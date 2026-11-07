@@ -108,7 +108,11 @@ def process_static(a, ob):
     lo, hi = v.min(0), v.max(0)
     size = hi - lo
     t = a["target"]
-    if "width" in t:
+    if "fit" in t:
+        # per-axis fit (Blender x, y, z in metres) for set pieces whose generated proportions
+        # are off the design sheet, e.g. a 12 m hearth trench that Tripo makes short and deep
+        f = np.array([t["fit"][k] / size[i] for i, k in enumerate("xyz")])
+    elif "width" in t:
         f = t["width"] / size[0]
     elif "height" in t:
         f = t["height"] / size[2]
@@ -116,7 +120,9 @@ def process_static(a, ob):
         f = t["length"] / size.max()
     v *= f
     lo, hi = v.min(0), v.max(0)
-    v -= np.array([(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, lo[2]])
+    # origin: bottom_center (kit, props, landmarks) or center (strapped items such as shields)
+    z0 = (lo[2] + hi[2]) / 2 if a.get("origin") == "center" else lo[2]
+    v -= np.array([(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, z0])
     set_verts(ob, v)
     return v
 
@@ -171,6 +177,11 @@ def process_weapon(a, ob):
     v *= f
     z_guard *= f
     grip_z = (v[:, 2].min() + z_guard) / 2
+    if a.get("grip_from_pommel") is not None:
+        # guardless blades (seax, needle): the widest slice is the pommel cap, so the
+        # design sheet gives the grip centre as a distance from the pommel end instead
+        grip_z = v[:, 2].min() + a["grip_from_pommel"]
+        z_guard = grip_z + a["grip_from_pommel"]
     grip = v[np.abs(v[:, 2] - grip_z) < 0.02]
     cx, cy = (grip[:, 0].mean(), grip[:, 1].mean()) if len(grip) else (0, 0)
     v -= np.array([cx, cy, grip_z])

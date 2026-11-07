@@ -8,7 +8,7 @@ What it fetches (Studio projects keep the *latest* model version, so after a qua
 the project model is an FBX and the original high-poly GLB is gone):
   static/weapon  -> raw/<name>/remesh.fbx       (tripo_download format=fbx)
   character      -> raw/<name>/rigged.fbx + raw/<name>/anims/<preset>.fbx
-                    (tripo_download animated+animation_only per preset; Studio serves these as FBX
+                    (tripo_download animated+animation_only per preset, namespaced by source.rig; Studio serves these as FBX
                      even though the tool names them .glb, so they are renamed)
 Costs 0 credits: downloads are free.
 """
@@ -48,13 +48,15 @@ def main():
         if inp.endswith(".fbx"):
             call(client, "tripo_download", {"project_id": pid, "format": "fbx", "out_path": inp})
             print("fetched", asset["input"])
+        # preset names are namespaced by rig type: preset:biped:walk, preset:quadruped:walk
+        rig_type = asset.get("source", {}).get("rig", "biped").split("/")[0]
         for clip, path in asset.get("anims", {}).items():
             preset = os.path.splitext(os.path.basename(path))[0]
             dst = os.path.join(ROOT, path)
             tmp = dst[:-4] + ".glb"
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             call(client, "tripo_download", {"project_id": pid, "animated": True, "animation_only": True,
-                                            "animation_name": f"preset:biped:{preset}", "out_path": tmp})
+                                            "animation_name": f"preset:{rig_type}:{preset}", "out_path": tmp})
             os.replace(tmp, dst)
             print("fetched", path)
 
