@@ -190,6 +190,8 @@ func _first_hearth() -> Hearthstone:
 ##   combat: a rimewalker squares up to the Bearer mid-swing
 ##   death:  the Bearer falls; the capture lands on the death splash
 ##   rest:   the hearthstone menu opens on the levelling page
+##   dialogue_ingra: Ingra's audience, framed over the Bearer's shoulder
+##   keepsakes: the Pack opened at the Keepsakes leaf, two threads begun
 ##   swing / foe_death / boss: character close-ups (ADR 0004), see _char_stage
 func _stage_tick() -> void:
 	_stage_frame += 1
@@ -224,6 +226,37 @@ func _stage_tick() -> void:
 			if _stage_frame == 8:
 				Game.set_warmth(57)
 				p.take_hit(DamagePacket.new(99999, 0, null))
+		"dialogue_ingra":
+			# Ingra at her tally in the yard, mid-errand: her fourth line
+			if _stage_frame == 8:
+				for n in get_tree().current_scene.find_children("*", "NPC", true, false):
+					if (n as NPC).npc_id == "steward_ingra":
+						var npc := n as NPC
+						var fwd := -npc.global_transform.basis.z
+						fwd.y = 0.0
+						p.global_position = npc.global_position + fwd.normalized() * 2.2
+						p.velocity = Vector3.ZERO
+						npc._on_talk(p)
+						var side := fwd.normalized().cross(Vector3.UP)
+						var cam := Camera3D.new()
+						cam.name = "ShotCam"
+						get_tree().current_scene.add_child(cam)
+						var mid := (p.global_position + npc.global_position) * 0.5
+						cam.global_position = mid + side * 3.4 + fwd.normalized() * 0.6 + Vector3.UP * 1.9
+						cam.look_at(mid + Vector3.UP * 1.1, Vector3.UP)
+						cam.fov = 50.0
+						cam.current = true
+			if _stage_frame == 12:
+				for c in get_tree().root.get_children():
+					if c is DialogueUI:
+						for k in 3:
+							(c as DialogueUI).advance()
+		"keepsakes":
+			# a journey part-way along: both threads started, one further on
+			if _stage_frame == 8:
+				for f in ["ks_ingra_met", "ks_ingra_rye_found", "ks_ingra_rye", "ks_brede_met", "ks_brede_float_found"]:
+					World.set_flag(f)
+				InventoryUI.open_for(p, "keepsakes")
 		"rest":
 			if _stage_frame == 8:
 				var h := _first_hearth()
