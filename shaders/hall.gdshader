@@ -54,13 +54,8 @@ instance uniform float indoor = 0.0;
 // Per-subtree dissolve (deaths, pickups fading out; applied via RH.set_dissolve)
 uniform float death_diss : hint_range(0.0, 1.0) = 0.0;
 
-// Transformation wave globals (set by StateDirector)
-global uniform float rh_wave_r;
-global uniform vec3 rh_wave_origin;
-global uniform float rh_wave_dir;
-global uniform float rh_state_blend;
-global uniform float rh_wave_band;
-global uniform vec3 rh_wave_color;
+// Transformation wave globals, frost/melt look (set by StateDirector)
+#include "res://shaders/wavefront.gdshaderinc"
 
 varying vec3 v_world_pos;
 varying vec3 v_world_nrm;
@@ -90,24 +85,6 @@ float vnoise(vec3 p) {
 	           mix(mix(n001, n101, f.x), mix(n011, n111, f.x), f.y), f.z);
 }
 
-float local_rime(vec3 wp) {
-	if (rh_wave_r < -500.0) {
-		return rh_state_blend;
-	}
-	float d = distance(wp, rh_wave_origin);
-	float w = smoothstep(0.0, 1.0, clamp((rh_wave_r - d) / rh_wave_band, 0.0, 1.0));
-	return mix(rh_state_blend, rh_wave_dir, w);
-}
-
-float wave_edge(vec3 wp) {
-	if (rh_wave_r < -500.0) {
-		return 0.0;
-	}
-	float d = distance(wp, rh_wave_origin);
-	float t = 1.0 - clamp(abs(rh_wave_r - d) / rh_wave_band, 0.0, 1.0);
-	return pow(t, 2.6);
-}
-
 void vertex() {
 	v_local_pos = VERTEX;
 	v_local_nrm = normalize(NORMAL);
@@ -128,7 +105,7 @@ void fragment() {
 	}
 	float diss_n = 0.0;
 	if (presence < 0.999) {
-		diss_n = hash13(floor(v_world_pos * 8.0));
+		diss_n = wf_presence_noise(v_world_pos, v_world_nrm);
 		if (presence < diss_n) {
 			discard;
 		}
@@ -286,6 +263,10 @@ void fragment() {
 		final_albedo = mix(final_albedo, sheen_col, fres * sheen_strength * cav_ao);
 	}
 
+	// the wavefront: hoarfrost growing / meltwater darkening
+	vec4 wf = wf_eval(v_world_pos, world_nrm);
+	final_albedo = wf_albedo(final_albedo, wf);
+
 	ALBEDO = final_albedo;
 
 	// Physically-Based Metallic, Specular & Roughness
@@ -295,10 +276,11 @@ void fragment() {
 	float rgh = roughness_v + (rough_mod - 0.5) * 0.40 + rime * 0.02 - edge_chip * 0.16 + moss * 0.22 - arch_grime * 0.12;
 	rgh = mix(rgh, 0.88, horiz_ledge * 0.5);
 	rgh = mix(rgh, 0.08, puddle * 0.88); // wet puddles gleam under moonlight & torchlight
+	rgh = wf_roughness(rgh, wf);
 	ROUGHNESS = clamp(rgh, 0.05, 1.0);
 
 	float spec = specular_v * mix(0.42, 1.22, cav_ao) * (1.0 - horiz_ledge * 0.45) + puddle * 0.42;
-	SPECULAR = clamp(spec, 0.05, 1.0);
+	SPECULAR = clamp(wf_specular(spec, wf), 0.05, 1.0);
 
 	float total_ao = clamp(vao * cav_ao * (1.0 - crack * 0.38) * (1.0 - arch_grime * 0.28), 0.08, 1.0);
 	AO = mix(1.0, total_ao, 0.88);
@@ -327,16 +309,11 @@ void fragment() {
 	}
 	emis += emission_color * emission_energy * gate;
 
-	// The Wavefront: frost/ember crust & dissolution
-	float edge = wave_edge(v_world_pos);
-	if (edge > 0.001) {
-		float ember_vein = smoothstep(0.32, 0.78, (1.0 - h_field) * 0.65 + n2 * 0.55);
-		float diss_edge = 0.0;
-		if (state_mode != 0 && presence < 0.999) {
-			diss_edge = 1.0 - smoothstep(0.0, 0.25, presence - diss_n);
-		}
-		vec3 core_fire = mix(rh_wave_color, vec3(1.0, 0.92, 0.65), edge * ember_vein);
-		emis += core_fire * (edge * (3.5 + 4.5 * ember_vein) + diss_edge * edge * 14.0);
+	// The wavefront: a pale frost line / a warm melt bloom, and the edge of
+	// state-only meshes growing in as lace or melting away
+	emis += wf_emission(wf);
+	if (state_mode != 0 && presence < 0.999 && presence > 0.001) {
+		emis += wf_presence_edge(1.0 - smoothstep(0.0, 0.12, presence - diss_n));
 	}
 	if (death_diss > 0.001) {
 		float dn2 = hash13(floor(v_world_pos * 16.0));

@@ -185,3 +185,12 @@ func music_for(state: RH.WState) -> String:
 
 func ambience_for(state: RH.WState) -> String:
 	return _profile(RH.STATE_NAMES[state]).get("ambience", "")
+
+## Music, ambience and their crossfade times for a state (AudioDirector).
+func audio_for(state: RH.WState) -> Dictionary:
+	var p := _profile(RH.STATE_NAMES[state])
+	var out := {}
+	for k in ["music", "ambience", "music_fade_in", "ambience_fade"]:
+		if p.has(k):
+			out[k] = p[k]
+	return out

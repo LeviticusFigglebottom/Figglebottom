@@ -7,6 +7,9 @@ extends Node
 ##   --state=thaw|rime     force initial world state for the loaded area
 ##   --shot-pack         populate sample gear/relics and open InventoryUI
 ##   --quit-after=N         quit after N frames (no capture)
+##   --hearth-frame=N       rest at the first hearth on frame N; with
+##   --shot-seq=s1,s2,...   captures PATH_0.png.. that many seconds after it
+##   --hearth-toggle        make that rest turn the world (THAW <-> RIME)
 
 var _shot_path := ""
 var _frames_left := -1
@@ -21,6 +24,7 @@ var _foe: Node3D = null
 var forced_state := ""   # read by boot/world setup
 var forced_flags: Array = []   # world flags applied before the area builds
 var _hearth_frame := -1
+var _hearth_choice := "auto"   # --hearth-toggle: turn the world even if uncleared (wave shots)
 var _seq: Array = []      # seconds after the hearth trigger
 var _seq_t := -1.0
 var _seq_i := 0
@@ -53,6 +57,8 @@ func _ready() -> void:
 			_quit_after = int(arg.get_slice("=", 1))
 		elif arg.begins_with("--hearth-frame="):
 			_hearth_frame = int(arg.get_slice("=", 1))
+		elif arg == "--hearth-toggle":
+			_hearth_choice = "toggle"
 		elif arg.begins_with("--shot-seq="):
 			for part in arg.get_slice("=", 1).split(","):
 				_seq.append(float(part))
@@ -179,7 +185,9 @@ func _trigger_hearth() -> void:
 		return
 	Game.player.global_position = hearth.respawn_point()
 	Game.player.vis.rotation.y = PI
-	Game.hearth_flow(hearth, Game.player)
+	if _cam_spec != "":
+		_spawn_cam()
+	Game.hearth_flow(hearth, Game.player, _hearth_choice)
 	_seq_t = 0.0
 
 func _first_hearth() -> Hearthstone:
@@ -367,4 +375,5 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 
 func _exit_tree() -> void:
 	AmbientLife._mote_tex = null
+	FrostFX.clear_cache()
 	EnvRig.active_instance = null

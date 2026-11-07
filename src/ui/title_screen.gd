@@ -42,7 +42,7 @@ var _armed_slot := 0       # overwrite confirm: second press forgets
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	AudioDirector.play_music("res://assets/audio/theme_title.wav", 1.2)
+	AudioDirector.play_music(AudioDirector.music_path("title"), 1.2)
 	_stage = Node3D.new()
 	add_child(_stage)
 	_cam = Camera3D.new()

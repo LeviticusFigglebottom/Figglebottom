@@ -8,7 +8,8 @@ render_mode cull_back, depth_draw_opaque, diffuse_burley, specular_schlick_ggx;
 // Derived layers:
 //   rock  — on slopes steeper than ~40 deg (schist, banded)
 //   snow  — RIME only: settles on top-facing surfaces, hoarfrost elsewhere
-// The thaw/rime wavefront uses the same StateDirector globals as hall.gdshader.
+// The thaw/rime wavefront (frost line / melt line) is shared with hall.gdshader
+// via wavefront.gdshaderinc.
 // ---------------------------------------------------------------------------
 
 uniform vec3 turf_a : source_color = vec3(0.17, 0.25, 0.08);
@@ -21,12 +22,7 @@ uniform float rock_slope = 0.72;       // normal.y below this turns to rock
 uniform float snow_cover = 0.9;
 uniform int state_mode = 0;
 
-global uniform float rh_wave_r;
-global uniform vec3 rh_wave_origin;
-global uniform float rh_wave_dir;
-global uniform float rh_state_blend;
-global uniform float rh_wave_band;
-global uniform vec3 rh_wave_color;
+#include "res://shaders/wavefront.gdshaderinc"
 
 varying vec3 v_wp;
 varying vec3 v_wn;
@@ -47,23 +43,6 @@ float vnoise(vec3 p) {
 	               mix(hash13(i + vec3(0, 1, 0)), hash13(i + vec3(1, 1, 0)), f.x), f.y),
 	           mix(mix(hash13(i + vec3(0, 0, 1)), hash13(i + vec3(1, 0, 1)), f.x),
 	               mix(hash13(i + vec3(0, 1, 1)), hash13(i + vec3(1, 1, 1)), f.x), f.y), f.z);
-}
-
-float local_rime(vec3 wp) {
-	if (rh_wave_r < -500.0) {
-		return rh_state_blend;
-	}
-	float d = distance(wp, rh_wave_origin);
-	float w = smoothstep(0.0, 1.0, clamp((rh_wave_r - d) / rh_wave_band, 0.0, 1.0));
-	return mix(rh_state_blend, rh_wave_dir, w);
-}
-
-float wave_edge(vec3 wp) {
-	if (rh_wave_r < -500.0) {
-		return 0.0;
-	}
-	float t = 1.0 - clamp(abs(rh_wave_r - distance(wp, rh_wave_origin)) / rh_wave_band, 0.0, 1.0);
-	return pow(t, 2.6);
 }
 
 void vertex() {
@@ -125,6 +104,8 @@ void fragment() {
 	vec3 frost = mix(rime_col, snow_col * 0.8, 0.10 + 0.12 * n_macro);
 	rime_col = mix(frost, snow_col * (0.92 + 0.08 * n2), snow);
 	vec3 albedo = mix(thaw_col, rime_col, rime);
+	vec4 wf = wf_eval(v_wp, n);
+	albedo = wf_albedo(albedo, wf);
 	ALBEDO = albedo;
 
 	// micro relief
@@ -133,15 +114,12 @@ void fragment() {
 	float rgh = mix(0.92, 0.82, rock_w);
 	rgh = mix(rgh, 0.35, wet * (1.0 - rime));
 	rgh = mix(rgh, 0.55, snow * rime);
-	ROUGHNESS = rgh;
-	SPECULAR = mix(0.35, 0.55, snow * rime);
+	ROUGHNESS = wf_roughness(rgh, wf);
+	SPECULAR = wf_specular(mix(0.35, 0.55, snow * rime), wf);
 	AO = mix(1.0, 0.6 + 0.4 * blocks, rock_w);
 
 	vec3 emis = vec3(0.0);
-	float edge = wave_edge(v_wp);
-	if (edge > 0.001) {
-		emis += mix(rh_wave_color, vec3(1.0, 0.92, 0.65), n2) * edge * 4.0;
-	}
+	emis += wf_emission(wf);
 	// a faint cold glint on the snow in rime
 	emis += vec3(0.04, 0.05, 0.07) * snow * rime * smoothstep(0.92, 0.99, n3);
 	EMISSION = emis;
