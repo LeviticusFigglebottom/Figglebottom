@@ -14,9 +14,10 @@ const ASH := Color(0.62, 0.58, 0.50)
 
 ## One stop per quarter: a slow dolly from -> to, eyes fixed on look.
 const STOPS := [
-	{"id": "saltfell_steading", "from": Vector3(-14.0, 5.0, 26.0), "to": Vector3(6.0, 4.0, 22.0), "look": Vector3(0, 1.6, 0)},
-	{"id": "saltfell_steading", "from": Vector3(10.0, 2.4, -14.0), "to": Vector3(-6.0, 2.6, -18.0), "look": Vector3(0, 2.0, -28)},
-	{"id": "saltfell_steading", "from": Vector3(12.0, 6.0, 10.0), "to": Vector3(-12.0, 6.0, 8.0), "look": Vector3(0, 0.5, -6)},
+	# the Strand from the water's edge, the yard from the path top, the hills
+	{"id": "saltfell_steading", "from": Vector3(-24.0, 4.0, 82.0), "to": Vector3(-6.0, 4.5, 80.0), "look": Vector3(20, 6.0, 52)},
+	{"id": "saltfell_steading", "from": Vector3(-36.0, 26.0, 28.0), "to": Vector3(-24.0, 26.5, 24.0), "look": Vector3(0, 23.0, -20)},
+	{"id": "saltfell_steading", "from": Vector3(16.0, 26.0, -26.0), "to": Vector3(-14.0, 26.0, -26.0), "look": Vector3(0, 30.0, -130)},
 ]
 const STOP_T := 11.0
 

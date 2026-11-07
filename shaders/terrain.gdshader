@@ -11,9 +11,9 @@ render_mode cull_back, depth_draw_opaque, diffuse_burley, specular_schlick_ggx;
 // The thaw/rime wavefront uses the same StateDirector globals as hall.gdshader.
 // ---------------------------------------------------------------------------
 
-uniform vec3 turf_a : source_color = vec3(0.24, 0.29, 0.13);
-uniform vec3 turf_b : source_color = vec3(0.33, 0.33, 0.16);
-uniform vec3 rock_col : source_color = vec3(0.30, 0.31, 0.28);
+uniform vec3 turf_a : source_color = vec3(0.17, 0.25, 0.08);
+uniform vec3 turf_b : source_color = vec3(0.30, 0.31, 0.13);
+uniform vec3 rock_col : source_color = vec3(0.27, 0.27, 0.28);
 uniform vec3 shingle_col : source_color = vec3(0.46, 0.43, 0.39);
 uniform vec3 path_col : source_color = vec3(0.29, 0.22, 0.15);
 uniform vec3 snow_col : source_color = vec3(0.86, 0.90, 0.96);
@@ -88,8 +88,14 @@ void fragment() {
 	// worn path: bare peaty earth with stones
 	vec3 path = path_col * (0.85 + 0.25 * n2) + vec3(0.06) * smoothstep(0.8, 0.95, n3);
 	// rock: banded schist, darker in the folds
-	float band = sin(v_wp.y * 2.3 + n1 * 3.0 + v_wp.x * 0.15) * 0.5 + 0.5;
-	vec3 rock = rock_col * (0.7 + 0.25 * band + 0.25 * n2) * mix(vec3(1.0), vec3(0.92, 1.0, 0.9), n_macro);
+	// schist: tilted bedding broken into blocks, dark joints, pale lichen
+	float bed = sin(v_wp.y * 1.3 + v_wp.x * 0.35 + n1 * 4.0) * 0.5 + 0.5;
+	float blocks = vnoise(vec3(v_wp.x * 0.35, v_wp.y * 0.9, v_wp.z * 0.35));
+	float joint = smoothstep(0.08, 0.0, abs(blocks - 0.5)) + smoothstep(0.9, 0.98, bed) * 0.6;
+	vec3 rock = rock_col * (0.55 + 0.35 * blocks + 0.25 * n2 + 0.12 * bed);
+	rock *= 1.0 - 0.55 * clamp(joint, 0.0, 1.0);
+	rock = mix(rock, vec3(0.52, 0.52, 0.44), smoothstep(0.72, 0.9, n2 * 0.6 + n_macro * 0.5) * 0.45);
+	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * 0.4);
 
 	vec3 col = turf;
 	col = mix(col, shingle, clamp(v_col.r * 1.2 - n3 * 0.15, 0.0, 1.0));
@@ -120,7 +126,7 @@ void fragment() {
 	rgh = mix(rgh, 0.55, snow * rime);
 	ROUGHNESS = rgh;
 	SPECULAR = mix(0.35, 0.55, snow * rime);
-	AO = mix(1.0, 0.75 + 0.25 * n1, rock_w);
+	AO = mix(1.0, 0.6 + 0.4 * blocks, rock_w);
 
 	vec3 emis = vec3(0.0);
 	float edge = wave_edge(v_wp);

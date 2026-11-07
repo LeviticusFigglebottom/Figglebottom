@@ -182,7 +182,8 @@ def _terrace(x, z):
     """The switchback face: three legs stacked on a terraced cliff, joined by
     two turning landings. Walls between legs are steep (>45 deg) except near
     the turns, where cutting the corner saves nothing."""
-    if not (TER_X0 <= x <= TER_X1 and 31.0 <= z <= 54.5):
+    xw = x + 2.5 * fbm(0.4, z * 0.08, 2, 24)
+    if not (TER_X0 <= xw <= TER_X1 and 31.0 <= z <= 54.5):
         return None
     wob = 0.5 * fbm(x * 0.15, 0.0, 2, 9)
     zz = z + wob
@@ -231,8 +232,11 @@ def height(x, z):
             if r < 1.0:
                 top += bh * (1 - r * r) ** 1.5
     # the east fell: scree too steep to climb
-    if x > 62:
-        top += min(34.0, (x - 62) * 1.55) + 1.5 * fbm(x * 0.2, z * 0.2, 2, 4)
+    fx = x - 62 - 7.0 * fbm(z * 0.03, 0.3, 2, 17)
+    if fx > 0:
+        # broken scree: buttresses and runnels, never less than ~48 degrees
+        top += min(34.0 + 6.0 * fbm(x * 0.02, z * 0.02, 2, 18), fx * 1.6) \
+            + min(fx, 4.0) * (0.6 * fbm(x * 0.09, z * 0.09, 3, 4) + 0.25 * math.sin(z * 0.45 + 2.0 * fbm(x * 0.1, z * 0.1, 1, 19)))
     # warp the outline so no edge runs straight: bays, buttresses, slumps
     sdf = _poly_sdf(x, z, PLATEAU) + 3.2 * fbm(x * 0.045, z * 0.045, 3, 13) + 1.2 * fbm(x * 0.16, z * 0.16, 2, 14)
     rough = 2.0 * fbm(x * 0.13, z * 0.13, 3, 5)
@@ -241,7 +245,9 @@ def height(x, z):
     h = max(beach_y(x, z), cliff) if sdf < 0 else top
     t = _terrace(x, z)
     if t is not None:
-        h = t + 0.15 * fbm(x * 0.3, z * 0.3, 2, 6)
+        # legs keep a gentle tread; the walls between them are broken rock
+        on_leg = path_weight_terrace(x, z)
+        h = t + 0.15 * fbm(x * 0.3, z * 0.3, 2, 6) + (1.0 - on_leg) * 0.9 * fbm(x * 0.35, z * 0.35, 2, 25)
     # flatten the pads people built on
     for name, pad in PADS.items():
         w = _pad_weight(x, z, pad)
@@ -305,6 +311,16 @@ def _seg_dist(px, pz, ax, az, bx, bz):
     L = ex * ex + ez * ez
     t = 0.0 if L == 0 else max(0.0, min(1.0, ((px - ax) * ex + (pz - az) * ez) / L))
     return math.hypot(px - (ax + t * ex), pz - (az + t * ez))
+
+
+def path_weight_terrace(x, z):
+    """1 on a switchback leg's tread, 0 on the walls between."""
+    for (kind, zs, zn) in _ROWS:
+        if kind.startswith("leg") and zn + 0.3 <= z <= zs - 0.3:
+            return 1.0
+    if x < -60 or x > -16:     # the turning landings
+        return 1.0 if 35.0 <= z <= 51.5 else 0.0
+    return 0.0
 
 
 def path_weight(x, z):

@@ -212,10 +212,10 @@ static func _mesh(kind: String, mode: int) -> Mesh:
 	var m: Mesh
 	match kind:
 		"rock": m = _rock_mesh(0.55, 11, "M_stone_dark", mode)
-		"boulder": m = _rock_mesh(1.0, 23, "M_stone", mode)
+		"boulder": m = _rock_mesh(1.0, 23, "M_stone_dark", mode)
 		"hummock": m = _rock_mesh(0.7, 5, "M_turf", mode, 0.45)
 		"ice_floe": m = _rock_mesh(1.0, 31, "M_ice", mode, 0.3)
-		"standing_stone": m = _box_stack([[Vector3(0.8, 2.7, 0.45), Vector3(0, 1.3, 0), Vector3(0, 0, 3)]], "M_stone", mode)
+		"standing_stone": m = _box_stack([[Vector3(0.8, 2.7, 0.45), Vector3(0, 1.3, 0), Vector3(0, 0, 3)]], "M_stone_dark", mode)
 		"driftwood": m = _driftwood(mode)
 		"peat_stack": m = _peat(mode)
 		"stone_fence": m = _drystone(mode)
