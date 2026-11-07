@@ -63,6 +63,8 @@
  },
  "netmender": {
   "name": "The Netmender",
+  "release_flag": "ks_netmender_released",
+  "release_card": "THE NETMENDER — RELEASED",
   "desc": "Gunna of Saltfell, wrapped in the frozen net she would not stop mending, and in what the net brought home.",
   "hp": 920,
   "poise": 130,

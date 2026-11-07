@@ -10,6 +10,7 @@ signal breathmark_reclaimed(amount: int)
 signal toast(text: String)               # short diegetic messages
 signal lore_panel(text: String)          # plaque/lore reading
 signal area_title(text: String)          # grand entry card: the area's name
+signal title_card(text: String, hold: float)   # a card held longer (a release)
 signal area_cleared(area_id: String)
 
 var player: Node = null
@@ -77,12 +78,20 @@ func respawn_player() -> void:
 	player_respawned.emit()
 
 ## A holdfast has been put to rest: the area opens for free warming.
-func on_boss_slain(area_id: String) -> void:
+## The holdfast's own data may name a story flag (a Keepsakes turn) and the
+## quiet card that replaces any victory banner (SLICE.md §1).
+func on_boss_slain(area_id: String, boss: Node = null) -> void:
 	World.set_cleared(area_id)
+	var bcfg: Dictionary = boss.get("cfg") if boss != null and boss.get("cfg") is Dictionary else {}
+	if String(bcfg.get("release_flag", "")) != "":
+		World.set_flag(String(bcfg["release_flag"]))
 	World.save_game()
 	AudioDirector.play_music("", 2.0)
 	AudioDirector.duck_ambience(false)
-	toast.emit("The holdfast rests. The memory is yours to keep or let go.")
+	if String(bcfg.get("release_card", "")) != "":
+		title_card.emit(String(bcfg["release_card"]), 3.0)
+	else:
+		toast.emit("The holdfast rests. The memory is yours to keep or let go.")
 	area_cleared.emit(area_id)
 	await get_tree().create_timer(2.0, false).timeout
 	if current_area != null and current_area.area_id == area_id:

@@ -134,8 +134,8 @@ func _engage_boss() -> void:
 	Game.arena_locked = true
 	boss_engaged.emit()
 
-func _on_boss_dead(_e) -> void:
-	Game.on_boss_slain(area_id)
+func _on_boss_dead(e) -> void:
+	Game.on_boss_slain(area_id, e)
 	dissolve()
 
 ## The veil re-forms with its holdfast. Dying mid-fight used to leave the gate

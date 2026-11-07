@@ -5,7 +5,7 @@
  },
  "gourd": {
   "name": "Gourd",
-  "desc": "A stoppered gourd of hot broth. Resting at a hearthstone fills it again."
+  "desc": "A stoppered gourd of hot broth. Rest at a Hearthstone and it is full again. Somebody has cut a small notch in the neck for every time it has been refilled, and then given up."
  },
  "arrows": {
   "name": "Arrows",
@@ -17,7 +17,7 @@
  },
  "mend": {
   "name": "Mending Song",
-  "desc": "A low hum the steading sang over cuts and chilblains. The wound remembers being warm."
+  "desc": "A low hum sung over cuts and chilblains, mostly to children, until they stop crying out of embarrassment. Every household on the coast sings it slightly differently. Ingra sings it flat and says that is how it goes."
  },
  "ember_throw": {
   "name": "Ember Throw",
@@ -34,5 +34,44 @@
  "warding_hum": {
   "name": "Warding Hum",
   "desc": "A skin of remembered warmth that takes the cold's anger first, and goes out doing it."
+ },
+ "saltfell_shield": {
+  "name": "Saltfell Board Shield",
+  "desc": "A round shield of pine boards with a bog-iron boss, painted woad blue long ago. It hung over the boat-shed door and was used mostly to keep the rain off the door."
+ },
+ "fostering_horn": {
+  "name": "Fostering Horn",
+  "key_item": true,
+  "desc": "A cow's horn with a soapstone stopper and a draught-hole, worn at the hip. Children of Saltfell carry a coal from the home hearth in one when they are sent down the water. The coal inside has been fed every evening since you were small."
+ },
+ "item_net_float": {
+  "name": "Brede's Net-Float",
+  "desc": "A cork float off a herring net, with Brede's knot burned on one side. He burned a second knot on the other side the year they married, got it wrong, and never burned a third."
+ },
+ "ks_child_mask": {
+  "name": "Child's Mask",
+  "desc": "A small mourning mask of birch with a woad-blue band, hung on the low peg by the Longhouse door. Children are given one to grow into. The band has been retied to fit a smaller head."
+ },
+ "ks_knucklebones": {
+  "name": "Knucklebones",
+  "desc": "Four sheep's knucklebones, the fifth missing, worn smooth in a small pocket. The game is to throw one up and snatch the rest before it lands. One of them has a tooth-mark."
+ },
+ "item_rye_sack": {
+  "name": "Rye Sack",
+  "desc": "A sack of rye from the Saltfell store-house, chewed at one corner. It was under the byre dog, flattened into the shape of a dog. Ingra will want it back."
+ },
+ "armour_saltfell_oilskins": {
+  "name": "Saltfell Oilskins",
+  "slot": "body",
+  "desc": "Brede's spare oilskin smock, dressed with fish oil and smelling of it. It turns sea-spray and some of the cold. The left cuff has been let down and re-hemmed by someone who did it properly."
+ },
+ "armour_traveller_coat": {
+  "name": "Traveller's Coat",
+  "slot": "body",
+  "desc": "A long coat of grey southern wool, wrong for the north, warm enough on a boat. The toggles are horn. One is a replacement and does not match."
+ },
+ "item_mending_needle": {
+  "name": "Mending Needle",
+  "desc": "A net-needle of whalebone, loaded with tarred twine, from the Netmender's lap. The last net it worked has one hole mended fourteen times over. Each knot is a little looser than the one before it."
  }
 }
