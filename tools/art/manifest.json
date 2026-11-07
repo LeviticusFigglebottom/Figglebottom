@@ -318,6 +318,124 @@
       },
       "origin": "bottom_center",
       "output": "assets/models/enemies/oarsman.glb"
+    },
+    {
+      "name": "gourd",
+      "category": "props",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "14e283ad-8e65-4f23-a7e2-eb487848bd2a",
+        "task_id": "1923519e-391c-4230-8069-029e29e3c152",
+        "remesh_operator": "2d405f3e-d24f-4631-b98c-417773ca2e02",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/gourd/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 0.22
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/props/gourd.glb"
+    },
+    {
+      "name": "fostering_horn",
+      "category": "props",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "62d8752f-9576-475e-ab98-d346aa54a07a",
+        "task_id": "cececf8d-b046-4738-9a88-010c106b0cc8",
+        "remesh_operator": "5705bd50-8142-49cd-83ec-3a9bade1a364",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/fostering_horn/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 0.3
+      },
+      "origin": "center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/props/fostering_horn.glb"
+    },
+    {
+      "name": "lm_brede_boat",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "8b9f1957-abfc-466a-b109-0cf84db3dae3",
+        "task_id": "1592319f-af6e-4416-ac97-430bffbd56a2",
+        "remesh_operator": "b12a0497-54dc-4a4c-bee6-a078d2d9b715",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_brede_boat/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "fit": {
+          "x": 7.0,
+          "y": 2.0,
+          "z": 2.6
+        }
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_brede_boat.glb"
+    },
+    {
+      "name": "lm_standing_stone",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "c5bba63f-52d7-4f5c-be72-fc21415dfec0",
+        "task_id": "74cf8df6-85e4-44fa-b3c7-1b5361b73035",
+        "remesh_operator": "a1acf469-ded6-495e-b9db-c40223c2f81e",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_standing_stone/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.5
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_standing_stone.glb"
+    },
+    {
+      "name": "lm_tide_wall",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "ab78638a-fe0e-4ee8-b193-1dbfeb0782ce",
+        "task_id": "f479dc5c-dbee-4c59-a0b3-ee020c1ff7ee",
+        "remesh_operator": "c926c971-05c3-469f-ab8d-bb88ac1ba378",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_tide_wall/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "fit": {
+          "x": 3.0,
+          "y": 8.0,
+          "z": 3.0
+        }
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "trimesh",
+      "output": "assets/models/landmarks/lm_tide_wall.glb"
     }
   ]
 }

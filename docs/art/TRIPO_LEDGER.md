@@ -44,3 +44,13 @@ Budget for the batch: about 3,500 credits. Balance at start: 24,185 (`tripo_stat
 | 2026-11-07 | remesh quad 10k | oarsman | d86bb6f5-… | 40 | — | op 41ffa4b6 |
 | 2026-11-07 | rig check_only + rig biped/mixamo | oarsman | d86bb6f5-… | 20 | — | op b60de334 |
 | 2026-11-07 | animate ×6 (idle, walk, run, slash, hit_to_body_01, defeat_02) | oarsman | d86bb6f5-… | 0 | — | presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | gourd | 14e283ad-8e65-4f23-a7e2-eb487848bd2a | 55 | — | op 1923519e |
+| 2026-11-07 | remesh quad 10k | gourd | 14e283ad-… | 40 | — | op 2d405f3e |
+| 2026-11-07 | image_to_model (v3.1, detailed) | fostering_horn | 62d8752f-9576-475e-ab98-d346aa54a07a | 55 | — | op cececf8d |
+| 2026-11-07 | remesh quad 10k | fostering_horn | 62d8752f-… | 40 | — | op 5705bd50 |
+| 2026-11-07 | image_to_model (v3.1, detailed) | lm_brede_boat | 8b9f1957-abfc-466a-b109-0cf84db3dae3 | 55 | — | op 1592319f |
+| 2026-11-07 | remesh quad 10k | lm_brede_boat | 8b9f1957-… | 40 | — | op b12a0497 |
+| 2026-11-07 | image_to_model (v3.1, detailed) | lm_standing_stone | c5bba63f-52d7-4f5c-be72-fc21415dfec0 | 55 | — | op 74cf8df6 |
+| 2026-11-07 | remesh quad 10k | lm_standing_stone | c5bba63f-… | 40 | — | op a1acf469 |
+| 2026-11-07 | image_to_model (v3.1, detailed) | lm_tide_wall | ab78638a-fe0e-4ee8-b193-1dbfeb0782ce | 55 | — | op f479dc5c |
+| 2026-11-07 | remesh quad 10k | lm_tide_wall | ab78638a-… | 40 | — | op c926c971 |
