@@ -132,3 +132,40 @@ Budget for the batch: about 3,000 credits. Balance at start: 21,870 (`tripo_stat
 | 2026-11-07 | tripo_animate prompt (text_to_motion) ×3: ground cut ("Arm Chop Motion"), stack sod ("Lifting and Placing Block"), back drop ("Backward Fall and Sit Up") | turfwright | 954b9c38-… | 60 | — | ops c881a910, 3bdae36c, 14a0bb2d; shipped as clips |
 | 2026-11-07 | tripo_animate prompt, **failed** (HTTP 406 "Failed to acquire lock": three prompt clips sent in parallel to one project) | turfwright | 954b9c38-… | 20 | — | op f58b2808; charged, not refunded; retried alone |
 | 2026-11-07 | **Lowe batch total** (11 generations incl. 1 superseded, 10 remeshes, 7 rigs, 4 text_to_motion) | | | **1,235** | **20,635** | reconciled with the `tripo_status` ledger |
+
+## Regions 3-7 batch (branch art/regions-3-7, 2026-11-07)
+
+Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 20,635 (`tripo_status`, checked before each batch). Reference images, multiview expansions and every reference re-roll via `tripo_image` are free on the plan (prompts in PROVENANCE; picks in `docs/art/concept/refs/`). Rows are grouped by region, in commit order. Bosses: multiview + extreme + three prompt clips each, sent one at a time per project (no 406s this batch).
+
+| Date | Action | Asset | Project id | Cost | Balance after | Note |
+|---|---|---|---|---|---|---|
+| 2026-11-07 | tripo_status | — | — | 0 | 20,635 | batch start |
+| 2026-11-07 | remesh quad 10k **failed** (HTTP 502, retried automatically) | feast_cleaver | — | 0 | — | not charged (balance reconciles exactly) |
+| 2026-11-07 | *Kettle Fjord* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | ice_cutter | 16bd3f55-57da-438e-b84e-79515c88d0d6 | 65 | — | op dbc22378 |
+| 2026-11-07 | remesh quad 10k | ice_cutter | 16bd3f55-… | 40 | — | op 435c06e6 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | ice_cutter | 16bd3f55-… | 20 | — | op 25f36461; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: drill_down ("Drilling Ice"), haul_trace ("Hauling Rope"), ring_cut ("Turning and Stabbing") | ice_cutter | 16bd3f55-… | 60 | — | ops 9868064c, c2b9c458, d330d4ce; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | ice_fisher | fcc44eb6-fe4c-4e8a-a940-adb1663988d9 | 55 | — | op 689bb502 |
+| 2026-11-07 | remesh quad 10k | ice_fisher | fcc44eb6-… | 40 | — | op 385475f9 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | ice_fisher | fcc44eb6-… | 20 | — | op 6ef89d05; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | sledge_dog | 443f57f2-7d68-4a15-be9a-218e8107d28a | 55 | — | op 19b47f01 |
+| 2026-11-07 | remesh quad 10k | sledge_dog | 443f57f2-… | 40 | — | op 719594f2 |
+| 2026-11-07 | rig check_only + rig quadruped; animate ×1 presets (walk) | sledge_dog | 443f57f2-… | 20 | — | op a071c3e7; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | sealer | a36746a3-1dfc-4610-9a73-f1cdbbc40375 | 55 | — | op bca441dc |
+| 2026-11-07 | remesh quad 10k | sealer | a36746a3-… | 40 | — | op 01d2ae1f |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | sealer | a36746a3-… | 20 | — | op 00309b13; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | ivo | 199eba5c-780e-4d63-a0d8-26d8d2a11bfb | 55 | — | op d32fe972 |
+| 2026-11-07 | remesh quad 10k | ivo | 199eba5c-… | 40 | — | op c0dced18 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | ivo | 199eba5c-… | 20 | — | op 5e53fd29; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_icefur | 894a4459-a224-466f-b4dd-e9cc3cf9c5ad | 55 | — | op 0bc077ee |
+| 2026-11-07 | remesh quad 10k | bearer_icefur | 894a4459-… | 40 | — | op 4f476662 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_icefur | 894a4459-… | 20 | — | op b1481c25; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | ice_auger | 78e6abdc-2f7c-48c7-9618-63911bd46704 | 55 | — | op ab552650 |
+| 2026-11-07 | remesh quad 10k | ice_auger | 78e6abdc-… | 40 | — | op 93126257 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | sealer_harpoon | 2119103e-6f70-4854-aa3f-f35c3b1ce393 | 55 | — | op 2b95fbe2 |
+| 2026-11-07 | remesh quad 10k | sealer_harpoon | 2119103e-… | 40 | — | op 39d443cc |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_fish_kettle | 20be4ec8-fdc5-4e08-8651-142d6bdfa79b | 55 | — | op a4d78a82 |
+| 2026-11-07 | remesh quad 10k | lm_fish_kettle | 20be4ec8-… | 40 | — | op 8a3ec9f0 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_sledge | 45765576-8ec0-4968-b4b7-d3b856eca468 | 55 | — | op 967d31e5 |
+| 2026-11-07 | remesh quad 10k | lm_sledge | 45765576-… | 40 | — | op 3f7b0e92 |
