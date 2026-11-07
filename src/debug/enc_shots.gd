@@ -19,9 +19,13 @@ var _hold := -1
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
-func _process(_dt: float) -> void:
+var _clock := 0.0   # game seconds since boot (headless frames run slow)
+
+func _process(dt: float) -> void:
 	if _done:
 		return
+	if not get_tree().paused:
+		_clock += dt
 	if _hold >= 0:
 		_hold -= 1
 		if _hold == 0:
@@ -133,3 +137,30 @@ func _st_ingra_thaw(p: Player) -> void:
 		ing._vis.play("greet", 0.3)
 	if _f > 50 and ing._vis.rig != null and ing._vis.rig.action_time() >= 1.4:
 		_freeze()
+
+# ------------------------------------------------------------------ death
+## A slain Tripo foe frosts over and shatters (FrostDissolve), captured mid-way.
+var _t0 := 0.0
+
+func _first_foe(id: String) -> Enemy:
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		if e is Enemy and (e as Enemy).id == id and not (e as Enemy).dead and (e as Enemy).can_process():
+			return e
+	return null
+
+func _st_foe_dissolve(p: Player) -> void:
+	if _f == 10:
+		_foe = _first_foe("rimewalker")
+		(_foe as Enemy)._die()
+		_t0 = _clock
+	if _foe != null and is_instance_valid(_foe):
+		_frame(_foe.global_position, _foe, Vector3(1.6, 0.8, -3.4), 0.4, 42.0)
+		if _diss_of(_foe) >= 0.45:
+			_freeze()
+
+func _diss_of(n: Node) -> float:
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var m = (mi as MeshInstance3D).get_surface_override_material(0)
+		if m is ShaderMaterial and m.get_shader_parameter("death_diss") != null:
+			return float(m.get_shader_parameter("death_diss"))
+	return 0.0

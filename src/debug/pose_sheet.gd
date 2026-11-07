@@ -10,6 +10,7 @@ func _ready() -> void:
 	var clip := "idle"
 	var times: Array = [0.0]
 	var yaw := 90.0
+	var diss: Array = []
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--pose-model="):
 			model = a.get_slice("=", 1)
@@ -17,6 +18,8 @@ func _ready() -> void:
 			clip = a.get_slice("=", 1)
 		elif a.begins_with("--pose-times="):
 			times = Array(a.get_slice("=", 1).split(",")).map(func(x): return float(x))
+		elif a.begins_with("--pose-diss="):
+			diss = Array(a.get_slice("=", 1).split(",")).map(func(x): return float(x))
 		elif a.begins_with("--pose-yaw="):
 			yaw = float(a.get_slice("=", 1))
 	var env := Environment.new()
@@ -49,6 +52,9 @@ func _ready() -> void:
 			ap.play(clip)
 			ap.seek(float(times[i]), true)
 			ap.pause()
+		if i < diss.size():   # preview the frost dissolve at this value
+			FrostDissolve.apply(inst)
+			RH.set_dissolve(inst, float(diss[i]))
 		var lbl := Label3D.new()
 		lbl.text = "%s %.2f" % [clip, float(times[i])]
 		lbl.pixel_size = 0.004
