@@ -1,0 +1,206 @@
+# Banned terms. Matched case-insensitively as whole words, across every tracked file
+# except docs/transposition/ and this file. One term per line. Lines starting with # and
+# blank lines are ignored. Generic English words the source also used (glory, ruin, vigil,
+# dawn, dusk, noon, prime, ward…) are listed as *proper-noun bans* in ORIGINALITY.md
+# instead of here, so ordinary prose stays legal. Anything here is never legal.
+
+# --- Source game: setting & lore ---
+Vespergard
+Evening Kingdom
+Latecomer
+Vigil Lantern
+orison
+orisons
+Chrism
+Candleglass
+First Wick
+Thirteenth Hour
+Thirteenth Bell
+Unrung Bell
+Bellman's Echo
+Unlit Procession
+Hundred Candles
+Hour Gate
+Door of the Hour
+Stair of Light
+lightfall
+Waxbound
+Pilgrim's Satchel
+Weight of the Dark
+Kindled Path
+Guttered Path
+Trial of Arms
+Sun-Creed
+Sun-Bees
+Golden Skeps
+Queen-Skep
+Queen-Comb
+Tithe-Wagon
+Great Censer
+Morrow Anthem
+Daily Offices
+Vesper Chimes
+Last Light
+# --- Source game: places ---
+Gray Cloister
+gray_cloister
+Basilica of Last Light
+basilica_porch
+basilica_nave
+Ossuary Undercroft
+ossuary_undercroft
+Larkspire
+Black Gate
+black_gate
+Drowned Marches
+drowned_marches
+Vigil's End
+vigils_end
+Last Shore
+Old Outskirts
+old_outskirts
+Chandlers' Quarter
+Gilded Sanctum
+gilded_sanctum
+Palace of the Hour
+Palace of the Kept Hour
+Hour Palace
+hour_palace
+Keep of the Morrow
+Morrow's Keep
+morrow_keep
+Chandlers' Hollow
+Chandlers Hollow
+chandlers_hollow
+Amber Foundry
+Crucible Vault
+Sovereign Apiary
+sovereign_apiary
+Cathedral of the First Comb
+Golden Comb
+wick_cathedral
+Birdkeeper's Hearth
+Quaylantern
+Unfaltering Vigil
+Threshold Vigil
+# --- Source game: characters ---
+Aveline
+Brother Ordo
+Osric
+Adalric
+Prior Anselm
+Anselm
+Halcyon
+Master Caelan
+Caelan
+Melisande
+Scion of Light
+Malakor
+Aurelia
+Vesper Matriarch
+# --- Source game: factions ---
+Guild of Chandlers
+Sisters of the Skep
+Cloister Wards
+Last Choir
+Wards of the Morning
+# --- Source game: enemies & bosses ---
+Bellkeeper
+Chorister
+Precentress
+Shroudbound
+Bourdon
+Bell-Ox
+Cage Warden
+Gilded Echo
+Larkwarden
+Drowned Herald
+Tollkeeper
+Mirebound
+Ferryman
+Lantern Wretch
+Vigilant Husk
+First Vigilant
+Immortalized
+Tallow Melter
+Comb-Warden
+# --- Source game: items, weapons, spells ---
+Cloistersword
+cloistersword
+Sexton's Maul
+Ward's Halberd
+Fen-Ward Spear
+Pilgrim's Greatsword
+Larkbow
+Pilgrim's Torch
+Censer-Mace
+Comb-Blade
+Mend the Wick
+Radiant Blast
+Radiant Burst
+Morrow Lance
+Vesper Ward
+Tallow Heart
+Choir Seal
+Bell Fragment
+Writ of Penance
+Radiant Retribution
+Seal-Wax
+Assay-Glass
+Press-Cake
+Chief Skimmer
+# --- Other existing games (inspiration by genre only; never recreate) ---
+Fallout
+Vault-Tec
+Pip-Boy
+Nuka-Cola
+Brotherhood of Steel
+Mojave
+New Vegas
+Elder Scrolls
+Tamriel
+Skyrim
+Dovahkiin
+Daedra
+Septim
+Oblivion gate
+Morrowind
+Whiterun
+Dark Souls
+Demon's Souls
+Estus
+Lordran
+Drangleic
+Lothric
+Anor Londo
+Firelink
+Undead Burg
+Chosen Undead
+Ashen One
+Lord of Cinder
+Lords of Cinder
+Lord-of-Cinder
+Anor-Londo
+Boletaria
+Hollowing
+humanity sprite
+bonfire
+Elden Ring
+Erdtree
+Tarnished
+Lands Between
+Site of Grace
+Limgrave
+Bloodborne
+Yharnam
+Blood Echoes
+Paleblood
+Hunter's Dream
+Sekiro
+Ashina
+Hallownest
+Lords of the Fallen
+Nioh
+Hyrule
+FromSoftware
+Miyazaki
