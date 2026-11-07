@@ -72,3 +72,7 @@ Budget for the batch: about 3,500 credits. Balance at start: 24,185 (`tripo_stat
 | 2026-11-07 | animate ×1 (walk) | hearthhound | 0ee8204b-… | 0 | — | presets free |
 | 2026-11-07 | image_to_model (v3.1, detailed) | lm_doorpost | 781501fd-0da4-4731-9d96-5a8f7cf75f51 | 55 | — | op fcf9fcc1 |
 | 2026-11-07 | remesh quad 10k | lm_doorpost | 781501fd-… | 40 | — | op 1c0b2a5e |
+| 2026-11-07 | text_to_model (v3.1, detailed) | mending_needle | e62c5ba9-506b-4aab-b2dc-04b2d9a6b110 | 55 | — | op fec81d3c |
+| 2026-11-07 | remesh quad 10k | mending_needle | e62c5ba9-… | 40 | — | op e2c0b071 |
+| 2026-11-07 | image_to_model (v3.1, detailed) | lm_mask_pegs | 5edb1463-0078-48a2-8bac-87710d393ae6 | 55 | — | op 5f113176 |
+| 2026-11-07 | remesh quad 10k | lm_mask_pegs | 5edb1463-… | 40 | — | op 0dd11952 |

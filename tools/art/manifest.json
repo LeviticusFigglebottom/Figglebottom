@@ -609,6 +609,50 @@
       },
       "origin": "bottom_center",
       "output": "assets/models/enemies/hearthhound.glb"
+    },
+    {
+      "name": "mending_needle",
+      "category": "weapons",
+      "kind": "weapon",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "e62c5ba9-506b-4aab-b2dc-04b2d9a6b110",
+        "task_id": "fec81d3c-28d8-456b-a6a6-99c423c734f9",
+        "remesh_operator": "e2c0b071-e2f1-4b73-a763-d2fa76da35b0",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/mending_needle/remesh.fbx",
+      "target": {
+        "length": 0.4
+      },
+      "origin": "grip",
+      "texture_max": 1024,
+      "collision": null,
+      "grip_from_pommel": 0.08,
+      "output": "assets/models/weapons/mending_needle.glb"
+    },
+    {
+      "name": "lm_mask_pegs",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "5edb1463-0078-48a2-8bac-87710d393ae6",
+        "task_id": "5f113176-298c-46a8-ac3a-7457b468cc37",
+        "remesh_operator": "0dd11952-c19c-4dcc-9b45-8c89a6d955c6",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_mask_pegs/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 2.4
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": null,
+      "output": "assets/models/landmarks/lm_mask_pegs.glb"
     }
   ]
 }
