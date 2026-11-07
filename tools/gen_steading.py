@@ -114,11 +114,13 @@ building("boatshed", 25.0, 54.0, 12, 12, 0.0, T.BEACH_FOOT, doors=[("N", 1)], op
 # the longhouse floor: boards laid over the flattened pad (no collision: the
 # pad IS the floor), the long hearth kerb down the middle (waist-high cover)
 BOXES.append({"min": [-5.8, SH - 0.02, -51.8], "max": [5.8, SH + 0.02, -20.2], "mat": "M_wood", "collide": False})
-BOXES.append({"min": [-0.9, SH, -38.0], "max": [0.9, SH + 0.55, -25.0], "mat": "M_stone_trim"})
-BOXES.append({"min": [-0.6, SH + 0.5, -37.6], "max": [0.6, SH + 0.57, -25.4], "mat": "M_peat", "collide": False})
+# (the kerb is low and does not collide yet: the Netmender's 0.7 m body
+# wedged on its corners against a 0.4 m-agent navmesh)
+BOXES.append({"min": [-0.8, SH, -36.0], "max": [0.8, SH + 0.3, -27.0], "mat": "M_stone_trim", "collide": False})
+BOXES.append({"min": [-0.55, SH + 0.25, -35.6], "max": [0.55, SH + 0.32, -27.4], "mat": "M_peat", "collide": False})
 for i in range(6):
     z = -48.0 + i * 4.6
-    for x in (-3.4, 3.4):
+    for x in (-4.2, 4.2):
         PIECES.append({"kit": "column_4m", "at": [x, SH, r2(z)]})
 
 # ----------------------------------------------------------------- props
@@ -144,9 +146,9 @@ prop("barrel", -21.0, -9.0, 0)
 # the longhouse: thaw laid for eleven; rime dragged to the walls
 for z in (-27.0, -31.0, -35.0):
     PROPS.append({"kit": "table_3m", "at": [-2.2, SH, z], "rot": 90, "tag": "thaw"})
-    PROPS.append({"kit": "bench_3m", "at": [-2.9, SH, z], "rot": 90, "tag": "thaw"})
+    PROPS.append({"kit": "bench_3m", "at": [-3.1, SH, z], "rot": 90, "tag": "thaw"})
 for z in (-23.5, -44.0):
-    for x in (-4.6, 4.6):
+    for x in (-2.6, 2.6):
         PROPS.append({"kit": "brazier", "at": [x, SH, z], "tag": "thaw", "glow": [1.4, 2.4, 11]})
         PROPS.append({"kit": "brazier", "at": [x, SH, z], "tag": "rime", "flames": False, "glow": [2.2, 1.6, 14]})
 for i, z in enumerate((-29.0, -34.0, -40.0)):
@@ -174,7 +176,7 @@ spawners = [
     {"enemy": "rimewalker", "id": "yard_racks", "at": at(-4.0, 12.0, 0.1), "face": 160},
     {"enemy": "rimewalker", "id": "yard_store", "at": at(sd[0], sd[1], 0.1), "face": -100},
     {"enemy": "rimewalker", "id": "yard_graves", "at": at(40.0, 17.0, 0.1), "face": 30},
-    {"enemy": "oarsman", "id": "cliff_edge_e", "at": at(36.0, 30.0, 0.1), "face": 0},
+    {"enemy": "oarsman", "id": "cliff_edge_e", "at": at(46.0, 33.0, 0.1), "face": 0},
     {"enemy": "hearthhound", "id": "byre_hound", "at": at(-27.0, -13.0, 0.1), "face": -90},
     {"enemy": "hearthhound", "id": "yard_hound", "at": at(-14.0, -22.0, 0.1), "face": 200},
     {"enemy": "netmender", "id": "netmender", "at": [0.0, SH + 0.1, -46.0], "face": 180,

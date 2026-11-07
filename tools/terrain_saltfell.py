@@ -46,10 +46,10 @@ PLATEAU = [
 
 # building pads (flattened): name -> (cx, cz, half_x, half_z, yaw_deg, y, margin)
 PADS = {
+    "yard": (-5.0, 0.0, 36.0, 24.0, 0.0, SHELF_Y, 6.0),
     "longhouse": (0.0, -36.0, 8.5, 18.0, 0.0, SHELF_Y, 4.0),
     "byre": (-27.0, -14.0, 7.0, 8.0, -9.0, SHELF_Y, 3.0),
     "store": (22.0, -14.0, 6.0, 6.0, 13.0, SHELF_Y, 3.0),
-    "yard": (-5.0, 0.0, 36.0, 24.0, 0.0, SHELF_Y, 6.0),
     "boatshed": (25.0, 54.0, 6.4, 6.6, 0.0, BEACH_FOOT, 0.0),
 }
 
