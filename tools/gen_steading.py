@@ -271,7 +271,7 @@ edges = {
     "walk_max_deg": 45.0,
     "water_level": 0.0,
     "drown_depth": 1.15,
-    "nav_bounds": [-102, -76, 66, 130],
+    "nav_bounds": [-102, -76, 72, 130],
     "buildings": BUILDINGS,
     "thickets": [],
     "state_floors": [{"tag": "rime", "min": [CH["x0"] + 0.8, CH["z0"]], "max": [CH["x1"] - 0.8, ICE_Z1], "y": CH["y"]}],
@@ -286,7 +286,7 @@ D = {
     "env": {"thaw": {"sun_rot": [-12, -36], "sun_energy": 2.3, "fog_density": 0.0008, "vol_density": 0.0032},
             "rime": {"sun_rot": [-34, -30]}},
     "terrain": T.terrain_block(),
-    "nav_bounds": [-102, -4, -76, 66, 64, 130],
+    "nav_bounds": [-102, -4, -76, 72, 64, 130],
     "water": water,
     "hazards": hazards,
     "zones": [

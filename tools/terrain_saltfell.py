@@ -73,7 +73,8 @@ def ravine_floor_half(x):
 
 
 # rock spurs jutting into the ravine: (x, side +1 south wall / -1 north, reach m)
-RAVINE_SPURS = [(-62, 1, 4.0), (-28, -1, 3.5), (14, 1, 4.5), (38, -1, 3.0), (-84, -1, 3.5)]
+RAVINE_SPURS = [(-62, 1, 6.0), (-40, -1, 5.0), (-28, -1, 4.5), (-8, -1, 5.5), (14, 1, 7.0),
+                (30, 1, 4.0), (38, -1, 5.0), (56, 1, 6.0), (-84, -1, 5.0)]
 
 
 def gully_x(z):
@@ -260,7 +261,7 @@ def height(x, z):
             if r < 1.0:
                 top += bh * (1 - r * r) ** 1.5
     # the east fell: scree too steep to climb
-    fx = x - 62 - 7.0 * fbm(z * 0.03, 0.3, 2, 17)
+    fx = x - 62 - 7.0 * fbm(z * 0.03, 0.3, 2, 17) - 4.0 * fbm(z * 0.09, 1.7, 2, 38)
     if fx > 0:
         # broken scree: buttresses and runnels, never less than ~48 degrees
         top += min(34.0 + 6.0 * fbm(x * 0.02, z * 0.02, 2, 18), fx * 1.6) \
@@ -305,6 +306,8 @@ def height(x, z):
         for sx_, sside, reach in RAVINE_SPURS:
             if sside == side:
                 dz += reach * math.exp(-((x - sx_) / 5.0) ** 2)
+        # a ragged lip: slumps and bites along the top of each wall
+        dz += 2.2 * fbm(x * 0.12, z * 0.12, 2, 36) + 1.2 * fbm(x * 0.35, z * 0.35, 1, 37)
         d = max(0.0, dz - ravine_floor_half(x))
         kw = 2.4 + 1.2 * vnoise(x * 0.04, z * 0.04, 35)
         # a talus apron at the foot, then the layered wall

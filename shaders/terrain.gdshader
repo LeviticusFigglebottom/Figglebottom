@@ -102,7 +102,6 @@ void fragment() {
 	rock *= mix(vec3(1.0), vec3(1.06, 1.0, 0.92), step(0.6, bed_tone));      // a warmer, iron-stained bed
 	rock *= 1.0 - 0.22 * smoothstep(0.8, 1.0, bed_f) - 0.18 * smoothstep(0.0, 0.08, 0.08 - bed_f);
 	rock *= 1.0 - 0.32 * smoothstep(0.5, 0.92, streak) * (0.6 + 0.4 * n1);
-	rock = mix(rock, vec3(0.46, 0.46, 0.40), smoothstep(0.82, 0.95, n2 * 0.6 + n_macro * 0.5) * 0.2);
 	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * 0.4);
 
 	vec3 col = turf;
