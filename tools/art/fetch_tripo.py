@@ -8,7 +8,7 @@ What it fetches (Studio projects keep the *latest* model version, so after a qua
 the project model is an FBX and the original high-poly GLB is gone):
   static/weapon  -> raw/<name>/remesh.fbx       (tripo_download format=fbx)
   character      -> raw/<name>/rigged.fbx + raw/<name>/anims/<preset>.fbx
-                    (tripo_download animated+animation_only per preset; Studio serves these as FBX
+                    (tripo_download animated+animation_only per preset, namespaced by source.rig; Studio serves these as FBX
                      even though the tool names them .glb, so they are renamed)
 Costs 0 credits: downloads are free.
 """
@@ -27,6 +27,16 @@ def call(client, tool, args):
     if not out.get("ok"):
         raise SystemExit(f"{tool} failed: {out.get('result')}")
     return out["result"]
+
+
+def decompress_if_glb(path):
+    """Studio GLBs use EXT_meshopt_compression, which Blender cannot read; expand in place."""
+    with open(path, "rb") as f:
+        if f.read(4) != b"glTF":
+            return
+    tmp = path + ".dec.glb"
+    subprocess.run([os.path.join(ROOT, "tools/art/decompress.sh"), path, tmp], check=True, capture_output=True)
+    os.replace(tmp, path)
 
 
 def main():
@@ -48,14 +58,24 @@ def main():
         if inp.endswith(".fbx"):
             call(client, "tripo_download", {"project_id": pid, "format": "fbx", "out_path": inp})
             print("fetched", asset["input"])
+        elif inp.endswith(".glb") and asset.get("source", {}).get("rig"):
+            # imported (not Tripo-remeshed) projects: keep rig and clips in one format (GLB)
+            call(client, "tripo_download", {"project_id": pid, "format": "glb", "out_path": inp})
+            decompress_if_glb(inp)
+            print("fetched", asset["input"])
+        # preset names are namespaced by rig type: preset:biped:walk, preset:quadruped:walk
+        rig_type = asset.get("source", {}).get("rig", "biped").split("/")[0]
         for clip, path in asset.get("anims", {}).items():
             preset = os.path.splitext(os.path.basename(path))[0]
             dst = os.path.join(ROOT, path)
             tmp = dst[:-4] + ".glb"
             os.makedirs(os.path.dirname(dst), exist_ok=True)
+            # text-prompt clips (tripo_animate prompt=...) are named by the title Studio gave them
+            name = asset.get("motion_titles", {}).get(preset) or f"preset:{rig_type}:{preset}"
             call(client, "tripo_download", {"project_id": pid, "animated": True, "animation_only": True,
-                                            "animation_name": f"preset:biped:{preset}", "out_path": tmp})
+                                            "animation_name": name, "out_path": tmp})
             os.replace(tmp, dst)
+            decompress_if_glb(dst)
             print("fetched", path)
 
 

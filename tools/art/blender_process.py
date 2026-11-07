@@ -108,7 +108,11 @@ def process_static(a, ob):
     lo, hi = v.min(0), v.max(0)
     size = hi - lo
     t = a["target"]
-    if "width" in t:
+    if "fit" in t:
+        # per-axis fit (Blender x, y, z in metres) for set pieces whose generated proportions
+        # are off the design sheet, e.g. a 12 m hearth trench that Tripo makes short and deep
+        f = np.array([t["fit"][k] / size[i] for i, k in enumerate("xyz")])
+    elif "width" in t:
         f = t["width"] / size[0]
     elif "height" in t:
         f = t["height"] / size[2]
@@ -116,7 +120,9 @@ def process_static(a, ob):
         f = t["length"] / size.max()
     v *= f
     lo, hi = v.min(0), v.max(0)
-    v -= np.array([(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, lo[2]])
+    # origin: bottom_center (kit, props, landmarks) or center (strapped items such as shields)
+    z0 = (lo[2] + hi[2]) / 2 if a.get("origin") == "center" else lo[2]
+    v -= np.array([(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, z0])
     set_verts(ob, v)
     return v
 
@@ -171,6 +177,11 @@ def process_weapon(a, ob):
     v *= f
     z_guard *= f
     grip_z = (v[:, 2].min() + z_guard) / 2
+    if a.get("grip_from_pommel") is not None:
+        # guardless blades (seax, needle): the widest slice is the pommel cap, so the
+        # design sheet gives the grip centre as a distance from the pommel end instead
+        grip_z = v[:, 2].min() + a["grip_from_pommel"]
+        z_guard = grip_z + a["grip_from_pommel"]
     grip = v[np.abs(v[:, 2] - grip_z) < 0.02]
     cx, cy = (grip[:, 0].mean(), grip[:, 1].mean()) if len(grip) else (0, 0)
     v -= np.array([cx, cy, grip_z])
@@ -194,6 +205,7 @@ def merge_anims(arm, anims):
             raise SystemExit(f"no action in {path}")
         act.name = clip
         act.use_fake_user = True
+        _strip_object_keys(act)
         for o in new_obs:
             bpy.data.objects.remove(o, do_unlink=True)
         tr = arm.animation_data.nla_tracks.new()
@@ -204,6 +216,21 @@ def merge_anims(arm, anims):
         tr.mute = False
         print(f"  anim {clip}: frames {act.frame_range[0]:.0f}-{act.frame_range[1]:.0f}")
     arm.animation_data.action = None
+
+
+def _strip_object_keys(act):
+    """Drop armature-object transform keys. Tripo's quadruped clips key the object's own
+    location/rotation/scale (all identity), which would override the scale and yaw this
+    script sets on the armature object."""
+    bags = []
+    try:
+        bags = [act]
+        list(act.fcurves)
+    except AttributeError:  # slotted actions (Blender 4.4+)
+        bags = [cb for layer in act.layers for st in layer.strips for cb in st.channelbags]
+    for bag in bags:
+        for fc in [f for f in bag.fcurves if not f.data_path.startswith("pose.bones")]:
+            bag.fcurves.remove(fc)
 
 
 def _fcurves(act):
@@ -218,7 +245,7 @@ def _fcurves(act):
         return out
 
 
-def make_in_place(clips, up_index=1):
+def make_in_place(clips, up_index=1, root_bone="Hips"):
     """Remove the horizontal root drift (linear start->end trend) from the Hips location.
 
     Gameplay moves the capsule; the clip should stay put. Sway and bob are kept. The
@@ -229,7 +256,7 @@ def make_in_place(clips, up_index=1):
         if act is None:
             continue
         for fc in _fcurves(act):
-            if fc.data_path.endswith('"].location') and "Hips" in fc.data_path and fc.array_index != up_index:
+            if fc.data_path.endswith('"].location') and root_bone in fc.data_path and fc.array_index != up_index:
                 kps = fc.keyframe_points
                 if len(kps) < 2:
                     continue
@@ -256,8 +283,15 @@ def process_character(a):
         raise SystemExit("character input has no armature (rig first)")
     arm = arms[0]
     arm.name = a["name"] + "_rig"
+    # Tripo rig exports can carry a stray unskinned placeholder mesh (an 80-tri icosphere,
+    # 2 m across) that would wreck the size fit; keep only meshes driven by the armature
+    for o in mesh_objects():
+        if o.parent != arm and not any(m.type == "ARMATURE" for m in o.modifiers):
+            print(f"  drop stray mesh {o.name} ({len(o.data.polygons)} faces)")
+            bpy.data.objects.remove(o, do_unlink=True)
     merge_anims(arm, a.get("anims", {}))
-    make_in_place(a.get("in_place", []))
+    # quadruped rigs root at tripo::Root, whose up axis is not bone-local Y: strip only the trend
+    make_in_place(a.get("in_place", []), *((-1, a["root_bone"]) if a.get("root_bone") else ()))
     arm.data.pose_position = "REST"
     bpy.context.view_layer.update()
     lo, hi = world_bbox(mesh_objects())

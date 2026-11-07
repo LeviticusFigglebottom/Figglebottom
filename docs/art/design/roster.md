@@ -830,3 +830,31 @@ Wide establishing concept art painting, eye-level, a loud brown meltwater river 
 ```
 Wide establishing concept art painting, eye-level, the same river frozen solid, crowded with still white hooded figures facing upstream toward the stone ring and a giant seated figure. No people in the foreground, no text, no lettering, no gothic architecture, no stained glass, no candles. painterly realistic northern folk craft, hand-adzed timber, dry-stone, wool and felt, wrought iron, horn and soapstone, weathered and lived-in, muted earthy palette, game asset, PBR, crusted with white hoarfrost and grown ice, frozen solid, pale blue-white rime on every edge
 ```
+
+## Slice batch results (2026-11-07, branch `art/slice-heroes`)
+
+Spend and costs: `docs/art/TRIPO_LEDGER.md`. Feature trials: `tripo_features.md`. Lineup: `scenes/sandbox/art_lineup.tscn`, screens `docs/screens/art_lineup_*.png`.
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| bearer_traveller | characters/ | 1.80 tall | 18,736 | 4.8 | mixamo; 6 presets + 7 text-prompt clips |
+| bearer_oilskins | characters/ | 1.80 | 18,865 | 4.1 | mixamo; 6 presets |
+| ingra | npcs/ | 1.70 | 18,585 | 4.5 | mixamo; idle, walk, greet, look |
+| brede | npcs/ | 1.80 | 18,217 | 4.7 | mixamo; idle, walk, greet, look |
+| rimewalker (mask re-roll) | enemies/ | 1.80 | 18,917 | 5.2 | mixamo; 6 presets + dodge roll |
+| oarsman | enemies/ | 1.90 | 18,551 | 4.8 | mixamo; 6 presets (the ice oar is not modelled yet: procedural attachment to do) |
+| hearthhound | enemies/ | 1.80 L × 1.35 H (0.8 at shoulder) | 18,815 | 4.7 | quadruped; walk |
+| netmender (mask re-roll) | bosses/ | 3.20 | 40,000 | 4.5 | mixamo; idle, walk, slash, hit, defeat |
+| hewing_blade (seax re-roll) | weapons/ | 1.00 | 18,190 | 1.1 | none; grip at origin |
+| saltfell_shield | weapons/ | 0.80 Ø | 21,213 | 1.4 | none; centre origin |
+| mending_needle | weapons/ | 0.40 | 18,233 | 1.4 | none (text-to-model) |
+| fostering_horn, gourd | props/ | 0.30 / 0.22 | 18,228 / 17,700 | 1.3 / 1.4 | none |
+| lm_long_hearth | landmarks/ | 12 × 1.6 × 1.8 | 20,184 | 3.8 | trimesh |
+| lm_doorpost | landmarks/ | 3.2 tall | 18,672 | 1.5 | convex |
+| lm_mask_pegs | landmarks/ | 2.4 wide | 19,128 | 3.5 | none (wall-mounted) |
+| lm_brede_boat (the ship prow) | landmarks/ | 7 × 2 × 2.6 | 20,954 | 3.7 | convex |
+| lm_frost_veil_net | landmarks/ | 4 tall | 19,394 | 3.9 | convex |
+| lm_tide_wall | landmarks/ | 8 × 3 × 3 | 19,645 | 3.4 | trimesh |
+| lm_standing_stone | landmarks/ | 3.5 tall | 18,802 | 1.6 | convex |
+
+`lm_hearthstone` reuses the pilot's `kit_hearthstone`. Boat-sheds stay procedural (see "Procedural instead of Tripo").

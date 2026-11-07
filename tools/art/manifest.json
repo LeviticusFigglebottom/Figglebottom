@@ -1,5 +1,5 @@
 {
-  "_doc": "Art pipeline manifest. One entry per asset. tools/art/blender_process.py reads this. Paths are relative to the repo root. Raw inputs live in raw/ (gitignored); rebuild them with tools/art/fetch_tripo.sh. yaw_deg turns the model about up so its front faces glTF +Z (Tripo output faces +X, so -90). target: exactly one of height/width/length in metres. origin: bottom_center | grip. collision: trimesh | convex | null (Godot node-name suffix -col / -convcol).",
+  "_doc": "Art pipeline manifest. One entry per asset. tools/art/blender_process.py reads this. Paths are relative to the repo root. Raw inputs live in raw/ (gitignored); rebuild them with tools/art/fetch_tripo.sh. yaw_deg turns the model about up so its front faces glTF +Z (Tripo output faces +X, so -90). target: exactly one of height/width/length in metres, or fit {x,y,z} for a per-axis fit (Blender axes after yaw, z up). origin: bottom_center | center | grip. collision: trimesh | convex | null (Godot node-name suffix -col / -convcol).",
   "assets": [
     {
       "name": "kit_hearthstone",
@@ -21,103 +21,6 @@
       "texture_max": 1024,
       "collision": "convex",
       "output": "assets/models/kit/kit_hearthstone.glb"
-    },
-    {
-      "name": "hewing_blade",
-      "category": "weapons",
-      "kind": "weapon",
-      "source": {
-        "tool": "tripo_generate_text",
-        "project_id": "25bd6877-fc0f-4a71-8bd1-fc4dc371758b",
-        "task_id": "6ae54faf-f82a-44b0-be1e-3483fded0494",
-        "remesh_operator": "e78b673e-fecb-4460-be25-15269e7a1d6a",
-        "model_version": "v3.1-20260211"
-      },
-      "input": "raw/hewing_blade/remesh.fbx",
-      "target": {
-        "length": 0.95
-      },
-      "origin": "grip",
-      "texture_max": 1024,
-      "collision": null,
-      "output": "assets/models/weapons/hewing_blade.glb"
-    },
-    {
-      "name": "rimewalker",
-      "category": "enemies",
-      "kind": "character",
-      "source": {
-        "tool": "tripo_image -> tripo_generate_image",
-        "project_id": "43aaefb6-0c5f-460a-a9eb-8cb5a34d6423",
-        "task_id": "c547353c-a7fe-4fc8-ae87-922fea3f6852",
-        "remesh_operator": "9abcb5b2-4ac0-4aeb-9584-4c44bd56f407",
-        "rig_operator": "b4dd2dd5-e66a-4e1a-92ea-9cedcd52974d",
-        "model_version": "v3.1-20260211",
-        "rig": "biped/mixamo"
-      },
-      "input": "raw/rimewalker/rigged.fbx",
-      "anims": {
-        "idle": "raw/rimewalker/anims/idle.fbx",
-        "walk": "raw/rimewalker/anims/walk.fbx",
-        "run": "raw/rimewalker/anims/run.fbx",
-        "slash": "raw/rimewalker/anims/slash.fbx",
-        "hit": "raw/rimewalker/anims/hit_to_body_01.fbx",
-        "defeat": "raw/rimewalker/anims/defeat_02.fbx"
-      },
-      "loop": [
-        "idle",
-        "walk",
-        "run"
-      ],
-      "yaw_deg": -90,
-      "target": {
-        "height": 1.8
-      },
-      "origin": "bottom_center",
-      "texture_max": 2048,
-      "collision": null,
-      "output": "assets/models/enemies/rimewalker.glb",
-      "in_place": [
-        "walk",
-        "run"
-      ]
-    },
-    {
-      "name": "netmender",
-      "category": "bosses",
-      "kind": "character",
-      "source": {
-        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
-        "project_id": "5f4ab571-a3de-427a-9c04-1c43e0acceab",
-        "task_id": "62c27f59-1b63-4442-bfe7-716d180a671a",
-        "remesh_operator": "161a8e5b-c1b4-42ad-9f4a-7c21af3372a8",
-        "model_version": "v3.1-20260211",
-        "rig_operator": "cb8f70f2-520d-4bc5-83bd-e68382036a85",
-        "rig": "biped/mixamo"
-      },
-      "input": "raw/netmender/rigged.fbx",
-      "anims": {
-        "idle": "raw/netmender/anims/idle.fbx",
-        "walk": "raw/netmender/anims/walk.fbx",
-        "slash": "raw/netmender/anims/slash.fbx",
-        "hit": "raw/netmender/anims/hit_to_body_01.fbx",
-        "defeat": "raw/netmender/anims/defeat_02.fbx"
-      },
-      "loop": [
-        "idle",
-        "walk"
-      ],
-      "yaw_deg": -90,
-      "target": {
-        "height": 3.2
-      },
-      "origin": "bottom_center",
-      "texture_max": 2048,
-      "collision": null,
-      "output": "assets/models/bosses/netmender.glb",
-      "in_place": [
-        "walk"
-      ]
     },
     {
       "name": "area_saltfell_yard_remesh",
@@ -164,6 +67,619 @@
       "texture_max": 2048,
       "collision": "trimesh",
       "output": "assets/models/areas/experiment/area_saltfell_yard_decim.glb"
+    },
+    {
+      "name": "hewing_blade",
+      "category": "weapons",
+      "kind": "weapon",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "ad360c56-a6e3-40b2-bb87-1b70fc7fc077",
+        "task_id": "39104176-488c-4df4-a998-0038f34f1e3e",
+        "remesh_operator": "83f8e4da-d1d7-40df-b26f-cb3157b33ad0",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/hewing_blade/remesh.fbx",
+      "target": {
+        "length": 1.0
+      },
+      "origin": "grip",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/weapons/hewing_blade.glb",
+      "grip_from_pommel": 0.13
+    },
+    {
+      "name": "saltfell_shield",
+      "category": "weapons",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "0d927f95-12ce-4578-9e3c-3506ba6efdf9",
+        "task_id": "8f2f2e97-e91e-4da6-a9fb-f0440f1b5606",
+        "remesh_operator": "43eb4eba-d3f3-4715-8426-c7f9ec7bf2ef",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/saltfell_shield/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 0.8
+      },
+      "origin": "center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/weapons/saltfell_shield.glb"
+    },
+    {
+      "name": "lm_frost_veil_net",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "67568684-033b-4ef6-a4ee-cd8d37579129",
+        "task_id": "cbdacc44-1eb6-4ebd-8bae-67ff08b050a8",
+        "remesh_operator": "1f5de16f-364d-4586-83cf-3d80a55d14e2",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_frost_veil_net/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 4.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_frost_veil_net.glb"
+    },
+    {
+      "name": "lm_long_hearth",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "c86ff154-8751-4a84-9e52-1247a1fb1f77",
+        "task_id": "c052d07e-cbfc-413c-b62c-36f612d154f0",
+        "remesh_operator": "06d1018d-a3a2-4a4f-b102-ec8b47d038a4",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_long_hearth/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "fit": {
+          "x": 1.6,
+          "y": 12.0,
+          "z": 1.8
+        }
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "trimesh",
+      "output": "assets/models/landmarks/lm_long_hearth.glb"
+    },
+    {
+      "name": "bearer_oilskins",
+      "category": "characters",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "3f903f91-0083-48d5-a609-2dd53323b5f1",
+        "task_id": "7240f0eb-b56a-418c-8f6f-12b3d16b7770",
+        "remesh_operator": "a76bbe78-b13a-41da-a5d9-b0cfb85524a3",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "f849c878-56a9-473a-97df-3220cfd832ac",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/bearer_oilskins/rigged.fbx",
+      "anims": {
+        "idle": "raw/bearer_oilskins/anims/idle.fbx",
+        "walk": "raw/bearer_oilskins/anims/walk.fbx",
+        "run": "raw/bearer_oilskins/anims/run.fbx",
+        "slash": "raw/bearer_oilskins/anims/slash.fbx",
+        "hit": "raw/bearer_oilskins/anims/hit_to_body_01.fbx",
+        "defeat": "raw/bearer_oilskins/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/characters/bearer_oilskins.glb"
+    },
+    {
+      "name": "oarsman",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "d86bb6f5-8201-47d7-9e61-db6ab6ae157f",
+        "task_id": "b689826f-40e3-41d0-878f-4ba7c8a4a6ee",
+        "remesh_operator": "41ffa4b6-8530-4a13-8c71-bd32bb5052e6",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "b60de334-70a4-4d10-8266-b80a1c5bc7f6",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/oarsman/rigged.fbx",
+      "anims": {
+        "idle": "raw/oarsman/anims/idle.fbx",
+        "walk": "raw/oarsman/anims/walk.fbx",
+        "run": "raw/oarsman/anims/run.fbx",
+        "slash": "raw/oarsman/anims/slash.fbx",
+        "hit": "raw/oarsman/anims/hit_to_body_01.fbx",
+        "defeat": "raw/oarsman/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.9
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/oarsman.glb"
+    },
+    {
+      "name": "gourd",
+      "category": "props",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "14e283ad-8e65-4f23-a7e2-eb487848bd2a",
+        "task_id": "1923519e-391c-4230-8069-029e29e3c152",
+        "remesh_operator": "2d405f3e-d24f-4631-b98c-417773ca2e02",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/gourd/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 0.22
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/props/gourd.glb"
+    },
+    {
+      "name": "fostering_horn",
+      "category": "props",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "62d8752f-9576-475e-ab98-d346aa54a07a",
+        "task_id": "cececf8d-b046-4738-9a88-010c106b0cc8",
+        "remesh_operator": "5705bd50-8142-49cd-83ec-3a9bade1a364",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/fostering_horn/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 0.3
+      },
+      "origin": "center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/props/fostering_horn.glb"
+    },
+    {
+      "name": "lm_brede_boat",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "8b9f1957-abfc-466a-b109-0cf84db3dae3",
+        "task_id": "1592319f-af6e-4416-ac97-430bffbd56a2",
+        "remesh_operator": "b12a0497-54dc-4a4c-bee6-a078d2d9b715",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_brede_boat/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "fit": {
+          "x": 7.0,
+          "y": 2.0,
+          "z": 2.6
+        }
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_brede_boat.glb"
+    },
+    {
+      "name": "lm_standing_stone",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "c5bba63f-52d7-4f5c-be72-fc21415dfec0",
+        "task_id": "74cf8df6-85e4-44fa-b3c7-1b5361b73035",
+        "remesh_operator": "a1acf469-ded6-495e-b9db-c40223c2f81e",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_standing_stone/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.5
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_standing_stone.glb"
+    },
+    {
+      "name": "lm_tide_wall",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "ab78638a-fe0e-4ee8-b193-1dbfeb0782ce",
+        "task_id": "f479dc5c-dbee-4c59-a0b3-ee020c1ff7ee",
+        "remesh_operator": "c926c971-05c3-469f-ab8d-bb88ac1ba378",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_tide_wall/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "fit": {
+          "x": 3.0,
+          "y": 8.0,
+          "z": 3.0
+        }
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "trimesh",
+      "output": "assets/models/landmarks/lm_tide_wall.glb"
+    },
+    {
+      "name": "bearer_traveller",
+      "category": "characters",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "45249dbe-c13d-4c92-9671-fab170af3142",
+        "task_id": "e909525a-5766-4060-822a-fe5449487491",
+        "remesh_operator": "b3cd52a6-2a3e-4e65-baa7-c260af7a4a18",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "e1fce142-094e-4442-bbcf-a7dcf9104d74",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/bearer_traveller/rigged.fbx",
+      "anims": {
+        "idle": "raw/bearer_traveller/anims/idle.fbx",
+        "walk": "raw/bearer_traveller/anims/walk.fbx",
+        "run": "raw/bearer_traveller/anims/run.fbx",
+        "slash": "raw/bearer_traveller/anims/slash.fbx",
+        "hit": "raw/bearer_traveller/anims/hit_to_body_01.fbx",
+        "defeat": "raw/bearer_traveller/anims/defeat_02.fbx",
+        "dodge_roll": "raw/bearer_traveller/anims/dodge_roll.fbx",
+        "block": "raw/bearer_traveller/anims/block.fbx",
+        "parry": "raw/bearer_traveller/anims/parry.fbx",
+        "drink": "raw/bearer_traveller/anims/drink.fbx",
+        "rest": "raw/bearer_traveller/anims/rest.fbx",
+        "heavy_overhead": "raw/bearer_traveller/anims/heavy_overhead.fbx",
+        "stagger": "raw/bearer_traveller/anims/stagger.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run",
+        "dodge_roll",
+        "stagger",
+        "parry"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/characters/bearer_traveller.glb",
+      "motion_titles": {
+        "dodge_roll": "Dodge Roll Forward",
+        "block": "Shield Block Defense",
+        "parry": "Parry and Step Back",
+        "drink": "Drinking from Flask",
+        "rest": "Kneel and Rest",
+        "heavy_overhead": "Overhead Chop Attack",
+        "stagger": "Recover from Hit"
+      }
+    },
+    {
+      "name": "lm_doorpost",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "781501fd-0da4-4731-9d96-5a8f7cf75f51",
+        "task_id": "fcf9fcc1-e9a2-43b7-86b5-82152ee44823",
+        "remesh_operator": "1c0b2a5e-ff9f-4a1b-b196-27f30063b28d",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_doorpost/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.2
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_doorpost.glb"
+    },
+    {
+      "name": "brede",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "14ff3042-e3d1-42c5-bdd6-f0334c232280",
+        "task_id": "ceaf2113-ce45-4ff5-8527-7ad98ca05c61",
+        "remesh_operator": "8b24cd91-1bc8-490a-8510-1ef2f78fa54f",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "9a11ba9a-5f45-4805-b1a1-6749a63d0b86",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/brede/rigged.fbx",
+      "anims": {
+        "idle": "raw/brede/anims/idle.fbx",
+        "walk": "raw/brede/anims/walk.fbx",
+        "greet": "raw/brede/anims/greet_01.fbx",
+        "look": "raw/brede/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/brede.glb"
+    },
+    {
+      "name": "ingra",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "51e8fa1e-159a-4c14-83f0-667ec95a8d9a",
+        "task_id": "36f74341-c4a7-4165-82d9-92c0c08249b9",
+        "remesh_operator": "bebdfe0e-2137-4c09-8bce-5887768ab299",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "4a2cf113-c47e-47c2-b34a-c05f58d35961",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/ingra/rigged.fbx",
+      "anims": {
+        "idle": "raw/ingra/anims/idle.fbx",
+        "walk": "raw/ingra/anims/walk.fbx",
+        "greet": "raw/ingra/anims/greet_01.fbx",
+        "look": "raw/ingra/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.7
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/ingra.glb"
+    },
+    {
+      "name": "mending_needle",
+      "category": "weapons",
+      "kind": "weapon",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "e62c5ba9-506b-4aab-b2dc-04b2d9a6b110",
+        "task_id": "fec81d3c-28d8-456b-a6a6-99c423c734f9",
+        "remesh_operator": "e2c0b071-e2f1-4b73-a763-d2fa76da35b0",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/mending_needle/remesh.fbx",
+      "target": {
+        "length": 0.4
+      },
+      "origin": "grip",
+      "texture_max": 1024,
+      "collision": null,
+      "grip_from_pommel": 0.08,
+      "output": "assets/models/weapons/mending_needle.glb"
+    },
+    {
+      "name": "lm_mask_pegs",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "5edb1463-0078-48a2-8bac-87710d393ae6",
+        "task_id": "5f113176-298c-46a8-ac3a-7457b468cc37",
+        "remesh_operator": "0dd11952-c19c-4dcc-9b45-8c89a6d955c6",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_mask_pegs/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 2.4
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": null,
+      "output": "assets/models/landmarks/lm_mask_pegs.glb"
+    },
+    {
+      "name": "hearthhound",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "0ee8204b-9515-4a50-9fd7-f22f2a172d0d",
+        "task_id": "7c80d086-f037-439b-ba03-137b9e8a9a89",
+        "remesh_operator": "f1754315-c4c4-44db-8b62-d746a4d0e8be",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "c5e92aaa-9910-4c32-abc5-cd232f1ca38b",
+        "rig": "quadruped"
+      },
+      "input": "raw/hearthhound/rigged.fbx",
+      "anims": {
+        "walk": "raw/hearthhound/anims/walk.fbx"
+      },
+      "loop": [
+        "walk"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": 180,
+      "root_bone": "Root",
+      "target": {
+        "height": 1.35
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/hearthhound.glb"
+    },
+    {
+      "name": "rimewalker",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "00a2f0eb-3ac9-42b3-a9a5-ed2bb7d7fcdd",
+        "task_id": "5d6e2590-50a9-462f-bbd4-4e8008bec5ca",
+        "remesh_operator": "48a14129-fd3f-4cda-9c98-844b3b2763cf",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "3f362f98-2292-4f5f-acd7-61e50db2bb84",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/rimewalker/rigged.fbx",
+      "anims": {
+        "idle": "raw/rimewalker/anims/idle.fbx",
+        "walk": "raw/rimewalker/anims/walk.fbx",
+        "run": "raw/rimewalker/anims/run.fbx",
+        "slash": "raw/rimewalker/anims/slash.fbx",
+        "hit": "raw/rimewalker/anims/hit_to_body_01.fbx",
+        "defeat": "raw/rimewalker/anims/defeat_02.fbx",
+        "dodge_roll": "raw/rimewalker/anims/dodge_roll.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run",
+        "dodge_roll"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/rimewalker.glb",
+      "motion_titles": {
+        "dodge_roll": "Dodge Roll Forward"
+      }
+    },
+    {
+      "name": "netmender",
+      "category": "bosses",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image(multiview) -> tripo_generate_multiview (extreme) -> tools/art/decimate_glb.py 40k -> tripo_import",
+        "project_id": "bbb15df0-9024-4af2-9581-959811f485c8",
+        "task_id": "263effdd-bd8d-47c0-a8bf-ec9063210229",
+        "remesh_operator": "none: Tripo remesh failed twice on this model; decimated locally to 40k tris (decim.py) and re-imported",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "extreme",
+        "rig_operator": "5a727e97-1b10-4e6c-83ec-c96b13616884",
+        "rig": "biped/mixamo",
+        "note": "Tripo remesh failed twice on this model (once after tripo_segment); decimated locally and re-imported, then rigged"
+      },
+      "input": "raw/netmender/rigged.glb",
+      "anims": {
+        "idle": "raw/netmender/anims/idle.fbx",
+        "walk": "raw/netmender/anims/walk.fbx",
+        "slash": "raw/netmender/anims/slash.fbx",
+        "hit": "raw/netmender/anims/hit_to_body_01.fbx",
+        "defeat": "raw/netmender/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.2
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/bosses/netmender.glb"
     }
   ]
 }
