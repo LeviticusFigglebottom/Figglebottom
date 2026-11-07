@@ -42,6 +42,97 @@
    "own_clips": true,
    "bare_hands": true,
    "_note": "keeps her own hunched idle/walk/slash/hit/defeat; borrows run; overlays ride her own idle"
+  },
+  "barrow_sleeper": {
+   "scene": "res://assets/models/enemies/barrow_sleeper.glb",
+   "yaw_deg": 180.0,
+   "own_clips": false,
+   "bare_hands": true,
+   "unarmed": {
+    "_note": "grown ice clubs (SLICE.md): no weapon mesh; a sphere hit volume rides each hand bone. offset is bone-local (Y runs toward the fingers). An attack's \"hands\" (enemies.json) picks which strike; default right.",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    }
+   },
+   "_note": "Lowe frost-taken (art/lowe-heroes): rides the shared clip library; encounter pass will tune"
+  },
+  "keener": {
+   "scene": "res://assets/models/enemies/keener.glb",
+   "yaw_deg": 180.0,
+   "own_clips": false,
+   "bare_hands": true,
+   "unarmed": {
+    "_note": "grown ice clubs (SLICE.md): no weapon mesh; a sphere hit volume rides each hand bone. offset is bone-local (Y runs toward the fingers). An attack's \"hands\" (enemies.json) picks which strike; default right.",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    }
+   },
+   "_note": "Lowe frost-taken (art/lowe-heroes): rides the shared clip library; encounter pass will tune"
+  },
+  "cairn_carrier": {
+   "scene": "res://assets/models/enemies/cairn_carrier.glb",
+   "yaw_deg": 180.0,
+   "own_clips": false,
+   "bare_hands": true,
+   "unarmed": {
+    "_note": "grown ice clubs (SLICE.md): no weapon mesh; a sphere hit volume rides each hand bone. offset is bone-local (Y runs toward the fingers). An attack's \"hands\" (enemies.json) picks which strike; default right.",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    }
+   },
+   "_note": "Lowe frost-taken (art/lowe-heroes): rides the shared clip library; encounter pass will tune"
+  },
+  "turfwright": {
+   "scene": "res://assets/models/bosses/turfwright.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "keeps his own idle/walk/slash plus ground_cut, stack_sod, back_drop; borrows the rest"
   }
  },
  "mounts": {
@@ -273,6 +364,10 @@
   ],
   "bow_hold": [
    "block"
+  ],
+  "attack_sprint": [
+   "heavy",
+   "slash"
   ]
  },
  "mannequin_contact": {
@@ -289,6 +384,7 @@
   "atk_2h_thrust": 0.5,
   "attack_l1": 0.44,
   "attack_l2": 0.42,
-  "attack_h": 0.48
+  "attack_h": 0.48,
+  "attack_sprint": 0.48
  }
 }

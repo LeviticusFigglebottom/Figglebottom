@@ -7,10 +7,10 @@ extends CanvasLayer
 ## their own input — the menu refuses to open over them.
 
 const CFG_PATH := "user://settings.cfg"
-const GOLD := Color(0.9, 0.78, 0.55)
-const GOLD_DIM := Color(0.65, 0.56, 0.4)
-const PARCHMENT := Color(0.82, 0.78, 0.68)
-const ASH := Color(0.55, 0.52, 0.46)
+const GOLD := UITheme.EMBER_HOT
+const GOLD_DIM := UITheme.EMBER
+const PARCHMENT := UITheme.BONE
+const ASH := UITheme.ASH
 const QUALITY_NAMES := ["Low", "High", "Ultra"]
 
 var settings := {
@@ -114,44 +114,22 @@ func begin_anew(reload := true) -> void:
 
 # ------------------------------------------------------------------ UI build
 
-func _ls(size: int, color: Color) -> LabelSettings:
-	var ls := LabelSettings.new()
-	ls.font = load("res://assets/fonts/DejaVuSerif.ttf")
-	ls.font_size = size
-	ls.font_color = color
-	ls.shadow_color = Color(0, 0, 0, 0.6)
-	ls.shadow_offset = Vector2(1, 2)
-	return ls
+func _ls(size: int, color: Color, weight := "regular") -> LabelSettings:
+	return UITheme.ls(size, color, weight)
 
 func _button(text: String, on_press := Callable()) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.custom_minimum_size = Vector2(0, 48)
-	b.add_theme_font_override("font", load("res://assets/fonts/DejaVuSerif.ttf"))
-	b.add_theme_font_size_override("font_size", 24)
-	b.add_theme_color_override("font_color", PARCHMENT)
-	b.add_theme_color_override("font_hover_color", GOLD)
-	b.add_theme_color_override("font_focus_color", GOLD)
-	b.add_theme_color_override("font_pressed_color", GOLD)
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.085, 0.07, 0.055, 0.9)
-	sb.border_color = Color(0.42, 0.34, 0.22)
-	sb.set_border_width_all(1)
-	sb.content_margin_left = 18
-	var hover := sb.duplicate()
-	hover.bg_color = Color(0.16, 0.12, 0.07, 0.95)
-	hover.border_color = Color(0.85, 0.68, 0.38)
-	b.add_theme_stylebox_override("normal", sb)
-	b.add_theme_stylebox_override("hover", hover)
-	b.add_theme_stylebox_override("focus", hover)
-	b.add_theme_stylebox_override("pressed", hover)
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	b.custom_minimum_size = Vector2(0, 50)
+	UITheme.style_button(b, 26)
 	if on_press.is_valid():
 		b.pressed.connect(on_press)
 	return b
 
 func _rule() -> Control:
 	var r := ColorRect.new()
-	r.color = Color(0.6, 0.5, 0.32, 0.65)
+	r.color = Color(UITheme.EMBER, 0.5)
 	r.custom_minimum_size = Vector2(0, 1)
 	return r
 
@@ -192,18 +170,17 @@ func _quality_label() -> String:
 
 func _build() -> void:
 	var root := Control.new()
+	root.theme = UITheme.theme()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	_dim = ColorRect.new()
-	_dim.color = Color(0.01, 0.008, 0.012, 0.62)
+	_dim.color = Color(UITheme.COAL, 0.66)
 	_dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.add_child(_dim)
 
 	_panel = Panel.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.05, 0.042, 0.036, 0.96)
-	sb.border_color = Color(0.6, 0.5, 0.32)
-	sb.set_border_width_all(2)
+	var sb := UITheme.box("panel")
+	sb.border_color = Color(0, 0, 0, 0)
 	_panel.add_theme_stylebox_override("panel", sb)
 	_panel.set_anchors_preset(Control.PRESET_CENTER)
 	_panel.offset_left = -290
@@ -211,15 +188,15 @@ func _build() -> void:
 	root.add_child(_panel)
 
 	var title := Label.new()
-	title.label_settings = _ls(44, GOLD)
-	title.text = "RIMEHOLT"
+	title.label_settings = _ls(48, GOLD, "caps")
+	title.text = "Rimeholt"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.position = Vector2(0, 30)
 	title.size = Vector2(580, 54)
 	_panel.add_child(title)
 	var sub := Label.new()
-	sub.label_settings = _ls(18, ASH)
-	sub.text = "— the hearth is held —"
+	sub.label_settings = _ls(21, UITheme.BONE_DIM, "italic")
+	sub.text = "the hearth is held"
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub.position = Vector2(0, 88)
 	sub.size = Vector2(580, 26)
@@ -295,6 +272,7 @@ func _build() -> void:
 
 	for p in _pages.values():
 		_panel.add_child(p)
+	_panel.add_child(KnotFrame.new())
 
 func _page_box() -> VBoxContainer:
 	var box := VBoxContainer.new()

@@ -380,10 +380,34 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 		shut.transform = xf * Transform3D(Basis.IDENTITY, Vector3(0, 0, front + 0.25))
 		area.attach(shut, shut_tag)
 	if door_tag != "shut":
-		var propped := _turf_door(Vector3(pass_w + 0.1, pass_h, 0.3), false, 0)
-		propped.transform = xf * Transform3D(Basis(Vector3.UP, 0.5) * Basis(Vector3.RIGHT, -0.25), Vector3(pass_w + 0.4, 0, front + 0.9))
-		area.attach(propped, "rime" if door_tag == "thaw_shut" else "base")
+		var open_tag := "rime" if door_tag == "thaw_shut" else "base"
+		var lm := _landmark("res://assets/models/landmarks/lm_barrow_door.glb")
+		if lm != null:
+			# the Tripo barrow door: jambs, lintel, the turf door propped on its
+			# spade. Dressing only: the passage behind stays open to walk.
+			lm.transform = xf * Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * (w / 6.0)), Vector3(0, 0, front + 0.35))
+			area.attach(lm, open_tag)
+		else:
+			var propped := _turf_door(Vector3(pass_w + 0.1, pass_h, 0.3), false, 0)
+			propped.transform = xf * Transform3D(Basis(Vector3.UP, 0.5) * Basis(Vector3.RIGHT, -0.25), Vector3(pass_w + 0.4, 0, front + 0.9))
+			area.attach(propped, open_tag)
 	return root
+
+## A landmark scene with its collision stripped (we place our own).
+static func _landmark(path: String) -> Node3D:
+	if not ResourceLoader.exists(path):
+		return null
+	var n := (load(path) as PackedScene).instantiate() as Node3D
+	var stack: Array[Node] = [n]
+	while not stack.is_empty():
+		var c: Node = stack.pop_back()
+		if c is CollisionObject3D:
+			c.get_parent().remove_child(c)
+			c.free()
+			continue
+		for ch in c.get_children():
+			stack.append(ch)
+	return n
 
 static func _turf_door(size: Vector3, collide: bool, bit: int) -> Node3D:
 	var n := Node3D.new()

@@ -8,9 +8,9 @@ signal done(choice: String, slot: int)
 
 var has_save := false
 
-const GOLD := Color(0.95, 0.82, 0.52)
-const PARCHMENT := Color(0.86, 0.82, 0.72)
-const ASH := Color(0.62, 0.58, 0.50)
+const GOLD := UITheme.EMBER_HOT
+const PARCHMENT := UITheme.BONE
+const ASH := UITheme.BONE_DIM
 
 ## One stop per quarter: a slow dolly from -> to, eyes fixed on look.
 const STOPS := [
@@ -79,8 +79,8 @@ func _build_ui() -> void:
 	# a soft dark gradient behind the words so they read on bright stops
 	var shade := TextureRect.new()
 	var grad := Gradient.new()
-	grad.set_color(0, Color(0, 0, 0, 0.68))
-	grad.set_color(1, Color(0, 0, 0, 0.0))
+	grad.set_color(0, Color(UITheme.COAL, 0.80))
+	grad.set_color(1, Color(UITheme.COAL, 0.0))
 	var gt := GradientTexture2D.new()
 	gt.gradient = grad
 	gt.fill_from = Vector2(0, 0.5)
@@ -90,58 +90,45 @@ func _build_ui() -> void:
 	shade.texture = gt
 	shade.stretch_mode = TextureRect.STRETCH_SCALE
 	shade.set_anchors_preset(Control.PRESET_LEFT_WIDE)
-	shade.offset_right = 820
+	shade.offset_right = 980
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_layer.add_child(shade)
 
-	var crest_path := "res://assets/ui/icons/crest.png"
-	if ResourceLoader.exists(crest_path):
-		var ci := TextureRect.new()
-		ci.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		ci.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		ci.texture = load(crest_path)
-		ci.position = Vector2(88, 92)
-		ci.size = Vector2(78, 78)
-		ci.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_layer.add_child(ci)
-
+	var root := Control.new()
+	root.theme = UITheme.theme()
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_layer.add_child(root)
 	var title := Label.new()
-	title.text = "RIMEHOLT"
-	var tls := LabelSettings.new()
-	tls.font = load("res://assets/fonts/DejaVuSerif.ttf")
-	tls.font_size = 86
-	tls.font_color = GOLD
-	tls.shadow_color = Color(0, 0, 0, 0.92)
-	tls.shadow_size = 6
-	tls.shadow_offset = Vector2(2, 3)
-	title.label_settings = tls
-	title.position = Vector2(180, 82)
-	_layer.add_child(title)
-
-	var trule := ColorRect.new()
-	trule.color = Color(0.84, 0.70, 0.42, 0.78)
-	trule.position = Vector2(92, 194)
-	trule.size = Vector2(640, 2)
-	_layer.add_child(trule)
-
+	title.text = "Rimeholt"
+	title.label_settings = UITheme.ls(118, UITheme.BONE, "caps")
+	title.label_settings.shadow_size = 10
+	title.position = Vector2(92, 116)
+	root.add_child(title)
+	# the house ornament under the name: an ember rule tied in a knot
+	var rl := UITheme.rule(236, 0.8)
+	rl.position = Vector2(98, 266)
+	root.add_child(rl)
+	var rr := UITheme.rule(236, 0.8)
+	rr.position = Vector2(376, 266)
+	root.add_child(rr)
+	var knot := KnotFrame.new(true, 13.0)
+	knot.position = Vector2(355, 266) - knot.size * 0.5
+	root.add_child(knot)
 	var sub := Label.new()
-	sub.text = "—   T H E   W I N T E R   T H A T   W O U L D   N O T   E N D"
-	var sls := LabelSettings.new()
-	sls.font = load("res://assets/fonts/DejaVuSerif.ttf")
-	sls.font_size = 18
-	sls.font_color = ASH
-	sls.shadow_color = Color(0, 0, 0, 0.88)
-	sls.shadow_offset = Vector2(1, 2)
-	sub.label_settings = sls
-	sub.position = Vector2(94, 208)
-	_layer.add_child(sub)
+	sub.text = "The Winter That Would Not End"
+	sub.label_settings = UITheme.ls(30, UITheme.BONE_DIM, "italic")
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.position = Vector2(98, 290)
+	sub.size = Vector2(514, 40)
+	root.add_child(sub)
 
 	var box := VBoxContainer.new()
 	box.set_anchors_preset(Control.PRESET_CENTER_LEFT)
-	box.offset_left = 96
-	box.offset_top = -110
-	box.add_theme_constant_override("separation", 18)
-	_layer.add_child(box)
+	box.offset_left = 80
+	box.offset_top = -40
+	box.add_theme_constant_override("separation", 8)
+	root.add_child(box)
 	_main_box = box
 	var first: Button = null
 	if has_save:
@@ -156,48 +143,30 @@ func _build_ui() -> void:
 	first.grab_focus.call_deferred()
 	_slots_box = VBoxContainer.new()
 	_slots_box.set_anchors_preset(Control.PRESET_CENTER_LEFT)
-	_slots_box.offset_left = 96
-	_slots_box.offset_top = -130
-	_slots_box.add_theme_constant_override("separation", 14)
+	_slots_box.offset_left = 80
+	_slots_box.offset_top = -60
+	_slots_box.add_theme_constant_override("separation", 8)
 	_slots_box.visible = false
-	_layer.add_child(_slots_box)
+	root.add_child(_slots_box)
 
 	var ver := Label.new()
 	ver.text = RH.BUILD
-	var vls := LabelSettings.new()
-	vls.font = load("res://assets/fonts/DejaVuSerif.ttf")
-	vls.font_size = 14
-	vls.font_color = Color(ASH.r, ASH.g, ASH.b, 0.6)
-	ver.label_settings = vls
+	ver.label_settings = UITheme.ls(16, Color(UITheme.ASH, 0.7), "regular", false)
 	ver.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	ver.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	ver.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	ver.offset_left = -120
-	ver.offset_top = -44
-	_layer.add_child(ver)
+	ver.offset_left = -220
+	ver.offset_right = -36
+	ver.offset_top = -48
+	ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	root.add_child(ver)
 
 func _button(text: String, on_press: Callable) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.flat = true
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.custom_minimum_size = Vector2(420, 46)
-	b.add_theme_font_override("font", load("res://assets/fonts/DejaVuSerif.ttf"))
-	b.add_theme_font_size_override("font_size", 30)
-	b.add_theme_color_override("font_color", PARCHMENT)
-	b.add_theme_color_override("font_hover_color", GOLD)
-	b.add_theme_color_override("font_focus_color", GOLD)
-	b.add_theme_color_override("font_pressed_color", GOLD)
-	var empty := StyleBoxEmpty.new()
-	var focus_sb := StyleBoxFlat.new()
-	focus_sb.bg_color = Color(0.14, 0.11, 0.06, 0.55)
-	focus_sb.border_color = Color(0.86, 0.72, 0.42, 0.85)
-	focus_sb.border_width_left = 3
-	focus_sb.content_margin_left = 12
-	for st in ["normal", "pressed"]:
-		b.add_theme_stylebox_override(st, empty)
-	b.add_theme_stylebox_override("hover", focus_sb)
-	b.add_theme_stylebox_override("focus", focus_sb)
+	b.custom_minimum_size = Vector2(520, 56)
+	UITheme.style_button(b, 34)
 	b.pressed.connect(on_press)
 	return b
 
@@ -262,26 +231,22 @@ func _open_slots(mode: String) -> void:
 	for c in _slots_box.get_children():
 		c.queue_free()
 	var head := Label.new()
-	var hls := LabelSettings.new()
-	hls.font = load("res://assets/fonts/DejaVuSerif.ttf")
-	hls.font_size = 24
-	hls.font_color = ASH
-	head.label_settings = hls
+	head.label_settings = UITheme.ls(26, ASH, "italic")
 	head.text = "Resume which hearth?" if mode == "resume" else "Keep the new hearth where?"
 	_slots_box.add_child(head)
 	var first: Button = null
 	for i in range(1, World.SLOTS + 1):
 		var sum = World.slot_summary(i)
 		var b := _button(_slot_label(i, sum), _pick_slot.bind(i))
-		b.add_theme_font_size_override("font_size", 24)
+		b.add_theme_font_size_override("font_size", 27)
+		b.custom_minimum_size.x = 900
 		if mode == "resume" and sum == null:
 			b.disabled = true
-			b.add_theme_color_override("font_disabled_color", Color(ASH.r, ASH.g, ASH.b, 0.4))
 		elif first == null:
 			first = b
 		_slots_box.add_child(b)
 	var back := _button("Back", _close_slots)
-	back.add_theme_font_size_override("font_size", 24)
+	back.add_theme_font_size_override("font_size", 27)
 	_slots_box.add_child(back)
 	_main_box.visible = false
 	_slots_box.visible = true

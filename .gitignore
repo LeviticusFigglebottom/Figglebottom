@@ -4,3 +4,5 @@ raw/
 *.tmp
 assets/models/**/*.jpg
 assets/models/**/*.jpg.import
+__pycache__/
+*.pyc

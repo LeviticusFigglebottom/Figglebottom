@@ -1,32 +1,83 @@
 {
  "steward_ingra": {
   "name": "Ingra, Steward of Saltfell",
-  "short_name": "the Steward",
+  "short_name": "Ingra",
   "body": "mannequin_thaw",
+  "first_flags": [
+   "ks_ingra_met"
+  ],
   "lines_first": [
-   "Late for the feast, traveller? The fires are high and the mead is cold, the way it should be.",
-   "This is Saltfell Steading. Tonight is the last long evening of summer — the shearing starts at first light.",
-   "If you sit by the hearthstone, mind it: they say it remembers. Sit long enough and it will show you what it remembers now."
+   "You'll be off a boat. You've got the walk. Sit down before you fall down.",
+   "I'm Ingra. I keep the stores and the hearth and most of the people in this house, whether they like it or not.",
+   "There's stew. You're not having any till you've washed, mind. Well's in the yard.",
+   "We're short a sack of rye. I've counted it four times. Somebody's dog has had it, and I know whose dog.",
+   "If you see it, you bring it back. I'll not have folk saying Saltfell can't feed a guest."
   ],
   "lines_repeat": [
-   "Eat something. Winter is a long way off yet.",
-   "The headman is in the long hall, counting the stores again."
+   "Three nights you're household. After that you're either kin or gone, and you don't look like gone.",
+   "Gunna's up in the loft. Don't go up. She bites.",
+   "That end of the table's Brede's. He's particular about his end."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_rye_sack",
+    "absent_flag": "ks_ingra_rye",
+    "take_item": true,
+    "set_flag": "ks_ingra_rye",
+    "reward_item": "bog_iron",
+    "reward_count": 1,
+    "toast": "Ingra takes the rye. Received: Bog-iron ×1"
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_netmender_released",
+    "set_flag": "ks_ingra_count",
+    "lines": [
+     "Eleven. Twelve. Eleven.",
+     "Sit down. You've been on your feet all day."
+    ]
+   },
+   {
+    "flag": "ks_ingra_rye",
+    "lines": [
+     "Found it in the byre, did you. Under that dog. Well. He's a good dog.",
+     "You've got a look of someone. Don't mind me. Everyone's got a look of someone."
+    ]
+   }
   ],
   "services": [
-   {
-    "id": "deep_gourd",
-    "type": "gourd_up",
-    "warmth": 300,
-    "once_flag": "bought_deep_gourd",
-    "label": "Trade for a Deep Gourd — 300 warmth"
-   },
    {
     "id": "buy_mend",
     "type": "buy",
     "item": "mend",
     "warmth": 200,
-    "label": "Learn the Mending Song — 200 warmth",
-    "line_done": "Hum it low. It works better when nobody is listening."
+    "once_flag": "bought_mend",
+    "label": "Learn the Mending Song",
+    "line_done": "Hum it over the cut, not at it. And don't look so pleased with yourself, everyone knows it."
+   },
+   {
+    "id": "deep_gourd",
+    "type": "gourd_up",
+    "warmth": 300,
+    "once_flag": "bought_deep_gourd",
+    "absent_flag": "ks_ingra_rye",
+    "label": "Trade for a Deep Gourd",
+    "line_done": "That was my mother's. It leaks if you hold it wrong. Don't hold it wrong."
+   },
+   {
+    "id": "deep_gourd_kin",
+    "type": "gourd_up",
+    "warmth": 150,
+    "once_flag": "bought_deep_gourd",
+    "require_flag": "ks_ingra_rye",
+    "label": "Trade for a Deep Gourd",
+    "line_done": "That was my mother's. It leaks if you hold it wrong. Don't hold it wrong."
+   },
+   {
+    "id": "rest_level",
+    "type": "level_up",
+    "label": "Sit by the fire"
    }
   ]
  },
@@ -34,6 +85,9 @@
   "name": "Brede",
   "short_name": "Brede",
   "body": "mannequin_thaw",
+  "first_flags": [
+   "ks_brede_met"
+  ],
   "lines_first": [
    "Mind the oars. No, the other way. Thank you.",
    "Brede. I'd shake your hand but I've had it in fish guts all afternoon.",
@@ -46,7 +100,53 @@
    "Ever been to Kettle Fjord? They boil the fish in kettles the size of this boat. You can smell it a day out.",
    "Don't tell Gunna I said she was cross."
   ],
-  "services": []
+  "on_talk": [
+   {
+    "needs_item": "item_net_float",
+    "absent_flag": "ks_brede_float",
+    "take_item": true,
+    "set_flag": "ks_brede_float",
+    "toast": "Brede takes the float."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_netmender_released",
+    "set_flag": "ks_brede_mending",
+    "lines": [
+     "She does this faster. I don't know how she does it.",
+     "Pass us that. No. Yes. Thank you."
+    ]
+   },
+   {
+    "flag": "ks_brede_float",
+    "lines": [
+     "That's it. That's my knot. The one on the back's wrong, I did it the year we married. She says it makes it lucky.",
+     "You've done me a kindness. If you're ever in a boat, take the oilskins. I've another set."
+    ]
+   }
+  ],
+  "services": [
+   {
+    "id": "give_oilskins",
+    "type": "gift",
+    "item": "armour_saltfell_oilskins",
+    "require_flag": "ks_brede_float",
+    "once_flag": "got_brede_oilskins",
+    "label": "Take Brede's spare oilskins",
+    "line_done": "They've been in salt water more than I have. Keep 'em that way round."
+   },
+   {
+    "id": "buy_bog_iron",
+    "type": "buy",
+    "item": "bog_iron",
+    "count": 1,
+    "warmth": 120,
+    "limit": 3,
+    "label": "Buy a lump of bog-iron",
+    "line_done": "Raked it up for sinkers. You'll do better with it."
+   }
+  ]
  },
  "aud": {
   "name": "Aud, barrow-keeper's widow",

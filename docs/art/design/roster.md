@@ -858,3 +858,20 @@ Spend and costs: `docs/art/TRIPO_LEDGER.md`. Feature trials: `tripo_features.md`
 | lm_standing_stone | landmarks/ | 3.5 tall | 18,802 | 1.6 | convex |
 
 `lm_hearthstone` reuses the pilot's `kit_hearthstone`. Boat-sheds stay procedural (see "Procedural instead of Tripo").
+
+## Lowe batch results (2026-11-07, branch `art/lowe-heroes`)
+
+Spend: `docs/art/TRIPO_LEDGER.md` (1,235 credits). Lineup: `scenes/sandbox/art_lineup_lowe.tscn`, screens `docs/screens/art_lowe_<shot>_{thaw,rime}.png`. The roster has no Lowe shield slot, so none was made. `lm_standing_stone` was already shipped in the slice batch. `sefa` and `lm_maskwright_cart` are travelling (LEXICON), not Lowe, and `bearer_icefur` belongs to Kettle Fjord.
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| turfwright (multiview, extreme) | bosses/ | 3.40 tall | 19,190 | 4.9 | mixamo; idle, walk, slash, hit, defeat + text-prompt ground_cut, stack_sod, back_drop |
+| barrow_sleeper | enemies/ | 1.90 | 20,020 | 5.0 | mixamo; 6 presets |
+| keener | enemies/ | 1.75 | 19,158 | 5.0 | mixamo; 6 presets (the ice breath plume is part of the mesh and follows the head) |
+| cairn_carrier (multiview) | enemies/ | 2.20 | 19,658 | 5.4 | mixamo; 6 presets |
+| hesk (multiview) | npcs/ | 1.80 | 19,153 | 4.5 | mixamo; idle, walk, greet, look (the bellows came out as a leather pack-frame) |
+| aud | npcs/ | 1.60 | 19,388 | 4.6 | mixamo; idle, walk, greet, look |
+| bearer_barrow | characters/ | 1.80 | 19,971 | 4.2 | mixamo; 6 presets |
+| turf_spade | weapons/ | 1.60 | 18,303 | 1.1 | none; grip at origin, blade +Y, winged blade |
+| post_maul | weapons/ | 1.30 | 18,840 | 1.3 | none; grip at origin, head +Y |
+| lm_barrow_door (re-roll) | landmarks/ | 4.0 × 3.5 × 2.2 tall | 18,414 | 3.3 | convex; a turf mound with stone jambs, a turf-panel door and a propped spade |

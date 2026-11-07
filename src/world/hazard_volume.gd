@@ -77,5 +77,7 @@ func _take(p: Player, dmg: float) -> void:
 	# the land does not care for i-frames
 	var was := p.invulnerable
 	p.invulnerable = false
-	p.take_hit(DamagePacket.new(dmg, 0, null))
+	var pk := DamagePacket.new(dmg, 0, null)
+	pk.kind = "hazard"   # no absorption: a coat does not soften a fall
+	p.take_hit(pk)
 	p.invulnerable = was

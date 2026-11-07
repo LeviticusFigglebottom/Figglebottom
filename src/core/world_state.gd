@@ -3,6 +3,8 @@ extends Node
 ## pending Breathmark, last hearth, and save/load. Pure data; no scene logic.
 
 signal area_state_changed(area_id: String, state: RH.WState)
+## A global flag turned true for the first time (the Keepsakes toast listens).
+signal flag_raised(name: String)
 
 var areas: Dictionary = {}        # id -> {state:int, cleared:bool, flags:{}}
 var flags: Dictionary = {}        # global story/npc flags
@@ -51,7 +53,10 @@ func flag_val(name: String, def = null):
 	return flags.get(name, def)
 
 func set_flag(name: String, v = true) -> void:
+	var was = flags.get(name, false)
 	flags[name] = v
+	if not was and v is bool and v:
+		flag_raised.emit(name)
 
 func set_breathmark(area: String, pos: Vector3, amount: int) -> void:
 	breathmark = {"area": area, "pos": [pos.x, pos.y, pos.z], "amount": amount}
@@ -72,6 +77,29 @@ func breathmark_pos() -> Vector3:
 const SLOTS := 3
 var active_slot := 1
 var play_s := 0.0   # real seconds walked this playthrough (Game accumulates)
+
+## The save format's version. Bump it with a step in migrate() whenever a
+## save's shape changes; old slots are upgraded as they load.
+##   1: the first format (written as "version": 1, before save_version)
+##   2: save_version; the player wears armour (player.armour, slot -> id)
+const SAVE_VERSION := 2
+
+## Upgrade a parsed save of any older version to SAVE_VERSION, one step at a
+## time. Returns the same Dictionary, upgraded in place; a newer save than
+## this build knows is passed through untouched.
+func migrate(data: Dictionary) -> Dictionary:
+	var v := int(data.get("save_version", data.get("version", 1)))
+	if v < 2:
+		# v1 -> v2: the Bearer had no armour slots; dress them in the
+		# starting coat they would have begun with
+		var pd: Dictionary = data.get("player", {})
+		if not pd.is_empty() and not pd.has("armour"):
+			pd["armour"] = Player.starting_armour()
+		data["player"] = pd
+		data.erase("version")
+		v = 2
+	data["save_version"] = maxi(v, int(data.get("save_version", 0)))
+	return data
 
 func save_path() -> String:
 	return _save_dir.path_join("slot_%d.json" % active_slot)
@@ -120,7 +148,7 @@ func save_game() -> void:
 		Game.snapshot_player()
 	DirAccess.make_dir_recursive_absolute(_save_dir)
 	var data := {
-		"version": 1,
+		"save_version": SAVE_VERSION,
 		"areas": areas,
 		"flags": flags,
 		"breathmark": breathmark,
@@ -147,6 +175,7 @@ func load_game() -> bool:
 	var parsed = JSON.parse_string(FileAccess.open(save_path(), FileAccess.READ).get_as_text())
 	if not (parsed is Dictionary):
 		return false
+	parsed = migrate(parsed)
 	areas = {}
 	# JSON round-trips ints as floats; normalize.
 	for id in parsed.get("areas", {}):

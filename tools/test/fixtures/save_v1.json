@@ -1,0 +1,24 @@
+{
+	"version": 1,
+	"areas": {
+		"saltfell_strand": {"state": 1, "cleared": false, "flags": {"took_strand_bog_iron": true}},
+		"saltfell_steading": {"state": 0, "cleared": false, "flags": {}}
+	},
+	"flags": {"difficulty": "long", "met_steward_ingra": true},
+	"breathmark": {"area": "saltfell_strand", "pos": [3.0, 0.1, -4.0], "amount": 57},
+	"last_hearth": {"area": "saltfell_strand", "hearth": "boat_shed"},
+	"player": {
+		"attributes": {"heart": 10, "wind": 10, "might": 10, "craft": 9, "lungs": 9, "kinship": 11},
+		"level": 4,
+		"gourd_max": 3,
+		"weapon": "hewing_blade",
+		"weapon_level": 1,
+		"inventory": {"bog_iron": 1, "arrows": 6},
+		"hotbar": ["hewing_blade", "torch", "", "", "gourd"],
+		"attuned_song": "",
+		"pos": [0.0, 0.1, 0.0],
+		"warmth": 140
+	},
+	"play_s": 812.5,
+	"meta": {"level": 4, "area": "saltfell_strand", "difficulty": "long", "saved_at": 1790000000.0, "play_s": 812.5}
+}

@@ -168,6 +168,12 @@ pickups = [
     {"id": "bog_iron_stack", "at": at(-30.0, 104.5), "item": "bog_iron", "count": 2, "tag": "rime",
      "label": "Pry up the bog-iron"},
     {"id": "gully_cache", "at": at(25.4, 30.0), "warmth": 30, "tag": "rime", "label": "Take what was dropped"},
+    # Keepsakes (SLICE.md §7): Ingra's missing rye, under the byre hound
+    {"id": "rye_sack", "at": at(-27.4, -11.9), "item": "item_rye_sack", "kit": "rye_sack", "tag": "rime",
+     "set_flag": "ks_ingra_rye_found", "label": "Take the rye sack"},
+    # and Brede's float, frozen into the face of the tide wall
+    {"id": "net_float", "at": at(-8.0, 78.8), "item": "item_net_float", "kit": "net_float", "tag": "rime",
+     "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice"},
 ]
 npcs = [
     {"id": "steward_ingra", "at": at(14.0, -5.0), "rot": -60, "tag": "thaw"},

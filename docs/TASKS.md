@@ -1,23 +1,31 @@
 # Task board
 
 ## doing
-- Port the engine and system code, strip content, build the greybox `saltfell_steading` with tests and screenshots (lead, via subagent). Branch: main, initial import.
-- Pilot the Tripo art pipeline: a modular kit, the Rimewalker (rigged and animated), the hewing blade and the Netmender (lead, via subagent).
+Format: worktree → branch.
+
+- `/home/user/fb-ui` → `feat/ui-keepsakes`
+  - UI re-skin (bone and ember, OFL font), house card, Keepsakes journal
+  - Ingra and Brede's lines, verbatim from SLICE.md
+- `/home/user/fb-enc` → `feat/slice-encounters`
+  - Cast in game: the Bearer, NPCs, the Oarsman and his ice oar, the Hearthhound
+  - The Netmender's three-phase fight
+  - Death dissolve
+- `/home/user/fb-art2` → `art/lowe-heroes`: Tripo heroes for the Lowe (the Turfwright, enemies, NPCs, landmarks)
+- `/home/user/figglebottom` → `feat/lowe-world`
+  - Living dressing (grass, particles), strata variety
+  - The `lowe_barrows` region, linked to Saltfell by the ravine bridge
 
 ## todo
-1. ADR 0004: humanoid animation layer. Mixamo 52-bone rig, AnimationTree, playback rate-scaled to data windups.
-2. Lock-on target switching (SURVEY §3 Δ).
-3. Weapon upgrade reads `upgrade.per_level`. Stat scaling uses (stat−8).
-4. Sprint attack data entry plus a state.
-5. Armour slots (head, body, hands, legs) adding poise and absorption.
-6. Keepsakes journal UI over flag chains.
-7. Frost and hoar branch in `hall.gdshader`. Frost/melt wavefront look.
-8. New music and ambience for THAW and RIME (synth or composed). Generic foley.
-9. UI re-skin: bone and ember palette, new font (OFL licence).
-10. Vertical slice areas: the Strand, Saltfell yard, the Longhouse (generator scripts).
-11. Vertical slice NPCs (2) and the Netmender questline.
-12. Boot house card: "Figglebottom Productions", sincere and quiet (owner request).
-13. `save_version` field plus migration hook.
+1. Frost and hoar branch in `hall.gdshader`. Frost/melt wavefront look (replaces the inherited burning edge).
+2. New music and ambience for THAW and RIME. Generic foley.
+3. Wire Brede's `give_oilskins` gift once his NPC data lands.
+4. Region tier: the Turfwright fight, the Lowe NPCs, the Keepsakes questline.
+5. Performance pass: LODs, visibility ranges, MultiMesh, real-GPU profiling by the owner.
 
-## done
-- Phase 1 survey, originality guardrails, ADR 0001, SPEC and CLAUDE.md (see git log).
+## done (merged to main)
+- Phase 1 survey, originality guard, ADRs 0001–0003, SPEC, CLAUDE.md, lore and roster
+- Engine port and the greybox
+- Tripo pilot; slice heroes and 14 region concepts
+- ADR 0004: Mixamo animation layer; the Rimewalker strikes with ice-club fists
+- Terrain system, the Saltfell landscape (ADR 0005), cliff and ravine polish, procedural turf-roof buildings
+- Combat deltas: lock switching, data upgrades, (stat−8) scaling, sprint attack, armour slots, save_version 2

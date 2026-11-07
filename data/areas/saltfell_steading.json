@@ -1124,6 +1124,32 @@
    "warmth": 30,
    "tag": "rime",
    "label": "Take what was dropped"
+  },
+  {
+   "id": "rye_sack",
+   "at": [
+    -27.4,
+    22.0,
+    -11.9
+   ],
+   "item": "item_rye_sack",
+   "kit": "rye_sack",
+   "tag": "rime",
+   "set_flag": "ks_ingra_rye_found",
+   "label": "Take the rye sack"
+  },
+  {
+   "id": "net_float",
+   "at": [
+    -8.0,
+    0.08,
+    78.8
+   ],
+   "item": "item_net_float",
+   "kit": "net_float",
+   "tag": "rime",
+   "set_flag": "ks_brede_float_found",
+   "label": "Chip the float out of the ice"
   }
  ],
  "scatter": {
