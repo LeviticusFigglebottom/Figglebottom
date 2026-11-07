@@ -128,6 +128,65 @@ def icon_crest():
     return im
 
 
+# --- armour (Pack: the Armour leaf) ------------------------------------------
+GHOST = (120, 104, 80, 150)
+WOOL = (150, 150, 146, 255)
+OIL = (70, 62, 48, 255)
+HORN = (226, 214, 186, 255)
+
+
+def _coat(d, fill, trim):
+    # a long coat: shoulders, sleeves, skirt flaring to the knee
+    d.polygon([(44, 20), (84, 20), (100, 34), (96, 112), (32, 112), (28, 34)], fill=fill)
+    d.polygon([(28, 34), (12, 76), (22, 80), (38, 46)], fill=fill)
+    d.polygon([(100, 34), (116, 76), (106, 80), (90, 46)], fill=fill)
+    d.polygon([(54, 20), (74, 20), (64, 40)], fill=trim)
+    d.line((64, 40, 64, 112), fill=trim, width=3)
+
+
+def icon_armour_coat():
+    im, d = canvas()
+    _coat(d, WOOL, DARK)
+    for i, y in enumerate((52, 66, 80)):
+        d.rounded_rectangle((60, y - 2, 70, y + 2), radius=2, fill=HORN if i != 1 else EMBER)
+    return im
+
+
+def icon_armour_oilskins():
+    im, d = canvas()
+    d.polygon([(40, 10), (88, 10), (96, 30), (32, 30)], fill=OIL)   # the hood
+    _coat(d, OIL, (150, 130, 92, 255))
+    d.line((34, 100, 94, 100), fill=(150, 130, 92, 255), width=3)
+    return im
+
+
+def icon_slot_head():
+    im, d = canvas()
+    d.chord((30, 26, 98, 100), 180, 360, fill=GHOST)
+    d.rectangle((30, 62, 98, 72), fill=GHOST)
+    return im
+
+
+def icon_slot_body():
+    im, d = canvas()
+    _coat(d, GHOST, (0, 0, 0, 0))
+    return im
+
+
+def icon_slot_hands():
+    im, d = canvas()
+    d.rounded_rectangle((38, 46, 84, 104), radius=12, fill=GHOST)
+    d.rounded_rectangle((80, 56, 100, 82), radius=8, fill=GHOST)
+    d.rectangle((40, 30, 82, 48), fill=GHOST)
+    return im
+
+
+def icon_slot_legs():
+    im, d = canvas()
+    d.polygon([(36, 16), (92, 16), (96, 112), (70, 112), (64, 50), (58, 112), (32, 112)], fill=GHOST)
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in list(globals().items()):

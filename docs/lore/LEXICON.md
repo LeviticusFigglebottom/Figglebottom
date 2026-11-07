@@ -55,6 +55,8 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | Hearthhound | enemy (Saltfell) | a dog frozen waiting at a door |
 | Hewing Blade | weapon | starting weapon |
 | Saltfell Board Shield | shield | |
+| Traveller's Coat | armour (body) | starting armour, `armour_traveller_coat` |
+| Saltfell Oilskins | armour (body) | Brede's gift, `armour_saltfell_oilskins` |
 | Mending Song | song | heal; taught by Ingra |
 | the Turfwright (Arne Holm) | Holdfast (the Lowe) | would not lay the last turf on his twin daughters, Liv and Asta |
 | the Barrow Road / the Kin-Mounds / the Open Barrow | areas (the Lowe) | |
