@@ -164,3 +164,58 @@ func _diss_of(n: Node) -> float:
 		if m is ShaderMaterial and m.get_shader_parameter("death_diss") != null:
 			return float(m.get_shader_parameter("death_diss"))
 	return 0.0
+
+# ------------------------------------------------------------------ foes
+func _spawn_foe(id: String, pos: Vector3) -> Enemy:
+	var ecfg: Dictionary = DB.table("enemies").get(id, {})
+	var e: Enemy = load(ecfg["class"]).new() if ecfg.has("class") else Enemy.new()
+	e.setup(id)
+	get_tree().current_scene.add_child(e)
+	e.global_position = pos
+	return e
+
+## Face-off: the foe found in the area (or spawned in the sandbox) squares up
+## to the Bearer `gap` metres away; returns it once placed.
+func _face_off(p: Player, id: String, gap: float) -> Enemy:
+	if _f == 3:
+		var e := _first_foe(id) if Game.current_area != null else null
+		if e == null:
+			e = _spawn_foe(id, p.global_position + Vector3(0, 0.1, -gap))
+		_foe = e
+	if _foe == null or not is_instance_valid(_foe):
+		return null
+	var e2 := _foe as Enemy
+	if _f == 6:
+		var fwd := -e2.vis.global_transform.basis.z
+		fwd.y = 0
+		_place_player(p, e2.global_position + fwd.normalized() * gap + Vector3.UP * 0.1, 0.0)
+	if _f >= 6:
+		var d := e2.global_position - p.global_position
+		d.y = 0
+		p.vis.rotation.y = atan2(-d.x, -d.z)
+		if e2.state != Enemy.ES.ATTACK:
+			e2.vis.rotation.y = atan2(d.x, d.z)
+			e2.velocity = Vector3.ZERO
+		e2.target = p
+	return e2
+
+func _side_cam(p: Player, e: Node3D, dist := 4.4, h := 0.5, look := 1.0, fov := 46.0) -> void:
+	var mid := (p.global_position + e.global_position) * 0.5
+	var axis := e.global_position - p.global_position
+	axis.y = 0
+	var side := axis.normalized().cross(Vector3.UP)
+	var tgt := mid + Vector3.UP * look
+	_cam.global_position = tgt + side * dist + Vector3.UP * h - axis.normalized() * 0.8
+	_cam.look_at(tgt, Vector3.UP)
+	_cam.fov = fov
+
+func _st_oarsman_stroke(p: Player) -> void:
+	var e := _face_off(p, "oarsman", 3.2)
+	if e == null:
+		return
+	if _f >= 6:
+		_side_cam(p, e)
+	if _f == 50:
+		e._begin_attack(e.attack_by_id(OS.get_environment("ENC_ATK") if OS.get_environment("ENC_ATK") != "" else "stroke"))
+	if _f > 50 and e.state == Enemy.ES.ATTACK and e.state_t >= float(e._atk["windup"]) + float(OS.get_environment("ENC_DT") if OS.get_environment("ENC_DT") != "" else "0.06"):
+		_freeze()

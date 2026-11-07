@@ -191,7 +191,7 @@
   "arm_h": 1.16,
   "arm_dx": 0.27,
   "hurt_r": 0.5,
-  "hurt_h": 1.55,
+  "hurt_h": 1.75,
   "col_r": 0.45,
   "stagger_time": 0.9,
   "anim_amp": 1.15,
@@ -200,39 +200,73 @@
   "attacks": [
    {
     "id": "stroke",
+    "_tell": "oar drawn back past the right side, torso coils (0.8 s); a wide sweep across the front, 3 m reach. Roll through toward him.",
     "range": 3.0,
     "windup": 0.8,
-    "active": 0.2,
+    "active": 0.22,
     "recover": 1.0,
     "dmg": 20,
     "poise_dmg": 22,
-    "reach": 2.8,
-    "width": 3.0,
-    "height": 1.4,
     "cooldown": 1.8,
-    "anim": "atk_r",
-    "lunge": 0.8
+    "anim": "oar_stroke",
+    "lunge": 0.6,
+    "chain": "back_stroke",
+    "chain_chance": 0.65
+   },
+   {
+    "id": "back_stroke",
+    "_tell": "pauses at the end of the Stroke, feet shuffle (0.5 s); the sweep comes back the other way. Only after a Stroke.",
+    "range": 3.0,
+    "windup": 0.5,
+    "active": 0.2,
+    "recover": 1.1,
+    "dmg": 18,
+    "poise_dmg": 20,
+    "cooldown": 0.0,
+    "anim": "oar_back",
+    "lunge": 0.4,
+    "chain_only": true
    },
    {
     "id": "ship_oars",
-    "range": 2.6,
+    "_tell": "oar raised vertical and held, frost-breath rises straight up (1.2 s); the blade slams down and an ice shockwave runs 4 m forward. Then 1.4 s dragging the oar back up: the riposte window.",
+    "type": "line",
+    "range": 4.2,
     "windup": 1.2,
-    "active": 0.22,
+    "active": 0.2,
     "recover": 1.4,
     "dmg": 28,
-    "poise_dmg": 30,
-    "reach": 2.6,
-    "width": 1.6,
-    "height": 1.6,
+    "poise_dmg": 34,
     "cooldown": 5.0,
-    "anim": "atk_double",
-    "lunge": 0.6
+    "anim": "oar_ship",
+    "lunge": 0.0,
+    "length": 4.0,
+    "width": 1.4,
+    "offset": 0.8,
+    "breath": "up",
+    "track": 0.9,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.4,
+      4.0
+     ],
+     "offset": 0.8
+    }
    }
   ],
   "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
   "warmth": 28,
-  "weapon": "spear",
-  "vis_scale": 1.12
+  "model": "oarsman",
+  "class": "res://src/enemies/oarsman.gd",
+  "oar": {
+   "_doc": "the procedural ice oar (src/enemies/oarsman.gd): metres along the shaft",
+   "length": 3.0,
+   "grip": 0.45,
+   "hit_from": 1.0,
+   "blade_len": 0.85,
+   "blade_w": 0.3
+  }
  },
  "hearthhound": {
   "name": "Hearthhound",

@@ -128,7 +128,8 @@
    "yaw_deg": 180.0,
    "own_clips": true,
    "bare_hands": true,
-   "_note": "the ice oar is procedural (src/enemies/ice_oar.gd), spans both hands and carries the blade hitbox; its strokes are overlays (oar_*)"
+   "_note": "the ice oar is procedural (src/enemies/oarsman.gd): it runs from the left hand through the right, carries the hit volume, and the arms hold it through locomotion via the upper-body carry layer (carry: oar_carry). Strokes are overlays (oar_*).",
+   "carry": "oar_carry"
   }
  },
  "mounts": {
@@ -291,6 +292,31 @@
     "contact": 0.32,
     "end": 0.8
    }
+  },
+  "oar_carry": {
+   "loop": true,
+   "procedural": {}
+  },
+  "oar_stroke": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 0.62,
+    "end": 1.0
+   }
+  },
+  "oar_back": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 0.5,
+    "end": 0.9
+   }
+  },
+  "oar_ship": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 1.0,
+    "end": 2.2
+   }
   }
  },
  "aliases": {
@@ -405,5 +431,6 @@
    "scene": "res://assets/models/props/gourd.glb",
    "slot": "gourd"
   }
- }
+ },
+ "_doc_carry": "models.<id>.carry names a looping clip played on the arms only (HumanoidRig upper layer) whenever no action owns the rig, so a held two-handed weapon stays in the hands while the legs walk."
 }

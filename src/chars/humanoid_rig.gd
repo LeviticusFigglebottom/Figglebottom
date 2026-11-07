@@ -5,6 +5,8 @@ extends AnimationTree
 ##   loco (BlendSpace1D idle 0 / walk 1 / run 2) -> loco_rate (TimeScale) --\
 ##   act0 (Animation) -> act0_seek (TimeSeek) --\                           mix (Blend2) -> output
 ##   act1 (Animation) -> act1_seek (TimeSeek) ---> slot (Blend2) ---------/
+##   mix -> upper (Blend2, arm tracks only) <- carry (Animation): a model's
+##   "carry" clip holds a two-handed weapon through locomotion
 ##
 ## Two action slots let one action cross-fade into the next. Action time is
 ## owned here, not by the tree: each physics tick both slots are seeked to
@@ -36,6 +38,7 @@ var _w_slot_speed := 10.0
 var _loco_rate := 1.0
 var _loco_pos := 0.0
 var _loco_phase := 0.0             # seconds into the dominant loco cycle
+var _carry := ""                   # arms-only carry clip ("" = none)
 
 func setup(id: String, skel: Skeleton3D) -> void:
 	model_id = id
@@ -73,7 +76,22 @@ func setup(id: String, skel: Skeleton3D) -> void:
 	bt.add_node("mix", AnimationNodeBlend2.new())
 	bt.connect_node("mix", 0, "loco_rate")
 	bt.connect_node("mix", 1, "slot")
-	bt.connect_node("output", 0, "mix")
+	# the upper-body carry layer (arms only); weight 0 unless the model has one
+	var up := AnimationNodeBlend2.new()
+	up.filter_enabled = true
+	for side in ["Left", "Right"]:
+		for b in ["Shoulder", "Arm", "ForeArm", "Hand"]:
+			up.set_filter_path(NodePath("Skeleton3D:mixamorig_%s%s" % [side, b]), true)
+	bt.add_node("upper", up)
+	var carry := AnimationNodeAnimation.new()
+	_carry = String(HumanoidLib.model_cfg(id).get("carry", ""))
+	carry.animation = qualified(_carry) if _carry != "" and qualified(_carry) != "" else qualified("idle")
+	if _carry != "" and qualified(_carry) == "":
+		_carry = ""
+	bt.add_node("carry", carry)
+	bt.connect_node("upper", 0, "mix")
+	bt.connect_node("upper", 1, "carry")
+	bt.connect_node("output", 0, "upper")
 	tree_root = bt
 	active = true
 	_push()
@@ -254,3 +272,5 @@ func _push() -> void:
 	set("parameters/act1_seek/seek_request", _t[1])
 	set("parameters/slot/blend_amount", _w_slot)
 	set("parameters/mix/blend_amount", _w_act)
+	# the carry pose holds the arms whenever no action owns them
+	set("parameters/upper/blend_amount", (1.0 - _w_act) if _carry != "" else 0.0)

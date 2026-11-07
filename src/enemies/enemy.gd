@@ -425,6 +425,8 @@ func _begin_attack(a: Dictionary) -> void:
 		_tele_at = w * float(a.get("telegraph_lock", 0.7))
 	if a.has("sfx_windup"):
 		AudioDirector.sfx_at(String(a["sfx_windup"]), global_position, -4.0)
+	if a.has("breath"):
+		breath_puff(String(a["breath"]), w)
 
 ## Seconds after the windup at which each strike of a multi-strike attack
 ## lands ("hits": [0, 0.22, 0.6]); one strike at 0 by default.
@@ -528,6 +530,42 @@ func _spawn_telegraph(remaining: float) -> Node:
 	var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
 	return FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1),
 			Color(tint[0], tint[1], tint[2]))
+
+## The frost-breath tell (SPEC.md 7): a plume from the mask a beat before a
+## move. kind: "up" (rises straight up: Ship oars), "forward" (a snort),
+## "held" (thin and slow: the Cast), "twice" (two puffs: the double fall).
+func breath_puff(kind: String, over := 0.6) -> void:
+	var head := global_position + Vector3.UP * float(cfg.get("hurt_h", 1.6)) * 0.95
+	if vis.is_humanoid() and vis.skel != null and vis.skel.find_bone("mixamorig_Head") >= 0:
+		head = vis.bone_xform("mixamorig_Head").origin + Vector3.UP * 0.08
+	elif cfg.has("head_offset"):
+		var ho: Array = cfg["head_offset"]
+		head = vis.global_transform * Vector3(ho[0], ho[1], ho[2])
+	var fwd := -vis.global_transform.basis.z
+	var p := CPUParticles3D.new()
+	p.amount = 26 if kind != "held" else 14
+	p.lifetime = clampf(over, 0.4, 1.6)
+	p.one_shot = true
+	p.explosiveness = 0.2 if kind == "held" else 0.65
+	p.direction = Vector3.UP if kind == "up" else (fwd + Vector3.UP * 0.3).normalized()
+	p.spread = 12.0 if kind == "up" else 24.0
+	p.initial_velocity_min = 0.5
+	p.initial_velocity_max = 1.4 if kind != "held" else 0.6
+	p.gravity = Vector3(0, 0.35, 0)
+	p.scale_amount_min = 0.06
+	p.scale_amount_max = 0.16
+	p.color = Color(0.9, 0.95, 1.0, 0.5)
+	p.mesh = AreaPortal.make_mote_quad(1.0)
+	get_parent().add_child(p)
+	p.global_position = head + fwd * 0.18
+	p.emitting = true
+	RH.free_after(p, p.lifetime + 0.4)
+	if kind == "twice":
+		var tw := create_tween()
+		tw.tween_interval(over * 0.45)
+		tw.tween_callback(func():
+			if is_instance_valid(p):
+				p.restart())
 
 ## Ground-plane test against the committed aim: inside a strip `width` wide
 ## running `length` forward from `offset` metres ahead.
