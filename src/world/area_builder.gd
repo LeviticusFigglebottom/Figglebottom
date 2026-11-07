@@ -171,6 +171,11 @@ static func build(area_id: String) -> Area:
 		area.attach(pt, spec.get("tag", "base"))
 		_place(pt, spec)
 
+	if def.has("zones"):
+		var zt := ZoneTitles.new()
+		zt.name = "ZoneTitles"
+		zt.zones = def["zones"]
+		area.add_child(zt)
 	if area.terrain != null and def.has("scatter"):
 		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
 

@@ -263,9 +263,10 @@ void fragment() {
 	// Snow settles on whatever faces the sky; hoarfrost greys the rest
 	if (snow_strength > 0.001 && use_local_triplanar == 0) {
 		float top = smoothstep(0.45, 0.8, world_nrm.y + (n1 - 0.5) * 0.35);
-		vec3 snow_c = vec3(0.86, 0.90, 0.96) * (0.9 + 0.1 * n2);
+		vec3 snow_c = vec3(0.86, 0.90, 0.96) * (0.94 + 0.06 * n1);
 		rime_col = mix(rime_col, snow_c, top * snow_strength);
-		rime_col = mix(rime_col, vec3(0.78, 0.84, 0.92), (1.0 - top) * snow_strength * 0.22 * smoothstep(0.35, 0.8, n2));
+		// hoarfrost: a soft pale bloom, broad not speckled
+		rime_col = mix(rime_col, vec3(0.74, 0.80, 0.88), (1.0 - top) * snow_strength * 0.16 * smoothstep(0.3, 0.8, n_macro));
 	}
 	vec3 final_albedo = mix(thaw_col, rime_col, rime);
 

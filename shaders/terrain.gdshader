@@ -17,7 +17,7 @@ uniform vec3 rock_col : source_color = vec3(0.27, 0.27, 0.28);
 uniform vec3 shingle_col : source_color = vec3(0.46, 0.43, 0.39);
 uniform vec3 path_col : source_color = vec3(0.29, 0.22, 0.15);
 uniform vec3 snow_col : source_color = vec3(0.86, 0.90, 0.96);
-uniform float rock_slope = 0.78;       // normal.y below this turns to rock
+uniform float rock_slope = 0.72;       // normal.y below this turns to rock
 uniform float snow_cover = 0.9;
 uniform int state_mode = 0;
 
@@ -88,13 +88,13 @@ void fragment() {
 	// worn path: bare peaty earth with stones
 	vec3 path = path_col * (0.85 + 0.25 * n2) + vec3(0.06) * smoothstep(0.8, 0.95, n3);
 	// rock: banded schist, darker in the folds
-	// schist: tilted bedding broken into blocks, dark joints, pale lichen
+	// schist: tilted bedding, blocky faces, rain streaks down the face
 	float bed = sin(v_wp.y * 1.3 + v_wp.x * 0.35 + n1 * 4.0) * 0.5 + 0.5;
 	float blocks = vnoise(vec3(v_wp.x * 0.35, v_wp.y * 0.9, v_wp.z * 0.35));
-	float joint = smoothstep(0.08, 0.0, abs(blocks - 0.5)) + smoothstep(0.9, 0.98, bed) * 0.6;
-	vec3 rock = rock_col * (0.55 + 0.35 * blocks + 0.25 * n2 + 0.12 * bed);
-	rock *= 1.0 - 0.55 * clamp(joint, 0.0, 1.0);
-	rock = mix(rock, vec3(0.52, 0.52, 0.44), smoothstep(0.72, 0.9, n2 * 0.6 + n_macro * 0.5) * 0.45);
+	float streak = vnoise(vec3(v_wp.x * 1.4, v_wp.y * 0.12, v_wp.z * 1.4));
+	vec3 rock = rock_col * (0.6 + 0.4 * blocks + 0.2 * n2 + 0.1 * bed);
+	rock *= 1.0 - 0.3 * smoothstep(0.55, 0.9, streak) - 0.25 * smoothstep(0.93, 0.99, bed);
+	rock = mix(rock, vec3(0.46, 0.46, 0.40), smoothstep(0.8, 0.95, n2 * 0.6 + n_macro * 0.5) * 0.2);
 	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * 0.4);
 
 	vec3 col = turf;

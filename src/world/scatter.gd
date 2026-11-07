@@ -58,9 +58,13 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 		var at: Array = p["at"]
 		var x := float(at[0])
 		var z := float(at[1])
-		var y := terrain.height_at(x, z)
-		var xf := _seat(String(p["kind"]), Vector3(x, y, z), terrain.normal_at(x, z),
-				deg_to_rad(float(p.get("rot", rng.randf() * 360.0))), float(p.get("scale", 1.0)), rng)
+		var y := float(p["y"]) if p.has("y") else terrain.height_at(x, z)
+		var nrm := Vector3.UP if p.has("y") else terrain.normal_at(x, z)
+		var sc = p.get("scale", 1.0)
+		var xf := _seat(String(p["kind"]), Vector3(x, y, z), nrm,
+				deg_to_rad(float(p.get("rot", rng.randf() * 360.0))), 1.0 if sc is Array else float(sc), rng)
+		if sc is Array:     # an explicit [x, y, z] scale: floes laid flat on the water
+			xf.basis = xf.basis.orthonormalized().scaled_local(Vector3(sc[0], sc[1], sc[2]))
 		_add(groups, String(p["kind"]), String(p.get("tag", "base")), xf)
 	for f in spec.get("fences", []):
 		_fence(groups, terrain, f, rng)
@@ -151,6 +155,13 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 		var shape: Shape3D = null
 		var off := Vector3.ZERO
 		match kind:
+			"ice_floe":
+				if t.basis.get_scale().y < 1.0:
+					continue      # flat channel floes: the ice sheet carries you
+				var spi := SphereShape3D.new()
+				spi.radius = 0.8
+				shape = spi
+				off = Vector3(0, 0.2, 0)
 			"boulder":
 				var sp := SphereShape3D.new()
 				sp.radius = 0.85

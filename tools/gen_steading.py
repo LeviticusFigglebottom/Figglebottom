@@ -200,7 +200,16 @@ plaques = [
 # ----------------------------------------------------------------- the sea's edge
 CH = T.CHANNEL
 ICE_Z1 = 102.5
-BOXES.append({"min": [CH["x0"], -0.6, CH["z0"]], "max": [CH["x1"], CH["y"], ICE_Z1], "mat": "M_ice", "tag": "rime"})
+# the frozen channel: an invisible sheet carries you; broken floes show where
+BLOCKERS = [{"min": [CH["x0"] + 0.8, -0.6, CH["z0"]], "max": [CH["x1"] - 0.8, CH["y"], ICE_Z1], "tag": "rime"}]
+FLOES = []
+for k in range(14):
+    z = CH["z0"] + 1.0 + k * 1.9
+    for side in (-1, 1):
+        x = -30.0 + side * (0.9 + 0.5 * math.sin(k * 1.7 + side)) + 0.6 * math.sin(k * 0.9)
+        FLOES.append({"kind": "ice_floe", "at": [r2(x), r2(z + side * 0.5)], "y": -0.06,
+                      "scale": [r2(2.0 + 0.5 * abs(math.sin(k * 2.3 + side))), 0.42, r2(1.8 + 0.4 * abs(math.cos(k * 1.3)))],
+                      "rot": r2((k * 61 + side * 37) % 360), "tag": "rime"})
 water = [
     {"at": [0, 0.0, 0], "size": [4000, 4000]},                           # the sea
     {"at": [0, T.RAVINE_FLOOR + 0.6, -76], "size": [300, 40]},          # the river in the ravine
@@ -220,6 +229,9 @@ for b in BUILDINGS:
 for p in PROPS:
     clear.append([p["at"][0], p["at"][2], 2.2])
 clear.append([-30.0, 90.0, 14.0])        # the channel stays clear
+for k in range(15):                       # and so does the gully
+    z = T.GULLY_Z0 + k * 3.0
+    clear.append([r2(T.GULLY_X + 0.8 * math.sin(z * 0.12)), r2(z), 3.2])
 scatter = {
     "seed": 90210,
     "clear": clear,
@@ -247,7 +259,7 @@ scatter = {
         {"kind": "hummock", "at": [44.0, 14.5], "scale": 1.1, "rot": 10},
         {"kind": "hummock", "at": [43.5, 9.8], "scale": 0.8, "rot": 75},
         {"kind": "standing_stone", "at": [46.0, 11.5], "scale": 0.6, "rot": 12},
-    ] + [
+    ] + FLOES + [
         # the tide froze mid-surge: a broken glass wall along the old waterline,
         # open where the channel runs out to the stack
         {"kind": "ice_floe", "at": [r2(x), r2(80.6 + 1.2 * math.sin(x * 0.37))],
@@ -271,10 +283,10 @@ edges = {
     "walk_max_deg": 45.0,
     "water_level": 0.0,
     "drown_depth": 1.15,
-    "nav_bounds": [-102, -76, 66, 128],
+    "nav_bounds": [-102, -76, 66, 130],
     "buildings": BUILDINGS,
     "thickets": [],
-    "state_floors": [{"tag": "rime", "min": [CH["x0"], CH["z0"]], "max": [CH["x1"], ICE_Z1], "y": CH["y"]}],
+    "state_floors": [{"tag": "rime", "min": [CH["x0"] + 0.8, CH["z0"]], "max": [CH["x1"] - 0.8, ICE_Z1], "y": CH["y"]}],
     "gates": [{"id": "boatshed_back", "at": GATE_AT, "rot": 0}],
 }
 
@@ -286,7 +298,7 @@ D = {
     "env": {"thaw": {"sun_rot": [-12, -36], "sun_energy": 2.3, "fog_density": 0.0008, "vol_density": 0.0032},
             "rime": {"sun_rot": [-34, -30]}},
     "terrain": T.terrain_block(),
-    "nav_bounds": [-102, -4, -76, 66, 64, 128],
+    "nav_bounds": [-102, -4, -76, 66, 64, 130],
     "water": water,
     "hazards": hazards,
     "zones": [
@@ -296,6 +308,7 @@ D = {
     ],
     "pieces": PIECES,
     "boxes": BOXES,
+    "blockers": BLOCKERS,
     "props": PROPS,
     "hearths": hearths,
     "gates": [{"id": "boatshed_back", "at": GATE_AT, "rot": 0, "locked_prompt": "Barred from the other side"}],

@@ -185,7 +185,7 @@ def _terrace(x, z):
     xw = x + 2.5 * fbm(0.4, z * 0.08, 2, 24)
     if not (TER_X0 <= xw <= TER_X1 and 31.0 <= z <= 54.5):
         return None
-    wob = 0.5 * fbm(x * 0.15, 0.0, 2, 9)
+    wob = 1.3 * fbm(x * 0.08, 0.0, 2, 9)
     zz = z + wob
     l1, l2, l3 = _leg1(x), leg_y(2, x), leg_y(3, x)
     # turning landings span two legs and the wall between
@@ -238,7 +238,7 @@ def height(x, z):
         top += min(34.0 + 6.0 * fbm(x * 0.02, z * 0.02, 2, 18), fx * 1.6) \
             + min(fx, 4.0) * (0.6 * fbm(x * 0.09, z * 0.09, 3, 4) + 0.25 * math.sin(z * 0.45 + 2.0 * fbm(x * 0.1, z * 0.1, 1, 19)))
     # warp the outline so no edge runs straight: bays, buttresses, slumps
-    sdf = _poly_sdf(x, z, PLATEAU) + 3.2 * fbm(x * 0.045, z * 0.045, 3, 13) + 1.2 * fbm(x * 0.16, z * 0.16, 2, 14)
+    sdf = _poly_sdf(x, z, PLATEAU) + 4.5 * fbm(x * 0.035, z * 0.035, 3, 13) + 1.6 * fbm(x * 0.14, z * 0.14, 2, 14)
     rough = 2.0 * fbm(x * 0.13, z * 0.13, 3, 5)
     k = CLIFF_K * (0.95 + 0.4 * vnoise(x * 0.05, z * 0.05, 15))
     cliff = top + k * min(sdf, 0.0) + (rough if sdf < 0 else 0.0)
@@ -247,7 +247,7 @@ def height(x, z):
     if t is not None:
         # legs keep a gentle tread; the walls between them are broken rock
         on_leg = path_weight_terrace(x, z)
-        h = t + 0.15 * fbm(x * 0.3, z * 0.3, 2, 6) + (1.0 - on_leg) * 0.9 * fbm(x * 0.35, z * 0.35, 2, 25)
+        h = t + 0.15 * fbm(x * 0.3, z * 0.3, 2, 6) + (1.0 - on_leg) * (1.0 * fbm(x * 0.35, z * 0.35, 2, 25) + 1.4 * fbm(x * 0.12, z * 0.5, 2, 26))
     # flatten the pads people built on
     for name, pad in PADS.items():
         w = _pad_weight(x, z, pad)
@@ -274,9 +274,12 @@ def height(x, z):
     # the sea stack and its tide shelf
     sx, sz = STACK
     r = math.hypot(x - sx, z - sz)
-    if r < 16:
-        shelf = 0.8 - 1.1 * smooth(8.0, 12.5, r) + 0.15 * fbm(x * 0.4, z * 0.4, 1, 11)
-        pillar = 17.0 * (1.0 - smooth(4.6, 6.2, r + 0.8 * fbm(x * 0.5, z * 0.5, 2, 12))) - 1.0
+    if r < 18:
+        th = math.atan2(z - sz, x - sx)
+        lobe = 1.0 + 0.18 * math.sin(3 * th + 0.7) + 0.1 * math.sin(5 * th + 2.1) + 0.12 * fbm(x * 0.3, z * 0.3, 2, 12)
+        shelf = 0.8 - 1.1 * smooth(8.0, 12.5, r / (0.9 + 0.2 * lobe)) + 0.15 * fbm(x * 0.4, z * 0.4, 1, 11)
+        crown = 15.0 + 4.0 * fbm(x * 0.25, z * 0.25, 2, 27) + 2.0 * math.sin(th * 2 + 1.0)
+        pillar = (crown + 1.0) * (1.0 - smooth(3.6, 6.4, r / lobe)) - 1.0
         h = max(h, shelf, pillar)
     return h
 
@@ -368,7 +371,7 @@ def write():
             # beyond the play grid the hills keep rising into fells
             h = height(x, z)
             if z < -180:
-                h += min(40.0, (-180 - z) * 0.08) + 14.0 * fbm(x * 0.004, z * 0.004, 3, 40)
+                h += min(40.0, (-180 - z) * 0.08) + 14.0 * fbm(x * 0.004, z * 0.004, 3, 40) * smooth(-180, -260, z)
             far.append(h - (4.0 if inner else 0.0))
     with open(os.path.join(OUT_DIR, "saltfell_far.bin"), "wb") as f:
         f.write(struct.pack("<%df" % len(far), *far))

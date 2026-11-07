@@ -191,16 +191,14 @@ def audit(area_id):
                     classes["cliff"] += 1
                     if far < -6.0:
                         # where does a fall land? follow the drop to its foot
-                        li, lj = i, j
-                        h0 = h(i, j)
-                        for st in range(1, 40):
-                            ni, nj = i + di * st, j + dj * st
-                            n2 = (min(max(ni + 2 * di, 0), NX - 1), min(max(nj + 2 * dj, 0), NZ - 1))
-                            if not (0 <= ni < NX and 0 <= nj < NZ):
-                                break
-                            li, lj = ni, nj
-                            if h(ni, nj) < h0 - 6.0 and abs(h(ni, nj) - h(*n2)) < 1.0:
-                                break     # the foot of the drop
+                        # where does a fall land? the lowest ground just past the lip
+                        li, lj = n
+                        for a in range(0, 14):          # out along the fall
+                            for b in range(-4, 5):      # and either side of it
+                                ni = n[0] + di * a + (b if dj else 0)
+                                nj = n[1] + dj * a + (b if di else 0)
+                                if 0 <= ni < NX and 0 <= nj < NZ and h(ni, nj) < h(li, lj):
+                                    li, lj = ni, nj
                         land = (X0 + li, h(li, lj) + 0.5, Z0 + lj)
                         if not any(in_box(land, gz) for gz in guards
                                    if gz.get("tag", "base") in ("base", state)):
