@@ -1,0 +1,169 @@
+{
+  "_doc": "Art pipeline manifest. One entry per asset. tools/art/blender_process.py reads this. Paths are relative to the repo root. Raw inputs live in raw/ (gitignored); rebuild them with tools/art/fetch_tripo.sh. yaw_deg turns the model about up so its front faces glTF +Z (Tripo output faces +X, so -90). target: exactly one of height/width/length in metres. origin: bottom_center | grip. collision: trimesh | convex | null (Godot node-name suffix -col / -convcol).",
+  "assets": [
+    {
+      "name": "kit_hearthstone",
+      "category": "kit",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_generate_text",
+        "project_id": "a43be366-1a6e-4424-9b6e-d317f265695a",
+        "task_id": "5126f6b9-dd9b-4a16-bd49-13f1fde4a539",
+        "remesh_operator": "9e6b9f94-3d3c-4925-b835-39ceef89fff7",
+        "model_version": "v3.1-20260211"
+      },
+      "input": "raw/kit_hearthstone/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "width": 1.6
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": "convex",
+      "output": "assets/models/kit/kit_hearthstone.glb"
+    },
+    {
+      "name": "hewing_blade",
+      "category": "weapons",
+      "kind": "weapon",
+      "source": {
+        "tool": "tripo_generate_text",
+        "project_id": "25bd6877-fc0f-4a71-8bd1-fc4dc371758b",
+        "task_id": "6ae54faf-f82a-44b0-be1e-3483fded0494",
+        "remesh_operator": "e78b673e-fecb-4460-be25-15269e7a1d6a",
+        "model_version": "v3.1-20260211"
+      },
+      "input": "raw/hewing_blade/remesh.fbx",
+      "target": {
+        "length": 0.95
+      },
+      "origin": "grip",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/weapons/hewing_blade.glb"
+    },
+    {
+      "name": "rimewalker",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "43aaefb6-0c5f-460a-a9eb-8cb5a34d6423",
+        "task_id": "c547353c-a7fe-4fc8-ae87-922fea3f6852",
+        "remesh_operator": "9abcb5b2-4ac0-4aeb-9584-4c44bd56f407",
+        "rig_operator": "b4dd2dd5-e66a-4e1a-92ea-9cedcd52974d",
+        "model_version": "v3.1-20260211",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/rimewalker/rigged.fbx",
+      "anims": {
+        "idle": "raw/rimewalker/anims/idle.fbx",
+        "walk": "raw/rimewalker/anims/walk.fbx",
+        "run": "raw/rimewalker/anims/run.fbx",
+        "slash": "raw/rimewalker/anims/slash.fbx",
+        "hit": "raw/rimewalker/anims/hit_to_body_01.fbx",
+        "defeat": "raw/rimewalker/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": null,
+      "output": "assets/models/enemies/rimewalker.glb",
+      "in_place": [
+        "walk",
+        "run"
+      ]
+    },
+    {
+      "name": "netmender",
+      "category": "bosses",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
+        "project_id": "5f4ab571-a3de-427a-9c04-1c43e0acceab",
+        "task_id": "62c27f59-1b63-4442-bfe7-716d180a671a",
+        "remesh_operator": "161a8e5b-c1b4-42ad-9f4a-7c21af3372a8",
+        "model_version": "v3.1-20260211",
+        "rig_operator": "cb8f70f2-520d-4bc5-83bd-e68382036a85",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/netmender/rigged.fbx",
+      "anims": {
+        "idle": "raw/netmender/anims/idle.fbx",
+        "walk": "raw/netmender/anims/walk.fbx",
+        "slash": "raw/netmender/anims/slash.fbx",
+        "hit": "raw/netmender/anims/hit_to_body_01.fbx",
+        "defeat": "raw/netmender/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk"
+      ],
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.2
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": null,
+      "output": "assets/models/bosses/netmender.glb",
+      "in_place": [
+        "walk"
+      ]
+    },
+    {
+      "name": "area_saltfell_yard_remesh",
+      "category": "areas",
+      "kind": "static",
+      "experiment": true,
+      "source": {
+        "tool": "tripo_generate_text",
+        "project_id": "cc0f1689-5d77-4a53-b709-92588b8bfa53",
+        "task_id": "9213a51a-02de-480f-9bfe-1478fcdff796",
+        "model_version": "v3.1-20260211",
+        "note": "area-chunk experiment, see docs/art/design/area_experiment.md",
+        "remesh_operator": "see TRIPO_LEDGER"
+      },
+      "input": "raw/area_saltfell_yard/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "width": 30.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "trimesh",
+      "output": "assets/models/areas/experiment/area_saltfell_yard_remesh.glb"
+    },
+    {
+      "name": "area_saltfell_yard_decim",
+      "category": "areas",
+      "kind": "static",
+      "experiment": true,
+      "source": {
+        "tool": "tripo_generate_text",
+        "project_id": "cc0f1689-5d77-4a53-b709-92588b8bfa53",
+        "task_id": "9213a51a-02de-480f-9bfe-1478fcdff796",
+        "model_version": "v3.1-20260211",
+        "note": "area-chunk experiment, see docs/art/design/area_experiment.md"
+      },
+      "input": "raw/area_saltfell_yard/raw_dec.glb",
+      "decimate_tris": 150000,
+      "yaw_deg": -90,
+      "target": {
+        "width": 30.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "trimesh",
+      "output": "assets/models/areas/experiment/area_saltfell_yard_decim.glb"
+    }
+  ]
+}

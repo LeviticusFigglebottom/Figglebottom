@@ -2,3 +2,5 @@
 build/
 raw/
 *.tmp
+assets/models/**/*.jpg
+assets/models/**/*.jpg.import
