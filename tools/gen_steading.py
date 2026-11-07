@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Authoring script for data/areas/saltfell_steading.json: the Saltfell slice as
-ONE continuous sea-cliff landscape (ADR 0003, 0004).
+ONE continuous sea-cliff landscape (ADR 0003, 0005).
 
     the Strand (shingle cove, boat-shed, sea stack)
       -> the cliff path (three switchback legs cut into the face)

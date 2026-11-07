@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The Saltfell landform: one continuous sea-cliff landscape (ADR 0003, 0004).
+"""The Saltfell landform: one continuous sea-cliff landscape (ADR 0003, 0005).
 
 Pure Python (no numpy). Importable: gen_steading.py places everything on it,
 audit_edges.py / audit_areas.py sample it. Run directly to (re)write the

@@ -90,7 +90,7 @@ This is the state on 2026-11-07. `tools/test/anim_test.gd` prints the derived sp
 
 ### Integration
 
-- **Enemies:** `"model"` in `enemies.json`. The rimewalker uses `rimewalker` and is unarmed (ice-club fist volumes). `holdfast_of_saltfell` (the Netmender in SLICE.md) uses `netmender`. Her hands are bare needles, so the model's `bare_hands` flag skips the data maul, and she strikes with the body hitbox.
+- **Enemies:** `"model"` in `enemies.json`. The rimewalker uses `rimewalker` and is unarmed (ice-club fist volumes). `netmender` (renamed from `holdfast_of_saltfell`) uses `netmender`. Her hands are bare needles, so the model's `bare_hands` flag skips the data maul, and she strikes with the body hitbox.
 - **Player:** `game.json` → `player.model` is read but left unset. The Bearer stays a mannequin until that model exists.
 - **Orientation:** Tripo meshes face +Z after the manifest's -90° yaw. Godot characters face -Z, so each model's `yaw_deg: 180` is applied on a child of the flinch node.
 

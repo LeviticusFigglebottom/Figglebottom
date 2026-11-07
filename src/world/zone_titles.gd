@@ -1,6 +1,6 @@
 class_name ZoneTitles
 extends Node
-## Named places inside one continuous area (ADR 0004): walking from the
+## Named places inside one continuous area (ADR 0005): walking from the
 ## Strand up to the yard shows SALTFELL the first time, as a portal would.
 ## zones: [{"name", "min": [x, z], "max": [x, z]}], innermost listed last.
 

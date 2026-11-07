@@ -1,5 +1,5 @@
 extends TestBase
-## Saltfell as one landscape (ADR 0003/0004): built on terrain, thaw-first
+## Saltfell as one landscape (ADR 0003/0005): built on terrain, thaw-first
 ## arrival on the Strand, the cliff path joins Strand and yard on the navmesh,
 ## the forced first rest at the Boat-Shed (thaw -> rime), the rime populated,
 ## the RIME-only frozen channel to the sea stack, the boat-shed shortcut loop

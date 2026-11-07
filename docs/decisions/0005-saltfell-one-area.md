@@ -1,4 +1,4 @@
-# ADR 0004: Saltfell is one area on one terrain
+# ADR 0005: Saltfell is one area on one terrain
 
 - **Status:** accepted
 - **Date:** 2026-11-07
