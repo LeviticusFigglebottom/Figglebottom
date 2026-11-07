@@ -248,7 +248,8 @@ func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_WITH_CHILDREN
 	mesh.geometry_source_group_name = "nav_src"
 	mesh.geometry_collision_mask = (1 << (RH.L_WORLD_BASE - 1)) \
-		| (1 << ((RH.L_WORLD_RIME if rime_world else RH.L_WORLD_THAW) - 1))
+		| (1 << ((RH.L_WORLD_RIME if rime_world else RH.L_WORLD_THAW) - 1)) \
+		| (1 << ((RH.L_NAV_BLOCK_RIME if rime_world else RH.L_NAV_BLOCK_THAW) - 1))
 	region.navigation_mesh = mesh
 	# make sure every layer's colliders carry their true layer bits for the
 	# mask filter (they may have been zeroed by a previous apply_state)

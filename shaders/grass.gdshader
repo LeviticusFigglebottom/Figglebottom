@@ -41,6 +41,8 @@ void vertex() {
 	// sway in world space, then back into the instance's frame
 	vec3 off_w = vec3(wind_dir.x, -0.15, wind_dir.y) * bend;
 	VERTEX += (inverse(MODEL_MATRIX) * vec4(off_w, 0.0)).xyz;
+	// RIME: the snow has the clumps up to their tips
+	VERTEX.y *= 1.0 - 0.6 * rime;
 	v_wp = wp;
 	v_h = h;
 	// clumps light like a soft dome, not like flat cards
@@ -58,7 +60,7 @@ void fragment() {
 	vec3 c = COLOR.rgb * mix(0.5, 0.9, v_h);
 	vec3 thaw_c = mix(c, c * tip_tint * 1.1, v_h * v_h * 0.35);
 	float luma = dot(c, vec3(0.3, 0.59, 0.11));
-	vec3 rime_c = mix(vec3(luma) * vec3(0.8, 0.86, 0.95), vec3(0.86, 0.9, 0.97), smoothstep(0.35, 0.95, v_h));
+	vec3 rime_c = mix(vec3(0.42, 0.47, 0.55) + vec3(luma) * 0.3, vec3(0.88, 0.92, 0.98), smoothstep(0.2, 0.8, v_h));
 	ALBEDO = mix(thaw_c, rime_c, rime);
 	ROUGHNESS = 0.9;
 	BACKLIGHT = mix(vec3(0.16, 0.14, 0.05), vec3(0.1, 0.12, 0.15), rime) * v_h;

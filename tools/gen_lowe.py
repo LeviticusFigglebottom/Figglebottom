@@ -104,14 +104,17 @@ for i in range(len(L.ROAD) - 1):
 for (x, z, r) in [(-60, -170, 20), (-63, -175, 75), (-22, -176, -30), (-20, -200, 10), (-58, -205, 44)]:
     place.append({"kind": "peat_stack", "at": [x, z], "rot": r})
 # the island of cut peat in the bog
-for k in range(5):
-    th = k * 1.3
+for k in range(4):
+    th = 3.5 + k * 0.62      # stacked on the island's north side
     place.append({"kind": "peat_stack", "at": [r2(L.ISLAND[0] + 2.2 * math.cos(th)), r2(L.ISLAND[1] + 2.2 * math.sin(th))], "rot": k * 50})
 
 # frost veil across the gap in the sod wall
 VEIL = [r2(CX), r2(A), r2(CZ + CR - 0.5)]
 
 # the frozen bog (RIME): an invisible sheet carries you; ice shows where
+# THAW: the AI must not path through the black water (nothing collides)
+BLOCKERS.append({"min": [L.BOG[0] - 24, r2(W - 3), L.BOG[1] - 24], "max": [L.BOG[0] + 24, r2(W + 2.5), L.BOG[1] + 24],
+                 "tag": "thaw", "nav_only": True})
 BLOCKERS.append({"radius": L.BOG_RIM, "at": [L.BOG[0], r2(W - 0.3), L.BOG[1]], "height": 0.6, "tag": "rime"})
 
 

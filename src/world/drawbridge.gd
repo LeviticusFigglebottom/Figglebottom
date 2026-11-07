@@ -53,7 +53,7 @@ func _ready() -> void:
 	_deck.add_child(mi)
 	# the windlass and its posts at the hinge
 	var wl := KitLib.instance("woodpile")
-	wl.position = Vector3(0, 0, 1.6)
+	wl.position = Vector3(width * 0.5 + 1.2, 0, 1.0)
 	wl.rotation.y = PI * 0.5
 	add_child(wl)
 	_body = StaticBody3D.new()

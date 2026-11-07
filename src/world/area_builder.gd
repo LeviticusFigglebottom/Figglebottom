@@ -650,6 +650,8 @@ static func _blocker(area: Area, spec: Dictionary) -> void:
 	var mx := _v3(spec["max"])
 	var body := StaticBody3D.new()
 	body.collision_layer = 1 << (_tag_bit(tag) - 1)
+	if spec.get("nav_only", false):
+		body.collision_layer = 1 << ((RH.L_NAV_BLOCK_RIME if tag == "rime" else RH.L_NAV_BLOCK_THAW) - 1)
 	body.collision_mask = 0
 	var cs := CollisionShape3D.new()
 	var box := BoxShape3D.new()
