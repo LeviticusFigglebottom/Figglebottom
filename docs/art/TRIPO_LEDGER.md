@@ -21,3 +21,26 @@ The account is shared with the owner's other sessions, so check `tripo_status` b
 | 2026-11-07 | text_to_model (v3.1, detailed) | area_saltfell_yard (experiment) | cc0f1689-5d77-4a53-b709-92588b8bfa53 | 55 | 24,225 | task 9213a51a |
 | 2026-11-07 | remesh quad 10k (max) | area_saltfell_yard (experiment) | cc0f1689-… | 40 | 24,185 | op 4500f764 |
 | 2026-11-07 | **pilot total** | | | **515** | **24,185** | 0 re-rolls on 3D; the netmender ref image was re-rolled twice (free) |
+
+## Slice heroes batch (branch art/slice-heroes, 2026-11-07)
+
+Budget for the batch: about 3,500 credits. Balance at start: 24,185 (`tripo_status`). Reference images and concept art via `tripo_image` are free on the plan and are not itemised (prompts are in PROVENANCE and `docs/art/concept/`).
+
+| Date | Action | Asset | Project id | Cost | Balance after | Note |
+|---|---|---|---|---|---|---|
+| 2026-11-07 | image_to_model (v3.1, detailed) | hewing_blade | ad360c56-a6e3-40b2-bb87-1b70fc7fc077 | 55 | — | op 39104176 |
+| 2026-11-07 | remesh quad 10k | hewing_blade | ad360c56-… | 40 | — | op 83f8e4da |
+| 2026-11-07 | image_to_model (v3.1, detailed) | saltfell_shield | 0d927f95-12ce-4578-9e3c-3506ba6efdf9 | 55 | — | op 8f2f2e97 |
+| 2026-11-07 | remesh quad 10k | saltfell_shield | 0d927f95-… | 40 | — | op 43eb4eba |
+| 2026-11-07 | image_to_model (v3.1, detailed) | lm_long_hearth | c86ff154-8751-4a84-9e52-1247a1fb1f77 | 55 | — | op c052d07e |
+| 2026-11-07 | remesh quad 10k | lm_long_hearth | c86ff154-… | 40 | — | op 06d1018d |
+| 2026-11-07 | image_to_model (v3.1, detailed) | lm_frost_veil_net | 67568684-033b-4ef6-a4ee-cd8d37579129 | 55 | — | op cbdacc44 |
+| 2026-11-07 | remesh quad 10k | lm_frost_veil_net | 67568684-… | 40 | — | op 1f5de16f |
+| 2026-11-07 | image_to_model (v3.1, detailed) | bearer_oilskins | 3f903f91-0083-48d5-a609-2dd53323b5f1 | 55 | — | op 7240f0eb |
+| 2026-11-07 | remesh quad 10k | bearer_oilskins | 3f903f91-… | 40 | — | op a76bbe78 |
+| 2026-11-07 | rig check_only + rig biped/mixamo | bearer_oilskins | 3f903f91-… | 20 | — | op f849c878 |
+| 2026-11-07 | animate ×6 (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_oilskins | 3f903f91-… | 0 | — | presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | oarsman | d86bb6f5-8201-47d7-9e61-db6ab6ae157f | 55 | — | op b689826f |
+| 2026-11-07 | remesh quad 10k | oarsman | d86bb6f5-… | 40 | — | op 41ffa4b6 |
+| 2026-11-07 | rig check_only + rig biped/mixamo | oarsman | d86bb6f5-… | 20 | — | op b60de334 |
+| 2026-11-07 | animate ×6 (idle, walk, run, slash, hit_to_body_01, defeat_02) | oarsman | d86bb6f5-… | 0 | — | presets free |

@@ -1,5 +1,5 @@
 {
-  "_doc": "Art pipeline manifest. One entry per asset. tools/art/blender_process.py reads this. Paths are relative to the repo root. Raw inputs live in raw/ (gitignored); rebuild them with tools/art/fetch_tripo.sh. yaw_deg turns the model about up so its front faces glTF +Z (Tripo output faces +X, so -90). target: exactly one of height/width/length in metres. origin: bottom_center | grip. collision: trimesh | convex | null (Godot node-name suffix -col / -convcol).",
+  "_doc": "Art pipeline manifest. One entry per asset. tools/art/blender_process.py reads this. Paths are relative to the repo root. Raw inputs live in raw/ (gitignored); rebuild them with tools/art/fetch_tripo.sh. yaw_deg turns the model about up so its front faces glTF +Z (Tripo output faces +X, so -90). target: exactly one of height/width/length in metres, or fit {x,y,z} for a per-axis fit (Blender axes after yaw, z up). origin: bottom_center | center | grip. collision: trimesh | convex | null (Godot node-name suffix -col / -convcol).",
   "assets": [
     {
       "name": "kit_hearthstone",
@@ -21,26 +21,6 @@
       "texture_max": 1024,
       "collision": "convex",
       "output": "assets/models/kit/kit_hearthstone.glb"
-    },
-    {
-      "name": "hewing_blade",
-      "category": "weapons",
-      "kind": "weapon",
-      "source": {
-        "tool": "tripo_generate_text",
-        "project_id": "25bd6877-fc0f-4a71-8bd1-fc4dc371758b",
-        "task_id": "6ae54faf-f82a-44b0-be1e-3483fded0494",
-        "remesh_operator": "e78b673e-fecb-4460-be25-15269e7a1d6a",
-        "model_version": "v3.1-20260211"
-      },
-      "input": "raw/hewing_blade/remesh.fbx",
-      "target": {
-        "length": 0.95
-      },
-      "origin": "grip",
-      "texture_max": 1024,
-      "collision": null,
-      "output": "assets/models/weapons/hewing_blade.glb"
     },
     {
       "name": "rimewalker",
@@ -164,6 +144,180 @@
       "texture_max": 2048,
       "collision": "trimesh",
       "output": "assets/models/areas/experiment/area_saltfell_yard_decim.glb"
+    },
+    {
+      "name": "hewing_blade",
+      "category": "weapons",
+      "kind": "weapon",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "ad360c56-a6e3-40b2-bb87-1b70fc7fc077",
+        "task_id": "39104176-488c-4df4-a998-0038f34f1e3e",
+        "remesh_operator": "83f8e4da-d1d7-40df-b26f-cb3157b33ad0",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/hewing_blade/remesh.fbx",
+      "target": {
+        "length": 1.0
+      },
+      "origin": "grip",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/weapons/hewing_blade.glb",
+      "grip_from_pommel": 0.13
+    },
+    {
+      "name": "saltfell_shield",
+      "category": "weapons",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "0d927f95-12ce-4578-9e3c-3506ba6efdf9",
+        "task_id": "8f2f2e97-e91e-4da6-a9fb-f0440f1b5606",
+        "remesh_operator": "43eb4eba-d3f3-4715-8426-c7f9ec7bf2ef",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/saltfell_shield/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 0.8
+      },
+      "origin": "center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/weapons/saltfell_shield.glb"
+    },
+    {
+      "name": "lm_frost_veil_net",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "67568684-033b-4ef6-a4ee-cd8d37579129",
+        "task_id": "cbdacc44-1eb6-4ebd-8bae-67ff08b050a8",
+        "remesh_operator": "1f5de16f-364d-4586-83cf-3d80a55d14e2",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_frost_veil_net/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 4.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_frost_veil_net.glb"
+    },
+    {
+      "name": "lm_long_hearth",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "c86ff154-8751-4a84-9e52-1247a1fb1f77",
+        "task_id": "c052d07e-cbfc-413c-b62c-36f612d154f0",
+        "remesh_operator": "06d1018d-a3a2-4a4f-b102-ec8b47d038a4",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_long_hearth/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "fit": {
+          "x": 1.6,
+          "y": 12.0,
+          "z": 1.8
+        }
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "trimesh",
+      "output": "assets/models/landmarks/lm_long_hearth.glb"
+    },
+    {
+      "name": "bearer_oilskins",
+      "category": "characters",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "3f903f91-0083-48d5-a609-2dd53323b5f1",
+        "task_id": "7240f0eb-b56a-418c-8f6f-12b3d16b7770",
+        "remesh_operator": "a76bbe78-b13a-41da-a5d9-b0cfb85524a3",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "f849c878-56a9-473a-97df-3220cfd832ac",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/bearer_oilskins/rigged.fbx",
+      "anims": {
+        "idle": "raw/bearer_oilskins/anims/idle.fbx",
+        "walk": "raw/bearer_oilskins/anims/walk.fbx",
+        "run": "raw/bearer_oilskins/anims/run.fbx",
+        "slash": "raw/bearer_oilskins/anims/slash.fbx",
+        "hit": "raw/bearer_oilskins/anims/hit_to_body_01.fbx",
+        "defeat": "raw/bearer_oilskins/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/characters/bearer_oilskins.glb"
+    },
+    {
+      "name": "oarsman",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "d86bb6f5-8201-47d7-9e61-db6ab6ae157f",
+        "task_id": "b689826f-40e3-41d0-878f-4ba7c8a4a6ee",
+        "remesh_operator": "41ffa4b6-8530-4a13-8c71-bd32bb5052e6",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "b60de334-70a4-4d10-8266-b80a1c5bc7f6",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/oarsman/rigged.fbx",
+      "anims": {
+        "idle": "raw/oarsman/anims/idle.fbx",
+        "walk": "raw/oarsman/anims/walk.fbx",
+        "run": "raw/oarsman/anims/run.fbx",
+        "slash": "raw/oarsman/anims/slash.fbx",
+        "hit": "raw/oarsman/anims/hit_to_body_01.fbx",
+        "defeat": "raw/oarsman/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.9
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/oarsman.glb"
     }
   ]
 }
