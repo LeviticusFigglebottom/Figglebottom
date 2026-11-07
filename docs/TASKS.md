@@ -5,7 +5,7 @@
 - Pilot the Tripo art pipeline: a modular kit, the Rimewalker (rigged and animated), the hewing blade and the Netmender (lead, via subagent).
 
 ## todo
-1. ADR 0002: humanoid animation layer. Mixamo 52-bone rig, AnimationTree, playback rate-scaled to data windups.
+1. ADR 0003: humanoid animation layer. Mixamo 52-bone rig, AnimationTree, playback rate-scaled to data windups.
 2. Lock-on target switching (SURVEY §3 Δ).
 3. Weapon upgrade reads `upgrade.per_level`. Stat scaling uses (stat−8).
 4. Sprint attack data entry plus a state.
