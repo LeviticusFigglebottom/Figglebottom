@@ -92,8 +92,8 @@ func _wake() -> void:
 	_begin_transition("wake")
 
 func take_hit(packet: DamagePacket) -> void:
-	if dead or released:
-		return
+	if is_invulnerable():
+		return   # (scripted damage too, not only the hurtbox path)
 	if state == ES.HOLD:
 		_hold_quiet = 0.0   # she stays curled while the Bearer keeps at it
 	var was_up := stood
