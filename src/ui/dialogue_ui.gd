@@ -27,60 +27,81 @@ func _ready() -> void:
 	layer = 20
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	var root := Control.new()
+	root.theme = UITheme.theme()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
+	# a low shade so the words sit on the scene, not on a box floating in it
+	var shade := TextureRect.new()
+	var sg := Gradient.new()
+	sg.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
+	sg.colors = PackedColorArray([Color(UITheme.COAL, 0.0), Color(UITheme.COAL, 0.55), Color(UITheme.COAL, 0.82)])
+	var sgt := GradientTexture2D.new()
+	sgt.gradient = sg
+	sgt.fill_from = Vector2(0.5, 0.0)
+	sgt.fill_to = Vector2(0.5, 1.0)
+	sgt.width = 4
+	sgt.height = 64
+	shade.texture = sgt
+	shade.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	shade.stretch_mode = TextureRect.STRETCH_SCALE
+	shade.anchor_left = 0.0
+	shade.anchor_right = 1.0
+	shade.anchor_top = 0.58
+	shade.anchor_bottom = 1.0
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(shade)
 	panel = Panel.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.038, 0.033, 0.028, 0.94)
-	sb.border_color = Color(0.76, 0.64, 0.40)
-	sb.set_border_width_all(2)
-	sb.set_corner_radius_all(3)
-	sb.shadow_color = Color(0, 0, 0, 0.75)
-	sb.shadow_size = 14
+	var sb := UITheme.box("panel")
+	sb.border_color = Color(0, 0, 0, 0)
 	panel.add_theme_stylebox_override("panel", sb)
 	panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	panel.offset_left = -600
-	panel.offset_right = 600
-	panel.offset_top = -310
-	panel.offset_bottom = -70
+	panel.offset_left = -620
+	panel.offset_right = 620
+	panel.offset_top = -360
+	panel.offset_bottom = -106
 	root.add_child(panel)
 	name_label = Label.new()
-	name_label.label_settings = _ls(26, Color(0.95, 0.82, 0.52), true)
-	name_label.position = Vector2(28, 12)
+	name_label.label_settings = UITheme.ls(30, UITheme.EMBER_HOT, "caps")
+	name_label.position = Vector2(48, 22)
 	panel.add_child(name_label)
-	var nrule := ColorRect.new()
-	nrule.color = Color(0.72, 0.60, 0.36, 0.65)
-	nrule.position = Vector2(28, 48)
-	nrule.size = Vector2(1144, 1)
+	var nrule := UITheme.rule(1144, 0.55)
+	nrule.position = Vector2(48, 66)
 	panel.add_child(nrule)
 	text_label = Label.new()
-	text_label.label_settings = _ls(24, Color(0.94, 0.90, 0.82))
-	text_label.position = Vector2(28, 60)
+	text_label.label_settings = UITheme.ls(28, UITheme.BONE)
+	text_label.label_settings.line_spacing = 4
+	text_label.position = Vector2(48, 82)
 	text_label.size = Vector2(1144, 120)
 	text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	panel.add_child(text_label)
 	_next_glyph = Label.new()
-	_next_glyph.label_settings = _ls(18, Color(0.86, 0.74, 0.46))
+	_next_glyph.label_settings = UITheme.ls(19, UITheme.ASH, "italic")
 	_next_glyph.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	_next_glyph.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	_next_glyph.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_next_glyph.offset_left = -180
-	_next_glyph.offset_right = -24
-	_next_glyph.offset_top = -36
-	_next_glyph.offset_bottom = -12
+	_next_glyph.offset_left = -260
+	_next_glyph.offset_right = -48
+	_next_glyph.offset_top = -50
+	_next_glyph.offset_bottom = -22
 	_next_glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_next_glyph.text = "[E]  Continue ▾"
+	_next_glyph.text = "E   continue"
 	panel.add_child(_next_glyph)
 	options_box = VBoxContainer.new()
-	options_box.position = Vector2(28, 60)
+	options_box.position = Vector2(48, 80)
 	options_box.size = Vector2(1144, 160)
-	options_box.add_theme_constant_override("separation", 4)
+	options_box.add_theme_constant_override("separation", 2)
 	panel.add_child(options_box)
+	panel.add_child(KnotFrame.new())
 
 	name_label.text = npc_cfg.get("name", "???")
 	var nid: String = npc_cfg.get("id", "npc")
 	var first := not World.flag("met_" + nid)
 	World.set_flag("met_" + nid)
+	if first:
+		for f in npc_cfg.get("first_flags", []):
+			World.set_flag(String(f))
+	_run_exchanges()
 	# chaptered speakers tell their tale one audience at a time; when the last
 	# chapter has been told they may leave a parting gift, then fall to repeats
 	var chapters: Array = npc_cfg.get("chapters", [])
@@ -92,10 +113,49 @@ func _ready() -> void:
 			if ci == chapters.size() - 1:
 				_grant_gift(npc_cfg.get("gift", {}))
 		else:
-			_lines = npc_cfg.get("lines_repeat", [])
+			_lines = _repeat_lines()
 	else:
-		_lines = npc_cfg.get("lines_first" if first else "lines_repeat", [])
+		_lines = npc_cfg.get("lines_first", []) if first else _repeat_lines()
 	_show_line()
+
+## Repeat lines follow the story: the first "lines_when" entry whose flag is
+## set wins (it may raise a flag of its own, a Keepsakes step), else the
+## plain repeats.
+func _repeat_lines() -> Array:
+	for w in npc_cfg.get("lines_when", []):
+		if World.flag(String(w.get("flag", ""))):
+			if String(w.get("set_flag", "")) != "":
+				World.set_flag(String(w["set_flag"]))
+			return w.get("lines", [])
+	return npc_cfg.get("lines_repeat", [])
+
+## Things handed over just by talking (SLICE.md: "talk to Ingra carrying the
+## sack"): no menu entry, the errand closes when you arrive with it.
+func _run_exchanges() -> void:
+	var p = Game.player
+	for ex in npc_cfg.get("on_talk", []):
+		if ex.has("require_flag") and not World.flag(String(ex["require_flag"])):
+			continue
+		if ex.has("absent_flag") and World.flag(String(ex["absent_flag"])):
+			continue
+		var need := String(ex.get("needs_item", ""))
+		if need != "" and (p == null or int(p.inventory.get(need, 0)) < 1):
+			continue
+		if need != "" and bool(ex.get("take_item", false)):
+			p.inventory[need] = int(p.inventory[need]) - 1
+			if int(p.inventory[need]) <= 0:
+				p.inventory.erase(need)
+		if ex.has("reward_item") and p != null:
+			p.give_item(String(ex["reward_item"]), int(ex.get("reward_count", 1)))
+		if ex.has("reward_warmth"):
+			Game.add_warmth(int(ex["reward_warmth"]))
+		if p != null:
+			p.inventory_changed.emit()
+		if String(ex.get("set_flag", "")) != "":
+			World.set_flag(String(ex["set_flag"]))
+		if String(ex.get("toast", "")) != "":
+			Game.toast.emit(String(ex["toast"]))
+		World.save_game()
 
 ## One-time parting gift once a chaptered tale is exhausted.
 func _grant_gift(g: Dictionary) -> void:
@@ -112,16 +172,6 @@ func _grant_gift(g: Dictionary) -> void:
 		DB.song(item).get("name", DB.item(item).get("name", item)))
 	Game.toast.emit(g.get("toast", "Received %s x%d" % [iname, count]))
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -6.0)
-
-func _ls(size: int, color: Color, bold := false) -> LabelSettings:
-	var ls := LabelSettings.new()
-	ls.font = load("res://assets/fonts/DejaVuSerif-Bold.ttf" if bold else "res://assets/fonts/DejaVuSerif.ttf")
-	ls.font_size = size
-	ls.font_color = color
-	ls.shadow_color = Color(0, 0, 0, 0.85)
-	ls.shadow_size = 3
-	ls.shadow_offset = Vector2(1, 2)
-	return ls
 
 func _show_line() -> void:
 	options_box.visible = false
@@ -175,6 +225,9 @@ func _enter_options() -> void:
 		if o.has("needs_item") and Game.player != null \
 				and int(Game.player.inventory.get(String(o["needs_item"]), 0)) < 1:
 			continue
+		# a stock that runs out (three lumps of bog-iron, and no more)
+		if o.has("limit") and int(World.flag_val("bought_" + String(o.get("id", "")), 0)) >= int(o["limit"]):
+			continue
 		_options.append(o)
 	_options.append({"id": "leave", "label": "Leave"})
 	text_label.visible = false
@@ -185,7 +238,7 @@ func _enter_options() -> void:
 	# a long stock list must not spill past the panel: grow the panel upward
 	# so every option (and Leave) stays inside the frame
 	var over := maxi(0, _options.size() - 5)
-	panel.offset_top = -310 - over * 34
+	panel.offset_top = -360 - over * 40
 	_render_options()
 
 func _render_options() -> void:
@@ -195,8 +248,9 @@ func _render_options() -> void:
 		var o: Dictionary = _options[i]
 		var l := Label.new()
 		var selected := i == _opt_i
-		l.label_settings = _ls(24, Color(0.98, 0.88, 0.58) if selected else Color(0.74, 0.69, 0.60), selected)
-		l.text = ("◆  " if selected else "    ") + _option_label(o)
+		l.label_settings = UITheme.ls(26, UITheme.EMBER_HOT if selected else UITheme.BONE_DIM)
+		l.text = ("◆   " if selected else "     ") + _option_label(o)
+		l.custom_minimum_size = Vector2(0, 38)
 		l.mouse_filter = Control.MOUSE_FILTER_STOP
 		var idx := i
 		l.mouse_entered.connect(func():
@@ -209,8 +263,12 @@ func _render_options() -> void:
 				get_viewport().set_input_as_handled())
 		options_box.add_child(l)
 
+## The label is the data's, word for word; a price is set beside it.
 func _option_label(o: Dictionary) -> String:
-	return o.get("label", o.get("id", "?"))
+	var t: String = o.get("label", o.get("id", "?"))
+	if o.has("warmth") and int(o["warmth"]) > 0:
+		t += "   ·   %d warmth" % int(o["warmth"])
+	return t
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _closing:
@@ -287,7 +345,7 @@ func _activate(o: Dictionary) -> void:
 				p.gourds_changed.emit(p.gourds, p.gourd_max)
 				Game.toast.emit("Gourd deepened (+1 draught).")
 				AudioDirector.sfx("res://assets/audio/levelup.wav", -4.0)
-				text_label.text = "Drink it slow. It was brewed for a longer winter than this."
+				text_label.text = o.get("line_done", "Drink it slow. It was brewed for a longer winter than this.")
 				_flash_line()
 		"buy":
 			var item: String = o.get("item", "")
@@ -309,12 +367,36 @@ func _activate(o: Dictionary) -> void:
 				p.give_item(item, qty)
 				if o.has("once_flag"):
 					World.set_flag(String(o["once_flag"]))
+				if o.has("limit"):
+					var bk := "bought_" + String(o.get("id", ""))
+					World.set_flag(bk, int(World.flag_val(bk, 0)) + 1)
 				var iname: String = DB.weapon(item).get("name",
 					DB.song(item).get("name", DB.item(item).get("name", item)))
 				Game.toast.emit("Received %s%s." % [iname, (" x%d" % qty) if qty > 1 else ""])
 				AudioDirector.sfx("res://assets/audio/levelup.wav", -6.0)
 				text_label.text = o.get("line_done", "Sold. Spend it on staying alive.")
 				_flash_line()
+		"gift":
+			# freely given, once: Brede's spare oilskins
+			var gitem: String = o.get("item", "")
+			var gflag: String = o.get("once_flag", "gift_" + String(o.get("id", "")))
+			if World.flag(gflag):
+				text_label.text = o.get("line_have", "That's yours already.")
+			else:
+				World.set_flag(gflag)
+				p.give_item(gitem, int(o.get("count", 1)))
+				Game.toast.emit("Received: %s" % DB.item(gitem).get("name", gitem))
+				AudioDirector.sfx("res://assets/audio/ui_tick.wav", -6.0)
+				World.save_game()
+				text_label.text = o.get("line_done", "")
+			_flash_line()
+		"level_up":
+			# "Sit by the fire": the levelling sheet, and the speaker says nothing
+			close()
+			if p != null:
+				p.lock_control(true)
+				get_tree().root.add_child(RestUI.new(null, p, "level", String(o.get("label", ""))))
+			return
 		"song":
 			# holdfast songs carry their own law — the node that opened this
 			# dialogue judges the attempt and hands back the line to speak.

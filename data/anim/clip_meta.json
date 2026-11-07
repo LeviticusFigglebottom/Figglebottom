@@ -888,6 +888,10 @@
   "bow_hold": [
    "block"
   ],
+  "attack_sprint": [
+   "heavy",
+   "slash"
+  ],
   "roll": [
    "dodge_roll"
   ]
@@ -906,7 +910,8 @@
   "atk_2h_thrust": 0.5,
   "attack_l1": 0.44,
   "attack_l2": 0.42,
-  "attack_h": 0.48
+  "attack_h": 0.48,
+  "attack_sprint": 0.48
  },
  "props": {
   "_doc": "held items with a Tripo mesh, shown only while used (the gourd while drinking). slot names a mounts row.",

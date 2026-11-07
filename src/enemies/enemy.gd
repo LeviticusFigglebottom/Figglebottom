@@ -624,6 +624,7 @@ func _line_strike() -> void:
 	if p != null and not p.get("dead") and in_strip(p.global_position, length, width, offset):
 		var hb: Hurtbox = p.get("hurtbox")
 		var pk := DamagePacket.new(float(_atk.get("dmg", 20)), float(_atk.get("poise_dmg", 20)), self)
+		pk.kind = String(_atk.get("kind", "frost"))   # an ice line is frost unless data says not
 		pk.can_be_parried = false
 		pk.can_be_blocked = bool(_atk.get("blockable", true))
 		if hb != null:
@@ -793,6 +794,7 @@ func _end_all_swings() -> void:
 
 func _open_hitbox() -> void:
 	var pk := DamagePacket.new(float(_atk.get("dmg", 10)), float(_atk.get("poise_dmg", 10)), self)
+	pk.kind = String(_atk.get("kind", "physical"))   # armour absorbs per kind
 	# an armed foe hits with the steel itself: the box riding the weapon
 	# through the swing IS the attack — no arc gate, no chest projection.
 	# "The sword never touched me" is now literally never a hit.
@@ -842,6 +844,7 @@ func _fire_projectiles() -> void:
 		var off := 0.0 if count == 1 else lerpf(-spread, spread, float(i) / float(count - 1))
 		var d := dir.rotated(Vector3.UP, off)
 		var pk := DamagePacket.new(float(_atk.get("dmg", 12)), float(_atk.get("poise_dmg", 8)), self)
+		pk.kind = String(_atk.get("kind", "physical"))
 		pk.can_be_parried = false
 		# per-attack tint (ember rings burn gold; default frost-blue)
 		var pc = _atk.get("proj_color", null)
@@ -897,6 +900,7 @@ func _shockwave(radius: float) -> void:
 		if d < radius and seen and p.has_method("take_hit"):
 			var hb: Hurtbox = p.get("hurtbox")
 			var pk := DamagePacket.new(float(_atk.get("dmg", 20)) * 0.7, 20.0, self)
+			pk.kind = String(_atk.get("kind", "physical"))
 			pk.can_be_parried = false
 			if hb != null:
 				hb.receive(pk)
@@ -920,7 +924,7 @@ func _ember_nova(radius: float) -> void:
 		if d < radius and seen and p.has_method("take_hit"):
 			var hb: Hurtbox = p.get("hurtbox")
 			var pk := DamagePacket.new(float(_atk.get("dmg", 30)), float(_atk.get("poise_dmg", 35)), self)
-			pk.kind = String(_atk.get("nova_kind", "ember"))
+			pk.kind = String(_atk.get("kind", _atk.get("nova_kind", "ember")))
 			pk.can_be_parried = false
 			if hb != null:
 				hb.receive(pk)

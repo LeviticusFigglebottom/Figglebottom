@@ -17,6 +17,8 @@ var appear_flag := ""
 var display_kit := ""
 ## or a Tripo mesh (the Mending Needle where the Netmender sat)
 var display_scene := ""
+## a story flag raised on taking it (a Keepsakes step, say)
+var set_flag := ""
 
 var _zone: Interactable
 var _shown := true
@@ -80,6 +82,8 @@ func _ready() -> void:
 
 func _on_take(player) -> void:
 	World.set_area_flag(area_id, "took_" + pickup_id)
+	if set_flag != "":
+		World.set_flag(set_flag)
 	if warmth > 0:
 		Game.add_warmth(warmth)
 	if item_id != "" and player != null:

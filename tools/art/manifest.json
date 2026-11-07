@@ -680,6 +680,360 @@
       },
       "origin": "bottom_center",
       "output": "assets/models/bosses/netmender.glb"
+    },
+    {
+      "name": "turfwright",
+      "category": "bosses",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
+        "project_id": "954b9c38-2c30-44cf-adfc-992ab0f67f62",
+        "task_id": "d3888fc2-9bef-4013-858a-53e019fa4f24",
+        "remesh_operator": "3d9bf5c9-99b9-4468-ab41-f4d3fd933097",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "extreme",
+        "rig_operator": "a1b8ba80-e36e-4a6b-8e89-de90e80cc7d1",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/turfwright/rigged.fbx",
+      "anims": {
+        "idle": "raw/turfwright/anims/idle.fbx",
+        "walk": "raw/turfwright/anims/walk.fbx",
+        "slash": "raw/turfwright/anims/slash.fbx",
+        "hit": "raw/turfwright/anims/hit_to_body_01.fbx",
+        "defeat": "raw/turfwright/anims/defeat_02.fbx",
+        "ground_cut": "raw/turfwright/anims/ground_cut.fbx",
+        "stack_sod": "raw/turfwright/anims/stack_sod.fbx",
+        "back_drop": "raw/turfwright/anims/back_drop.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "motion_titles": {
+        "ground_cut": "Arm Chop Motion",
+        "stack_sod": "Lifting and Placing Block",
+        "back_drop": "Backward Fall and Sit Up"
+      },
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.4
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/bosses/turfwright.glb"
+    },
+    {
+      "name": "barrow_sleeper",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "4e4bace2-ed2d-4412-89fc-416c99aabf51",
+        "task_id": "d9c98c3f-39b1-496a-9af8-7252c6fd730a",
+        "remesh_operator": "14b83ba4-eb36-4fb6-a011-6d7387b398e2",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "7f897039-1a21-4d83-a978-941991298a7d",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/barrow_sleeper/rigged.fbx",
+      "anims": {
+        "idle": "raw/barrow_sleeper/anims/idle.fbx",
+        "walk": "raw/barrow_sleeper/anims/walk.fbx",
+        "run": "raw/barrow_sleeper/anims/run.fbx",
+        "slash": "raw/barrow_sleeper/anims/slash.fbx",
+        "hit": "raw/barrow_sleeper/anims/hit_to_body_01.fbx",
+        "defeat": "raw/barrow_sleeper/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.9
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/barrow_sleeper.glb"
+    },
+    {
+      "name": "keener",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "afa77fb4-d6d4-4a70-bc37-2721a201c8a4",
+        "task_id": "7660bd04-e56c-4be8-b5f9-33ddc65e0943",
+        "remesh_operator": "6cdafff1-366e-42b5-9b1e-25f859943175",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "928a41ea-3280-4e80-b38a-22303e285d67",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/keener/rigged.fbx",
+      "anims": {
+        "idle": "raw/keener/anims/idle.fbx",
+        "walk": "raw/keener/anims/walk.fbx",
+        "run": "raw/keener/anims/run.fbx",
+        "slash": "raw/keener/anims/slash.fbx",
+        "hit": "raw/keener/anims/hit_to_body_01.fbx",
+        "defeat": "raw/keener/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.75
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/keener.glb"
+    },
+    {
+      "name": "cairn_carrier",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
+        "project_id": "3cc04710-ae7f-4ec0-81b3-070dd4b09665",
+        "task_id": "428adddc-9eb2-449d-9ca7-1c48a1ce95ac",
+        "remesh_operator": "6b2290a0-e8c8-4cdc-b50b-59e8d6b9293a",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "2edfedf8-5f10-4192-b367-356c6b9fec55",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/cairn_carrier/rigged.fbx",
+      "anims": {
+        "idle": "raw/cairn_carrier/anims/idle.fbx",
+        "walk": "raw/cairn_carrier/anims/walk.fbx",
+        "run": "raw/cairn_carrier/anims/run.fbx",
+        "slash": "raw/cairn_carrier/anims/slash.fbx",
+        "hit": "raw/cairn_carrier/anims/hit_to_body_01.fbx",
+        "defeat": "raw/cairn_carrier/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 2.2
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/cairn_carrier.glb"
+    },
+    {
+      "name": "hesk",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
+        "project_id": "aeb6f052-0e99-4272-8c71-095c4957aed7",
+        "task_id": "61d9e271-180c-4b29-9762-0832221a4693",
+        "remesh_operator": "6d8f8af6-9b8a-4e6b-974d-d8a1df0964ee",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "ee469194-1bbe-404f-ada4-04fc885592c2",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/hesk/rigged.fbx",
+      "anims": {
+        "idle": "raw/hesk/anims/idle.fbx",
+        "walk": "raw/hesk/anims/walk.fbx",
+        "greet": "raw/hesk/anims/greet_01.fbx",
+        "look": "raw/hesk/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/hesk.glb"
+    },
+    {
+      "name": "aud",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "20728a74-560d-4d77-908e-f8da9ef190a2",
+        "task_id": "5ec9e994-743a-409f-a328-6edd0ecbf566",
+        "remesh_operator": "1d764172-4678-4c3b-96fa-0b3545afbc43",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "c2e6bdbf-7992-4cad-a92f-a965ff2760c4",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/aud/rigged.fbx",
+      "anims": {
+        "idle": "raw/aud/anims/idle.fbx",
+        "walk": "raw/aud/anims/walk.fbx",
+        "greet": "raw/aud/anims/greet_01.fbx",
+        "look": "raw/aud/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.6
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/aud.glb"
+    },
+    {
+      "name": "bearer_barrow",
+      "category": "characters",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "f77963e6-33a9-43e7-a7ab-878967cb39b6",
+        "task_id": "765269a6-80f0-440c-aa86-5acd74ea8f29",
+        "remesh_operator": "abce2dc1-cd7e-46aa-992b-ab13a008da9a",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "41f4a3b6-c3e6-4e18-b4a1-542b1ed3d65e",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/bearer_barrow/rigged.fbx",
+      "anims": {
+        "idle": "raw/bearer_barrow/anims/idle.fbx",
+        "walk": "raw/bearer_barrow/anims/walk.fbx",
+        "run": "raw/bearer_barrow/anims/run.fbx",
+        "slash": "raw/bearer_barrow/anims/slash.fbx",
+        "hit": "raw/bearer_barrow/anims/hit_to_body_01.fbx",
+        "defeat": "raw/bearer_barrow/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/characters/bearer_barrow.glb"
+    },
+    {
+      "name": "turf_spade",
+      "category": "weapons",
+      "kind": "weapon",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "e2165091-2ddb-4d06-bac9-a6bc0ac455af",
+        "task_id": "2be68347-c8d7-4b4f-ab4b-f635969264ba",
+        "remesh_operator": "aee2853b-b59e-4b68-8eac-87cc66319209",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/turf_spade/remesh.fbx",
+      "target": {
+        "length": 1.6
+      },
+      "origin": "grip",
+      "texture_max": 1024,
+      "collision": null,
+      "grip_from_pommel": 0.12,
+      "grip_end": "thin",
+      "output": "assets/models/weapons/turf_spade.glb"
+    },
+    {
+      "name": "post_maul",
+      "category": "weapons",
+      "kind": "weapon",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "b5b4b088-ef56-4f89-b16a-54d7529865ca",
+        "task_id": "c4b2c09f-ecf8-4814-98ac-a112b61724e6",
+        "remesh_operator": "eef688ec-846f-4b60-be21-ef86cea72d04",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/post_maul/remesh.fbx",
+      "target": {
+        "length": 1.3
+      },
+      "origin": "grip",
+      "texture_max": 1024,
+      "collision": null,
+      "grip_from_pommel": 0.15,
+      "grip_end": "thin",
+      "output": "assets/models/weapons/post_maul.glb"
+    },
+    {
+      "name": "lm_barrow_door",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "b6418cb6-25b3-4519-bfaa-d1674d9d49b5",
+        "task_id": "c6d2e55b-b2f8-42ee-a377-55b74aab7347",
+        "remesh_operator": "38b11741-2385-42c8-ad38-693e88850d30",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_barrow_door/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 2.2
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_barrow_door.glb"
     }
   ]
 }

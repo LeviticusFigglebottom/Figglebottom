@@ -4,8 +4,9 @@ extends CanvasLayer
 ## warmth plaque bottom-right, interact prompt center, boss bar with trailing
 ## damage ghost bottom-center, death splash, diegetic toasts.
 
-const SERIF := "res://assets/fonts/DejaVuSerif.ttf"
-const SERIF_B := "res://assets/fonts/DejaVuSerif-Bold.ttf"
+# font weights (UITheme.font): every label is set in the house serif
+const SERIF := "regular"
+const SERIF_B := "medium"
 
 var hp_fill: ColorRect
 var breath_panel: Control
@@ -76,14 +77,14 @@ func set_crosshair(on: bool) -> void:
 		_xhair.set_anchors_preset(Control.PRESET_CENTER)
 		_xhair.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var dot := ColorRect.new()
-		dot.color = Color(1.0, 0.88, 0.55, 0.9)
+		dot.color = Color(UITheme.EMBER_HOT, 0.9)
 		dot.size = Vector2(5, 5)
 		dot.position = Vector2(-2.5, -2.5)
 		dot.rotation = PI / 4
 		_xhair.add_child(dot)
 		for off in [Vector2(-11, -1), Vector2(7, -1), Vector2(-1, -11), Vector2(-1, 7)]:
 			var tick := ColorRect.new()
-			tick.color = Color(1.0, 0.88, 0.55, 0.55)
+			tick.color = Color(UITheme.EMBER_HOT, 0.55)
 			tick.size = Vector2(4, 2) if abs(off.x) > abs(off.y) else Vector2(2, 4)
 			tick.position = off
 			_xhair.add_child(tick)
@@ -101,6 +102,8 @@ func _ready() -> void:
 	Game.breathmark_reclaimed.connect(func(n): show_toast("Breathmark reclaimed — %d warmth." % n))
 	Game.toast.connect(show_toast)
 	Game.area_title.connect(show_area_title)
+	Game.title_card.connect(show_area_title)
+	World.flag_raised.connect(_on_flag_raised)
 	Juice.post_flash_requested.connect(_on_post_flash)
 	StateDirector.transition_started.connect(_on_transition)
 	if Game.player != null:
@@ -125,32 +128,23 @@ func _bind_player(p) -> void:
 	_on_warmth(Game.warmth)
 	_refresh_hotbar()
 
-func _font(path: String, size: int, color: Color, shadow := true) -> LabelSettings:
-	var ls := LabelSettings.new()
-	ls.font = load(path)
-	ls.font_size = size
-	ls.font_color = color
-	if shadow:
-		ls.shadow_color = Color(0, 0, 0, 0.85)
-		ls.shadow_size = 3
-		ls.shadow_offset = Vector2(1, 2)
-	return ls
+func _font(weight: String, size: int, color: Color, shadow := true) -> LabelSettings:
+	return UITheme.ls(size, color, weight, shadow)
 
 func _bar(parent: Control, y: float, w: float, h: float, back: Color) -> Array:
 	var panel := Panel.new()
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = back
-	sb.border_color = Color(0.76, 0.64, 0.40, 0.94)
-	sb.set_border_width_all(2)
-	sb.set_corner_radius_all(1)
-	sb.shadow_color = Color(0, 0, 0, 0.55)
-	sb.shadow_size = 4
+	sb.border_color = Color(UITheme.BONE, 0.30)
+	sb.set_border_width_all(1)
+	sb.shadow_color = Color(0, 0, 0, 0.6)
+	sb.shadow_size = 5
 	panel.add_theme_stylebox_override("panel", sb)
 	panel.position = Vector2(BAR_X, y)
 	panel.size = Vector2(w, h)
 	parent.add_child(panel)
 	var ghost := ColorRect.new()
-	ghost.color = Color(0.92, 0.76, 0.44, 0.72)
+	ghost.color = Color(UITheme.EMBER_HOT, 0.62)
 	ghost.position = Vector2(2, 2)
 	ghost.size = Vector2(w - 4, h - 4)
 	panel.add_child(ghost)
@@ -159,13 +153,13 @@ func _bar(parent: Control, y: float, w: float, h: float, back: Color) -> Array:
 	fill.size = Vector2(w - 4, h - 4)
 	panel.add_child(fill)
 	var sheen := ColorRect.new()
-	sheen.color = Color(1.0, 0.96, 0.86, 0.20)
+	sheen.color = Color(UITheme.BONE, 0.14)
 	sheen.position = Vector2(2, 2)
 	sheen.size = Vector2(w - 4, maxf(2.0, (h - 4) * 0.35))
 	sheen.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(sheen)
 	var edge := ColorRect.new()
-	edge.color = Color(1.0, 0.95, 0.78, 0.88)
+	edge.color = Color(UITheme.BONE, 0.85)
 	edge.position = Vector2(w - 4, 2)
 	edge.size = Vector2(2, h - 4)
 	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -174,13 +168,14 @@ func _bar(parent: Control, y: float, w: float, h: float, back: Color) -> Array:
 
 func _build() -> void:
 	var root := Control.new()
+	root.theme = UITheme.theme()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
 
 	vignette = ColorRect.new()
 	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
-	vignette.color = Color(0.5, 0.05, 0.05, 0.0)
+	vignette.color = Color(0.5, 0.05, 0.05, 0.0)   # the post shader's hurt pulse
 	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var psh := load("res://shaders/post_grade.gdshader") as Shader
 	if psh != null:
@@ -201,27 +196,24 @@ func _build() -> void:
 		_crest_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		root.add_child(_crest_icon)
 
-	var r1 := _bar(root, 26, HP_W, 16, Color(0.07, 0.045, 0.045, 0.90))
+	var back := Color(UITheme.COAL, 0.86)
+	var r1 := _bar(root, 30, HP_W, 14, back)
 	hp_panel = r1[0]; hp_fill = r1[1]; hp_ghost = r1[2]; _hp_edge = r1[3]
-	hp_fill.color = Color(0.62, 0.13, 0.11)
-	var r2 := _bar(root, 48, ST_W, 12, Color(0.045, 0.07, 0.045, 0.90))
+	hp_fill.color = UITheme.BLOOD
+	var r2 := _bar(root, 50, ST_W, 10, back)
 	st_panel = r2[0]; st_fill = r2[1]; _st_edge = r2[3]
-	st_fill.color = Color(0.32, 0.54, 0.26)
+	st_fill.color = UITheme.WIND
 	(r2[2] as ColorRect).color = Color(0, 0, 0, 0)
 	# the breath-bar: breath, warmed only once a song is learned
-	var r3 := _bar(root, 66, ST_W * 0.8, 10, Color(0.08, 0.065, 0.03, 0.90))
+	var r3 := _bar(root, 66, ST_W * 0.8, 8, back)
 	breath_panel = r3[0]; breath_fill = r3[1]; _breath_edge = r3[3]
-	breath_fill.color = Color(0.94, 0.76, 0.32)
+	breath_fill.color = UITheme.EMBER
 	(r3[2] as ColorRect).color = Color(0, 0, 0, 0)
 	breath_panel.visible = false
 
 	# Bottom-left Gourd plaque backing
 	var gourd_plate := Panel.new()
-	var fsb := StyleBoxFlat.new()
-	fsb.bg_color = Color(0.04, 0.035, 0.03, 0.78)
-	fsb.border_color = Color(0.62, 0.52, 0.34, 0.72)
-	fsb.set_border_width_all(1)
-	fsb.set_corner_radius_all(2)
+	var fsb := UITheme.box("plate")
 	gourd_plate.add_theme_stylebox_override("panel", fsb)
 	gourd_plate.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	gourd_plate.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -233,27 +225,23 @@ func _build() -> void:
 	root.add_child(gourd_plate)
 
 	gourd_label = Label.new()
-	gourd_label.label_settings = _font(SERIF_B, 25, Color(0.94, 0.88, 0.74))
+	gourd_label.label_settings = _font(SERIF_B, 27, UITheme.BONE)
 	gourd_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	gourd_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	gourd_label.offset_left = 32
 	gourd_label.offset_top = -90
 	gourd_label.offset_bottom = -50
-	gourd_label.text = "Gourd ✕3"
+	gourd_label.text = "Gourd  ×3"
 	root.add_child(gourd_label)
 
 	# Bottom-right Warmth plaque backing + soul-flame emblem
 	var warmth_plate := Panel.new()
-	var osb := StyleBoxFlat.new()
-	osb.bg_color = Color(0.04, 0.035, 0.03, 0.82)
-	osb.border_color = Color(0.72, 0.60, 0.38, 0.80)
-	osb.set_border_width_all(1)
-	osb.set_corner_radius_all(2)
+	var osb := UITheme.box("plate")
 	warmth_plate.add_theme_stylebox_override("panel", osb)
 	warmth_plate.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	warmth_plate.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	warmth_plate.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	warmth_plate.offset_left = -256
+	warmth_plate.offset_left = -212
 	warmth_plate.offset_right = -20
 	warmth_plate.offset_top = -96
 	warmth_plate.offset_bottom = -50
@@ -272,22 +260,22 @@ func _build() -> void:
 		warmth_plate.add_child(oi)
 
 	warmth_label = Label.new()
-	warmth_label.label_settings = _font(SERIF_B, 25, Color(0.96, 0.82, 0.48))
+	warmth_label.label_settings = _font(SERIF_B, 27, UITheme.EMBER_HOT)
 	warmth_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	warmth_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	warmth_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	warmth_label.offset_left = -300
+	warmth_label.offset_left = -164
 	warmth_label.offset_top = -92
-	warmth_label.offset_right = -32
+	warmth_label.offset_right = -24
 	warmth_label.offset_bottom = -52
-	warmth_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	warmth_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	warmth_label.text = "0 warmth"
 
 	# the surveyor's line: area, state and the live camera pose in exactly the
 	# form tools/shot.sh --shot-cam takes, so any player screenshot can be
 	# replayed 1:1 headlessly (dim, small, out of the composition's way)
 	pose_label = Label.new()
-	pose_label.label_settings = _font(SERIF_B, 13, Color(0.75, 0.72, 0.62, 0.55))
+	pose_label.label_settings = _font(SERIF, 14, Color(UITheme.ASH, 0.6))
 	pose_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	pose_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	pose_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -302,11 +290,8 @@ func _build() -> void:
 
 	# Interact prompt plate
 	_prompt_plate = Panel.new()
-	var psb := StyleBoxFlat.new()
-	psb.bg_color = Color(0.035, 0.03, 0.025, 0.86)
-	psb.border_color = Color(0.76, 0.64, 0.40, 0.85)
-	psb.set_border_width_all(1)
-	psb.set_corner_radius_all(2)
+	var psb := UITheme.box("plate")
+	psb.bg_color = Color(UITheme.COAL, 0.84)
 	_prompt_plate.add_theme_stylebox_override("panel", psb)
 	_prompt_plate.set_anchors_preset(Control.PRESET_CENTER)
 	_prompt_plate.offset_left = -210
@@ -318,7 +303,7 @@ func _build() -> void:
 	root.add_child(_prompt_plate)
 
 	prompt_label = Label.new()
-	prompt_label.label_settings = _font(SERIF, 24, Color(0.96, 0.92, 0.84))
+	prompt_label.label_settings = _font(SERIF, 26, UITheme.BONE)
 	prompt_label.set_anchors_preset(Control.PRESET_CENTER)
 	prompt_label.offset_left = -200
 	prompt_label.offset_top = 100
@@ -329,7 +314,7 @@ func _build() -> void:
 	root.add_child(prompt_label)
 
 	toast_label = Label.new()
-	toast_label.label_settings = _font(SERIF, 28, Color(0.95, 0.90, 0.78))
+	toast_label.label_settings = _font("italic", 30, UITheme.BONE)
 	toast_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	toast_label.offset_left = -400
 	toast_label.offset_top = 120
@@ -348,7 +333,7 @@ func _build() -> void:
 	boss_root.visible = false
 	root.add_child(boss_root)
 	boss_name = Label.new()
-	boss_name.label_settings = _font(SERIF_B, 30, Color(0.95, 0.90, 0.80))
+	boss_name.label_settings = _font("caps", 34, UITheme.BONE)
 	boss_name.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	boss_name.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	boss_name.offset_left = -400
@@ -358,7 +343,7 @@ func _build() -> void:
 	boss_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	boss_root.add_child(boss_name)
 	var brule := ColorRect.new()
-	brule.color = Color(0.78, 0.66, 0.42, 0.75)
+	brule.color = Color(UITheme.EMBER, 0.6)
 	brule.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	brule.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	brule.offset_left = -360
@@ -368,9 +353,9 @@ func _build() -> void:
 	boss_root.add_child(brule)
 	var bp := Panel.new()
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.055, 0.038, 0.038, 0.92)
-	sb.border_color = Color(0.76, 0.64, 0.40, 0.94)
-	sb.set_border_width_all(2)
+	sb.bg_color = Color(UITheme.COAL, 0.88)
+	sb.border_color = Color(UITheme.BONE, 0.30)
+	sb.set_border_width_all(1)
 	sb.shadow_color = Color(0, 0, 0, 0.65)
 	sb.shadow_size = 5
 	bp.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -382,17 +367,17 @@ func _build() -> void:
 	bp.add_theme_stylebox_override("panel", sb)
 	boss_root.add_child(bp)
 	_boss_ghost = ColorRect.new()
-	_boss_ghost.color = Color(0.92, 0.76, 0.42, 0.72)
+	_boss_ghost.color = Color(UITheme.EMBER_HOT, 0.62)
 	_boss_ghost.position = Vector2(2, 2)
 	_boss_ghost.size = Vector2(996, 12)
 	bp.add_child(_boss_ghost)
 	boss_fill = ColorRect.new()
-	boss_fill.color = Color(0.64, 0.14, 0.11)
+	boss_fill.color = UITheme.BLOOD
 	boss_fill.position = Vector2(2, 2)
 	boss_fill.size = Vector2(996, 12)
 	bp.add_child(boss_fill)
 	var bsheen := ColorRect.new()
-	bsheen.color = Color(1.0, 0.94, 0.84, 0.18)
+	bsheen.color = Color(UITheme.BONE, 0.12)
 	bsheen.position = Vector2(2, 2)
 	bsheen.size = Vector2(996, 4)
 	bsheen.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -405,32 +390,29 @@ func _build() -> void:
 	root.add_child(lore_root)
 	var ldim := ColorRect.new()
 	ldim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	ldim.color = Color(0, 0, 0, 0.62)
+	ldim.color = Color(UITheme.COAL, 0.66)
 	lore_root.add_child(ldim)
 	_lore_panel = Panel.new()
-	var lsb := StyleBoxFlat.new()
-	lsb.bg_color = Color(0.045, 0.04, 0.035, 0.97)
-	lsb.border_color = Color(0.74, 0.62, 0.38)
-	lsb.set_border_width_all(2)
-	lsb.shadow_color = Color(0, 0, 0, 0.75)
-	lsb.shadow_size = 12
+	var lsb := UITheme.box("panel")
+	lsb.border_color = Color(0, 0, 0, 0)
 	_lore_panel.add_theme_stylebox_override("panel", lsb)
 	_lore_panel.position = Vector2(510, 330)
 	_lore_panel.size = Vector2(900, 400)
 	lore_root.add_child(_lore_panel)
 	lore_text = Label.new()
-	lore_text.label_settings = _font(SERIF, 26, Color(0.92, 0.88, 0.78), false)
+	lore_text.label_settings = _font(SERIF, 28, UITheme.BONE, false)
 	lore_text.position = Vector2(46, 46)
 	lore_text.size = Vector2(808, 260)
 	lore_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_lore_panel.add_child(lore_text)
 	_lore_hint = Label.new()
-	_lore_hint.label_settings = _font(SERIF, 18, Color(0.68, 0.60, 0.46), false)
+	_lore_hint.label_settings = _font("italic", 19, UITheme.ASH, false)
 	_lore_hint.position = Vector2(46, 340)
-	_lore_hint.text = "— press any key —"
+	_lore_hint.text = "press any key"
 	_lore_panel.add_child(_lore_hint)
+	_lore_panel.add_child(KnotFrame.new())
 
-	# death splash
+	# death splash: STILLED, held still. Bone on coal, no blood-red shout.
 	splash = Control.new()
 	splash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	splash.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -438,33 +420,105 @@ func _build() -> void:
 	root.add_child(splash)
 	var dim := ColorRect.new()
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	dim.color = Color(0, 0, 0, 0.65)
+	dim.color = Color(UITheme.COAL, 0.62)
 	splash.add_child(dim)
-	var band := ColorRect.new()
+	var band := TextureRect.new()
+	band.texture = _band_tex(0.86)
+	band.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	band.stretch_mode = TextureRect.STRETCH_SCALE
 	band.anchor_left = 0.0
 	band.anchor_right = 1.0
-	band.anchor_top = 0.42
-	band.anchor_bottom = 0.58
-	band.color = Color(0.012, 0.010, 0.009, 0.90)
+	band.anchor_top = 0.36
+	band.anchor_bottom = 0.64
 	splash.add_child(band)
-	for ry in [0.42, 0.58]:
-		var srule := ColorRect.new()
-		srule.anchor_left = 0.12
-		srule.anchor_right = 0.88
-		srule.anchor_top = ry
-		srule.anchor_bottom = ry + 0.002
-		srule.color = Color(0.72, 0.58, 0.34, 0.62)
-		splash.add_child(srule)
 	splash_label = Label.new()
-	splash_label.label_settings = _font(SERIF_B, 84, Color(0.66, 0.11, 0.09), false)
+	splash_label.label_settings = _font("caps", 104, UITheme.BONE, false)
+	splash_label.label_settings.shadow_color = Color(0, 0, 0, 0.9)
+	splash_label.label_settings.shadow_size = 18
 	splash_label.set_anchors_preset(Control.PRESET_CENTER)
-	splash_label.offset_left = -500
-	splash_label.offset_top = -60
-	splash_label.offset_right = 500
-	splash_label.offset_bottom = 60
+	splash_label.offset_left = -600
+	splash_label.offset_top = -86
+	splash_label.offset_right = 600
+	splash_label.offset_bottom = 40
 	splash_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	splash_label.text = "S T I L L E D"
+	splash_label.text = "Stilled"
 	splash.add_child(splash_label)
+	_ornament(splash, 0.535, 0.30)
+
+	# the keepsake toast: small, off to the left, never in the way
+	_ks_toast = HBoxContainer.new()
+	_ks_toast.position = Vector2(28, 106)
+	_ks_toast.add_theme_constant_override("separation", 12)
+	_ks_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ks_toast.modulate.a = 0.0
+	root.add_child(_ks_toast)
+	var seal := KnotFrame.new(true, 10.0)
+	_ks_toast.add_child(seal)
+	_ks_label = Label.new()
+	_ks_label.label_settings = _font("italic", 23, UITheme.BONE)
+	_ks_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_ks_toast.add_child(_ks_label)
+
+## A soft band of coal, clear at both ends and feathered top and bottom,
+## so a card sits in a haze rather than a box.
+func _band_tex(alpha: float) -> ImageTexture:
+	var w := 256
+	var h := 64
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+	var c := UITheme.COAL
+	for y in h:
+		var v := 1.0 - absf((float(y) + 0.5) / h * 2.0 - 1.0)
+		v = smoothstep(0.0, 0.7, v)
+		for x in w:
+			var u := 1.0 - absf((float(x) + 0.5) / w * 2.0 - 1.0)
+			u = smoothstep(0.0, 0.6, u)
+			img.set_pixel(x, y, Color(c, alpha * u * v))
+	return ImageTexture.create_from_image(img)
+
+## The card ornament: an ember rule each side of a knot, centred at
+## anchor y, spanning half_w of the screen width either side.
+func _ornament(parent: Control, y: float, half_w: float) -> void:
+	for side in [-1, 1]:
+		var r := UITheme.rule(10, 0.75)
+		r.anchor_top = y
+		r.anchor_bottom = y
+		r.offset_bottom = 1
+		if side < 0:
+			r.anchor_left = 0.5 - half_w
+			r.anchor_right = 0.5
+			r.offset_right = -22
+		else:
+			r.anchor_left = 0.5
+			r.anchor_right = 0.5 + half_w
+			r.offset_left = 22
+		parent.add_child(r)
+	var k := KnotFrame.new(true, 11.0)
+	k.anchor_left = 0.5
+	k.anchor_right = 0.5
+	k.anchor_top = y
+	k.anchor_bottom = y
+	k.offset_left = -k.size.x * 0.5
+	k.offset_right = k.size.x * 0.5
+	k.offset_top = -k.size.y * 0.5
+	k.offset_bottom = k.size.y * 0.5
+	parent.add_child(k)
+
+var _ks_toast: HBoxContainer = null
+var _ks_label: Label = null
+var _ks_tw: Tween = null
+
+func _on_flag_raised(flag: String) -> void:
+	if Keepsakes.is_step_flag(flag):
+		show_keepsake_toast()
+
+func show_keepsake_toast() -> void:
+	_ks_label.text = Keepsakes.toast_text()
+	if _ks_tw != null and _ks_tw.is_valid():
+		_ks_tw.kill()
+	_ks_tw = create_tween()
+	_ks_tw.tween_property(_ks_toast, "modulate:a", 1.0, 0.8).set_trans(Tween.TRANS_SINE)
+	_ks_tw.tween_interval(3.2)
+	_ks_tw.tween_property(_ks_toast, "modulate:a", 0.0, 1.4).set_trans(Tween.TRANS_SINE)
 
 func _process(dt: float) -> void:
 	# the surveyor's line follows the live camera every frame
@@ -541,7 +595,7 @@ func _on_stamina(st: float, max_st: float) -> void:
 	_st_ratio = clampf(st / max_st, 0.0, 1.0)
 
 func _on_gourds(n: int, mx: int) -> void:
-	gourd_label.text = "Gourd ✕%d" % n
+	gourd_label.text = "Gourd  ×%d" % n
 	_refresh_hotbar()
 
 # ------------------------------------------------------------------ hotbar
@@ -560,13 +614,7 @@ func _build_hotbar(root: Control) -> void:
 	_slots.clear()
 	for i in 5:
 		var panel := Panel.new()
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Color(0.045, 0.04, 0.035, 0.88)
-		sb.border_color = Color(0.52, 0.44, 0.30, 0.85)
-		sb.set_border_width_all(1)
-		sb.set_corner_radius_all(3)
-		sb.shadow_color = Color(0, 0, 0, 0.5)
-		sb.shadow_size = 3
+		var sb := UITheme.box("slot")
 		panel.add_theme_stylebox_override("panel", sb)
 		panel.position = Vector2(i * 70, 4)
 		panel.size = Vector2(60, 60)
@@ -580,12 +628,12 @@ func _build_hotbar(root: Control) -> void:
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		panel.add_child(icon)
 		var num := Label.new()
-		num.label_settings = _font(SERIF_B, 13, Color(0.82, 0.72, 0.52))
+		num.label_settings = _font(SERIF_B, 15, UITheme.BONE_DIM)
 		num.position = Vector2(5, 1)
 		num.text = str(i + 1)
 		panel.add_child(num)
 		var count := Label.new()
-		count.label_settings = _font(SERIF_B, 15, Color(0.98, 0.90, 0.72))
+		count.label_settings = _font(SERIF_B, 17, UITheme.BONE)
 		count.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 		count.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 		count.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -598,7 +646,7 @@ func _build_hotbar(root: Control) -> void:
 		panel.add_child(count)
 		_slots.append({"panel": panel, "style": sb, "icon": icon, "count": count})
 	arrows_chip = Label.new()
-	arrows_chip.label_settings = _font(SERIF_B, 20, Color(0.94, 0.88, 0.72))
+	arrows_chip.label_settings = _font(SERIF_B, 22, UITheme.BONE)
 	arrows_chip.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	arrows_chip.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	arrows_chip.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -618,13 +666,8 @@ func _build_hotbar(root: Control) -> void:
 	song_panel.offset_right = -190
 	song_panel.offset_top = -82
 	song_panel.offset_bottom = -22
-	var rsb := StyleBoxFlat.new()
-	rsb.bg_color = Color(0.09, 0.075, 0.04, 0.92)
-	rsb.border_color = Color(0.92, 0.78, 0.42, 0.94)
-	rsb.set_border_width_all(2)
-	rsb.set_corner_radius_all(3)
-	rsb.shadow_color = Color(0, 0, 0, 0.55)
-	rsb.shadow_size = 4
+	var rsb := UITheme.box("slot")
+	rsb.border_color = Color(UITheme.EMBER, 0.85)
 	song_panel.add_theme_stylebox_override("panel", rsb)
 	song_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(song_panel)
@@ -636,12 +679,12 @@ func _build_hotbar(root: Control) -> void:
 	song_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	song_panel.add_child(song_icon)
 	var rkey := Label.new()
-	rkey.label_settings = _font(SERIF_B, 13, Color(0.96, 0.84, 0.48))
+	rkey.label_settings = _font(SERIF_B, 15, UITheme.EMBER_HOT)
 	rkey.position = Vector2(5, 1)
 	rkey.text = "X"
 	song_panel.add_child(rkey)
 	song_cost = Label.new()
-	song_cost.label_settings = _font(SERIF_B, 14, Color(0.94, 0.84, 0.52))
+	song_cost.label_settings = _font(SERIF_B, 16, UITheme.BONE)
 	song_cost.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	song_cost.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	song_cost.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -679,9 +722,10 @@ func _refresh_hotbar() -> void:
 		var selected: bool = id == p.weapon_id
 		(slot["icon"] as TextureRect).modulate.a = 0.98 if owned else 0.22
 		var sb: StyleBoxFlat = slot["style"]
-		sb.border_color = Color(0.98, 0.84, 0.48, 0.98) if selected else Color(0.52, 0.44, 0.30, 0.85)
+		var look := UITheme.box("slot_sel" if selected else "slot")
+		sb.border_color = look.border_color
 		sb.set_border_width_all(2 if selected else 1)
-		sb.bg_color = Color(0.11, 0.09, 0.055, 0.94) if selected else Color(0.045, 0.04, 0.035, 0.88)
+		sb.bg_color = look.bg_color
 		var c: Label = slot["count"]
 		if id == "gourd":
 			c.text = str(p.gourds)
@@ -692,7 +736,7 @@ func _refresh_hotbar() -> void:
 	var bow_up: bool = p.weapon_id == "bow"
 	arrows_chip.visible = bow_up
 	if bow_up:
-		arrows_chip.text = "Arrows ✕%d" % int(p.inventory.get("arrows", 0))
+		arrows_chip.text = "Arrows  ×%d" % int(p.inventory.get("arrows", 0))
 
 func _on_breath(v: float, mx: float) -> void:
 	breath_panel.visible = mx > 0.0
@@ -704,12 +748,15 @@ func _on_breath(v: float, mx: float) -> void:
 	var p = Game.player
 	if song_cost != null and p != null and is_instance_valid(p) and p.attuned_song != "":
 		var cost := float(DB.song(p.attuned_song).get("breath", 0))
-		song_cost.label_settings.font_color = Color(0.94, 0.84, 0.52) if v >= cost else Color(0.72, 0.35, 0.30)
+		song_cost.label_settings.font_color = UITheme.BONE if v >= cost else UITheme.ASH
 
 func _on_warmth(n: int) -> void:
 	warmth_label.text = "%d warmth" % n
 
 func _on_forgotten() -> void:
+	# STILLED stands alone: no place-name card under it
+	if _title_layer != null and is_instance_valid(_title_layer):
+		_title_layer.queue_free()
 	_fade_splash(true)
 
 func _fade_splash(on: bool) -> void:
@@ -765,6 +812,19 @@ func _input(event: InputEvent) -> void:
 					Game.player.suppress_interact(8)
 			get_viewport().set_input_as_handled()
 
+## J opens the Pack at the Keepsakes leaf (the Bearer's own keys stay in
+## player.gd; this is a menu key, so the HUD owns it).
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("keepsakes"):
+		return
+	var p = Game.player
+	if p == null or not is_instance_valid(p) or p.dead or not p.input_enabled:
+		return
+	if p.busy_in_menu() or PauseUI.is_open():
+		return
+	InventoryUI.open_for(p, "keepsakes")
+	get_viewport().set_input_as_handled()
+
 func show_boss(boss: Node) -> void:
 	_boss = boss
 	_boss_ghost_ratio = 1.0
@@ -781,10 +841,7 @@ func hide_boss() -> void:
 ## gold rule beneath — faded in, held a breath, and let go.
 var _title_layer: CanvasLayer = null
 
-## style "release": the holdfast-released card (SLICE.md 1): quiet,
-## bone-white, held 3 s, in place of any victory banner.
-func show_area_title(text: String, style := "") -> void:
-	var release := style == "release"
+func show_area_title(text: String, hold := 2.2) -> void:
 	if _title_layer != null and is_instance_valid(_title_layer):
 		_title_layer.queue_free()
 	_title_layer = CanvasLayer.new()
@@ -797,85 +854,52 @@ func show_area_title(text: String, style := "") -> void:
 	var tband := TextureRect.new()
 	tband.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	tband.stretch_mode = TextureRect.STRETCH_SCALE
-	var bgrad := Gradient.new()
-	bgrad.offsets = PackedFloat32Array([0.0, 0.22, 0.50, 0.78, 1.0])
-	bgrad.colors = PackedColorArray([
-		Color(0.012, 0.010, 0.008, 0.0),
-		Color(0.012, 0.010, 0.008, 0.54),
-		Color(0.012, 0.010, 0.008, 0.72),
-		Color(0.012, 0.010, 0.008, 0.54),
-		Color(0.012, 0.010, 0.008, 0.0),
-	])
-	var btex := GradientTexture2D.new()
-	btex.gradient = bgrad
-	btex.fill_from = Vector2(0.0, 0.5)
-	btex.fill_to = Vector2(1.0, 0.5)
-	btex.width = 256
-	btex.height = 16
-	tband.texture = btex
-	tband.anchor_left = 0.12
-	tband.anchor_right = 0.88
-	tband.anchor_top = 0.292
-	tband.anchor_bottom = 0.422
+	tband.texture = _band_tex(0.62)
+	tband.anchor_left = 0.14
+	tband.anchor_right = 0.86
+	tband.anchor_top = 0.24
+	tband.anchor_bottom = 0.47
 	tband.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(tband)
 	var name_l := Label.new()
-	var ls := LabelSettings.new()
-	ls.font = load("res://assets/fonts/DejaVuSerif.ttf")
-	ls.font_size = 52
-	ls.font_color = Color(0.93, 0.91, 0.86) if release else Color(0.96, 0.90, 0.74)
-	if release:
-		ls.font_size = 44
-	ls.shadow_color = Color(0, 0, 0, 0.92)
-	ls.shadow_size = 6
-	ls.shadow_offset = Vector2(1, 2)
-	name_l.label_settings = ls
-	name_l.text = text
+	name_l.label_settings = _font("caps", 64, UITheme.BONE, true)
+	name_l.label_settings.shadow_size = 12
+	# SLICE.md: small caps, no subtitle. Lower the authored capitals so the
+	# font's small caps carry the word, with a true capital up front.
+	name_l.text = _caps_case(text)
 	name_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_l.anchor_left = 0.0
 	name_l.anchor_right = 1.0
-	name_l.anchor_top = 0.30
+	name_l.anchor_top = 0.29
 	name_l.anchor_bottom = 0.40
 	box.add_child(name_l)
-	var rule := TextureRect.new()
-	rule.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	rule.stretch_mode = TextureRect.STRETCH_SCALE
-	var rgrad := Gradient.new()
-	rgrad.offsets = PackedFloat32Array([0.0, 0.25, 0.50, 0.75, 1.0])
-	var rc := Color(0.86, 0.84, 0.8) if release else Color(0.86, 0.74, 0.44)
-	var rh := Color(0.95, 0.94, 0.9) if release else Color(0.98, 0.88, 0.58)
-	rgrad.colors = PackedColorArray([
-		Color(rc.r, rc.g, rc.b, 0.0),
-		Color(rc.r, rc.g, rc.b, 0.78),
-		Color(rh.r, rh.g, rh.b, 0.98),
-		Color(rc.r, rc.g, rc.b, 0.78),
-		Color(rc.r, rc.g, rc.b, 0.0),
-	])
-	var rtex := GradientTexture2D.new()
-	rtex.gradient = rgrad
-	rtex.fill_from = Vector2(0.0, 0.5)
-	rtex.fill_to = Vector2(1.0, 0.5)
-	rtex.width = 256
-	rtex.height = 4
-	rule.texture = rtex
-	rule.anchor_left = 0.28
-	rule.anchor_right = 0.72
-	rule.anchor_top = 0.404
-	rule.anchor_bottom = 0.408
-	rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_child(rule)
+	_ornament(box, 0.405, 0.16)
 	box.modulate.a = 0.0
 	var tw := box.create_tween()
-	tw.tween_property(box, "modulate:a", 1.0, 0.9) \
+	tw.tween_property(box, "modulate:a", 1.0, 1.1) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tw.tween_interval(3.0 if release else 2.2)
-	tw.tween_property(box, "modulate:a", 0.0, 1.2) \
+	tw.tween_interval(hold)
+	tw.tween_property(box, "modulate:a", 0.0, 1.4) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	var layer_ref := _title_layer
 	tw.tween_callback(func():
 		if is_instance_valid(layer_ref):
 			layer_ref.queue_free())
 
+## "THE STRAND" -> "The Strand", which the caps face then sets in small caps
+## (lower case -> small caps, capitals stay full). Short words stay low.
+static func _caps_case(text: String) -> String:
+	var words := text.split(" ")
+	var out := PackedStringArray()
+	for i in words.size():
+		var w := words[i].to_lower()
+		if i > 0 and w in ["the", "of", "and", "a"]:
+			out.append(w)
+		elif w.length() > 0:
+			out.append(w.substr(0, 1).to_upper() + w.substr(1))
+		else:
+			out.append(w)
+	return " ".join(out)
 
 func _on_post_flash(kind: String, might: float) -> void:
 	_flash_strength = clampf(might, 0.0, 1.0)

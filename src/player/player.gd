@@ -15,6 +15,7 @@ signal hotbar_changed
 signal breath_changed(v: float, mx: float)
 signal attune_changed(id: String)
 signal inventory_changed
+signal armour_changed
 
 enum S { MOVE, ROLL, BACKSTEP, ATTACK, BLOCK, PARRY, RIPOSTE, GOURD, STAGGER, REST, TALK, DEAD }
 
@@ -22,7 +23,7 @@ enum S { MOVE, ROLL, BACKSTEP, ATTACK, BLOCK, PARRY, RIPOSTE, GOURD, STAGGER, RE
 ## Every point does something: heart holds life, wind the breath
 ## (cap AND recovery), might the sword and greatsword, craft the bow
 ## and spear, lungs the breath (cap AND warming), kinship the songs.
-var attributes := {"heart": 8, "wind": 8, "might": 8, "craft": 8, "lungs": 8, "kinship": 8}
+var attributes := {}   # filled at base_stat in _init
 var breath := 0.0
 var max_breath := 0.0               # stays 0 until the first song is learned
 var _cast_cd := 0.0
@@ -39,6 +40,9 @@ var gourds := 3
 var weapon_id := "hewing_blade"
 var weapon_level := 0
 var inventory: Dictionary = {}    # item_id -> count
+## Worn armour, slot -> item id ("" = bare). Slots and the starting coat
+## come from game.json player/armour; each piece's numbers from items.json.
+var armour: Dictionary = {}
 
 # --- state ------------------------------------------------------------------
 var state: S = S.MOVE
@@ -64,6 +68,7 @@ var _iframe_from := 0.0
 var _iframe_to := 0.0
 var _roll_dir := Vector3.ZERO
 var _roll_speed := 0.0
+var _roll_dur := 0.0        # this roll's duration (its weight tier's), set as it starts
 
 # attack
 var _atk: Dictionary = {}
@@ -72,6 +77,8 @@ var _combo_i := 0
 var _atk_hit_open := false
 var _queued: String = ""
 var _lunge := 0.0
+var _atk_kind := ""          # "light" | "heavy" | "sprint": which moveset entry is swinging
+var _sprinting := false      # set by _st_move each frame the Bearer is at a sprint
 
 # blocking / parry
 var _blocking := false
@@ -117,10 +124,15 @@ var sim_sprint := false
 
 @onready var T: Dictionary = DB.table("game")["player"]
 
+func _init() -> void:
+	for st in DB.tuning("levels/stats", ["heart", "wind", "might", "craft", "lungs", "kinship"]):
+		attributes[String(st)] = base_stat()
+	armour = starting_armour()
+
 func _ready() -> void:
 	add_to_group("player")
 	collision_layer = 1 << (RH.L_PLAYER - 1)
-	collision_mask = RH.M_WORLD_ALL
+	collision_mask = RH.M_WORLD_ALL | (1 << (RH.L_WORLD_LOW - 1))
 	var cs := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.34
@@ -186,6 +198,7 @@ func _ready() -> void:
 	recompute_derived()
 	hp = max_hp
 	stamina = max_stamina
+	poise = max_poise
 	Game.register_player(self)
 	_emit_all()
 	look_compat = bool(PauseUI.settings.get("look_compat", false))
@@ -195,11 +208,12 @@ func _ready() -> void:
 func recompute_derived() -> void:
 	var base: Dictionary = T["base"]
 	var per: Dictionary = T["per_level"]
-	max_breath = (70.0 + (attributes["lungs"] - 8) * 7.0) if knows_any_song() else 0.0
+	max_breath = (70.0 + _over_base("lungs") * 7.0) if knows_any_song() else 0.0
 	breath = minf(breath, max_breath)
-	max_hp = float(base["hp"]) + (attributes["heart"] - 8) * float(per["heart_hp"])
-	max_stamina = float(base["stamina"]) + (attributes["wind"] - 8) * float(per["wind_stamina"])
-	max_poise = float(base["poise"])
+	max_hp = float(base["hp"]) + _over_base("heart") * float(per["heart_hp"])
+	max_stamina = float(base["stamina"]) + _over_base("wind") * float(per["wind_stamina"])
+	max_poise = float(base["poise"]) + worn_poise()
+	poise = minf(poise, max_poise)
 
 func _emit_all() -> void:
 	health_changed.emit(hp, max_hp)
@@ -396,6 +410,8 @@ func _physics_process(dt: float) -> void:
 		cam.stick_look(Input.get_vector("cam_left", "cam_right", "cam_up", "cam_down"), dt)
 
 func _set_state(s: S) -> void:
+	if s != S.MOVE:
+		_sprinting = false
 	if s == S.MOVE:
 		apply_carry_pose()
 	if state == S.GOURD and s != S.GOURD:
@@ -474,11 +490,11 @@ func _regen(dt: float) -> void:
 		_stam_delay -= dt
 	elif stamina < max_stamina and state != S.ROLL and state != S.ATTACK and state != S.RIPOSTE:
 		var mult: float = float(T["stamina"]["regen_block_mult"]) if _blocking else 1.0
-		mult *= 1.0 + (attributes["wind"] - 8) * 0.02   # wind quickens the breath
+		mult *= 1.0 + _over_base("wind") * 0.02   # wind quickens the breath
 		stamina = minf(stamina + float(T["stamina"]["regen"]) * mult * dt, max_stamina)
 		stamina_changed.emit(stamina, max_stamina)
 	if max_breath > 0.0 and breath < max_breath:
-		breath = minf(breath + (3.5 + (attributes["lungs"] - 8) * 0.45) * dt, max_breath)
+		breath = minf(breath + (3.5 + _over_base("lungs") * 0.45) * dt, max_breath)
 		breath_changed.emit(breath, max_breath)
 	if _cast_cd > 0.0:
 		_cast_cd -= dt
@@ -490,6 +506,7 @@ func _regen(dt: float) -> void:
 
 # --------------------------------------------------------------- states
 func _st_move(dt: float) -> void:
+	_sprinting = false
 	if not input_enabled:
 		velocity.x = move_toward(velocity.x, 0, 20 * dt)
 		velocity.z = move_toward(velocity.z, 0, 20 * dt)
@@ -499,6 +516,7 @@ func _st_move(dt: float) -> void:
 		_enter_block()
 		return
 	var sprinting: bool = _pressed("sprint") and dir != Vector3.ZERO and stamina > 1.0 and cam.locked_target == null
+	_sprinting = sprinting
 	var mv: Dictionary = T["move"]
 	var speed: float = float(mv["run"])
 	if sprinting:
@@ -577,18 +595,18 @@ func _try_roll(dir: Vector3) -> bool:
 		return true
 	_set_state(S.ROLL)
 	_roll_dir = dir.normalized()
-	_roll_speed = float(R["speed"])
-	_iframe_from = float(R["iframe_start"])
-	_iframe_to = float(R["iframe_end"])
+	_roll_speed = roll_param("speed")
+	_iframe_from = roll_param("iframe_start")
+	_iframe_to = roll_param("iframe_end")
+	_roll_dur = roll_param("duration")
 	vis.rotation.y = atan2(-_roll_dir.x, -_roll_dir.z)
-	vis.play("roll", 0.03, vis.clip_length("roll") / float(R["duration"]))
+	vis.play("roll", 0.03, vis.clip_length("roll") / _roll_dur)
 	Juice.spawn_hit_fx(global_position + Vector3(0, 0.08, 0), -_roll_dir, "dust")
 	AudioDirector.sfx_at("res://assets/audio/roll.wav", global_position, -6.0, randf_range(0.95, 1.05))
 	return true
 
 func _st_roll(dt: float) -> void:
-	var R: Dictionary = T["roll"]
-	var dur := float(R["duration"])
+	var dur := _roll_dur
 	var k := 1.0 - smoothstep(0.55, 1.0, state_t / dur) * 0.85
 	velocity.x = _roll_dir.x * _roll_speed * k
 	velocity.z = _roll_dir.z * _roll_speed * k
@@ -714,6 +732,84 @@ func attune_song(id: String) -> void:
 	attuned_song = id
 	attune_changed.emit(id)
 
+# --- armour -------------------------------------------------------------------
+static func armour_slots() -> Array:
+	return DB.tuning("player/armour/slots", ["head", "body", "hands", "legs"])
+
+## Slot -> id for a new Bearer: every slot bare but what game.json starts worn.
+static func starting_armour() -> Dictionary:
+	var out := {}
+	var start: Dictionary = DB.tuning("player/armour/start", {})
+	for slot in armour_slots():
+		out[slot] = String(start.get(slot, ""))
+	return out
+
+## The armour block of an item ({} when it is not armour).
+static func armour_data(id: String) -> Dictionary:
+	return DB.item(id).get("armour", {}) if id != "" else {}
+
+func owns_armour(id: String) -> bool:
+	if armour_data(id).is_empty():
+		return false
+	return id in starting_armour().values() or int(inventory.get(id, 0)) > 0
+
+## Wear `id` in its own slot (an empty id bares `slot`). Fails on a piece
+## not carried or meant for another slot.
+func equip_armour(slot: String, id: String) -> bool:
+	if not slot in armour_slots():
+		return false
+	if id != "":
+		var a := armour_data(id)
+		if a.is_empty() or String(a.get("slot", "")) != slot or not owns_armour(id):
+			return false
+	armour[slot] = id
+	recompute_derived()
+	armour_changed.emit()
+	return true
+
+func _worn() -> Array:
+	var out := []
+	for slot in armour_slots():
+		var a := armour_data(String(armour.get(slot, "")))
+		if not a.is_empty():
+			out.append(a)
+	return out
+
+func worn_poise() -> float:
+	var t := 0.0
+	for a in _worn():
+		t += float(a.get("poise", 0))
+	return t
+
+func worn_weight() -> float:
+	var t := 0.0
+	for a in _worn():
+		t += float(a.get("weight", 0))
+	return t
+
+## Summed share of a `kind` of blow the worn pieces turn (0..absorb_cap).
+func absorption(kind: String) -> float:
+	var key := String((DB.tuning("player/armour/absorb_kind", {}) as Dictionary).get(kind, ""))
+	if key == "":
+		return 0.0
+	var t := 0.0
+	for a in _worn():
+		t += float((a.get("absorb", {}) as Dictionary).get(key, 0.0))
+	return clampf(t, 0.0, float(DB.tuning("player/armour/absorb_cap", 0.8)))
+
+## light / medium / heavy by worn weight. Medium is player.roll unchanged.
+func roll_tier() -> String:
+	var w := worn_weight()
+	if w < float(DB.tuning("player/armour/light_under", 3.0)):
+		return "light"
+	if w > float(DB.tuning("player/armour/heavy_over", 12.0)):
+		return "heavy"
+	return "medium"
+
+func roll_param(key: String) -> float:
+	var tier: Dictionary = DB.tuning("player/armour/roll_tiers/" + roll_tier(), {})
+	return float(tier.get(key, T["roll"][key]))
+
 # --- the bow ----------------------------------------------------------------
 func _bow_equipped() -> bool:
 	return bool(weapon_data().get("ranged", false))
@@ -801,14 +897,30 @@ func _bow_release() -> void:
 func weapon_data() -> Dictionary:
 	return DB.weapon(weapon_id)
 
+## The stat every attribute starts at (game.json levels/base_stat). Scaling
+## counts only points ABOVE it, so a fresh Bearer is not secretly +10%.
+func base_stat() -> int:
+	return int(DB.tuning("levels/base_stat", 8))
+
+func _over_base(stat: String) -> float:
+	return float(int(attributes.get(stat, base_stat())) - base_stat())
+
+## Flat damage the smith's bog-iron adds per level (weapons.json
+## upgrade.per_level). A weapon without one falls back to 14% of its base.
+func upgrade_bonus(w: Dictionary, lvl: int) -> float:
+	var upg: Dictionary = w.get("upgrade", {})
+	var per := float(upg.get("per_level", float(w.get("damage", 10)) * 0.14))
+	return per * float(lvl)
+
 func _attack_damage(mult: float) -> float:
 	var w := weapon_data()
 	var scal: Dictionary = w.get("scaling", {})
-	var s: float = 1.0 + attributes["might"] * float(scal.get("might", 0.0)) * 0.02 \
-			+ attributes["craft"] * float(scal.get("craft", 0.0)) * 0.02 \
-			+ float(attributes.get("kinship", 0)) * float(scal.get("kinship", 0.0)) * 0.02
-	var up := 1.0 + 0.14 * weapon_level
-	return float(w.get("damage", 10)) * s * up * mult * Game.dmg_out_mult()
+	var k := float(DB.tuning("levels/scaling_per_point", 0.02))
+	var s: float = 1.0
+	for stat in ["might", "craft", "kinship"]:
+		s += _over_base(stat) * float(scal.get(stat, 0.0)) * k
+	var base := float(w.get("damage", 10)) + upgrade_bonus(w, weapon_level)
+	return base * s * mult * Game.dmg_out_mult()
 
 var _no_atk_toast := 0.0
 
@@ -828,7 +940,25 @@ func try_attack(heavy: bool) -> bool:
 		return false
 	if not heavy and _riposte_target != null and try_riposte():
 		return true
+	if not heavy and state == S.MOVE and _sprinting:
+		return _sprint_attack()
 	return _chain_attack(heavy)
+
+## A light pressed at a full sprint: the run-in strike (movesets.json
+## `sprint`), its own windup, lunge and cost (weapons.json stamina.sprint).
+func _sprint_attack() -> bool:
+	var w := weapon_data()
+	var ms := DB.moveset(w.get("moveset", "longsword"))
+	if not ms.has("sprint"):
+		return _chain_attack(false)
+	if stamina < 1.0 or _winded > 0.0:
+		return false
+	var st: Dictionary = w["stamina"]
+	_spend(float(st.get("sprint", st["light"])))
+	_combo_i = 0
+	_sprinting = false
+	_begin_attack(ms["sprint"], false, "sprint")
+	return true
 
 ## Starts a swing regardless of current attack state (combo links use this).
 func _chain_attack(heavy: bool) -> bool:
@@ -847,12 +977,13 @@ func _chain_attack(heavy: bool) -> bool:
 		_combo_i = _combo_i % lights.size()
 		m = lights[_combo_i]
 	_spend(cost)
-	_begin_attack(m, heavy)
+	_begin_attack(m, heavy, "heavy" if heavy else "light")
 	return true
 
-func _begin_attack(m: Dictionary, heavy: bool) -> void:
+func _begin_attack(m: Dictionary, heavy: bool, kind := "") -> void:
 	_atk = m
 	_atk_is_heavy = heavy
+	_atk_kind = kind if kind != "" else ("heavy" if heavy else "light")
 	_atk_hit_open = false
 	_queued = ""
 	_blocking = false
@@ -1141,7 +1272,7 @@ func cast_song(id: String) -> void:
 		stw.tween_callback(func():
 			if vis != null and is_instance_valid(vis) and vis.shield_mount != null and state != S.GOURD:
 				vis.shield_mount.visible = not bool(weapon_data().get("two_handed", false)))
-	var dev: float = 1.0 + float(attributes["kinship"]) * 0.025
+	var dev: float = 1.0 + _over_base("kinship") * 0.025   # songs.json is rebalanced for (stat - base)
 	match String(sp.get("type", "")):
 		"heal":
 			vis.play("cast_self", 0.1)
@@ -1510,6 +1641,8 @@ func _lance_beam(from: Vector3, to: Vector3) -> void:
 func take_hit(packet: DamagePacket) -> void:
 	if dead or invulnerable:
 		return
+	# worn armour turns a share of the blow before anything else sees it
+	packet.amount *= 1.0 - absorption(packet.kind)
 	# the Warding Hum takes the world's anger first
 	if _ward_active():
 		var soak := minf(_ward_hp, packet.amount * Game.dmg_in_mult())
@@ -1663,6 +1796,7 @@ func to_save() -> Dictionary:
 		"attributes": attributes, "level": level, "gourd_max": gourd_max,
 		"weapon": weapon_id, "weapon_level": weapon_level,
 		"inventory": inventory, "hotbar": hotbar, "attuned_song": attuned_song,
+		"armour": armour.duplicate(),
 		"pos": [global_position.x, global_position.y, global_position.z],
 	}
 
@@ -1683,6 +1817,12 @@ func from_save(d: Dictionary) -> void:
 	if hb.size() == 5:
 		hotbar = hb
 	attuned_song = d.get("attuned_song", "")
+	armour = starting_armour()
+	if d.has("armour"):
+		armour = {}
+		for slot in armour_slots():
+			armour[slot] = String((d["armour"] as Dictionary).get(slot, ""))
+	armour_changed.emit()
 	recompute_derived()
 	heal_full()
 	_refresh_weapon_visual()

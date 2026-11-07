@@ -1,10 +1,10 @@
 {
  "hewing_blade": {
   "name": "Hewing Blade",
-  "desc": "A plain long blade of bog-iron, ground for clearing brush and worse. Balanced for one hand, a shield on the other.",
+  "desc": "A long blade of bog-iron, ground for clearing gorse off the fold walls. The Bearer's foster-father lent it for the voyage and said to bring it back. The grip is wrapped in his old belt.",
   "class": "longsword",
   "kit": "hewing_blade",
-  "damage": 42,
+  "damage": 47.376,
   "poise_damage": 22,
   "scaling": {
    "might": 0.6,
@@ -12,7 +12,8 @@
   },
   "stamina": {
    "light": 17,
-   "heavy": 30
+   "heavy": 30,
+   "sprint": 20
   },
   "moveset": "longsword",
   "upgrade": {
@@ -29,14 +30,15 @@
   "desc": "A post-driving maul. Slow to lift, slower to argue with.",
   "class": "great_hammer",
   "kit": "maul",
-  "damage": 66,
+  "damage": 74.976,
   "poise_damage": 52,
   "scaling": {
    "might": 0.85
   },
   "stamina": {
    "light": 26,
-   "heavy": 44
+   "heavy": 44,
+   "sprint": 31
   },
   "moveset": "great_hammer",
   "upgrade": {
@@ -53,7 +55,7 @@
   "desc": "An ash-hafted spear with a leaf head. Keeps the cold at arm's length and a little more.",
   "class": "spear",
   "kit": "spear",
-  "damage": 38,
+  "damage": 43.168,
   "poise_damage": 18,
   "scaling": {
    "might": 0.2,
@@ -61,7 +63,8 @@
   },
   "stamina": {
    "light": 14,
-   "heavy": 25
+   "heavy": 25,
+   "sprint": 17
   },
   "moveset": "spear",
   "two_handed": true,
@@ -79,14 +82,15 @@
   "desc": "A two-handed blade as long as a door is tall. Swung, it makes its own weather.",
   "class": "greatsword",
   "kit": "greatblade",
-  "damage": 74,
+  "damage": 84.656,
   "poise_damage": 48,
   "scaling": {
    "might": 0.9
   },
   "stamina": {
    "light": 30,
-   "heavy": 50
+   "heavy": 50,
+   "sprint": 36
   },
   "moveset": "greatsword",
   "two_handed": true,
@@ -104,14 +108,15 @@
   "desc": "A short yew bow for fowling on the fells. Draws arrows from the quiver.",
   "class": "bow",
   "kit": "bow",
-  "damage": 34,
+  "damage": 38.352,
   "poise_damage": 10,
   "scaling": {
    "craft": 0.8
   },
   "stamina": {
    "light": 13,
-   "heavy": 13
+   "heavy": 13,
+   "sprint": 16
   },
   "ranged": true,
   "ammo": "arrows",
@@ -131,7 +136,8 @@
   "scaling": {},
   "stamina": {
    "light": 10,
-   "heavy": 18
+   "heavy": 18,
+   "sprint": 12
   },
   "moveset": "longsword",
   "upgrade": {

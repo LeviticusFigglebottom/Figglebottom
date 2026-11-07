@@ -516,54 +516,18 @@ func _die() -> void:
 	died.emit(self)
 	_release_flow.call_deferred()
 
+## The release itself (flag, card, the needle in front of her, the Long
+## Hearth) is Game.on_boss_slain's, from her data; the frost veil calls it.
+## With no veil to call it (a sandbox), she does.
 func _release_flow() -> void:
-	var rel: Dictionary = cfg.get("release", {})
-	World.set_flag(String(rel.get("flag", "ks_netmender_released")))
 	for hud in get_tree().get_nodes_in_group("hud"):
 		if hud.has_method("hide_boss"):
 			hud.hide_boss()
-		if hud.has_method("show_area_title"):
-			hud.show_area_title(String(rel.get("title", "THE NETMENDER — RELEASED")), "release")
 	if net_floor != null:
 		net_floor.pulse(0.8, 3.0)
-	_drop_needle(rel)
-	_light_long_hearth(rel)
+	if not _engaged_by_veil:
+		Game.on_boss_slain(Game.current_area_id, self)
 	released_boss.emit()
-
-## The Mending Needle lies where she sat.
-func _drop_needle(rel: Dictionary) -> void:
-	var k := Pickup.new()
-	k.pickup_id = String(rel.get("pickup_id", "mending_needle"))
-	k.area_id = Game.current_area_id
-	k.item_id = String(rel.get("drop", "item_mending_needle"))
-	k.item_count = 1
-	k.label = String(rel.get("drop_label", "Take the mending needle"))
-	k.display_scene = String(rel.get("drop_scene", ""))
-	var home_node: Node = Game.current_area.base if Game.current_area != null else get_parent()
-	home_node.add_child(k)
-	var fwd := -vis.global_transform.basis.z
-	fwd.y = 0
-	k.global_position = global_position + fwd.normalized() * float(rel.get("drop_ahead", 1.2))
-
-## The long hearth catches from the Bearer's horn: it is a Hearthstone now.
-## The spec is the area's own (hearths entry with require_flag), so a rebuilt
-## area keeps it.
-func _light_long_hearth(rel: Dictionary) -> void:
-	var hid := String(rel.get("hearth", ""))
-	if hid == "" or Game.current_area == null or Game.find_hearth(hid) != null:
-		return
-	var def: Dictionary = Game.current_area.get_meta("def", {})
-	for spec in def.get("hearths", []):
-		if String(spec.get("id", "")) != hid:
-			continue
-		var h := Hearthstone.new()
-		h.hearth_id = hid
-		h.display_name = String(spec.get("name", "Hearthstone"))
-		h.area = Game.current_area
-		Game.current_area.base.add_child(h)
-		h.position = Vector3(spec["at"][0], spec["at"][1], spec["at"][2])
-		h.rotation.y = deg_to_rad(float(spec.get("rot", 0)))
-		AudioDirector.sfx_at("res://assets/audio/swell_warm.wav", h.global_position, -2.0)
 
 ## She stays where she sat; no dissolve.
 func _fade_out() -> void:

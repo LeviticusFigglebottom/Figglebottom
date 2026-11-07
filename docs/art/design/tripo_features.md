@@ -15,3 +15,6 @@
 - **Reference images:** `gpt_image_2.5_sunburst` keeps carved masks flat (board, two eye holes, brow groove). `gemini_3_pro_image_preview` drifts to carved faces with noses, but is better for environments and concept art.
 - **Concept pairs:** generate THAW first, then make RIME as an *image edit* of the THAW image (`image_paths`). This keeps the camera and silhouette identical, which a fresh text prompt does not.
 - **Quadruped rig:** the rig check passed for the Hearthhound. Only one preset exists (`walk`). The clip keys the armature object's own transform, which `blender_process.py` now strips.
+- **Prompt clips on a boss (Lowe batch):** the Turfwright's three signature moves have no preset, so they came from text prompts at 20 each: "Arm Chop Motion" (ground cut), "Lifting and Placing Block" (stacking sods) and "Backward Fall and Sit Up" (dropping his back like a lid). All three read in the lineup, and the turf door on his back follows the spine without tearing. Send prompt clips **one at a time** per project: three in parallel gave one HTTP 406 lock failure, which was still charged.
+- **Multiview for back loads (Lowe batch):** the cairn-carrier's stones and Hesk's pack were generated from four-view references and are modelled solidly from behind. Multiview expansion of a sunburst board-mask reference kept the mask flat in all four views.
+

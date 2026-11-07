@@ -140,8 +140,7 @@ func _engage_boss() -> void:
 	boss_engaged.emit()
 
 func _on_boss_dead(e) -> void:
-	# a released holdfast has its own title card instead of the toast
-	Game.on_boss_slain(area_id, e != null and is_instance_valid(e) and e.cfg.has("release"))
+	Game.on_boss_slain(area_id, e)
 	dissolve()
 
 ## The veil re-forms with its holdfast. Dying mid-fight used to leave the gate

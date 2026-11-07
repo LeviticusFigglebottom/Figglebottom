@@ -4,20 +4,20 @@
   "breath": 35,
   "type": "heal",
   "power": 0.35,
-  "desc": "A low hum the steading sang over cuts and chilblains. The wound remembers being warm."
+  "desc": "A low hum sung over cuts and chilblains, mostly to children, until they stop crying out of embarrassment. Every household on the coast sings it slightly differently. Ingra sings it flat and says that is how it goes."
  },
  "ember_throw": {
   "name": "Ember Throw",
   "breath": 24,
   "type": "blast",
-  "damage": 58,
+  "damage": 69.6,
   "desc": "A coal of remembered summer, thrown. It goes where the breath is aimed."
  },
  "hearth_shout": {
   "name": "Hearth Shout",
   "breath": 62,
   "type": "burst",
-  "damage": 95,
+  "damage": 114.0,
   "radius": 4.6,
   "desc": "The whole hearth at once. Everything near learns what midsummer felt like."
  },
@@ -25,7 +25,7 @@
   "name": "Long Note",
   "breath": 42,
   "type": "lance",
-  "damage": 88,
+  "damage": 105.6,
   "length": 24.0,
   "desc": "One held note driven straight through everything between you and the far wall."
  },
@@ -33,7 +33,7 @@
   "name": "Warding Hum",
   "breath": 55,
   "type": "ward",
-  "absorb": 55,
+  "absorb": 66.0,
   "duration": 8.0,
   "desc": "A skin of remembered warmth that takes the cold's anger first, and goes out doing it."
  }

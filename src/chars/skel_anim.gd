@@ -623,7 +623,9 @@ static func build_library(skel: Skeleton3D, skel_path: NodePath, amp := 1.0, swa
 			anim.position_track_insert_key(t3, 0.0, rest_p["hips"])
 		lib.add_animation(clip_name, anim)
 	# aliases
-	var dup := {"atk_cast": "cast_lance"}
+	# the mannequin has no run-in strike; the sprint attack borrows the heavy
+	# (clip_meta.json aliases carry the same fallback for humanoids)
+	var dup := {"atk_cast": "cast_lance", "attack_sprint": "attack_h"}
 	for alias in dup:
 		if lib.has_animation(dup[alias]):
 			lib.add_animation(alias, lib.get_animation(dup[alias]))

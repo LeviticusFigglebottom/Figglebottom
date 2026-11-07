@@ -37,6 +37,8 @@ const PIECES := {
 	"woodpile": {"size": [2.0, 0.8, 1.0], "origin": "bottom-center"},
 	"rime_spike": {"size": [0.8, 0.8, 1.8], "origin": "bottom-center"},
 	"gourd": {"size": [0.17, 0.17, 0.26], "origin": "bottom-center"},
+	"rye_sack": {"size": [0.9, 0.5, 0.4], "origin": "bottom-center"},
+	"net_float": {"size": [0.16, 0.16, 0.12], "origin": "bottom-center"},
 	"hewing_blade": {"size": [0.3, 0.05, 1.1], "origin": "grip"},
 	"maul": {"size": [0.37, 0.25, 1.65], "origin": "grip"},
 	"spear": {"size": [0.11, 0.05, 2.9], "origin": "grip"},
@@ -44,6 +46,7 @@ const PIECES := {
 	"bow": {"size": [0.08, 0.4, 1.6], "origin": "grip"},
 	"torch": {"size": [0.14, 0.14, 1.0], "origin": "grip-center"},
 	"shield_kite": {"size": [0.5, 0.1, 0.6], "origin": "strap"},
+	"door_leaf": {"size": [0.95, 0.12, 2.5], "origin": "bottom-center"},
 	"gable_8m": {"size": [4, 8, 3.2], "origin": "bottom-center"},
 	"gable_12m": {"size": [4, 12, 4.4], "origin": "bottom-center"},
 	"gable_end_8m": {"size": [8, 0.4, 3.2], "origin": "bottom-center"},
@@ -228,6 +231,14 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(-1.8, 1.8, 0), "M_wood", "post_l")
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(1.8, 1.8, 0), "M_wood", "post_r")
 			_box(n, Vector3(4.2, 0.4, 0.7), Vector3(0, 3.6, 0), "M_wood", "lintel")
+		"door_leaf":
+			# one plank leaf: four boards on two ledges and a brace
+			for k in 4:
+				_box(n, Vector3(0.23, 2.45, 0.07), Vector3(-0.36 + k * 0.24, 1.25, 0), "M_wood", "board%d" % k)
+			for yy in [0.45, 2.05]:
+				_box(n, Vector3(0.9, 0.14, 0.06), Vector3(0, yy, -0.065), "M_wood_dark", "ledge")
+			_box(n, Vector3(0.1, 1.75, 0.05), Vector3(0, 1.25, -0.07), "M_wood_dark", "brace", Vector3(0, 0, 38))
+			_box(n, Vector3(0.12, 0.12, 0.1), Vector3(0, 1.2, 0.06), "M_iron", "ring")
 		"gable_8m", "gable_12m":
 			# a turf roof bay, 4 m along local X, spanning local Z, on the wall top
 			var half := 4.3 if id == "gable_8m" else 6.3
@@ -308,6 +319,13 @@ static func _build_piece(n: Node3D, id: String) -> void:
 		"rime_spike":
 			_cyl(n, 0.0, 0.32, 1.8, Vector3(0, 0.9, 0), "M_rime", "spike_a", Vector3(6, 0, 4), 6)
 			_cyl(n, 0.0, 0.2, 1.1, Vector3(0.35, 0.55, 0.1), "M_rime", "spike_b", Vector3(-4, 0, -18), 6)
+		"rye_sack":
+			# a flattened, dog-shaped sack: wide and low, one corner chewed
+			_sphere(n, 0.42, Vector3(0, 0.15, 0), "M_habit", "sack", Vector3(1.0, 0.36, 0.62))
+			_sphere(n, 0.12, Vector3(0.38, 0.12, 0.16), "M_habit", "corner", Vector3(1.0, 0.6, 0.8))
+		"net_float":
+			_cyl(n, 0.075, 0.075, 0.1, Vector3(0, 0.06, 0), "M_drift", "cork", Vector3(90, 0, 0), 14)
+			_cyl(n, 0.012, 0.012, 0.22, Vector3(0, 0.06, 0), "M_leather", "line", Vector3(90, 0, 0), 6)
 		"gourd":
 			_sphere(n, 0.085, Vector3(0, 0.08, 0), "M_leather", "belly")
 			_sphere(n, 0.05, Vector3(0, 0.19, 0), "M_leather", "neck")

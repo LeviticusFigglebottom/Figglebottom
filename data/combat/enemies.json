@@ -63,6 +63,8 @@
  },
  "netmender": {
   "name": "The Netmender",
+  "release_flag": "ks_netmender_released",
+  "release_card": "THE NETMENDER — RELEASED",
   "desc": "Gunna of Saltfell, wrapped in the frozen net she would not stop mending, and in what the net brought home.",
   "hp": 920,
   "poise": 130,
@@ -190,7 +192,8 @@
       0.58,
       1.0
      ]
-    }
+    },
+    "kind": "frost"
    },
    {
     "id": "knot",
@@ -229,7 +232,8 @@
       0.58,
       1.0
      ]
-    }
+    },
+    "kind": "frost"
    },
    {
     "id": "haul",
@@ -284,7 +288,8 @@
       0.58,
       1.0
      ]
-    }
+    },
+    "kind": "frost"
    },
    {
     "id": "mend_floor",
@@ -435,17 +440,14 @@
     ]
    }
   },
-  "release": {
-   "title": "THE NETMENDER \u2014 RELEASED",
-   "flag": "ks_netmender_released",
-   "drop": "item_mending_needle",
-   "drop_scene": "res://assets/models/weapons/mending_needle.glb",
-   "drop_label": "Take the mending needle",
+  "release_drop": {
+   "item": "item_mending_needle",
+   "scene": "res://assets/models/weapons/mending_needle.glb",
+   "label": "Take the mending needle",
    "pickup_id": "mending_needle",
-   "drop_ahead": 1.4,
-   "hearth": "hs_long_hearth"
+   "ahead": 2.2
   },
-  "death_linger": 9999.0
+  "release_hearth": "hs_long_hearth"
  },
  "oarsman": {
   "name": "Oarsman",
@@ -529,7 +531,8 @@
       0.58,
       1.0
      ]
-    }
+    },
+    "kind": "frost"
    }
   ],
   "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
