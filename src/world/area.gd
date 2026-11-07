@@ -94,13 +94,18 @@ func _set_layer_collision(layer: Node3D, on: bool) -> void:
 func add_ambient(mn: Vector3, mx: Vector3) -> void:
 	var center := (mn + mx) * 0.5
 	var size := mx - mn
-	# gold dust motes catching the light — soft alpha, not glowing orbs
+	# pollen and warm dust catching the low sun — soft alpha, not glowing orbs
 	var motes := _ambient_emitter(size, Color(0.86, 0.74, 0.5, 0.14), 0.1, Vector3(0.12, 0.05, 0.0), 46)
 	motes.position = center + Vector3(0, 2.2, 0)
 	thaw_layer.add_child(motes)
-	var ash := _ambient_emitter(size, Color(0.5, 0.53, 0.6, 0.16), 0.12, Vector3(0.25, -0.5, 0.1), 80)
-	ash.position = center + Vector3(0, 4.0, 0)
-	rime_layer.add_child(ash)
+	# snow crystals sifting down through the rime air
+	var snow := _ambient_emitter(size, Color(0.88, 0.93, 1.0, 0.7), 0.5, Vector3(0.25, -0.5, 0.1), 90)
+	var smat := FrostFX.material(FrostFX.crystal_tex(), Color(0.88, 0.93, 1.0, 0.7))
+	smat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	(snow.mesh as QuadMesh).material = smat
+	snow.angle_max = 360.0
+	snow.position = center + Vector3(0, 4.0, 0)
+	rime_layer.add_child(snow)
 	# life: distant birds wheel over thaw; petals drift; crows keep the rime
 	var birds := _ambient_emitter(size * 1.6, Color(0.13, 0.10, 0.09, 0.9), 1.6, Vector3(1.6, 0.06, 0.5), 24)
 	birds.position = center + Vector3(0, 15.0, 0)
@@ -114,7 +119,7 @@ func add_ambient(mn: Vector3, mx: Vector3) -> void:
 	crows.emission_box_extents.y = 4.0
 	rime_layer.add_child(crows)
 
-## Soft alpha-blended flecks (motes/ash/petals/birds). Deliberately NOT additive:
+## Soft alpha-blended flecks (motes/snow/petals/birds). Deliberately NOT additive:
 ## additive + the environment's bloom turned these into big white orbs.
 func _ambient_emitter(size: Vector3, color: Color, scale_max: float, drift: Vector3, amount: int) -> CPUParticles3D:
 	var p := CPUParticles3D.new()

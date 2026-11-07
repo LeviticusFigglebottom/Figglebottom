@@ -3,7 +3,7 @@ extends Node3D
 ## The world breathing: cheap ambient dressing that makes the thaw feel
 ## inhabited and the rime feel abandoned — which is the whole juxtaposition.
 ##   kind "motes_gold" — sunlit dust rising slowly through the air (thaw)
-##   kind "motes_ash"  — ash sifting downward (rime)
+##   kind "motes_ash"  — snow crystals sifting downward (rime; id kept for data)
 ##   kind "birds"      — a few ground birds pecking; they burst up and away
 ##                       when the wayfarer comes near
 ##   {"script": ".../ambient_life.gd", "at": [cx, y, cz], "tag": "thaw",
@@ -67,8 +67,11 @@ func _build_motes(ash: bool) -> void:
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.albedo_texture = _get_mote_tex()
-	if ash:
-		mat.albedo_color = Color(0.56, 0.58, 0.64, 0.55)
+	if ash:   # the rime's air carries snow crystals, not ash
+		mat.albedo_texture = FrostFX.crystal_tex()
+		mat.albedo_color = Color(0.88, 0.93, 1.0, 0.7)
+		p.angle_max = 360.0
+		m.size = Vector2(0.09, 0.09)
 	else:
 		mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 		mat.albedo_color = Color(1.0, 0.88, 0.56, 0.52)
