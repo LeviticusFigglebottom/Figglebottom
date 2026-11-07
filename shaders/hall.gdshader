@@ -48,6 +48,8 @@ uniform int state_mode = 0;
 uniform int albedo_from_vc = 0;
 // RIME snow crust on top-facing world surfaces (MaterialLib.SNOW)
 uniform float snow_strength : hint_range(0.0, 1.0) = 0.0;
+// 1 under a roof (AreaBuilder._mark_indoors): no snow falls indoors
+instance uniform float indoor = 0.0;
 
 // Per-subtree dissolve (deaths, pickups fading out; applied via RH.set_dissolve)
 uniform float death_diss : hint_range(0.0, 1.0) = 0.0;
@@ -261,7 +263,7 @@ void fragment() {
 	rime_col = mix(rime_col, rime_col * 0.82, puddle * 0.38);
 
 	// Snow settles on whatever faces the sky; hoarfrost greys the rest
-	if (snow_strength > 0.001 && use_local_triplanar == 0) {
+	if (snow_strength > 0.001 && use_local_triplanar == 0 && indoor < 0.5) {
 		float top = smoothstep(0.45, 0.8, world_nrm.y + (n1 - 0.5) * 0.35);
 		vec3 snow_c = vec3(0.86, 0.90, 0.96) * (0.94 + 0.06 * n1);
 		rime_col = mix(rime_col, snow_c, top * snow_strength);

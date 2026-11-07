@@ -92,6 +92,9 @@ const L_ENEMY := 5
 const L_HURTBOX := 6
 const L_INTERACT := 7
 const L_CAMERA_CLIP := 8
+## Low furniture the Bearer must walk round but foes step over (a hearth
+## kerb): left out of the navmesh, so a big body never wedges on its corners.
+const L_WORLD_LOW := 9
 
 ## Masks
 const M_WORLD_ALL := (1 << 0) | (1 << 1) | (1 << 2)  # base|thaw|rime

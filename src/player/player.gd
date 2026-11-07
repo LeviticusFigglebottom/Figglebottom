@@ -120,7 +120,7 @@ var sim_sprint := false
 func _ready() -> void:
 	add_to_group("player")
 	collision_layer = 1 << (RH.L_PLAYER - 1)
-	collision_mask = RH.M_WORLD_ALL
+	collision_mask = RH.M_WORLD_ALL | (1 << (RH.L_WORLD_LOW - 1))
 	var cs := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.34

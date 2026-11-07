@@ -6,27 +6,36 @@ extends Node3D
 var gate_id := "gate"
 var area_id := ""
 var locked_prompt := "Barred from the other side"
+## Width of the opening the leaves fill (a house door is 1.9 m; the old
+## yard gate 3.6 m). The leaves hinge at the jambs and swing to the far side.
+var door_width := 3.6
+var door_height := 2.5
 
 var _leaves: Array[Node3D] = []
 var _front: Interactable
 var _back: Interactable
 
 func _ready() -> void:
-	var vis := KitLib.instance("gate_iron")
-	add_child(vis)
-	for mi in KitLib._mesh_instances(vis):
-		var nm := String(mi.name)
-		if nm.contains("gate_leaf"):
-			_leaves.append(mi)
+	# two plank leaves, each hung from its jamb on a pivot so it really swings
+	for side in [-1.0, 1.0]:
+		var pivot := Node3D.new()
+		pivot.name = "gate_leaf_%s" % ("l" if side < 0 else "r")
+		pivot.position = Vector3(side * door_width * 0.5, 0, 0)
+		add_child(pivot)
+		var leaf := KitLib.instance("door_leaf")
+		leaf.scale = Vector3(door_width * 0.5 / 0.95, door_height / 2.5, 1.0)
+		leaf.position = Vector3(-side * door_width * 0.25, 0, 0)
+		pivot.add_child(leaf)
+		_leaves.append(pivot)
 	# static collision so the closed gate truly blocks (and splits navmesh)
 	var body := StaticBody3D.new()
 	body.name = "GateBody"
 	body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
 	var cs := CollisionShape3D.new()
 	var box := BoxShape3D.new()
-	box.size = Vector3(2.4, 2.3, 0.14)
+	box.size = Vector3(door_width + 0.3, door_height, 0.14)
 	cs.shape = box
-	cs.position.y = 1.15
+	cs.position.y = door_height * 0.5
 	body.add_child(cs)
 	add_child(body)
 
@@ -62,7 +71,8 @@ func _apply_open(instant: bool) -> void:
 	body.collision_layer = 0
 	for i in _leaves.size():
 		var leaf := _leaves[i]
-		var target := deg_to_rad(-104.0 if i == 0 else 104.0)
+		# both leaves swing in toward the unbarring (-Z) side
+		var target := deg_to_rad(100.0 if i == 0 else -100.0)
 		if instant:
 			leaf.rotation.y = target
 		else:

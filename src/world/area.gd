@@ -241,6 +241,9 @@ func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	if nav_aabb.size != Vector3.ZERO:
 		mesh.filter_baking_aabb = nav_aabb
 		mesh.agent_max_slope = 44.0
+		# outdoors the biggest walker sets the margin: a 0.7 m Holdfast must
+		# not be routed along a 0.4 m hairline past a kerb or a doorpost
+		mesh.agent_radius = 0.6
 	mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
 	mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_WITH_CHILDREN
 	mesh.geometry_source_group_name = "nav_src"
