@@ -23,83 +23,6 @@
       "output": "assets/models/kit/kit_hearthstone.glb"
     },
     {
-      "name": "rimewalker",
-      "category": "enemies",
-      "kind": "character",
-      "source": {
-        "tool": "tripo_image -> tripo_generate_image",
-        "project_id": "43aaefb6-0c5f-460a-a9eb-8cb5a34d6423",
-        "task_id": "c547353c-a7fe-4fc8-ae87-922fea3f6852",
-        "remesh_operator": "9abcb5b2-4ac0-4aeb-9584-4c44bd56f407",
-        "rig_operator": "b4dd2dd5-e66a-4e1a-92ea-9cedcd52974d",
-        "model_version": "v3.1-20260211",
-        "rig": "biped/mixamo"
-      },
-      "input": "raw/rimewalker/rigged.fbx",
-      "anims": {
-        "idle": "raw/rimewalker/anims/idle.fbx",
-        "walk": "raw/rimewalker/anims/walk.fbx",
-        "run": "raw/rimewalker/anims/run.fbx",
-        "slash": "raw/rimewalker/anims/slash.fbx",
-        "hit": "raw/rimewalker/anims/hit_to_body_01.fbx",
-        "defeat": "raw/rimewalker/anims/defeat_02.fbx"
-      },
-      "loop": [
-        "idle",
-        "walk",
-        "run"
-      ],
-      "yaw_deg": -90,
-      "target": {
-        "height": 1.8
-      },
-      "origin": "bottom_center",
-      "texture_max": 2048,
-      "collision": null,
-      "output": "assets/models/enemies/rimewalker.glb",
-      "in_place": [
-        "walk",
-        "run"
-      ]
-    },
-    {
-      "name": "netmender",
-      "category": "bosses",
-      "kind": "character",
-      "source": {
-        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
-        "project_id": "5f4ab571-a3de-427a-9c04-1c43e0acceab",
-        "task_id": "62c27f59-1b63-4442-bfe7-716d180a671a",
-        "remesh_operator": "161a8e5b-c1b4-42ad-9f4a-7c21af3372a8",
-        "model_version": "v3.1-20260211",
-        "rig_operator": "cb8f70f2-520d-4bc5-83bd-e68382036a85",
-        "rig": "biped/mixamo"
-      },
-      "input": "raw/netmender/rigged.fbx",
-      "anims": {
-        "idle": "raw/netmender/anims/idle.fbx",
-        "walk": "raw/netmender/anims/walk.fbx",
-        "slash": "raw/netmender/anims/slash.fbx",
-        "hit": "raw/netmender/anims/hit_to_body_01.fbx",
-        "defeat": "raw/netmender/anims/defeat_02.fbx"
-      },
-      "loop": [
-        "idle",
-        "walk"
-      ],
-      "yaw_deg": -90,
-      "target": {
-        "height": 3.2
-      },
-      "origin": "bottom_center",
-      "texture_max": 2048,
-      "collision": null,
-      "output": "assets/models/bosses/netmender.glb",
-      "in_place": [
-        "walk"
-      ]
-    },
-    {
       "name": "area_saltfell_yard_remesh",
       "category": "areas",
       "kind": "static",
@@ -458,7 +381,14 @@
         "run": "raw/bearer_traveller/anims/run.fbx",
         "slash": "raw/bearer_traveller/anims/slash.fbx",
         "hit": "raw/bearer_traveller/anims/hit_to_body_01.fbx",
-        "defeat": "raw/bearer_traveller/anims/defeat_02.fbx"
+        "defeat": "raw/bearer_traveller/anims/defeat_02.fbx",
+        "dodge_roll": "raw/bearer_traveller/anims/dodge_roll.fbx",
+        "block": "raw/bearer_traveller/anims/block.fbx",
+        "parry": "raw/bearer_traveller/anims/parry.fbx",
+        "drink": "raw/bearer_traveller/anims/drink.fbx",
+        "rest": "raw/bearer_traveller/anims/rest.fbx",
+        "heavy_overhead": "raw/bearer_traveller/anims/heavy_overhead.fbx",
+        "stagger": "raw/bearer_traveller/anims/stagger.fbx"
       },
       "loop": [
         "idle",
@@ -467,7 +397,10 @@
       ],
       "in_place": [
         "walk",
-        "run"
+        "run",
+        "dodge_roll",
+        "stagger",
+        "parry"
       ],
       "collision": null,
       "texture_max": 2048,
@@ -476,7 +409,16 @@
         "height": 1.8
       },
       "origin": "bottom_center",
-      "output": "assets/models/characters/bearer_traveller.glb"
+      "output": "assets/models/characters/bearer_traveller.glb",
+      "motion_titles": {
+        "dodge_roll": "Dodge Roll Forward",
+        "block": "Shield Block Defense",
+        "parry": "Parry and Step Back",
+        "drink": "Drinking from Flask",
+        "rest": "Kneel and Rest",
+        "heavy_overhead": "Overhead Chop Attack",
+        "stagger": "Recover from Hit"
+      }
     },
     {
       "name": "lm_doorpost",
@@ -577,40 +519,6 @@
       "output": "assets/models/npcs/ingra.glb"
     },
     {
-      "name": "hearthhound",
-      "category": "enemies",
-      "kind": "character",
-      "source": {
-        "tool": "tripo_image -> tripo_generate_image",
-        "project_id": "0ee8204b-9515-4a50-9fd7-f22f2a172d0d",
-        "task_id": "7c80d086-f037-439b-ba03-137b9e8a9a89",
-        "remesh_operator": "f1754315-c4c4-44db-8b62-d746a4d0e8be",
-        "model_version": "v3.1-20260211; rig v3.0-20260909",
-        "texture_quality": "detailed",
-        "rig_operator": "c5e92aaa-9910-4c32-abc5-cd232f1ca38b",
-        "rig": "quadruped"
-      },
-      "input": "raw/hearthhound/rigged.fbx",
-      "anims": {
-        "walk": "raw/hearthhound/anims/walk.fbx"
-      },
-      "loop": [
-        "walk"
-      ],
-      "in_place": [
-        "walk"
-      ],
-      "collision": null,
-      "texture_max": 2048,
-      "yaw_deg": 180,
-      "root_bone": "Root",
-      "target": {
-        "height": 1.35
-      },
-      "origin": "bottom_center",
-      "output": "assets/models/enemies/hearthhound.glb"
-    },
-    {
       "name": "mending_needle",
       "category": "weapons",
       "kind": "weapon",
@@ -653,6 +561,125 @@
       "texture_max": 2048,
       "collision": null,
       "output": "assets/models/landmarks/lm_mask_pegs.glb"
+    },
+    {
+      "name": "hearthhound",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "0ee8204b-9515-4a50-9fd7-f22f2a172d0d",
+        "task_id": "7c80d086-f037-439b-ba03-137b9e8a9a89",
+        "remesh_operator": "f1754315-c4c4-44db-8b62-d746a4d0e8be",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "c5e92aaa-9910-4c32-abc5-cd232f1ca38b",
+        "rig": "quadruped"
+      },
+      "input": "raw/hearthhound/rigged.fbx",
+      "anims": {
+        "walk": "raw/hearthhound/anims/walk.fbx"
+      },
+      "loop": [
+        "walk"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": 180,
+      "root_bone": "Root",
+      "target": {
+        "height": 1.35
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/hearthhound.glb"
+    },
+    {
+      "name": "rimewalker",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "00a2f0eb-3ac9-42b3-a9a5-ed2bb7d7fcdd",
+        "task_id": "5d6e2590-50a9-462f-bbd4-4e8008bec5ca",
+        "remesh_operator": "48a14129-fd3f-4cda-9c98-844b3b2763cf",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "3f362f98-2292-4f5f-acd7-61e50db2bb84",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/rimewalker/rigged.fbx",
+      "anims": {
+        "idle": "raw/rimewalker/anims/idle.fbx",
+        "walk": "raw/rimewalker/anims/walk.fbx",
+        "run": "raw/rimewalker/anims/run.fbx",
+        "slash": "raw/rimewalker/anims/slash.fbx",
+        "hit": "raw/rimewalker/anims/hit_to_body_01.fbx",
+        "defeat": "raw/rimewalker/anims/defeat_02.fbx",
+        "dodge_roll": "raw/rimewalker/anims/dodge_roll.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run",
+        "dodge_roll"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/rimewalker.glb",
+      "motion_titles": {
+        "dodge_roll": "Dodge Roll Forward"
+      }
+    },
+    {
+      "name": "netmender",
+      "category": "bosses",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image(multiview) -> tripo_generate_multiview (extreme) -> tools/art/decimate_glb.py 40k -> tripo_import",
+        "project_id": "bbb15df0-9024-4af2-9581-959811f485c8",
+        "task_id": "263effdd-bd8d-47c0-a8bf-ec9063210229",
+        "remesh_operator": "none: Tripo remesh failed twice on this model; decimated locally to 40k tris (decim.py) and re-imported",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "extreme",
+        "rig_operator": "5a727e97-1b10-4e6c-83ec-c96b13616884",
+        "rig": "biped/mixamo",
+        "note": "Tripo remesh failed twice on this model (once after tripo_segment); decimated locally and re-imported, then rigged"
+      },
+      "input": "raw/netmender/rigged.glb",
+      "anims": {
+        "idle": "raw/netmender/anims/idle.fbx",
+        "walk": "raw/netmender/anims/walk.fbx",
+        "slash": "raw/netmender/anims/slash.fbx",
+        "hit": "raw/netmender/anims/hit_to_body_01.fbx",
+        "defeat": "raw/netmender/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.2
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/bosses/netmender.glb"
     }
   ]
 }

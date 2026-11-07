@@ -76,3 +76,21 @@ Budget for the batch: about 3,500 credits. Balance at start: 24,185 (`tripo_stat
 | 2026-11-07 | remesh quad 10k | mending_needle | e62c5ba9-… | 40 | — | op e2c0b071 |
 | 2026-11-07 | image_to_model (v3.1, detailed) | lm_mask_pegs | 5edb1463-0078-48a2-8bac-87710d393ae6 | 55 | — | op 5f113176 |
 | 2026-11-07 | remesh quad 10k | lm_mask_pegs | 5edb1463-… | 40 | — | op 0dd11952 |
+| 2026-11-07 | image_to_model (v3.1, detailed) **re-roll of pilot: mask read as a face** | rimewalker | 00a2f0eb-3ac9-42b3-a9a5-ed2bb7d7fcdd | 55 | — | op 5d6e2590 |
+| 2026-11-07 | remesh quad 10k | rimewalker | 00a2f0eb-… | 40 | — | op 48a14129 |
+| 2026-11-07 | rig check_only + rig biped/mixamo | rimewalker | 00a2f0eb-… | 20 | — | op 3f362f98 |
+| 2026-11-07 | animate ×6 (idle, walk, run, slash, hit_to_body_01, defeat_02) | rimewalker | 00a2f0eb-… | 0 | — | presets free |
+| 2026-11-07 | image_to_model (v3.1, extreme) **re-roll of pilot (mask read as a face); superseded: auto-rig collapsed the bundle in idle** | netmender | fd1d4b94-fb2b-473e-92f3-3b8193b377f8 | 0 | — | op b7d983ec; no charge appeared in the account ledger (expected 85) |
+| 2026-11-07 | remesh quad 10k | netmender | fd1d4b94-… | 40 | — | op a4396ff8 |
+| 2026-11-07 | rig check_only + rig biped/mixamo | netmender | fd1d4b94-… | 20 | — | op b70975c5 |
+| 2026-11-07 | animate ×5 (idle, walk, slash, hit_to_body_01, defeat_02) | netmender | fd1d4b94-… | 0 | — | presets free |
+| 2026-11-07 | **slice heroes batch total** (19 generations, 20 remeshes, 8 rigs; 0 re-rolls on 3D except the two pilot mask re-rolls) | | | **2,005** | **22,180** | matches `tripo_status` ledger: 18 image_to_model + 1 text_to_model at 55, 20 remesh at 40, 8 rigging at 20 |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×1: dodge roll | rimewalker | 00a2f0eb-… | 20 | — | feature eval 5, docs/art/design/tripo_features.md |
+| 2026-11-07 | image_to_model (v3.1, **extreme**) eval, not shipped | eval_bearer_extreme | 6b49ffde-6ffb-4e52-b44f-f4d9a6141b4f | 65 | — | feature eval 4: extreme vs detailed on the Bearer |
+| 2026-11-07 | image_to_model Nexus-v2.0 ×2 (failed server-side) | eval_stone_nexus | — | 0 | — | feature eval 3: 100 charged then cancelled; smart-mesh quota now 0 |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×7: dodge roll, block, parry, drink, rest, heavy overhead, stagger | bearer_traveller | 45249dbe-… | 140 | — | feature eval 5; shipped as clips |
+| 2026-11-07 | tripo_image multiview (free) + multiview_to_model (v3.1, extreme) | netmender | 4332b8cb-f949-4fa4-bd39-4fe4d5cc02ae | 65 | — | op 263effdd; feature eval 1 |
+| 2026-11-07 | tripo_segment (simple) | netmender | 4332b8cb-… | 0 | — | feature eval 2: 20 parts, bundle merged with hood/arm; remesh then failed (refunded) |
+| 2026-11-07 | tripo_import ×2 (raw_mv.glb: remesh failed again, refunded; local 40k decimate: used) | netmender | 4ea01cb8-… / bbb15df0-9024-4af2-9581-959811f485c8 | 0 | — | imports free |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets | netmender | bbb15df0-… | 20 | **21,870** | op 5a727e97 |
+| 2026-11-07 | **slice batch + feature evaluation total** | | | **2,315** | **21,870** | reconciled with the `tripo_status` ledger |
