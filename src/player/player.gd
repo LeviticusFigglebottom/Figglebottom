@@ -72,6 +72,8 @@ var _combo_i := 0
 var _atk_hit_open := false
 var _queued: String = ""
 var _lunge := 0.0
+var _atk_kind := ""          # "light" | "heavy" | "sprint": which moveset entry is swinging
+var _sprinting := false      # set by _st_move each frame the Bearer is at a sprint
 
 # blocking / parry
 var _blocking := false
@@ -400,6 +402,8 @@ func _physics_process(dt: float) -> void:
 		cam.stick_look(Input.get_vector("cam_left", "cam_right", "cam_up", "cam_down"), dt)
 
 func _set_state(s: S) -> void:
+	if s != S.MOVE:
+		_sprinting = false
 	if s == S.MOVE:
 		apply_carry_pose()
 	if state == S.GOURD and s != S.GOURD:
@@ -494,6 +498,7 @@ func _regen(dt: float) -> void:
 
 # --------------------------------------------------------------- states
 func _st_move(dt: float) -> void:
+	_sprinting = false
 	if not input_enabled:
 		velocity.x = move_toward(velocity.x, 0, 20 * dt)
 		velocity.z = move_toward(velocity.z, 0, 20 * dt)
@@ -503,6 +508,7 @@ func _st_move(dt: float) -> void:
 		_enter_block()
 		return
 	var sprinting: bool = _pressed("sprint") and dir != Vector3.ZERO and stamina > 1.0 and cam.locked_target == null
+	_sprinting = sprinting
 	var mv: Dictionary = T["move"]
 	var speed: float = float(mv["run"])
 	if sprinting:
@@ -848,7 +854,25 @@ func try_attack(heavy: bool) -> bool:
 		return false
 	if not heavy and _riposte_target != null and try_riposte():
 		return true
+	if not heavy and state == S.MOVE and _sprinting:
+		return _sprint_attack()
 	return _chain_attack(heavy)
+
+## A light pressed at a full sprint: the run-in strike (movesets.json
+## `sprint`), its own windup, lunge and cost (weapons.json stamina.sprint).
+func _sprint_attack() -> bool:
+	var w := weapon_data()
+	var ms := DB.moveset(w.get("moveset", "longsword"))
+	if not ms.has("sprint"):
+		return _chain_attack(false)
+	if stamina < 1.0 or _winded > 0.0:
+		return false
+	var st: Dictionary = w["stamina"]
+	_spend(float(st.get("sprint", st["light"])))
+	_combo_i = 0
+	_sprinting = false
+	_begin_attack(ms["sprint"], false, "sprint")
+	return true
 
 ## Starts a swing regardless of current attack state (combo links use this).
 func _chain_attack(heavy: bool) -> bool:
@@ -867,12 +891,13 @@ func _chain_attack(heavy: bool) -> bool:
 		_combo_i = _combo_i % lights.size()
 		m = lights[_combo_i]
 	_spend(cost)
-	_begin_attack(m, heavy)
+	_begin_attack(m, heavy, "heavy" if heavy else "light")
 	return true
 
-func _begin_attack(m: Dictionary, heavy: bool) -> void:
+func _begin_attack(m: Dictionary, heavy: bool, kind := "") -> void:
 	_atk = m
 	_atk_is_heavy = heavy
+	_atk_kind = kind if kind != "" else ("heavy" if heavy else "light")
 	_atk_hit_open = false
 	_queued = ""
 	_blocking = false

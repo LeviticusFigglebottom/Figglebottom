@@ -12,7 +12,8 @@
   },
   "stamina": {
    "light": 17,
-   "heavy": 30
+   "heavy": 30,
+   "sprint": 20
   },
   "moveset": "longsword",
   "upgrade": {
@@ -36,7 +37,8 @@
   },
   "stamina": {
    "light": 26,
-   "heavy": 44
+   "heavy": 44,
+   "sprint": 31
   },
   "moveset": "great_hammer",
   "upgrade": {
@@ -61,7 +63,8 @@
   },
   "stamina": {
    "light": 14,
-   "heavy": 25
+   "heavy": 25,
+   "sprint": 17
   },
   "moveset": "spear",
   "two_handed": true,
@@ -86,7 +89,8 @@
   },
   "stamina": {
    "light": 30,
-   "heavy": 50
+   "heavy": 50,
+   "sprint": 36
   },
   "moveset": "greatsword",
   "two_handed": true,
@@ -111,7 +115,8 @@
   },
   "stamina": {
    "light": 13,
-   "heavy": 13
+   "heavy": 13,
+   "sprint": 16
   },
   "ranged": true,
   "ammo": "arrows",
@@ -131,7 +136,8 @@
   "scaling": {},
   "stamina": {
    "light": 10,
-   "heavy": 18
+   "heavy": 18,
+   "sprint": 12
   },
   "moveset": "longsword",
   "upgrade": {

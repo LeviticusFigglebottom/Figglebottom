@@ -41,7 +41,7 @@ const TRAIL_EXTENTS := {
 
 ## Clips authored with the blade extending straight along hand_r +Y.
 const ZERO_MOUNT_CLIPS := [
-	"attack_l1", "attack_l2", "attack_h", "riposte",
+	"attack_l1", "attack_l2", "attack_h", "attack_sprint", "riposte",
 	"atk_r", "atk_double", "atk_thrust", "atk_over", "atk_back", "atk_spin",
 	"atk_2h_cleave", "atk_2h_sweep", "atk_2h_thrust",
 	"twohand_idle", "twohand_walk", "kneel", "seppuku",
