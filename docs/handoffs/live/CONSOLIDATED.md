@@ -3,37 +3,32 @@
 _Last updated: 2026-11-07 (founding session)_
 
 ## State (on main)
-- **Phase 1** is done: the survey, originality guard and CI, and ADRs 0001–0003.
-- **Engine port** is merged.
-  - It contains all systems, renamed, plus the greybox `saltfell_steading`.
-  - `tools/test.sh` passes 5 suites with 102 checks.
-- **Lore** is done: `docs/lore/WORLD.md`, `SLICE.md`, `WRITING.md` (the story quality bar) and `docs/art/design/roster.md` (about 94 Tripo slots).
-- **Tripo pilot** is merged.
-  - Assets: the Netmender (boss, rigged), the Rimewalker (enemy, rigged, 6 clips), the hewing blade and the hearthstone.
-  - Procedural pieces: walls and a drying rack.
-  - Pipeline: `tools/art/`.
-  - Spend: 515 credits; the balance is 24,185.
-  - The area-diorama experiment concluded: backdrop only.
+- **Engine and systems:** ported (ADR 0001).
+- **Lore and roster:** done.
+- **Tripo pilot:** merged.
+- **Mixamo animation layer:** merged (ADR 0004). The Rimewalker and the Netmender use Tripo models in the game, and the Rimewalker attacks with ice-club hands.
+- **Terrain system (ADR 0003, 0005):** Saltfell is one continuous sea-cliff landscape, with the Strand → switchback cliff path → yard → Longhouse.
+  - There is a gully shortcut to the boat-shed and a frozen-channel route in RIME only.
+  - A Lowe vista sits across a lethal ravine.
+  - The edge audit passes.
+- **Tests:** `tools/test.sh` runs 6 suites, 173 checks, all green.
 
-## In flight (branches)
-- `feat/terrain-saltfell` (ready for review): the ADR 0003 terrain system and Saltfell rebuilt as one continuous sea-cliff landscape (ADR 0005).
-  - It adds terrain, scatter, hazards and zone titles.
-  - `tools/audit_edges.py` replaces `audit_walls.py`.
-  - `tools/test.sh` passes 6 suites with 173 checks, with main merged in.
-  - Screens: `docs/screens/terrain_*`, `strand`, `cliff_path`, `yard_*`, `longhouse_boss`, `rime_channel`.
-  - Regenerate the area with `python3 tools/gen_steading.py`, which also rewrites `data/terrain/*.bin`.
-- `art/slice-heroes`: the slice-tier roster through Tripo, plus 14 region concept images. Budget: about 3,500 credits.
-- `feat/characters`: ADR 0004, the Mixamo humanoid animation layer. It puts the Tripo models on the enemy and boss, with data-timed contact frames.
+## In flight (worktree → branch)
+| Worktree | Branch | Work |
+|---|---|---|
+| `/home/user/fb-art` | `art/slice-heroes` | Slice roster through Tripo, 14 concept images, and Tripo feature evaluation (multiview, segment, prompt-animations for roll/block/parry/drink/rest) |
+| `/home/user/figglebottom` | `feat/terrain-polish` | Natural cliff and ravine shapes, procedural turf-roof buildings, terrain known issues |
+| `/home/user/fb-combat` | `feat/combat-deltas` | Lock-on switching, upgrade data, (stat−8) scaling, sprint attack, armour slots, `save_version` |
+| `/home/user/fb-ui` | `feat/ui-keepsakes` | UI re-skin and OFL font, house card, Keepsakes journal, Ingra and Brede lines verbatim from SLICE.md |
+| `/home/user/fb-lead` | `main` | Lead merges here |
 
 ## Next exact step
-1. Review each branch's screenshots and confirm its tests pass.
-2. Merge the branches into main in this order: terrain, then characters, then art.
-3. Then build the vertical slice proper:
-   - the slice NPC dialogue from SLICE.md goes into `data/npcs.json`
-   - the Keepsakes journal
-   - armour slots
-   - lock-on switching
-   - the UI re-skin and house card
+1. Review each branch's screenshots and confirm its tests pass, then merge it.
+2. Next wave:
+   - Netmender fight per SLICE.md §6: three phases, real moves, a frost-veil arena.
+   - The Oarsman and Hearthhound get their Tripo models. The hound needs a quadruped rig and its own AI tuning.
+   - Real music.
+   - Then the region tier: the Lowe.
 
 ## Tripo access (for future sessions)
 - **Tool:** the unofficial `Neko-Yukari/tripo-studio-mcp`. Clone it into the scratchpad and run it with `TRIPO_GATEWAY=0` and `TRIPO_STUDIO_STATE=<scratchpad>/tripo/studio-state.json`.
