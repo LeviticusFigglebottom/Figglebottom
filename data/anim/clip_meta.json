@@ -130,6 +130,373 @@
    "bare_hands": true,
    "_note": "the ice oar is procedural (src/enemies/oarsman.gd): it runs from the left hand through the right, carries the hit volume, and the arms hold it through locomotion via the upper-body carry layer (carry: oar_carry). Strokes are overlays (oar_*).",
    "carry": "oar_carry"
+  },
+  "hearthhound": {
+   "scene": "res://assets/models/enemies/hearthhound.glb",
+   "rig": "quadruped",
+   "yaw_deg": 180.0,
+   "stride": 1.1,
+   "_note": "Tripo quadruped (one real clip: walk). Every other state is a QuadRig pose: skeleton-space Euler offsets in degrees (the rig faces -Z: +X tips a leg forward and lifts a nose) plus a root lift in skeleton units (x1.84 on import). FL = front upper legs, hind thighs are 1_Left_Limb_0 / bone_17 / 1_Right_Limb_0.",
+   "poses": {
+    "lie": {
+     "_root": [
+      0,
+      -0.2,
+      0
+     ],
+     "tripo__Head_1": [
+      -14,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      -6,
+      0,
+      0
+     ],
+     "bone_25": [
+      -30,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      78,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      78,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      62,
+      0,
+      0
+     ],
+     "bone_17": [
+      62,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      62,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -120,
+      0,
+      0
+     ],
+     "bone_18": [
+      -120,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -120,
+      0,
+      0
+     ]
+    },
+    "crouch": {
+     "_root": [
+      0,
+      -0.06,
+      0
+     ],
+     "tripo__Spine_0": [
+      -6,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      -22,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      -8,
+      0,
+      0
+     ],
+     "bone_25": [
+      -25,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      -8,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      -8,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      24,
+      0,
+      0
+     ],
+     "bone_17": [
+      24,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      24,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -30,
+      0,
+      0
+     ],
+     "bone_18": [
+      -30,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -30,
+      0,
+      0
+     ]
+    },
+    "lunge": {
+     "_root": [
+      0,
+      0.03,
+      0
+     ],
+     "tripo__Spine_0": [
+      5,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      16,
+      0,
+      0
+     ],
+     "tripo__Head_3": [
+      12,
+      0,
+      0
+     ],
+     "bone_25": [
+      25,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      48,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      48,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      -42,
+      0,
+      0
+     ],
+     "bone_17": [
+      -42,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      -42,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      10,
+      0,
+      0
+     ],
+     "bone_18": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      10,
+      0,
+      0
+     ]
+    },
+    "bark": {
+     "_root": [
+      0,
+      -0.07,
+      0
+     ],
+     "tripo__Spine_0": [
+      34,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      -10,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      22,
+      0,
+      0
+     ],
+     "bone_25": [
+      -10,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      -34,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      -34,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      72,
+      0,
+      0
+     ],
+     "bone_17": [
+      72,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      72,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -105,
+      0,
+      0
+     ],
+     "bone_18": [
+      -105,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -105,
+      0,
+      0
+     ]
+    },
+    "hold": {
+     "tripo__Head_1": [
+      -12,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      -4,
+      0,
+      0
+     ],
+     "_root": [
+      0,
+      -0.03,
+      0
+     ]
+    },
+    "dead": {
+     "_root": [
+      0,
+      -0.17,
+      0
+     ],
+     "tripo__Root": [
+      0,
+      0,
+      84
+     ],
+     "tripo__Head_1": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      20,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      20,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      10,
+      0,
+      0
+     ],
+     "bone_17": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -20,
+      0,
+      0
+     ],
+     "bone_18": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -20,
+      0,
+      0
+     ]
+    },
+    "flinch": {
+     "tripo__Head_1": [
+      10,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      4,
+      0,
+      0
+     ]
+    }
+   },
+   "pose_alias": {
+    "death": "dead",
+    "stagger": "flinch",
+    "hit": "flinch",
+    "bite": "lunge",
+    "atk_lunge": "crouch",
+    "atk_bark": "bark"
+   },
+   "scale": 0.72
   }
  },
  "mounts": {

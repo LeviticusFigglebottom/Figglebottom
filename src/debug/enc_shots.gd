@@ -219,3 +219,25 @@ func _st_oarsman_stroke(p: Player) -> void:
 		e._begin_attack(e.attack_by_id(OS.get_environment("ENC_ATK") if OS.get_environment("ENC_ATK") != "" else "stroke"))
 	if _f > 50 and e.state == Enemy.ES.ATTACK and e.state_t >= float(e._atk["windup"]) + float(OS.get_environment("ENC_DT") if OS.get_environment("ENC_DT") != "" else "0.06"):
 		_freeze()
+
+func _st_hound_lunge(p: Player) -> void:
+	var e := _face_off(p, "hearthhound", 3.0)
+	if e == null:
+		return
+	if _f == 4:
+		e.set("barked", true)
+	if _f >= 6:
+		_side_cam(p, e, 3.6, 0.2, 0.6, 46.0)
+	if _f == 50:
+		e._begin_attack(e.attack_by_id(OS.get_environment("ENC_ATK") if OS.get_environment("ENC_ATK") != "" else "lunge_bite"))
+	if _f > 50 and e.state == Enemy.ES.ATTACK and e.state_t >= float(e._atk["windup"]) + float(OS.get_environment("ENC_DT") if OS.get_environment("ENC_DT") != "" else "0.1"):
+		_freeze()
+
+func _st_hound_lie(p: Player) -> void:
+	if _f == 3:
+		_foe = _first_foe("hearthhound") if Game.current_area != null else _spawn_foe("hearthhound", p.global_position + Vector3(0, 0.1, -5.0))
+		_place_player(p, p.global_position + Vector3(8, 0, 6), 0.0)   # out of its sight
+	if _foe != null and _f >= 4:
+		_frame(_foe.global_position, _foe.vis, Vector3(2.2, 0.6, 2.2), 0.3, 40.0)
+	if _f == 60:
+		_freeze()

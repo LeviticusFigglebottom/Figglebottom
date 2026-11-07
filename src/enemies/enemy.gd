@@ -5,7 +5,10 @@ extends CharacterBody3D
 
 signal died(enemy)
 
-enum ES { IDLE, ALERT, APPROACH, COMBAT, ATTACK, STAGGER, DEAD }
+## RETURN, GRAB, INTRO, TRANSITION and HOLD belong to the slice's special
+## foes (a hound walking back to its threshold, a hound's grab, a holdfast's
+## intro, phase change and hold); the base ticks them through _st_extra().
+enum ES { IDLE, ALERT, APPROACH, COMBAT, ATTACK, STAGGER, DEAD, RETURN, GRAB, INTRO, TRANSITION, HOLD }
 
 var id := "rimewalker"
 var cfg: Dictionary = {}
@@ -144,6 +147,7 @@ func _physics_process(dt: float) -> void:
 		ES.COMBAT: _st_combat(dt)
 		ES.ATTACK: _st_attack(dt)
 		ES.STAGGER: _st_stagger(dt)
+		_: _st_extra(dt)
 	move_and_slide()
 	_track_progress(dt)
 	# stride cycles while moving; action clips own the rig during ATTACK/STAGGER
@@ -961,6 +965,11 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 		# it; this shorter flinch is only for those who shrugged the parry —
 		# it must never overwrite the long window
 		_stagger(1.6)
+
+## States a subclass adds (RETURN, GRAB, INTRO, TRANSITION, HOLD).
+func _st_extra(dt: float) -> void:
+	velocity.x = move_toward(velocity.x, 0, 10 * dt)
+	velocity.z = move_toward(velocity.z, 0, 10 * dt)
 
 func _st_stagger(dt: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 10 * dt)

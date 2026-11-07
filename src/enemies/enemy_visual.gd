@@ -8,9 +8,10 @@ extends CharVisual
 
 func build(cfg: Dictionary) -> void:
 	var model := String(cfg.get("model", ""))
-	var humanoid := model != "" and build_model(model)
+	var four := model != "" and build_quadruped(model)
+	var humanoid := not four and model != "" and build_model(model)
 	var body_id: String = cfg.get("body", "mannequin_rime")
-	if not humanoid:
+	if not humanoid and not four:
 		var vis_scale := float(cfg.get("vis_scale", 1.55 if cfg.get("is_boss", false) else 1.0))
 		build_body(body_id, float(cfg.get("anim_amp", 1.0)), float(cfg.get("anim_sway", 1.0)), vis_scale)
 	stride = float(cfg.get("stride", 2.3))
