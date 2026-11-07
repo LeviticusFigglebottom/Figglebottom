@@ -177,6 +177,7 @@ func _fit_panel() -> void:
 
 func _render() -> void:
 	for c in list_box.get_children():
+		list_box.remove_child(c)   # out now, so the panel measures only the new rows
 		c.queue_free()
 	for i in _options.size():
 		var l := Label.new()

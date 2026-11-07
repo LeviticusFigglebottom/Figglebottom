@@ -85,6 +85,11 @@ static func box(kind := "panel") -> StyleBoxFlat:
 			sb.border_color = Color(EMBER.r, EMBER.g, EMBER.b, 0.70)
 			sb.set_border_width_all(1)
 			sb.border_width_left = 3
+		"button_sel":
+			# a chosen menu word: an ember bar at its left, a breath of coal
+			sb.bg_color = Color(EMBER_DEEP.r, EMBER_DEEP.g, EMBER_DEEP.b, 0.30)
+			sb.border_color = EMBER_HOT
+			sb.border_width_left = 3
 		"slot":
 			sb.bg_color = Color(COAL.r, COAL.g, COAL.b, 0.86)
 			sb.border_color = Color(BONE.r, BONE.g, BONE.b, 0.22)
@@ -134,7 +139,7 @@ static func style_button(b: Button, size := 26) -> Button:
 	b.add_theme_color_override("font_disabled_color", Color(ASH, 0.5))
 	var empty := box("empty")
 	empty.content_margin_left = 16
-	var sel := box("row_sel")
+	var sel := box("button_sel")
 	sel.content_margin_left = 16
 	for st in ["normal", "disabled"]:
 		b.add_theme_stylebox_override(st, empty)
@@ -158,7 +163,7 @@ static func build_theme() -> Theme:
 	for k in ["normal", "disabled"]:
 		t.set_stylebox(k, "Button", box("empty"))
 	for k in ["hover", "focus", "pressed"]:
-		t.set_stylebox(k, "Button", box("row_sel"))
+		t.set_stylebox(k, "Button", box("button_sel"))
 	t.set_color("font_color", "Button", BONE_DIM)
 	t.set_color("font_hover_color", "Button", EMBER_HOT)
 	t.set_color("font_focus_color", "Button", EMBER_HOT)

@@ -53,6 +53,7 @@ static func open_for(p, leaf := "pack") -> void:
 	p.get_tree().root.add_child(InventoryUI.new(p, leaf))
 
 var _first_leaf := "pack"
+var _frule: ColorRect = null
 
 func _init(p, leaf := "pack") -> void:
 	player = p
@@ -101,6 +102,7 @@ func _ready() -> void:
 
 	# ---- hand-slot rail (pack) + attune slot (songs) share the footer band
 	var frule := ColorRect.new()
+	_frule = frule
 	frule.color = Color(UITheme.BONE, 0.12)
 	frule.position = Vector2(44, 620); frule.size = Vector2(952, 1)
 	panel.add_child(frule)
@@ -161,6 +163,9 @@ func _show_tab(key: String) -> void:
 	_sel = 0
 	_rebuild_list()
 	var footer := String(leaf.get("footer", ""))
+	# a leaf with no footer reads on down to the hint line
+	_scroll.size.y = 512.0 if footer != "" else 640.0
+	if _frule != null: _frule.visible = footer != ""
 	for s in _slots:
 		(s["panel"] as Control).visible = (footer == "hand")
 	_attune_slot.visible = (footer == "attune")

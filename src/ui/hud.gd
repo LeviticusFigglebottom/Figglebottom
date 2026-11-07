@@ -241,7 +241,7 @@ func _build() -> void:
 	warmth_plate.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	warmth_plate.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	warmth_plate.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	warmth_plate.offset_left = -256
+	warmth_plate.offset_left = -212
 	warmth_plate.offset_right = -20
 	warmth_plate.offset_top = -96
 	warmth_plate.offset_bottom = -50
@@ -264,11 +264,11 @@ func _build() -> void:
 	warmth_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	warmth_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	warmth_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	warmth_label.offset_left = -300
+	warmth_label.offset_left = -164
 	warmth_label.offset_top = -92
-	warmth_label.offset_right = -32
+	warmth_label.offset_right = -24
 	warmth_label.offset_bottom = -52
-	warmth_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	warmth_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	warmth_label.text = "0 warmth"
 
 	# the surveyor's line: area, state and the live camera pose in exactly the
@@ -428,8 +428,8 @@ func _build() -> void:
 	band.stretch_mode = TextureRect.STRETCH_SCALE
 	band.anchor_left = 0.0
 	band.anchor_right = 1.0
-	band.anchor_top = 0.40
-	band.anchor_bottom = 0.60
+	band.anchor_top = 0.36
+	band.anchor_bottom = 0.64
 	splash.add_child(band)
 	splash_label = Label.new()
 	splash_label.label_settings = _font("caps", 104, UITheme.BONE, false)
@@ -459,18 +459,21 @@ func _build() -> void:
 	_ks_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_ks_toast.add_child(_ks_label)
 
-## A soft horizontal band of coal, clear at both ends.
-func _band_tex(alpha: float) -> GradientTexture2D:
-	var g := Gradient.new()
-	g.offsets = PackedFloat32Array([0.0, 0.2, 0.5, 0.8, 1.0])
+## A soft band of coal, clear at both ends and feathered top and bottom,
+## so a card sits in a haze rather than a box.
+func _band_tex(alpha: float) -> ImageTexture:
+	var w := 256
+	var h := 64
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
 	var c := UITheme.COAL
-	g.colors = PackedColorArray([Color(c, 0.0), Color(c, alpha * 0.75), Color(c, alpha),
-		Color(c, alpha * 0.75), Color(c, 0.0)])
-	var t := GradientTexture2D.new()
-	t.gradient = g
-	t.width = 256
-	t.height = 4
-	return t
+	for y in h:
+		var v := 1.0 - absf((float(y) + 0.5) / h * 2.0 - 1.0)
+		v = smoothstep(0.0, 0.7, v)
+		for x in w:
+			var u := 1.0 - absf((float(x) + 0.5) / w * 2.0 - 1.0)
+			u = smoothstep(0.0, 0.6, u)
+			img.set_pixel(x, y, Color(c, alpha * u * v))
+	return ImageTexture.create_from_image(img)
 
 ## The card ornament: an ember rule each side of a knot, centred at
 ## anchor y, spanning half_w of the screen width either side.
@@ -751,6 +754,9 @@ func _on_warmth(n: int) -> void:
 	warmth_label.text = "%d warmth" % n
 
 func _on_forgotten() -> void:
+	# STILLED stands alone: no place-name card under it
+	if _title_layer != null and is_instance_valid(_title_layer):
+		_title_layer.queue_free()
 	_fade_splash(true)
 
 func _fade_splash(on: bool) -> void:
@@ -851,8 +857,8 @@ func show_area_title(text: String, hold := 2.2) -> void:
 	tband.texture = _band_tex(0.62)
 	tband.anchor_left = 0.14
 	tband.anchor_right = 0.86
-	tband.anchor_top = 0.27
-	tband.anchor_bottom = 0.45
+	tband.anchor_top = 0.24
+	tband.anchor_bottom = 0.47
 	tband.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(tband)
 	var name_l := Label.new()

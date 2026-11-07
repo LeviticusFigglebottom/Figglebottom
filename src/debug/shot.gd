@@ -226,6 +226,13 @@ func _stage_tick() -> void:
 			if _stage_frame == 8:
 				Game.set_warmth(57)
 				p.take_hit(DamagePacket.new(99999, 0, null))
+			# freeze on the full splash: headless frames are slower than the
+			# respawn timer, so a frame count alone lands after the rise
+			if _stage_frame > 8 and not get_tree().paused:
+				var hud := get_tree().get_first_node_in_group("hud")
+				if hud != null and hud.splash.modulate.a >= 0.99:
+					get_tree().paused = true
+					_frames_left = mini(_frames_left, 4)
 		"dialogue_ingra":
 			# Ingra at her tally in the yard, mid-errand: her fourth line
 			if _stage_frame == 8:
@@ -251,6 +258,10 @@ func _stage_tick() -> void:
 					if c is DialogueUI:
 						for k in 3:
 							(c as DialogueUI).advance()
+		"hud":
+			# the HUD at rest, with an area card held up for the photograph
+			if _stage_frame == 8:
+				Game.title_card.emit("THE STRAND", 120.0)
 		"keepsakes":
 			# a journey part-way along: both threads started, one further on
 			if _stage_frame == 8:

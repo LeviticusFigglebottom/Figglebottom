@@ -106,19 +106,21 @@ func _build_ui() -> void:
 	title.position = Vector2(92, 116)
 	root.add_child(title)
 	# the house ornament under the name: an ember rule tied in a knot
-	var rl := UITheme.rule(300, 0.8)
-	rl.position = Vector2(96, 266)
+	var rl := UITheme.rule(236, 0.8)
+	rl.position = Vector2(98, 266)
 	root.add_child(rl)
-	var rr := UITheme.rule(300, 0.8)
-	rr.position = Vector2(436, 266)
+	var rr := UITheme.rule(236, 0.8)
+	rr.position = Vector2(376, 266)
 	root.add_child(rr)
 	var knot := KnotFrame.new(true, 13.0)
-	knot.position = Vector2(416, 266) - knot.size * 0.5
+	knot.position = Vector2(355, 266) - knot.size * 0.5
 	root.add_child(knot)
 	var sub := Label.new()
 	sub.text = "The Winter That Would Not End"
 	sub.label_settings = UITheme.ls(30, UITheme.BONE_DIM, "italic")
-	sub.position = Vector2(132, 278)
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.position = Vector2(98, 290)
+	sub.size = Vector2(514, 40)
 	root.add_child(sub)
 
 	var box := VBoxContainer.new()
