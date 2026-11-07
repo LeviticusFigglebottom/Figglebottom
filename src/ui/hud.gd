@@ -768,7 +768,7 @@ func _input(event: InputEvent) -> void:
 func show_boss(boss: Node) -> void:
 	_boss = boss
 	_boss_ghost_ratio = 1.0
-	boss_name.text = boss.cfg.get("name", "???")
+	boss_name.text = boss.cfg.get("bar_name", boss.cfg.get("name", "???"))
 	boss_root.visible = true
 
 func hide_boss() -> void:
@@ -781,7 +781,10 @@ func hide_boss() -> void:
 ## gold rule beneath — faded in, held a breath, and let go.
 var _title_layer: CanvasLayer = null
 
-func show_area_title(text: String) -> void:
+## style "release": the holdfast-released card (SLICE.md 1): quiet,
+## bone-white, held 3 s, in place of any victory banner.
+func show_area_title(text: String, style := "") -> void:
+	var release := style == "release"
 	if _title_layer != null and is_instance_valid(_title_layer):
 		_title_layer.queue_free()
 	_title_layer = CanvasLayer.new()
@@ -820,7 +823,9 @@ func show_area_title(text: String) -> void:
 	var ls := LabelSettings.new()
 	ls.font = load("res://assets/fonts/DejaVuSerif.ttf")
 	ls.font_size = 52
-	ls.font_color = Color(0.96, 0.90, 0.74)
+	ls.font_color = Color(0.93, 0.91, 0.86) if release else Color(0.96, 0.90, 0.74)
+	if release:
+		ls.font_size = 44
 	ls.shadow_color = Color(0, 0, 0, 0.92)
 	ls.shadow_size = 6
 	ls.shadow_offset = Vector2(1, 2)
@@ -837,12 +842,14 @@ func show_area_title(text: String) -> void:
 	rule.stretch_mode = TextureRect.STRETCH_SCALE
 	var rgrad := Gradient.new()
 	rgrad.offsets = PackedFloat32Array([0.0, 0.25, 0.50, 0.75, 1.0])
+	var rc := Color(0.86, 0.84, 0.8) if release else Color(0.86, 0.74, 0.44)
+	var rh := Color(0.95, 0.94, 0.9) if release else Color(0.98, 0.88, 0.58)
 	rgrad.colors = PackedColorArray([
-		Color(0.86, 0.74, 0.44, 0.0),
-		Color(0.86, 0.74, 0.44, 0.78),
-		Color(0.98, 0.88, 0.58, 0.98),
-		Color(0.86, 0.74, 0.44, 0.78),
-		Color(0.86, 0.74, 0.44, 0.0),
+		Color(rc.r, rc.g, rc.b, 0.0),
+		Color(rc.r, rc.g, rc.b, 0.78),
+		Color(rh.r, rh.g, rh.b, 0.98),
+		Color(rc.r, rc.g, rc.b, 0.78),
+		Color(rc.r, rc.g, rc.b, 0.0),
 	])
 	var rtex := GradientTexture2D.new()
 	rtex.gradient = rgrad
@@ -861,7 +868,7 @@ func show_area_title(text: String) -> void:
 	var tw := box.create_tween()
 	tw.tween_property(box, "modulate:a", 1.0, 0.9) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tw.tween_interval(2.2)
+	tw.tween_interval(3.0 if release else 2.2)
 	tw.tween_property(box, "modulate:a", 0.0, 1.2) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	var layer_ref := _title_layer

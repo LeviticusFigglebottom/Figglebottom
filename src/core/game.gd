@@ -77,12 +77,13 @@ func respawn_player() -> void:
 	player_respawned.emit()
 
 ## A holdfast has been put to rest: the area opens for free warming.
-func on_boss_slain(area_id: String) -> void:
+func on_boss_slain(area_id: String, quiet := false) -> void:
 	World.set_cleared(area_id)
 	World.save_game()
 	AudioDirector.play_music("", 2.0)
 	AudioDirector.duck_ambience(false)
-	toast.emit("The holdfast rests. The memory is yours to keep or let go.")
+	if not quiet:   # a released holdfast shows its own card (SLICE.md 1)
+		toast.emit("The holdfast rests. The memory is yours to keep or let go.")
 	area_cleared.emit(area_id)
 	await get_tree().create_timer(2.0, false).timeout
 	if current_area != null and current_area.area_id == area_id:

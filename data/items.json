@@ -34,5 +34,13 @@
  "warding_hum": {
   "name": "Warding Hum",
   "desc": "A skin of remembered warmth that takes the cold's anger first, and goes out doing it."
+ },
+ "item_mending_needle": {
+  "name": "Mending Needle",
+  "desc": "A net-needle of whalebone, loaded with tarred twine, from the Netmender's lap. The last net it worked has one hole mended fourteen times over. Each knot is a little looser than the one before it."
+ },
+ "item_rye_sack": {
+  "name": "Rye Sack",
+  "desc": "A sack of rye from the Saltfell store-house, chewed at one corner. It was under the byre dog, flattened into the shape of a dog. Ingra will want it back."
  }
 }

@@ -32,6 +32,11 @@ var _think_t := 0.0
 var _strafe_dir := 1.0
 var _blocking := false
 var phase := 1
+## An idle chore from the area data (spawner "pose"): "sit" = sitting at a
+## chore, mending nothing (SLICE.md 5). Such a foe rises slowly when the
+## Bearer comes into perception (data rise_time).
+var idle_pose := ""
+var _risen := true
 
 # corner recovery: pursuing into a wall wedge used to pin bosses in place —
 # wanting to move but making no ground. Track real progress; when wedged,
@@ -120,6 +125,7 @@ func _ready() -> void:
 	hitbox.on_contact = _on_hit_contact
 	_build_blade_hitbox()
 	_build_fist_hitbox()
+	_apply_idle_pose()
 
 	# floating health bar for regular foes; bosses ride the big HUD bar instead
 	if not cfg.get("is_boss", false):
@@ -263,9 +269,27 @@ func _st_idle(dt: float) -> void:
 			AudioDirector.sfx_at(cfg["sfx_alert"], global_position, -2.0, randf_range(0.9, 1.1))
 
 func _st_alert(dt: float) -> void:
-	_face(target.global_position - global_position, dt, 1.6)
-	if state_t >= 0.42:
+	if not _risen:
+		# a sitter gets up first: slowly, the chore set down
+		_risen = true
+		var rise := float(cfg.get("rise_time", 1.8))
+		vis.play("stand_up", 0.25, vis.clip_length("stand_up") / maxf(rise, 0.1))
+		_rise_until = rise
+	_face(target.global_position - global_position, dt, 1.6 if _rise_until <= 0.0 else 0.4)
+	if state_t >= maxf(0.42, _rise_until):
+		_rise_until = 0.0
+		vis.idle(0.3)
 		_set_state(ES.APPROACH)
+
+var _rise_until := 0.0
+
+const IDLE_POSES := {"sit": "sit_mend"}
+
+func _apply_idle_pose() -> void:
+	if idle_pose == "" or not vis.is_humanoid() or not IDLE_POSES.has(idle_pose):
+		return
+	vis.play(String(IDLE_POSES[idle_pose]), 0.0)
+	_risen = false
 
 func _st_approach(dt: float) -> void:
 	if not _target_valid():
@@ -476,12 +500,20 @@ func _st_attack(dt: float) -> void:
 	# each strike in turn
 	while _hit_i < hits.size() and t >= w + float(hits[_hit_i]) / sm:
 		if _hit_i > 0:
-			_end_all_swings()
+			# the next strike re-arms the same volumes (begin_swing clears who
+			# was struck); ending them first would land a deferred disable
+			# after the re-arm and swallow the strike
 			if _atk.has("hit_anim"):
 				vis.play_timed(String(_atk["hit_anim"]), maxf(float(_atk.get("hit_lead", 0.12)), 0.05), 0.05)
 		_strike()
 		_hit_i += 1
 	_atk_done = _hit_i > 0
+	# between strikes the volumes stay armed but bite nothing (no packet):
+	# re-arming next strike must not race a deferred disable
+	if _atk_done and not in_strike and _hit_i < hits.size():
+		for hb in [hitbox, blade_hitbox, fist_hitbox]:
+			if hb != null:
+				(hb as Hitbox).packet = null
 	if vis.trail != null and _atk_done and t >= w + last + act:
 		vis.trail.visible = false
 	if _atk_done and t >= w + last + act and (hitbox.monitoring
@@ -888,11 +920,16 @@ func _ember_nova(radius: float) -> void:
 		if d < radius and seen and p.has_method("take_hit"):
 			var hb: Hurtbox = p.get("hurtbox")
 			var pk := DamagePacket.new(float(_atk.get("dmg", 30)), float(_atk.get("poise_dmg", 35)), self)
-			pk.kind = "ember"
+			pk.kind = String(_atk.get("nova_kind", "ember"))
 			pk.can_be_parried = false
 			if hb != null:
 				hb.receive(pk)
-	_ring_vfx(radius, true)
+	var frost := String(_atk.get("nova_kind", "ember")) == "frost"
+	_ring_vfx(radius, not frost)
+	if frost:   # a cold sweep (the Netmender's net train): no ember light
+		Juice.shake(0.4, 0.28)
+		AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -1.0, 0.7)
+		return
 	# the ring itself burns gold, and a breath of light rides it out
 	var flash := OmniLight3D.new()
 	flash.light_color = Color(1.0, 0.9, 0.6)
@@ -1035,6 +1072,10 @@ func take_hit(packet: DamagePacket) -> void:
 	if poise <= 0.0:
 		poise = float(cfg.get("poise", 30))
 		_stagger()
+	_check_phase()
+
+## Boss phase gates (a subclass may run its own: the Netmender's three).
+func _check_phase() -> void:
 	if cfg.get("is_boss", false) and phase == 1 and hp <= max_hp * float(cfg.get("phase2_at", 0.5)):
 		phase = 2
 		_enrage()

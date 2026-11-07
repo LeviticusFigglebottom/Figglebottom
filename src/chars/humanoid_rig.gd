@@ -39,6 +39,7 @@ var _loco_rate := 1.0
 var _loco_pos := 0.0
 var _loco_phase := 0.0             # seconds into the dominant loco cycle
 var _carry := ""                   # arms-only carry clip ("" = none)
+var _carry_always := false         # the carry holds through actions too
 
 func setup(id: String, skel: Skeleton3D) -> void:
 	model_id = id
@@ -121,6 +122,25 @@ func qualified(clip: String) -> String:
 func _resolved_name(clip: String) -> String:
 	var q := qualified(clip)
 	return q.trim_prefix("own/")
+
+## Swap the arms-only layer: `clip` on `bones` (mixamorig_* names); with
+## `always` it holds through actions as well (the Netmender's left hand stays
+## behind her back for the whole last phase). "" clears it.
+func set_carry(clip: String, bones: Array = [], always := false) -> void:
+	var up := (tree_root as AnimationNodeBlendTree).get_node("upper") as AnimationNodeBlend2
+	var carry := (tree_root as AnimationNodeBlendTree).get_node("carry") as AnimationNodeAnimation
+	if clip == "" or qualified(clip) == "":
+		_carry = ""
+		return
+	if not bones.is_empty():
+		for side in ["Left", "Right"]:
+			for b in ["Shoulder", "Arm", "ForeArm", "Hand"]:
+				up.set_filter_path(NodePath("Skeleton3D:mixamorig_%s%s" % [side, b]), false)
+		for b in bones:
+			up.set_filter_path(NodePath("Skeleton3D:" + String(b)), true)
+	carry.animation = qualified(clip)
+	_carry = clip
+	_carry_always = always
 
 func has_clip(clip: String) -> bool:
 	return qualified(clip) != ""
@@ -273,4 +293,7 @@ func _push() -> void:
 	set("parameters/slot/blend_amount", _w_slot)
 	set("parameters/mix/blend_amount", _w_act)
 	# the carry pose holds the arms whenever no action owns them
-	set("parameters/upper/blend_amount", (1.0 - _w_act) if _carry != "" else 0.0)
+	var cw := 0.0
+	if _carry != "":
+		cw = 1.0 if _carry_always else (1.0 - _w_act)
+	set("parameters/upper/blend_amount", cw)

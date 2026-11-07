@@ -48,7 +48,28 @@
    "yaw_deg": 180.0,
    "own_clips": true,
    "bare_hands": true,
-   "_note": "keeps her own hunched idle/walk/slash/hit/defeat; borrows run; overlays ride her own idle"
+   "_note": "keeps her own hunched idle/walk/slash/hit/defeat; borrows run; overlays ride her own idle",
+   "unarmed": {
+    "_note": "her fingers have grown long needle-points of ice (SLICE.md 6): a sphere rides each hand, pushed out along the fingers",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.45,
+     "offset": [
+      0.0,
+      0.45,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.45,
+     "offset": [
+      0.0,
+      0.45,
+      0.0
+     ]
+    }
+   }
   },
   "bearer_traveller": {
    "scene": "res://assets/models/characters/bearer_traveller.glb",
@@ -684,6 +705,101 @@
     "contact": 1.0,
     "end": 2.2
    }
+  },
+  "sit_mend": {
+   "loop": true,
+   "procedural": {}
+  },
+  "stand_up": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.0
+   }
+  },
+  "sit_still": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.0
+   }
+  },
+  "needle_draw": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 0.6,
+    "end": 0.6
+   }
+  },
+  "needle_stab": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 0.12,
+    "end": 0.4
+   }
+  },
+  "net_gather": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 1.22,
+    "end": 1.5
+   }
+  },
+  "net_shoulder": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 1.38,
+    "end": 1.6
+   }
+  },
+  "kneel_knot": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 1.4,
+    "end": 2.2
+   }
+  },
+  "haul_lean": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 1.0,
+    "end": 1.8
+   }
+  },
+  "sea_weight": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 1.6,
+    "end": 2.8
+   }
+  },
+  "turn_hunch": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 0.8,
+    "end": 0.8
+   }
+  },
+  "hold_curl": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 2.0,
+    "end": 2.0
+   }
+  },
+  "grab_floor": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.6
+   }
+  },
+  "reach_back": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.4
+   }
+  },
+  "left_behind": {
+   "loop": true,
+   "procedural": {}
   }
  },
  "aliases": {
