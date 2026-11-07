@@ -1,0 +1,33 @@
+class_name Spawner
+extends Node3D
+## Spawns one enemy; respawns it when hearth is kept (unless dead_once and
+## already slain, tracked via World area flags).
+
+@export var enemy_id := "rimewalker"
+@export var dead_once := false     # minibosses: stay dead once killed
+@export var face_deg := 0.0
+var spawn_flag := ""               # area flag name for dead_once tracking
+var area_id := ""
+
+var current: Enemy = null
+
+func _ready() -> void:
+	add_to_group(RH.GROUP_RESPAWN_ON_REST)
+	respawn.call_deferred()
+
+func respawn() -> void:
+	if dead_once and area_id != "" and World.area_flag(area_id, spawn_flag):
+		return
+	if current != null and is_instance_valid(current):
+		current.queue_free()
+	var ecfg: Dictionary = DB.table("enemies").get(enemy_id, {})
+	if ecfg.has("class"):
+		current = load(ecfg["class"]).new()
+	else:
+		current = Enemy.new()
+	current.setup(enemy_id)
+	add_child(current)
+	current.global_position = global_position
+	current.vis.rotation.y = deg_to_rad(face_deg)
+	if dead_once:
+		current.died.connect(func(_e): World.set_area_flag(area_id, spawn_flag))

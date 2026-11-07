@@ -1,0 +1,63 @@
+name: CI — test and export
+
+# Imports the project, runs the headless test suite (tools/test.sh: static
+# area audits + in-engine tests), then packages standalone Linux and Windows
+# builds. Grab the builds from the run's Artifacts.
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main", "claude/**"]
+    paths-ignore: ["docs/**", "*.md"]
+  pull_request:
+
+env:
+  GODOT_VERSION: "4.7"
+
+jobs:
+  test-and-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot + export templates
+        run: |
+          set -e
+          curl -sSL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+          curl -sSL -o templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          unzip -q templates.tpz
+          mv templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
+
+      - name: Import project resources
+        run: godot --headless --path . --import 2>&1 | tail -2 || true
+
+      - name: Run tests
+        run: tools/test.sh
+
+      - name: Export Linux
+        run: |
+          mkdir -p build
+          godot --headless --path . --export-release "Linux" build/rimeholt-linux.x86_64 2>&1 | tail -3
+          test -f build/rimeholt-linux.x86_64
+
+      - name: Export Windows
+        run: |
+          godot --headless --path . --export-release "Windows" build/rimeholt-windows.exe 2>&1 | tail -3
+          test -f build/rimeholt-windows.exe
+
+      - name: Upload Linux build
+        uses: actions/upload-artifact@v4
+        with:
+          name: rimeholt-linux
+          path: build/rimeholt-linux.x86_64
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: rimeholt-windows
+          path: build/rimeholt-windows.exe

@@ -1,0 +1,180 @@
+class_name FrostVeil
+extends Node3D
+## The frost veil before a holdfast. Rime-layer entity: pass through to
+## begin the fight; it seals at your back until the holdfast rests.
+
+signal boss_engaged
+
+var gate_id := "fog"
+var area_id := ""
+var boss_spawner: Spawner = null
+var has_frame := true
+var plane_size := Vector2(3.4, 5.1)
+
+var _plane: MeshInstance3D
+var _zone: Interactable
+var _seal: StaticBody3D
+var _engaged := false
+var intercept: Node = null   # a scripted reveal may stage the first engagement
+var _snap_when_ready := false
+
+## Arenas with a second way out list extra veil
+## walls in the gate spec: {"at": [x,y,z], "rot": deg, "size": [w,h]} in
+## world coords. They stand only while the duel does — no walking out on a
+## holdfast mid-fight.
+var aux_seal_specs: Array = []
+var _aux_walls: Array = []
+var _aux_planes: Array = []
+
+func _ready() -> void:
+	add_to_group(RH.GROUP_RESPAWN_ON_REST)
+	if has_frame:
+		add_child(KitLib.instance("frost_veil_frame"))
+	_plane = MeshInstance3D.new()
+	var quad := QuadMesh.new()
+	quad.size = plane_size
+	_plane.mesh = quad
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/frost_veil.gdshader")
+	_plane.set_surface_override_material(0, m)
+	_plane.position = Vector3(0, plane_size.y * 0.5, 0)
+	add_child(_plane)
+
+	_seal = StaticBody3D.new()
+	_seal.collision_layer = 1 << (RH.L_WORLD_RIME - 1)
+	var cs := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(3.6, 3.4, 0.3)
+	cs.shape = box
+	cs.position.y = 1.7
+	_seal.add_child(cs)
+	add_child(_seal)
+
+	_zone = Interactable.new()
+	_zone.prompt = "Part the frost veil"
+	_zone.setup_zone(1.4, 2.0, Vector3(0, 0, 1.2))
+	_zone.activated.connect(_on_enter)
+	add_child(_zone)
+	_build_aux_seals()
+	if _snap_when_ready:
+		snap_cleared()
+
+func _build_aux_seals() -> void:
+	for spec in aux_seal_specs:
+		var at: Array = spec.get("at", [0, 0, 0])
+		var size: Array = spec.get("size", [4.2, 4.0])
+		var holder := Node3D.new()
+		add_child(holder)
+		holder.global_position = Vector3(at[0], at[1], at[2])
+		holder.global_rotation = Vector3(0, deg_to_rad(float(spec.get("rot", 0.0))), 0)
+		var plane := MeshInstance3D.new()
+		var quad := QuadMesh.new()
+		quad.size = Vector2(float(size[0]), float(size[1]))
+		plane.mesh = quad
+		var m := ShaderMaterial.new()
+		m.shader = load("res://shaders/frost_veil.gdshader")
+		plane.set_surface_override_material(0, m)
+		plane.position = Vector3(0, float(size[1]) * 0.5, 0)
+		plane.visible = false
+		holder.add_child(plane)
+		var wall := StaticBody3D.new()
+		wall.collision_layer = 0
+		var cs := CollisionShape3D.new()
+		var box := BoxShape3D.new()
+		box.size = Vector3(float(size[0]) + 0.2, float(size[1]), 0.3)
+		cs.shape = box
+		cs.position.y = float(size[1]) * 0.5
+		wall.add_child(cs)
+		holder.add_child(wall)
+		_aux_walls.append(wall)
+		_aux_planes.append(plane)
+
+func _set_aux(up: bool) -> void:
+	for w in _aux_walls:
+		(w as StaticBody3D).collision_layer = (1 << (RH.L_WORLD_RIME - 1)) if up else 0
+	for p in _aux_planes:
+		(p as MeshInstance3D).visible = up
+
+func _on_enter(player) -> void:
+	if _engaged or player == null:
+		return
+	_engaged = true
+	_zone.enabled = false
+	# a scripted reveal may stage the first engagement the moment the
+	# veil is parted; the step-through still carries the player in
+	var staged: bool = intercept != null and is_instance_valid(intercept) \
+			and intercept.has_method("on_parted") and intercept.on_parted(self, player)
+	# step through the veil
+	var through: Vector3 = global_position - global_transform.basis.z * 2.2
+	through.y = player.global_position.y
+	var tw := create_tween()
+	player.lock_control(true)
+	tw.tween_property(player, "global_position", through, 0.7)
+	tw.tween_callback(func():
+		if staged:
+			return
+		player.lock_control(false)
+		for a in get_tree().get_nodes_in_group("allies"):
+			if a.has_method("blink_to_player"):
+				a.blink_to_player()
+		_engage_boss())
+	AudioDirector.sfx_at("res://assets/audio/veil_enter.wav", global_position, -2.0)
+
+func _engage_boss() -> void:
+	if boss_spawner != null and boss_spawner.current != null and not boss_spawner.current.dead:
+		var boss := boss_spawner.current
+		boss.target = Game.player
+		boss._set_state(Enemy.ES.ALERT)
+		AudioDirector.sfx_at(boss.cfg.get("sfx_alert", ""), boss.global_position, 2.0)
+		AudioDirector.boss_theme(boss.id, 1.5)
+		for hud in get_tree().get_nodes_in_group("hud"):
+			hud.show_boss(boss)
+		boss.died.connect(_on_boss_dead)
+	_set_aux(true)
+	Game.arena_locked = true
+	boss_engaged.emit()
+
+func _on_boss_dead(_e) -> void:
+	Game.on_boss_slain(area_id)
+	dissolve()
+
+## The veil re-forms with its holdfast. Dying mid-fight used to leave the gate
+## sealed and mute (its zone disabled, its died-signal bound to a freed boss),
+## so the arena could never be re-entered. Respawn runs with the enemy
+## respawns on death/rest: unless the holdfast is slain for good, re-arm.
+func respawn() -> void:
+	if boss_spawner != null and boss_spawner.dead_once \
+			and World.area_flag(area_id, boss_spawner.spawn_flag):
+		return   # the holdfast rests forever; the veil stays down
+	_engaged = false
+	_zone.enabled = true
+	_seal.collision_layer = 1 << (RH.L_WORLD_RIME - 1)
+	_plane.transparency = 0.0
+	_plane.show()
+	_set_aux(false)
+	Game.arena_locked = false
+	for hud in get_tree().get_nodes_in_group("hud"):
+		hud.hide_boss()
+
+## The holdfast already rests (a prior session or an earlier visit): the veil
+## must not re-form when the area is rebuilt. Cheap, instant, no tween.
+## The builder calls this on a detached tree, before _ready has made the
+## parts — remember the order and apply it when they exist.
+func snap_cleared() -> void:
+	if _zone == null:
+		_snap_when_ready = true
+		return
+	_engaged = true
+	_zone.enabled = false
+	_seal.collision_layer = 0
+	_plane.hide()
+	_set_aux(false)
+
+func dissolve() -> void:
+	_seal.collision_layer = 0
+	_zone.enabled = false
+	_set_aux(false)
+	Game.arena_locked = false
+	var tw := create_tween()
+	tw.tween_property(_plane, "transparency", 1.0, 2.0)
+	tw.tween_callback(_plane.hide)

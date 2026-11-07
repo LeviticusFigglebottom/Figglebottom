@@ -1,0 +1,79 @@
+{
+ "player": {
+  "base": {
+   "hp": 100,
+   "stamina": 80,
+   "poise": 30
+  },
+  "per_level": {
+   "heart_hp": 12,
+   "wind_stamina": 6
+  },
+  "stamina": {
+   "regen": 30.0,
+   "regen_delay": 0.55,
+   "regen_block_mult": 0.4,
+   "sprint_cost": 12.0,
+   "roll_cost": 24.0
+  },
+  "roll": {
+   "duration": 0.46,
+   "iframe_start": 0.04,
+   "iframe_end": 0.32,
+   "speed": 7.5,
+   "backstep_speed": 5.0,
+   "backstep_duration": 0.32,
+   "backstep_iframe_start": 0.03,
+   "backstep_iframe_end": 0.18
+  },
+  "move": {
+   "walk": 3.4,
+   "run": 5.2,
+   "sprint": 7.2,
+   "accel": 14.0,
+   "turn_speed": 11.0,
+   "strafe": 3.0
+  },
+  "gourd": {
+   "charges": 3,
+   "heal": 55,
+   "use_time": 1.1
+  },
+  "parry": {
+   "windup": 0.08,
+   "window": 0.16,
+   "recovery": 0.45,
+   "stamina": 12
+  },
+  "poise_regen": 8.0,
+  "stagger_time": 0.7
+ },
+ "levels": {
+  "base_cost": 60,
+  "cost_growth": 1.22,
+  "stats": [
+   "heart",
+   "wind",
+   "might",
+   "craft",
+   "lungs",
+   "kinship"
+  ]
+ },
+ "camera": {
+  "distance": 3.6,
+  "height": 1.7,
+  "fov": 62,
+  "sensitivity": 0.0035,
+  "lock_distance_bias": 1.15
+ },
+ "death": {
+  "respawn_delay": 2.8
+ },
+ "transition": {
+  "duration": 6.0,
+  "max_radius": 90.0,
+  "band": 4.5,
+  "lock_player_time": 3.2
+ }
+}

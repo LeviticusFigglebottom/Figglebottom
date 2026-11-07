@@ -1,0 +1,33 @@
+{
+ "steward_ingra": {
+  "name": "Ingra, Steward of Saltfell",
+  "short_name": "the Steward",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Late for the feast, traveller? The fires are high and the mead is cold, the way it should be.",
+   "This is Saltfell Steading. Tonight is the last long evening of summer \u2014 the shearing starts at first light.",
+   "If you sit by the hearthstone, mind it: they say it remembers. Sit long enough and it will show you what it remembers now."
+  ],
+  "lines_repeat": [
+   "Eat something. Winter is a long way off yet.",
+   "The headman is in the long hall, counting the stores again."
+  ],
+  "services": [
+   {
+    "id": "deep_gourd",
+    "type": "gourd_up",
+    "warmth": 300,
+    "once_flag": "bought_deep_gourd",
+    "label": "Trade for a Deep Gourd \u2014 300 warmth"
+   },
+   {
+    "id": "buy_mend",
+    "type": "buy",
+    "item": "mend",
+    "warmth": 200,
+    "label": "Learn the Mending Song \u2014 200 warmth",
+    "line_done": "Hum it low. It works better when nobody is listening."
+   }
+  ]
+ }
+}

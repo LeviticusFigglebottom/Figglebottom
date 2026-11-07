@@ -1,0 +1,38 @@
+{
+ "bog_iron": {
+  "name": "Bog-iron",
+  "desc": "A lump of iron raked from the fen and hammered once. A smith can fold it into an edge."
+ },
+ "gourd": {
+  "name": "Gourd",
+  "desc": "A stoppered gourd of hot broth. Resting at a hearthstone fills it again."
+ },
+ "arrows": {
+  "name": "Arrows",
+  "desc": "Goose-fletched arrows for the bow. Carried in the quiver, not the hand."
+ },
+ "deep_gourd": {
+  "name": "Deep Gourd",
+  "desc": "A larger gourd. Holds one more draught."
+ },
+ "mend": {
+  "name": "Mending Song",
+  "desc": "A low hum the steading sang over cuts and chilblains. The wound remembers being warm."
+ },
+ "ember_throw": {
+  "name": "Ember Throw",
+  "desc": "A coal of remembered summer, thrown. It goes where the breath is aimed."
+ },
+ "hearth_shout": {
+  "name": "Hearth Shout",
+  "desc": "The whole hearth at once. Everything near learns what midsummer felt like."
+ },
+ "long_note": {
+  "name": "Long Note",
+  "desc": "One held note driven straight through everything between you and the far wall."
+ },
+ "warding_hum": {
+  "name": "Warding Hum",
+  "desc": "A skin of remembered warmth that takes the cold's anger first, and goes out doing it."
+ }
+}
