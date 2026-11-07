@@ -1,0 +1,294 @@
+{
+ "_doc": "Humanoid animation metadata (ADR 0004). Times are seconds into the source clip. Action clips play the section [start, end] rate-scaled so `contact` lands on the caller's data time (an attack's windup): rate = (contact - start) / windup, capped at max_rate by trimming the lead-in instead of slowing the hit. A clip is REAL when an animation of that name exists in a rig's glb (merged by tools/art/blender_process.py from the manifest's anims) and PROCEDURAL otherwise (HumanoidOverlays on the idle base pose). Real always outranks procedural, so dropping a real clip in under the same name needs no code change: give it top-level start/contact/end here (defaults: the whole clip, contact = start). The `procedural` block holds the overlay's own timing and is used only while the overlay is what plays. `aliases` map the game's clip vocabulary onto humanoid clips, best first; the game name itself is always tried before its aliases (a real `stagger` beats the `hit` fallback). `mannequin_contact` is the legacy 17-bone rig's contact fraction of its 1-second clips.",
+ "donor": "rimewalker",
+ "max_rate": 2.4,
+ "locomotion": {
+  "idle": 0.0,
+  "walk": 1.0,
+  "run": 2.0
+ },
+ "models": {
+  "rimewalker": {
+   "scene": "res://assets/models/enemies/rimewalker.glb",
+   "yaw_deg": 180.0,
+   "own_clips": false,
+   "_note": "the donor: its clips ARE the shared library",
+   "bare_hands": true,
+   "unarmed": {
+    "_note": "grown ice clubs (SLICE.md): no weapon mesh; a sphere hit volume rides each hand bone. offset is bone-local (Y runs toward the fingers). An attack's \"hands\" (enemies.json) picks which strike; default right.",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    }
+   }
+  },
+  "netmender": {
+   "scene": "res://assets/models/bosses/netmender.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "keeps her own hunched idle/walk/slash/hit/defeat; borrows run; overlays ride her own idle"
+  }
+ },
+ "mounts": {
+  "weapon": {
+   "bone": "mixamorig_RightHand",
+   "pos": [
+    0.03,
+    0.085,
+    0.0
+   ],
+   "rot": [
+    -45.0,
+    0.0,
+    0.0
+   ]
+  },
+  "offhand": {
+   "bone": "mixamorig_LeftHand",
+   "pos": [
+    -0.03,
+    0.085,
+    0.0
+   ],
+   "rot": [
+    -45.0,
+    0.0,
+    0.0
+   ]
+  },
+  "shield": {
+   "bone": "mixamorig_LeftForeArm",
+   "pos": [
+    0.0,
+    0.16,
+    -0.05
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ]
+  }
+ },
+ "bone_alias": {
+  "hips": "mixamorig_Hips",
+  "spine": "mixamorig_Spine",
+  "chest": "mixamorig_Spine2",
+  "neck": "mixamorig_Neck",
+  "head": "mixamorig_Head",
+  "uarm_r": "mixamorig_RightArm",
+  "farm_r": "mixamorig_RightForeArm",
+  "hand_r": "mixamorig_RightHand",
+  "uarm_l": "mixamorig_LeftArm",
+  "farm_l": "mixamorig_LeftForeArm",
+  "hand_l": "mixamorig_LeftHand",
+  "thigh_r": "mixamorig_RightUpLeg",
+  "shin_r": "mixamorig_RightLeg",
+  "foot_r": "mixamorig_RightFoot",
+  "thigh_l": "mixamorig_LeftUpLeg",
+  "shin_l": "mixamorig_LeftLeg",
+  "foot_l": "mixamorig_LeftFoot"
+ },
+ "weapons": {
+  "hewing_blade": {
+   "scene": "res://assets/models/weapons/hewing_blade.glb",
+   "trail": [
+    0.12,
+    0.8
+   ]
+  }
+ },
+ "clips": {
+  "idle": {
+   "loop": true
+  },
+  "walk": {
+   "loop": true
+  },
+  "run": {
+   "loop": true
+  },
+  "slash": {
+   "start": 0.83,
+   "contact": 2.03,
+   "end": 3.4
+  },
+  "hit": {
+   "start": 0.0,
+   "end": 1.2
+  },
+  "defeat": {},
+  "heavy": {
+   "_note": "awaited real clip (overhead heavy); falls back to slash"
+  },
+  "stagger": {
+   "_note": "awaited real clip; falls back to hit"
+  },
+  "death": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.6
+   }
+  },
+  "roll": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.0
+   }
+  },
+  "backstep": {
+   "procedural": {
+    "start": 0.0,
+    "end": 0.32
+   }
+  },
+  "block": {
+   "loop": true,
+   "procedural": {}
+  },
+  "parry": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 0.12,
+    "end": 0.6
+   }
+  },
+  "drink": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.1
+   }
+  },
+  "rest": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.2
+   }
+  },
+  "cast": {
+   "procedural": {
+    "start": 0.0,
+    "contact": 0.32,
+    "end": 0.8
+   }
+  }
+ },
+ "aliases": {
+  "RESET": [
+   "idle"
+  ],
+  "talk": [
+   "idle"
+  ],
+  "twohand_idle": [
+   "idle"
+  ],
+  "twohand_walk": [
+   "walk"
+  ],
+  "atk_r": [
+   "slash"
+  ],
+  "atk_double": [
+   "slash"
+  ],
+  "atk_thrust": [
+   "slash"
+  ],
+  "atk_over": [
+   "heavy",
+   "slash"
+  ],
+  "atk_back": [
+   "slash"
+  ],
+  "atk_spin": [
+   "slash"
+  ],
+  "atk_2h_cleave": [
+   "heavy",
+   "slash"
+  ],
+  "atk_2h_sweep": [
+   "slash"
+  ],
+  "atk_2h_thrust": [
+   "slash"
+  ],
+  "attack_l1": [
+   "slash"
+  ],
+  "attack_l2": [
+   "slash"
+  ],
+  "attack_h": [
+   "heavy",
+   "slash"
+  ],
+  "riposte": [
+   "heavy",
+   "slash"
+  ],
+  "stagger": [
+   "hit"
+  ],
+  "gourd": [
+   "drink"
+  ],
+  "kneel": [
+   "rest"
+  ],
+  "pray": [
+   "rest"
+  ],
+  "atk_cast": [
+   "cast"
+  ],
+  "cast_self": [
+   "cast"
+  ],
+  "cast_lance": [
+   "cast"
+  ],
+  "cast_ward": [
+   "cast"
+  ],
+  "bow_draw": [
+   "cast"
+  ],
+  "bow_hold": [
+   "block"
+  ]
+ },
+ "mannequin_contact": {
+  "_default": 0.56,
+  "atk_r": 0.56,
+  "atk_thrust": 0.58,
+  "atk_over": 0.58,
+  "atk_back": 0.5,
+  "atk_spin": 0.5,
+  "atk_double": 0.56,
+  "atk_cast": 0.4,
+  "atk_2h_cleave": 0.51,
+  "atk_2h_sweep": 0.5,
+  "atk_2h_thrust": 0.5,
+  "attack_l1": 0.44,
+  "attack_l2": 0.42,
+  "attack_h": 0.48
+ }
+}

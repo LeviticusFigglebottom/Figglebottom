@@ -12,6 +12,7 @@
   "aggro_hear": 4.0,
   "leash": 26.0,
   "body": "mannequin_rime",
+  "model": "rimewalker",
   "arm_h": 1.16,
   "arm_dx": 0.27,
   "hurt_r": 0.45,
@@ -50,6 +51,10 @@
     "height": 1.4,
     "cooldown": 4.2,
     "anim": "atk_double",
+    "hands": [
+     "right",
+     "left"
+    ],
     "lunge": 1.0
    }
   ],
@@ -69,6 +74,7 @@
   "aggro_hear": 40.0,
   "leash": 999.0,
   "body": "mannequin_holdfast",
+  "model": "netmender",
   "weapon": "maul",
   "arm_h": 1.95,
   "arm_dx": 0.55,

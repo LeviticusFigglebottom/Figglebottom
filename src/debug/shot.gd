@@ -14,7 +14,7 @@ var _quit_after := -1
 var _cam_spec := ""
 var _open_pack := false
 var _trigger_gourd := false
-var _stage := ""          # "combat" | "death" | "rest": staged scenes
+var _stage := ""          # "combat" | "death" | "rest" | "swing" | "foe_death" | "boss"
 var _stage_frame := 0
 var _frames_total := 0
 var _foe: Node3D = null
@@ -190,9 +190,13 @@ func _first_hearth() -> Hearthstone:
 ##   combat: a rimewalker squares up to the Bearer mid-swing
 ##   death:  the Bearer falls; the capture lands on the death splash
 ##   rest:   the hearthstone menu opens on the levelling page
+##   swing / foe_death / boss: character close-ups (ADR 0004), see _char_stage
 func _stage_tick() -> void:
 	_stage_frame += 1
 	var p: Player = Game.player
+	if _stage in ["swing", "foe_death", "boss"]:
+		_char_stage(p)
+		return
 	match _stage:
 		"combat":
 			if _stage_frame == 6:
@@ -232,6 +236,90 @@ func _stage_tick() -> void:
 				for c in get_tree().root.get_children():
 					if c is RestUI:
 						(c as RestUI).choose(1)   # the levelling page
+
+## Character close-ups, side-on, captured on a gameplay beat rather than a
+## frame count:
+##   swing:     a rimewalker faces the Bearer and attacks; the capture is the
+##              frame its data windup ends (the clip's contact frame)
+##   foe_death: the same foe dies; capture once the death clip has played
+##   boss:      the first boss, framed in its arena
+func _char_stage(p: Player) -> void:
+	if _stage_frame == 6:
+		for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+			var en := e as Enemy
+			if en == null or en.dead or not en.can_process():
+				continue
+			if bool(en.cfg.get("is_boss", false)) == (_stage == "boss"):
+				_foe = en
+				break
+		if _foe == null:
+			push_warning("Shot: no foe for stage %s" % _stage)
+			_frames_left = 1
+			return
+		p.invulnerable = true
+		p.velocity = Vector3.ZERO
+		if _stage != "boss":
+			var fwd := -(_foe as Enemy).vis.global_transform.basis.z
+			fwd.y = 0.0
+			p.global_position = _foe.global_position + fwd.normalized() * 1.9 + Vector3.UP * 0.1
+		_frames_total = _frames_left
+	if _foe == null or not is_instance_valid(_foe):
+		return
+	var foe := _foe as Enemy
+	if _stage != "boss":
+		var d := foe.global_position - p.global_position
+		p.vis.rotation.y = atan2(-d.x, -d.z)
+		foe.vis.rotation.y = atan2(d.x, d.z)
+		foe.target = p
+	if _stage_frame == 30:
+		match _stage:
+			"swing":
+				foe._begin_attack((foe.cfg["attacks"] as Array)[0])
+			"foe_death":
+				foe._die()
+		_frame_char_cam(p, foe)
+	if _stage_frame > 30:
+		_frame_char_cam(p, foe)
+		var ready := false
+		match _stage:
+			"swing":
+				ready = foe.state == Enemy.ES.ATTACK and foe.state_t >= float(foe._atk["windup"])
+			"foe_death":
+				# on the clip's own clock (frames render slower than game time)
+				ready = foe.dead and (foe.vis.rig == null or foe.vis.rig.action_time() >= 1.45)
+			"boss":
+				ready = _stage_frame > 60
+		if ready and not get_tree().paused:
+			# freeze on the beat: headless frames render slower than physics
+			# ticks, so grab only once the paused pose has been drawn
+			get_tree().paused = true
+			_frames_left = mini(_frames_left, 4)
+
+func _frame_char_cam(p: Player, foe: Enemy) -> void:
+	var cam := get_tree().current_scene.find_child("ShotCam", false, false) as Camera3D
+	if cam == null:
+		cam = Camera3D.new()
+		cam.name = "ShotCam"
+		get_tree().current_scene.add_child(cam)
+		cam.current = true
+	var h := maxf(float(foe.cfg.get("hurt_h", 1.6)), 1.2)
+	if _stage == "boss":
+		var fwd := -foe.vis.global_transform.basis.z
+		fwd.y = 0.0
+		var side := fwd.normalized().cross(Vector3.UP)
+		var tgt := foe.global_position + Vector3.UP * h * 0.6
+		cam.global_position = tgt + fwd.normalized() * h * 2.4 + side * h * 1.0 + Vector3.UP * h * 0.15
+		cam.look_at(tgt, Vector3.UP)
+		cam.fov = 55.0
+		return
+	var mid := (p.global_position + foe.global_position) * 0.5
+	var axis := foe.global_position - p.global_position
+	axis.y = 0.0
+	var side := axis.normalized().cross(Vector3.UP)
+	var tgt := mid + Vector3.UP * 0.95
+	cam.global_position = tgt + side * 3.6 + Vector3.UP * 0.35
+	cam.look_at(tgt, Vector3.UP)
+	cam.fov = 48.0
 
 func _exit_tree() -> void:
 	AmbientLife._mote_tex = null

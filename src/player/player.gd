@@ -132,7 +132,8 @@ func _ready() -> void:
 	vis = PlayerVisual.new()
 	vis.name = "Vis"
 	add_child(vis)
-	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"))
+	# "model" (optional) selects a humanoid body; absent, the mannequin stands in
+	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), String(T.get("model", "")))
 
 	cam = CameraRig.new()
 	cam.name = "CamRig"
@@ -265,7 +266,7 @@ func enter_dialogue() -> void:
 	velocity = Vector3.ZERO
 	_set_state(S.TALK)
 	# TALK skips locomotion updates; a live walk/run cycle would jog in place
-	if vis != null and vis.anim != null and vis.anim.current_animation in ["walk", "run"]:
+	if vis != null and vis.current_clip() in ["walk", "run"]:
 		vis.play("idle", 0.2)
 
 func exit_dialogue() -> void:
@@ -580,7 +581,7 @@ func _try_roll(dir: Vector3) -> bool:
 	_iframe_from = float(R["iframe_start"])
 	_iframe_to = float(R["iframe_end"])
 	vis.rotation.y = atan2(-_roll_dir.x, -_roll_dir.z)
-	vis.play("roll", 0.03, float(vis.anim.get_animation("roll").length) / float(R["duration"]))
+	vis.play("roll", 0.03, vis.clip_length("roll") / float(R["duration"]))
 	Juice.spawn_hit_fx(global_position + Vector3(0, 0.08, 0), -_roll_dir, "dust")
 	AudioDirector.sfx_at("res://assets/audio/roll.wav", global_position, -6.0, randf_range(0.95, 1.05))
 	return true
@@ -732,7 +733,7 @@ func _bow_move_input(dt: float) -> void:
 		_bow_t += dt
 		# once the string reaches the cheek, hand the pose to an explicit
 		# looping hold — the draw clip ending must never let the arm sag
-		if _bow_t > 0.72 and vis.anim != null and vis.anim.current_animation != "bow_hold":
+		if _bow_t > 0.72 and vis.current_clip() != "bow_hold":
 			vis.play("bow_hold", 0.08)
 		# the shaft stays docked LEVEL, pointing where the archer faces —
 		# the hand bone's own frame tilts with the draw and can't be trusted
@@ -866,9 +867,9 @@ func _begin_attack(m: Dictionary, heavy: bool) -> void:
 		vis.rotation.y = atan2(-dir.x, -dir.z)
 	_lunge = float(m.get("lunge", 2.0))
 	var anim_name: String = m.get("anim", "attack_l1")
-	var contact := 0.48 if anim_name == "attack_h" else (0.42 if anim_name == "attack_l2" else 0.44)
+	# contact frames are data (clip_meta.json); the clip is timed to the strike
 	var strike_t := maxf(float(m.get("windup", 0.30)) + float(m.get("active", 0.14)) * 0.45, 0.12)
-	vis.play(anim_name, 0.05, clampf(contact / strike_t, 0.55, 1.85))
+	vis.play_timed(anim_name, strike_t, 0.05, 0.55, 1.85)
 
 func _st_attack(dt: float) -> void:
 	var wind := float(_atk["windup"])
@@ -1572,7 +1573,7 @@ func lock_control(on: bool) -> void:
 		velocity = Vector3.ZERO
 		# menus freeze input mid-stride; settle the gait so he does not jog
 		# in place behind the parchment
-		if vis != null and vis.anim != null and vis.anim.current_animation in ["walk", "run"]:
+		if vis != null and vis.current_clip() in ["walk", "run"]:
 			vis.play("idle", 0.2)
 
 func enter_rest() -> void:
