@@ -27,6 +27,9 @@ func _ready() -> void:
 		Game.set_difficulty(str(World.flag_val("difficulty", "long")))
 
 	if interactive:
+		var card := HouseCard.new()
+		add_child(card)
+		await card.finished
 		var preweighed := not World.any_slot()
 		if preweighed:
 			var sel := DifficultyUI.new()

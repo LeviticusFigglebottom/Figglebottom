@@ -1,7 +1,7 @@
 {
  "hewing_blade": {
   "name": "Hewing Blade",
-  "desc": "A plain long blade of bog-iron, ground for clearing brush and worse. Balanced for one hand, a shield on the other.",
+  "desc": "A long blade of bog-iron, ground for clearing gorse off the fold walls. The Bearer's foster-father lent it for the voyage and said to bring it back. The grip is wrapped in his old belt.",
   "class": "longsword",
   "kit": "hewing_blade",
   "damage": 47.376,

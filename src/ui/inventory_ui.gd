@@ -1,19 +1,45 @@
 class_name InventoryUI
 extends CanvasLayer
-## The Pack — Tab opens it. Two leaves: the PACK (arms and
-## relics; drag or click an arm onto a hand-slot 1-5) and the SONGS (known
-## songs; click or drop one to attune it to X). Fully mouse-driven — click
-## rows, click slots, or drag between them — with W/S + 1-5 + Q/E still live.
+## The Pack — Tab opens it (J opens it at the Keepsakes). Its leaves come
+## from the registry below: the PACK (arms and relics; drag or click an arm
+## onto a hand-slot 1-5), the SONGS (known songs; click or drop one to
+## attune it to X), the KEEPSAKES (the journal). Fully mouse-driven — click
+## rows, click slots, or drag between them — with W/S + 1-5 + A/D still live.
 
-const GOLD := Color(0.95, 0.82, 0.48)
-const PARCH := Color(0.94, 0.90, 0.80)
-const DIM := Color(0.64, 0.58, 0.46)
+const GOLD := UITheme.EMBER_HOT
+const PARCH := UITheme.BONE
+const DIM := UITheme.BONE_DIM
+
+## The leaf registry, in tab order. A leaf is {key, title, fill, footer, hint}:
+## `fill` names a method on this UI, or is a script path whose static
+## fill(ui) lists the leaf's rows; `footer` is "hand" (the belt rail),
+## "attune" (the X slot) or "" (none). A new leaf is one register_leaf()
+## call (or one line here) plus its fill; nothing else in this file changes.
+static var LEAVES: Array = [
+	{"key": "pack", "title": "The Pack", "fill": "_fill_pack", "footer": "hand",
+	 "hint": "A/D  leaf      W/S  choose      1-5 or drag  set the arm in that hand-slot      Tab  close"},
+	{"key": "songs", "title": "The Songs", "fill": "_fill_songs", "footer": "attune",
+	 "hint": "A/D  leaf      W/S  choose      Enter, click or drag  attune the song to X      Tab  close"},
+	{"key": "armour", "title": "The Armour", "fill": "_fill_armour", "footer": "armour",
+	 "hint": "A/D  leaf      W/S  choose      Enter, click or drag  wear it (again to take it off)      1-4  that slot      Tab  close"},
+	{"key": "keepsakes", "title": "Keepsakes", "fill": "res://src/ui/pack/keepsakes_leaf.gd", "footer": "",
+	 "hint": "A/D  leaf      W/S  read on      Tab or J  close"},
+]
+
+static func register_leaf(def: Dictionary, before := "") -> void:
+	for l in LEAVES:
+		if l["key"] == def.get("key", ""):
+			return
+	var at := LEAVES.size()
+	for i in LEAVES.size():
+		if LEAVES[i]["key"] == before:
+			at = i
+	LEAVES.insert(at, def)
 
 var player: Node
 var _scroll: ScrollContainer
 var _list: VBoxContainer
-var _tab := "pack"           # "pack" | "songs" | "armour"
-const TABS := ["pack", "songs", "armour"]   # A/D walks the leaves in this order
+var _tab := "pack"           # "pack" | "songs"
 var _tab_btns := {}
 var _slots: Array = []          # hand-slot drop targets (pack)
 var _attune_slot: Panel = null  # the X-song drop target (songs)
@@ -23,13 +49,17 @@ var _hint: Label = null
 var _belt_lbl: Label = null
 var _attune_lbl: Label = null
 
-static func open_for(p) -> void:
+static func open_for(p, leaf := "pack") -> void:
 	if p == null or not p.get_tree().get_nodes_in_group("inventory_ui").is_empty():
 		return
-	p.get_tree().root.add_child(InventoryUI.new(p))
+	p.get_tree().root.add_child(InventoryUI.new(p, leaf))
 
-func _init(p) -> void:
+var _first_leaf := "pack"
+var _frule: ColorRect = null
+
+func _init(p, leaf := "pack") -> void:
 	player = p
+	_first_leaf = leaf
 
 func _ready() -> void:
 	layer = 22
@@ -37,75 +67,60 @@ func _ready() -> void:
 	player.lock_control(true)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	var root := Control.new()
+	root.theme = UITheme.theme()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var dim := ColorRect.new()
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	dim.color = Color(0.01, 0.008, 0.006, 0.62)
+	dim.color = Color(UITheme.COAL, 0.70)
 	root.add_child(dim)
 
 	var panel := Panel.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.04, 0.035, 0.03, 0.97)
-	sb.border_color = Color(0.76, 0.64, 0.40)
-	sb.set_border_width_all(2)
-	sb.set_corner_radius_all(3)
-	sb.shadow_color = Color(0, 0, 0, 0.78)
-	sb.shadow_size = 16
+	var sb := UITheme.box("panel")
+	sb.border_color = Color(0, 0, 0, 0)
 	panel.add_theme_stylebox_override("panel", sb)
 	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.offset_left = -500; panel.offset_right = 500
-	panel.offset_top = -368; panel.offset_bottom = 368
+	panel.offset_left = -520; panel.offset_right = 520
+	panel.offset_top = -380; panel.offset_bottom = 380
 	root.add_child(panel)
 
-	# Inner hairline gold frame
-	var inner := Panel.new()
-	var isb := StyleBoxFlat.new()
-	isb.bg_color = Color(0, 0, 0, 0)
-	isb.border_color = Color(0.56, 0.46, 0.28, 0.45)
-	isb.set_border_width_all(1)
-	inner.add_theme_stylebox_override("panel", isb)
-	inner.position = Vector2(8, 8)
-	inner.size = Vector2(984, 720)
-	inner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(inner)
-
-	# ---- tab bar
-	_add_tab(panel, "pack", "The Pack", 30)
-	_add_tab(panel, "songs", "The Songs", 250)
-	_add_tab(panel, "armour", "The Armour", 470)
+	# ---- tab bar: one tab per registered leaf
+	for i in LEAVES.size():
+		_add_tab(panel, String(LEAVES[i]["key"]), String(LEAVES[i]["title"]), 44 + i * 232)
 	var rule := ColorRect.new()
-	rule.color = Color(0.74, 0.62, 0.38, 0.72)
-	rule.position = Vector2(30, 64); rule.size = Vector2(940, 2)
+	rule.color = Color(UITheme.EMBER, 0.55)
+	rule.position = Vector2(44, 84); rule.size = Vector2(952, 1)
 	panel.add_child(rule)
 
 	# ---- scrolling list
 	_scroll = ScrollContainer.new()
-	_scroll.position = Vector2(30, 78); _scroll.size = Vector2(940, 520)
+	_scroll.position = Vector2(44, 98); _scroll.size = Vector2(952, 512)
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	panel.add_child(_scroll)
 	_list = VBoxContainer.new()
-	_list.custom_minimum_size = Vector2(920, 0)
+	_list.custom_minimum_size = Vector2(930, 0)
 	_list.add_theme_constant_override("separation", 10)
 	_scroll.add_child(_list)
 
 	# ---- hand-slot rail (pack) + attune slot (songs) share the footer band
 	var frule := ColorRect.new()
-	frule.color = Color(0.58, 0.48, 0.30, 0.45)
-	frule.position = Vector2(30, 608); frule.size = Vector2(940, 1)
+	_frule = frule
+	frule.color = Color(UITheme.BONE, 0.12)
+	frule.position = Vector2(44, 620); frule.size = Vector2(952, 1)
 	panel.add_child(frule)
 	_build_hand_rail(panel)
 	_build_attune_slot(panel)
 	_build_armour_rail(panel)
 
 	_hint = Label.new()
-	_hint.label_settings = _ls(16, DIM)
+	_hint.label_settings = _ls(17, UITheme.ASH, "italic")
 	_hint.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	_hint.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_hint.offset_left = 30; _hint.offset_top = -32; _hint.offset_bottom = -12
+	_hint.offset_left = 44; _hint.offset_top = -50; _hint.offset_bottom = -26
 	panel.add_child(_hint)
+	panel.add_child(KnotFrame.new())
 
-	_show_tab("pack")
+	_show_tab(_first_leaf if not _leaf(_first_leaf).is_empty() else "pack")
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
 
 # ------------------------------------------------------------------ tabs
@@ -114,32 +129,53 @@ func _add_tab(panel: Panel, key: String, text: String, x: float) -> void:
 	var b := Button.new()
 	b.text = text
 	b.flat = true
-	b.position = Vector2(x, 18); b.size = Vector2(210, 40)
-	b.add_theme_font_override("font", load("res://assets/fonts/DejaVuSerif-Bold.ttf"))
-	b.add_theme_font_size_override("font_size", 26)
+	b.position = Vector2(x, 30); b.size = Vector2(220, 46)
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	b.focus_mode = Control.FOCUS_NONE
+	b.add_theme_font_override("font", UITheme.font("caps"))
+	b.add_theme_font_size_override("font_size", 30)
 	b.add_theme_color_override("font_color", DIM)
 	b.add_theme_color_override("font_hover_color", PARCH)
+	b.add_theme_color_override("font_pressed_color", GOLD)
+	for st in ["normal", "hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(st, StyleBoxEmpty.new())
 	b.pressed.connect(func(): _show_tab(key))
 	panel.add_child(b)
 	_tab_btns[key] = b
 
+func _leaf(key: String) -> Dictionary:
+	for l in LEAVES:
+		if l["key"] == key:
+			return l
+	return {}
+
+func _leaf_step(d: int) -> void:
+	var i := 0
+	for k in LEAVES.size():
+		if LEAVES[k]["key"] == _tab:
+			i = k
+	_show_tab(String(LEAVES[clampi(i + d, 0, LEAVES.size() - 1)]["key"]))
+
 func _show_tab(key: String) -> void:
 	_tab = key
+	var leaf := _leaf(key)
 	for k in _tab_btns:
-		(_tab_btns[k] as Button).add_theme_color_override("font_color", GOLD if k == key else DIM)
+		var on: bool = k == key
+		(_tab_btns[k] as Button).add_theme_color_override("font_color", GOLD if on else DIM)
+		(_tab_btns[k] as Button).add_theme_color_override("font_hover_color", GOLD if on else PARCH)
 	_sel = 0
 	_rebuild_list()
+	var footer := String(leaf.get("footer", ""))
+	# a leaf with no footer reads on down to the hint line
+	_scroll.size.y = 512.0 if footer != "" else 640.0
+	if _frule != null: _frule.visible = footer != ""
 	for s in _slots:
-		(s["panel"] as Control).visible = (key == "pack")
-	_attune_slot.visible = (key == "songs")
-	if _belt_lbl != null: _belt_lbl.visible = (key == "pack")
-	if _attune_lbl != null: _attune_lbl.visible = (key == "songs")
-	_show_armour_rail(key == "armour")
-	_hint.text = ("A/D — leaf     W/S — choose     1-5 or drag — set the arm in that hand-slot     Tab — close" \
-		if key == "pack" else \
-		"A/D — leaf     W/S — choose     Enter/click/drag — attune the song to  X     Tab — close")
-	if key == "armour":
-		_hint.text = "A/D — leaf     W/S — choose     Enter/click/drag — wear it (again to take it off)     1-4 — that slot     Tab — close"
+		(s["panel"] as Control).visible = (footer == "hand")
+	_attune_slot.visible = (footer == "attune")
+	if _belt_lbl != null: _belt_lbl.visible = (footer == "hand")
+	if _attune_lbl != null: _attune_lbl.visible = (footer == "attune")
+	_show_armour_rail(footer == "armour")
+	_hint.text = String(leaf.get("hint", "Tab  close"))
 
 # ------------------------------------------------------------------ list
 
@@ -147,12 +183,11 @@ func _rebuild_list() -> void:
 	for c in _list.get_children():
 		c.queue_free()
 	_rows.clear()
-	if _tab == "pack":
-		_fill_pack()
-	elif _tab == "armour":
-		_fill_armour()
-	else:
-		_fill_songs()
+	var fill := String(_leaf(_tab).get("fill", ""))
+	if fill.begins_with("res://"):
+		load(fill).fill(self)
+	elif fill != "" and has_method(fill):
+		call(fill)
 	_mark_selected.call_deferred()
 
 func _fill_pack() -> void:
@@ -173,7 +208,7 @@ func _fill_pack() -> void:
 				tag = "ATK %d   Poise %d" % [atk, poise]
 			_row(id, "arm", _icon_for(id), nm, tag, w.get("desc", ""))
 	_row("gourd", "gourd", "res://assets/ui/icons/gourd.png", "Gourd",
-		"✕%d / %d" % [player.gourds, player.gourd_max], DB.item("gourd").get("desc", ""))
+		"×%d / %d" % [player.gourds, player.gourd_max], DB.item("gourd").get("desc", ""))
 	_section("RELICS & GOODS")
 	var any := false
 	for id in player.inventory:
@@ -185,7 +220,7 @@ func _fill_pack() -> void:
 		if n <= 0: continue
 		any = true
 		var it: Dictionary = DB.item(id)
-		_relic_row(_icon_for(id), it.get("name", String(id).capitalize()), "✕%d" % n,
+		_relic_row(_icon_for(id), it.get("name", String(id).capitalize()), "×%d" % n,
 			it.get("desc", "A keepsake of the road. Nobody remembers what it was for."))
 	if not any:
 		_note("    Nothing but road-dust and resolve.")
@@ -203,7 +238,7 @@ func _fill_songs() -> void:
 		_row(id, "song", _icon_for(id), nm,
 			"%d breath" % int(sp.get("breath", 0)), sp.get("desc", ""))
 	if not any:
-		_note("    No songs yet. The Prior of the First Breath teaches them.")
+		_note("    No songs yet. Somebody in the steading will know one.")
 
 # ------------------------------------------------------------------ rows
 
@@ -212,18 +247,8 @@ func _fill_songs() -> void:
 func _row(id: String, kind: String, icon_path: String, nm: String, tag: String, desc: String) -> void:
 	var idx := _rows.size()
 	var pc := PanelContainer.new()
-	var st := StyleBoxFlat.new()
-	st.bg_color = Color(0.055, 0.048, 0.04, 0.45)
-	st.border_color = Color(0.42, 0.35, 0.24, 0.35)
-	st.set_border_width_all(1)
-	st.set_corner_radius_all(3)
-	st.content_margin_left = 8
-	st.content_margin_right = 8
-	st.content_margin_top = 6
-	st.content_margin_bottom = 6
-	pc.add_theme_stylebox_override("panel", st)
+	pc.add_theme_stylebox_override("panel", UITheme.box("row"))
 	pc.mouse_filter = Control.MOUSE_FILTER_STOP
-	pc.set_meta("box", st)
 	pc.gui_input.connect(_on_row_input.bind(idx))
 	pc.set_drag_forwarding(_drag_row.bind(pc, id, kind), Callable(), Callable())
 	var row := HBoxContainer.new()
@@ -241,12 +266,12 @@ func _row(id: String, kind: String, icon_path: String, nm: String, tag: String, 
 	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(col)
 	var head := Label.new()
-	head.label_settings = _ls(22, PARCH, "res://assets/fonts/DejaVuSerif-Bold.ttf")
+	head.label_settings = _ls(24, PARCH, "medium")
 	head.text = nm + ("      " + tag if tag != "" else "")
 	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	col.add_child(head)
 	var body := Label.new()
-	body.label_settings = _ls(16, Color(0.70, 0.66, 0.56))
+	body.label_settings = _ls(19, DIM)
 	body.text = desc
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.custom_minimum_size = Vector2(820, 0)
@@ -258,16 +283,7 @@ func _row(id: String, kind: String, icon_path: String, nm: String, tag: String, 
 func _relic_row(icon_path: String, nm: String, tag: String, desc: String) -> void:
 	# unbindable lore items — no selection, no drag
 	var pc := PanelContainer.new()
-	var st := StyleBoxFlat.new()
-	st.bg_color = Color(0.05, 0.044, 0.036, 0.38)
-	st.border_color = Color(0.38, 0.32, 0.22, 0.30)
-	st.set_border_width_all(1)
-	st.set_corner_radius_all(3)
-	st.content_margin_left = 8
-	st.content_margin_right = 8
-	st.content_margin_top = 6
-	st.content_margin_bottom = 6
-	pc.add_theme_stylebox_override("panel", st)
+	pc.add_theme_stylebox_override("panel", UITheme.box("row"))
 	_list.add_child(pc)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 16)
@@ -282,11 +298,11 @@ func _relic_row(icon_path: String, nm: String, tag: String, desc: String) -> voi
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(col)
 	var head := Label.new()
-	head.label_settings = _ls(22, PARCH, "res://assets/fonts/DejaVuSerif-Bold.ttf")
+	head.label_settings = _ls(24, PARCH, "medium")
 	head.text = nm + ("      " + tag if tag != "" else "")
 	col.add_child(head)
 	var body := Label.new()
-	body.label_settings = _ls(16, Color(0.70, 0.66, 0.56))
+	body.label_settings = _ls(19, DIM)
 	body.text = desc
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.custom_minimum_size = Vector2(820, 0)
@@ -294,8 +310,8 @@ func _relic_row(icon_path: String, nm: String, tag: String, desc: String) -> voi
 
 func _section(text: String) -> void:
 	var l := Label.new()
-	l.label_settings = _ls(19, Color(0.80, 0.68, 0.44), "res://assets/fonts/DejaVuSerif-Bold.ttf")
-	l.text = "◆  " + text
+	l.label_settings = _ls(22, UITheme.EMBER, "caps")
+	l.text = text.capitalize() if text == text.to_upper() else text
 	_list.add_child(l)
 
 func _note(text: String) -> void:
@@ -329,17 +345,13 @@ func _act_selected() -> void:
 func _build_hand_rail(panel: Panel) -> void:
 	for i in 5:
 		var pnl := Panel.new()
-		var st := StyleBoxFlat.new()
-		st.bg_color = Color(0.08, 0.07, 0.05, 0.92)
-		st.border_color = Color(0.54, 0.45, 0.30)
-		st.set_border_width_all(1); st.set_corner_radius_all(3)
-		pnl.add_theme_stylebox_override("panel", st)
-		pnl.position = Vector2(30 + i * 72, 622); pnl.size = Vector2(60, 60)
+		pnl.add_theme_stylebox_override("panel", UITheme.box("slot"))
+		pnl.position = Vector2(44 + i * 72, 634); pnl.size = Vector2(60, 60)
 		pnl.set_drag_forwarding(Callable(), _can_drop_hand, _drop_hand.bind(i))
 		pnl.gui_input.connect(_on_hand_input.bind(i))
 		panel.add_child(pnl)
 		var num := Label.new()
-		num.label_settings = _ls(13, Color(0.82, 0.72, 0.52))
+		num.label_settings = _ls(15, DIM)
 		num.position = Vector2(5, 1); num.text = str(i + 1)
 		num.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		pnl.add_child(num)
@@ -351,9 +363,9 @@ func _build_hand_rail(panel: Panel) -> void:
 		pnl.add_child(icon)
 		_slots.append({"panel": pnl, "icon": icon})
 	var lbl := Label.new()
-	lbl.label_settings = _ls(15, DIM)
+	lbl.label_settings = _ls(19, DIM, "italic")
 	lbl.text = "the belt"
-	lbl.position = Vector2(408, 642)
+	lbl.position = Vector2(422, 650)
 	panel.add_child(lbl)
 	_belt_lbl = lbl
 	_refresh_hand()
@@ -386,23 +398,19 @@ func _bind_hand(i: int, id: String) -> void:
 
 func _build_attune_slot(panel: Panel) -> void:
 	_attune_slot = Panel.new()
-	var st := StyleBoxFlat.new()
-	st.bg_color = Color(0.10, 0.085, 0.04, 0.94)
-	st.border_color = GOLD
-	st.set_border_width_all(2); st.set_corner_radius_all(3)
-	_attune_slot.add_theme_stylebox_override("panel", st)
-	_attune_slot.position = Vector2(30, 622); _attune_slot.size = Vector2(60, 60)
+	_attune_slot.add_theme_stylebox_override("panel", UITheme.box("slot_sel"))
+	_attune_slot.position = Vector2(44, 634); _attune_slot.size = Vector2(60, 60)
 	_attune_slot.set_drag_forwarding(Callable(), _can_drop_attune, _drop_attune)
 	panel.add_child(_attune_slot)
 	var c := Label.new()
-	c.label_settings = _ls(22, GOLD, "res://assets/fonts/DejaVuSerif-Bold.ttf")
-	c.text = "X"; c.position = Vector2(22, 14)
+	c.label_settings = _ls(24, GOLD, "medium")
+	c.text = "X"; c.position = Vector2(22, 12)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_attune_slot.add_child(c)
 	var lbl := Label.new()
-	lbl.label_settings = _ls(15, DIM)
-	lbl.text = "the song on your tongue  —  drop a song here, or click it"
-	lbl.position = Vector2(104, 642)
+	lbl.label_settings = _ls(19, DIM, "italic")
+	lbl.text = "the song on your tongue: drop a song here, or click it"
+	lbl.position = Vector2(118, 650)
 	panel.add_child(lbl)
 	_attune_lbl = lbl
 
@@ -428,13 +436,10 @@ func _build_armour_rail(panel: Panel) -> void:
 	for i in slots.size():
 		var slot := String(slots[i])
 		var pnl := Panel.new()
-		var st := StyleBoxFlat.new()
-		st.bg_color = Color(0.08, 0.07, 0.05, 0.92)
-		st.border_color = Color(0.54, 0.45, 0.30)
-		st.set_border_width_all(1); st.set_corner_radius_all(3)
+		var st := UITheme.box("slot")
 		pnl.add_theme_stylebox_override("panel", st)
 		pnl.set_meta("box", st)
-		pnl.position = Vector2(30 + i * 136, 616); pnl.size = Vector2(128, 74)
+		pnl.position = Vector2(44 + i * 140, 628); pnl.size = Vector2(132, 70)
 		pnl.set_drag_forwarding(Callable(), _can_drop_armour.bind(slot), _drop_armour.bind(slot))
 		pnl.gui_input.connect(_on_armour_slot_input.bind(slot))
 		panel.add_child(pnl)
@@ -445,20 +450,20 @@ func _build_armour_rail(panel: Panel) -> void:
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		pnl.add_child(icon)
 		var key := Label.new()
-		key.label_settings = _ls(13, Color(0.82, 0.72, 0.52))
+		key.label_settings = _ls(15, DIM)
 		key.position = Vector2(52, 6); key.text = "%d  %s" % [i + 1, slot.capitalize()]
 		key.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		pnl.add_child(key)
 		var nm := Label.new()
-		nm.label_settings = _ls(12, PARCH)
+		nm.label_settings = _ls(14, PARCH)
 		nm.position = Vector2(52, 26); nm.size = Vector2(74, 44)
 		nm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		nm.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		pnl.add_child(nm)
 		_armour_slots.append({"slot": slot, "panel": pnl, "icon": icon, "name": nm})
 	_armour_lbl = Label.new()
-	_armour_lbl.label_settings = _ls(15, DIM)
-	_armour_lbl.position = Vector2(30 + slots.size() * 136 + 10, 622)
+	_armour_lbl.label_settings = _ls(17, DIM, "italic")
+	_armour_lbl.position = Vector2(44 + slots.size() * 140 + 10, 632)
 	_armour_lbl.size = Vector2(380, 70)
 	panel.add_child(_armour_lbl)
 	_refresh_armour()
@@ -476,7 +481,7 @@ func _refresh_armour() -> void:
 		(a["icon"] as TextureRect).texture = load(path) if ResourceLoader.exists(path) else null
 		(a["name"] as Label).text = _name_of(id) if id != "" else "bare"
 		var st: StyleBoxFlat = (a["panel"] as Panel).get_meta("box")
-		st.border_color = GOLD if id != "" else Color(0.54, 0.45, 0.30)
+		st.border_color = UITheme.EMBER_HOT if id != "" else UITheme.box("slot").border_color
 	if _armour_lbl != null:
 		_armour_lbl.text = "Poise %d     Weight %.1f  (%s roll)\nTurns  %d%% of blows   %d%% of the cold" % [
 			int(player.max_poise), player.worn_weight(), player.roll_tier(),
@@ -554,10 +559,7 @@ func _drop_armour(_at, data, slot: String) -> void:
 func _drag_row(_at, ctrl: Control, id: String, kind: String) -> Variant:
 	var prev := Panel.new()
 	prev.size = Vector2(56, 56)
-	var st := StyleBoxFlat.new()
-	st.bg_color = Color(0.12, 0.1, 0.06, 0.95); st.border_color = GOLD
-	st.set_border_width_all(1); st.set_corner_radius_all(3)
-	prev.add_theme_stylebox_override("panel", st)
+	prev.add_theme_stylebox_override("panel", UITheme.box("slot_sel"))
 	var icon := TextureRect.new()
 	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -571,16 +573,19 @@ func _drag_row(_at, ctrl: Control, id: String, kind: String) -> Variant:
 # ------------------------------------------------------------------ keyboard
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("inventory") or event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("inventory") or event.is_action_pressed("ui_cancel") \
+			or (event.is_action_pressed("keepsakes") and _tab == "keepsakes"):
 		close(); get_viewport().set_input_as_handled(); return
+	if event.is_action_pressed("keepsakes"):
+		_show_tab("keepsakes"); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("move_left"):
-		_show_tab(TABS[maxi(TABS.find(_tab) - 1, 0)]); get_viewport().set_input_as_handled(); return
+		_leaf_step(-1); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("move_right"):
-		_show_tab(TABS[mini(TABS.find(_tab) + 1, TABS.size() - 1)]); get_viewport().set_input_as_handled(); return
+		_leaf_step(1); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("move_forward"):
 		_sel = maxi(_sel - 1, 0); _mark_selected(); _scroll.scroll_vertical -= 56; return
 	if event.is_action_pressed("move_back"):
-		_sel = mini(_sel + 1, _rows.size() - 1); _mark_selected(); _scroll.scroll_vertical += 56; return
+		_sel = clampi(_sel + 1, 0, maxi(_rows.size() - 1, 0)); _mark_selected(); _scroll.scroll_vertical += 56; return
 	if event.is_action_pressed("interact") and _sel < _rows.size():
 		_act_selected(); get_viewport().set_input_as_handled(); return
 	if _tab == "armour":
@@ -595,9 +600,8 @@ func _input(event: InputEvent) -> void:
 
 func _mark_selected() -> void:
 	for i in _rows.size():
-		var st: StyleBoxFlat = _rows[i]["panel"].get_meta("box")
-		st.bg_color = Color(0.16, 0.13, 0.07, 0.92) if i == _sel else Color(0.055, 0.048, 0.04, 0.45)
-		st.border_color = Color(0.92, 0.78, 0.44, 0.85) if i == _sel else Color(0.42, 0.35, 0.24, 0.35)
+		var look := UITheme.box("row_sel" if i == _sel else "row")
+		(_rows[i]["panel"] as PanelContainer).add_theme_stylebox_override("panel", look)
 		(_rows[i]["head"] as Label).label_settings.font_color = GOLD if i == _sel else PARCH
 
 # ------------------------------------------------------------------ helpers
@@ -616,14 +620,15 @@ func _icon_for(id: String) -> String:
 		"arrows": "arrows", "gourd": "gourd", "deep_gourd": "gourd", "bog_iron": "bog_iron",
 		"mend": "song", "ember_throw": "song", "hearth_shout": "song",
 		"long_note": "song", "warding_hum": "song",
+		"item_rye_sack": "rye_sack", "item_net_float": "net_float",
+		"item_mending_needle": "needle", "ks_child_mask": "mask",
+		"fostering_horn": "crest",
 		"armour_traveller_coat": "armour_coat", "armour_saltfell_oilskins": "armour_oilskins",
 	}
 	return "res://assets/ui/icons/%s.png" % by.get(id, "relic")
 
-func _ls(size: int, color: Color, font := "res://assets/fonts/DejaVuSerif.ttf") -> LabelSettings:
-	var ls := LabelSettings.new()
-	ls.font = load(font); ls.font_size = size; ls.font_color = color
-	return ls
+func _ls(size: int, color: Color, weight := "regular") -> LabelSettings:
+	return UITheme.ls(size, color, weight, false)
 
 func close() -> void:
 	if player != null and is_instance_valid(player):

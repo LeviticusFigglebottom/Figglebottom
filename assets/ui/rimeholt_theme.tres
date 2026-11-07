@@ -1,0 +1,122 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/alegreya/Alegreya-VF.ttf" id="1_ragem"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ragem"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lqvey"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.43, 0.17, 0.065, 0.3)
+border_width_left = 3
+border_color = Color(1, 0.69, 0.36, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhnw0"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.43, 0.17, 0.065, 0.3)
+border_width_left = 3
+border_color = Color(1, 0.69, 0.36, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xbqy8"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rq0in"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.43, 0.17, 0.065, 0.3)
+border_width_left = 3
+border_color = Color(1, 0.69, 0.36, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_showh"]
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.905, 0.47, 0.18, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ja613"]
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.925, 0.895, 0.825, 0.14)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yx6oh"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.042, 0.037, 0.033, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.905, 0.47, 0.18, 0.55)
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1dcey"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.07, 0.058, 0.048, 0.35)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.925, 0.895, 0.825, 0.07)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7mydl"]
+content_margin_left = 3.0
+content_margin_right = 3.0
+bg_color = Color(0.905, 0.47, 0.18, 0.55)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6ewts"]
+content_margin_left = 3.0
+content_margin_right = 3.0
+bg_color = Color(0.925, 0.895, 0.825, 0.05)
+
+[sub_resource type="FontVariation" id="FontVariation_kowfv"]
+base_font = ExtResource("1_ragem")
+variation_opentype = {
+2003265652: 400
+}
+
+[resource]
+default_font = SubResource("FontVariation_kowfv")
+default_font_size = 22
+Button/colors/font_color = Color(0.7, 0.668, 0.61, 1)
+Button/colors/font_disabled_color = Color(0.48, 0.455, 0.42, 0.5)
+Button/colors/font_focus_color = Color(1, 0.69, 0.36, 1)
+Button/colors/font_hover_color = Color(1, 0.69, 0.36, 1)
+Button/colors/font_pressed_color = Color(1, 0.69, 0.36, 1)
+Button/styles/disabled = SubResource("StyleBoxFlat_ragem")
+Button/styles/focus = SubResource("StyleBoxFlat_lqvey")
+Button/styles/hover = SubResource("StyleBoxFlat_yhnw0")
+Button/styles/normal = SubResource("StyleBoxFlat_xbqy8")
+Button/styles/pressed = SubResource("StyleBoxFlat_rq0in")
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_showh")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_showh")
+HSlider/styles/slider = SubResource("StyleBoxFlat_ja613")
+Label/colors/font_color = Color(0.925, 0.895, 0.825, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0.85)
+Label/constants/shadow_offset_y = 2
+Panel/styles/panel = SubResource("StyleBoxFlat_yx6oh")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_1dcey")
+VScrollBar/styles/grabber = SubResource("StyleBoxFlat_7mydl")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_7mydl")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_7mydl")
+VScrollBar/styles/scroll = SubResource("StyleBoxFlat_6ewts")

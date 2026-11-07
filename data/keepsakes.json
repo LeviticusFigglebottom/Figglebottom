@@ -1,0 +1,26 @@
+{
+ "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md.",
+ "toast": "A keepsake is remembered.",
+ "threads": [
+  {
+   "id": "ingra_rye",
+   "title": "Ingra's rye",
+   "steps": [
+    {"flag": "ks_ingra_met", "line": "Ingra is a sack of rye short and blames a dog."},
+    {"flag": "ks_ingra_rye_found", "line": "The rye was in the byre, under the dog. It had been his bed."},
+    {"flag": "ks_ingra_rye", "line": "Ingra said he was a good dog."},
+    {"flag": "ks_ingra_count", "line": "Ingra is counting bowls."}
+   ]
+  },
+  {
+   "id": "brede_float",
+   "title": "Brede's float",
+   "steps": [
+    {"flag": "ks_brede_met", "line": "Brede lost a cork float off the herring net."},
+    {"flag": "ks_brede_float_found", "line": "The float was in the ice, where the tide stopped."},
+    {"flag": "ks_brede_float", "line": "Brede says the wrong knot on the back makes it lucky."},
+    {"flag": "ks_brede_mending", "line": "Brede is mending the net himself."}
+   ]
+  }
+ ]
+}

@@ -2,6 +2,8 @@ class_name RestUI
 extends CanvasLayer
 ## The hearth menu: keep hearth (rest / turn the world), grow by warmth
 ## (level attributes with warmth), rise. Keyboard-driven, sim-drivable.
+## Opened with no hearth (Ingra's "Sit by the fire"), it is the levelling
+## sheet alone: Back rises.
 
 var hearth: Hearthstone
 var player
@@ -26,39 +28,32 @@ var info_label: Label
 var _top_rule: ColorRect
 var _bot_rule: ColorRect
 
-func _init(l: Hearthstone, p) -> void:
+var _start := "main"
+var _title := ""
+
+func _init(l: Hearthstone, p, start := "main", title := "") -> void:
 	hearth = l
 	player = p
-
-func _ls(size: int, color: Color, bold := false) -> LabelSettings:
-	var ls := LabelSettings.new()
-	ls.font = load("res://assets/fonts/DejaVuSerif-Bold.ttf" if bold else "res://assets/fonts/DejaVuSerif.ttf")
-	ls.font_size = size
-	ls.font_color = color
-	ls.shadow_color = Color(0, 0, 0, 0.85)
-	ls.shadow_size = 3
-	ls.shadow_offset = Vector2(1, 2)
-	return ls
+	_start = start if l != null else "level"
+	_title = title
 
 func _ready() -> void:
 	layer = 20
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	if hearth == null and player != null:
+		player.lock_control(true)
 	var root := Control.new()
+	root.theme = UITheme.theme()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var dim := ColorRect.new()
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	dim.color = Color(0.015, 0.010, 0.006, 0.42)
+	dim.color = Color(UITheme.COAL, 0.45)
 	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(dim)
 	panel = Panel.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.04, 0.035, 0.028, 0.96)
-	sb.border_color = Color(0.78, 0.66, 0.40)
-	sb.set_border_width_all(2)
-	sb.set_corner_radius_all(3)
-	sb.shadow_color = Color(0, 0, 0, 0.78)
-	sb.shadow_size = 16
+	var sb := UITheme.box("panel")
+	sb.border_color = Color(0, 0, 0, 0)
 	panel.add_theme_stylebox_override("panel", sb)
 	panel.set_anchors_preset(Control.PRESET_CENTER)
 	panel.offset_left = -385
@@ -72,37 +67,44 @@ func _ready() -> void:
 		ci.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		ci.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		ci.texture = load(crest_path)
-		ci.position = Vector2(24, 14)
-		ci.size = Vector2(38, 38)
+		ci.position = Vector2(34, 22)
+		ci.size = Vector2(40, 40)
 		ci.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		panel.add_child(ci)
 	title_label = Label.new()
-	title_label.label_settings = _ls(28, Color(0.95, 0.82, 0.52), true)
-	title_label.position = Vector2(72, 16)
-	title_label.text = hearth.display_name
+	title_label.label_settings = UITheme.ls(32, UITheme.EMBER_HOT, "caps")
+	title_label.position = Vector2(86, 20)
+	title_label.text = hearth.display_name if hearth != null else _title
 	panel.add_child(title_label)
 	_top_rule = ColorRect.new()
-	_top_rule.color = Color(0.74, 0.62, 0.38, 0.68)
-	_top_rule.position = Vector2(28, 60)
+	_top_rule.color = Color(UITheme.EMBER, 0.5)
+	_top_rule.position = Vector2(PAD, TOP - 12)
 	_top_rule.size = Vector2(710, 1)
 	panel.add_child(_top_rule)
 	list_box = VBoxContainer.new()
-	list_box.position = Vector2(28, 74)
+	list_box.position = Vector2(PAD, TOP)
 	list_box.size = Vector2(710, 260)
-	list_box.add_theme_constant_override("separation", 6)
+	list_box.add_theme_constant_override("separation", 4)
 	panel.add_child(list_box)
 	_bot_rule = ColorRect.new()
-	_bot_rule.color = Color(0.56, 0.46, 0.28, 0.48)
-	_bot_rule.position = Vector2(28, 348)
+	_bot_rule.color = Color(UITheme.BONE, 0.12)
+	_bot_rule.position = Vector2(PAD, 348)
 	_bot_rule.size = Vector2(710, 1)
 	panel.add_child(_bot_rule)
 	info_label = Label.new()
-	info_label.label_settings = _ls(19, Color(0.70, 0.64, 0.52))
-	info_label.position = Vector2(28, 360)
+	info_label.label_settings = UITheme.ls(21, UITheme.BONE_DIM, "italic")
+	info_label.position = Vector2(PAD, 360)
 	info_label.size = Vector2(710, 50)
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	panel.add_child(info_label)
-	_enter_main()
+	panel.add_child(KnotFrame.new())
+	if _start == "level":
+		_enter_level()
+	else:
+		_enter_main()
+
+const PAD := 44.0
+const TOP := 88.0
 
 func _aid() -> String:
 	return hearth.area.area_id if hearth.area != null else Game.current_area_id
@@ -157,30 +159,31 @@ func _enter_level() -> void:
 ## long line and never swimming around a short menu.
 func _fit_panel() -> void:
 	var need := list_box.get_combined_minimum_size()
-	var half_w: float = (maxf(need.x, 540.0) + 88.0) * 0.5
-	var h: float = 74.0 + need.y + 118.0
+	var half_w: float = (maxf(need.x, 560.0) + PAD * 2.0) * 0.5
+	var h: float = TOP + need.y + 128.0
 	panel.offset_left = -half_w
 	panel.offset_right = half_w
 	panel.offset_top = -h * 0.5
 	panel.offset_bottom = h * 0.5
-	var inner_w := half_w * 2.0 - 56.0
+	var inner_w := half_w * 2.0 - PAD * 2.0
 	list_box.size = Vector2(inner_w, need.y)
 	if _top_rule != null:
 		_top_rule.size = Vector2(inner_w, 1)
 	if _bot_rule != null:
-		_bot_rule.position = Vector2(28, 74.0 + need.y + 12.0)
+		_bot_rule.position = Vector2(PAD, TOP + need.y + 14.0)
 		_bot_rule.size = Vector2(inner_w, 1)
-	info_label.position = Vector2(28, 74.0 + need.y + 22.0)
+	info_label.position = Vector2(PAD, TOP + need.y + 26.0)
 	info_label.size = Vector2(inner_w, 64)
 
 func _render() -> void:
 	for c in list_box.get_children():
+		list_box.remove_child(c)   # out now, so the panel measures only the new rows
 		c.queue_free()
 	for i in _options.size():
 		var l := Label.new()
 		var sel := i == _opt_i
-		l.label_settings = _ls(23, Color(0.98, 0.88, 0.58) if sel else Color(0.74, 0.69, 0.60), sel)
-		l.text = ("◆  " if sel else "    ") + _options[i]["label"]
+		l.label_settings = UITheme.ls(25, UITheme.EMBER_HOT if sel else UITheme.BONE_DIM)
+		l.text = ("◆   " if sel else "     ") + _options[i]["label"]
 		l.mouse_filter = Control.MOUSE_FILTER_STOP
 		var idx := i
 		l.mouse_entered.connect(func():
@@ -222,7 +225,10 @@ func choose(idx: int) -> void:
 	elif id == "level":
 		_enter_level()
 	elif id == "back":
-		_enter_main()
+		if hearth == null:
+			close()
+		else:
+			_enter_main()
 	elif id.begins_with("stat:"):
 		_buy_stat(id.get_slice(":", 1))
 

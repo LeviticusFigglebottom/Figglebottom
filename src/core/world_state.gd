@@ -3,6 +3,8 @@ extends Node
 ## pending Breathmark, last hearth, and save/load. Pure data; no scene logic.
 
 signal area_state_changed(area_id: String, state: RH.WState)
+## A global flag turned true for the first time (the Keepsakes toast listens).
+signal flag_raised(name: String)
 
 var areas: Dictionary = {}        # id -> {state:int, cleared:bool, flags:{}}
 var flags: Dictionary = {}        # global story/npc flags
@@ -51,7 +53,10 @@ func flag_val(name: String, def = null):
 	return flags.get(name, def)
 
 func set_flag(name: String, v = true) -> void:
+	var was = flags.get(name, false)
 	flags[name] = v
+	if not was and v is bool and v:
+		flag_raised.emit(name)
 
 func set_breathmark(area: String, pos: Vector3, amount: int) -> void:
 	breathmark = {"area": area, "pos": [pos.x, pos.y, pos.z], "amount": amount}

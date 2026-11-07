@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://d35drupie6rey"
-path="res://.godot/imported/DejaVuSerif-Bold.ttf-5e14f82452e18fd7af6ec587ffd4b0e5.fontdata"
+uid="uid://0oxyxoownfj1"
+path="res://.godot/imported/Alegreya-VF.ttf-dab74301f0828e8a7638912c1454d415.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/DejaVuSerif-Bold.ttf"
-dest_files=["res://.godot/imported/DejaVuSerif-Bold.ttf-5e14f82452e18fd7af6ec587ffd4b0e5.fontdata"]
+source_file="res://assets/fonts/alegreya/Alegreya-VF.ttf"
+dest_files=["res://.godot/imported/Alegreya-VF.ttf-dab74301f0828e8a7638912c1454d415.fontdata"]
 
 [params]
 
