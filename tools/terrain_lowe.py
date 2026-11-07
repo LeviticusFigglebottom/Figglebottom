@@ -113,9 +113,11 @@ def height(x, z):
     # heather moor: broader swells than the coast turf
     h += lowe * (1.8 * fbm(x * 0.025, z * 0.025, 3, 80) + 0.4 * fbm(x * 0.12, z * 0.12, 2, 79))
     # the fell wall to the north: too steep to climb, the Lowe's back
-    wz = NORTH_WALL_Z + 6.0 * fbm(x * 0.03, 0.2, 2, 82)
+    # broken by buttresses and hollows, it tops out into rolling fell
+    wz = NORTH_WALL_Z + 14.0 * fbm(x * 0.02, 0.2, 2, 82) + 5.0 * fbm(x * 0.07, 0.9, 1, 86)
     if z < wz:
-        h += min(70.0, (wz - z) * 1.75) + 2.0 * fbm(x * 0.1, z * 0.1, 2, 83)
+        rise = (wz - z) * 1.3
+        h += min(30.0 + 10.0 * fbm(x * 0.015, z * 0.015, 2, 87), rise) + min(rise, 4.0) * fbm(x * 0.12, z * 0.12, 2, 83)
     # the Open Barrow: a hollow, levelled where the Turfwright cut it
     d = math.hypot(x - ARENA[0], z - ARENA[1])
     if d < ARENA[2] + 10:
@@ -228,6 +230,8 @@ def terrain_block():
         "origin": [X0, Z0], "cell": CELL, "size": [NX, NZ],
         "far_origin": [FAR_X0, FAR_Z0], "far_cell": FAR_CELL, "far_size": FAR_N,
         "chunk": 32, "generator": "tools/terrain_lowe.py", "seed": S.SEED,
+        # heather moor: rust and brown under the green
+        "palette": {"turf_a": [0.20, 0.17, 0.08], "turf_b": [0.30, 0.20, 0.10], "path_col": [0.36, 0.30, 0.22]},
     }
 
 

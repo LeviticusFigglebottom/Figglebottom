@@ -119,6 +119,7 @@ static func _seat(kind: String, pos: Vector3, nrm: Vector3, yaw: float, s: float
 			b = b * Basis(Vector3.FORWARD, rng.randf_range(-0.12, 0.12))
 		"standing_stone":
 			b = b * Basis(Vector3.RIGHT, rng.randf_range(-0.1, 0.1))
+			sv = Vector3(s, s, s * 0.5)     # a slab, not a boulder
 			pos.y -= 0.3
 	return Transform3D(b.scaled_local(sv), pos)
 
@@ -237,7 +238,7 @@ static func _mesh(kind: String, mode: int) -> Mesh:
 		"boulder": m = _rock_mesh(1.0, 23, "M_stone_dark", mode)
 		"hummock": m = _rock_mesh(0.7, 5, "M_turf", mode, 0.45)
 		"ice_floe": m = _rock_mesh(1.0, 31, "M_ice", mode, 0.3)
-		"standing_stone": m = _box_stack([[Vector3(0.8, 2.7, 0.45), Vector3(0, 1.3, 0), Vector3(0, 0, 3)]], "M_stone_dark", mode)
+		"standing_stone": m = _rock_mesh(0.55, 41, "M_drystone", mode, 2.6)
 		"driftwood": m = _driftwood(mode)
 		"peat_stack": m = _peat(mode)
 		"stone_fence": m = _drystone(mode)
@@ -437,10 +438,10 @@ static func _veg_mesh(kind: String, tag: String) -> ArrayMesh:
 	var spread := 0.18
 	match kind:
 		"heather":
-			blades = 16
-			hgt = Vector2(0.18, 0.34)
-			wid = 0.12
-			spread = 0.32
+			blades = 24
+			hgt = Vector2(0.1, 0.24)
+			wid = 0.15
+			spread = 0.3
 			cols = [Color(0.30, 0.10, 0.06), Color(0.36, 0.14, 0.08), Color(0.26, 0.12, 0.09), Color(0.38, 0.22, 0.20)]
 		"sedge":
 			blades = 7
@@ -452,7 +453,7 @@ static func _veg_mesh(kind: String, tag: String) -> ArrayMesh:
 		var a := rng.randf() * TAU
 		var r := rng.randf() * spread
 		var base := Vector3(cos(a) * r, 0, sin(a) * r)
-		var lean := Vector3(cos(a), 0, sin(a)) * rng.randf_range(0.05, 0.25)
+		var lean := Vector3(cos(a), 0, sin(a)) * (rng.randf_range(0.35, 0.8) if kind == "heather" else rng.randf_range(0.05, 0.25))
 		var h := rng.randf_range(hgt.x, hgt.y)
 		var side := Vector3(-sin(a + 1.2), 0, cos(a + 1.2)) * wid * 0.5
 		var tip := base + lean * h * 2.0 + Vector3(0, h, 0)
