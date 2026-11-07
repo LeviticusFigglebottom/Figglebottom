@@ -34,5 +34,31 @@
  "warding_hum": {
   "name": "Warding Hum",
   "desc": "A skin of remembered warmth that takes the cold's anger first, and goes out doing it."
+ },
+ "armour_traveller_coat": {
+  "name": "Traveller's Coat",
+  "desc": "A long coat of grey southern wool, wrong for the north, warm enough on a boat. The toggles are horn. One is a replacement and does not match.",
+  "armour": {
+   "slot": "body",
+   "poise": 2,
+   "absorb": {
+    "phys": 0.03,
+    "frost": 0.08
+   },
+   "weight": 3.5
+  }
+ },
+ "armour_saltfell_oilskins": {
+  "name": "Saltfell Oilskins",
+  "desc": "Brede's spare oilskin smock, dressed with fish oil and smelling of it. It turns sea-spray and some of the cold. The left cuff has been let down and re-hemmed by someone who did it properly.",
+  "armour": {
+   "slot": "body",
+   "poise": 4,
+   "absorb": {
+    "phys": 0.06,
+    "frost": 0.14
+   },
+   "weight": 6.0
+  }
  }
 }

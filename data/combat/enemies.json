@@ -168,7 +168,8 @@
     "lunge": 0.0,
     "shockwave": 7.5,
     "phase2_only": true,
-    "arc": 110
+    "arc": 110,
+    "kind": "frost"
    }
   ],
   "phase2_at": 0.55,

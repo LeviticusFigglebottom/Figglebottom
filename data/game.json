@@ -46,7 +46,39 @@
    "stamina": 12
   },
   "poise_regen": 8.0,
-  "stagger_time": 0.7
+  "stagger_time": 0.7,
+  "armour": {
+   "_doc": "Four slots. Poise = base.poise + worn poise. Incoming damage is cut by the summed absorption for its kind (absorb_kind maps a packet kind to an absorption key), capped at absorb_cap. Total worn weight picks the roll tier: under light_under is light, over heavy_over is heavy, else medium (= player.roll as-is). roll_tiers override player.roll keys.",
+   "slots": [
+    "head",
+    "body",
+    "hands",
+    "legs"
+   ],
+   "start": {
+    "body": "armour_traveller_coat"
+   },
+   "absorb_kind": {
+    "physical": "phys",
+    "arrow": "phys",
+    "frost": "frost"
+   },
+   "absorb_cap": 0.8,
+   "light_under": 3.0,
+   "heavy_over": 12.0,
+   "roll_tiers": {
+    "light": {
+     "duration": 0.42,
+     "speed": 7.9
+    },
+    "heavy": {
+     "duration": 0.58,
+     "speed": 6.4,
+     "iframe_start": 0.06,
+     "iframe_end": 0.26
+    }
+   }
+  }
  },
  "levels": {
   "base_cost": 60,
