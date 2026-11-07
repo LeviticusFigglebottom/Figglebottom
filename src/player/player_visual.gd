@@ -1,10 +1,12 @@
 class_name PlayerVisual
 extends CharVisual
-## The Bearer's skeletal rig: greybox mannequin body, weapon in the right hand,
-## kite shield strapped to the left forearm, swing trail.
+## The Bearer's skeletal rig: weapon in the right hand, kite shield strapped
+## to the left forearm, swing trail. The body is the greybox mannequin until
+## game.json player.model names a humanoid (HumanoidLib, ADR 0004).
 
-func build(weapon_kit := "hewing_blade") -> void:
-	build_body("mannequin_wayfarer")
+func build(weapon_kit := "hewing_blade", model := "") -> void:
+	if model == "" or not build_model(model):
+		build_body("mannequin_wayfarer")
 	stride = 2.7
 	run_stride = 5.4
 	footsteps = true
@@ -13,9 +15,12 @@ func build(weapon_kit := "hewing_blade") -> void:
 	set_weapon(weapon_kit)
 	add_trail()
 
-	shield_mount = mount("farm_l")
-	shield_mount.position = Vector3(-0.085, 0.18, 0.015)
-	shield_mount.rotation_degrees = Vector3(0, 90, 0)   # face out from the forearm
+	if is_humanoid():
+		shield_mount = mount_slot("shield")
+	else:
+		shield_mount = mount("farm_l")
+		shield_mount.position = Vector3(-0.085, 0.18, 0.015)
+		shield_mount.rotation_degrees = Vector3(0, 90, 0)   # face out from the forearm
 	shield_mount.add_child(KitLib.instance("shield_kite"))
 
 ## Swap the drawn arms: right-hand weapon kit, and the kite shield only rides
