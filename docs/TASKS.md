@@ -15,12 +15,14 @@ Format: worktree → branch.
   - Living dressing (grass, particles), strata variety
   - The `lowe_barrows` region, linked to Saltfell by the ravine bridge
 
+- `/home/user/fb-audio` → `feat/audio-frost` (ready for review)
+  - Frost/melt wavefront in `hall`, `hall_ds` and `terrain` (`shaders/wavefront.gdshaderinc`), snow-crystal and pollen/steam/drip wave particles
+  - The score (THAW, RIME, the Outsong, the Netmender, title), ambiences and the foley pass: `docs/audio/MUSIC.md`
+
 ## todo
-1. Frost and hoar branch in `hall.gdshader`. Frost/melt wavefront look (replaces the inherited burning edge).
-2. New music and ambience for THAW and RIME. Generic foley.
-3. Wire Brede's `give_oilskins` gift once his NPC data lands.
-4. Region tier: the Turfwright fight, the Lowe NPCs, the Keepsakes questline.
-5. Performance pass: LODs, visibility ranges, MultiMesh, real-GPU profiling by the owner.
+1. Wire Brede's `give_oilskins` gift once his NPC data lands.
+2. Region tier: the Turfwright fight, the Lowe NPCs, the Keepsakes questline.
+3. Performance pass: LODs, visibility ranges, MultiMesh, real-GPU profiling by the owner.
 
 ## done (merged to main)
 - Phase 1 survey, originality guard, ADRs 0001–0003, SPEC, CLAUDE.md, lore and roster

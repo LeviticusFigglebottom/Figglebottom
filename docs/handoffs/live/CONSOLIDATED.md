@@ -20,6 +20,7 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/figglebottom` | `feat/terrain-polish` | Natural cliff and ravine shapes, procedural turf-roof buildings, terrain known issues |
 | `/home/user/fb-combat` | `feat/combat-deltas` | Lock-on switching, upgrade data, (stat−8) scaling, sprint attack, armour slots, `save_version` |
 | `/home/user/fb-ui` | `feat/ui-keepsakes` | UI re-skin and OFL font, house card, Keepsakes journal, Ingra and Brede lines verbatim from SLICE.md |
+| `/home/user/fb-audio` | `feat/audio-frost` | Music, ambience and foley rebuilt from `tools/audio/build.sh` (needs fluidsynth, fluid-soundfont-gm, vorbis-tools); frost/melt wavefront shaders and particles; the `audio` suite (39 checks; 296 in all) |
 | `/home/user/fb-lead` | `main` | Lead merges here |
 
 ## Next exact step
