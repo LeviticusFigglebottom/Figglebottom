@@ -11,7 +11,7 @@ const HALL_DS := preload("res://shaders/hall_ds.gdshader")
 ## two-sided GEOMETRY instead, which lights and shadows correctly.
 const DOUBLE_SIDED := {}
 ## Families that take a snow crust on their top faces in RIME.
-const SNOW := {"M_stone": 0.85, "M_stone_trim": 0.85, "M_stone_dark": 0.8, "M_wood": 0.75, "M_wood_dark": 0.75,
+const SNOW := {"M_stone": 0.85, "M_stone_trim": 0.85, "M_stone_dark": 0.8, "M_wood": 0.75, "M_wood_dark": 0.75, "M_drystone": 0.85,
 	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_drift": 0.85, "M_terrain": 0.9}
 
 ## Greybox: no detail textures ship; families render as flat shaded colour.
@@ -82,6 +82,8 @@ const FAMILIES := {
 	# the land's own stuff (terrain scatter and turf-roofed houses)
 	# weathered, silvered timber for posts, plates and carving
 	"M_wood_dark":    {"albedo": Color(0.20, 0.16, 0.12), "rough": 0.85, "metallic": 0.0, "specular": 0.40, "normal_scale": 1.20, "rim": 0.3, "moss": 0.25},
+	# dry-stone footings: warm grey-brown fieldstone, lichened
+	"M_drystone":     {"albedo": Color(0.36, 0.31, 0.25), "rough": 0.92, "metallic": 0.0, "specular": 0.40, "normal_scale": 1.3, "rim": 0.25, "moss": 0.6},
 	"M_turf":         {"albedo": Color(0.22, 0.27, 0.12), "rough": 0.95, "metallic": 0.0, "specular": 0.30, "rim": 0.35, "moss": 0.6, "crack": 0.0, "wear": 0.0},
 	"M_peat":         {"albedo": Color(0.12, 0.08, 0.05), "rough": 0.97, "metallic": 0.0, "specular": 0.28, "rim": 0.15, "moss": 0.2, "crack": 0.1},
 	"M_drift":        {"albedo": Color(0.50, 0.47, 0.42), "rough": 0.90, "metallic": 0.0, "specular": 0.35, "rim": 0.4, "moss": 0.0, "crack": 0.35, "wear": 0.4},

@@ -5,11 +5,14 @@ extends Area3D
 ##   "kill"  — a fall into a ravine: the same
 ##   "fall"  — below cliffs: a hard landing hurts by impact speed; walking
 ##             in on your feet does nothing
+##   "bog"   — black peat water: it drags at the legs, and a Bearer who
+##             stays in it past hazard/bog_seconds goes under
 ## Numbers live in data/game.json "hazard".
 
 var kind := "fall"
 var size := Vector3.ONE
 var _falling: Dictionary = {}    # body id -> worst downward speed this fall
+var _sunk: Dictionary = {}       # body id -> seconds in the bog
 
 func _ready() -> void:
 	add_to_group("hazards")
@@ -30,6 +33,9 @@ func _on_enter(b: Node3D) -> void:
 		_take(b as Player, 99999.0)
 
 func _physics_process(_dt: float) -> void:
+	if kind == "bog":
+		_bog(_dt)
+		return
 	if kind != "fall":
 		return
 	for b in get_overlapping_bodies():
@@ -47,6 +53,25 @@ func _physics_process(_dt: float) -> void:
 			if v > safe and not p.dead:
 				var t := clampf((v - safe) / maxf(lethal - safe, 0.1), 0.0, 1.0)
 				_take(p, 99999.0 if t >= 1.0 else t * p.max_hp)
+
+func _bog(dt: float) -> void:
+	var inside := {}
+	for b in get_overlapping_bodies():
+		if not (b is Player) or (b as Player).dead:
+			continue
+		var p := b as Player
+		var key := p.get_instance_id()
+		inside[key] = true
+		var drag := float(DB.tuning("hazard/bog_drag", 0.55))
+		p.velocity.x *= drag
+		p.velocity.z *= drag
+		_sunk[key] = float(_sunk.get(key, 0.0)) + dt
+		if _sunk[key] > float(DB.tuning("hazard/bog_seconds", 3.0)):
+			_sunk.erase(key)
+			_take(p, 99999.0)
+	for k in _sunk.keys():
+		if not inside.has(k):
+			_sunk.erase(k)
 
 func _take(p: Player, dmg: float) -> void:
 	# the land does not care for i-frames

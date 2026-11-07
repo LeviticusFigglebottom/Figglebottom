@@ -47,5 +47,35 @@
    "Don't tell Gunna I said she was cross."
   ],
   "services": []
+ },
+ "aud": {
+  "name": "Aud, barrow-keeper's widow",
+  "short_name": "Aud",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Mind the road. They like you on the road.",
+   "That one's the Holms'. That one's the miller's people. That one's empty, whatever anyone tells you.",
+   "My husband kept these forty years. I know every mound on the Lowe. I'm wrong about two of them and I'll thank you not to say which."
+  ],
+  "lines_repeat": [
+   "Turf goes back the same day. That's the whole of it.",
+   "Arne cut every sod on this hill. You can tell his by the edge."
+  ],
+  "services": []
+ },
+ "hesk": {
+  "name": "Hesk, travelling smith",
+  "short_name": "Hesk",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Don't stand there, you're in my draught.",
+   "Bog-iron. You rake it out of the black water and it comes up looking like dung. Give it a day in here and it's a hinge.",
+   "If you find any, bring it. I'll make it into something you won't be ashamed of."
+  ],
+  "lines_repeat": [
+   "Wind's wrong again. It's always wrong on the Lowe.",
+   "Bring me iron. I'll do the rest."
+  ],
+  "services": []
  }
 }

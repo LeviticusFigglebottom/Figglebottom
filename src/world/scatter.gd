@@ -340,3 +340,135 @@ static func _wattle(mode: int) -> ArrayMesh:
 	for k in 6:
 		boxes.append([Vector3(2.0, 0.12, 0.07), Vector3(0, 0.25 + k * 0.15, (k % 2) * 0.05 - 0.025), Vector3(0, 0, 1.5 - k * 0.6)])
 	return _box_stack(boxes, "M_wood", mode)
+
+# ------------------------------------------------------------ living ground cover
+
+const VEG_SHADER := preload("res://shaders/grass.gdshader")
+const VEG_CHUNK := 24.0
+
+## "veg": [{"kind": "grass"|"heather"|"sedge", "region": [x0, z0, x1, z1],
+##          "density": per m2, "h": [min, max], "tag", "range": m}]
+## Clumps crowd the edges of worn paths and settle in hollows; they thin on
+## slopes and stay off bare shingle, wet shore, rock and the path itself.
+static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	for rule in rules:
+		var kind := String(rule.get("kind", "grass"))
+		var tag := String(rule.get("tag", "base"))
+		var reg: Array = rule.get("region", [-50, -50, 50, 50])
+		var hr: Array = rule.get("h", [-1000, 1000])
+		var dens := float(rule.get("density", 1.0))
+		var step := 1.0 / sqrt(maxf(dens, 0.01))
+		var chunks: Dictionary = {}
+		var x := float(reg[0])
+		while x < float(reg[2]):
+			var z := float(reg[1])
+			while z < float(reg[3]):
+				var px := x + rng.randf() * step
+				var pz := z + rng.randf() * step
+				z += step
+				if not terrain.contains(px, pz):
+					continue
+				var y := terrain.height_at(px, pz)
+				if y < float(hr[0]) or y > float(hr[1]):
+					continue
+				var nrm := terrain.normal_at(px, pz)
+				var p := smoothstep(0.72, 0.93, nrm.y)
+				if p <= 0.0:
+					continue
+				var path := terrain.splat_at(px, pz, 1)
+				if path > 0.55:
+					continue
+				p *= 1.0 + 1.6 * clampf(1.0 - absf(path - 0.32) / 0.22, 0.0, 1.0)   # path edges
+				if terrain.splat_at(px, pz, 0) > 0.35 or terrain.splat_at(px, pz, 2) > 0.3:
+					continue      # shingle and wet shore stay bare
+				var around := (terrain.height_at(px + 3, pz) + terrain.height_at(px - 3, pz)
+						+ terrain.height_at(px, pz + 3) + terrain.height_at(px, pz - 3)) * 0.25
+				p *= 1.0 + clampf((around - y) * 1.2, 0.0, 1.2)                     # hollows
+				p *= 0.55 + 0.45 * terrain.splat_at(px, pz, 3)
+				if rng.randf() > p * 0.6 or _blocked(keep_clear, px, pz):
+					continue
+				var up := Vector3.UP.lerp(nrm, 0.5).normalized()
+				var b := Basis(Quaternion(Vector3.UP, up)) * Basis(Vector3.UP, rng.randf() * TAU)
+				var s := rng.randf_range(0.7, 1.35)
+				var key := Vector2i(int(floor(px / VEG_CHUNK)), int(floor(pz / VEG_CHUNK)))
+				if not chunks.has(key):
+					chunks[key] = []
+				chunks[key].append(Transform3D(b.scaled_local(Vector3(s, s * rng.randf_range(0.8, 1.2), s)), Vector3(px, y - 0.03, pz)))
+			x += step
+		var mesh := _veg_mesh(kind, tag)
+		var rng_end := float(rule.get("range", 55.0))
+		for key in chunks:
+			var xfs: Array = chunks[key]
+			var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
+			c.y = terrain.height_at(c.x, c.z)
+			var mm := MultiMesh.new()
+			mm.transform_format = MultiMesh.TRANSFORM_3D
+			mm.mesh = mesh
+			mm.instance_count = xfs.size()
+			for i in xfs.size():
+				var t: Transform3D = xfs[i]
+				t.origin -= c
+				mm.set_instance_transform(i, t)
+			var mmi := MultiMeshInstance3D.new()
+			mmi.name = "Veg_%s_%d_%d" % [kind, key.x, key.y]
+			mmi.multimesh = mm
+			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			# anchored at the chunk centre so the range test measures to the chunk
+			mmi.position = c
+			mmi.visibility_range_end = rng_end
+			mmi.visibility_range_end_margin = 6.0
+			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+			area.attach(mmi, tag)
+
+static func _veg_mesh(kind: String, tag: String) -> ArrayMesh:
+	var key := "veg|%s|%s" % [kind, tag]
+	if _mesh_cache.has(key):
+		return _mesh_cache[key]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(kind)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var blades := 13
+	var hgt := Vector2(0.18, 0.4)
+	var wid := 0.035
+	var cols: Array = [Color(0.20, 0.28, 0.09), Color(0.28, 0.32, 0.12), Color(0.24, 0.26, 0.10), Color(0.33, 0.31, 0.14)]
+	var spread := 0.18
+	match kind:
+		"heather":
+			blades = 16
+			hgt = Vector2(0.18, 0.34)
+			wid = 0.12
+			spread = 0.32
+			cols = [Color(0.30, 0.10, 0.06), Color(0.36, 0.14, 0.08), Color(0.26, 0.12, 0.09), Color(0.38, 0.22, 0.20)]
+		"sedge":
+			blades = 7
+			hgt = Vector2(0.5, 0.85)
+			wid = 0.035
+			spread = 0.12
+			cols = [Color(0.42, 0.40, 0.20), Color(0.50, 0.44, 0.22)]
+	for i in blades:
+		var a := rng.randf() * TAU
+		var r := rng.randf() * spread
+		var base := Vector3(cos(a) * r, 0, sin(a) * r)
+		var lean := Vector3(cos(a), 0, sin(a)) * rng.randf_range(0.05, 0.25)
+		var h := rng.randf_range(hgt.x, hgt.y)
+		var side := Vector3(-sin(a + 1.2), 0, cos(a + 1.2)) * wid * 0.5
+		var tip := base + lean * h * 2.0 + Vector3(0, h, 0)
+		var c: Color = cols[rng.randi() % cols.size()]
+		var n := Vector3(cos(a), 0.6, sin(a)).normalized()
+		for v in [[base - side, 0.0], [base + side, 0.0], [tip, 1.0]]:
+			st.set_normal(n)
+			st.set_color(Color(c.r, c.g, c.b, v[1]))
+			st.add_vertex(v[0])
+	var mesh := st.commit()
+	var mat := ShaderMaterial.new()
+	mat.shader = VEG_SHADER
+	mat.set_shader_parameter("state_mode", 1 if tag == "thaw" else (2 if tag == "rime" else 0))
+	if kind == "heather":
+		mat.set_shader_parameter("wind_strength", 0.06)
+		mat.set_shader_parameter("tip_tint", Vector3(1.1, 0.85, 0.95))
+	mesh.surface_set_material(0, mat)
+	_mesh_cache[key] = mesh
+	return mesh

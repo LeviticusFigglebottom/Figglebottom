@@ -11,6 +11,10 @@ var locked_flag := ""        # world flag that must be TRUE to pass
 var locked_prompt := "Sealed"
 var requires_items: Array = []   # item ids the Bearer must carry to pass
 var cutscene := ""               # reserved: a ride played before arriving
+## A seam in continuous land (a pass, a bridge): no prompt, no marker. Walking
+## into the box carries the Bearer on; the next area holds the same ground.
+var auto := false
+var zone_size := Vector3(12, 4, 2)
 
 var _zone: Interactable
 var _marker: OmniLight3D
@@ -18,6 +22,22 @@ var _disc: MeshInstance3D
 var _pulse := 0.0
 
 func _ready() -> void:
+	if auto:
+		var a := Area3D.new()
+		a.name = "Seam"
+		a.collision_layer = 0
+		a.collision_mask = 1 << (RH.L_PLAYER - 1)
+		a.monitorable = false
+		var cs := CollisionShape3D.new()
+		var bx := BoxShape3D.new()
+		bx.size = zone_size
+		cs.shape = bx
+		cs.position.y = zone_size.y * 0.5
+		a.add_child(cs)
+		a.body_entered.connect(func(b): if b == Game.player: _on_use.call_deferred(b))
+		add_child(a)
+		add_to_group("seams")
+		return
 	_zone = Interactable.new()
 	_zone.prompt = prompt
 	_zone.setup_zone(1.6, 2.2)
@@ -96,6 +116,8 @@ func _unlocked() -> bool:
 	return true
 
 func _physics_process(dt: float) -> void:
+	if auto:
+		return
 	var open := _unlocked()
 	if locked_flag != "" or not requires_items.is_empty():
 		_zone.prompt = prompt if open else locked_prompt

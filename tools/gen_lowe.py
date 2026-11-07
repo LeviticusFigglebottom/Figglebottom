@@ -1,0 +1,230 @@
+#!/usr/bin/env python3
+"""Authoring script for data/areas/lowe_barrows.json: the Lowe (WORLD.md 5.2).
+
+    the pass      a strip of cliff top where the ravine heads out short of the
+                  sea: the main road inland from Saltfell (a seam, no door)
+    the Barrow Road   standing stones, the Barrow Road hearth
+    the Kin-Mounds    long barrows facing the road; in RIME every door is open
+    the peat bog      THAW: black water that drags and drowns; RIME: frozen,
+                      walk it to the island of cut peat (bog-iron)
+    the Open Barrow   the Turfwright's arena behind a frost veil: a hollow
+                      walled with stacked sods round his daughters' barrow
+    the bridge    a plank drawbridge over the ravine, lowered from this side:
+                  the shortcut back to Saltfell yard
+
+Run: python3 tools/gen_lowe.py [--keep-terrain]"""
+import json
+import math
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import terrain_lowe as L  # noqa: E402
+import terrain_saltfell as S  # noqa: E402
+from seams_lowe import PASS, seams  # noqa: E402
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if __name__ == "__main__" and "--keep-terrain" not in sys.argv:
+    L.write()
+
+
+def r2(v):
+    return round(v, 2)
+
+
+def g(x, z):
+    return r2(L.sample(x, z))
+
+
+def at(x, z, dy=0.0):
+    return [r2(x), r2(g(x, z) + dy), r2(z)]
+
+
+def rot_off(cx, cz, yaw, ox, oz):
+    a = math.radians(yaw)
+    return (cx + ox * math.cos(a) + oz * math.sin(a), cz - ox * math.sin(a) + oz * math.cos(a))
+
+
+# ----------------------------------------------------------------- the Lowe
+HOUSES, BUILDINGS, PROPS, BOXES, BLOCKERS = [], [], [], [], []
+
+
+def barrow(bid, x, z, w, l, door="thaw_shut", toward=None):
+    yaw = r2(L.barrow_yaw(x, z, toward))
+    y = g(x, z)
+    HOUSES.append({"id": bid, "kind": "barrow", "center": [x, z], "size": [w, l], "yaw": yaw, "y": y, "door": door})
+    fx, fz = rot_off(x, z, yaw, 0, l * 0.5)
+    BUILDINGS.append({"id": bid, "center": [x, z], "size": [w + 3.2, l], "yaw": yaw, "y": y,
+                      "doors": [[r2(fx), r2(fz)]], "open": []})
+    return yaw, (fx, fz)
+
+
+DOORS = {}
+for (bid, x, z, w, l) in L.LONG_BARROWS:
+    # one barrow on the road stays shut in every winter (WORLD.md 4.2)
+    DOORS[bid] = barrow(bid, x, z, w, l, door="shut" if bid == "kin_c" else "thaw_shut")
+tid, tx, tz, tw, tl = L.TWIN
+DOORS[tid] = barrow(tid, tx, tz, tw, tl, door="open", toward=(L.ARENA[0], L.ARENA[1]))
+
+A = L.arena_level()
+W = L.bog_level()
+CX, CZ, CR = L.ARENA
+
+# the sod wall: stacked cut turf all round the hollow, a gap to the road
+place = []
+n = int(2 * math.pi * (CR - 0.5) / 1.45)
+for k in range(n):
+    th = 2 * math.pi * k / n
+    deg = math.degrees(th) % 360
+    if abs(deg - 90) < 7.5 or abs(deg - 270) < 20:
+        continue      # the entrance (south) and the twin barrow (north)
+    x = CX + (CR - 0.5) * math.cos(th)
+    z = CZ + (CR - 0.5) * math.sin(th)
+    place.append({"kind": "peat_stack", "at": [r2(x), r2(z)], "rot": r2(-(deg + 90))})
+# stacks of sods waiting, inside the ring: enough to close every barrow
+for k in range(14):
+    th = 2 * math.pi * k / 14 + 0.2
+    x = CX + 13 * math.cos(th)
+    z = CZ + 13 * math.sin(th)
+    if math.hypot(x - tx, z - tz) > 10 and abs(math.degrees(th) % 360 - 90) > 25:
+        place.append({"kind": "peat_stack", "at": [r2(x), r2(z)], "rot": r2(k * 37)})
+# standing stones along the Barrow Road
+for i in range(len(L.ROAD) - 1):
+    ax, az = L.ROAD[i]
+    bx, bz = L.ROAD[i + 1]
+    dx, dz = bx - ax, bz - az
+    ln = math.hypot(dx, dz)
+    nx, nz = -dz / ln, dx / ln
+    for t in (0.3, 0.75):
+        side = 1 if (i + int(t * 2)) % 2 == 0 else -1
+        x = ax + dx * t + nx * side * 4.2
+        z = az + dz * t + nz * side * 4.2
+        place.append({"kind": "standing_stone", "at": [r2(x), r2(z)], "scale": 1.3, "rot": r2((i * 53 + t * 90) % 360)})
+# cut peat stacked to dry at the bog's edge
+for (x, z, r) in [(-60, -170, 20), (-63, -175, 75), (-22, -176, -30), (-20, -200, 10), (-58, -205, 44)]:
+    place.append({"kind": "peat_stack", "at": [x, z], "rot": r})
+# the island of cut peat in the bog
+for k in range(5):
+    th = k * 1.3
+    place.append({"kind": "peat_stack", "at": [r2(L.ISLAND[0] + 2.2 * math.cos(th)), r2(L.ISLAND[1] + 2.2 * math.sin(th))], "rot": k * 50})
+
+# frost veil across the gap in the sod wall
+VEIL = [r2(CX), r2(A), r2(CZ + CR - 0.5)]
+
+# the frozen bog (RIME): an invisible sheet carries you; ice shows where
+BLOCKERS.append({"radius": L.BOG_RIM, "at": [L.BOG[0], r2(W - 0.3), L.BOG[1]], "height": 0.6, "tag": "rime"})
+
+
+def door_front(bid, out=2.2):
+    yaw = DOORS[bid][0]
+    fx, fz = DOORS[bid][1]
+    return rot_off(fx, fz, yaw, 0, out)
+
+
+spawners = []
+for bid, _x, _z, _w, _l in L.LONG_BARROWS:
+    if bid == "kin_c":
+        continue
+    fx, fz = door_front(bid)
+    spawners.append({"enemy": "barrow_sleeper", "stand_in": "rimewalker", "id": "sleeper_" + bid,
+                     "at": at(fx, fz, 0.1), "face": r2(DOORS[bid][0])})
+spawners += [
+    {"enemy": "keener", "stand_in": "oarsman", "id": "keener_road", "at": at(-30, -128, 0.1), "face": 200},
+    {"enemy": "keener", "stand_in": "oarsman", "id": "keener_mounds", "at": at(14, -147, 0.1), "face": 160},
+    {"enemy": "cairn_carrier", "stand_in": "rimewalker", "id": "carrier_bog", "at": at(-60, -160, 0.1), "face": 30},
+    {"enemy": "barrow_sleeper", "stand_in": "rimewalker", "id": "sleeper_bridge", "at": at(-12, -95, 0.1), "face": 180},
+    {"enemy": "turfwright", "stand_in": "netmender", "id": "turfwright", "at": [r2(CX), r2(A + 0.1), r2(CZ - 7)],
+     "face": 0, "dead_once": True, "frost_veil_id": "open_barrow_veil"},
+]
+
+kin_a = [b for b in L.LONG_BARROWS if b[0] == "kin_a"][0]
+pa = rot_off(kin_a[1], kin_a[2], DOORS["kin_a"][0], 0, kin_a[4] * 0.5 - 5.0)
+pickups = [
+    {"id": "peat_island_iron", "at": [r2(L.ISLAND[0] + 0.5), r2(W + 0.5), r2(L.ISLAND[1] + 0.8)], "item": "bog_iron",
+     "count": 2, "tag": "rime", "label": "Pry up the bog-iron"},
+    {"id": "kin_a_grave_goods", "at": [r2(pa[0]), g(pa[0], pa[1]), r2(pa[1])], "warmth": 60, "tag": "rime",
+     "label": "Take what was left for the road"},
+]
+
+portals, bridge = seams("lowe_barrows")
+START = [PASS["x"], r2(L.sample(PASS["x"], PASS["z"] - 5.0) + 0.2), PASS["z"] - 5.0]
+
+edges = {
+    "doc": "tools/audit_edges.py classes every walkable boundary; seams to Saltfell are their own class.",
+    "walk_max_deg": 45.0, "water_level": 0.0, "drown_depth": 1.15,
+    "nav_bounds": [-124, -262, 70, -80],
+    "buildings": BUILDINGS, "thickets": [],
+    "state_floors": [{"tag": "rime", "center": [L.BOG[0], L.BOG[1]], "radius": L.BOG_RIM, "y": r2(W)}],
+    "gates": [],
+}
+
+D = {
+    "id": "lowe_barrows",
+    "name": "The Lowe",
+    "start": {"pos": START, "yaw": 0},
+    "env": {"thaw": {"sun_rot": [-10, -60], "sun_energy": 2.3, "fog_density": 0.0010, "vol_density": 0.004},
+            "rime": {"sun_rot": [-30, -40], "fog_density": 0.006, "vol_density": 0.016}},
+    "terrain": L.terrain_block(),
+    "nav_bounds": [-124, 10, -262, 70, 90, -80],
+    "weather": {"gulls": False, "spindrift": 10},
+    "water": [
+        {"at": [0, 0.0, -200], "size": [4000, 4000]},
+        {"at": [25, S.RAVINE_FLOOR + 0.6, -76], "size": [210, 44]},
+        {"at": [L.BOG[0], r2(W), L.BOG[1]], "radius": L.BOG_RIM, "tag": "thaw"},
+        {"at": [L.BOG[0], r2(W + 0.02), L.BOG[1]], "radius": L.BOG_RIM, "tag": "rime", "mat": "M_ice"},
+    ],
+    "hazards": [
+        {"kind": "drown", "min": [-1200, -40, -1200], "max": [1200, -1.15, 1200]},
+        {"kind": "kill", "min": [S.RAVINE_HEAD_X + 2, -10, -112], "max": [130, S.RAVINE_FLOOR + 4.0, -50]},
+        {"kind": "bog", "tag": "thaw", "min": [L.BOG[0] - 27, r2(W - 4), L.BOG[1] - 27], "max": [L.BOG[0] + 27, r2(W - 0.45), L.BOG[1] + 27]},
+        {"kind": "fall", "min": [-100, 0, -112], "max": [70, 60, -78]},
+        {"kind": "fall", "min": [-135, -2, -262], "max": [-88, 60, -78]},
+    ],
+    "zones": [
+        {"name": "THE BARROW ROAD", "min": [-100, -112], "max": [-40, -80]},
+        {"name": "THE KIN-MOUNDS", "min": [-40, -170], "max": [40, -100]},
+        {"name": "THE OPEN BARROW", "min": [24, -240], "max": [70, -176]},
+    ],
+    "houses": HOUSES,
+    "boxes": BOXES,
+    "blockers": BLOCKERS,
+    "hearths": [{"id": "hs_barrow_road", "name": "the Barrow Road", "at": at(-82, -104), "rot": 140}],
+    "spawners": spawners,
+    "frost_veils": [{"id": "open_barrow_veil", "at": VEIL, "rot": 0, "tag": "rime"}],
+    "npcs": [
+        {"id": "aud", "at": at(-34, -121), "rot": 200, "tag": "thaw"},
+        {"id": "hesk", "at": at(-58, -166), "rot": 120, "tag": "thaw"},
+    ],
+    "plaques": [
+        {"at": at(-84, -95), "rot": 20, "text": "THE LOWE\n\nThe barrow hills. Each neighbourhood has its kin-mounds.\nThe turf goes back the same day."},
+    ],
+    "pickups": pickups,
+    "portals": portals,
+    "scripted": [bridge],
+    "scatter": {
+        "seed": 5150,
+        "clear": [[b["center"][0], b["center"][1], r2(math.hypot(*b["size"]) * 0.5 + 1)] for b in BUILDINGS]
+                 + [[CX, CZ, CR + 1.0], [L.BOG[0], L.BOG[1], L.BOG[2] + 3]],
+        "rules": [
+            {"kind": "rock", "count": 160, "region": [-98, -250, 62, -88], "slope": [0.8, 1.0], "scale": [0.3, 0.9], "path_max": 0.2},
+            {"kind": "boulder", "count": 40, "region": [-98, -250, 62, -88], "slope": [0.8, 1.0], "scale": [0.9, 1.7], "path_max": 0.1},
+            {"kind": "boulder", "count": 60, "region": [56, -260, 128, -60], "slope": [0.3, 0.75], "scale": [1.0, 2.0]},
+            {"kind": "boulder", "count": 50, "region": [-100, -280, 128, -240], "slope": [0.3, 0.8], "scale": [1.0, 2.2]},
+            {"kind": "hummock", "count": 200, "region": [-98, -250, 62, -88], "slope": [0.85, 1.0], "scale": [0.5, 1.2], "path_max": 0.25},
+            {"kind": "boulder", "count": 40, "region": [-90, -100, 110, -55], "slope": [0.5, 0.95], "h": [2.5, 8], "scale": [0.8, 1.8]},
+        ],
+        "place": place,
+        "veg": [
+            {"kind": "heather", "region": [-98, -252, 64, -86], "density": 2.6, "range": 60},
+            {"kind": "grass", "region": [-98, -252, 64, -86], "density": 1.4, "range": 50},
+            {"kind": "sedge", "region": [L.BOG[0] - 34, L.BOG[1] - 34, L.BOG[0] + 34, L.BOG[1] + 34], "density": 2.0, "range": 50},
+            {"kind": "grass", "region": [-98, -76, 64, 30], "density": 1.5, "h": [16, 40], "range": 50},
+        ],
+    },
+    "edges": edges,
+}
+
+if __name__ == "__main__":
+    out = os.path.join(ROOT, "data", "areas", "lowe_barrows.json")
+    json.dump(D, open(out, "w"), indent=1)
+    print("wrote", out)

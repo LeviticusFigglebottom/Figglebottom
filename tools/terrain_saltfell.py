@@ -73,7 +73,7 @@ def ravine_floor_half(x):
 
 
 # rock spurs jutting into the ravine: (x, side +1 south wall / -1 north, reach m)
-RAVINE_SPURS = [(-62, 1, 6.0), (-40, -1, 5.0), (-28, -1, 4.5), (-8, -1, 5.5), (14, 1, 7.0),
+RAVINE_SPURS = [(-62, 1, 6.0), (-40, -1, 5.0), (-28, -1, 4.5), (-8, -1, 6.0), (-8, 1, 6.0), (14, 1, 7.0),
                 (30, 1, 4.0), (38, -1, 5.0), (56, 1, 6.0), (-84, -1, 5.0)]
 
 
@@ -86,18 +86,28 @@ def gully_x(z):
 
 def strata(depth, x, z, seed=40):
     """Layered rock: turn a smooth fall of `depth` metres into risers and
-    narrow ledges. Beds dip gently and come and go along the coast."""
-    step = 3.6 + 0.8 * fbm(x * 0.01, z * 0.01, 1, seed)
-    q = (depth + 0.03 * x + 0.6 * fbm(x * 0.05, z * 0.05, 2, seed + 1)) / step
+    ledges. Bed thickness, dip and ledge width change from one stretch of
+    coast to the next; in slumps the beds have slid and lost their order."""
+    seg = vnoise(x * 0.018, z * 0.018, seed + 3)                 # which stretch of coast
+    step = 2.4 + 3.4 * seg + 0.8 * fbm(x * 0.03, z * 0.03, 1, seed)
+    dip = 0.08 * (vnoise(x * 0.012, z * 0.012, seed + 4) - 0.5)
+    q = (depth + dip * x + 0.9 * fbm(x * 0.05, z * 0.05, 2, seed + 1)) / step
     fq = q - math.floor(q)
-    stepped = (math.floor(q) + smooth(0.32, 1.0, fq)) * step
-    k = 0.55 + 0.45 * vnoise(x * 0.03, z * 0.03, seed + 2)
-    return depth + (stepped - depth) * k
+    ledge = 0.22 + 0.3 * vnoise(x * 0.04, z * 0.04, seed + 5)     # wider ledges grow turf
+    stepped = (math.floor(q) + smooth(ledge, 1.0, fq)) * step
+    k = 0.45 + 0.55 * vnoise(x * 0.03, z * 0.03, seed + 2)
+    slump = smooth(0.62, 0.8, vnoise(x * 0.025, z * 0.025, seed + 6))
+    k *= 1.0 - slump
+    return depth + (stepped - depth) * k + slump * 1.2 * fbm(x * 0.2, z * 0.2, 2, seed + 7)
+
 
 RAVINE_FLOOR = 3.0
+RAVINE_HEAD_X = -80.0      # the ravine's west end
+BRIDGE_X = -8.0            # the Lowe drawbridge spans here
 
-BARROWS = [(-34, -112, 10, 5.0), (8, -124, 13, 6.5), (44, -106, 8, 4.0),
-           (-66, -138, 11, 5.0), (28, -152, 15, 7.0), (-12, -160, 9, 4.0)]
+# round kin-mounds on the Lowe (the long barrows are houses: terrain_lowe.py)
+BARROWS = [(-82, -150, 9, 4.5), (14, -110, 9, 4.5), (-30, -162, 10, 5.0),
+           (8, -182, 11, 5.0), (-70, -172, 9, 4.0), (36, -120, 8, 4.0)]
 
 
 # ------------------------------------------------------------------ noise
@@ -314,7 +324,11 @@ def height(x, z):
         talus = min(d, 3.0) * 0.6
         wallh = strata(max(0.0, d - 3.0) * kw, x, z, 60)
         rav = RAVINE_FLOOR + talus + wallh + 0.5 * fbm(x * 0.3, z * 0.3, 2, 7)
-        h = min(h, rav)
+        # the ravine heads out short of the west sea cliffs: a strip of cliff
+        # top is the road inland to the Lowe
+        head = smooth(RAVINE_HEAD_X - 6.0, RAVINE_HEAD_X + 4.0, x)
+        if rav < h:
+            h = h - (h - rav) * head
     # the sea stack and its tide shelf
     sx, sz = STACK
     r = math.hypot(x - sx, z - sz)
@@ -323,7 +337,8 @@ def height(x, z):
         lobe = 1.0 + 0.18 * math.sin(3 * th + 0.7) + 0.1 * math.sin(5 * th + 2.1) + 0.12 * fbm(x * 0.3, z * 0.3, 2, 12)
         shelf = 0.8 - 1.1 * smooth(8.0, 12.5, r / (0.9 + 0.2 * lobe)) + 0.15 * fbm(x * 0.4, z * 0.4, 1, 11)
         crown = 15.0 + 4.0 * fbm(x * 0.25, z * 0.25, 2, 27) + 2.0 * math.sin(th * 2 + 1.0)
-        pillar = (crown + 1.0) * (1.0 - smooth(3.6, 6.4, r / lobe)) - 1.0
+        fall = (crown + 1.0) * smooth(3.6, 6.4, r / lobe)
+        pillar = crown - strata(fall, x, z, 70)
         h = max(h, shelf, pillar)
     return h
 
