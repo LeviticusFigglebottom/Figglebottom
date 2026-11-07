@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_saltfell as T  # noqa: E402
+from seams_lowe import seams  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if __name__ == "__main__" and "--keep-terrain" not in sys.argv:
@@ -198,11 +199,11 @@ for k in range(14):
                       "rot": r2((k * 61 + side * 37) % 360), "tag": "rime"})
 water = [
     {"at": [0, 0.0, 0], "size": [4000, 4000]},                           # the sea
-    {"at": [0, T.RAVINE_FLOOR + 0.6, -76], "size": [300, 40]},          # the river in the ravine
+    {"at": [25, T.RAVINE_FLOOR + 0.6, -76], "size": [210, 44]},         # the river in the ravine
 ]
 hazards = [
     {"kind": "drown", "min": [-1200, -40, -1200], "max": [1200, -1.15, 1200]},
-    {"kind": "kill", "min": [-130, -10, -112], "max": [130, T.RAVINE_FLOOR + 4.0, -50]},
+    {"kind": "kill", "min": [T.RAVINE_HEAD_X + 2, -10, -112], "max": [130, T.RAVINE_FLOOR + 4.0, -50]},
     {"kind": "fall", "min": [-84, -2, 28], "max": [64, 26, 92]},          # below the cliffs round the cove
     {"kind": "fall", "min": [18, 0, 6], "max": [32, 26, 50]},             # the gully
 ]
@@ -260,6 +261,14 @@ scatter = {
          "scale": r2(1.5 + 0.6 * abs(math.sin(x * 1.7))), "rot": r2((x * 47) % 360), "tag": "rime"}
         for x in [i * 2.3 - 72 for i in range(55)] if not (-37.5 < x < -22.5)
     ],
+    "veg": [
+        {"kind": "grass", "region": [-98, -70, 64, 44], "density": 2.6, "h": [16, 40], "range": 50},
+        {"kind": "sedge", "region": [-98, -70, 64, 44], "density": 0.35, "h": [16, 40], "range": 45},
+        {"kind": "heather", "region": [-98, -70, 64, 44], "density": 0.5, "h": [16, 40], "range": 60},
+        {"kind": "grass", "region": [-80, 40, 60, 70], "density": 1.2, "h": [2.5, 16], "range": 45},
+        {"kind": "heather", "region": [-96, -172, 100, -86], "density": 0.9, "h": [18, 80], "range": 70},
+        {"kind": "grass", "region": [-96, -172, 100, -86], "density": 1.0, "h": [18, 80], "range": 50},
+    ],
     "fences": [
         {"kind": "drystone", "points": [[-50, -48], [-53, -30], [-51, -12], [-47, 4], [-49, 16]]},
         {"kind": "drystone", "points": [[36, -44], [40, -26], [38, -8]]},
@@ -277,7 +286,7 @@ edges = {
     "walk_max_deg": 45.0,
     "water_level": 0.0,
     "drown_depth": 1.15,
-    "nav_bounds": [-102, -76, 72, 130],
+    "nav_bounds": [-102, -90, 72, 130],
     "buildings": BUILDINGS,
     "thickets": [],
     "state_floors": [{"tag": "rime", "min": [CH["x0"] + 0.8, CH["z0"]], "max": [CH["x1"] - 0.8, ICE_Z1], "y": CH["y"]}],
@@ -292,7 +301,7 @@ D = {
     "env": {"thaw": {"sun_rot": [-12, -36], "sun_energy": 2.3, "fog_density": 0.0008, "vol_density": 0.0032},
             "rime": {"sun_rot": [-34, -30]}},
     "terrain": T.terrain_block(),
-    "nav_bounds": [-102, -4, -76, 72, 64, 130],
+    "nav_bounds": [-102, -4, -90, 72, 64, 130],
     "water": water,
     "hazards": hazards,
     "zones": [
@@ -314,6 +323,9 @@ D = {
     "pickups": pickups,
     "scatter": scatter,
     "edges": edges,
+    # the seams to the Lowe: the cliff-top pass and the drawbridge
+    "portals": seams("saltfell_steading")[0],
+    "scripted": [seams("saltfell_steading")[1]],
 }
 
 if __name__ == "__main__":

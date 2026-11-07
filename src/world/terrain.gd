@@ -17,12 +17,18 @@ var heights := PackedFloat32Array()
 var splat := PackedByteArray()
 var spec: Dictionary = {}
 
-static var _mat: ShaderMaterial = null
+var _mat: ShaderMaterial = null
 
-static func material() -> ShaderMaterial:
+## One material per landform: "palette" in the terrain block re-tints the
+## layers (the Lowe's turf is heather-brown, Saltfell's is sea-turf green).
+func material() -> ShaderMaterial:
 	if _mat == null:
 		_mat = ShaderMaterial.new()
 		_mat.shader = SHADER
+		var pal: Dictionary = spec.get("palette", {})
+		for k in pal:
+			var c: Array = pal[k]
+			_mat.set_shader_parameter(k, Color(c[0], c[1], c[2]))
 	return _mat
 
 func setup(s: Dictionary) -> bool:

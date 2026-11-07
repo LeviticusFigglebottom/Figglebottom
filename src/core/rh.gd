@@ -95,6 +95,10 @@ const L_CAMERA_CLIP := 8
 ## Low furniture the Bearer must walk round but foes step over (a hearth
 ## kerb): left out of the navmesh, so a big body never wedges on its corners.
 const L_WORLD_LOW := 9
+## Navmesh-only walls, per state: nothing collides with them, but the bake
+## for that state treats them as solid (deep bog water the AI must not path).
+const L_NAV_BLOCK_THAW := 10
+const L_NAV_BLOCK_RIME := 11
 
 ## Masks
 const M_WORLD_ALL := (1 << 0) | (1 << 1) | (1 << 2)  # base|thaw|rime

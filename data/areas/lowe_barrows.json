@@ -1,0 +1,1822 @@
+{
+ "id": "lowe_barrows",
+ "name": "The Lowe",
+ "start": {
+  "pos": [
+   -89.0,
+   23.32,
+   -90.5
+  ],
+  "yaw": 0
+ },
+ "env": {
+  "thaw": {
+   "sun_rot": [
+    -10,
+    -60
+   ],
+   "sun_energy": 2.3,
+   "fog_density": 0.001,
+   "vol_density": 0.004
+  },
+  "rime": {
+   "sun_rot": [
+    -30,
+    -40
+   ],
+   "fog_density": 0.006,
+   "vol_density": 0.016
+  }
+ },
+ "terrain": {
+  "source": "res://data/terrain/lowe_h.bin",
+  "splat": "res://data/terrain/lowe_splat.bin",
+  "far": "res://data/terrain/lowe_far.bin",
+  "origin": [
+   -128.0,
+   -336.0
+  ],
+  "cell": 1.0,
+  "size": [
+   257,
+   281
+  ],
+  "far_origin": [
+   -1024.0,
+   -1300.0
+  ],
+  "far_cell": 8.0,
+  "far_size": 257,
+  "chunk": 32,
+  "generator": "tools/terrain_lowe.py",
+  "seed": 7331,
+  "palette": {
+   "turf_a": [
+    0.2,
+    0.17,
+    0.08
+   ],
+   "turf_b": [
+    0.3,
+    0.2,
+    0.1
+   ],
+   "path_col": [
+    0.36,
+    0.3,
+    0.22
+   ]
+  }
+ },
+ "nav_bounds": [
+  -124,
+  10,
+  -262,
+  70,
+  90,
+  -80
+ ],
+ "weather": {
+  "gulls": false,
+  "spindrift": 10
+ },
+ "water": [
+  {
+   "at": [
+    0,
+    0.0,
+    -200
+   ],
+   "size": [
+    4000,
+    4000
+   ]
+  },
+  {
+   "at": [
+    25,
+    3.6,
+    -76
+   ],
+   "size": [
+    210,
+    44
+   ]
+  },
+  {
+   "at": [
+    -40.0,
+    43.94,
+    -190.0
+   ],
+   "radius": 30.0,
+   "tag": "thaw"
+  },
+  {
+   "at": [
+    -40.0,
+    43.96,
+    -190.0
+   ],
+   "radius": 30.0,
+   "tag": "rime",
+   "mat": "M_ice"
+  }
+ ],
+ "hazards": [
+  {
+   "kind": "drown",
+   "min": [
+    -1200,
+    -40,
+    -1200
+   ],
+   "max": [
+    1200,
+    -1.15,
+    1200
+   ]
+  },
+  {
+   "kind": "kill",
+   "min": [
+    -78.0,
+    -10,
+    -112
+   ],
+   "max": [
+    130,
+    7.0,
+    -50
+   ]
+  },
+  {
+   "kind": "bog",
+   "tag": "thaw",
+   "min": [
+    -67.0,
+    39.94,
+    -217.0
+   ],
+   "max": [
+    -13.0,
+    43.49,
+    -163.0
+   ]
+  },
+  {
+   "kind": "fall",
+   "min": [
+    -100,
+    0,
+    -112
+   ],
+   "max": [
+    70,
+    60,
+    -78
+   ]
+  },
+  {
+   "kind": "fall",
+   "min": [
+    -135,
+    -2,
+    -262
+   ],
+   "max": [
+    -88,
+    60,
+    -78
+   ]
+  }
+ ],
+ "zones": [
+  {
+   "name": "THE BARROW ROAD",
+   "min": [
+    -100,
+    -112
+   ],
+   "max": [
+    -40,
+    -80
+   ]
+  },
+  {
+   "name": "THE KIN-MOUNDS",
+   "min": [
+    -40,
+    -170
+   ],
+   "max": [
+    40,
+    -100
+   ]
+  },
+  {
+   "name": "THE OPEN BARROW",
+   "min": [
+    24,
+    -240
+   ],
+   "max": [
+    70,
+    -176
+   ]
+  }
+ ],
+ "houses": [
+  {
+   "id": "kin_a",
+   "kind": "barrow",
+   "center": [
+    -62,
+    -127
+   ],
+   "size": [
+    6,
+    14
+   ],
+   "yaw": 26.57,
+   "y": 31.6,
+   "door": "thaw_shut"
+  },
+  {
+   "id": "kin_b",
+   "kind": "barrow",
+   "center": [
+    -24,
+    -112
+   ],
+   "size": [
+    6,
+    13
+   ],
+   "yaw": -160.02,
+   "y": 28.4,
+   "door": "thaw_shut"
+  },
+  {
+   "id": "kin_c",
+   "kind": "barrow",
+   "center": [
+    -2,
+    -153
+   ],
+   "size": [
+    7,
+    15
+   ],
+   "yaw": 24.44,
+   "y": 37.03,
+   "door": "shut"
+  },
+  {
+   "id": "kin_d",
+   "kind": "barrow",
+   "center": [
+    22,
+    -132
+   ],
+   "size": [
+    6,
+    12
+   ],
+   "yaw": -142.13,
+   "y": 32.19,
+   "door": "thaw_shut"
+  },
+  {
+   "id": "twin",
+   "kind": "barrow",
+   "center": [
+    46.0,
+    -222.0
+   ],
+   "size": [
+    10,
+    16
+   ],
+   "yaw": 0.0,
+   "y": 47.52,
+   "door": "open"
+  }
+ ],
+ "boxes": [],
+ "blockers": [
+  {
+   "min": [
+    -64.0,
+    40.94,
+    -214.0
+   ],
+   "max": [
+    -16.0,
+    46.44,
+    -166.0
+   ],
+   "tag": "thaw",
+   "nav_only": true
+  },
+  {
+   "radius": 30.0,
+   "at": [
+    -40.0,
+    43.64,
+    -190.0
+   ],
+   "height": 0.6,
+   "tag": "rime"
+  }
+ ],
+ "hearths": [
+  {
+   "id": "hs_barrow_road",
+   "name": "the Barrow Road",
+   "at": [
+    -82,
+    25.63,
+    -104
+   ],
+   "rot": 140
+  }
+ ],
+ "spawners": [
+  {
+   "enemy": "barrow_sleeper",
+   "stand_in": "rimewalker",
+   "id": "sleeper_kin_a",
+   "at": [
+    -57.88,
+    31.7,
+    -118.77
+   ],
+   "face": 26.57
+  },
+  {
+   "enemy": "barrow_sleeper",
+   "stand_in": "rimewalker",
+   "id": "sleeper_kin_b",
+   "at": [
+    -26.97,
+    28.5,
+    -120.18
+   ],
+   "face": -160.02
+  },
+  {
+   "enemy": "barrow_sleeper",
+   "stand_in": "rimewalker",
+   "id": "sleeper_kin_d",
+   "at": [
+    16.97,
+    32.29,
+    -138.47
+   ],
+   "face": -142.13
+  },
+  {
+   "enemy": "keener",
+   "stand_in": "oarsman",
+   "id": "keener_road",
+   "at": [
+    -30,
+    31.33,
+    -128
+   ],
+   "face": 200
+  },
+  {
+   "enemy": "keener",
+   "stand_in": "oarsman",
+   "id": "keener_mounds",
+   "at": [
+    14,
+    35.27,
+    -147
+   ],
+   "face": 160
+  },
+  {
+   "enemy": "cairn_carrier",
+   "stand_in": "rimewalker",
+   "id": "carrier_bog",
+   "at": [
+    -60,
+    41.61,
+    -160
+   ],
+   "face": 30
+  },
+  {
+   "enemy": "barrow_sleeper",
+   "stand_in": "rimewalker",
+   "id": "sleeper_bridge",
+   "at": [
+    -12,
+    24.86,
+    -95
+   ],
+   "face": 180
+  },
+  {
+   "enemy": "turfwright",
+   "stand_in": "netmender",
+   "id": "turfwright",
+   "at": [
+    46.0,
+    45.7,
+    -205.0
+   ],
+   "face": 0,
+   "dead_once": true,
+   "frost_veil_id": "open_barrow_veil"
+  }
+ ],
+ "frost_veils": [
+  {
+   "id": "open_barrow_veil",
+   "at": [
+    46.0,
+    45.6,
+    -177.5
+   ],
+   "rot": 0,
+   "tag": "rime"
+  }
+ ],
+ "npcs": [
+  {
+   "id": "aud",
+   "at": [
+    -34,
+    28.83,
+    -121
+   ],
+   "rot": 200,
+   "tag": "thaw"
+  },
+  {
+   "id": "hesk",
+   "at": [
+    -58,
+    44.24,
+    -166
+   ],
+   "rot": 120,
+   "tag": "thaw"
+  }
+ ],
+ "plaques": [
+  {
+   "at": [
+    -84,
+    23.52,
+    -95
+   ],
+   "rot": 20,
+   "text": "THE LOWE\n\nThe barrow hills. Each neighbourhood has its kin-mounds.\nThe turf goes back the same day."
+  }
+ ],
+ "pickups": [
+  {
+   "id": "peat_island_iron",
+   "at": [
+    -39.5,
+    44.44,
+    -189.2
+   ],
+   "item": "bog_iron",
+   "count": 2,
+   "tag": "rime",
+   "label": "Pry up the bog-iron"
+  },
+  {
+   "id": "kin_a_grave_goods",
+   "at": [
+    -61.11,
+    31.6,
+    -125.21
+   ],
+   "warmth": 60,
+   "tag": "rime",
+   "label": "Take what was left for the road"
+  }
+ ],
+ "portals": [
+  {
+   "to": "saltfell_steading",
+   "auto": true,
+   "at": [
+    -89.0,
+    22.18,
+    -85.5
+   ],
+   "zone": [
+    20.0,
+    5,
+    2
+   ],
+   "spawn": [
+    -89.0,
+    22.48,
+    -81.5
+   ],
+   "spawn_yaw": 180
+  },
+  {
+   "to": "saltfell_steading",
+   "auto": true,
+   "at": [
+    -8.0,
+    22.11,
+    -75.7
+   ],
+   "zone": [
+    3,
+    4,
+    2
+   ],
+   "spawn": [
+    -8.0,
+    22.41,
+    -71.7
+   ],
+   "spawn_yaw": 180
+  }
+ ],
+ "scripted": [
+  {
+   "script": "res://src/world/drawbridge.gd",
+   "at": [
+    -8.0,
+    22.11,
+    -82.5
+   ],
+   "rot": 180,
+   "params": {
+    "flag": "lowe_bridge_down",
+    "length": 13.6,
+    "width": 2.4,
+    "operable": true
+   }
+  }
+ ],
+ "scatter": {
+  "seed": 5150,
+  "clear": [
+   [
+    -62,
+    -127,
+    9.38
+   ],
+   [
+    -24,
+    -112,
+    8.96
+   ],
+   [
+    -2,
+    -153,
+    10.07
+   ],
+   [
+    22,
+    -132,
+    8.56
+   ],
+   [
+    46.0,
+    -222.0,
+    11.37
+   ],
+   [
+    46.0,
+    -198.0,
+    22.0
+   ],
+   [
+    -40.0,
+    -190.0,
+    22.0
+   ]
+  ],
+  "rules": [
+   {
+    "kind": "rock",
+    "count": 160,
+    "region": [
+     -98,
+     -250,
+     62,
+     -88
+    ],
+    "slope": [
+     0.8,
+     1.0
+    ],
+    "scale": [
+     0.3,
+     0.9
+    ],
+    "path_max": 0.2
+   },
+   {
+    "kind": "boulder",
+    "count": 40,
+    "region": [
+     -98,
+     -250,
+     62,
+     -88
+    ],
+    "slope": [
+     0.8,
+     1.0
+    ],
+    "scale": [
+     0.9,
+     1.7
+    ],
+    "path_max": 0.1
+   },
+   {
+    "kind": "boulder",
+    "count": 60,
+    "region": [
+     56,
+     -260,
+     128,
+     -60
+    ],
+    "slope": [
+     0.3,
+     0.75
+    ],
+    "scale": [
+     1.0,
+     2.0
+    ]
+   },
+   {
+    "kind": "boulder",
+    "count": 50,
+    "region": [
+     -100,
+     -280,
+     128,
+     -240
+    ],
+    "slope": [
+     0.3,
+     0.8
+    ],
+    "scale": [
+     1.0,
+     2.2
+    ]
+   },
+   {
+    "kind": "hummock",
+    "count": 200,
+    "region": [
+     -98,
+     -250,
+     62,
+     -88
+    ],
+    "slope": [
+     0.85,
+     1.0
+    ],
+    "scale": [
+     0.5,
+     1.2
+    ],
+    "path_max": 0.25
+   },
+   {
+    "kind": "boulder",
+    "count": 40,
+    "region": [
+     -90,
+     -100,
+     110,
+     -55
+    ],
+    "slope": [
+     0.5,
+     0.95
+    ],
+    "h": [
+     2.5,
+     8
+    ],
+    "scale": [
+     0.8,
+     1.8
+    ]
+   }
+  ],
+  "place": [
+   {
+    "kind": "peat_stack",
+    "at": [
+     66.5,
+     -198.0
+    ],
+    "rot": -90.0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     66.45,
+     -196.54
+    ],
+    "rot": -94.09
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     66.29,
+     -195.08
+    ],
+    "rot": -98.18
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     66.03,
+     -193.64
+    ],
+    "rot": -102.27
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     65.67,
+     -192.22
+    ],
+    "rot": -106.36
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     65.21,
+     -190.84
+    ],
+    "rot": -110.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     64.65,
+     -189.48
+    ],
+    "rot": -114.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     63.99,
+     -188.18
+    ],
+    "rot": -118.64
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     63.25,
+     -186.92
+    ],
+    "rot": -122.73
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     62.41,
+     -185.71
+    ],
+    "rot": -126.82
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     61.49,
+     -184.58
+    ],
+    "rot": -130.91
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     60.5,
+     -183.5
+    ],
+    "rot": -135.0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     59.42,
+     -182.51
+    ],
+    "rot": -139.09
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     58.29,
+     -181.59
+    ],
+    "rot": -143.18
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     57.08,
+     -180.75
+    ],
+    "rot": -147.27
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     55.82,
+     -180.01
+    ],
+    "rot": -151.36
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     54.52,
+     -179.35
+    ],
+    "rot": -155.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     53.16,
+     -178.79
+    ],
+    "rot": -159.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     51.78,
+     -178.33
+    ],
+    "rot": -163.64
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     50.36,
+     -177.97
+    ],
+    "rot": -167.73
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     48.92,
+     -177.71
+    ],
+    "rot": -171.82
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     43.08,
+     -177.71
+    ],
+    "rot": -188.18
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     41.64,
+     -177.97
+    ],
+    "rot": -192.27
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     40.22,
+     -178.33
+    ],
+    "rot": -196.36
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     38.84,
+     -178.79
+    ],
+    "rot": -200.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     37.48,
+     -179.35
+    ],
+    "rot": -204.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     36.18,
+     -180.01
+    ],
+    "rot": -208.64
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     34.92,
+     -180.75
+    ],
+    "rot": -212.73
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     33.71,
+     -181.59
+    ],
+    "rot": -216.82
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     32.58,
+     -182.51
+    ],
+    "rot": -220.91
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     31.5,
+     -183.5
+    ],
+    "rot": -225.0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     30.51,
+     -184.58
+    ],
+    "rot": -229.09
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     29.59,
+     -185.71
+    ],
+    "rot": -233.18
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     28.75,
+     -186.92
+    ],
+    "rot": -237.27
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     28.01,
+     -188.18
+    ],
+    "rot": -241.36
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     27.35,
+     -189.48
+    ],
+    "rot": -245.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     26.79,
+     -190.84
+    ],
+    "rot": -249.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     26.33,
+     -192.22
+    ],
+    "rot": -253.64
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     25.97,
+     -193.64
+    ],
+    "rot": -257.73
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     25.71,
+     -195.08
+    ],
+    "rot": -261.82
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     25.55,
+     -196.54
+    ],
+    "rot": -265.91
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     25.5,
+     -198.0
+    ],
+    "rot": -270.0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     25.55,
+     -199.46
+    ],
+    "rot": -274.09
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     25.71,
+     -200.92
+    ],
+    "rot": -278.18
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     25.97,
+     -202.36
+    ],
+    "rot": -282.27
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     26.33,
+     -203.78
+    ],
+    "rot": -286.36
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     26.79,
+     -205.16
+    ],
+    "rot": -290.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     27.35,
+     -206.52
+    ],
+    "rot": -294.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     28.01,
+     -207.82
+    ],
+    "rot": -298.64
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     28.75,
+     -209.08
+    ],
+    "rot": -302.73
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     29.59,
+     -210.29
+    ],
+    "rot": -306.82
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     30.51,
+     -211.42
+    ],
+    "rot": -310.91
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     31.5,
+     -212.5
+    ],
+    "rot": -315.0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     32.58,
+     -213.49
+    ],
+    "rot": -319.09
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     33.71,
+     -214.41
+    ],
+    "rot": -323.18
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     34.92,
+     -215.25
+    ],
+    "rot": -327.27
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     36.18,
+     -215.99
+    ],
+    "rot": -331.36
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     37.48,
+     -216.65
+    ],
+    "rot": -335.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     38.84,
+     -217.21
+    ],
+    "rot": -339.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     53.16,
+     -217.21
+    ],
+    "rot": -380.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     54.52,
+     -216.65
+    ],
+    "rot": -384.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     55.82,
+     -215.99
+    ],
+    "rot": -388.64
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     57.08,
+     -215.25
+    ],
+    "rot": -392.73
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     58.29,
+     -214.41
+    ],
+    "rot": -396.82
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     59.42,
+     -213.49
+    ],
+    "rot": -400.91
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     60.5,
+     -212.5
+    ],
+    "rot": -405.0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     61.49,
+     -211.42
+    ],
+    "rot": -409.09
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     62.41,
+     -210.29
+    ],
+    "rot": -413.18
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     63.25,
+     -209.08
+    ],
+    "rot": -417.27
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     63.99,
+     -207.82
+    ],
+    "rot": -421.36
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     64.65,
+     -206.52
+    ],
+    "rot": -425.45
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     65.21,
+     -205.16
+    ],
+    "rot": -429.55
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     65.67,
+     -203.78
+    ],
+    "rot": -433.64
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     66.03,
+     -202.36
+    ],
+    "rot": -437.73
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     66.29,
+     -200.92
+    ],
+    "rot": -441.82
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     66.45,
+     -199.46
+    ],
+    "rot": -445.91
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     58.74,
+     -195.42
+    ],
+    "rot": 0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     56.36,
+     -190.15
+    ],
+    "rot": 37
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     51.92,
+     -186.43
+    ],
+    "rot": 74
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     36.04,
+     -189.65
+    ],
+    "rot": 185
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     33.4,
+     -194.8
+    ],
+    "rot": 222
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     33.26,
+     -200.58
+    ],
+    "rot": 259
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     35.64,
+     -205.85
+    ],
+    "rot": 296
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     40.08,
+     -209.57
+    ],
+    "rot": 333
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     45.68,
+     -211.0
+    ],
+    "rot": 370
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     51.35,
+     -209.85
+    ],
+    "rot": 407
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     55.96,
+     -206.35
+    ],
+    "rot": 444
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     58.6,
+     -201.2
+    ],
+    "rot": 481
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -82.25,
+     -88.51
+    ],
+    "scale": 1.3,
+    "rot": 27.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -82.1,
+     -100.09
+    ],
+    "scale": 1.3,
+    "rot": 67.5
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -73.18,
+     -107.52
+    ],
+    "scale": 1.3,
+    "rot": 80.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -59.92,
+     -107.18
+    ],
+    "scale": 1.3,
+    "rot": 120.5
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -50.12,
+     -113.24
+    ],
+    "scale": 1.3,
+    "rot": 133.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -44.88,
+     -125.26
+    ],
+    "scale": 1.3,
+    "rot": 173.5
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -32.84,
+     -130.35
+    ],
+    "scale": 1.3,
+    "rot": 186.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -20.06,
+     -126.05
+    ],
+    "scale": 1.3,
+    "rot": 226.5
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -7.66,
+     -131.18
+    ],
+    "scale": 1.3,
+    "rot": 239.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -1.24,
+     -143.32
+    ],
+    "scale": 1.3,
+    "rot": 279.5
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     8.82,
+     -149.52
+    ],
+    "scale": 1.3,
+    "rot": 292.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     22.08,
+     -149.18
+    ],
+    "scale": 1.3,
+    "rot": 332.5
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     30.79,
+     -157.47
+    ],
+    "scale": 1.3,
+    "rot": 345.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     29.81,
+     -169.23
+    ],
+    "scale": 1.3,
+    "rot": 25.5
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     35.43,
+     -175.37
+    ],
+    "scale": 1.3,
+    "rot": 38.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     44.97,
+     -173.03
+    ],
+    "scale": 1.3,
+    "rot": 78.5
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -60,
+     -170
+    ],
+    "rot": 20
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -63,
+     -175
+    ],
+    "rot": 75
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -22,
+     -176
+    ],
+    "rot": -30
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -20,
+     -200
+    ],
+    "rot": 10
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -58,
+     -205
+    ],
+    "rot": 44
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -42.06,
+     -190.77
+    ],
+    "rot": 0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -41.23,
+     -191.83
+    ],
+    "rot": 50
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -39.94,
+     -192.2
+    ],
+    "rot": 100
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -38.67,
+     -191.75
+    ],
+    "rot": 150
+   }
+  ],
+  "veg": [
+   {
+    "kind": "heather",
+    "region": [
+     -98,
+     -252,
+     64,
+     -86
+    ],
+    "density": 2.6,
+    "range": 60
+   },
+   {
+    "kind": "grass",
+    "region": [
+     -98,
+     -252,
+     64,
+     -86
+    ],
+    "density": 1.4,
+    "range": 50
+   },
+   {
+    "kind": "sedge",
+    "region": [
+     -74.0,
+     -224.0,
+     -6.0,
+     -156.0
+    ],
+    "density": 2.0,
+    "range": 50
+   },
+   {
+    "kind": "grass",
+    "region": [
+     -98,
+     -76,
+     64,
+     30
+    ],
+    "density": 1.5,
+    "h": [
+     16,
+     40
+    ],
+    "range": 50
+   }
+  ]
+ },
+ "edges": {
+  "doc": "tools/audit_edges.py classes every walkable boundary; seams to Saltfell are their own class.",
+  "walk_max_deg": 45.0,
+  "water_level": 0.0,
+  "drown_depth": 1.15,
+  "nav_bounds": [
+   -124,
+   -262,
+   70,
+   -80
+  ],
+  "buildings": [
+   {
+    "id": "kin_a",
+    "center": [
+     -62,
+     -127
+    ],
+    "size": [
+     9.2,
+     14
+    ],
+    "yaw": 26.57,
+    "y": 31.6,
+    "doors": [
+     [
+      -58.87,
+      -120.74
+     ]
+    ],
+    "open": []
+   },
+   {
+    "id": "kin_b",
+    "center": [
+     -24,
+     -112
+    ],
+    "size": [
+     9.2,
+     13
+    ],
+    "yaw": -160.02,
+    "y": 28.4,
+    "doors": [
+     [
+      -26.22,
+      -118.11
+     ]
+    ],
+    "open": []
+   },
+   {
+    "id": "kin_c",
+    "center": [
+     -2,
+     -153
+    ],
+    "size": [
+     10.2,
+     15
+    ],
+    "yaw": 24.44,
+    "y": 37.03,
+    "doors": [
+     [
+      1.1,
+      -146.17
+     ]
+    ],
+    "open": []
+   },
+   {
+    "id": "kin_d",
+    "center": [
+     22,
+     -132
+    ],
+    "size": [
+     9.2,
+     12
+    ],
+    "yaw": -142.13,
+    "y": 32.19,
+    "doors": [
+     [
+      18.32,
+      -136.74
+     ]
+    ],
+    "open": []
+   },
+   {
+    "id": "twin",
+    "center": [
+     46.0,
+     -222.0
+    ],
+    "size": [
+     13.2,
+     16
+    ],
+    "yaw": 0.0,
+    "y": 47.52,
+    "doors": [
+     [
+      46.0,
+      -214.0
+     ]
+    ],
+    "open": []
+   }
+  ],
+  "thickets": [],
+  "state_floors": [
+   {
+    "tag": "rime",
+    "center": [
+     -40.0,
+     -190.0
+    ],
+    "radius": 30.0,
+    "y": 43.94
+   }
+  ],
+  "gates": []
+ }
+}

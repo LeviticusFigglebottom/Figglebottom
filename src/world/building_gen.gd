@@ -13,6 +13,8 @@ const DOOR_W := 1.9
 const DOOR_H := 2.5
 
 static func build(area: Area, spec: Dictionary) -> Node3D:
+	if String(spec.get("kind", "house")) == "barrow":
+		return _barrow(area, spec)
 	var tag := String(spec.get("tag", "base"))
 	var mode := 1 if tag == "thaw" else (2 if tag == "rime" else 0)
 	var w := float(spec["size"][0])
@@ -107,7 +109,14 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 		else:
 			_gable(plank, beam, w, h, sz * l * 0.5, sz, rng, false)
 
-	for pair in [[plank, "M_wood"], [stone, "M_stone"], [turf, "M_turf"], [beam, "M_wood_dark"]]:
+	# far LOD: past ~40 m the split staves alias into moiré stripes, so the
+	# walls swap to plain plank-coloured slabs (the outline stays the same)
+	var far := SurfaceTool.new(); far.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for sd in solids:
+		var sz: Vector3 = sd[1]
+		_box(far, Vector3(sz.x if sz.x > 0.5 else 0.16, sz.y - (0.4 if sz.y > 3.0 else 0.0), sz.z if sz.z > 0.5 else 0.16),
+			sd[0] + Vector3(0, 0.2 if sz.y > 3.0 else 0.0, 0), Vector3.ZERO)
+	for pair in [[plank, "M_wood"], [stone, "M_drystone"], [turf, "M_turf"], [beam, "M_wood_dark"], [far, "M_wood"]]:
 		var st: SurfaceTool = pair[0]
 		st.generate_normals()
 		var mesh := st.commit()
@@ -117,6 +126,13 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 		var mi := MeshInstance3D.new()
 		mi.mesh = mesh
 		mi.name = String(pair[1])
+		if pair[0] == plank:
+			mi.visibility_range_end = 60.0
+			mi.visibility_range_end_margin = 4.0
+		elif pair[0] == far:
+			mi.name = "walls_far"
+			mi.visibility_range_begin = 60.0
+			mi.visibility_range_begin_margin = 4.0
 		root.add_child(mi)
 
 	var body := StaticBody3D.new()
@@ -244,3 +260,181 @@ static func _bm(size: Vector3) -> BoxMesh:
 	var bm := BoxMesh.new()
 	bm.size = size
 	return bm
+
+
+# ------------------------------------------------------------ barrows
+
+## A long barrow (the Lowe): a dry-stone facade with winged walls and a
+## lintelled doorway, a stone passage roofed with capstones running back into
+## a long turf mound, and a turf door. THAW: the door is in. RIME: every door
+## stands open, propped on a frozen spade, the passage dark behind it.
+## The mound is solid; only the passage is walkable. Door faces local +Z.
+static func _barrow(area: Area, spec: Dictionary) -> Node3D:
+	var w := float(spec["size"][0])
+	var l := float(spec["size"][1])
+	var y := float(spec.get("y", 0.0))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(String(spec.get("id", "barrow")))
+	var root := Node3D.new()
+	root.name = "House_" + String(spec.get("id", "barrow"))
+	root.position = Vector3(float(spec["center"][0]), y, float(spec["center"][1]))
+	root.rotation.y = deg_to_rad(float(spec.get("yaw", 0.0)))
+	var stone := SurfaceTool.new(); stone.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var turf := SurfaceTool.new(); turf.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var solids: Array = []
+	var front := l * 0.5
+	var pass_w := 1.5
+	var pass_h := 1.85
+	var pass_l := minf(7.0, l * 0.55)
+	var wall_h := 2.3
+	var wing := w * 0.5 + 1.6
+	# facade: coursed dry-stone, wings curving back into the mound
+	for side in [-1.0, 1.0]:
+		var x := pass_w * 0.5
+		while x < wing:
+			var bw := rng.randf_range(0.5, 0.9)
+			var course := 0.0
+			var ht := wall_h * (1.0 - smoothstep(wing * 0.6, wing, x) * 0.6)
+			while course < ht:
+				var bh := rng.randf_range(0.18, 0.3)
+				var bz := front - smoothstep(wing * 0.5, wing, x) * 1.6
+				_box(stone, Vector3(bw * 0.95, bh * 0.95, rng.randf_range(0.55, 0.75)),
+					Vector3(side * (x + bw * 0.5), course + bh * 0.5, bz), Vector3(rng.randf_range(-3, 3), rng.randf_range(-6, 6), rng.randf_range(-3, 3)))
+				course += bh
+			x += bw
+		solids.append([Vector3(side * (pass_w * 0.5 + (wing - pass_w * 0.5) * 0.5), wall_h * 0.5, front - 0.4),
+			Vector3(wing - pass_w * 0.5, wall_h, 1.2)])
+	# the lintel and the stones over the door
+	_box(stone, Vector3(pass_w + 1.0, 0.35, 0.8), Vector3(0, pass_h + 0.18, front), Vector3(0, 0, rng.randf_range(-2, 2)))
+	_box(stone, Vector3(pass_w + 0.6, wall_h - pass_h - 0.35, 0.65), Vector3(0, (wall_h + pass_h + 0.35) * 0.5, front), Vector3.ZERO)
+	# the passage: walls of upright slabs, capstones over, a back stone
+	for side in [-1.0, 1.0]:
+		var z := front
+		while z > front - pass_l:
+			var sl := rng.randf_range(0.6, 1.0)
+			_box(stone, Vector3(0.35, pass_h + 0.1, sl * 0.95), Vector3(side * (pass_w * 0.5 + 0.17), (pass_h + 0.1) * 0.5, z - sl * 0.5),
+				Vector3(rng.randf_range(-3, 3), 0, rng.randf_range(-4, 4)))
+			z -= sl
+		solids.append([Vector3(side * (pass_w * 0.5 + 0.2), pass_h * 0.5, front - pass_l * 0.5), Vector3(0.4, pass_h, pass_l)])
+	var zc := front
+	while zc > front - pass_l:
+		var cl := rng.randf_range(0.8, 1.2)
+		_box(stone, Vector3(pass_w + 0.9, 0.3, cl), Vector3(0, pass_h + 0.18, zc - cl * 0.5), Vector3(0, rng.randf_range(-5, 5), rng.randf_range(-3, 3)))
+		zc -= cl
+	_box(stone, Vector3(pass_w + 0.4, pass_h + 0.2, 0.4), Vector3(0, pass_h * 0.5, front - pass_l), Vector3.ZERO)
+	solids.append([Vector3(0, pass_h * 0.5, front - pass_l - 0.1), Vector3(pass_w + 0.4, pass_h, 0.4)])
+	# the mound: a long whaleback of turf, lumpy, a little lop-sided
+	var sm := SphereMesh.new()
+	sm.radius = 1.0
+	sm.height = 2.0
+	sm.radial_segments = 18
+	sm.rings = 9
+	var arr := sm.get_mesh_arrays()
+	var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var noise := FastNoiseLite.new()
+	noise.seed = rng.seed
+	noise.frequency = 1.2
+	var mh := 2.6 + w * 0.12
+	for i in verts.size():
+		var v := verts[i]
+		v *= 1.0 + 0.08 * noise.get_noise_3dv(v * 2.0)
+		v = Vector3(v.x * (w * 0.5 + 1.2), maxf(v.y, -0.15) * mh, v.z * l * 0.5)
+		verts[i] = v
+	arr[Mesh.ARRAY_VERTEX] = verts
+	var mst := SurfaceTool.new()
+	mst.create_from_arrays(arr)
+	mst.generate_normals()
+	turf.append_from(mst.commit(), 0, Transform3D(Basis.IDENTITY, Vector3(0, -0.2, -0.6)))
+	# mound collision: the turf either side of the passage and behind it
+	var mx := w * 0.5 + 1.0
+	for side in [-1.0, 1.0]:
+		solids.append([Vector3(side * (pass_w * 0.5 + 0.4 + (mx - pass_w * 0.5 - 0.4) * 0.5), 1.4, -0.6), Vector3(mx - pass_w * 0.5 - 0.4, 2.8, l - 1.2)])
+	solids.append([Vector3(0, 1.4, (front - pass_l - 0.3 - l * 0.5 + 0.6) * 0.5 - 0.3), Vector3(pass_w + 0.8, 2.8, maxf(0.5, front - pass_l - 0.3 + l * 0.5 - 0.6))])
+	for pair in [[stone, "M_drystone"], [turf, "M_turf"]]:
+		var st: SurfaceTool = pair[0]
+		st.generate_normals()
+		var mesh := st.commit()
+		mesh.surface_set_material(0, MaterialLib.get_mat(String(pair[1]), 0))
+		var mi := MeshInstance3D.new()
+		mi.mesh = mesh
+		mi.name = String(pair[1])
+		root.add_child(mi)
+	var body := StaticBody3D.new()
+	body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
+	body.collision_mask = 0
+	for sd in solids:
+		var cs := CollisionShape3D.new()
+		var bx := BoxShape3D.new()
+		bx.size = sd[1]
+		cs.shape = bx
+		cs.position = sd[0]
+		body.add_child(cs)
+	root.add_child(body)
+	area.attach(root, "base")
+	# the turf door: in, in THAW; open and propped on a frozen spade in RIME
+	var door_tag := String(spec.get("door", "thaw_shut"))
+	var xf := root.transform
+	if door_tag != "open":
+		var shut_tag := "thaw" if door_tag == "thaw_shut" else "base"
+		var shut := _turf_door(Vector3(pass_w + 0.1, pass_h, 0.3), true, AreaBuilder._tag_bit(shut_tag))
+		shut.transform = xf * Transform3D(Basis.IDENTITY, Vector3(0, 0, front + 0.25))
+		area.attach(shut, shut_tag)
+	if door_tag != "shut":
+		var open_tag := "rime" if door_tag == "thaw_shut" else "base"
+		var lm := _landmark("res://assets/models/landmarks/lm_barrow_door.glb")
+		if lm != null:
+			# the Tripo barrow door: jambs, lintel, the turf door propped on its
+			# spade. Dressing only: the passage behind stays open to walk.
+			lm.transform = xf * Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * (w / 6.0)), Vector3(0, 0, front + 0.35))
+			area.attach(lm, open_tag)
+		else:
+			var propped := _turf_door(Vector3(pass_w + 0.1, pass_h, 0.3), false, 0)
+			propped.transform = xf * Transform3D(Basis(Vector3.UP, 0.5) * Basis(Vector3.RIGHT, -0.25), Vector3(pass_w + 0.4, 0, front + 0.9))
+			area.attach(propped, open_tag)
+	return root
+
+## A landmark scene with its collision stripped (we place our own).
+static func _landmark(path: String) -> Node3D:
+	if not ResourceLoader.exists(path):
+		return null
+	var n := (load(path) as PackedScene).instantiate() as Node3D
+	var stack: Array[Node] = [n]
+	while not stack.is_empty():
+		var c: Node = stack.pop_back()
+		if c is CollisionObject3D:
+			c.get_parent().remove_child(c)
+			c.free()
+			continue
+		for ch in c.get_children():
+			stack.append(ch)
+	return n
+
+static func _turf_door(size: Vector3, collide: bool, bit: int) -> Node3D:
+	var n := Node3D.new()
+	n.name = "TurfDoor"
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var y := 0.0
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 9
+	while y < size.y - 0.05:
+		var sh := rng.randf_range(0.22, 0.3)
+		_box(st, Vector3(size.x, sh * 0.95, size.z), Vector3(rng.randf_range(-0.04, 0.04), y + sh * 0.5, 0), Vector3(0, 0, rng.randf_range(-2, 2)))
+		y += sh
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	mi.mesh.surface_set_material(0, MaterialLib.get_mat("M_peat", 0))
+	n.add_child(mi)
+	if collide:
+		var body := StaticBody3D.new()
+		body.collision_mask = 0
+		body.collision_layer = 1 << (bit - 1)
+		var cs := CollisionShape3D.new()
+		var bx := BoxShape3D.new()
+		bx.size = size
+		cs.shape = bx
+		cs.position.y = size.y * 0.5
+		body.add_child(cs)
+		n.add_child(body)
+	return n

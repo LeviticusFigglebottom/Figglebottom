@@ -80,6 +80,10 @@ static func build(area_id: String) -> Area:
 	for spec in def.get("spawners", []):
 		var s := Spawner.new()
 		s.enemy_id = spec.get("enemy", "rimewalker")
+		# a foe still being made (art in flight) fights as its stand-in until
+		# its row lands in enemies.json; the id stays, so the model drops in
+		if not DB.table("enemies").has(s.enemy_id) and spec.has("stand_in"):
+			s.enemy_id = String(spec["stand_in"])
 		s.face_deg = float(spec.get("face", 0))
 		s.dead_once = spec.get("dead_once", false)
 		s.spawn_flag = "slain_" + spec.get("id", spec.get("enemy", "e"))
@@ -173,6 +177,9 @@ static func build(area_id: String) -> Area:
 		pt.locked_prompt = spec.get("locked_prompt", "Sealed")
 		pt.requires_items = spec.get("requires_items", [])
 		pt.cutscene = spec.get("cutscene", "")
+		pt.auto = bool(spec.get("auto", false))
+		if spec.has("zone"):
+			pt.zone_size = _v3(spec["zone"])
 		area.attach(pt, spec.get("tag", "base"))
 		_place(pt, spec)
 
@@ -183,6 +190,10 @@ static func build(area_id: String) -> Area:
 		area.add_child(zt)
 	if area.terrain != null and def.has("scatter"):
 		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
+		Scatter.build_veg(area, area.terrain, def["scatter"].get("veg", []),
+				int(def["scatter"].get("seed", 1)) + 7, _keep_clear(def))
+	if area.terrain != null:
+		Weather.build(area, area.terrain, def)
 
 	_mark_indoors(area, def.get("houses", []))
 
@@ -242,11 +253,21 @@ static func _water(area: Area, spec: Dictionary) -> void:
 	var tag: String = spec.get("tag", "base")
 	var mi := MeshInstance3D.new()
 	mi.name = "Water"
-	var pm := PlaneMesh.new()
-	var sz: Array = spec.get("size", [100, 100])
-	pm.size = Vector2(float(sz[0]), float(sz[1]))
-	mi.mesh = pm
-	mi.material_override = MaterialLib.get_mat("M_water", _state_mode(tag))
+	if spec.has("radius"):
+		# a level disc (a bog, a tarn): the land around it rises above its rim
+		var cm := CylinderMesh.new()
+		cm.top_radius = float(spec["radius"])
+		cm.bottom_radius = float(spec["radius"])
+		cm.height = 0.02
+		cm.radial_segments = 48
+		cm.rings = 1
+		mi.mesh = cm
+	else:
+		var pm := PlaneMesh.new()
+		var sz: Array = spec.get("size", [100, 100])
+		pm.size = Vector2(float(sz[0]), float(sz[1]))
+		mi.mesh = pm
+	mi.material_override = MaterialLib.get_mat(String(spec.get("mat", "M_water")), _state_mode(tag))
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.position = _v3(spec.get("at", [0, 0, 0]))
 	area.attach(mi, tag)
@@ -613,10 +634,25 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 ## Invisible impassable volume (collapsed debris etc.) — dress it with props.
 static func _blocker(area: Area, spec: Dictionary) -> void:
 	var tag: String = spec.get("tag", "base")
+	if spec.has("radius"):
+		var cb := StaticBody3D.new()
+		cb.collision_layer = 1 << (_tag_bit(tag) - 1)
+		cb.collision_mask = 0
+		var ccs := CollisionShape3D.new()
+		var cyl := CylinderShape3D.new()
+		cyl.radius = float(spec["radius"])
+		cyl.height = float(spec.get("height", 0.6))
+		ccs.shape = cyl
+		cb.add_child(ccs)
+		area.attach(cb, tag)
+		cb.position = _v3(spec["at"])
+		return
 	var mn := _v3(spec["min"])
 	var mx := _v3(spec["max"])
 	var body := StaticBody3D.new()
 	body.collision_layer = 1 << (_tag_bit(tag) - 1)
+	if spec.get("nav_only", false):
+		body.collision_layer = 1 << ((RH.L_NAV_BLOCK_RIME if tag == "rime" else RH.L_NAV_BLOCK_THAW) - 1)
 	body.collision_mask = 0
 	var cs := CollisionShape3D.new()
 	var box := BoxShape3D.new()

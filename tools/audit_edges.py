@@ -94,9 +94,25 @@ def audit(area_id):
     max_step = math.tan(math.radians(E.get("walk_max_deg", 45.0)))   # rise per 1 m
     deep = E.get("water_level", 0.0) - E.get("drown_depth", 1.15)
     hazards = d.get("hazards", [])
-    kills = [h for h in hazards if h["kind"] in ("kill", "drown")]
+    kills = [h for h in hazards if h["kind"] in ("kill", "drown", "bog")]
     guards = hazards
     walls = building_mask(E.get("buildings", []), X0, Z0, NX, NZ)
+    # seams to other areas (auto portals): the land goes on, but this area
+    # ends there: a classed edge, and the flood stops
+    seam_cells = set()
+    for pt in d.get("portals", []):
+        if not pt.get("auto"):
+            continue
+        px, _, pz = pt["at"]
+        zx, _, zz = pt.get("zone", [12, 4, 2])
+        a = math.radians(pt.get("rot", 0))
+        for jj in range(int(pz - max(zx, zz)) - 1, int(pz + max(zx, zz)) + 2):
+            for ii in range(int(px - max(zx, zz)) - 1, int(px + max(zx, zz)) + 2):
+                dx, dz = ii - px, jj - pz
+                lx = dx * math.cos(a) - dz * math.sin(a)
+                lz = dx * math.sin(a) + dz * math.cos(a)
+                if abs(lx) <= zx * 0.5 + 0.5 and abs(lz) <= zz * 0.5 + 0.5:
+                    seam_cells.add((int(round(ii - X0)), int(round(jj - Z0))))
     gate_cells = set()
     for gt in E.get("gates", []):
         gx, _, gz = gt["at"]
@@ -122,6 +138,13 @@ def audit(area_id):
         for sf in E.get("state_floors", []):
             if sf.get("tag", "base") not in ("base", state):
                 continue
+            if "radius" in sf:      # a level disc: a frozen bog
+                cx, cz, rr = sf["center"][0], sf["center"][1], sf["radius"]
+                for j in range(int(cz - rr - Z0), int(cz + rr - Z0) + 2):
+                    for i in range(int(cx - rr - X0), int(cx + rr - X0) + 2):
+                        if 0 <= i < NX and 0 <= j < NZ and math.hypot(X0 + i - cx, Z0 + j - cz) <= rr:
+                            hh[(i, j)] = max(H(i, j), sf["y"])
+                continue
             for j in range(int(sf["min"][1] - Z0), int(sf["max"][1] - Z0) + 1):
                 for i in range(int(sf["min"][0] - X0), int(sf["max"][0] - X0) + 1):
                     if 0 <= i < NX and 0 <= j < NZ:
@@ -136,12 +159,18 @@ def audit(area_id):
                                           if k.get("tag", "base") in ("base", state))
 
         def walkable(i, j):
-            if (i, j) in walls or (i, j) in gate_cells:
+            if (i, j) in walls or (i, j) in gate_cells or (i, j) in seam_cells:
                 return False
             if killed(i, j):
                 return False
             return slope_ok(i, j, hh)
 
+        # a bridge lowered for good is land too (flag-gated "bridges" metadata)
+        for br in E.get("bridges", []):
+            for j in range(int(br["min"][1] - Z0), int(br["max"][1] - Z0) + 1):
+                for i in range(int(br["min"][0] - X0), int(br["max"][0] - X0) + 1):
+                    if 0 <= i < NX and 0 <= j < NZ:
+                        hh[(i, j)] = br["y"]
         sx, _, sz = d["start"]["pos"]
         start = (int(round(sx - X0)), int(round(sz - Z0)))
         seen = {start}
@@ -170,6 +199,9 @@ def audit(area_id):
                 if not (0 <= n[0] < NX and 0 <= n[1] < NZ):
                     bad.append((x, z, "grid edge"))
                     continue
+                if n in seam_cells:
+                    classes["seam"] += 1
+                    continue
                 if n in walls or n in gate_cells:
                     classes["building"] += 1
                     continue
@@ -177,7 +209,10 @@ def audit(area_id):
                     classes["water"] += 1
                     continue
                 if killed(*n):
-                    classes["cliff"] += 1     # a lethal ravine
+                    pt = (X0 + n[0], h(*n) + 0.5, Z0 + n[1])
+                    wet = any(k["kind"] in ("bog", "drown") and in_box(pt, k) for k in kills
+                              if k.get("tag", "base") in ("base", state))
+                    classes["water" if wet else "cliff"] += 1     # bog water / a lethal ravine
                     continue
                 if any(_in_poly(x, z, t["poly"]) for t in thickets):
                     classes["thicket"] += 1

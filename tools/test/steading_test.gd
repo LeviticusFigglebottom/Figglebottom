@@ -115,6 +115,16 @@ func _run() -> void:
 		player.global_position.x, player.global_position.z)) < 0.6, "the Bearer stands on the shingle")
 	check(area.get_tree().get_nodes_in_group("hazards").size() >= 3, "drown, ravine and fall volumes guard the edges")
 
+	print("== the seams to the Lowe")
+	var seams := area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto and p.to_area == "lowe_barrows")
+	check(seams.size() == 2, "the cliff-top pass and the bridge lead on to the Lowe")
+	var drawbridge: DrawBridge = area.find_children("*", "DrawBridge", true, false)[0]
+	check(not drawbridge.is_down() and not drawbridge.operable, "the bridge stands raised on the far side, out of reach")
+	var pass_seam: AreaPortal = seams.filter(func(p): return p.zone_size.x > 10.0)[0]
+	var to_pass := _path(_ground(-10, 10), pass_seam.global_position + Vector3(0, 0, 3.0))
+	check(_reaches(to_pass, pass_seam.global_position + Vector3(0, 0, 3.0), 3.0),
+		"the main road: from the yard west and north along the cliff top to the pass")
+
 	print("== the cliff path (thaw navmesh)")
 	var strand := _ground(-4, 62)
 	var yard := _ground(-10, 10)

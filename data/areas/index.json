@@ -1,8 +1,14 @@
 {
  "areas": [
-  "saltfell_steading"
+  "saltfell_steading",
+  "lowe_barrows"
  ],
  "graph": {
-  "saltfell_steading": {}
+  "saltfell_steading": {
+   "lowe_barrows": "the cliff-top pass; the drawbridge"
+  },
+  "lowe_barrows": {
+   "saltfell_steading": "the cliff-top pass; the drawbridge"
+  }
  }
 }
