@@ -112,3 +112,24 @@ func _st_bearer_drink(p: Player) -> void:
 		p.try_gourd()
 	if _f > 60 and p.state == Player.S.GOURD and p.state_t >= 0.62:
 		_freeze()
+
+# ------------------------------------------------------------------ villagers
+func _find_npc(id: String) -> NPC:
+	for n in get_tree().current_scene.find_children("*", "NPC", true, false):
+		if (n as NPC).npc_id == id and (n as NPC).is_visible_in_tree():
+			return n
+	return null
+
+func _st_ingra_thaw(p: Player) -> void:
+	var ing := _find_npc("steward_ingra")
+	if ing == null:
+		return
+	var fwd := -ing.global_transform.basis.z
+	if _f == 3:
+		_place_player(p, ing.global_position + fwd * 2.6 + Vector3.UP * 0.2, atan2(fwd.x, fwd.z))
+	if _f > 3:
+		_frame(ing.global_position, ing, Vector3(1.6, 0.25, 3.2), 0.95, 40.0)
+	if _f == 50:
+		ing._vis.play("greet", 0.3)
+	if _f > 50 and ing._vis.rig != null and ing._vis.rig.action_time() >= 1.4:
+		_freeze()

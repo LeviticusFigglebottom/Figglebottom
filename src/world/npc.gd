@@ -13,8 +13,11 @@ func _ready() -> void:
 	cfg["id"] = npc_id
 	_vis = CharVisual.new()
 	add_child(_vis)
-	var body_id: String = cfg.get("body", "mannequin_thaw")
-	_vis.build_body(body_id, 0.8, 0.9)
+	# a Tripo villager (npcs.json "model"); the mannequin stands in otherwise
+	var model := String(cfg.get("model", ""))
+	if model == "" or not _vis.build_model(model):
+		_vis.build_body(String(cfg.get("body", "mannequin_thaw")), 0.8, 0.9)
+	_look_t = randf_range(4.0, 9.0)
 	# carried prop (a torch, a tool) in one hand
 	var carry: String = cfg.get("carry", "")
 	if carry != "" and KitLib.has_piece(carry):
@@ -50,9 +53,20 @@ func _ready() -> void:
 		zone.activated.connect(_on_talk)
 		add_child(zone)
 
+## Humanoid villagers fidget: now and then they look about (their own
+## "look" clip), and they greet whoever speaks to them.
+var _look_t := 6.0
+
 func _physics_process(dt: float) -> void:
 	if _vis == null or not is_visible_in_tree():
 		return
+	if _vis.is_humanoid():
+		_vis.locomotion(dt, 0.0)   # a finished greet or look yields to idle
+		_look_t -= dt
+		if _look_t <= 0.0:
+			_look_t = randf_range(9.0, 16.0)
+			if _vis.current_clip() == "idle" and _vis.rig.has_clip("look"):
+				_vis.play("look", 0.5)
 	var p = Game.player
 	if p == null:
 		return
@@ -79,7 +93,7 @@ func _on_talk(player) -> void:
 		if player.get("vis") != null:
 			player.vis.rotation.y = atan2(to.x, to.z)
 	player.enter_dialogue()
-	_vis.play("talk", 0.4)
+	_vis.play("greet" if _vis.is_humanoid() and _vis.rig.has_clip("greet") else "talk", 0.4)
 	var ui := DialogueUI.new(cfg, self)
 	ui.tree_exited.connect(func() -> void:
 		if is_instance_valid(_vis):
