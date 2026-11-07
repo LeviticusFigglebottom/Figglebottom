@@ -27,8 +27,7 @@ func snap(area: Area, to_state: RH.WState) -> void:
 	_set_g("rh_wave_r", -1000.0)
 	area.apply_state(to_state)
 	World.set_area_state(area.area_id, to_state)
-	AudioDirector.play_music(area.env.music_for(to_state), 1.0)
-	AudioDirector.play_ambience(area.env.ambience_for(to_state))
+	AudioDirector.play_state(area.env, to_state, 0.35)
 
 ## The spectacle: the world remembers (warm) or forgets (still).
 func transition(area: Area, to_state: RH.WState, origin: Vector3) -> void:
@@ -55,9 +54,11 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3) -> void:
 
 	area.pre_transition(to_state)
 	_spawn_wave_particles(area, origin, duration, max_r, to_rime)
-	AudioDirector.sfx("res://assets/audio/swell_still.wav" if to_rime else "res://assets/audio/swell_warm.wav", 2.0)
-	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", origin, 4.0, 0.8 if to_rime else 1.0)
-	AudioDirector.play_music("", 2.5)   # music dies during the wave
+	# the world draws a breath in and holds it (RIME), or lets it go (THAW);
+	# ice cracks ride the frost line out, or give as it melts
+	var wave_cfg: Dictionary = AudioDirector.cfg("wave", {})
+	AudioDirector.sfx(String(wave_cfg.get("to_rime" if to_rime else "to_thaw", "")), 0.0)
+	AudioDirector.play_music("", float(wave_cfg.get("music_out_fade", 2.5)))   # music dies during the wave
 	Juice.shake(0.25, 1.2)
 
 	var env_from := 0.0 if to_rime else 1.0
@@ -79,8 +80,7 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3) -> void:
 	area.apply_state(to_state)
 	World.set_area_state(area.area_id, to_state)
 	World.save_game()
-	AudioDirector.play_music(area.env.music_for(to_state), 3.0)
-	AudioDirector.play_ambience(area.env.ambience_for(to_state))
+	AudioDirector.play_state(area.env, to_state)
 	transitioning = false
 	transition_finished.emit(area.area_id, to_state)
 

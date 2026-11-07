@@ -834,7 +834,7 @@ func _die() -> void:
 	collision_layer = 0
 	vis.play("death", 0.06)
 	Game.add_warmth(int(cfg.get("warmth", 10)))
-	AudioDirector.sfx_at("res://assets/audio/impact_flesh.wav", global_position, -2.0, 0.7)
+	AudioDirector.sfx_at(AudioDirector.foley("frost_fall"), global_position, -2.0, 0.9 if bool(cfg.get("is_boss", false)) else 1.0)
 	if cfg.has("drop_item") and Game.player != null:
 		var di: Dictionary = cfg["drop_item"]
 		var iid: String = di.get("id", "relic")

@@ -80,13 +80,13 @@ func respawn_player() -> void:
 func on_boss_slain(area_id: String) -> void:
 	World.set_cleared(area_id)
 	World.save_game()
-	AudioDirector.play_music("", 2.0)
-	AudioDirector.duck_ambience(false)
 	toast.emit("The holdfast rests. The memory is yours to keep or let go.")
 	area_cleared.emit(area_id)
-	await get_tree().create_timer(2.0, false).timeout
+	# the Outsong is sung for them; the world's music returns once it ends
+	var after := ""
 	if current_area != null and current_area.area_id == area_id:
-		AudioDirector.play_music(current_area.env.music_for(World.get_area_state(area_id)), 4.0)
+		after = current_area.env.music_for(World.get_area_state(area_id))
+	AudioDirector.play_outsong(after, 4.0)
 
 func snapshot_player() -> void:
 	if player == null:
@@ -220,7 +220,7 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 		p.lock_control(true)
 		p.enter_rest()
 		p.heal_full()
-	AudioDirector.sfx("res://assets/audio/rest_chime.wav", -4.0)
+	AudioDirector.sfx(AudioDirector.foley("coal_catch"), -3.0)   # the coal takes in the stone
 
 	if target != cur and area != null:
 		await get_tree().create_timer(1.3).timeout   # kneel beat first

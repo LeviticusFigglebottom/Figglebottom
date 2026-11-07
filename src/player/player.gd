@@ -1082,7 +1082,10 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 			Juice.hitstop(0.09 if _atk_is_heavy else 0.06)
 			Juice.shake(0.35 if _atk_is_heavy else 0.2, 0.18)
 			Juice.spawn_hit_fx(fx_pos, fx_dir, "heavy" if _atk_is_heavy else "blood")
-			AudioDirector.sfx_at("res://assets/audio/slash.wav", global_position, -4.0, randf_range(0.9, 1.1))
+			# every foe is frost-taken: the edge meets rime and frozen wool
+			AudioDirector.sfx_at("res://assets/audio/slash.wav", global_position, -9.0, randf_range(0.9, 1.1))
+			AudioDirector.sfx_at(AudioDirector.foley("frost_hit"), fx_pos, -3.0,
+					randf_range(0.82, 0.92) if _atk_is_heavy else randf_range(0.95, 1.08))
 		"blocked":
 			Juice.hitstop(0.05)
 			Juice.spawn_hit_fx(fx_pos, fx_dir, "spark")

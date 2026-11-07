@@ -66,7 +66,7 @@ func _run() -> void:
 		wd += 10
 		await ticks(10)
 	check(not player.dead, "the Bearer stands again at the hearth")
-	check(String(AudioDirector._active_music).ends_with("theme_rime.wav"),
+	check(String(AudioDirector._active_music).ends_with("theme_rime.ogg"),
 		"the boss theme yields back to the world's")
 	boss = fog.boss_spawner.current
 	check(boss != null and boss.get_instance_id() != old_id and not boss.dead,
