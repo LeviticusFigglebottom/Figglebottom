@@ -13,7 +13,7 @@ Rimeholt is a third-person action RPG in **Godot 4.7 (Forward+, GDScript only)**
   - Never weaken the list. Reword instead.
   - `docs/transposition/` is the only place allowed to name the source.
 - **Before inventing a proper noun,** check it against `docs/transposition/ORIGINALITY.md`, which also lists banned *motifs* and *beats*. Then add it to `docs/lore/LEXICON.md`.
-- **Other games:** draw on genres only. Never use names, terms or iconic mechanics from Fallout, Elder Scrolls, Souls games, Elden Ring, Bloodborne, or any other specific game.
+- **Other games:** draw on genres only. Never use names, terms or iconic mechanics from any specific existing game (the list is in ORIGINALITY.md §5).
 - **The source repo is read-only reference.** Never push to it.
 
 ## 2. Coding standards (carried over from the source)
