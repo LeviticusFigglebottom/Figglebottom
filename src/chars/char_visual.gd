@@ -1,9 +1,12 @@
 class_name CharVisual
 extends Node3D
-## Shared skeletal visual driver for player, enemies and NPCs. Instances a
-## skel_* glb (armature + skinned mesh), builds the SkelAnim clip library
-## against its rest pose, cross-fades locomotion cycles to actual ground
-## speed, and mounts gear on bones via BoneAttachment3D.
+## Shared skeletal visual driver for player, enemies and NPCs. Two bodies:
+##   mannequin (build_body): the 17-bone greybox, SkelAnim clips on an
+##     AnimationPlayer, cross-faded locomotion.
+##   humanoid (build_model): a Mixamo-rigged Tripo model driven by a
+##     HumanoidRig AnimationTree over the shared HumanoidLib (ADR 0004).
+## Either way it times locomotion to ground speed, rate-scales action clips
+## so contact lands on data, and mounts gear on bones via BoneAttachment3D.
 
 var body: Node3D
 var skel: Skeleton3D
@@ -13,6 +16,9 @@ var weapon_mount: Node3D
 var shield_mount: Node3D
 var head_mount: Node3D
 var weapon_kit := ""
+## Humanoid mode: the AnimationTree driver (null for mannequins).
+var rig: HumanoidRig = null
+var model_id := ""
 
 ## How each weapon kit rides the fist outside active attack swings.
 ## In relaxed stances (idle/walk/run), hand_r's +Y points ~36 deg forward of
@@ -78,6 +84,51 @@ func build_body(skel_id: String, amp := 1.0, sway := 1.0, vis_scale := 1.0) -> v
 	anim.play("idle")
 	anim.advance(randf() * 1.7)   # desync crowds
 
+## Humanoid body from clip_meta.json "models". Returns false (nothing built)
+## when the model is unknown, so callers fall back to a mannequin.
+func build_model(id: String) -> bool:
+	if not HumanoidLib.has_model(id):
+		push_warning("CharVisual: no humanoid model '%s'; using a mannequin" % id)
+		return false
+	var cfg := HumanoidLib.model_cfg(id)
+	body = Node3D.new()
+	body.name = "Body"   # flinch target: its rotation is reset every frame
+	add_child(body)
+	var holder := Node3D.new()
+	holder.name = "Model"
+	# Tripo meshes face +Z; Godot characters face -Z
+	holder.rotation_degrees.y = float(cfg.get("yaw_deg", 180.0))
+	holder.scale = Vector3.ONE * float(cfg.get("scale", 1.0))
+	body.add_child(holder)
+	var inst := HumanoidLib.instance_model(id)
+	holder.add_child(inst)
+	skel = inst.find_child("Skeleton3D", true, false) as Skeleton3D
+	for ap in inst.find_children("*", "AnimationPlayer", true, false):
+		ap.free()   # the shared library drives this rig, not the glb's own player
+	model_id = id
+	rig = HumanoidRig.new()
+	rig.name = "Rig"
+	add_child(rig)
+	rig.setup(id, skel)
+	return true
+
+func is_humanoid() -> bool:
+	return rig != null
+
+## The clip that owns the rig ("" once a one-shot has finished).
+func current_clip() -> String:
+	if rig != null:
+		return rig.current_clip()
+	return String(anim.current_animation) if anim != null else ""
+
+## Length (s at 1x) of a clip as it plays: the section for humanoids.
+func clip_length(clip: String) -> float:
+	if rig != null:
+		return rig.clip_length(clip)
+	if anim != null and anim.has_animation(clip):
+		return anim.get_animation(clip).length
+	return 1.0
+
 ## Upper-body / rig hit-flinch impulse on melee impact or block.
 func flinch(world_dir: Vector3, might := 1.0) -> void:
 	var local_dir := global_transform.basis.inverse() * world_dir
@@ -104,6 +155,8 @@ func _process(dt: float) -> void:
 ## A gear mount that rides a bone. Returned node is a child of the
 ## BoneAttachment3D; offset/orient it freely, then parent kit pieces to it.
 func mount(bone: String) -> Node3D:
+	if rig != null:
+		bone = HumanoidLib.bone(bone)   # mannequin names keep working
 	var att := BoneAttachment3D.new()
 	att.name = "Att_" + bone
 	skel.add_child(att)
@@ -117,9 +170,46 @@ func mount(bone: String) -> Node3D:
 ## grip origin, and the hand bone's +Y runs past the fingers — so an
 ## identity mount carries the blade beyond the fist (down when relaxed).
 func mount_weapon_hand() -> Node3D:
+	if rig != null:
+		weapon_mount = mount_slot("weapon")
+		return weapon_mount
 	weapon_mount = mount("hand_r")
 	weapon_mount.position = Vector3(0, 0.05, 0)
 	return weapon_mount
+
+## Humanoid gear slot from clip_meta.json "mounts": bone + grip offset.
+func mount_slot(slot: String) -> Node3D:
+	var c := HumanoidLib.mount_cfg(slot)
+	var m := mount(String(c.get("bone", "mixamorig_RightHand")))
+	m.set_meta("slot", slot)
+	_apply_slot(m)
+	return m
+
+func _apply_slot(m: Node3D) -> void:
+	var c := HumanoidLib.mount_cfg(String(m.get_meta("slot", "weapon")))
+	var p: Array = c.get("pos", [0, 0, 0])
+	var r: Array = c.get("rot", [0, 0, 0])
+	m.position = Vector3(p[0], p[1], p[2])
+	m.rotation_degrees = Vector3(r[0], r[1], r[2])
+
+## The weapon mount's world transform read straight from the skeleton's
+## current pose. A BoneAttachment3D only catches up when the skeleton next
+## publishes its pose; hit volumes need this tick's blade, not last frame's.
+func weapon_xform() -> Transform3D:
+	if weapon_mount == null:
+		return global_transform
+	var att := weapon_mount.get_parent() as BoneAttachment3D
+	var bi := skel.find_bone(att.bone_name) if att != null and skel != null else -1
+	if bi < 0:
+		return weapon_mount.global_transform
+	return skel.global_transform * skel.get_bone_global_pose(bi) * weapon_mount.transform
+
+func _trail_extents() -> Vector2:
+	if rig != null:
+		var t: Array = HumanoidLib.weapon_cfg(weapon_kit).get("trail", [])
+		if t.size() == 2:
+			return Vector2(t[0], t[1])
+	return TRAIL_EXTENTS.get(weapon_kit, Vector2(0.12, 1.08))
 
 func set_weapon(kit_id: String) -> void:
 	if weapon_mount == null:
@@ -128,16 +218,19 @@ func set_weapon(kit_id: String) -> void:
 		c.queue_free()
 	weapon_kit = kit_id
 	if kit_id != "":
-		weapon_mount.add_child(KitLib.instance(kit_id))
+		var w: Node3D = HumanoidLib.weapon_instance(kit_id) if rig != null else null
+		weapon_mount.add_child(w if w != null else KitLib.instance(kit_id))
 	if trail != null:
-		var ext: Vector2 = TRAIL_EXTENTS.get(weapon_kit, Vector2(0.12, 1.08))
+		var ext := _trail_extents()
 		trail.set("base_up", ext.x)
 		trail.set("tip_up", ext.y)
-	var cur: String = anim.current_animation if anim != null else "idle"
-	apply_carry_pose(cur)
+	apply_carry_pose(current_clip())
 
 func apply_carry_pose(clip := "") -> void:
 	if weapon_mount == null:
+		return
+	if rig != null:
+		_apply_slot(weapon_mount)   # the grip is data; humanoid clips carry the blade
 		return
 	var c: String = clip
 	if c == "" and anim != null:
@@ -153,7 +246,7 @@ func add_trail() -> void:
 	var st: MeshInstance3D = _SWING_TRAIL.new()
 	st.name = "Trail"
 	st.set("target", weapon_mount)
-	var ext: Vector2 = TRAIL_EXTENTS.get(weapon_kit, Vector2(0.12, 1.08))
+	var ext := _trail_extents()
 	st.set("base_up", ext.x)
 	st.set("tip_up", ext.y)
 	trail = st
@@ -161,6 +254,9 @@ func add_trail() -> void:
 	weapon_mount.get_parent().add_child(trail)
 
 func play(clip: String, blend := 0.12, speed := 1.0) -> void:
+	if rig != null:
+		rig.play(clip, blend, speed)
+		return
 	if anim == null:
 		return
 	anim.speed_scale = 1.0
@@ -168,7 +264,20 @@ func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 		anim.play(clip, blend, speed)
 	apply_carry_pose(clip)
 
+## Play an action so its contact frame lands `contact_at` seconds from now
+## (an attack's data windup). Contact points are data: clip_meta.json.
+## lo/hi bound the rate (the player keeps the source's 0.55-1.85 clamp).
+func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi := INF) -> float:
+	if rig != null:
+		return rig.play_timed(clip, contact_at, blend, lo, hi)
+	var rate := clampf(HumanoidLib.mannequin_contact(clip) / maxf(contact_at, 0.02), lo, hi)
+	play(clip, blend, rate)
+	return rate
+
 func back_to_idle(blend := 0.2) -> void:
+	if rig != null:
+		rig.stop_action(blend)
+		return
 	if anim == null:
 		return
 	anim.speed_scale = 1.0
@@ -183,6 +292,9 @@ func idle(blend := 0.25) -> void:
 ## to the actual stride so feet stop skating. Only touches the animation
 ## while a locomotion clip owns it — action clips play out untouched.
 func locomotion(dt: float, ground_speed: float, accel_lean := Vector2.ZERO, grounded := true) -> void:
+	if rig != null:
+		_humanoid_locomotion(dt, ground_speed, accel_lean, grounded)
+		return
 	if anim == null:
 		return
 	var cur := anim.current_animation
@@ -210,6 +322,21 @@ func locomotion(dt: float, ground_speed: float, accel_lean := Vector2.ZERO, grou
 	if footsteps and want != "idle" and grounded:
 		var half: float = maxf(anim.current_animation_length * 0.5, 0.01)
 		var idx := int(anim.current_animation_position / half)
+		if idx != _step_i:
+			_step_i = idx
+			AudioDirector.sfx_at("res://assets/audio/step%d.wav" % ((idx % 2) + 1),
+					global_position, step_volume, randf_range(0.9, 1.1))
+
+func _humanoid_locomotion(dt: float, ground_speed: float, accel_lean: Vector2, grounded: bool) -> void:
+	var gait := rig.locomotion(dt, ground_speed, stride, run_stride, grounded)
+	if gait == "":
+		return   # an action owns the rig
+	_lean = _lean.lerp(accel_lean if gait != "idle" else Vector2.ZERO, 1.0 - exp(-7.0 * dt))
+	rotation.x = clampf(-_lean.y * 0.05, -0.1, 0.1)
+	rotation.z = clampf(_lean.x * 0.04, -0.09, 0.09)
+	if footsteps and gait != "idle" and grounded:
+		var cyc := rig.loco_cycle()
+		var idx := int(cyc.x / maxf(cyc.y * 0.5, 0.01))
 		if idx != _step_i:
 			_step_i = idx
 			AudioDirector.sfx_at("res://assets/audio/step%d.wav" % ((idx % 2) + 1),

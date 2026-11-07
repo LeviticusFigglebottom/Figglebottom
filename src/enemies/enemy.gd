@@ -363,15 +363,11 @@ func _pick_attack(dist: float) -> Dictionary:
 		return {}
 	return pool[randi() % pool.size()]
 
-## Where each attack clip's CONTACT beat sits (fraction of its 1.0 s length).
-## The clip is played at a speed that lands that beat exactly when the hitbox
-## opens (end of windup) — before this, clips ran at their authored duration
-## while damage followed the data windup, so slow attacks (a holdfast's
-## 1.1-1.5 s slams) visibly struck half a second before the damage arrived.
-const _CONTACT := {"atk_r": 0.56, "atk_thrust": 0.58, "atk_over": 0.58,
-		"atk_back": 0.5, "atk_spin": 0.5, "atk_double": 0.56, "atk_cast": 0.4,
-		"atk_2h_cleave": 0.51, "atk_2h_sweep": 0.50, "atk_2h_thrust": 0.50}
-
+## Each attack clip is played at a speed that lands its CONTACT beat exactly
+## when the hitbox opens (end of windup). The beats are data:
+## data/anim/clip_meta.json (mannequin_contact, and per-clip sections for
+## humanoids). Before this, clips ran at their authored duration while damage
+## followed the data windup, so slow attacks visibly struck early.
 func _begin_attack(a: Dictionary) -> void:
 	_atk = a
 	_atk_done = false
@@ -381,8 +377,7 @@ func _begin_attack(a: Dictionary) -> void:
 	var speed_mult := 1.35 if phase >= 2 else 1.0
 	var anim_name: String = a.get("anim", "atk_r")
 	var w := float(a.get("windup", 0.5)) / speed_mult
-	var contact := float(_CONTACT.get(anim_name, 0.56))
-	vis.play(anim_name, 0.08, contact / maxf(w, 0.05))
+	vis.play_timed(anim_name, maxf(w, 0.05), 0.08)
 
 func _st_attack(dt: float) -> void:
 	_sync_blade()   # the blade box wears the weapon's frame through the swing
@@ -450,7 +445,8 @@ func _build_blade_hitbox() -> void:
 	if not found:
 		return
 	merged = merged.grow(0.17)
-	var s := float(cfg.get("vis_scale", 1.55 if cfg.get("is_boss", false) else 1.0))
+	# the mount's real scale: the mannequin's vis_scale, or 1 for a humanoid
+	var s := vis.weapon_mount.global_transform.basis.get_scale().x
 	blade_hitbox = Hitbox.new()
 	blade_hitbox.exclude = self
 	blade_hitbox.friendly_team = hitbox.friendly_team
@@ -468,7 +464,7 @@ func _build_blade_hitbox() -> void:
 func _sync_blade() -> void:
 	if blade_hitbox == null or vis.weapon_mount == null:
 		return
-	var m := vis.weapon_mount.global_transform
+	var m := vis.weapon_xform()
 	blade_hitbox.global_transform = Transform3D(m.basis.orthonormalized(), m.origin)
 
 func _end_all_swings() -> void:
