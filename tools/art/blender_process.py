@@ -205,6 +205,7 @@ def merge_anims(arm, anims):
             raise SystemExit(f"no action in {path}")
         act.name = clip
         act.use_fake_user = True
+        _strip_object_keys(act)
         for o in new_obs:
             bpy.data.objects.remove(o, do_unlink=True)
         tr = arm.animation_data.nla_tracks.new()
@@ -215,6 +216,21 @@ def merge_anims(arm, anims):
         tr.mute = False
         print(f"  anim {clip}: frames {act.frame_range[0]:.0f}-{act.frame_range[1]:.0f}")
     arm.animation_data.action = None
+
+
+def _strip_object_keys(act):
+    """Drop armature-object transform keys. Tripo's quadruped clips key the object's own
+    location/rotation/scale (all identity), which would override the scale and yaw this
+    script sets on the armature object."""
+    bags = []
+    try:
+        bags = [act]
+        list(act.fcurves)
+    except AttributeError:  # slotted actions (Blender 4.4+)
+        bags = [cb for layer in act.layers for st in layer.strips for cb in st.channelbags]
+    for bag in bags:
+        for fc in [f for f in bag.fcurves if not f.data_path.startswith("pose.bones")]:
+            bag.fcurves.remove(fc)
 
 
 def _fcurves(act):
@@ -267,6 +283,12 @@ def process_character(a):
         raise SystemExit("character input has no armature (rig first)")
     arm = arms[0]
     arm.name = a["name"] + "_rig"
+    # Tripo rig exports can carry a stray unskinned placeholder mesh (an 80-tri icosphere,
+    # 2 m across) that would wreck the size fit; keep only meshes driven by the armature
+    for o in mesh_objects():
+        if o.parent != arm and not any(m.type == "ARMATURE" for m in o.modifiers):
+            print(f"  drop stray mesh {o.name} ({len(o.data.polygons)} faces)")
+            bpy.data.objects.remove(o, do_unlink=True)
     merge_anims(arm, a.get("anims", {}))
     # quadruped rigs root at tripo::Root, whose up axis is not bone-local Y: strip only the trend
     make_in_place(a.get("in_place", []), *((-1, a["root_bone"]) if a.get("root_bone") else ()))

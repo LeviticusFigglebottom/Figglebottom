@@ -14,7 +14,10 @@ class _StubOp:
 
 def import_any(path):
     ext = os.path.splitext(path)[1].lower()
-    if ext in (".glb", ".gltf"):
+    with open(path, "rb") as f:
+        magic = f.read(4)
+    # Studio serves clips of non-remeshed (imported) projects as GLB whatever the name says
+    if ext in (".glb", ".gltf") or magic == b"glTF":
         bpy.ops.import_scene.gltf(filepath=path)
     elif ext == ".fbx":
         # The bpy.ops FBX operator can fail headless (no window context), so call the

@@ -29,6 +29,16 @@ def call(client, tool, args):
     return out["result"]
 
 
+def decompress_if_glb(path):
+    """Studio GLBs use EXT_meshopt_compression, which Blender cannot read; expand in place."""
+    with open(path, "rb") as f:
+        if f.read(4) != b"glTF":
+            return
+    tmp = path + ".dec.glb"
+    subprocess.run([os.path.join(ROOT, "tools/art/decompress.sh"), path, tmp], check=True, capture_output=True)
+    os.replace(tmp, path)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", nargs="*")
@@ -48,6 +58,11 @@ def main():
         if inp.endswith(".fbx"):
             call(client, "tripo_download", {"project_id": pid, "format": "fbx", "out_path": inp})
             print("fetched", asset["input"])
+        elif inp.endswith(".glb") and asset.get("source", {}).get("rig"):
+            # imported (not Tripo-remeshed) projects: keep rig and clips in one format (GLB)
+            call(client, "tripo_download", {"project_id": pid, "format": "glb", "out_path": inp})
+            decompress_if_glb(inp)
+            print("fetched", asset["input"])
         # preset names are namespaced by rig type: preset:biped:walk, preset:quadruped:walk
         rig_type = asset.get("source", {}).get("rig", "biped").split("/")[0]
         for clip, path in asset.get("anims", {}).items():
@@ -55,9 +70,12 @@ def main():
             dst = os.path.join(ROOT, path)
             tmp = dst[:-4] + ".glb"
             os.makedirs(os.path.dirname(dst), exist_ok=True)
+            # text-prompt clips (tripo_animate prompt=...) are named by the title Studio gave them
+            name = asset.get("motion_titles", {}).get(preset) or f"preset:{rig_type}:{preset}"
             call(client, "tripo_download", {"project_id": pid, "animated": True, "animation_only": True,
-                                            "animation_name": f"preset:{rig_type}:{preset}", "out_path": tmp})
+                                            "animation_name": name, "out_path": tmp})
             os.replace(tmp, dst)
+            decompress_if_glb(dst)
             print("fetched", path)
 
 
