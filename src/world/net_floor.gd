@@ -30,14 +30,15 @@ func covers(p: Vector3) -> bool:
 
 ## The net slides `dist` metres along `dir` (world, horizontal) over `secs`.
 func slide(dir: Vector3, dist: float, secs: float) -> void:
-	var from: Vector2 = _mat.get_shader_parameter("slide")
+	var from := slide_offset()
 	var to := from + Vector2(dir.x, dir.z).normalized() * dist
 	var tw := create_tween()
 	tw.tween_method(func(v: Vector2): _mat.set_shader_parameter("slide", v), from, to, secs) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 
 func slide_offset() -> Vector2:
-	return _mat.get_shader_parameter("slide")
+	var v = _mat.get_shader_parameter("slide")
+	return v if v is Vector2 else Vector2.ZERO
 
 func pulse(strength := 1.0, secs := 1.2) -> void:
 	var tw := create_tween()

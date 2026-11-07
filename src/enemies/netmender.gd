@@ -209,15 +209,16 @@ func _slam_furniture() -> void:
 	var area: Node = Game.current_area if Game.current_area != null else get_parent()
 	for n in area.find_children("*", "Node3D", true, false):
 		var k := String(n.get_meta("kit_id", ""))
-		if not (k in ["table_3m", "bench_3m"]):
-			continue
+		if not (k in ["table_3m", "bench_3m"]) or int(n.get_meta("state_mode", 0)) != 2:
+			continue   # only the RIME furniture dragged to the walls
 		var nd := n as Node3D
 		if not nd.is_visible_in_tree():
 			continue
 		if net_floor != null and not net_floor.covers(nd.global_position + Vector3.UP * 0.2):
 			continue
 		var tw := nd.create_tween()
-		tw.tween_property(nd, "rotation:z", nd.rotation.z + deg_to_rad(88.0 * (1.0 if randf() < 0.5 else -1.0)), 0.35) \
+		# over onto its side, about its long (local x) axis
+		tw.tween_property(nd, "rotation:x", nd.rotation.x + deg_to_rad(84.0 * (1.0 if randf() < 0.5 else -1.0)), 0.35) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, 0.0, 0.6)
 
@@ -432,6 +433,8 @@ func _raise_sheet() -> void:
 	m.shader = preload("res://shaders/net_floor.gdshader")
 	m.set_shader_parameter("cell", 0.4)
 	m.set_shader_parameter("rope", 0.045)
+	m.set_shader_parameter("use_uv", true)
+	m.set_shader_parameter("uv_size", Vector2(4.0, 3.2))
 	_sheet.material_override = m
 	_sheet.top_level = true
 	_sheet.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON

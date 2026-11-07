@@ -20,6 +20,7 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/figglebottom` | `feat/terrain-polish` | Natural cliff and ravine shapes, procedural turf-roof buildings, terrain known issues |
 | `/home/user/fb-combat` | `feat/combat-deltas` | Lock-on switching, upgrade data, (stat−8) scaling, sprint attack, armour slots, `save_version` |
 | `/home/user/fb-ui` | `feat/ui-keepsakes` | UI re-skin and OFL font, house card, Keepsakes journal, Ingra and Brede lines verbatim from SLICE.md |
+| `/home/user/fb-enc` | `feat/slice-encounters` | Slice cast in game (Bearer, Ingra, Brede, Oarsman, Hearthhound), the Netmender fight (SLICE §6), encounter placement, frost-shatter death, `encounters` suite. ADR 0006. Rebuilt on local `main` (art merge). |
 | `/home/user/fb-lead` | `main` | Lead merges here |
 
 ## Next exact step

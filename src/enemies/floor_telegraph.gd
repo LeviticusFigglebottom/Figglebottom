@@ -8,7 +8,7 @@ extends MeshInstance3D
 var life := 1.0
 var _t := 0.0
 var _mat: StandardMaterial3D
-var color := Color(0.55, 0.8, 1.0)
+var color := Color(0.3, 0.58, 1.0)
 
 ## shape: "rect" (size = [width, length], from the origin forward along -Z),
 ## "fan" (size = [range, degrees]), "ring" (size = [radius]).
@@ -20,7 +20,7 @@ static func spawn(parent: Node, xform: Transform3D, shape: String, size: Array, 
 	t.mesh = _shape_mesh(shape, size)
 	t.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(t)
-	t.global_transform = Transform3D(xform.basis.orthonormalized(), xform.origin + Vector3.UP * 0.04)
+	t.global_transform = Transform3D(xform.basis.orthonormalized(), xform.origin + Vector3.UP * 0.1)
 	return t
 
 static func _shape_mesh(shape: String, size: Array) -> Mesh:
@@ -69,7 +69,9 @@ func _ready() -> void:
 	_mat = StandardMaterial3D.new()
 	_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	# mixed, not added: the RIME floors are near white, and an additive glow
+	# vanishes on them
+	_mat.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
 	_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_mat.no_depth_test = false
 	_mat.albedo_color = Color(color.r, color.g, color.b, 0.0)
@@ -81,6 +83,6 @@ func _process(dt: float) -> void:
 	# faint at once (you can always see it), full at the strike; a pulse
 	# quickens toward the end so the beat itself is readable
 	var pulse := 0.5 + 0.5 * sin(_t * lerpf(6.0, 22.0, k))
-	_mat.albedo_color.a = lerpf(0.12, 0.55, k * k) + 0.08 * pulse
+	_mat.albedo_color.a = lerpf(0.18, 0.62, k * k) + 0.1 * pulse
 	if _t >= life:
 		queue_free()
