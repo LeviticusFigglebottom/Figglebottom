@@ -14,6 +14,9 @@ var rime_layer: Node3D
 var env: EnvRig
 var nav_thaw: NavigationRegion3D
 var nav_rime: NavigationRegion3D
+var terrain: Terrain = null
+## Terrain areas bake only the playable footprint (the horizon is scenery).
+var nav_aabb := AABB()
 
 var _applied: int = -1
 
@@ -235,6 +238,9 @@ func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	mesh.agent_max_climb = 0.4
 	mesh.cell_size = 0.20
 	mesh.cell_height = 0.20
+	if nav_aabb.size != Vector3.ZERO:
+		mesh.filter_baking_aabb = nav_aabb
+		mesh.agent_max_slope = 44.0
 	mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
 	mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_WITH_CHILDREN
 	mesh.geometry_source_group_name = "nav_src"

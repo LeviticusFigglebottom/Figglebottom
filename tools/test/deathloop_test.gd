@@ -1,6 +1,7 @@
 extends TestBase
 ## The Warmth death loop: kill reward, drop at death site, one-chance
-## recovery, replacement on second death, hearth respawns enemies.
+## recovery, replacement on second death, hearth respawns enemies, and the
+## land's own stakes: hard landings hurt, a ravine kills (HazardVolume).
 
 var area: Area
 var player: Player
@@ -121,5 +122,38 @@ func _run() -> void:
 	check(spawner.current != null and not spawner.current.dead, "hearth raises the dead again")
 	check(not StateDirector.transitioning, "no state flip (uncleared rime stays rime)")
 	check(World.get_area_state("dl_test") == RH.WState.RIME, "area still rime")
+
+	print("== the land's stakes: fall and ravine volumes")
+	var fall := HazardVolume.new()
+	fall.kind = "fall"
+	fall.size = Vector3(16, 30, 16)
+	fall.position = Vector3(0, 14, 0)
+	area.attach(fall, "base")
+	var ravine := HazardVolume.new()
+	ravine.kind = "kill"
+	ravine.size = Vector3(6, 4, 6)
+	ravine.position = Vector3(16, -6, 0)
+	area.attach(ravine, "base")
+	await ticks(4)
+	player.invulnerable = true    # foes can't touch the Bearer; the land still can
+	player.hp = player.max_hp
+	player.global_position = Vector3(-3, 1.2, -3)
+	player.velocity = Vector3.ZERO
+	await ticks(40)
+	check(player.hp == player.max_hp, "stepping down a metre costs nothing")
+	player.global_position = Vector3(-3, 8.0, -3)
+	player.velocity = Vector3.ZERO
+	await ticks(90)
+	check(player.hp < player.max_hp * 0.8 and not player.dead,
+		"an 8 m drop onto rock hurts (hp %.0f / %.0f)" % [player.hp, player.max_hp])
+	player.hp = player.max_hp
+	player.global_position = Vector3(16, 2.0, 0)
+	player.velocity = Vector3.ZERO
+	await ticks(60)
+	check(player.dead or player.hp <= 0.0, "the ravine takes the Bearer")
+	await ticks(220)
+	check(not player.dead and player.global_position.distance_to(hearth.global_position) < 4.0,
+		"and the hearth gives them back")
+	player.invulnerable = false
 
 	finish()

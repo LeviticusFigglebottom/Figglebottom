@@ -16,7 +16,12 @@ _Last updated: 2026-11-07 (founding session)_
   - The area-diorama experiment concluded: backdrop only.
 
 ## In flight (branches)
-- `feat/terrain-saltfell`: ADR 0003 terrain system, plus a rebuild of Saltfell as one continuous sea-cliff landscape with an edge audit.
+- `feat/terrain-saltfell` (ready for review): the ADR 0003 terrain system and Saltfell rebuilt as one continuous sea-cliff landscape (ADR 0005).
+  - It adds terrain, scatter, hazards and zone titles.
+  - `tools/audit_edges.py` replaces `audit_walls.py`.
+  - `tools/test.sh` passes 6 suites with 173 checks, with main merged in.
+  - Screens: `docs/screens/terrain_*`, `strand`, `cliff_path`, `yard_*`, `longhouse_boss`, `rime_channel`.
+  - Regenerate the area with `python3 tools/gen_steading.py`, which also rewrites `data/terrain/*.bin`.
 - `art/slice-heroes`: the slice-tier roster through Tripo, plus 14 region concept images. Budget: about 3,500 credits.
 - `feat/characters`: ADR 0004, the Mixamo humanoid animation layer. It puts the Tripo models on the enemy and boss, with data-timed contact frames.
 

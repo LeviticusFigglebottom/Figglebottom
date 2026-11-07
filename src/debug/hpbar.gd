@@ -32,7 +32,7 @@ func _ready() -> void:
 
 	# three foes at staggered health, bars forced visible
 	_foe("rimewalker", Vector3(-2.4, 0, 0), 0.38)
-	_foe("holdfast_of_saltfell", Vector3(0, 0, 0), 0.72)
+	_foe("netmender", Vector3(0, 0, 0), 0.72)
 	_foe("rimewalker", Vector3(2.4, 0, 0), 0.94)
 
 func _foe(id: String, pos: Vector3, ratio: float) -> void:

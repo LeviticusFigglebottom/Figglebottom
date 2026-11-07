@@ -5,7 +5,7 @@
   "body": "mannequin_thaw",
   "lines_first": [
    "Late for the feast, traveller? The fires are high and the mead is cold, the way it should be.",
-   "This is Saltfell Steading. Tonight is the last long evening of summer \u2014 the shearing starts at first light.",
+   "This is Saltfell Steading. Tonight is the last long evening of summer — the shearing starts at first light.",
    "If you sit by the hearthstone, mind it: they say it remembers. Sit long enough and it will show you what it remembers now."
   ],
   "lines_repeat": [
@@ -18,16 +18,34 @@
     "type": "gourd_up",
     "warmth": 300,
     "once_flag": "bought_deep_gourd",
-    "label": "Trade for a Deep Gourd \u2014 300 warmth"
+    "label": "Trade for a Deep Gourd — 300 warmth"
    },
    {
     "id": "buy_mend",
     "type": "buy",
     "item": "mend",
     "warmth": 200,
-    "label": "Learn the Mending Song \u2014 200 warmth",
+    "label": "Learn the Mending Song — 200 warmth",
     "line_done": "Hum it low. It works better when nobody is listening."
    }
   ]
+ },
+ "brede": {
+  "name": "Brede",
+  "short_name": "Brede",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Mind the oars. No, the other way. Thank you.",
+   "Brede. I'd shake your hand but I've had it in fish guts all afternoon.",
+   "Off to Kettle Fjord at first light. They've a healer there, a good one. There's a few coughing up at the house. Nothing much. Children, mostly.",
+   "Gunna says I'm not to go. Gunna says a lot of things. She's mending the big net, so she's not speaking to anyone anyway.",
+   "Lost my float off the herring net this morning. Cork, my knot burned on it. If the tide brings it in, I'd thank you for it. She'll notice it's gone and I'll never hear the end of it."
+  ],
+  "lines_repeat": [
+   "Tide's right at first light. I'll be back before she's finished being cross.",
+   "Ever been to Kettle Fjord? They boil the fish in kettles the size of this boat. You can smell it a day out.",
+   "Don't tell Gunna I said she was cross."
+  ],
+  "services": []
  }
 }

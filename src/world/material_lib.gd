@@ -10,6 +10,9 @@ const HALL_DS := preload("res://shaders/hall_ds.gdshader")
 ## (wrong shadow bias on what were backfaces) — the gable kits emit true
 ## two-sided GEOMETRY instead, which lights and shadows correctly.
 const DOUBLE_SIDED := {}
+## Families that take a snow crust on their top faces in RIME.
+const SNOW := {"M_stone": 0.85, "M_stone_trim": 0.85, "M_stone_dark": 0.8, "M_wood": 0.75,
+	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_drift": 0.85, "M_terrain": 0.9}
 
 ## Greybox: no detail textures ship; families render as flat shaded colour.
 const TEXTURES := {}
@@ -76,6 +79,12 @@ const FAMILIES := {
 	"M_rime":         {"albedo": Color(0.70, 0.82, 0.92), "rough": 0.30, "metallic": 0.0, "specular": 0.75, "rim": 1.4, "sss": 0.5, "moss": 0.0, "crack": 0.3, "wear": 0.0,
 					   "emission": Color(0.35, 0.55, 0.85), "emission_energy": 0.12},
 	"M_rime_cloth":   {"albedo": Color(0.30, 0.36, 0.44), "rough": 0.85, "metallic": 0.0, "specular": 0.40, "rim": 0.9, "sheen": 0.5, "local_uv": 1, "moss": 0.0, "crack": 0.0},
+	# the land's own stuff (terrain scatter and turf-roofed houses)
+	"M_turf":         {"albedo": Color(0.22, 0.27, 0.12), "rough": 0.95, "metallic": 0.0, "specular": 0.30, "rim": 0.35, "moss": 0.6, "crack": 0.0, "wear": 0.0},
+	"M_peat":         {"albedo": Color(0.12, 0.08, 0.05), "rough": 0.97, "metallic": 0.0, "specular": 0.28, "rim": 0.15, "moss": 0.2, "crack": 0.1},
+	"M_drift":        {"albedo": Color(0.50, 0.47, 0.42), "rough": 0.90, "metallic": 0.0, "specular": 0.35, "rim": 0.4, "moss": 0.0, "crack": 0.35, "wear": 0.4},
+	"M_ice":          {"albedo": Color(0.66, 0.80, 0.90), "rough": 0.12, "metallic": 0.0, "specular": 0.85, "rim": 1.3, "sss": 0.55, "moss": 0.0, "crack": 0.25, "wear": 0.0,
+					   "emission": Color(0.30, 0.50, 0.75), "emission_energy": 0.08},
 	"M_cloud":        {"albedo": Color(0.96, 0.93, 0.87), "rough": 1.0, "metallic": 0.0, "specular": 0.25, "rim": 0.9, "sss": 0.45, "moss": 0.0, "crack": 0.0, "wear": 0.0},
 }
 
@@ -132,6 +141,7 @@ static func get_mat(family: String, state_mode := 0) -> Material:
 		mat.set_shader_parameter("emission_gate", f.get("emission_gate", 0))
 		mat.set_shader_parameter("state_mode", state_mode)
 		mat.set_shader_parameter("albedo_from_vc", f.get("vc", 0))
+		mat.set_shader_parameter("snow_strength", SNOW.get(family, 0.0))
 		if TEXTURES.has(family):
 			var spec: Array = TEXTURES[family]
 			var base_name: String = spec[0]

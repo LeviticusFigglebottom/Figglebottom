@@ -1,5 +1,5 @@
 extends TestBase
-## The Holdfast of Saltfell: frost veil engagement, phases, clear-unlock,
+## The Netmender (the Saltfell Holdfast), in the Longhouse on the shelf: frost veil engagement, phases, clear-unlock,
 ## free toggling with persistence — the back half of the core loop.
 
 var area: Area
@@ -16,11 +16,11 @@ func _run() -> void:
 	Game.register_area(area, "saltfell_steading")
 	player = Player.new()
 	add_child(player)
-	player.global_position = Vector3(0, 0.3, -24)
+	player.global_position = Vector3(0, 22.3, -15.0)
 	player.sim_active = true
 	add_child(HUD.new())
 	StateDirector.snap(area, RH.WState.RIME)
-	World.last_hearth = {"area": "saltfell_steading", "hearth": "steading_hearth"}
+	World.last_hearth = {"area": "saltfell_steading", "hearth": "hs_salt_house"}
 	await ticks(25)
 
 	print("== the frost veil")
@@ -35,10 +35,10 @@ func _run() -> void:
 	check(fog != null, "frost veil stands in the rime")
 	check(fog.boss_spawner != null and fog.boss_spawner.current != null, "holdfast bound to the gate")
 	var boss: Enemy = fog.boss_spawner.current
-	check(boss.cfg.get("is_boss", false), "it is the Holdfast")
-	check(boss.state == Enemy.ES.IDLE, "he stands his watch undisturbed before the veil is parted")
+	check(boss.cfg.get("is_boss", false) and boss.id == "netmender", "it is the Netmender")
+	check(boss.state == Enemy.ES.IDLE, "she keeps mending, undisturbed, before the veil is parted")
 
-	player.global_position = Vector3(0, 0.3, -28.6)
+	player.global_position = Vector3(0, 22.3, -18.6)
 	await ticks(6)
 	var it := player.nearest_interactable()
 	check(it != null and it.prompt == "Part the frost veil", "the veil offers passage")
@@ -53,7 +53,8 @@ func _run() -> void:
 	while player.hp >= hp0 and waited < 900:
 		waited += 10
 		await ticks(10)
-	check(player.hp < hp0, "the maul lands (hp %.0f -> %.0f after %d ticks)" % [hp0, player.hp, waited])
+	check(player.hp < hp0, "the maul lands (hp %.0f -> %.0f after %d ticks; boss at %s, Bearer at %s)" % [hp0, player.hp, waited,
+		str(boss.global_position.snapped(Vector3.ONE * 0.1)), str(player.global_position.snapped(Vector3.ONE * 0.1))])
 
 	print("== death mid-fight re-arms the veil (the arena can be re-entered)")
 	var old_id := boss.get_instance_id()
@@ -72,7 +73,7 @@ func _run() -> void:
 		"the holdfast is restored whole")
 	check(not fog._engaged and fog._zone.enabled, "the veil stands ready to be parted again")
 	check(fog._seal.collision_layer != 0, "and still bars simply walking through")
-	player.global_position = Vector3(0, 0.3, -28.6)
+	player.global_position = Vector3(0, 22.3, -18.6)
 	await ticks(6)
 	it = player.nearest_interactable()
 	check(it != null and it.prompt == "Part the frost veil", "the veil offers passage anew")
@@ -91,12 +92,12 @@ func _run() -> void:
 		boss.take_hit(DamagePacket.new(160, 0, player))
 		await ticks(2)
 	await ticks(30)
-	check(World.is_cleared("saltfell_steading"), "Saltfell Steading is cleared")
+	check(World.is_cleared("saltfell_steading"), "Saltfell is cleared")
 	check(Game.warmth - warmth0 >= 1200, "his hoard of warmth passes on (%d)" % (Game.warmth - warmth0))
 	check(fog._seal.collision_layer == 0, "the veil disperses")
 
 	print("== free toggling, persisted")
-	var hearth := Game.find_hearth("steading_hearth")
+	var hearth := Game.find_hearth("hs_salt_house")
 	player.global_position = hearth.respawn_point()
 	await ticks(4)
 	Game.hearth_flow(hearth, player, "toggle")
@@ -127,6 +128,6 @@ func _run() -> void:
 	check(World.load_game(), "save reloads")
 	check(World.get_area_state("saltfell_steading") == st, "state persisted")
 	check(World.is_cleared("saltfell_steading") == cleared, "cleared persisted")
-	check(World.area_flag("saltfell_steading", "slain_holdfast"), "the holdfast stays at rest")
+	check(World.area_flag("saltfell_steading", "slain_netmender"), "the Netmender stays at rest")
 
 	finish()

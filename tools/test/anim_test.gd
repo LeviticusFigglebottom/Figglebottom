@@ -193,7 +193,7 @@ func _run() -> void:
 	armed.queue_free()
 
 	print("== the netmender: own clips, borrowed run")
-	var nm := _spawn("holdfast_of_saltfell", player.global_position + Vector3(4, 0.1, -4))
+	var nm := _spawn("netmender", player.global_position + Vector3(4, 0.1, -4))
 	await ticks(5)
 	check(nm.vis.is_humanoid() and nm.vis.model_id == "netmender", "the Saltfell holdfast wears netmender.glb")
 	check(nm.vis.rig.qualified("idle") == "own/idle" and nm.vis.rig.qualified("run") == "run",
