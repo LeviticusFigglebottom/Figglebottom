@@ -50,6 +50,8 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 				continue
 			if _blocked(clear, x, z):
 				continue
+			if rule.has("drop_min") and terrain.drop_at(x, z, float(rule.get("drop_r", 4.0))) < float(rule["drop_min"]):
+				continue    # cliff-top boulders: only where the land falls away
 			var s := rng.randf_range(float(sc[0]), float(sc[1]))
 			# a stone needs a seat: no perching on a cliff lip or a knife-edge
 			var fr := float(rule.get("flat", 0.9 * s + 0.4))

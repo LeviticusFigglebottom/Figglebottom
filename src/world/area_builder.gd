@@ -37,6 +37,9 @@ static func build(area_id: String) -> Area:
 		hz.position = (hmn + hmx) * 0.5
 		hz.name = "Hazard_" + hz.kind
 		area.attach(hz, spec.get("tag", "base"))
+	for spec in def.get("houses", []):
+		if _flag_ok(spec):
+			BuildingGen.build(area, spec)
 	for spec in def.get("fills", []):
 		_fill(area, spec)
 	for spec in def.get("rows", []):
@@ -71,6 +74,7 @@ static func build(area_id: String) -> Area:
 		g.gate_id = spec.get("id", "gate")
 		g.area_id = area_id
 		g.locked_prompt = spec.get("locked_prompt", "Barred from the other side")
+		g.door_width = float(spec.get("width", 3.6))
 		area.base.add_child(g)
 		_place(g, spec)
 	for spec in def.get("spawners", []):
@@ -179,12 +183,45 @@ static func build(area_id: String) -> Area:
 	if area.terrain != null and def.has("scatter"):
 		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
 
+	_mark_indoors(area, def.get("houses", []))
+
 	# ambient mood: gold motes in thaw, ash in rime, sized to the area
 	var ext := _extent(def)
 	area.add_ambient(ext[0], ext[1])
 
 	area.bake_navmeshes.call_deferred()
 	return area
+
+## Snow settles on what faces the sky, but not under a roof: everything
+## standing inside a house footprint (below its eaves) is masked indoor.
+static func _mark_indoors(area: Area, houses: Array) -> void:
+	if houses.is_empty():
+		return
+	var stack: Array[Node] = [area]
+	while not stack.is_empty():
+		var n: Node = stack.pop_back()
+		if n is Terrain or String(n.name).begins_with("House_") or n is MultiMeshInstance3D:
+			continue
+		if n is GeometryInstance3D:
+			# the area is not in the tree yet: walk the transforms up by hand
+			var p := Vector3.ZERO
+			var cur: Node = n
+			while cur != area and cur is Node3D:
+				p = (cur as Node3D).transform * p
+				cur = cur.get_parent()
+			for hs in houses:
+				var c := Vector2(float(hs["center"][0]), float(hs["center"][1]))
+				var a := deg_to_rad(float(hs.get("yaw", 0.0)))
+				var d := Vector2(p.x, p.z) - c
+				var lx := d.x * cos(a) - d.y * sin(a)
+				var lz := d.x * sin(a) + d.y * cos(a)
+				var y0 := float(hs.get("y", 0.0))
+				if absf(lx) < float(hs["size"][0]) * 0.5 and absf(lz) < float(hs["size"][1]) * 0.5 \
+						and p.y > y0 - 0.5 and p.y < y0 + float(hs.get("wall_h", 3.2)):
+					(n as GeometryInstance3D).set_instance_shader_parameter("indoor", 1.0)
+					break
+		for ch in n.get_children():
+			stack.append(ch)
 
 ## Scatter never lands on anything a player must reach or read.
 static func _keep_clear(def: Dictionary) -> Array:
@@ -562,7 +599,7 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 	area.attach(mi, tag)
 	if spec.get("collide", true):
 		var body := StaticBody3D.new()
-		body.collision_layer = 1 << (_tag_bit(tag) - 1)
+		body.collision_layer = 1 << ((RH.L_WORLD_LOW if spec.get("low", false) else _tag_bit(tag)) - 1)
 		body.collision_mask = 0
 		var cs := CollisionShape3D.new()
 		var cb := BoxShape3D.new()

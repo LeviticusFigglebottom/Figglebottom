@@ -46,46 +46,26 @@ def rot_off(cx, cz, yaw, ox, oz):
     return (cx + ox * math.cos(a) + oz * math.sin(a), cz - ox * math.sin(a) + oz * math.cos(a))
 
 
-PIECES, PROPS, BOXES, BUILDINGS = [], [], [], []
+PIECES, PROPS, BOXES, BUILDINGS, HOUSES = [], [], [], [], []
 
 
-def building(name, cx, cz, w, l, yaw, y, doors=(), open_sides=(), roof=True, skip=()):
-    """A turf-roofed house of 4 m wall bays: w along local x, l along local z.
-    doors: [(side, index)] where side is N/S/E/W (local -z/+z/+x/-x) and index
-    the bay along that side. skip: bays left out (a gate fills them)."""
+def building(name, cx, cz, w, l, yaw, y, doors=(), open_sides=(), gate_doors=()):
+    """A turf-and-stave house built by src/world/building_gen.gd: w along local
+    x, l along local z. doors / gate_doors: [(side, bay)] where side is N/S/E/W
+    (local -z/+z/+x/-x) and bay the 4 m bay along that side. A gate door is an
+    opening the ShortcutGate fills. Returns door world positions by key."""
     out = {}
     half_w, half_l = w / 2.0, l / 2.0
-    sides = {
-        "N": [(-half_w + 2 + 4 * i, -half_l) for i in range(int(w // 4))],
-        "S": [(-half_w + 2 + 4 * i, half_l) for i in range(int(w // 4))],
-        "W": [(-half_w, -half_l + 2 + 4 * i) for i in range(int(l // 4))],
-        "E": [(half_w, -half_l + 2 + 4 * i) for i in range(int(l // 4))],
-    }
-    rots = {"N": 0, "S": 180, "W": 90, "E": -90}
-    for side, offs in sides.items():
-        if side in open_sides:
-            continue
-        for i, (ox, oz) in enumerate(offs):
-            x, z = rot_off(cx, cz, yaw, ox, oz)
-            if (side, i) in skip:
-                continue
-            kit = "portal_4m" if (side, i) in doors else "wall_4x4"
-            PIECES.append({"kit": kit, "at": [r2(x), y, r2(z)], "rot": r2(yaw + rots[side])})
-            if kit == "portal_4m":
-                out[(side, i)] = (x, z, yaw + rots[side])
-    for sx in (-1, 1):
-        for sz in (-1, 1):
-            x, z = rot_off(cx, cz, yaw, sx * half_w, sz * half_l)
-            PIECES.append({"kit": "column_4m", "at": [r2(x), y, r2(z)]})
-    if roof:
-        gable = "gable_12m" if w >= 12 else "gable_8m"
-        for i in range(int(l // 4)):
-            x, z = rot_off(cx, cz, yaw, 0, -half_l + 2 + 4 * i)
-            PIECES.append({"kit": gable, "at": [r2(x), y + 4.0, r2(z)], "rot": r2(yaw + 90), "collide": False})
-        for sz in (-1, 1):
-            x, z = rot_off(cx, cz, yaw, 0, sz * half_l)
-            PIECES.append({"kit": gable.replace("gable_", "gable_end_"), "at": [r2(x), y + 4.0, r2(z)],
-                           "rot": r2(yaw), "collide": False})
+    for side, i in list(doors) + list(gate_doors):
+        span = w if side in "NS" else l
+        t = -span / 2.0 + 2 + 4 * i
+        ox, oz = {"N": (t, -half_l), "S": (t, half_l), "W": (-half_w, t), "E": (half_w, t)}[side]
+        x, z = rot_off(cx, cz, yaw, ox, oz)
+        out[(side, i)] = (x, z, yaw + {"N": 0, "S": 180, "W": 90, "E": -90}[side])
+    wall_h = 3.5 if w >= 12 else 3.2
+    HOUSES.append({"id": name, "center": [r2(cx), r2(cz)], "size": [w, l], "yaw": yaw, "y": y, "wall_h": wall_h,
+                   "doors": [list(d) for d in doors], "gate_doors": [list(d) for d in gate_doors],
+                   "open": list(open_sides)})
     BUILDINGS.append({"id": name, "center": [r2(cx), r2(cz)], "size": [w, l], "yaw": yaw, "y": y,
                       "doors": [[r2(v[0]), r2(v[1])] for v in out.values()], "open": list(open_sides)})
     return out
@@ -109,15 +89,15 @@ store_doors = building("store", 22.0, -14.0, 8, 8, 13.0, SH, doors=[("W", 0)])
 # the boat-shed: open to the sea; its back door (north, middle bay) is the
 # shortcut gate, barred on the inside
 GATE_AT = [25.0, T.BEACH_FOOT, 48.0]
-building("boatshed", 25.0, 54.0, 12, 12, 0.0, T.BEACH_FOOT, doors=[("N", 1)], open_sides=("S",))
+building("boatshed", 25.0, 54.0, 12, 12, 0.0, T.BEACH_FOOT, gate_doors=[("N", 1)], open_sides=("S",))
 
 # the longhouse floor: boards laid over the flattened pad (no collision: the
 # pad IS the floor), the long hearth kerb down the middle (waist-high cover)
 BOXES.append({"min": [-5.8, SH - 0.02, -51.8], "max": [5.8, SH + 0.02, -20.2], "mat": "M_wood", "collide": False})
-# (the kerb is low and does not collide yet: the Netmender's 0.7 m body
-# wedged on its corners against a 0.4 m-agent navmesh)
-BOXES.append({"min": [-0.8, SH, -36.0], "max": [0.8, SH + 0.3, -27.0], "mat": "M_stone_trim", "collide": False})
-BOXES.append({"min": [-0.55, SH + 0.25, -35.6], "max": [0.55, SH + 0.32, -27.4], "mat": "M_peat", "collide": False})
+# (the kerb is "low": cover for the Bearer, who must go round it; the 3 m
+# Netmender steps over it, so it stays out of the navmesh)
+BOXES.append({"min": [-0.8, SH, -36.0], "max": [0.8, SH + 0.55, -27.0], "mat": "M_stone_trim", "low": True})
+BOXES.append({"min": [-0.55, SH + 0.5, -35.6], "max": [0.55, SH + 0.57, -27.4], "mat": "M_peat", "collide": False})
 for i in range(6):
     z = -48.0 + i * 4.6
     for x in (-4.2, 4.2):
@@ -216,7 +196,7 @@ water = [
 ]
 hazards = [
     {"kind": "drown", "min": [-1200, -40, -1200], "max": [1200, -1.15, 1200]},
-    {"kind": "kill", "min": [-130, -10, -96], "max": [130, T.RAVINE_FLOOR + 4.0, -58]},
+    {"kind": "kill", "min": [-130, -10, -112], "max": [130, T.RAVINE_FLOOR + 4.0, -50]},
     {"kind": "fall", "min": [-84, -2, 28], "max": [64, 26, 92]},          # below the cliffs round the cove
     {"kind": "fall", "min": [18, 0, 6], "max": [32, 26, 50]},             # the gully
 ]
@@ -231,7 +211,7 @@ for p in PROPS:
 clear.append([-30.0, 90.0, 14.0])        # the channel stays clear
 for k in range(15):                       # and so does the gully
     z = T.GULLY_Z0 + k * 3.0
-    clear.append([r2(T.GULLY_X + 0.8 * math.sin(z * 0.12)), r2(z), 3.2])
+    clear.append([r2(T.gully_x(z)), r2(z), 3.2])
 scatter = {
     "seed": 90210,
     "clear": clear,
@@ -249,6 +229,14 @@ scatter = {
         {"kind": "standing_stone", "count": 22, "region": [-96, -172, 100, -94], "slope": [0.85, 1.0], "scale": [0.9, 1.6]},
         {"kind": "rock", "count": 140, "region": [-96, -172, 100, -90], "slope": [0.8, 1.0], "scale": [0.4, 1.2]},
         {"kind": "hummock", "count": 220, "region": [-96, -172, 100, -90], "slope": [0.85, 1.0], "scale": [0.6, 1.4]},
+        # boulders sat back from the cliff tops, breaking the skyline
+        {"kind": "boulder", "count": 45, "region": [-100, -70, 64, 46], "slope": [0.8, 1.0], "h": [17, 30], "scale": [0.8, 1.6], "drop_min": 6.0, "drop_r": 4.5, "path_max": 0.15},
+        {"kind": "rock", "count": 60, "region": [-100, -70, 64, 46], "slope": [0.75, 1.0], "h": [17, 30], "scale": [0.4, 1.0], "drop_min": 4.0, "drop_r": 3.5, "path_max": 0.15},
+        # the gully grows over: tussocks and stones on its ledges and lips
+        {"kind": "hummock", "count": 70, "region": [15, 6, 35, 46], "slope": [0.6, 1.0], "scale": [0.4, 1.0], "path_max": 0.5, "flat": 0.6},
+        {"kind": "rock", "count": 25, "region": [15, 6, 35, 46], "slope": [0.5, 1.0], "scale": [0.3, 0.8], "path_max": 0.5, "flat": 0.6},
+        # talus at the foot of the ravine walls
+        {"kind": "boulder", "count": 50, "region": [-100, -100, 110, -55], "slope": [0.5, 0.95], "h": [2.5, 8], "scale": [0.8, 1.8]},
         {"kind": "rock", "count": 18, "region": [-44, 100, -16, 126], "slope": [0.7, 1.0], "h": [0.1, 2.0], "scale": [0.4, 1.0]},
     ],
     "place": [
@@ -283,7 +271,7 @@ edges = {
     "walk_max_deg": 45.0,
     "water_level": 0.0,
     "drown_depth": 1.15,
-    "nav_bounds": [-102, -76, 66, 130],
+    "nav_bounds": [-102, -76, 72, 130],
     "buildings": BUILDINGS,
     "thickets": [],
     "state_floors": [{"tag": "rime", "min": [CH["x0"] + 0.8, CH["z0"]], "max": [CH["x1"] - 0.8, ICE_Z1], "y": CH["y"]}],
@@ -298,7 +286,7 @@ D = {
     "env": {"thaw": {"sun_rot": [-12, -36], "sun_energy": 2.3, "fog_density": 0.0008, "vol_density": 0.0032},
             "rime": {"sun_rot": [-34, -30]}},
     "terrain": T.terrain_block(),
-    "nav_bounds": [-102, -4, -76, 66, 64, 130],
+    "nav_bounds": [-102, -4, -76, 72, 64, 130],
     "water": water,
     "hazards": hazards,
     "zones": [
@@ -306,12 +294,13 @@ D = {
         {"name": "SALTFELL", "min": [-100, -19], "max": [70, 50]},
         {"name": "THE LONGHOUSE", "min": [-6, -52], "max": [6, -20]},
     ],
+    "houses": HOUSES,
     "pieces": PIECES,
     "boxes": BOXES,
     "blockers": BLOCKERS,
     "props": PROPS,
     "hearths": hearths,
-    "gates": [{"id": "boatshed_back", "at": GATE_AT, "rot": 0, "locked_prompt": "Barred from the other side"}],
+    "gates": [{"id": "boatshed_back", "at": GATE_AT, "rot": 0, "width": 1.9, "locked_prompt": "Barred from the other side"}],
     "spawners": spawners,
     "frost_veils": [{"id": "hall_veil", "at": [0.0, SH, LH_DOOR_Z], "rot": 0, "tag": "rime"}],
     "npcs": npcs,

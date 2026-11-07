@@ -55,7 +55,7 @@ PADS = {
 
 # the gully: a cleft from the yard down to the boat-shed back door
 GULLY_X, GULLY_Z0, GULLY_Z1 = 25.0, 8.0, 47.6
-GULLY_HALF = 1.6
+GULLY_HALF = 2.3
 
 # the sea stack and its tide shelf; the tidal channel runs to it
 STACK = (-30.0, 113.0)
@@ -63,7 +63,36 @@ CHANNEL = {"x0": -33.0, "x1": -27.0, "z0": 76.0, "z1": 104.5, "y": 0.06}
 
 # ravine (lethal) between the shelf and the barrow hills
 def ravine_z(x):
-    return -76.0 + 5.0 * math.sin(x * 0.035) + 2.0 * math.sin(x * 0.11 + 1.3)
+    """The ravine meanders: two bends and a wander, kept clear of the Longhouse."""
+    return -78.0 + 6.0 * math.sin(x * 0.03 + 0.5) + 3.0 * math.sin(x * 0.09 + 1.0) + 2.0 * fbm(x * 0.02, 3.3, 2, 31)
+
+
+def ravine_floor_half(x):
+    """Half-width of the ravine floor: pinches to a slot, opens to a pool."""
+    return 2.6 + 1.8 * (0.5 + 0.5 * math.sin(x * 0.05 + 2.0)) + 0.8 * fbm(x * 0.07, 1.1, 2, 32)
+
+
+# rock spurs jutting into the ravine: (x, side +1 south wall / -1 north, reach m)
+RAVINE_SPURS = [(-62, 1, 6.0), (-40, -1, 5.0), (-28, -1, 4.5), (-8, -1, 5.5), (14, 1, 7.0),
+                (30, 1, 4.0), (38, -1, 5.0), (56, 1, 6.0), (-84, -1, 5.0)]
+
+
+def gully_x(z):
+    """The gully bends twice on its way down, so no slot shows from the beach;
+    it straightens only for the last metres to the boat-shed's back door."""
+    taper = 1.0 - smooth(38.0, 45.0, z)
+    return GULLY_X + taper * (2.6 * math.sin(z * 0.11 + 0.4) + 1.1 * math.sin(z * 0.27))
+
+
+def strata(depth, x, z, seed=40):
+    """Layered rock: turn a smooth fall of `depth` metres into risers and
+    narrow ledges. Beds dip gently and come and go along the coast."""
+    step = 3.6 + 0.8 * fbm(x * 0.01, z * 0.01, 1, seed)
+    q = (depth + 0.03 * x + 0.6 * fbm(x * 0.05, z * 0.05, 2, seed + 1)) / step
+    fq = q - math.floor(q)
+    stepped = (math.floor(q) + smooth(0.32, 1.0, fq)) * step
+    k = 0.55 + 0.45 * vnoise(x * 0.03, z * 0.03, seed + 2)
+    return depth + (stepped - depth) * k
 
 RAVINE_FLOOR = 3.0
 
@@ -232,7 +261,7 @@ def height(x, z):
             if r < 1.0:
                 top += bh * (1 - r * r) ** 1.5
     # the east fell: scree too steep to climb
-    fx = x - 62 - 7.0 * fbm(z * 0.03, 0.3, 2, 17)
+    fx = x - 62 - 7.0 * fbm(z * 0.03, 0.3, 2, 17) - 4.0 * fbm(z * 0.09, 1.7, 2, 38)
     if fx > 0:
         # broken scree: buttresses and runnels, never less than ~48 degrees
         top += min(34.0 + 6.0 * fbm(x * 0.02, z * 0.02, 2, 18), fx * 1.6) \
@@ -241,7 +270,10 @@ def height(x, z):
     sdf = _poly_sdf(x, z, PLATEAU) + 4.5 * fbm(x * 0.035, z * 0.035, 3, 13) + 1.6 * fbm(x * 0.14, z * 0.14, 2, 14)
     rough = 2.0 * fbm(x * 0.13, z * 0.13, 3, 5)
     k = CLIFF_K * (0.95 + 0.4 * vnoise(x * 0.05, z * 0.05, 15))
-    cliff = top + k * min(sdf, 0.0) + (rough if sdf < 0 else 0.0)
+    # erosion: buttresses and runnels down the face (ridged noise)
+    ridge = 1.0 - abs(2.0 * vnoise(x * 0.09 + z * 0.02, z * 0.09, 33) - 1.0)
+    fall = -k * min(sdf - 1.4 * ridge, 0.0)
+    cliff = top - strata(fall, x, z) + (rough * 0.6 if sdf < 0 else 0.0)
     h = max(beach_y(x, z), cliff) if sdf < 0 else top
     t = _terrace(x, z)
     if t is not None:
@@ -260,16 +292,28 @@ def height(x, z):
     if GULLY_Z0 - 4 <= z <= 49.0:
         t = max(0.0, min(1.0, (z - GULLY_Z0) / (GULLY_Z1 - GULLY_Z0)))
         floor = _lerp(SHELF_Y, BEACH_FOOT, t)
-        gx = GULLY_X + 0.8 * math.sin(z * 0.12)
-        wall = floor + max(0.0, abs(x - gx) - GULLY_HALF) * 3.0
+        gx = gully_x(z)
+        half = GULLY_HALF + 0.5 * fbm(z * 0.15, 0.7, 1, 34)
+        wall = floor + strata(max(0.0, abs(x - gx) - half) * 2.8, x, z, 50)
         if z < GULLY_Z0:
             wall += (GULLY_Z0 - z) * 4.0
         h = min(h, wall)
     # the ravine
     rz = ravine_z(x)
     dz = abs(z - rz)
-    if dz < 20:
-        rav = RAVINE_FLOOR + max(0.0, dz - 2.5) * 3.2 + 0.8 * fbm(x * 0.3, z * 0.3, 2, 7)
+    if dz < 26:
+        side = 1 if z > rz else -1
+        for sx_, sside, reach in RAVINE_SPURS:
+            if sside == side:
+                dz += reach * math.exp(-((x - sx_) / 5.0) ** 2)
+        # a ragged lip: slumps and bites along the top of each wall
+        dz += 2.2 * fbm(x * 0.12, z * 0.12, 2, 36) + 1.2 * fbm(x * 0.35, z * 0.35, 1, 37)
+        d = max(0.0, dz - ravine_floor_half(x))
+        kw = 2.4 + 1.2 * vnoise(x * 0.04, z * 0.04, 35)
+        # a talus apron at the foot, then the layered wall
+        talus = min(d, 3.0) * 0.6
+        wallh = strata(max(0.0, d - 3.0) * kw, x, z, 60)
+        rav = RAVINE_FLOOR + talus + wallh + 0.5 * fbm(x * 0.3, z * 0.3, 2, 7)
         h = min(h, rav)
     # the sea stack and its tide shelf
     sx, sz = STACK
@@ -338,7 +382,7 @@ def path_weight(x, z):
         for (kind, zs, zn) in _ROWS:
             if kind.startswith("leg") and zn + 0.7 <= z <= zs - 0.7:
                 best = max(best, 0.85)
-    if GULLY_Z0 <= z <= GULLY_Z1 and abs(x - GULLY_X - 0.8 * math.sin(z * 0.12)) < 1.2:
+    if GULLY_Z0 <= z <= GULLY_Z1 and abs(x - gully_x(z)) < 1.2:
         best = max(best, 0.8)
     return best
 

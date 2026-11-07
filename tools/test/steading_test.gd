@@ -52,6 +52,18 @@ func _walk_to(to: Vector3, max_ticks := 900, tol := 1.2) -> bool:
 	player.sim_move = Vector3.ZERO
 	return false
 
+## Steer along the navmesh's own route (the gully bends; no straight line).
+func _walk_path(to: Vector3, max_ticks := 1600) -> bool:
+	var p := _path(player.global_position, to)
+	var used := 0
+	for k in range(1, p.size()):
+		var t0 := Engine.get_physics_frames()
+		var ok: bool = await _walk_to(p[k], max_ticks - used, 0.7 if k < p.size() - 1 else 0.9)
+		used += int(Engine.get_physics_frames() - t0)
+		if not ok:
+			return false
+	return true
+
 func _ray_down(x: float, z: float, top := 30.0) -> Dictionary:
 	var q := PhysicsRayQueryParameters3D.create(Vector3(x, top, z), Vector3(x, -30, z), RH.M_WORLD_ALL)
 	return area.get_world_3d().direct_space_state.intersect_ray(q)
@@ -178,7 +190,7 @@ func _run() -> void:
 	check(l1 > 150.0, "the long way is long (%.0f m)" % l1)
 	player.global_position = gully_head + Vector3(0, 0.4, 0)
 	await ticks(6)
-	walked = await _walk_to(gate_pos + Vector3(0, 0, -1.4), 1200, 0.9)
+	walked = await _walk_path(gate_pos + Vector3(0, 0, -1.4), 1600)
 	check(walked and not player.dead, "down the gully to the back of the door (%s)" % str(player.global_position.snapped(Vector3.ONE * 0.1)))
 	it = player.nearest_interactable()
 	check(it != null and it.prompt == "Unbar the gate", "from above it can be unbarred")
