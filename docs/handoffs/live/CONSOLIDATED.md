@@ -22,9 +22,13 @@ _Last updated: 2026-11-07 (founding session)_
 - **Cookie:** the owner's `ory_kratos_session` cookie, from Google Drive file `tripo-session.txt`. Never commit or print it.
 - **Balance:** 24,700 credits at the start (premium plan, valid until 2026-12-06).
 
+## Owner decisions
+- **Title:** confirmed as "Rimeholt", subtitle "The Winter That Would Not End".
+- **House card:** keep the "Figglebottom Productions" house card on boot. Make it sincere and quiet, with no jokes.
+- **Story:** it must be genuinely profound about grief and not letting go, told the soulslike way. That means item text, places and fragments, with no AI-writing tics. The rules are in `docs/lore/WRITING.md`.
+
 ## Open questions for the owner
-1. **Title:** "Rimeholt", subtitle "The Winter That Would Not End". Change it if you prefer something else.
-2. **House card:** keep a "Figglebottom Productions" house card on boot (your studio name), or none?
+- None right now.
 
 ## Known breakages
 - None yet.

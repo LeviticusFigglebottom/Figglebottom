@@ -16,7 +16,8 @@
 9. UI re-skin: bone and ember palette, new font (OFL licence).
 10. Vertical slice areas: the Strand, Saltfell yard, the Longhouse (generator scripts).
 11. Vertical slice NPCs (2) and the Netmender questline.
-12. `save_version` field plus migration hook.
+12. Boot house card: "Figglebottom Productions", sincere and quiet (owner request).
+13. `save_version` field plus migration hook.
 
 ## done
 - Phase 1 survey, originality guardrails, ADR 0001, SPEC and CLAUDE.md (see git log).
