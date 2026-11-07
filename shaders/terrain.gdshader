@@ -109,11 +109,11 @@ void fragment() {
 	vec3 thaw_col = col * vec3(1.04, 1.0, 0.92);
 	float luma = dot(col, vec3(0.299, 0.587, 0.114));
 	vec3 rime_col = mix(col, vec3(luma), 0.55) * vec3(0.88, 0.94, 1.04);
-	float top = smoothstep(0.55, 0.85, n.y + (n2 - 0.5) * 0.3);
-	float snow = snow_cover * top * smoothstep(0.25, 0.55, n_macro * 0.5 + n1 * 0.5 + 0.2);
-	snow = max(snow, snow_cover * top * 0.55);
+	float top = smoothstep(0.55, 0.85, n.y + (n1 - 0.5) * 0.3);
+	float snow = snow_cover * top * mix(0.7, 1.0, smoothstep(0.3, 0.7, n_macro * 0.7 + n1 * 0.3));
 	snow *= 1.0 - wet * 0.8;
-	vec3 frost = mix(rime_col, snow_col * 0.92, 0.28 * smoothstep(0.4, 0.9, n3));
+	// hoarfrost on the rock: broad pale sheets in the hollows, not glitter
+	vec3 frost = mix(rime_col, snow_col * 0.8, 0.10 + 0.12 * n_macro);
 	rime_col = mix(frost, snow_col * (0.92 + 0.08 * n2), snow);
 	vec3 albedo = mix(thaw_col, rime_col, rime);
 	ALBEDO = albedo;
