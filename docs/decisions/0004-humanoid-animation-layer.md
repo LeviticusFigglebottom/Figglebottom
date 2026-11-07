@@ -53,11 +53,17 @@ The game needs, per character: a locomotion blend by ground speed, one-shot acti
   - two action slots (`Animation` → `TimeSeek` → `TimeScale`), so one action can cross-fade into the next
   - `Blend2` nodes mixing loco ↔ action, with weights eased in `_process`
 - **Timing stays data.** `data/anim/clip_meta.json` holds, per clip:
-  - `start`, `contact` and `end` (seconds into the source clip; Tripo presets carry long idle lead-ins)
-  - `source: real|procedural`
-  - aliases from the game's clip vocabulary (`atk_r`, `attack_l1`, `stagger`, `gourd`, `kneel`, …) to humanoid clips
+  - `start`, `contact` and `end` (seconds into the source clip; Tripo presets carry long idle lead-ins). Without them a clip plays whole.
+  - a separate `procedural` block with the overlay's own timing, used only while the overlay is what plays
+  - aliases from the game's clip vocabulary (`atk_r`, `attack_l1`, `stagger`, `gourd`, `kneel`, …), each a best-first list (`atk_over` → `heavy` → `slash`)
 
-  `CharVisual.play_timed(clip, contact_at)` plays the section from `start` at the rate `(contact - start) / contact_at`, so the contact frame lands exactly on the data windup. The mannequin's contact table, which used to be hard-coded in `enemy.gd` and `player.gd`, moves to the same file under `mannequin_contact`.
+  `CharVisual.play_timed(clip, contact_at)` plays the section from `start` at the rate `(contact - start) / contact_at`, so the contact frame lands exactly on the data windup. If the rate would pass `max_rate`, the lead-in is trimmed instead, so the hit is never late. The mannequin's contact table, which used to be hard-coded in `enemy.gd` and `player.gd`, moves to the same file under `mannequin_contact`. The rig advances on the physics tick, as the combat state machines do, so contact lands within a tick of the windup (asserted by the `anim` suite).
+- **Drop-in real clips.** Whether a clip is real or procedural is never declared; it is *derived*. An animation of that name in a rig's GLB is real, and the overlays mark their own clips. Resolution tries the game name first, then its aliases. For each name it takes the model's own real clip, then the shared real clip, then any procedural overlay. So when the art pass delivers Tripo `roll`, `block`, `parry`, `drink`, `rest`, `heavy` or `stagger` clips, the steps are:
+  1. add the clip to the manifest's `anims`
+  2. rerun `blender_process.py` and `humanoid_import.py`
+  3. optionally add top-level `start`/`contact`/`end`
+
+  It replaces the fallback with **no code change**. The `anim` suite proves this by injecting real `roll` and `stagger` clips at runtime.
 - **Gear:**
   - Weapons attach by `BoneAttachment3D` to `mixamorig_RightHand`, and shields or off-hand items to `mixamorig_LeftHand` or `mixamorig_LeftForeArm`. The grip offset (position and Euler) is data in `clip_meta.json` → `mounts`.
   - A weapon kit with a Tripo GLB (`weapons` map) loads that GLB; others fall back to the KitLib greybox.
@@ -69,8 +75,9 @@ The game needs, per character: a locomotion blend by ground speed, one-shot acti
 | state | humanoid clip | source |
 |---|---|---|
 | idle / walk / run | `idle`, `walk`, `run` | real (Netmender run borrowed from rimewalker) |
-| attack (all `atk_*`, `attack_*`, `riposte`) | `slash` section | real |
-| hit / stagger | `hit` | real |
+| attack (all `atk_*`, `attack_*`) | `slash` section | real |
+| heavy (`atk_over`, `attack_h`, `riposte`, 2h cleave) | `heavy`, falling back to `slash` | real (`heavy` awaited) |
+| hit / stagger | `stagger`, falling back to `hit` | real (`stagger` awaited) |
 | death | `death` | **procedural** (Tripo `defeat` is a standing slump; kept as `defeat`) |
 | roll / backstep | `roll`, `backstep` | **procedural** |
 | block / parry | `block`, `parry` | **procedural** |
@@ -78,7 +85,7 @@ The game needs, per character: a locomotion blend by ground speed, one-shot acti
 | rest (kneel at a hearth) | `rest` | **procedural** |
 | cast (songs) | `cast` | **procedural** |
 
-`tools/test/anim_test.gd` asserts this table against `clip_meta.json`, so the doc and the data cannot drift apart.
+This is the state on 2026-11-07. `tools/test/anim_test.gd` prints the derived split on every run and asserts that each state resolves to one or the other.
 
 ### Integration
 
@@ -94,6 +101,7 @@ The game needs, per character: a locomotion blend by ground speed, one-shot acti
   3. a `models` entry in `clip_meta.json`
 
   It then inherits every state.
-- Procedural states read clearly but are stiffer than the presets. Buying Tripo presets for roll, block and parry (or adding hand-keyed clips) only means swapping `source` to `real`.
+- Procedural states read clearly but are stiffer than the presets. Buying Tripo presets for roll, block and parry (or adding hand-keyed clips) is a data-and-asset change only.
 - `slash` is a single overhead-diagonal preset. Every attack id shares it, differing only in rate. Attack variety waits on more presets.
 - The Tripo materials are `StandardMaterial3D`, so the death dissolve shader does not apply. Humanoid foes are freed after the fade timer instead of dissolving.
+- Screenshots come from the staged shots in `src/debug/shot.gd`: `--shot-stage=swing`, `foe_death` and `boss`. Each one freezes the tree on its gameplay beat before capturing, because headless frames render slower than physics ticks. The resulting images are `docs/screens/chars_*.png`.
