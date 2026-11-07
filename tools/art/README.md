@@ -31,7 +31,7 @@ The Tripo client (`client.mjs`) and its cookie live only in the session scratchp
 ## Conventions the scripts enforce
 
 - **Scale:** `target.height` (characters), `target.width` (walls, props, areas) or `target.length` (weapons), in metres.
-- **Origin:** bottom centre for kit, props and characters. For weapons, the **grip centre** is at the origin, the blade points +Y and the edge faces +Z. `blender_process.py` finds this with PCA: the long axis, the grip as the thick end, the guard as the widest slice, and the edge as the thin side.
+- **Origin:** bottom centre for kit, props and characters. For weapons, the **grip centre** is at the origin, the blade points +Y and the edge faces +Z. `blender_process.py` finds this with PCA: the long axis, the grip as the thick end, the guard as the widest slice, and the edge as the thin side. Hafted weapons whose heavy end is the head (maul, spade) set `grip_end: "thin"` in the manifest, plus `grip_from_pommel`.
 - **Characters:** scale, yaw and the floor offset live on the armature object, not applied to it. Applying them would break the root-motion keys. Every clip is one NLA track, and that becomes one glTF animation (`idle`, `walk`, `run`, `slash`, `hit`, `defeat`). Clips listed in `in_place` have the horizontal Hips drift and offset removed.
 - **Per-asset overrides (manifest):** `grip_from_pommel` (m) for guardless blades, where the widest slice is the pommel cap; `target.fit {x,y,z}` for set pieces whose generated proportions miss the design sheet (the Long Hearth, the boat, the tide wall); `origin: "center"` for strapped items such as the shield; `root_bone` for non-mixamo rigs (the quadruped roots at `tripo::Root`).
 - **Quadruped clips** key the armature object's own transform; `merge_anims` strips those keys so the armature keeps the scale and yaw set here.
@@ -58,4 +58,5 @@ No hand-edited `.import` files are needed. Godot also generates LODs on import b
 - Godot's glTF importer ignores `COLOR_0` for albedo, so procedural vertex tints are baked into a texture (Cycles EMIT bake).
 - Without `mesa-vulkan-drivers`, Godot silently falls back to the Compatibility renderer, which has no volumetric fog or SSAO.
 - The image content filter rejects words like "drowned body"; phrase it gently ("pale sleeping man, her husband").
-- `raw/.gdignore` keeps Godot from importing multi-million-tri raw files.
+- `raw/.gdignore` keeps Godot from importing multi-million-tri raw files. `raw/` is gitignored, so a fresh worktree needs `touch raw/.gdignore` before the first `--import`.
+- Send one `tripo_animate` call at a time per project: parallel calls fail with HTTP 406 "Failed to acquire lock" and a text-prompt call is still charged.

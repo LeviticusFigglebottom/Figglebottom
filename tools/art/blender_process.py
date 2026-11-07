@@ -148,7 +148,12 @@ def process_weapon(a, ob):
     z0, z1 = v[:, 2].min(), v[:, 2].max()
     lower = thick(v[:, 2] < z0 + 0.2 * L)
     upper = thick(v[:, 2] > z1 - 0.2 * L)
-    if upper > lower:  # grip (round, thick) must be at the bottom; flip about X
+    # grip (round, thick) must be at the bottom; flip about X. Hafted weapons (maul,
+    # spade) have the heavy end at the head, so the manifest says grip_end: "thin".
+    grip_at_top = upper > lower
+    if a.get("grip_end") == "thin":
+        grip_at_top = not grip_at_top
+    if grip_at_top:
         v = v * np.array([1, -1, -1])
         z0, z1 = v[:, 2].min(), v[:, 2].max()
     # guard = widest slice (Y extent) in the lower 45%
