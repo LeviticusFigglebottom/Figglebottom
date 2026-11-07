@@ -94,3 +94,41 @@ Budget for the batch: about 3,500 credits. Balance at start: 24,185 (`tripo_stat
 | 2026-11-07 | tripo_import ×2 (raw_mv.glb: remesh failed again, refunded; local 40k decimate: used) | netmender | 4ea01cb8-… / bbb15df0-9024-4af2-9581-959811f485c8 | 0 | — | imports free |
 | 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets | netmender | bbb15df0-… | 20 | **21,870** | op 5a727e97 |
 | 2026-11-07 | **slice batch + feature evaluation total** | | | **2,315** | **21,870** | reconciled with the `tripo_status` ledger |
+
+## Lowe heroes batch (branch art/lowe-heroes, 2026-11-07)
+
+Budget for the batch: about 3,000 credits. Balance at start: 21,870 (`tripo_status`, checked before each batch). Reference images, the three multiview expansions and four reference re-rolls via `tripo_image` are free on the plan (prompts in PROVENANCE; the images are in `docs/art/concept/refs/`).
+
+| Date | Action | Asset | Project id | Cost | Balance after | Note |
+|---|---|---|---|---|---|---|
+| 2026-11-07 | tripo_image multiview (free) + multiview_to_model (v3.1, **extreme**) | turfwright | 954b9c38-2c30-44cf-adfc-992ab0f67f62 | 65 | — | op d3888fc2 |
+| 2026-11-07 | remesh quad 10k | turfwright | 954b9c38-… | 40 | — | op 3d9bf5c9 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | turfwright | 954b9c38-… | 20 | — | op a1b8ba80; presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | barrow_sleeper | 4e4bace2-ed2d-4412-89fc-416c99aabf51 | 55 | — | op d9c98c3f |
+| 2026-11-07 | remesh quad 10k | barrow_sleeper | 4e4bace2-… | 40 | — | op 14b83ba4 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | barrow_sleeper | 4e4bace2-… | 20 | — | op 7f897039; presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | keener | afa77fb4-d6d4-4a70-bc37-2721a201c8a4 | 55 | — | op 7660bd04 |
+| 2026-11-07 | remesh quad 10k | keener | afa77fb4-… | 40 | — | op 6cdafff1 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | keener | afa77fb4-… | 20 | — | op 928a41ea; presets free |
+| 2026-11-07 | tripo_image multiview (free) + multiview_to_model (v3.1, detailed) | cairn_carrier | 3cc04710-ae7f-4ec0-81b3-070dd4b09665 | 55 | — | op 428adddc; back load |
+| 2026-11-07 | remesh quad 10k | cairn_carrier | 3cc04710-… | 40 | — | op 6b2290a0 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | cairn_carrier | 3cc04710-… | 20 | — | op 2edfedf8; presets free |
+| 2026-11-07 | tripo_image multiview (free) + multiview_to_model (v3.1, detailed) | hesk | aeb6f052-0e99-4272-8c71-095c4957aed7 | 55 | — | op 61d9e271; back load |
+| 2026-11-07 | remesh quad 10k | hesk | aeb6f052-… | 40 | — | op 6d8f8af6 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | hesk | aeb6f052-… | 20 | — | op ee469194; presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | aud | 20728a74-560d-4d77-908e-f8da9ef190a2 | 55 | — | op 5ec9e994 |
+| 2026-11-07 | remesh quad 10k | aud | 20728a74-… | 40 | — | op 1d764172 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | aud | 20728a74-… | 20 | — | op c2e6bdbf; presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | bearer_barrow | f77963e6-33a9-43e7-a7ab-878967cb39b6 | 55 | — | op 765269a6 |
+| 2026-11-07 | remesh quad 10k | bearer_barrow | f77963e6-… | 40 | — | op abce2dc1 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_barrow | f77963e6-… | 20 | — | op 41f4a3b6; presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | turf_spade | e2165091-2ddb-4d06-bac9-a6bc0ac455af | 55 | — | op 2be68347 |
+| 2026-11-07 | remesh quad 10k | turf_spade | e2165091-… | 40 | — | op aee2853b |
+| 2026-11-07 | image_to_model (v3.1, detailed) | post_maul | b5b4b088-ef56-4f89-b16a-54d7529865ca | 55 | — | op c4b2c09f |
+| 2026-11-07 | remesh quad 10k | post_maul | b5b4b088-… | 40 | — | op eef688ec |
+| 2026-11-07 | image_to_model (v3.1, detailed) **superseded: saturated teal texture, off-palette** | lm_barrow_door | b0ad98ff-638d-4adc-ab8d-70b1bd6f92cf | 55 | — | op 07f0074b; not remeshed |
+| 2026-11-07 | image_to_model (v3.1, detailed) re-roll from a brown-turf reference | lm_barrow_door | b6418cb6-25b3-4519-bfaa-d1674d9d49b5 | 55 | — | op c6d2e55b |
+| 2026-11-07 | remesh quad 10k | lm_barrow_door | b6418cb6-… | 40 | — | op 38b11741 |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3: ground cut ("Arm Chop Motion"), stack sod ("Lifting and Placing Block"), back drop ("Backward Fall and Sit Up") | turfwright | 954b9c38-… | 60 | — | ops c881a910, 3bdae36c, 14a0bb2d; shipped as clips |
+| 2026-11-07 | tripo_animate prompt, **failed** (HTTP 406 "Failed to acquire lock": three prompt clips sent in parallel to one project) | turfwright | 954b9c38-… | 20 | — | op f58b2808; charged, not refunded; retried alone |
+| 2026-11-07 | **Lowe batch total** (11 generations incl. 1 superseded, 10 remeshes, 7 rigs, 4 text_to_motion) | | | **1,235** | **20,635** | reconciled with the `tripo_status` ledger |
