@@ -1102,7 +1102,9 @@ func try_gourd() -> bool:
 	gourds_changed.emit(gourds, gourd_max)
 	_gourd_fx_fired = false
 	_set_state(S.GOURD)
-	vis.play("gourd", 0.08)
+	# the real drink clip is fitted to the data use_time, as the roll is
+	var gr := vis.clip_length("gourd") / float(T["gourd"]["use_time"]) if vis.is_humanoid() else 1.0
+	vis.play("gourd", 0.08, gr)
 	_show_gourd(true)
 	if vis.shield_mount != null:
 		vis.shield_mount.visible = false   # the gourd arm carries no shield
@@ -1275,7 +1277,8 @@ func _st_gourd(dt: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 12 * dt)
 	velocity.z = move_toward(velocity.z, 0, 12 * dt)
 	var use_time := float(T["gourd"]["use_time"])
-	if _gourd_mount != null and is_instance_valid(_gourd_mount):
+	if _gourd_mount != null and is_instance_valid(_gourd_mount) and not vis.is_humanoid():
+		# (a humanoid's real drink clip carries the gourd to the mouth itself)
 		# Keep _gourd_mount anchored in the gauntleted left hand (hand_l) while
 		# orienting the gourd in character space so its golden spout tips directly
 		# into the visor slit (matching posegrid gourd 0.50).
@@ -1437,19 +1440,14 @@ var _gourd_tilt := 36.0   # drinking tilt; pivots around the belly center
 
 func _show_gourd(on: bool) -> void:
 	if on:
-		if _gourd_mount == null and KitLib.has_piece("gourd"):
-			_gourd_mount = vis.mount("hand_l")
-			_gourd_mount.position = Vector3(0.0, 0.05, -0.02)
-			var vessel := KitLib.instance("gourd")
-			# Grip the lower base of the gourd (y=0.03) so its golden belly and
-			# neck rise cleanly above the gauntleted fist toward the visor slit.
-			vessel.position = Vector3(0.0, -0.03, 0.0)
-			_gourd_mount.add_child(vessel)
-			_gourd_mount.global_transform.basis = vis.global_transform.basis * Basis.from_euler(Vector3(
-				deg_to_rad(8.0),
-				deg_to_rad(-12.0),
-				deg_to_rad(-34.0)
-			))
+		if _gourd_mount == null:
+			_gourd_mount = vis.mount_gourd()
+			if not vis.is_humanoid():
+				_gourd_mount.global_transform.basis = vis.global_transform.basis * Basis.from_euler(Vector3(
+					deg_to_rad(8.0),
+					deg_to_rad(-12.0),
+					deg_to_rad(-34.0)
+				))
 			var glow := OmniLight3D.new()
 			glow.light_color = Color(1.0, 0.82, 0.42)
 			glow.light_energy = 0.85
@@ -1458,10 +1456,8 @@ func _show_gourd(on: bool) -> void:
 			glow.position = Vector3(0.0, 0.11, 0.0)
 			_gourd_mount.add_child(glow)
 	elif _gourd_mount != null:
-		var att := _gourd_mount.get_parent()   # the BoneAttachment3D
+		vis.unmount_gourd(_gourd_mount)
 		_gourd_mount = null
-		if att != null and is_instance_valid(att):
-			att.queue_free()
 
 # --- damage intake -----------------------------------------------------------
 # ---- the Warding Hum: a skin of remembered warmth that spends itself first

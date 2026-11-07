@@ -1,5 +1,6 @@
 {
  "player": {
+  "model": "bearer_traveller",
   "base": {
    "hp": 100,
    "stamina": 80,

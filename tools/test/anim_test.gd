@@ -198,7 +198,8 @@ func _run() -> void:
 	check(nm.vis.is_humanoid() and nm.vis.model_id == "netmender", "the Saltfell holdfast wears netmender.glb")
 	check(nm.vis.rig.qualified("idle") == "own/idle" and nm.vis.rig.qualified("run") == "run",
 		"own idle shadows the shared one; run is borrowed (%s, %s)" % [nm.vis.rig.qualified("idle"), nm.vis.rig.qualified("run")])
-	check(HumanoidLib.is_procedural(nm.vis.rig.clip_anim("roll")), "her roll is the overlay on her own idle")
+	check(nm.vis.rig.qualified("roll") == "dodge_roll" and HumanoidLib.is_procedural(nm.vis.rig.clip_anim("block")),
+		"a real aliased clip beats her overlay (roll -> %s); block stays the overlay" % nm.vis.rig.qualified("roll"))
 
 	print("== a real clip drops in over a fallback, by name alone")
 	var fake_roll := Animation.new()
@@ -227,13 +228,16 @@ func _run() -> void:
 	ev.build(cfg_missing)
 	check(not ev.is_humanoid() and ev.anim != null, "unknown model falls back to the mannequin")
 	ev.queue_free()
-	check(not player.vis.is_humanoid(), "the Bearer is still the mannequin (no player.model)")
+	check(player.vis.is_humanoid() and player.vis.model_id == "bearer_traveller",
+		"the Bearer wears bearer_traveller (game.json player.model)")
 	var pv := PlayerVisual.new()
 	add_child(pv)
 	pv.build("hewing_blade", "rimewalker")
 	check(pv.is_humanoid() and pv.shield_mount != null and pv.weapon_mount != null,
 		"the player visual accepts a model key")
-	check(absf(pv.clip_length("roll") - 1.0) < 0.01, "player roll timing reads the humanoid section")
+	var rsec := HumanoidLib.clip_info("dodge_roll", false, "rimewalker")
+	check(absf(pv.clip_length("roll") - (float(rsec["end"]) - float(rsec["start"]))) < 0.01,
+		"player roll timing reads the humanoid section (%.2f s)" % pv.clip_length("roll"))
 	pv.play_timed("attack_l1", 0.36, 0.05, 0.55, 1.85)
 	await ticks(1)
 	check(pv.current_clip() == "attack_l1", "player attacks play on the humanoid")

@@ -79,12 +79,14 @@ func setup(id: String, skel: Skeleton3D) -> void:
 	_push()
 	advance(0.0)
 
-## Library-qualified animation for a game clip. Each candidate name (the
-## clip, then its aliases) is looked up real-first: the model's own real clip,
-## the shared real clip, then the procedural overlays. So a real "roll"
-## dropped into any rig's glb replaces the overlay everywhere it is missing.
+## Library-qualified animation for a game clip. Real beats procedural across
+## every candidate name (the clip, then its aliases, best first; the model's
+## own clip before the shared one), and only then does the first overlay
+## found play. So a real "dodge_roll" aliased under "roll" replaces the roll
+## overlay, while the game name still wins among real clips.
 func qualified(clip: String) -> String:
 	var shared := HumanoidLib.shared_library()
+	var fallback := ""
 	for c in HumanoidLib.candidates(clip):
 		var hits := []
 		if own != null and own.has_animation(c):
@@ -94,9 +96,9 @@ func qualified(clip: String) -> String:
 		for q in hits:
 			if not HumanoidLib.is_procedural(get_animation(q)):
 				return q
-		if not hits.is_empty():
-			return hits[0]
-	return ""
+		if fallback == "" and not hits.is_empty():
+			fallback = hits[0]
+	return fallback
 
 func _resolved_name(clip: String) -> String:
 	var q := qualified(clip)
@@ -110,8 +112,10 @@ func clip_anim(clip: String) -> Animation:
 	return get_animation(q) if q != "" else null
 
 func _section(clip: String) -> Vector3:   # (start, contact, end)
-	var a := clip_anim(clip)
-	var info := HumanoidLib.clip_info(_resolved_name(clip), HumanoidLib.is_procedural(a))
+	var q := qualified(clip)
+	var a := get_animation(q) if q != "" else null
+	var info := HumanoidLib.clip_info(q.trim_prefix("own/"), HumanoidLib.is_procedural(a),
+			model_id if q.begins_with("own/") else String(HumanoidLib.meta().get("donor", "")))
 	var length := a.length if a != null else 1.0
 	var s := float(info.get("start", 0.0))
 	var e := minf(float(info.get("end", length)), length)

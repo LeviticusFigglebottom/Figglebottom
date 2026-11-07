@@ -34,6 +34,13 @@
       0.0
      ]
     }
+   },
+   "clips": {
+    "dodge_roll": {
+     "start": 0.4,
+     "end": 2.45,
+     "root_lock": true
+    }
    }
   },
   "netmender": {
@@ -42,6 +49,86 @@
    "own_clips": true,
    "bare_hands": true,
    "_note": "keeps her own hunched idle/walk/slash/hit/defeat; borrows run; overlays ride her own idle"
+  },
+  "bearer_traveller": {
+   "scene": "res://assets/models/characters/bearer_traveller.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "the Bearer (SLICE.md 10). Text-prompt clips (tripo_features.md 5) judged on pose sheets: dodge_roll, drink, rest (kneel) and parry are real and replace the overlays; block, heavy_overhead and stagger read weakly and stay procedural (skip_clips), so stagger falls back to the real hit.",
+   "skip_clips": [
+    "block",
+    "heavy_overhead",
+    "stagger"
+   ],
+   "clips": {
+    "dodge_roll": {
+     "start": 0.55,
+     "end": 2.45,
+     "root_lock": true
+    },
+    "drink": {
+     "start": 0.2,
+     "contact": 0.9,
+     "end": 2.0
+    },
+    "rest": {
+     "start": 0.0,
+     "end": 2.0
+    },
+    "parry": {
+     "start": 0.55,
+     "contact": 0.95,
+     "end": 1.5,
+     "root_lock": true
+    }
+   }
+  },
+  "bearer_oilskins": {
+   "scene": "res://assets/models/characters/bearer_oilskins.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "Brede's oilskins on the Bearer (same rig); has only the preset clips, so its states come from the overlays and the shared library"
+  },
+  "ingra": {
+   "scene": "res://assets/models/npcs/ingra.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW-only villager: own idle/walk plus greet (on talk) and look (idle fidget). greet walks 3.7 m in the source: root locked.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
+   }
+  },
+  "brede": {
+   "scene": "res://assets/models/npcs/brede.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW-only villager: own idle/walk plus greet (on talk) and look (idle fidget). greet walks 3.7 m in the source: root locked.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
+   }
+  },
+  "oarsman": {
+   "scene": "res://assets/models/enemies/oarsman.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "the ice oar is procedural (src/enemies/ice_oar.gd), spans both hands and carries the blade hitbox; its strokes are overlays (oar_*)"
   }
  },
  "mounts": {
@@ -83,6 +170,20 @@
     90.0,
     0.0
    ]
+  },
+  "gourd": {
+   "bone": "mixamorig_RightHand",
+   "pos": [
+    0.02,
+    0.08,
+    0.03
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "_note": "the real drink clip lifts the RIGHT hand: the blade is put away while the gourd is held"
   }
  },
  "bone_alias": {
@@ -111,6 +212,10 @@
     0.12,
     0.8
    ]
+  },
+  "saltfell_shield": {
+   "scene": "res://assets/models/weapons/saltfell_shield.glb",
+   "_note": "rides the shield slot (left forearm); greybox kite shield on mannequins"
   }
  },
  "clips": {
@@ -273,6 +378,9 @@
   ],
   "bow_hold": [
    "block"
+  ],
+  "roll": [
+   "dodge_roll"
   ]
  },
  "mannequin_contact": {
@@ -290,5 +398,12 @@
   "attack_l1": 0.44,
   "attack_l2": 0.42,
   "attack_h": 0.48
+ },
+ "props": {
+  "_doc": "held items with a Tripo mesh, shown only while used (the gourd while drinking). slot names a mounts row.",
+  "gourd": {
+   "scene": "res://assets/models/props/gourd.glb",
+   "slot": "gourd"
+  }
  }
 }

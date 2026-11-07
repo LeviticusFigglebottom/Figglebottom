@@ -54,8 +54,13 @@ static func candidates(clip: String) -> Array:
 ## top-level keys (start/contact/end, defaulting to the whole clip); the
 ## procedural fallback reads its own "procedural" block, so dropping in a
 ## real clip with its own timing never inherits the overlay's numbers.
-static func clip_info(clip: String, procedural := false) -> Dictionary:
+static func clip_info(clip: String, procedural := false, model := "") -> Dictionary:
 	var c: Dictionary = (meta().get("clips", {}) as Dictionary).get(clip, {})
+	# a model's own take on a clip (its own section times) merges over the shared row
+	var mine: Dictionary = (model_cfg(model).get("clips", {}) as Dictionary).get(clip, {}) if model != "" else {}
+	if not mine.is_empty() and not procedural:
+		c = c.duplicate()
+		c.merge(mine, true)
 	if procedural:
 		var p: Dictionary = c.get("procedural", {})
 		var merged := p.duplicate()
@@ -85,6 +90,16 @@ static func weapon_cfg(kit: String) -> Dictionary:
 
 static func weapon_instance(kit: String) -> Node3D:
 	var path := String(weapon_cfg(kit).get("scene", ""))
+	if path != "" and ResourceLoader.exists(path):
+		return (load(path) as PackedScene).instantiate() as Node3D
+	return null
+
+static func prop_cfg(id: String) -> Dictionary:
+	return (meta().get("props", {}) as Dictionary).get(id, {})
+
+## A held item's Tripo mesh (props map), or null when it has none.
+static func prop_instance(id: String) -> Node3D:
+	var path := String(prop_cfg(id).get("scene", ""))
 	if path != "" and ResourceLoader.exists(path):
 		return (load(path) as PackedScene).instantiate() as Node3D
 	return null
@@ -143,9 +158,15 @@ static func _extract(id: String) -> Dictionary:
 	var hh := maxf(skel.get_bone_global_rest(hips).origin.y, 0.01) if hips >= 0 else 1.0
 	_hips_h[id] = hh
 	var clips: Dictionary = meta().get("clips", {})
+	var own_rows: Dictionary = model_cfg(id).get("clips", {})
+	# weak real clips a model keeps procedural (a real clip always outranks the
+	# overlay, so the only way to prefer the overlay is not to load the clip)
+	var skip: Array = model_cfg(id).get("skip_clips", [])
 	var out := {}
 	if ap != null:
 		for n in ap.get_animation_list():
+			if String(n) in skip:
+				continue
 			var a := (ap.get_animation(n) as Animation).duplicate(true) as Animation
 			for t in range(a.get_track_count() - 1, -1, -1):
 				var p := a.track_get_path(t)
@@ -158,7 +179,21 @@ static func _extract(id: String) -> Dictionary:
 				if ty == Animation.TYPE_POSITION_3D:
 					for k in a.track_get_key_count(t):
 						a.track_set_key_value(t, k, (a.track_get_key_value(t, k) as Vector3) / hh)
-			var info: Dictionary = clips.get(n, {})
+			var info: Dictionary = (clips.get(n, {}) as Dictionary).duplicate()
+			info.merge(own_rows.get(n, {}), true)
 			a.loop_mode = Animation.LOOP_LINEAR if info.get("loop", false) else Animation.LOOP_NONE
+			if info.get("root_lock", false):
+				_lock_root(a)
 			out[n] = a
 	return {"anims": out, "skel": skel, "inst": inst}
+
+## Text-prompt clips travel (a forward roll moves the hips a metre): gameplay
+## moves the capsule, so the hips stay over the feet on the ground plane
+## and keep only the vertical (the roll still drops to the floor and rises).
+static func _lock_root(a: Animation) -> void:
+	var t := a.find_track(NodePath(SKEL + ":" + HIPS), Animation.TYPE_POSITION_3D)
+	if t < 0 or a.track_get_key_count(t) == 0:
+		return
+	for k in a.track_get_key_count(t):
+		var v: Vector3 = a.track_get_key_value(t, k)
+		a.track_set_key_value(t, k, Vector3(0.0, v.y, 0.0))
