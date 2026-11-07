@@ -51,6 +51,15 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 			if _blocked(clear, x, z):
 				continue
 			var s := rng.randf_range(float(sc[0]), float(sc[1]))
+			# a stone needs a seat: no perching on a cliff lip or a knife-edge
+			var fr := float(rule.get("flat", 0.9 * s + 0.4))
+			var tol := fr * (1.3 if kind == "boulder" else 0.75)
+			var bumpy := false
+			for o in [Vector2(fr, 0), Vector2(-fr, 0), Vector2(0, fr), Vector2(0, -fr)]:
+				if absf(terrain.height_at(x + o.x, z + o.y) - y) > tol:
+					bumpy = true
+			if bumpy:
+				continue
 			var xf := _seat(kind, Vector3(x, y, z), nrm, rng.randf() * TAU, s, rng)
 			_add(groups, kind, tag, xf)
 			placed += 1

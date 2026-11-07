@@ -93,7 +93,7 @@ void fragment() {
 	float blocks = vnoise(vec3(v_wp.x * 0.35, v_wp.y * 0.9, v_wp.z * 0.35));
 	float streak = vnoise(vec3(v_wp.x * 1.4, v_wp.y * 0.12, v_wp.z * 1.4));
 	vec3 rock = rock_col * (0.6 + 0.4 * blocks + 0.2 * n2 + 0.1 * bed);
-	rock *= 1.0 - 0.3 * smoothstep(0.55, 0.9, streak) - 0.25 * smoothstep(0.93, 0.99, bed);
+	rock *= 1.0 - 0.3 * smoothstep(0.55, 0.9, streak);
 	rock = mix(rock, vec3(0.46, 0.46, 0.40), smoothstep(0.8, 0.95, n2 * 0.6 + n_macro * 0.5) * 0.2);
 	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * 0.4);
 
