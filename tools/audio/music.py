@@ -593,7 +593,7 @@ def main(names):
             continue
         x, loops = fn()
         if loops:
-            print(f"[music] {fname}: seam ratio {dsp.seam_report(x):.2f} (1 = seamless)")
+            print(f"[music] {fname}: seam ratio {dsp.seam_report(x):.2f} (<1: inaudible)")
         dsp.write_ogg(os.path.join(OUT, fname + ".ogg"), x, quality=4)
         if os.environ.get("RH_KEEP_WAV"):
             dsp.write_wav(os.path.join(os.environ["RH_KEEP_WAV"], fname + ".wav"), x)
