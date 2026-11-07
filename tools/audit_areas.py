@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Systematic anomaly audit for every area's JSON: catches props floating off
 the floor, duplicate/overlapping props, placements off any floor, and interior
-holes in the walkable floor. Complements audit_walls.py (perimeter sealing).
+holes in the walkable floor. Complements audit_edges.py (classed terrain edges).
 
 Run: python3 tools/audit_areas.py [area_id]
 Exit non-zero if any anomaly is found."""
@@ -9,7 +9,7 @@ import json, glob, math, os, sys
 
 # props that are meant to sit ABOVE the floor (wall/ceiling/window mounted), so
 # a high Y is expected and must not be flagged as "floating".
-MOUNTED = {"beam_4m", "roof_slab_4m"}
+MOUNTED = {"beam_4m", "roof_slab_4m", "gable_8m", "gable_12m", "gable_end_8m", "gable_end_12m"}
 # kits that are architecture (not decor); they define floors/walls, skip float check
 ARCH = {"floor_4x4", "wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "column_4m", "pillar",
         "stair_4m", "ramp_4m", "fence_iron_4m", "gate_iron", "frost_veil_frame"}
@@ -39,12 +39,18 @@ def expand_row(r):
     return out
 
 
+TERRAIN = None   # sampler(x, z) of the area's committed heightmap, if any
+
+
 def floors_at(fills, x, z, margin=0.05):
     """All floor heights whose tile covers (x,z) — an area can be multi-level.
+    On a terrain area the land itself is a floor everywhere it spans.
     `margin` widens the footprint: railings legitimately line a floor's edge
     (hanging their depth over the drop they guard), so they need a looser reach
     to find the floor they belong to; grounded decor uses the tight default."""
     ys = []
+    if TERRAIN is not None:
+        ys.append(TERRAIN(x, z))
     for f in fills:
         mn, mx = v3(f["min"]), v3(f["max"])
         if mn[0] - margin <= x <= mx[0] + margin and mn[2] - margin <= z <= mx[2] + margin:
@@ -77,6 +83,8 @@ def wall_boxes(d):
         if kit not in WALLS:
             return
         x, y, z = v3(at)
+        if abs(float(rot)) % 90 > 0.01:
+            return     # a house turned to the land: the plane test is axis-only
         r = ((int(rot) % 180) + 180) % 180
         if r == 90:                      # spans Z
             boxes.append(("z", x, z - 2, z + 2, y, tag, kit))
@@ -104,7 +112,13 @@ def flags_exclusive(a, b):
 
 
 def audit(area_id):
+    global TERRAIN
     d = json.load(open(f"data/areas/{area_id}.json"))
+    TERRAIN = None
+    if d.get("terrain"):
+        sys.path.insert(0, "tools")
+        mod = __import__(os.path.splitext(os.path.basename(d["terrain"]["generator"]))[0])
+        TERRAIN = mod.sample
     fills = d.get("fills", [])
     # a walkable box's TOP is a floor too (the Marches' peat flats, landing
     # skirts): fold box tops in as faux fills for grounding/roof checks

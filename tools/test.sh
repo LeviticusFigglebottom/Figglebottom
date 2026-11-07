@@ -5,10 +5,10 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 FILTER="${1:-}"
 overall=0
-# static geometry audits: perimeter sealing + placement anomalies (no engine)
+# static geometry audits: classed edges + placement anomalies (no engine)
 if [ -z "$FILTER" ]; then
-  echo "=== audit: perimeter"
-  python3 tools/audit_walls.py || overall=1
+  echo "=== audit: edges"
+  python3 tools/audit_edges.py || overall=1
   echo "=== audit: placement anomalies"
   python3 tools/audit_areas.py || overall=1
 fi

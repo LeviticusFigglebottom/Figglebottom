@@ -16,6 +16,27 @@ static func build(area_id: String) -> Area:
 	area.set_meta("def", def)
 
 	area.env.set_overrides(def.get("env", {}))
+	# the land first: buildings sit on it, they are not it (ADR 0003)
+	if def.has("terrain"):
+		var t := Terrain.new()
+		if t.setup(def["terrain"]):
+			area.base.add_child(t)
+			t.build(RH.L_WORLD_BASE)
+			area.terrain = t
+	if def.has("nav_bounds"):
+		var nb: Array = def["nav_bounds"]
+		area.nav_aabb = AABB(Vector3(nb[0], nb[1], nb[2]), Vector3(nb[3] - nb[0], nb[4] - nb[1], nb[5] - nb[2]))
+	for spec in def.get("water", []):
+		_water(area, spec)
+	for spec in def.get("hazards", []):
+		var hz := HazardVolume.new()
+		hz.kind = String(spec.get("kind", "fall"))
+		var hmn := _v3(spec["min"])
+		var hmx := _v3(spec["max"])
+		hz.size = hmx - hmn
+		hz.position = (hmn + hmx) * 0.5
+		hz.name = "Hazard_" + hz.kind
+		area.attach(hz, spec.get("tag", "base"))
 	for spec in def.get("fills", []):
 		_fill(area, spec)
 	for spec in def.get("rows", []):
@@ -150,6 +171,9 @@ static func build(area_id: String) -> Area:
 		area.attach(pt, spec.get("tag", "base"))
 		_place(pt, spec)
 
+	if area.terrain != null and def.has("scatter"):
+		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
+
 	# ambient mood: gold motes in thaw, ash in rime, sized to the area
 	var ext := _extent(def)
 	area.add_ambient(ext[0], ext[1])
@@ -157,7 +181,37 @@ static func build(area_id: String) -> Area:
 	area.bake_navmeshes.call_deferred()
 	return area
 
+## Scatter never lands on anything a player must reach or read.
+static func _keep_clear(def: Dictionary) -> Array:
+	var out: Array = []
+	var radii := {"hearths": 3.5, "spawners": 2.0, "npcs": 2.5, "pickups": 1.8, "gates": 3.5,
+		"frost_veils": 4.5, "plaques": 1.8, "portals": 3.0}
+	for key in radii:
+		for spec in def.get(key, []):
+			var p := _v3(spec.get("at", [0, 0, 0]))
+			out.append(Vector3(p.x, p.z, radii[key]))
+	var st := _v3(def.get("start", {}).get("pos", [0, 0, 0]))
+	out.append(Vector3(st.x, st.z, 3.0))
+	return out
+
+## Sea, river and pool planes on the existing water shader.
+static func _water(area: Area, spec: Dictionary) -> void:
+	var tag: String = spec.get("tag", "base")
+	var mi := MeshInstance3D.new()
+	mi.name = "Water"
+	var pm := PlaneMesh.new()
+	var sz: Array = spec.get("size", [100, 100])
+	pm.size = Vector2(float(sz[0]), float(sz[1]))
+	mi.mesh = pm
+	mi.material_override = MaterialLib.get_mat("M_water", _state_mode(tag))
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.position = _v3(spec.get("at", [0, 0, 0]))
+	area.attach(mi, tag)
+
 static func _extent(def: Dictionary) -> Array:
+	if def.has("nav_bounds"):
+		var nb: Array = def["nav_bounds"]
+		return [Vector3(nb[0], 0, nb[2]), Vector3(nb[3], 0, nb[5])]
 	var mn := Vector3(1e9, 0, 1e9)
 	var mx := Vector3(-1e9, 0, -1e9)
 	for spec in def.get("fills", []):

@@ -75,5 +75,9 @@
   "max_radius": 90.0,
   "band": 4.5,
   "lock_player_time": 3.2
+ },
+ "hazard": {
+  "fall_safe_speed": 13.0,
+  "fall_lethal_speed": 24.0
  }
 }

@@ -44,6 +44,15 @@ const PIECES := {
 	"bow": {"size": [0.08, 0.4, 1.6], "origin": "grip"},
 	"torch": {"size": [0.14, 0.14, 1.0], "origin": "grip-center"},
 	"shield_kite": {"size": [0.5, 0.1, 0.6], "origin": "strap"},
+	"gable_8m": {"size": [4, 8, 3.2], "origin": "bottom-center"},
+	"gable_12m": {"size": [4, 12, 4.4], "origin": "bottom-center"},
+	"gable_end_8m": {"size": [8, 0.4, 3.2], "origin": "bottom-center"},
+	"gable_end_12m": {"size": [12, 0.4, 4.4], "origin": "bottom-center"},
+	"boat": {"size": [1.8, 6.0, 0.9], "origin": "bottom-center"},
+	"drying_rack": {"size": [4.0, 1.2, 2.2], "origin": "bottom-center"},
+	"ladder": {"size": [0.6, 0.2, 4.0], "origin": "bottom-center"},
+	"salt_pan": {"size": [3.0, 2.0, 0.45], "origin": "bottom-center"},
+	"well": {"size": [1.4, 1.4, 1.0], "origin": "bottom-center"},
 	"mannequin_wayfarer": {"skeletal": true},
 	"mannequin_rime": {"skeletal": true},
 	"mannequin_holdfast": {"skeletal": true},
@@ -154,6 +163,27 @@ static func _wall_with_opening(n: Node3D, w: float, h: float, ow: float, oh: flo
 	_box(n, Vector3(side, h, t), Vector3((ow + side) * 0.5, h * 0.5, 0), fam, "jamb_r")
 	_box(n, Vector3(ow, h - oh, t), Vector3(0, oh + (h - oh) * 0.5, 0), fam, "lintel")
 
+## A triangular gable end: base w on the wall top, apex h above, thickness t.
+static func _prism(n: Node3D, w: float, h: float, t: float, fam: String) -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var a := Vector3(-w * 0.5, 0, 0)
+	var b := Vector3(w * 0.5, 0, 0)
+	var c := Vector3(0, h, 0)
+	var f := Vector3(0, 0, t * 0.5)
+	var tris := [[a + f, b + f, c + f], [b - f, a - f, c - f],
+		[a - f, a + f, c + f], [a - f, c + f, c - f], [b + f, b - f, c - f], [b + f, c - f, c + f]]
+	for tri in tris:
+		for v in tri:
+			st.add_vertex(v)
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.name = "gable"
+	var mesh := st.commit()
+	mesh.surface_set_material(0, _ph(fam))
+	mi.mesh = mesh
+	n.add_child(mi)
+
 static func _build_piece(n: Node3D, id: String) -> void:
 	match id:
 		"floor_4x4":
@@ -198,6 +228,47 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(-1.8, 1.8, 0), "M_wood", "post_l")
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(1.8, 1.8, 0), "M_wood", "post_r")
 			_box(n, Vector3(4.2, 0.4, 0.7), Vector3(0, 3.6, 0), "M_wood", "lintel")
+		"gable_8m", "gable_12m":
+			# a turf roof bay, 4 m along local X, spanning local Z, on the wall top
+			var half := 4.3 if id == "gable_8m" else 6.3
+			var rise := 3.2 if id == "gable_8m" else 4.4
+			var slope := sqrt(half * half + rise * rise)
+			var ang := rad_to_deg(atan2(rise, half))
+			for sz in [-1.0, 1.0]:
+				_box(n, Vector3(4.02, 0.42, slope), Vector3(0, rise * 0.5, sz * half * 0.5), "M_turf", "turf", Vector3(sz * ang, 0, 0))
+				_box(n, Vector3(4.02, 0.12, slope), Vector3(0, rise * 0.5 - 0.27, sz * half * 0.5 + sz * 0.08), "M_wood", "boards", Vector3(sz * ang, 0, 0))
+			_box(n, Vector3(4.1, 0.3, 0.4), Vector3(0, rise + 0.05, 0), "M_wood", "ridge", Vector3(0, 0, 0))
+		"gable_end_8m", "gable_end_12m":
+			var gw := 8.0 if id == "gable_end_8m" else 12.0
+			var gh := 3.2 if id == "gable_end_8m" else 4.4
+			_prism(n, gw, gh, 0.38, "M_wood")
+		"boat":
+			_sphere(n, 1.0, Vector3(0, 0.42, 0), "M_wood", "hull", Vector3(0.85, 0.42, 3.0))
+			_box(n, Vector3(0.12, 0.2, 5.6), Vector3(0, 0.05, 0), "M_wood", "keel")
+			for k in 3:
+				_box(n, Vector3(1.4, 0.06, 0.24), Vector3(0, 0.62, -1.2 + k * 1.2), "M_wood", "thwart%d" % k)
+		"drying_rack":
+			for sx in [-1.9, 1.9]:
+				_box(n, Vector3(0.12, 2.3, 0.12), Vector3(sx, 1.0, 0.45), "M_wood", "leg_a", Vector3(-12, 0, 0))
+				_box(n, Vector3(0.12, 2.3, 0.12), Vector3(sx, 1.0, -0.45), "M_wood", "leg_b", Vector3(12, 0, 0))
+			_box(n, Vector3(4.1, 0.1, 0.1), Vector3(0, 2.1, 0), "M_wood", "rail")
+			_box(n, Vector3(4.0, 0.06, 0.06), Vector3(0, 1.45, 0.3), "M_wood", "rail_lo")
+			for k in 7:
+				_box(n, Vector3(0.18, 0.7, 0.05), Vector3(-1.6 + k * 0.53, 1.72, 0.02), "M_drift", "fish%d" % k, Vector3(0, 0, (k % 3 - 1) * 4))
+		"ladder":
+			for sx in [-0.25, 0.25]:
+				_box(n, Vector3(0.08, 4.0, 0.08), Vector3(sx, 2.0, 0), "M_wood", "rail")
+			for k in 10:
+				_box(n, Vector3(0.5, 0.05, 0.06), Vector3(0, 0.3 + k * 0.38, 0), "M_wood", "rung%d" % k)
+		"salt_pan":
+			_box(n, Vector3(3.0, 0.45, 2.0), Vector3(0, 0.225, 0), "M_stone", "rim")
+			_box(n, Vector3(2.6, 0.06, 1.6), Vector3(0, 0.44, 0), "M_bone", "brine")
+		"well":
+			_cyl(n, 0.7, 0.75, 0.9, Vector3(0, 0.45, 0), "M_stone", "ring", Vector3.ZERO, 10)
+			_cyl(n, 0.55, 0.55, 0.05, Vector3(0, 0.8, 0), "M_marsh", "water", Vector3.ZERO, 10)
+			_box(n, Vector3(1.8, 0.1, 0.1), Vector3(0, 1.9, 0), "M_wood", "beam")
+			for sx in [-0.85, 0.85]:
+				_box(n, Vector3(0.1, 1.9, 0.1), Vector3(sx, 0.95, 0), "M_wood", "post")
 		"hearthstone":
 			_cyl(n, 0.62, 0.7, 0.35, Vector3(0, 0.175, 0), "M_stone_trim", "ring")
 			_cyl(n, 0.5, 0.55, 0.2, Vector3(0, 0.45, 0), "M_stone_dark", "bed")
