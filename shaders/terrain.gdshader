@@ -31,6 +31,7 @@ global uniform vec3 rh_wave_color;
 varying vec3 v_wp;
 varying vec3 v_wn;
 varying vec4 v_col;
+varying float v_lip;
 
 float hash13(vec3 p3) {
 	p3 = fract(p3 * 0.1031);
@@ -69,6 +70,7 @@ void vertex() {
 	v_wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	v_wn = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	v_col = COLOR;
+	v_lip = UV.x;
 }
 
 void fragment() {
@@ -88,19 +90,27 @@ void fragment() {
 	// worn path: bare peaty earth with stones
 	vec3 path = path_col * (0.85 + 0.25 * n2) + vec3(0.06) * smoothstep(0.8, 0.95, n3);
 	// rock: banded schist, darker in the folds
-	// schist: tilted bedding, blocky faces, rain streaks down the face
-	float bed = sin(v_wp.y * 1.3 + v_wp.x * 0.35 + n1 * 4.0) * 0.5 + 0.5;
+	// schist in beds: each bed its own tone, beds dip gently along the
+	// coast; rain and seep streak the face downward from every ledge
+	float bed_y = v_wp.y + v_wp.x * 0.03 + (n_macro - 0.5) * 1.6;
+	float bed_i = floor(bed_y / 1.7);
+	float bed_f = fract(bed_y / 1.7);
+	float bed_tone = hash13(vec3(bed_i, 7.0, 3.0));
 	float blocks = vnoise(vec3(v_wp.x * 0.35, v_wp.y * 0.9, v_wp.z * 0.35));
-	float streak = vnoise(vec3(v_wp.x * 1.4, v_wp.y * 0.12, v_wp.z * 1.4));
-	vec3 rock = rock_col * (0.6 + 0.4 * blocks + 0.2 * n2 + 0.1 * bed);
-	rock *= 1.0 - 0.3 * smoothstep(0.55, 0.9, streak);
-	rock = mix(rock, vec3(0.46, 0.46, 0.40), smoothstep(0.8, 0.95, n2 * 0.6 + n_macro * 0.5) * 0.2);
+	float streak = vnoise(vec3(v_wp.x * 1.6, v_wp.y * 0.08, v_wp.z * 1.6));
+	vec3 rock = rock_col * (0.62 + 0.3 * bed_tone + 0.22 * blocks + 0.12 * n2);
+	rock *= mix(vec3(1.0), vec3(1.06, 1.0, 0.92), step(0.6, bed_tone));      // a warmer, iron-stained bed
+	rock *= 1.0 - 0.22 * smoothstep(0.8, 1.0, bed_f) - 0.18 * smoothstep(0.0, 0.08, 0.08 - bed_f);
+	rock *= 1.0 - 0.32 * smoothstep(0.5, 0.92, streak) * (0.6 + 0.4 * n1);
+	rock = mix(rock, vec3(0.46, 0.46, 0.40), smoothstep(0.82, 0.95, n2 * 0.6 + n_macro * 0.5) * 0.2);
 	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * 0.4);
 
 	vec3 col = turf;
 	col = mix(col, shingle, clamp(v_col.r * 1.2 - n3 * 0.15, 0.0, 1.0));
 	col = mix(col, path, clamp(v_col.g * (0.75 + 0.5 * n2), 0.0, 1.0));
 	float rock_w = smoothstep(rock_slope + 0.06, rock_slope - 0.1, n.y + (n1 - 0.5) * 0.12);
+	// grass lips: turf rolls over the cliff top and down the first metre
+	rock_w *= 1.0 - smoothstep(0.25, 0.7, v_lip + (n2 - 0.5) * 0.3);
 	col = mix(col, rock, rock_w);
 	float wet = v_col.b;
 	col *= 1.0 - wet * 0.35;

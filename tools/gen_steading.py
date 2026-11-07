@@ -196,7 +196,7 @@ water = [
 ]
 hazards = [
     {"kind": "drown", "min": [-1200, -40, -1200], "max": [1200, -1.15, 1200]},
-    {"kind": "kill", "min": [-130, -10, -96], "max": [130, T.RAVINE_FLOOR + 4.0, -58]},
+    {"kind": "kill", "min": [-130, -10, -112], "max": [130, T.RAVINE_FLOOR + 4.0, -50]},
     {"kind": "fall", "min": [-84, -2, 28], "max": [64, 26, 92]},          # below the cliffs round the cove
     {"kind": "fall", "min": [18, 0, 6], "max": [32, 26, 50]},             # the gully
 ]
@@ -211,7 +211,7 @@ for p in PROPS:
 clear.append([-30.0, 90.0, 14.0])        # the channel stays clear
 for k in range(15):                       # and so does the gully
     z = T.GULLY_Z0 + k * 3.0
-    clear.append([r2(T.GULLY_X + 0.8 * math.sin(z * 0.12)), r2(z), 3.2])
+    clear.append([r2(T.gully_x(z)), r2(z), 3.2])
 scatter = {
     "seed": 90210,
     "clear": clear,
@@ -229,6 +229,14 @@ scatter = {
         {"kind": "standing_stone", "count": 22, "region": [-96, -172, 100, -94], "slope": [0.85, 1.0], "scale": [0.9, 1.6]},
         {"kind": "rock", "count": 140, "region": [-96, -172, 100, -90], "slope": [0.8, 1.0], "scale": [0.4, 1.2]},
         {"kind": "hummock", "count": 220, "region": [-96, -172, 100, -90], "slope": [0.85, 1.0], "scale": [0.6, 1.4]},
+        # boulders sat back from the cliff tops, breaking the skyline
+        {"kind": "boulder", "count": 45, "region": [-100, -70, 64, 46], "slope": [0.8, 1.0], "h": [17, 30], "scale": [0.8, 1.6], "drop_min": 6.0, "drop_r": 4.5, "path_max": 0.15},
+        {"kind": "rock", "count": 60, "region": [-100, -70, 64, 46], "slope": [0.75, 1.0], "h": [17, 30], "scale": [0.4, 1.0], "drop_min": 4.0, "drop_r": 3.5, "path_max": 0.15},
+        # the gully grows over: tussocks and stones on its ledges and lips
+        {"kind": "hummock", "count": 70, "region": [15, 6, 35, 46], "slope": [0.6, 1.0], "scale": [0.4, 1.0], "path_max": 0.5, "flat": 0.6},
+        {"kind": "rock", "count": 25, "region": [15, 6, 35, 46], "slope": [0.5, 1.0], "scale": [0.3, 0.8], "path_max": 0.5, "flat": 0.6},
+        # talus at the foot of the ravine walls
+        {"kind": "boulder", "count": 50, "region": [-100, -100, 110, -55], "slope": [0.5, 0.95], "h": [2.5, 8], "scale": [0.8, 1.8]},
         {"kind": "rock", "count": 18, "region": [-44, 100, -16, 126], "slope": [0.7, 1.0], "h": [0.1, 2.0], "scale": [0.4, 1.0]},
     ],
     "place": [

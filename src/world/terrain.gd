@@ -47,6 +47,27 @@ static func _read_floats(path: String) -> PackedFloat32Array:
 	var b := FileAccess.get_file_as_bytes(path)
 	return b.to_float32_array()
 
+## 1 where turf rolls over a cliff top: the ground here is near the local
+## high point and falls away more than 3 m within three metres. The shader
+## drapes turf over the first steep metre instead of bare rock.
+func lip_at(i: int, j: int) -> float:
+	var h := h_at(i, j)
+	var lo := h
+	var hi := h
+	for o in [Vector2i(3, 0), Vector2i(-3, 0), Vector2i(0, 3), Vector2i(0, -3)]:
+		lo = minf(lo, h_at(i + o.x, j + o.y))
+	for o in [Vector2i(2, 0), Vector2i(-2, 0), Vector2i(0, 2), Vector2i(0, -2)]:
+		hi = maxf(hi, h_at(i + o.x, j + o.y))
+	return smoothstep(3.0, 5.0, h - lo) * (1.0 - smoothstep(0.6, 1.6, hi - h))
+
+## How far the ground falls within r metres of (x, z): cliff tops have it.
+func drop_at(x: float, z: float, r := 3.0) -> float:
+	var h := height_at(x, z)
+	var lo := h
+	for o in [Vector2(r, 0), Vector2(-r, 0), Vector2(0, r), Vector2(0, -r)]:
+		lo = minf(lo, height_at(x + o.x, z + o.y))
+	return h - lo
+
 func h_at(i: int, j: int) -> float:
 	return heights[clampi(j, 0, nz - 1) * nx + clampi(i, 0, nx - 1)]
 
@@ -125,6 +146,7 @@ func _vertex(i: int, j: int, center: Vector3, st: SurfaceTool) -> void:
 		st.set_color(Color(splat[k] / 255.0, splat[k + 1] / 255.0, splat[k + 2] / 255.0, splat[k + 3] / 255.0))
 	else:
 		st.set_color(Color(0, 0, 0, 0.5))
+	st.set_uv(Vector2(lip_at(i, j), 0.0))
 	st.add_vertex(Vector3(x, h_at(i, j), z) - center)
 
 func _chunk_mesh(ci: int, cj: int, w: int, d: int, stride: int) -> ArrayMesh:
