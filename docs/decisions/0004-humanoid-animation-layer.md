@@ -69,6 +69,7 @@ The game needs, per character: a locomotion blend by ground speed, one-shot acti
   - A weapon kit with a Tripo GLB (`weapons` map) loads that GLB; others fall back to the KitLib greybox.
   - Mannequin bone names (`hand_r`, `farm_l`, …) are aliased, so player code that mounts by name keeps working.
 - **Blade hitbox:** `Enemy._build_blade_hitbox` still merges the mounted weapon's mesh extents. It now takes its scale from the mount's real global scale rather than the `vis_scale` key, so it is right for both paths.
+- **Unarmed humanoids:** weapons are optional per model. A model's `unarmed` block in `clip_meta.json` gives each hand a sphere hit volume: bone, radius, and a bone-local offset. One `Hitbox` carries both spheres, so a two-handed blow still lands once. The volumes are re-placed from the skeleton's current pose every tick, carry no mesh, and are armed only during a swing. An attack's `"hands"` list in `enemies.json` chooses which hands strike; the default is `["right"]`. The rimewalker's grown ice-club hands use this (SLICE.md: it carries no weapon), and its two-handed `flail` (the double fall) strikes with both. Armed humanoids keep the blade path, ready for the Bearer.
 
 ### Which clips are real and which are procedural
 
@@ -89,7 +90,7 @@ This is the state on 2026-11-07. `tools/test/anim_test.gd` prints the derived sp
 
 ### Integration
 
-- **Enemies:** `"model"` in `enemies.json`. The rimewalker uses `rimewalker` and now carries the `hewing_blade`. `holdfast_of_saltfell` (the Netmender in SLICE.md) uses `netmender`. Her hands are bare needles, so the model's `bare_hands` flag skips the data weapon.
+- **Enemies:** `"model"` in `enemies.json`. The rimewalker uses `rimewalker` and is unarmed (ice-club fist volumes). `holdfast_of_saltfell` (the Netmender in SLICE.md) uses `netmender`. Her hands are bare needles, so the model's `bare_hands` flag skips the data maul, and she strikes with the body hitbox.
 - **Player:** `game.json` → `player.model` is read but left unset. The Bearer stays a mannequin until that model exists.
 - **Orientation:** Tripo meshes face +Z after the manifest's -90° yaw. Godot characters face -Z, so each model's `yaw_deg: 180` is applied on a child of the flinch node.
 

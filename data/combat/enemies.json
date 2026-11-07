@@ -13,7 +13,6 @@
   "leash": 26.0,
   "body": "mannequin_rime",
   "model": "rimewalker",
-  "weapon": "hewing_blade",
   "arm_h": 1.16,
   "arm_dx": 0.27,
   "hurt_r": 0.45,
@@ -52,6 +51,10 @@
     "height": 1.4,
     "cooldown": 4.2,
     "anim": "atk_double",
+    "hands": [
+     "right",
+     "left"
+    ],
     "lunge": 1.0
    }
   ],

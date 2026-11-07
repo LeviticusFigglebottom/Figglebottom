@@ -1,7 +1,8 @@
 extends TestBase
 ## Humanoid animation layer (ADR 0004): Tripo models load retargeted, keep
 ## their Mixamo bones, share one library, land attack contact on the data
-## windup, carry the blade in the right hand, and fall on death. Runs in the
+## windup, strike with ice-club hands (or a blade in the right hand when
+## armed), and fall on death. Runs in the
 ## arena sandbox with real Enemy and Player nodes.
 
 const MIXAMO := ["Hips", "Spine", "Spine1", "Spine2", "Neck", "Head",
@@ -100,15 +101,13 @@ func _run() -> void:
 			unresolved.append(s)
 	check(unresolved.is_empty(), "rimewalker: all states have clips (missing %s)" % [unresolved])
 
-	print("== weapon in the right hand")
-	var att := rw.vis.weapon_mount.get_parent() as BoneAttachment3D if rw.vis.weapon_mount != null else null
-	check(att != null and att.bone_name == "mixamorig_RightHand", "weapon rides a BoneAttachment3D on mixamorig_RightHand")
-	var grip := rw.vis.weapon_mount.global_position
-	var hand := _bone_pos(rw.vis, "mixamorig_RightHand")
-	check(grip.distance_to(hand) < 0.15, "grip sits in the fist (%.3f m from the hand bone)" % grip.distance_to(hand))
-	var wmesh := rw.vis.weapon_mount.find_children("*", "MeshInstance3D", true, false)
-	check(not wmesh.is_empty(), "the hewing blade glb is mounted")
-	_report_blade(rw, "idle")
+	print("== unarmed: the ice-club hands are the weapon")
+	check(rw.vis.weapon_mount == null and rw.blade_hitbox == null, "no weapon mesh or blade box on the rimewalker")
+	check(rw.fist_hitbox != null and rw._fists.has("right") and rw._fists.has("left"), "a fist volume on each hand")
+	var fr: Dictionary = rw._fists["right"]
+	var want_r: Vector3 = rw.vis.bone_xform("mixamorig_RightHand") * (fr["offset"] as Vector3)
+	check(fr["bone"] == "mixamorig_RightHand" and rw.fist_position("right").distance_to(want_r) < 0.06,
+		"right fist rides mixamorig_RightHand at its data offset (%.3f m off)" % rw.fist_position("right").distance_to(want_r))
 
 	print("== attack contact lands on the data windup")
 	rw.target = player
@@ -126,18 +125,16 @@ func _run() -> void:
 	check(err <= frame + 1e-4, "contact frame at windup: clip %.3f vs contact %.3f (%.4f s off, 1 frame = %.4f)"
 		% [anim_t, float(sec["contact"]), err, frame])
 	check(rw.vis.current_clip() == "atk_r", "the attack clip owns the rig")
-	_report_blade(rw, "contact")
-	var g0 := rw.vis.weapon_xform().origin
+	var f0 := rw.fist_position("right")
 	await ticks(2)
-	var g1 := rw.vis.weapon_xform().origin
+	var f1 := rw.fist_position("right")
+	var want := rw.vis.bone_xform("mixamorig_RightHand") * (fr["offset"] as Vector3)
 	# synced before move_and_slide: the lunge (1.5 m/s) may add one tick of drift
-	check(rw.blade_hitbox != null and rw.state == Enemy.ES.ATTACK
-		and rw.blade_hitbox.global_position.distance_to(g1) < 0.06 and g0.distance_to(g1) > 0.01,
-		"blade hitbox rides the weapon mesh through the swing (moved %.2f m, off %.3f m)"
-		% [g0.distance_to(g1), rw.blade_hitbox.global_position.distance_to(g1) if rw.blade_hitbox else -1.0])
-	await ticks(3)
-	var bone_att := rw.vis.weapon_mount.global_position
-	check(bone_att.distance_to(rw.vis.weapon_xform().origin) < 0.05, "the BoneAttachment3D agrees with the pose read")
+	check(rw.fist_hitbox.monitoring and not (fr["shape"] as CollisionShape3D).disabled
+		and (rw._fists["left"]["shape"] as CollisionShape3D).disabled,
+		"a one-handed swing opens the right fist only")
+	check(f1.distance_to(want) < 0.06 and f0.distance_to(f1) > 0.01,
+		"the fist volume follows the hand through the swing (moved %.2f m, off %.3f m)" % [f0.distance_to(f1), f1.distance_to(want)])
 
 	print("== death plays the death clip")
 	var hips0 := _bone_pos(rw.vis, "mixamorig_Hips").y - rw.global_position.y
@@ -149,6 +146,51 @@ func _run() -> void:
 	await ticks(110)
 	var hips1 := _bone_pos(rw.vis, "mixamorig_Hips").y - rw.global_position.y
 	check(hips1 < hips0 * 0.35, "the body falls (hips %.2f -> %.2f m)" % [hips0, hips1])
+
+	print("== the double fall strikes with both hands")
+	var rw2 := _spawn("rimewalker", player.global_position + Vector3(-2.5, 0.1, -2.2))
+	await ticks(6)
+	rw2.target = player
+	var flail: Dictionary = (rw2.cfg["attacks"] as Array)[1]
+	rw2._begin_attack(flail)
+	while rw2.state == Enemy.ES.ATTACK and rw2.state_t < float(flail["windup"]) + 0.02:
+		await ticks(1)
+	check(rw2.fist_hitbox.monitoring and not (rw2._fists["right"]["shape"] as CollisionShape3D).disabled
+		and not (rw2._fists["left"]["shape"] as CollisionShape3D).disabled, "both fists open for the double fall")
+	rw2.queue_free()
+
+	print("== an armed humanoid keeps the blade path")
+	var rwcfg: Dictionary = HumanoidLib.model_cfg("rimewalker")
+	rwcfg["bare_hands"] = false   # stand-in for an armed model (the Bearer, later)
+	var armed := Enemy.new()
+	armed.setup("rimewalker")
+	armed.cfg = armed.cfg.duplicate()
+	armed.cfg["weapon"] = "hewing_blade"
+	arena.add_child(armed)
+	armed.global_position = player.global_position + Vector3(2.5, 0.1, -2.2)
+	rwcfg["bare_hands"] = true
+	await ticks(6)
+	var att := armed.vis.weapon_mount.get_parent() as BoneAttachment3D if armed.vis.weapon_mount != null else null
+	check(att != null and att.bone_name == "mixamorig_RightHand", "weapon rides a BoneAttachment3D on mixamorig_RightHand")
+	var grip := armed.vis.weapon_mount.global_position
+	var hand := _bone_pos(armed.vis, "mixamorig_RightHand")
+	check(grip.distance_to(hand) < 0.15, "grip sits in the fist (%.3f m from the hand bone)" % grip.distance_to(hand))
+	check(not armed.vis.weapon_mount.find_children("*", "MeshInstance3D", true, false).is_empty(), "the hewing blade glb is mounted")
+	check(armed.blade_hitbox != null and armed.fist_hitbox == null, "armed: the blade box, not fists")
+	armed.target = player
+	armed._begin_attack((armed.cfg["attacks"] as Array)[0])
+	while armed.state == Enemy.ES.ATTACK and armed.state_t < float((armed.cfg["attacks"] as Array)[0]["windup"]):
+		await ticks(1)
+	var g0 := armed.vis.weapon_xform().origin
+	await ticks(2)
+	var g1 := armed.vis.weapon_xform().origin
+	check(armed.blade_hitbox.monitoring and armed.blade_hitbox.global_position.distance_to(g1) < 0.06 and g0.distance_to(g1) > 0.01,
+		"blade hitbox rides the weapon mesh through the swing (moved %.2f m, off %.3f m)"
+		% [g0.distance_to(g1), armed.blade_hitbox.global_position.distance_to(g1)])
+	await ticks(3)
+	check(armed.vis.weapon_mount.global_position.distance_to(armed.vis.weapon_xform().origin) < 0.05,
+		"the BoneAttachment3D agrees with the pose read")
+	armed.queue_free()
 
 	print("== the netmender: own clips, borrowed run")
 	var nm := _spawn("holdfast_of_saltfell", player.global_position + Vector3(4, 0.1, -4))
@@ -197,16 +239,3 @@ func _run() -> void:
 	check(pv.current_clip() == "attack_l1", "player attacks play on the humanoid")
 	pv.queue_free()
 	finish()
-
-func _report_blade(e: Enemy, tag: String) -> void:
-	var m := e.vis.weapon_mount.global_transform
-	var dir := (m.basis.y).normalized()
-	var b := e.vis.global_transform.basis
-	print("    blade %s: fwd %.2f up %.2f right %.2f | edge fwd %.2f up %.2f right %.2f" % [tag,
-		dir.dot(-b.z), dir.dot(b.y), dir.dot(b.x),
-		m.basis.z.normalized().dot(-b.z), m.basis.z.normalized().dot(b.y), m.basis.z.normalized().dot(b.x)])
-	var sk := e.vis.skel
-	var hb := (sk.global_transform.basis * sk.get_bone_global_pose(sk.find_bone("mixamorig_RightHand")).basis).orthonormalized()
-	for ax in [["x", hb.x], ["y", hb.y], ["z", hb.z]]:
-		var v: Vector3 = ax[1]
-		print("      hand %s: fwd %.2f up %.2f right %.2f" % [ax[0], v.dot(-b.z), v.dot(b.y), v.dot(b.x)])

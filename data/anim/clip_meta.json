@@ -12,7 +12,29 @@
    "scene": "res://assets/models/enemies/rimewalker.glb",
    "yaw_deg": 180.0,
    "own_clips": false,
-   "_note": "the donor: its clips ARE the shared library"
+   "_note": "the donor: its clips ARE the shared library",
+   "bare_hands": true,
+   "unarmed": {
+    "_note": "grown ice clubs (SLICE.md): no weapon mesh; a sphere hit volume rides each hand bone. offset is bone-local (Y runs toward the fingers). An attack's \"hands\" (enemies.json) picks which strike; default right.",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    }
+   }
   },
   "netmender": {
    "scene": "res://assets/models/bosses/netmender.glb",

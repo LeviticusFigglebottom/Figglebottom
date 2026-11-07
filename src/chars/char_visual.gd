@@ -204,6 +204,13 @@ func weapon_xform() -> Transform3D:
 		return weapon_mount.global_transform
 	return skel.global_transform * skel.get_bone_global_pose(bi) * weapon_mount.transform
 
+## A bone's world transform from the skeleton's current pose (see weapon_xform).
+func bone_xform(bone: String) -> Transform3D:
+	var bi := skel.find_bone(bone) if skel != null else -1
+	if bi < 0:
+		return global_transform
+	return skel.global_transform * skel.get_bone_global_pose(bi)
+
 func _trail_extents() -> Vector2:
 	if rig != null:
 		var t: Array = HumanoidLib.weapon_cfg(weapon_kit).get("trail", [])

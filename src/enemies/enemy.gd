@@ -47,6 +47,12 @@ var hitbox_shape: CollisionShape3D
 ## chest-projected `hitbox` remains for the unarmed and for attacks flagged
 ## "body_hitbox" (charges, horn butts).
 var blade_hitbox: Hitbox
+## Unarmed humanoids (the rimewalker's grown ice clubs) strike with their
+## hands: one hit volume whose sphere shapes ride the hand bones each tick
+## (clip_meta.json models.<id>.unarmed). One Area per swing, so a two-handed
+## blow still lands once.
+var fist_hitbox: Hitbox
+var _fists: Dictionary = {}   # "right"/"left" -> {shape, bone, offset}
 var hurtbox: Hurtbox
 var hpbar: EnemyHealthBar
 ## How far the last _stagger() stretched the punishable state (a parry buys
@@ -110,6 +116,7 @@ func _ready() -> void:
 	vis.add_child(hitbox)
 	hitbox.on_contact = _on_hit_contact
 	_build_blade_hitbox()
+	_build_fist_hitbox()
 
 	# floating health bar for regular foes; bosses ride the big HUD bar instead
 	if not cfg.get("is_boss", false):
@@ -125,6 +132,7 @@ func _physics_process(dt: float) -> void:
 	if dead:
 		return
 	state_t += dt
+	_sync_fists()   # the hands ride along every tick; only a swing arms them
 	if hpbar != null:
 		hpbar.set_forced(_is_locked_target())
 	if not is_on_floor():
@@ -414,7 +422,8 @@ func _st_attack(dt: float) -> void:
 	if vis.trail != null and _atk_done and t >= w + act:
 		vis.trail.visible = false
 	if _atk_done and t >= w + act and (hitbox.monitoring
-			or (blade_hitbox != null and blade_hitbox.monitoring)):
+			or (blade_hitbox != null and blade_hitbox.monitoring)
+			or (fist_hitbox != null and fist_hitbox.monitoring)):
 		_end_all_swings()
 	if t >= w + act + rec:
 		_set_state(ES.COMBAT)
@@ -467,7 +476,51 @@ func _sync_blade() -> void:
 	var m := vis.weapon_xform()
 	blade_hitbox.global_transform = Transform3D(m.basis.orthonormalized(), m.origin)
 
+func _build_fist_hitbox() -> void:
+	if vis == null or not vis.is_humanoid() or blade_hitbox != null:
+		return
+	var un: Dictionary = HumanoidLib.model_cfg(vis.model_id).get("unarmed", {})
+	for side in ["right", "left"]:
+		if not un.has(side):
+			continue
+		if fist_hitbox == null:
+			fist_hitbox = Hitbox.new()
+			fist_hitbox.name = "FistHitbox"
+			fist_hitbox.exclude = self
+			fist_hitbox.friendly_team = hitbox.friendly_team
+			fist_hitbox.on_contact = _on_hit_contact
+			fist_hitbox.top_level = true
+			add_child(fist_hitbox)
+		var c: Dictionary = un[side]
+		var cs := CollisionShape3D.new()
+		var sph := SphereShape3D.new()
+		sph.radius = float(c.get("radius", 0.2))
+		cs.shape = sph
+		cs.disabled = true
+		fist_hitbox.add_child(cs)
+		var o: Array = c.get("offset", [0, 0, 0])
+		_fists[side] = {"shape": cs, "bone": String(c["bone"]), "offset": Vector3(o[0], o[1], o[2])}
+	_sync_fists()
+
+## Shapes follow this tick's hand poses (the rig poses before we tick).
+func _sync_fists() -> void:
+	if fist_hitbox == null:
+		return
+	fist_hitbox.global_transform = Transform3D(Basis.IDENTITY, global_position)
+	for side in _fists:
+		var f: Dictionary = _fists[side]
+		var p: Vector3 = vis.bone_xform(f["bone"]) * (f["offset"] as Vector3)
+		(f["shape"] as CollisionShape3D).position = p - global_position
+
+## The fist volume at `side` in world space (for tests and debug).
+func fist_position(side: String) -> Vector3:
+	return fist_hitbox.global_position + (_fists[side]["shape"] as CollisionShape3D).position
+
 func _end_all_swings() -> void:
+	if fist_hitbox != null:
+		fist_hitbox.end_swing()
+		for side in _fists:
+			(_fists[side]["shape"] as CollisionShape3D).set_deferred("disabled", true)
 	if hitbox != null:
 		hitbox.end_swing()
 	if blade_hitbox != null:
@@ -484,6 +537,17 @@ func _open_hitbox() -> void:
 		blade_hitbox.occlude = true
 		_sync_blade()
 		blade_hitbox.begin_swing(pk)
+		return
+	# bare hands: the struck hand(s) are the attack, as the blade is above
+	if fist_hitbox != null and not _atk.get("body_hitbox", false):
+		var hands: Array = _atk.get("hands", ["right"])
+		for side in _fists:
+			(_fists[side]["shape"] as CollisionShape3D).disabled = not (side in hands)
+		fist_hitbox.arc_node = vis
+		fist_hitbox.arc_deg = 360.0
+		fist_hitbox.occlude = true
+		_sync_fists()
+		fist_hitbox.begin_swing(pk)
 		return
 	var reach := float(_atk.get("reach", 1.8))
 	(hitbox_shape.shape as BoxShape3D).size = Vector3(float(_atk.get("width", 1.8)),
