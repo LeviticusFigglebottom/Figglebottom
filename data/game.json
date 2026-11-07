@@ -65,7 +65,22 @@
   "height": 1.7,
   "fov": 62,
   "sensitivity": 0.0035,
-  "lock_distance_bias": 1.15
+  "lock_distance_bias": 1.15,
+  "lock": {
+   "_doc": "Lock-on. Acquire within range/cone with line of sight; a horizontal flick (mouse px accumulated inside flick_window s) or the right stick past stick_threshold switches to the nearest target on that side, scored on screen by angle_weight*|angle from the horizontal| + distance_weight*(screen distance / viewport width). Breaks on the lock button, beyond break_range, or after los_grace s without line of sight.",
+   "range": 16.0,
+   "cone": 1.1,
+   "break_range": 20.0,
+   "los_grace": 1.2,
+   "flick_px": 60.0,
+   "flick_window": 0.18,
+   "stick_threshold": 0.7,
+   "stick_rearm": 0.3,
+   "switch_cooldown": 0.25,
+   "max_angle": 1.2,
+   "angle_weight": 1.0,
+   "distance_weight": 1.0
+  }
  },
  "death": {
   "respawn_delay": 2.8

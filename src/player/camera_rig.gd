@@ -108,18 +108,52 @@ func mouse_look(rel: Vector2) -> void:
 	if locked_target != null and (not is_instance_valid(locked_target) or locked_target.get("dead") == true):
 		locked_target = null
 	if locked_target != null:
-		# a hard flick breaks the lock so the camera can never feel "stuck"
-		if absf(rel.x) > 60.0:
-			locked_target = null
+		# a hard horizontal flick SWITCHES target; it never breaks the lock
+		# (breaking is the lock button, or losing range / sight)
+		_flick_x += rel.x
+		_flick_t = float(_L("flick_window", 0.18))
+		if absf(_flick_x) > float(_L("flick_px", 60.0)):
+			var side := 1 if _flick_x > 0.0 else -1
+			_flick_x = 0.0
+			switch_target(side)
 		return
 	yaw -= rel.x * sensitivity
 	pitch = clampf(pitch - rel.y * sensitivity, -1.15, 0.55)
 
 func stick_look(v: Vector2, dt: float) -> void:
-	if locked_target != null or v.length_squared() < 0.02:
+	if locked_target != null:
+		# the right stick switches like the mouse flick: past the threshold
+		# once, then it must come back toward centre before it fires again
+		var ax := absf(v.x)
+		if _stick_armed and ax > float(_L("stick_threshold", 0.7)):
+			_stick_armed = false
+			switch_target(1 if v.x > 0.0 else -1)
+		elif ax < float(_L("stick_rearm", 0.3)):
+			_stick_armed = true
+		return
+	if v.length_squared() < 0.02:
 		return
 	yaw -= v.x * 2.6 * dt
 	pitch = clampf(pitch - v.y * 1.8 * dt, -1.15, 0.55)
+
+## Lock tuning, game.json camera/lock.
+func _L(key: String, def):
+	return DB.tuning("camera/lock/" + key, def)
+
+var _flick_x := 0.0      # horizontal mouse px gathered inside the flick window
+var _flick_t := 0.0
+var _stick_armed := true
+var _switch_cd := 0.0
+var _los_lost_t := 0.0
+
+func _lockable(c, max_range: float) -> bool:
+	if c == null or not is_instance_valid(c) or not (c is Node3D) or not c.is_inside_tree():
+		return false
+	if c.get("dead") == true:
+		return false
+	if (c as Node3D).global_position.distance_to(global_position) > max_range:
+		return false
+	return _has_los(c)
 
 func try_lock(candidates: Array) -> void:
 	if locked_target != null:
@@ -128,15 +162,17 @@ func try_lock(candidates: Array) -> void:
 	var best: Node3D = null
 	var best_score := INF
 	var fwd := -global_transform.basis.z
+	var rng := float(_L("range", 16.0))
+	var cone := float(_L("cone", 1.1))
 	for c in candidates:
 		if not is_instance_valid(c):
 			continue
 		var to: Vector3 = c.global_position - global_position
 		var d := to.length()
-		if d > 16.0:
+		if d > rng:
 			continue
 		var ang := fwd.angle_to(to.normalized())
-		if ang > 1.1:
+		if ang > cone:
 			continue
 		if not _has_los(c):
 			continue                      # never lock through a wall
@@ -145,6 +181,59 @@ func try_lock(candidates: Array) -> void:
 			best_score = score
 			best = c
 	locked_target = best
+	_los_lost_t = 0.0
+	_flick_x = 0.0
+
+## Move the lock to the nearest valid target on `side` (+1 right, -1 left)
+## of the current one, judged on screen: what the player sees as "the next
+## one over" is what they meant. Returns true when the lock moved.
+func switch_target(side: int, candidates: Array = []) -> bool:
+	if locked_target == null or not is_instance_valid(locked_target) or cam == null:
+		return false
+	if _switch_cd > 0.0:
+		return false
+	if candidates.is_empty():
+		candidates = get_tree().get_nodes_in_group("targetable")
+	var best := pick_switch_target(side, candidates)
+	if best == null:
+		return false
+	locked_target = best
+	_los_lost_t = 0.0
+	_switch_cd = float(_L("switch_cooldown", 0.25))
+	return true
+
+## Scoring only (no state change), so tests can probe it directly.
+func pick_switch_target(side: int, candidates: Array) -> Node3D:
+	var aim_h := Vector3.UP * 1.1
+	var cur_w: Vector3 = locked_target.global_position + aim_h
+	if cam.is_position_behind(cur_w):
+		return null
+	var cur_s := cam.unproject_position(cur_w)
+	var vw := maxf(float(get_viewport().get_visible_rect().size.x), 1.0)
+	var max_ang := float(_L("max_angle", 1.2))
+	var wa := float(_L("angle_weight", 1.0))
+	var wd := float(_L("distance_weight", 1.0))
+	var rng := float(_L("range", 16.0))
+	var best: Node3D = null
+	var best_score := INF
+	for c in candidates:
+		if c == locked_target or not _lockable(c, rng):
+			continue
+		var w: Vector3 = (c as Node3D).global_position + aim_h
+		if cam.is_position_behind(w):
+			continue
+		var dv := cam.unproject_position(w) - cur_s
+		if dv.x * float(side) <= 0.5:
+			continue                       # not on the side the flick asked for
+		# angle off the horizontal toward that side: 0 = dead level beside it
+		var ang := absf(atan2(dv.y, absf(dv.x)))
+		if ang > max_ang:
+			continue
+		var score := wa * ang + wd * dv.length() / vw
+		if score < best_score:
+			best_score = score
+			best = c
+	return best
 
 ## True when nothing world-solid stands between the camera and the target's
 ## chest. Ray runs from the CAMERA (not the player) so a foe peeking past a
@@ -160,6 +249,20 @@ func _has_los(c: Node3D) -> bool:
 func _physics_process(dt: float) -> void:
 	if locked_target != null and (not is_instance_valid(locked_target) or locked_target.get("dead") == true):
 		locked_target = null
+	_switch_cd = maxf(_switch_cd - dt, 0.0)
+	_flick_t -= dt
+	if _flick_t <= 0.0:
+		_flick_x = 0.0       # a slow drift is not a flick
+	if locked_target != null:
+		# lock breaks on range, or on sight lost for longer than a blink
+		if locked_target.global_position.distance_to(global_position) > float(_L("break_range", 20.0)):
+			locked_target = null
+		elif not _has_los(locked_target):
+			_los_lost_t += dt
+			if _los_lost_t > float(_L("los_grace", 1.2)):
+				locked_target = null
+		else:
+			_los_lost_t = 0.0
 	if locked_target != null:
 		var to: Vector3 = locked_target.global_position - global_position
 		var flat := Vector2(to.x, to.z)
