@@ -22,7 +22,7 @@ enum S { MOVE, ROLL, BACKSTEP, ATTACK, BLOCK, PARRY, RIPOSTE, GOURD, STAGGER, RE
 ## Every point does something: heart holds life, wind the breath
 ## (cap AND recovery), might the sword and greatsword, craft the bow
 ## and spear, lungs the breath (cap AND warming), kinship the songs.
-var attributes := {"heart": 8, "wind": 8, "might": 8, "craft": 8, "lungs": 8, "kinship": 8}
+var attributes := {}   # filled at base_stat in _init
 var breath := 0.0
 var max_breath := 0.0               # stays 0 until the first song is learned
 var _cast_cd := 0.0
@@ -117,6 +117,10 @@ var sim_sprint := false
 
 @onready var T: Dictionary = DB.table("game")["player"]
 
+func _init() -> void:
+	for st in DB.tuning("levels/stats", ["heart", "wind", "might", "craft", "lungs", "kinship"]):
+		attributes[String(st)] = base_stat()
+
 func _ready() -> void:
 	add_to_group("player")
 	collision_layer = 1 << (RH.L_PLAYER - 1)
@@ -195,10 +199,10 @@ func _ready() -> void:
 func recompute_derived() -> void:
 	var base: Dictionary = T["base"]
 	var per: Dictionary = T["per_level"]
-	max_breath = (70.0 + (attributes["lungs"] - 8) * 7.0) if knows_any_song() else 0.0
+	max_breath = (70.0 + _over_base("lungs") * 7.0) if knows_any_song() else 0.0
 	breath = minf(breath, max_breath)
-	max_hp = float(base["hp"]) + (attributes["heart"] - 8) * float(per["heart_hp"])
-	max_stamina = float(base["stamina"]) + (attributes["wind"] - 8) * float(per["wind_stamina"])
+	max_hp = float(base["hp"]) + _over_base("heart") * float(per["heart_hp"])
+	max_stamina = float(base["stamina"]) + _over_base("wind") * float(per["wind_stamina"])
 	max_poise = float(base["poise"])
 
 func _emit_all() -> void:
@@ -474,11 +478,11 @@ func _regen(dt: float) -> void:
 		_stam_delay -= dt
 	elif stamina < max_stamina and state != S.ROLL and state != S.ATTACK and state != S.RIPOSTE:
 		var mult: float = float(T["stamina"]["regen_block_mult"]) if _blocking else 1.0
-		mult *= 1.0 + (attributes["wind"] - 8) * 0.02   # wind quickens the breath
+		mult *= 1.0 + _over_base("wind") * 0.02   # wind quickens the breath
 		stamina = minf(stamina + float(T["stamina"]["regen"]) * mult * dt, max_stamina)
 		stamina_changed.emit(stamina, max_stamina)
 	if max_breath > 0.0 and breath < max_breath:
-		breath = minf(breath + (3.5 + (attributes["lungs"] - 8) * 0.45) * dt, max_breath)
+		breath = minf(breath + (3.5 + _over_base("lungs") * 0.45) * dt, max_breath)
 		breath_changed.emit(breath, max_breath)
 	if _cast_cd > 0.0:
 		_cast_cd -= dt
@@ -801,14 +805,30 @@ func _bow_release() -> void:
 func weapon_data() -> Dictionary:
 	return DB.weapon(weapon_id)
 
+## The stat every attribute starts at (game.json levels/base_stat). Scaling
+## counts only points ABOVE it, so a fresh Bearer is not secretly +10%.
+func base_stat() -> int:
+	return int(DB.tuning("levels/base_stat", 8))
+
+func _over_base(stat: String) -> float:
+	return float(int(attributes.get(stat, base_stat())) - base_stat())
+
+## Flat damage the smith's bog-iron adds per level (weapons.json
+## upgrade.per_level). A weapon without one falls back to 14% of its base.
+func upgrade_bonus(w: Dictionary, lvl: int) -> float:
+	var upg: Dictionary = w.get("upgrade", {})
+	var per := float(upg.get("per_level", float(w.get("damage", 10)) * 0.14))
+	return per * float(lvl)
+
 func _attack_damage(mult: float) -> float:
 	var w := weapon_data()
 	var scal: Dictionary = w.get("scaling", {})
-	var s: float = 1.0 + attributes["might"] * float(scal.get("might", 0.0)) * 0.02 \
-			+ attributes["craft"] * float(scal.get("craft", 0.0)) * 0.02 \
-			+ float(attributes.get("kinship", 0)) * float(scal.get("kinship", 0.0)) * 0.02
-	var up := 1.0 + 0.14 * weapon_level
-	return float(w.get("damage", 10)) * s * up * mult * Game.dmg_out_mult()
+	var k := float(DB.tuning("levels/scaling_per_point", 0.02))
+	var s: float = 1.0
+	for stat in ["might", "craft", "kinship"]:
+		s += _over_base(stat) * float(scal.get(stat, 0.0)) * k
+	var base := float(w.get("damage", 10)) + upgrade_bonus(w, weapon_level)
+	return base * s * mult * Game.dmg_out_mult()
 
 var _no_atk_toast := 0.0
 
@@ -1139,7 +1159,7 @@ func cast_song(id: String) -> void:
 		stw.tween_callback(func():
 			if vis != null and is_instance_valid(vis) and vis.shield_mount != null and state != S.GOURD:
 				vis.shield_mount.visible = not bool(weapon_data().get("two_handed", false)))
-	var dev: float = 1.0 + float(attributes["kinship"]) * 0.025
+	var dev: float = 1.0 + _over_base("kinship") * 0.025   # songs.json is rebalanced for (stat - base)
 	match String(sp.get("type", "")):
 		"heal":
 			vis.play("cast_self", 0.1)

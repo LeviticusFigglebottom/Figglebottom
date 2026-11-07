@@ -58,7 +58,9 @@
    "craft",
    "lungs",
    "kinship"
-  ]
+  ],
+  "base_stat": 8,
+  "scaling_per_point": 0.02
  },
  "camera": {
   "distance": 3.6,

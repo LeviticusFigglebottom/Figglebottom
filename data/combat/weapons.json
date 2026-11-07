@@ -4,7 +4,7 @@
   "desc": "A plain long blade of bog-iron, ground for clearing brush and worse. Balanced for one hand, a shield on the other.",
   "class": "longsword",
   "kit": "hewing_blade",
-  "damage": 42,
+  "damage": 47.376,
   "poise_damage": 22,
   "scaling": {
    "might": 0.6,
@@ -29,7 +29,7 @@
   "desc": "A post-driving maul. Slow to lift, slower to argue with.",
   "class": "great_hammer",
   "kit": "maul",
-  "damage": 66,
+  "damage": 74.976,
   "poise_damage": 52,
   "scaling": {
    "might": 0.85
@@ -53,7 +53,7 @@
   "desc": "An ash-hafted spear with a leaf head. Keeps the cold at arm's length and a little more.",
   "class": "spear",
   "kit": "spear",
-  "damage": 38,
+  "damage": 43.168,
   "poise_damage": 18,
   "scaling": {
    "might": 0.2,
@@ -79,7 +79,7 @@
   "desc": "A two-handed blade as long as a door is tall. Swung, it makes its own weather.",
   "class": "greatsword",
   "kit": "greatblade",
-  "damage": 74,
+  "damage": 84.656,
   "poise_damage": 48,
   "scaling": {
    "might": 0.9
@@ -104,7 +104,7 @@
   "desc": "A short yew bow for fowling on the fells. Draws arrows from the quiver.",
   "class": "bow",
   "kit": "bow",
-  "damage": 34,
+  "damage": 38.352,
   "poise_damage": 10,
   "scaling": {
    "craft": 0.8
