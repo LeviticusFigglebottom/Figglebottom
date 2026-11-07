@@ -2,25 +2,39 @@
 
 _Last updated: 2026-11-07 (founding session)_
 
-## State
-- **Phase 1 (survey) is done:**
-  - `docs/transposition/SURVEY.md`
-  - `docs/transposition/ORIGINALITY.md`
-  - `tools/banned_terms.txt` and `tools/check_originality.sh`, with the CI workflow `originality.yml`
-  - ADR 0001: copy the engine code and strip content
-- **Foundation docs are done:** SPEC.md, CLAUDE.md, the task board, STYLE.md and LEXICON.md.
-- **In progress:**
-  - the engine port and the greybox area `saltfell_steading`
-  - the Tripo pilot
+## State (on main)
+- **Phase 1** is done: the survey, originality guard and CI, and ADRs 0001–0003.
+- **Engine port** is merged.
+  - It contains all systems, renamed, plus the greybox `saltfell_steading`.
+  - `tools/test.sh` passes 5 suites with 102 checks.
+- **Lore** is done: `docs/lore/WORLD.md`, `SLICE.md`, `WRITING.md` (the story quality bar) and `docs/art/design/roster.md` (about 94 Tripo slots).
+- **Tripo pilot** is merged.
+  - Assets: the Netmender (boss, rigged), the Rimewalker (enemy, rigged, 6 clips), the hewing blade and the hearthstone.
+  - Procedural pieces: walls and a drying rack.
+  - Pipeline: `tools/art/`.
+  - Spend: 515 credits; the balance is 24,185.
+  - The area-diorama experiment concluded: backdrop only.
+
+## In flight (branches)
+- `feat/terrain-saltfell`: ADR 0003 terrain system, plus a rebuild of Saltfell as one continuous sea-cliff landscape with an edge audit.
+- `art/slice-heroes`: the slice-tier roster through Tripo, plus 14 region concept images. Budget: about 3,500 credits.
+- `feat/characters`: ADR 0004, the Mixamo humanoid animation layer. It puts the Tripo models on the enemy and boss, with data-timed contact frames.
 
 ## Next exact step
-- Land the engine port on main with `tools/test.sh` green, and add screenshots to `docs/screens/`.
-- Then run the Tripo pilot (see `docs/art/`).
+1. Review each branch's screenshots and confirm its tests pass.
+2. Merge the branches into main in this order: terrain, then characters, then art.
+3. Then build the vertical slice proper:
+   - the slice NPC dialogue from SLICE.md goes into `data/npcs.json`
+   - the Keepsakes journal
+   - armour slots
+   - lock-on switching
+   - the UI re-skin and house card
 
 ## Tripo access (for future sessions)
 - **Tool:** the unofficial `Neko-Yukari/tripo-studio-mcp`. Clone it into the scratchpad and run it with `TRIPO_GATEWAY=0` and `TRIPO_STUDIO_STATE=<scratchpad>/tripo/studio-state.json`.
 - **Cookie:** the owner's `ory_kratos_session` cookie, from Google Drive file `tripo-session.txt`. Never commit or print it.
-- **Balance:** 24,700 credits at the start (premium plan, valid until 2026-12-06).
+- **Balance:** 24,700 credits at the start (premium plan, valid until 2026-12-06). It was 24,185 after the pilot.
+- **Studio-state file:** the setup is in `tools/art/README.md`. Fresh sessions also need `bpy` in a Python 3.11 venv and `mesa-vulkan-drivers`.
 
 ## Owner decisions
 - **Title:** confirmed as "Rimeholt", subtitle "The Winter That Would Not End".
