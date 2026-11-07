@@ -436,6 +436,179 @@
       "texture_max": 2048,
       "collision": "trimesh",
       "output": "assets/models/landmarks/lm_tide_wall.glb"
+    },
+    {
+      "name": "bearer_traveller",
+      "category": "characters",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "45249dbe-c13d-4c92-9671-fab170af3142",
+        "task_id": "e909525a-5766-4060-822a-fe5449487491",
+        "remesh_operator": "b3cd52a6-2a3e-4e65-baa7-c260af7a4a18",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "e1fce142-094e-4442-bbcf-a7dcf9104d74",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/bearer_traveller/rigged.fbx",
+      "anims": {
+        "idle": "raw/bearer_traveller/anims/idle.fbx",
+        "walk": "raw/bearer_traveller/anims/walk.fbx",
+        "run": "raw/bearer_traveller/anims/run.fbx",
+        "slash": "raw/bearer_traveller/anims/slash.fbx",
+        "hit": "raw/bearer_traveller/anims/hit_to_body_01.fbx",
+        "defeat": "raw/bearer_traveller/anims/defeat_02.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "run"
+      ],
+      "in_place": [
+        "walk",
+        "run"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/characters/bearer_traveller.glb"
+    },
+    {
+      "name": "lm_doorpost",
+      "category": "landmarks",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "781501fd-0da4-4731-9d96-5a8f7cf75f51",
+        "task_id": "fcf9fcc1-e9a2-43b7-86b5-82152ee44823",
+        "remesh_operator": "1c0b2a5e-ff9f-4a1b-b196-27f30063b28d",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/lm_doorpost/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 3.2
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": "convex",
+      "output": "assets/models/landmarks/lm_doorpost.glb"
+    },
+    {
+      "name": "brede",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "14ff3042-e3d1-42c5-bdd6-f0334c232280",
+        "task_id": "ceaf2113-ce45-4ff5-8527-7ad98ca05c61",
+        "remesh_operator": "8b24cd91-1bc8-490a-8510-1ef2f78fa54f",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "9a11ba9a-5f45-4805-b1a1-6749a63d0b86",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/brede/rigged.fbx",
+      "anims": {
+        "idle": "raw/brede/anims/idle.fbx",
+        "walk": "raw/brede/anims/walk.fbx",
+        "greet": "raw/brede/anims/greet_01.fbx",
+        "look": "raw/brede/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/brede.glb"
+    },
+    {
+      "name": "ingra",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "51e8fa1e-159a-4c14-83f0-667ec95a8d9a",
+        "task_id": "36f74341-c4a7-4165-82d9-92c0c08249b9",
+        "remesh_operator": "bebdfe0e-2137-4c09-8bce-5887768ab299",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "4a2cf113-c47e-47c2-b34a-c05f58d35961",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/ingra/rigged.fbx",
+      "anims": {
+        "idle": "raw/ingra/anims/idle.fbx",
+        "walk": "raw/ingra/anims/walk.fbx",
+        "greet": "raw/ingra/anims/greet_01.fbx",
+        "look": "raw/ingra/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.7
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/ingra.glb"
+    },
+    {
+      "name": "hearthhound",
+      "category": "enemies",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "0ee8204b-9515-4a50-9fd7-f22f2a172d0d",
+        "task_id": "7c80d086-f037-439b-ba03-137b9e8a9a89",
+        "remesh_operator": "f1754315-c4c4-44db-8b62-d746a4d0e8be",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "c5e92aaa-9910-4c32-abc5-cd232f1ca38b",
+        "rig": "quadruped"
+      },
+      "input": "raw/hearthhound/rigged.fbx",
+      "anims": {
+        "walk": "raw/hearthhound/anims/walk.fbx"
+      },
+      "loop": [
+        "walk"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": 180,
+      "root_bone": "Root",
+      "target": {
+        "height": 1.35
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/enemies/hearthhound.glb"
     }
   ]
 }

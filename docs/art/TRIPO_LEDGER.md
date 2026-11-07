@@ -54,3 +54,21 @@ Budget for the batch: about 3,500 credits. Balance at start: 24,185 (`tripo_stat
 | 2026-11-07 | remesh quad 10k | lm_standing_stone | c5bba63f-… | 40 | — | op a1acf469 |
 | 2026-11-07 | image_to_model (v3.1, detailed) | lm_tide_wall | ab78638a-fe0e-4ee8-b193-1dbfeb0782ce | 55 | — | op f479dc5c |
 | 2026-11-07 | remesh quad 10k | lm_tide_wall | ab78638a-… | 40 | — | op c926c971 |
+| 2026-11-07 | image_to_model (v3.1, detailed) | bearer_traveller | 45249dbe-c13d-4c92-9671-fab170af3142 | 55 | — | op e909525a |
+| 2026-11-07 | remesh quad 10k | bearer_traveller | 45249dbe-… | 40 | — | op b3cd52a6 |
+| 2026-11-07 | rig check_only + rig biped/mixamo | bearer_traveller | 45249dbe-… | 20 | — | op e1fce142 |
+| 2026-11-07 | animate ×6 (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_traveller | 45249dbe-… | 0 | — | presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | ingra | 51e8fa1e-159a-4c14-83f0-667ec95a8d9a | 55 | — | op 36f74341 |
+| 2026-11-07 | remesh quad 10k | ingra | 51e8fa1e-… | 40 | — | op bebdfe0e |
+| 2026-11-07 | rig check_only + rig biped/mixamo | ingra | 51e8fa1e-… | 20 | — | op 4a2cf113 |
+| 2026-11-07 | animate ×4 (idle, walk, greet_01, look_around) | ingra | 51e8fa1e-… | 0 | — | presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | brede | 14ff3042-e3d1-42c5-bdd6-f0334c232280 | 55 | — | op ceaf2113 |
+| 2026-11-07 | remesh quad 10k | brede | 14ff3042-… | 40 | — | op 8b24cd91 |
+| 2026-11-07 | rig check_only + rig biped/mixamo | brede | 14ff3042-… | 20 | — | op 9a11ba9a |
+| 2026-11-07 | animate ×4 (idle, walk, greet_01, look_around) | brede | 14ff3042-… | 0 | — | presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | hearthhound | 0ee8204b-9515-4a50-9fd7-f22f2a172d0d | 55 | — | op 7c80d086 |
+| 2026-11-07 | remesh quad 10k | hearthhound | 0ee8204b-… | 40 | — | op f1754315 |
+| 2026-11-07 | rig check_only + rig quadruped | hearthhound | 0ee8204b-… | 20 | — | op c5e92aaa |
+| 2026-11-07 | animate ×1 (walk) | hearthhound | 0ee8204b-… | 0 | — | presets free |
+| 2026-11-07 | image_to_model (v3.1, detailed) | lm_doorpost | 781501fd-0da4-4731-9d96-5a8f7cf75f51 | 55 | — | op fcf9fcc1 |
+| 2026-11-07 | remesh quad 10k | lm_doorpost | 781501fd-… | 40 | — | op 1c0b2a5e |

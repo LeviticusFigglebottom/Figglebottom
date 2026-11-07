@@ -229,7 +229,7 @@ def _fcurves(act):
         return out
 
 
-def make_in_place(clips, up_index=1):
+def make_in_place(clips, up_index=1, root_bone="Hips"):
     """Remove the horizontal root drift (linear start->end trend) from the Hips location.
 
     Gameplay moves the capsule; the clip should stay put. Sway and bob are kept. The
@@ -240,7 +240,7 @@ def make_in_place(clips, up_index=1):
         if act is None:
             continue
         for fc in _fcurves(act):
-            if fc.data_path.endswith('"].location') and "Hips" in fc.data_path and fc.array_index != up_index:
+            if fc.data_path.endswith('"].location') and root_bone in fc.data_path and fc.array_index != up_index:
                 kps = fc.keyframe_points
                 if len(kps) < 2:
                     continue
@@ -268,7 +268,8 @@ def process_character(a):
     arm = arms[0]
     arm.name = a["name"] + "_rig"
     merge_anims(arm, a.get("anims", {}))
-    make_in_place(a.get("in_place", []))
+    # quadruped rigs root at tripo::Root, whose up axis is not bone-local Y: strip only the trend
+    make_in_place(a.get("in_place", []), *((-1, a["root_bone"]) if a.get("root_bone") else ()))
     arm.data.pose_position = "REST"
     bpy.context.view_layer.update()
     lo, hi = world_bbox(mesh_objects())
