@@ -607,7 +607,7 @@
     "breath": "up"
    }
   ],
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "res://assets/audio/hound_bark.wav",
   "warmth": 18,
   "model": "hearthhound",
   "class": "res://src/enemies/hearthhound.gd",
