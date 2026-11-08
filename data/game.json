@@ -132,5 +132,9 @@
   "fall_lethal_speed": 24.0,
   "bog_drag": 0.55,
   "bog_seconds": 3.0
+ },
+ "render": {
+  "_doc": "Per graphics-quality tier (Low, High, Ultra). shadow_distance: the sun's shadow reach in metres.",
+  "shadow_distance": [70.0, 100.0, 135.0]
  }
 }
