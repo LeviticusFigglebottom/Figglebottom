@@ -74,7 +74,6 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | Ivo | NPC (Kettle Fjord) | the Ice-Cutter's grandson |
 | Halla | NPC (Kettle Fjord) | trader; her boat brought the fish and the cough |
 | Sten | NPC (Kettle Fjord) | Halla's crewman, the one coughing |
-| the Breathing Hole (hearth) | Hearthstone (Kettle Fjord) | woken on the Ice-Cutter's release |
 | Ice-Cutter's Auger / Sealer's Harpoon | weapons (Kettle Fjord) | `ice_auger`, `sealer_harpoon` |
 | Ice-Fur Coat | armour (body) | Sten's gift, `armour_icefur` |
 | the Landing Ice / the Fish-Houses / the Breathing Hole | areas (Kettle Fjord) | |

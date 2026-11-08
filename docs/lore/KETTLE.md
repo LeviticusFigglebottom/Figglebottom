@@ -18,13 +18,12 @@ the Kettle Road ──(seam)──> the Landing Ice ──(jetties round the spu
 
 THAW: open water. The shelf is cut twice by rock running into the fjord, and the jetties go round the ends. RIME: one sheet of ice wall to wall. The player can walk anywhere, but the crevasses and the thin ice round the cut holes give way underfoot.
 
-Hearthstones:
+Hearthstones (two; none wakes at the Breathing Hole, because warmed to THAW it is open water and the shelf above it is cut off from the road):
 
 | id | Name | Where | Notes |
 |---|---|---|---|
 | `hs_landing_ice` | **the Landing Ice** | the shelf where the road comes down | First hearth. A soapstone ring under an upturned sledge. |
 | `hs_fish_houses` | **the Fish-Houses** | the shelf by the westmost house | Beside a fish-kettle's fire ring. Nearest hearth to the Holdfast. |
-| `hs_breathing_hole` | **the Breathing Hole** | on the ice, at the hole's south edge | Cold until the Ice-Cutter is released; then it becomes a Hearthstone (`release_hearth`). |
 
 Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
 
@@ -172,7 +171,7 @@ Transition (2.8 s, invulnerable): the ring closes over, white. He goes back to t
 | **Trace** | as phase 1 (1.4 s) | |
 | **Cut it fresh** (`cut_fresh`) | The Bearer is more than 5 m off: he turns to the hole, kneels, and sets the auger to the rim (2.0 s) | No attack. He drills at the rim, his back to the Bearer: open. Hitting him does not stop him. Left alone for 5 s, he stands. |
 
-**Release.** At 0 he kneels at the rim and lets the auger rest. The hole skins over: black water to grey to white, in about two seconds. The hazard under it is gone, now and in every later visit. The frost veil falls as meltwater. Title card. The Breathing Hole hearth takes from the Bearer's horn by itself. In the middle of the new ice, frozen into it palm up, is **Ivo's mitten**; the prompt is *Chip the mitten free*.
+**Release.** At 0 he kneels at the rim and lets the auger rest. The hole skins over: black water to grey to white, in about two seconds. The hazard under it is gone, now and in every later visit. The frost veil falls as meltwater. Title card. In the middle of the new ice, frozen into it palm up, is **Ivo's mitten**; the prompt is *Chip the mitten free*.
 
 **Music cue notes:** phase 1 is the creak of the ice and the bite of the auger. Phase 2 adds a low drone under the ring cut. Phase 3 is the auger alone, slowing, until it stops.
 
@@ -312,14 +311,14 @@ Voice per `WRITING.md`: a plain fact, then one human detail. No morals.
 
 ## 9. The release beat and what he leaves
 
-- **In the arena, at once:** he kneels at the rim and lets the auger rest; the hole skins over, black to grey to white; the ring and every broken patch close; the veil melts; the card; the hearth wakes; the mitten in the new ice.
+- **In the arena, at once:** he kneels at the rim and lets the auger rest; the hole skins over, black to grey to white; the ring and every broken patch close; the veil melts; the card; the mitten in the new ice.
 - **Flag:** `ks_ice_cutter_released` (`release_flag`), which turns both threads.
 - **Drop:** `item_ivo_mitten` (`release_drop`), set into the middle of the closed hole, not toward the Bearer, and it raises `ks_ivo_mitten_found`.
 - **Seal:** `release_seal` closes the hole's own thin-ice hazard and its water, now and on every rebuild of the area.
-- **Hearth:** `hs_breathing_hole` (`release_hearth`).
+- **No hearth** wakes: the Fish-Houses stays the nearest.
 
 ---
 
 ## 10. New names
 
-Added to `LEXICON.md`: Halla, Sten, the Breathing Hole hearth, Ice-Cutter's Auger, Sealer's Harpoon, Ice-Fur Coat. Checked against `tools/banned_terms.txt` and `docs/transposition/ORIGINALITY.md` §1–5: no bells, candles, wax, bees, choirs, runes or letters; nothing from another game.
+Added to `LEXICON.md`: Halla, Sten, Ice-Cutter's Auger, Sealer's Harpoon, Ice-Fur Coat. Checked against `tools/banned_terms.txt` and `docs/transposition/ORIGINALITY.md` §1–5: no bells, candles, wax, bees, choirs, runes or letters; nothing from another game.

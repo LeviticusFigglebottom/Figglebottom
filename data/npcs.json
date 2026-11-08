@@ -319,15 +319,144 @@
   "name": "Ivo",
   "short_name": "Ivo",
   "body": "mannequin_thaw",
+  "model": "ivo",
+  "first_flags": [
+   "ks_ivo_met"
+  ],
   "lines_first": [
    "Hold that one. Not by the collar, she bites.",
-   "Grandfather says the ice isn't made yet. It's made. I walked on it this morning, by the houses.",
-   "The healer's across at the far landing. Somebody's got to fetch her. Everybody keeps saying somebody."
+   "Grandfather says the ice isn't made yet. It's made. I walked on it this morning, out past the houses.",
+   "The healer's across at the far landing. Somebody's got to fetch her. Everybody keeps saying somebody.",
+   "Lost a mitten in the dog-pen. This one's Grandfather's. Don't tell him, he'll have me looking for it till dark."
   ],
   "lines_repeat": [
    "I'm not going anywhere. That's what he said to say.",
-   "The dogs know the way. The dogs always know the way."
+   "The dogs know the way. The dogs always know the way.",
+   "He's put my supper on. I'll eat it when I'm back. When I'm back from the pen, I mean."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_ivo_mitten",
+    "absent_flag": "ks_ivo_mitten",
+    "take_item": true,
+    "set_flag": "ks_ivo_mitten",
+    "toast": "Ivo takes the mitten."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_ivo_mitten",
+    "lines": [
+     "That's mine. Where was it? I had it this morning.",
+     "There. Both my own. You can give Grandfather his back, I'm not going near him."
+    ]
+   },
+   {
+    "flag": "ks_ivo_supper",
+    "lines": [
+     "Fish again. He only knows the one way. You'd think in sixty years."
+    ]
+   }
   ],
   "services": []
+ },
+ "halla": {
+  "name": "Halla, trader",
+  "short_name": "Halla",
+  "body": "mannequin_thaw",
+  "first_flags": [
+   "ks_halla_met"
+  ],
+  "lines_first": [
+   "If you're buying, I've salt, needles and a little iron. If you're selling, I've no room.",
+   "Halla. That's my boat, and that's my cord, and every knot on it's mine.",
+   "Sold the whole catch to the Tarnhall people for their feast. Forty barrels. They'll be eating it till the Melt.",
+   "We go on the morning tide. Sten'll be better at sea. It's the land air that's doing it."
+  ],
+  "lines_repeat": [
+   "Forty barrels off, forty barrels paid for. I like a week like that.",
+   "Don't mind Sten. He's always been a cougher."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_halla_cord",
+    "absent_flag": "ks_halla_cord",
+    "take_item": true,
+    "set_flag": "ks_halla_cord",
+    "toast": "Halla takes the cord."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_ice_cutter_released",
+    "set_flag": "ks_halla_bed",
+    "lines": [
+     "I've put him in the end house by the fire. He can come down on the next boat. There's always a next boat."
+    ]
+   },
+   {
+    "flag": "ks_halla_cord",
+    "lines": [
+     "That's not my knot. I don't tie it like that. One man, sick.",
+     "Sten. Come here. No, stay there. Stay there."
+    ]
+   }
+  ],
+  "services": [
+   {
+    "id": "buy_bog_iron",
+    "type": "buy",
+    "item": "bog_iron",
+    "count": 1,
+    "warmth": 140,
+    "limit": 3,
+    "label": "Buy a lump of iron",
+    "line_done": "Southern iron. Better than your bog stuff. Don't tell your smith."
+   },
+   {
+    "id": "buy_harpoon",
+    "type": "buy",
+    "item": "sealer_harpoon",
+    "warmth": 560,
+    "once_flag": "bought_harpoon",
+    "label": "Buy a sealing harpoon",
+    "line_done": "Took it off a sealer in a bad year for him. Line's new. Mostly."
+   },
+   {
+    "id": "buy_flask",
+    "type": "gourd_up",
+    "warmth": 320,
+    "once_flag": "bought_halla_flask",
+    "item": "",
+    "label": "Trade for a stoppered flask",
+    "line_done": "Keep the cork in. That's all the advice you get for free."
+   }
+  ]
+ },
+ "sten": {
+  "name": "Sten, Halla's crewman",
+  "short_name": "Sten",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Sorry. Don't mind me. It's the crossing, it gets in your chest.",
+   "Sten. I row for Halla. When she lets me. She says I cough out of time.",
+   "We'll be gone in the morning. Nobody here needs to catch anything off me.",
+   "I'd shake your hand. Best not."
+  ],
+  "lines_repeat": [
+   "Sorry.",
+   "It's nothing. It's the crossing.",
+   "Hot in here, isn't it. Is it just me."
+  ],
+  "services": [
+   {
+    "id": "give_icefur",
+    "type": "gift",
+    "item": "armour_icefur",
+    "once_flag": "got_sten_icefur",
+    "label": "Take Sten's fur coat",
+    "line_done": "Have it. I'm roasting. Don't let her see, it's on the cargo cord."
+   }
+  ]
  }
 }
