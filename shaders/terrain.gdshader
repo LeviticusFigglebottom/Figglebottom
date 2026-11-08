@@ -92,7 +92,9 @@ void fragment() {
 	// rock: banded schist, darker in the folds
 	// schist in beds: each bed its own tone, beds dip gently along the
 	// coast; rain and seep streak the face downward from every ledge
-	float bed_y = v_wp.y + v_wp.x * 0.03 + (n_macro - 0.5) * 1.6;
+	// beds shift, thin and pinch out from one rock block to the next
+	float blk = hash13(floor(vec3(v_wp.x * 0.04, 0.0, v_wp.z * 0.04)));
+	float bed_y = (v_wp.y + v_wp.x * 0.03 * (blk - 0.5) * 2.0 + (n_macro - 0.5) * 4.0 + blk * 7.0) * (0.7 + 0.6 * blk);
 	float bed_i = floor(bed_y / 1.7);
 	float bed_f = fract(bed_y / 1.7);
 	float bed_tone = hash13(vec3(bed_i, 7.0, 3.0));
@@ -100,7 +102,7 @@ void fragment() {
 	float streak = vnoise(vec3(v_wp.x * 1.6, v_wp.y * 0.08, v_wp.z * 1.6));
 	vec3 rock = rock_col * (0.62 + 0.3 * bed_tone + 0.22 * blocks + 0.12 * n2);
 	rock *= mix(vec3(1.0), vec3(1.06, 1.0, 0.92), step(0.6, bed_tone));      // a warmer, iron-stained bed
-	rock *= 1.0 - 0.22 * smoothstep(0.8, 1.0, bed_f) - 0.18 * smoothstep(0.0, 0.08, 0.08 - bed_f);
+	rock *= 1.0 - (0.22 * smoothstep(0.8, 1.0, bed_f) + 0.18 * smoothstep(0.0, 0.08, 0.08 - bed_f)) * smoothstep(0.3, 0.6, n1);
 	rock *= 1.0 - 0.32 * smoothstep(0.5, 0.92, streak) * (0.6 + 0.4 * n1);
 	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * 0.4);
 
