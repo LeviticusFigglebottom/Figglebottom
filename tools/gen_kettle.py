@@ -227,8 +227,8 @@ pickups = [
 ]
 npcs = [
     {"id": "ivo", "at": SH(-52, 0.4), "rot": 150, "tag": "thaw"},
-    # the trader on the middle house's platform; her crewman on a crate at the foot of the walk
-    {"id": "halla", "at": [-37.0, DECK, r2(edge_z(-38.5) - 3.2)], "rot": 90, "tag": "thaw"},
+    # the trader and her crewman at the foot of the middle house's walk
+    {"id": "halla", "at": SH(-41.0, -0.8), "rot": 140, "tag": "thaw"},
     {"id": "sten", "at": SH(-35.5, -1.2), "rot": 170, "tag": "thaw"},
 ]
 portal = seam("kettle_fjord")

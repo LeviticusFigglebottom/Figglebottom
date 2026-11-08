@@ -65,7 +65,7 @@ Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
 
 - The big iron fish-kettles steam. Somebody is stirring one with a ladle as long as an oar.
 - **Ivo** on the shelf by the westmost house with the sledge-dogs, harnessing them and being told he is not going anywhere. Nobody is telling him; he is saying it himself, in someone else's voice.
-- The trader's boat at the middle house, its sail half furled. **Halla** on the platform with her knot-cord, counting.
+- The trader's boat at the middle house, its sail half furled. **Halla** at the foot of its walk with her knot-cord, counting.
 - **Sten** sits on a crate at the foot of the middle walk, coughing into his elbow, apologising to everybody who goes by.
 - Inside the westmost house: a pot on the hook over the fire. A bowl and a spoon on the bench beside it.
 
