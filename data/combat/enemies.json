@@ -1976,5 +1976,634 @@
     "anim": "kneel_down"
    }
   ]
+ },
+ "feast_guest": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.9,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Feast-guest",
+  "desc": "A guest the frost took in its seat at the feast. Both hands have grown into rounded fists of ice.",
+  "model": "feast_guest",
+  "hp": 70,
+  "poise": 36,
+  "speed": 2.0,
+  "aggro_sight": 7.0,
+  "hurt_r": 0.45,
+  "hurt_h": 1.7,
+  "col_r": 0.4,
+  "stagger_time": 1.0,
+  "warmth": 32,
+  "rise_time": 1.6,
+  "_ai": "TARNHALL.md 5. Sits on benches and barrels (pose sit / sit_feast) and stands when the Bearer passes close; cuffs, and brings both fists down round itself (The toast). The Host raises more of them from the benches.",
+  "attacks": [
+   {
+    "id": "cuff",
+    "_tell": "right fist swung round flat, shoulder first (0.6 s). Parryable. Often the left after it.",
+    "range": 2.2,
+    "windup": 0.6,
+    "active": 0.16,
+    "recover": 0.8,
+    "dmg": 16,
+    "poise_dmg": 16,
+    "cooldown": 1.8,
+    "anim": "cuff_swing",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.6,
+    "chain": "cuff_left",
+    "chain_chance": 0.5
+   },
+   {
+    "id": "cuff_left",
+    "_tell": "the weight goes over, the left fist low (0.45 s). Only after a Cuff.",
+    "range": 2.2,
+    "windup": 0.45,
+    "active": 0.14,
+    "recover": 0.9,
+    "dmg": 13,
+    "poise_dmg": 12,
+    "cooldown": 0.0,
+    "anim": "cuff_back",
+    "hands": [
+     "left"
+    ],
+    "lunge": 1.2,
+    "chain_only": true
+   },
+   {
+    "id": "toast",
+    "_tell": "both fists lifted together over the head as if raising a horn, breath twice (1.2 s); a 2.2 m circle glows round it; both fists come down on the floor and everything in the circle is hit. Step out.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 2.2,
+     "arc": 360.0
+    },
+    "range": 2.0,
+    "windup": 1.2,
+    "active": 0.2,
+    "recover": 1.2,
+    "dmg": 24,
+    "poise_dmg": 40,
+    "cooldown": 7.0,
+    "anim": "slash",
+    "breath": "twice",
+    "track": 0.6,
+    "blockable": false,
+    "shake": 0.3,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.2
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "cupbearer": {
+  "poise_regen": 7,
+  "turn": 7.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 2.1,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Cupbearer",
+  "desc": "A server the frost took between the benches. Both hands have grown into thin straight blades of ice.",
+  "model": "cupbearer",
+  "hp": 55,
+  "poise": 22,
+  "speed": 3.2,
+  "aggro_sight": 11.0,
+  "hurt_r": 0.4,
+  "hurt_h": 1.6,
+  "col_r": 0.36,
+  "stagger_time": 0.8,
+  "warmth": 30,
+  "flank": true,
+  "keep_range": 2.8,
+  "_ai": "TARNHALL.md 5. Quick; comes in pairs and works from both sides (flank). Two cuts, a running lunge along a strip, and three turns on the spot with the blades out.",
+  "attacks": [
+   {
+    "id": "slice",
+    "_tell": "blades crossed at the chest, a step in (0.35 s); two quick cuts. Parryable.",
+    "range": 2.0,
+    "windup": 0.35,
+    "active": 0.12,
+    "recover": 0.7,
+    "dmg": 9,
+    "poise_dmg": 8,
+    "cooldown": 1.4,
+    "anim": "slash",
+    "hands": [
+     "right",
+     "left"
+    ],
+    "hits": [
+     0.0,
+     0.22
+    ],
+    "lunge": 2.0
+   },
+   {
+    "id": "lunge",
+    "_tell": "the right shoulder drops, the left blade goes back (0.6 s); a 1.0 x 5 m strip glows; it runs the strip blade first.",
+    "type": "line",
+    "kind": "physical",
+    "range": 5.5,
+    "min_range": 2.4,
+    "length": 5.0,
+    "width": 1.0,
+    "windup": 0.6,
+    "active": 0.25,
+    "recover": 0.9,
+    "dmg": 16,
+    "poise_dmg": 18,
+    "cooldown": 5.0,
+    "anim": "blade_lunge",
+    "lunge": 7.0,
+    "track": 1.4,
+    "shake": 0.1,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.0,
+      5.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "going_round",
+    "_tell": "turns side-on, both blades out low like a tray (0.8 s); a 2.4 m circle glows; three turns on the spot, a cut each turn.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 2.4,
+     "arc": 360.0
+    },
+    "range": 2.2,
+    "windup": 0.8,
+    "active": 0.15,
+    "recover": 1.0,
+    "dmg": 8,
+    "poise_dmg": 10,
+    "hits": [
+     0.0,
+     0.35,
+     0.7
+    ],
+    "cooldown": 7.0,
+    "anim": "tray_spin",
+    "track": 0.4,
+    "lunge": 0.0,
+    "shake": 0.1,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.4
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "hall_champion": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.8,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Hall-champion",
+  "desc": "A hall guard the frost took at the door. A round board shield of ice has grown into the left forearm, and the right fist is a mace-head.",
+  "model": "hall_champion",
+  "hp": 180,
+  "poise": 90,
+  "speed": 1.6,
+  "aggro_sight": 10.0,
+  "hurt_r": 0.6,
+  "hurt_h": 2.0,
+  "col_r": 0.5,
+  "stagger_time": 1.2,
+  "warmth": 60,
+  "block_arc": 120.0,
+  "block_chance": 0.75,
+  "_ai": "TARNHALL.md 5. Circles with the shield up (block_arc, block_chance): strike it from the side or after it swings. A heavy mace, a shield bash, and a rush behind the shield along a strip.",
+  "attacks": [
+   {
+    "id": "mace",
+    "_tell": "the ice fist raised behind the shield rim (0.9 s); one heavy overhand.",
+    "range": 2.6,
+    "windup": 0.9,
+    "active": 0.2,
+    "recover": 1.1,
+    "dmg": 32,
+    "poise_dmg": 44,
+    "cooldown": 2.4,
+    "anim": "slash",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.2,
+    "breath": "forward"
+   },
+   {
+    "id": "shield_bash",
+    "_tell": "shield squared, a short step (0.5 s); little damage, a lot of poise. Often a Mace after it.",
+    "range": 1.9,
+    "windup": 0.5,
+    "active": 0.15,
+    "recover": 0.8,
+    "dmg": 10,
+    "poise_dmg": 40,
+    "cooldown": 3.0,
+    "anim": "shield_bash",
+    "hands": [
+     "left"
+    ],
+    "lunge": 2.2,
+    "chain": "mace",
+    "chain_chance": 0.5
+   },
+   {
+    "id": "shield_rush",
+    "_tell": "sets the shield and puts its head down behind it, breath held (1.0 s); a 1.6 x 7 m strip glows; it runs the strip behind the shield and knocks down what is on it. Cannot be blocked. Roll sideways.",
+    "type": "line",
+    "kind": "physical",
+    "range": 7.5,
+    "min_range": 3.0,
+    "length": 7.0,
+    "width": 1.6,
+    "windup": 1.0,
+    "active": 0.35,
+    "recover": 1.2,
+    "dmg": 26,
+    "poise_dmg": 80,
+    "blockable": false,
+    "cooldown": 8.0,
+    "anim": "shield_set",
+    "lunge": 7.5,
+    "track": 1.0,
+    "breath": "held",
+    "shake": 0.35,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.6,
+      7.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "host": {
+  "name": "The Host",
+  "bar_name": "THE HOST",
+  "desc": "Gaute Haug, keeper of Tarnhall and host of the feast. He barred the doors when the guests began coughing, and kept filling their cups.",
+  "class": "res://src/enemies/host.gd",
+  "model": "host",
+  "body": "mannequin_holdfast",
+  "is_boss": true,
+  "hp": 1500,
+  "poise": 160,
+  "poise_regen": 30,
+  "speed": 1.8,
+  "turn": 3.2,
+  "aggro_sight": 40.0,
+  "aggro_fov": 360.0,
+  "aggro_hear": 40.0,
+  "leash": 999.0,
+  "arm_h": 2.6,
+  "arm_dx": 0.7,
+  "hurt_r": 1.2,
+  "hurt_h": 3.8,
+  "col_r": 0.9,
+  "stagger_time": 1.6,
+  "stride": 2.2,
+  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "warmth": 2000,
+  "_fight": "TARNHALL.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: he walks the table filling horns until the Bearer is within wake_dist or strikes him. The guests he raises are the seated feast-guest stills in the hall (seat_step: metres out from the bench; horn_ahead/horn_h: where the horn in front of a place is). guard_r: in phase 3 he keeps this close to where he stood.",
+  "phase_at": [
+   0.6,
+   0.25
+  ],
+  "phase_speed": [
+   1.0,
+   1.05,
+   0.9
+  ],
+  "wake_dist": 7.0,
+  "guard_r": 6.0,
+  "parry_stagger_mult": 1.5,
+  "guest": "feast_guest",
+  "raise_count": 2,
+  "seat_step": 0.55,
+  "horn_ahead": 1.53,
+  "horn_h": 1.17,
+  "transitions": {
+   "wake": {
+    "_tell": "sets the horn down on the table in front of a guest and turns round; the bar appears",
+    "time": 2.6,
+    "anim": "host_set_horn",
+    "events": [
+     [
+      1.2,
+      "set_down"
+     ]
+    ]
+   },
+   "p2": {
+    "_tell": "spreads both arms over the table: two of the white guests stand up out of their places, and every horn in front of an empty place fills again",
+    "time": 3.0,
+    "anim": "raise_guests",
+    "events": [
+     [
+      1.4,
+      "raise"
+     ],
+     [
+      2.0,
+      "refill"
+     ]
+    ]
+   },
+   "p3": {
+    "_tell": "his frost on the floor goes grey; he walks back to the table and keeps to it",
+    "time": 2.8,
+    "anim": "pour_horn",
+    "events": [
+     [
+      0.3,
+      "pools_grey"
+     ]
+    ]
+   }
+  },
+  "release_flag": "ks_host_released",
+  "release_card": "THE HOST — RELEASED",
+  "release_gates": [
+   "hall_doors"
+  ],
+  "release_hearth": "hs_long_table",
+  "release_drop": {
+   "item": "item_host_cup",
+   "label": "Take the Host's cup",
+   "pickup_id": "host_cup",
+   "ahead": 1.6,
+   "scene": "res://assets/models/props/host_cup.tscn"
+  },
+  "attacks": [
+   {
+    "id": "horn_fist",
+    "_tell": "the right fist, a horn frozen in it, drawn back across the body (0.9 s); a heavy backhand, 3.8 m. Parryable.",
+    "range": 3.8,
+    "windup": 0.9,
+    "active": 0.22,
+    "recover": 1.2,
+    "dmg": 34,
+    "poise_dmg": 56,
+    "cooldown": 2.2,
+    "anim": "slash",
+    "hands": [
+     "right"
+    ],
+    "lunge": 2.0,
+    "parry_stagger": true
+   },
+   {
+    "id": "table_sweep",
+    "_tell": "turns his shoulder; the long table on his back swings round behind it (1.4 s); a fan of 160 degrees glows from 1.8 to 7.5 m; whoever is in it is slid 3 m outward and pinned against a wall or bench (0.9 s, mash). Inside 1.8 m it passes overhead. Phase 3: right round.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 7.5,
+     "arc": 160.0,
+     "inner": 1.8,
+     "shove": 3.0,
+     "shove_time": 0.3,
+     "pin": 0.9,
+     "mash": 4
+    },
+    "range": 7.0,
+    "min_range": 1.0,
+    "windup": 1.4,
+    "active": 0.25,
+    "recover": 1.3,
+    "dmg": 30,
+    "poise_dmg": 70,
+    "cooldown": 7.0,
+    "anim": "table_sweep",
+    "track": 0.8,
+    "blockable": false,
+    "shake": 0.5,
+    "telegraph": {
+     "shape": "fan",
+     "size": [
+      7.5,
+      160.0,
+      1.8
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "by_phase": {
+     "3": {
+      "windup": 1.6,
+      "sweep": {
+       "radius": 7.5,
+       "arc": 360.0,
+       "inner": 1.8,
+       "shove": 3.0,
+       "shove_time": 0.3,
+       "pin": 0.9,
+       "mash": 4
+      },
+      "telegraph": {
+       "shape": "annulus",
+       "size": [
+        1.8,
+        7.5
+       ],
+       "color": [
+        0.3,
+        0.58,
+        1.0
+       ]
+      }
+     }
+    }
+   },
+   {
+    "id": "bench_throw",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "wrenches a bench up off the floor with both hands, over his head (1.6 s); a 2.2 m circle glows where the Bearer stands; the bench lands 0.5 s after it leaves his hands, on the circle. Knocks down. Phase 2: a second bench where the Bearer is running to.",
+    "type": "lob",
+    "at_target": true,
+    "length": 0.0,
+    "lob": {
+     "radius": 2.2,
+     "flight": 0.5,
+     "arc": 2.6,
+     "size": [
+      2.4,
+      0.45,
+      0.5
+     ]
+    },
+    "range": 16.0,
+    "min_range": 4.5,
+    "windup": 1.6,
+    "active": 0.2,
+    "recover": 1.2,
+    "dmg": 28,
+    "poise_dmg": 70,
+    "cooldown": 7.0,
+    "anim": "bench_throw",
+    "track": 1.0,
+    "shake": 0.3,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.2
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "by_phase": {
+     "2": {
+      "lob": {
+       "radius": 2.2,
+       "flight": 0.5,
+       "arc": 2.6,
+       "size": [
+        2.4,
+        0.45,
+        0.5
+       ],
+       "lead": 0.8
+      }
+     }
+    }
+   },
+   {
+    "id": "raise_guests",
+    "phases": [
+     2,
+     3
+    ],
+    "_tell": "both arms out over the table, palms up (1.6 s); with fewer than two guests standing, two more stand up from the benches where they sat (at most three up), and the horns in front of their places fill.",
+    "type": "summon",
+    "count": 2,
+    "below": 2,
+    "max_alive": 3,
+    "range": 99.0,
+    "windup": 1.6,
+    "active": 0.1,
+    "recover": 1.0,
+    "cooldown": 14.0,
+    "anim": "raise_guests"
+   },
+   {
+    "id": "tip_horn",
+    "phases": [
+     2,
+     3
+    ],
+    "_tell": "lifts a great horn off the table at his back and tips it out ahead of him (1.2 s); a 1.2 m circle glows where it pours; frost spreads from it across the floor, 1.2 to 6 m over 3 s, and stays 8 s; its edge glows as it spreads; frost bites every half second on it.",
+    "type": "pool",
+    "pool": {
+     "ahead": 3.2,
+     "from": 1.2,
+     "to": 6.0,
+     "grow": 3.0,
+     "life": 8.0,
+     "dmg": 7.0,
+     "tick": 0.5
+    },
+    "range": 9.0,
+    "min_range": 2.0,
+    "windup": 1.2,
+    "active": 0.1,
+    "recover": 1.0,
+    "poise_dmg": 0,
+    "cooldown": 11.0,
+    "anim": "horn_tip",
+    "track": 1.0,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      1.2
+     ],
+     "offset": 3.2,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "pour",
+    "phases": [
+     3
+    ],
+    "_tell": "the Bearer more than 6 m off: he turns to the table and lifts a horn (1.6 s). No attack: he fills the horns along the table, his back to the Bearer: open. Hits do not stop him. Every guest standing is mended. Left alone 5 s, a guest stands at an empty place and he turns back.",
+    "type": "hold",
+    "range": 99.0,
+    "min_range": 6.0,
+    "quiet": 5.0,
+    "windup": 1.6,
+    "active": 0.1,
+    "recover": 0.0,
+    "cooldown": 12.0,
+    "anim": "host_set_horn"
+   }
+  ]
  }
 }
