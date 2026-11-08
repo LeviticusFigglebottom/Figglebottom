@@ -256,15 +256,22 @@ func _talk(npc_id: String) -> DialogueUI:
 	var n := _npc(npc_id)
 	if n == null:
 		return null
-	await _walk_path(n.global_position, 3600, false)
-	await _walk_to(n.global_position, 240, 1.6, false)
-	await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
-	await ticks(2)
-	if _near_interact("Speak with") == null:
-		return null
-	player.try_interact()
-	await ticks(3)
-	return _ui("DialogueUI") as DialogueUI
+	for attempt in 3:
+		await _walk_path(n.global_position, 3600, false)
+		await _walk_to(n.global_position, 240, 1.6, false)
+		await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
+		await ticks(2)
+		if _near_interact("Speak with") != null:
+			player.try_interact()
+			await ticks(3)
+			var ui := _ui("DialogueUI") as DialogueUI
+			if ui != null:
+				return ui
+		var it := player.nearest_interactable()
+		print("  (talk %s, try %d: %.1f m off, nearest %s)" % [npc_id, attempt + 1,
+			player.global_position.distance_to(n.global_position), it.prompt if it != null else "nothing"])
+		await _sidestep()
+	return null
 
 func _lines_of(ui: DialogueUI) -> Array:
 	var out := []
@@ -293,15 +300,23 @@ func _rest_ui_at(hearth_id: String) -> RestUI:
 	var h := Game.find_hearth(hearth_id)
 	if h == null:
 		return null
-	await _walk_path(h.respawn_point(), 3600, true)
-	await _walk_to(h.respawn_point(), 200, 0.8, false)
-	await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
-	await ticks(2)
-	if _near_interact("Keep hearth") == null:
-		return null
-	player.try_interact()
-	await ticks(3)
-	return _ui("RestUI") as RestUI
+	for attempt in 3:
+		await _walk_path(h.respawn_point(), 3600, true)
+		await _walk_to(h.respawn_point(), 200, 0.8, false)
+		await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
+		await ticks(2)
+		if _near_interact("Keep hearth") != null:
+			player.try_interact()
+			await ticks(3)
+			var ui := _ui("RestUI") as RestUI
+			if ui != null:
+				return ui
+		var it := player.nearest_interactable()
+		print("  (hearth %s, try %d: at %s, %.1f m off, nearest %s)" % [hearth_id, attempt + 1,
+			str(player.global_position.snapped(Vector3.ONE * 0.1)), player.global_position.distance_to(h.respawn_point()),
+			it.prompt if it != null else "nothing"])
+		await _sidestep()
+	return null
 
 func _wait_turn() -> void:
 	await _until(func(): return StateDirector.transitioning, 6.0)
