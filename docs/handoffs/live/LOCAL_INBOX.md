@@ -2,6 +2,44 @@
 
 The local GPU worker (Claude Code on the owner's PC) writes job reports, blockers and questions here, on branch `gpu/inbox`. The newest entry goes at the top. (A message to session `regothiga-e8` failed: the session was not reachable by that name.)
 
+## 2026-11-08: Job 2 done (real-GPU gallery), branch `gpu/gallery`
+
+**Branch:** `gpu/gallery`
+- Based on main `adab65a`, in 2 commits. It is independent of `gpu/perf`.
+- Originality check: OK.
+- `tools/test.sh`: 17 suites, 714 checks. One check is **flaky**: `kettle_encounters` "stepped in close, he stands on whole ice" failed once, then passed in 2 re-runs. It is unrelated to this branch: the only code change is two opt-in `shot.gd` flags that no test uses. It is on main too; worth a look.
+- Details are in `docs/qa/GPU_VISUAL_DIFF.md`.
+
+**Gallery**
+- `docs/gallery_gpu/`: 36 JPEGs, 18 viewpoints × THAW/RIME at q2, on the RX 9070 XT.
+- The cameras are the *exact* `docs/screens` cameras. I read them back from the pose line in the corner of each lavapipe shot.
+- **Manifest and runner:** `tools/gallery_gpu.sh`, one process per shot.
+- **Same-revision lavapipe pairs:** run `WRAP='xvfb-run -a -s "-screen 0 1920x1080x24"' PNG=build/gallery_lvp JPG=build/gallery_lvp tools/gallery_gpu.sh`. The `docs/screens` references are older revisions, so most differences are content changes, not the renderer.
+- **`shot.gd` additions** (opt-in; the defaults are unchanged):
+  - `--shot-settle=N`: places the camera N frames before capture, so SDFGI and the fog history can converge on hardware.
+  - `--shot-quality=N`: forces the graphics tier.
+
+**Findings**
+1. **Look bug: SDFGI kills the water at q2.**
+   - All open water loses its sky sheen and reads dark and flat.
+   - Turning features off one at a time on the Lowe bog: without SSR or SSIL the water stays dark; **without SDFGI the sheen comes back**. q1 matches lavapipe.
+   - Real GPUs auto-select q2, so players see this by default.
+   - Evidence: `docs/gallery_gpu/_evidence_water_sdfgi.jpg`.
+   - **Options:**
+     - **a.** Add a fresnel sky term in `water.gdshader`, fed by EnvRig's sky colours.
+     - **b.** Add sky-only ReflectionProbes over the water.
+     - **c.** Default real GPUs to q1, with SDFGI opt-in. This also saves about 1.3 ms of GPU.
+   - **Decision needed from you (look):** which of these, if any. I have not changed it.
+2. **Volumetric fog is much stronger on hardware than on lavapipe.**
+   - Distant contrast drops, and soft light shafts appear.
+   - At the Kettle breathing hole in THAW the frame blows out toward the low sun: the left third is near white, and the shadowed gorge wall crushes to black.
+   - Suggestion: a per-area `vol_density` or lower anisotropy for the deep gorges.
+3. **Nothing broken.** No light leaks, fog banding, SSR streaks or missing materials.
+
+**Next**
+- Job 3, the playtest, needs the owner at the PC. I'm asking them now.
+- `gpu/perf` (Job 1, entry below) is still waiting for review.
+
 ## 2026-11-07: Job 1 done (performance profile), branch `gpu/perf`
 
 **Branch:** `gpu/perf`
