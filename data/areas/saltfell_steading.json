@@ -1098,7 +1098,15 @@
     -20.0
    ],
    "rot": 0,
-   "tag": "rime"
+   "tag": "rime",
+   "shader": {
+    "tint": [
+     0.74,
+     0.84,
+     0.96
+    ],
+    "mesh_strength": 0.7
+   }
   }
  ],
  "npcs": [

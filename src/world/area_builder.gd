@@ -101,6 +101,7 @@ static func build(area_id: String) -> Area:
 		f.gate_id = spec.get("id", "fog")
 		f.area_id = area_id
 		f.aux_seal_specs = spec.get("seals", [])
+		f.shader_params = spec.get("shader", {})
 		var fg_pos := _v3(spec.get("at", [0, 0, 0]))
 		for pc in def.get("pieces", []):
 			var pk := String(pc.get("kit", ""))

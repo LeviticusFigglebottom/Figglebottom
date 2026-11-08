@@ -344,7 +344,10 @@ D = {
     "hearths": hearths,
     "gates": [{"id": "boatshed_back", "at": GATE_AT, "rot": 0, "width": 1.9, "locked_prompt": "Barred from the other side"}],
     "spawners": spawners,
-    "frost_veils": [{"id": "hall_veil", "at": [0.0, SH, LH_DOOR_Z], "rot": 0, "tag": "rime"}],
+    "frost_veils": [{"id": "hall_veil", "at": [0.0, SH, LH_DOOR_Z], "rot": 0, "tag": "rime",
+                     # frozen net mesh, rime-cold (the parchment tint glowed beige
+                     # against the blue yard)
+                     "shader": {"tint": [0.74, 0.84, 0.96], "mesh_strength": 0.7}}],
     "npcs": npcs,
     "plaques": plaques,
     "pickups": pickups,
