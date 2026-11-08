@@ -2387,7 +2387,7 @@
    "item": "item_host_cup",
    "label": "Take the Host's cup",
    "pickup_id": "host_cup",
-   "ahead": 1.6,
+   "ahead": 3.0,
    "scene": "res://assets/models/props/host_cup.tscn"
   },
   "attacks": [
@@ -2604,6 +2604,7 @@
     "cooldown": 12.0,
     "anim": "host_set_horn"
    }
-  ]
+  ],
+  "release_anim": "defeat"
  }
 }

@@ -426,7 +426,7 @@ func _die() -> void:
 	collision_layer = 0
 	var to := _table_dir()
 	vis.rotation.y = atan2(to.x, to.z)   # his back to the table, sitting at it
-	vis.play("host_sit", 0.5)   # he sets the horn down and sits on the bench end
+	vis.play(String(_d("release_anim", "host_sit")), 0.5)   # he sets the horn down and sinks onto the bench end
 	Game.add_warmth(int(cfg.get("warmth", 10)))
 	for fp in pools:
 		if is_instance_valid(fp):

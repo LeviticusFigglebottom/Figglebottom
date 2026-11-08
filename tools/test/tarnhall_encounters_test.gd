@@ -441,7 +441,7 @@ func _host() -> void:
 		h.take_hit(DamagePacket.new(400, 0, player))
 		await ticks(2)
 	await ticks(20)
-	check(h.released and h.vis.current_clip() == "host_sit", "he sets the horn down and sits (%s)" % h.vis.current_clip())
+	check(h.released and h.vis.current_clip() == String(h.cfg.get("release_anim", "host_sit")), "he sets the horn down and sits (%s)" % h.vis.current_clip())
 	check(up_before.filter(func(g): return is_instance_valid(g) and g.is_in_group(RH.GROUP_ENEMIES)).is_empty(),
 		"the guests still standing sit down where they are")
 	player.invulnerable = false
@@ -599,7 +599,7 @@ func _hall() -> void:
 	check(gate != null and absf(gate._leaves[0].rotation.y) > deg_to_rad(80.0), "the leaves stand open")
 	check(Game.find_hearth("hs_long_table") != null, "the hearth wakes at the cold fire")
 	var cup := _pickup("host_cup")
-	check(cup != null and cup.global_position.distance_to(host.global_position) < 2.5, "his cup is left beside him")
+	check(cup != null and cup.global_position.distance_to(host.global_position) < 3.5, "his cup is left beside him")
 	if cup != null:
 		cup._on_take(player)
 	check(int(player.inventory.get("item_host_cup", 0)) == 1, "the Bearer takes the Host's cup")
