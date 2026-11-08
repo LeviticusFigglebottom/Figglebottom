@@ -2814,6 +2814,120 @@
       },
       "origin": "bottom_center",
       "output": "assets/models/npcs/pell_thaw.glb"
+    },
+    {
+      "name": "bearer_child",
+      "category": "characters",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "7d37b622-31aa-43ad-9b15-3bf2a68887d3",
+        "task_id": "fcc13843-2ea0-4d25-9d9e-6b2e15e5f4de",
+        "remesh_operator": "75f1a9ff-2e6d-4ca4-8fe7-153b5959d2e5",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "7dbd635b-3f7b-4fd4-b6ba-2e3f903959d5",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/bearer_child/rigged.fbx",
+      "anims": {
+        "idle": "raw/bearer_child/anims/idle.fbx",
+        "walk": "raw/bearer_child/anims/walk.fbx",
+        "greet": "raw/bearer_child/anims/greet_01.fbx",
+        "look": "raw/bearer_child/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.2
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/characters/bearer_child.glb"
+    },
+    {
+      "name": "eyvind_thaw",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "211d6360-d0f3-4951-b729-6451012ba293",
+        "task_id": "42bcd065-65f8-45e3-bb9c-cc195e407bb0",
+        "remesh_operator": "db3e53c1-3bc9-43e5-b17f-ef0c1e582886",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "2dc05b78-2268-48ae-99e5-aaf5184f1baf",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/eyvind_thaw/rigged.fbx",
+      "anims": {
+        "idle": "raw/eyvind_thaw/anims/idle.fbx",
+        "walk": "raw/eyvind_thaw/anims/walk.fbx",
+        "greet": "raw/eyvind_thaw/anims/greet_01.fbx",
+        "look": "raw/eyvind_thaw/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.85
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/eyvind_thaw.glb"
+    },
+    {
+      "name": "sigga_thaw",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "7383bb7b-ed29-455c-84ef-906f97b82062",
+        "task_id": "9680d792-eb09-4a3a-bec0-e1d4431d040a",
+        "remesh_operator": "b864114b-d85c-46f8-b53c-f7ce4f495855",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "3c8b4f78-5fd6-4639-bba5-5efcdeefeade",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/sigga_thaw/rigged.fbx",
+      "anims": {
+        "idle": "raw/sigga_thaw/anims/idle.fbx",
+        "walk": "raw/sigga_thaw/anims/walk.fbx",
+        "greet": "raw/sigga_thaw/anims/greet_01.fbx",
+        "look": "raw/sigga_thaw/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.75
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/sigga_thaw.glb"
     }
   ]
 }

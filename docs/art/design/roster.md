@@ -952,3 +952,24 @@ Spend: `docs/art/TRIPO_LEDGER.md` (5,300 credits; 20,635 → 15,335). Lineups: `
 | lm_wellhead | landmarks/ | 8.0 | 18,999 | 3.4 | none; trimesh |
 
 Known issues: the Leadvoice's floor-length ice cloak is auto-skinned to the legs, so big moves tear its hem into separate sheets. The first `shelter` clip ("Protective Body Curl") was superseded by a gentler re-prompt ("Gentle Bow with Folded Arms"), and small hem fragments still separate in it. The custom cloak bones in this slot's rig spec are the real fix. `lm_hedge_gate` reads more like a woven lattice fence than a laid hedge. The Fellcaller's `ram_charge` travels far enough to leave the lineup's clip camera.
+
+## NPCs and release scenes batch results (2026-11-08, branch `art/npcs-release-scenes`)
+
+Spend: `docs/art/TRIPO_LEDGER.md` (1,055 credits; 15,335 → 14,280). One 3D roll per slot; only the free reference images were re-rolled (Halla's mask band covered the eye holes; Eyvind's back load and a multi-panel sheet). Lineup: `scenes/sandbox/art_lineup_npcs2.tscn` (THAW only), screens `docs/screens/art_npcs2_<shot>_thaw.png`.
+
+Scope check: every NPC named in WORLD.md for Tarnhall, Thornwold, Shepherd's Reach and the Coldwell (Lusse, Linnet, Old Calder, Maren, Wren) already had a model. The only named people left in those regions' THAW scenes were Eyvind (the gate argument with Linnet) and Sigga (calling the flock), so they were made. Lusse's model existed but was not wired: `npcs.json` now names it.
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| halla | npcs/ | 1.70 | 18,604 | 4.3 | mixamo; idle, walk, greet, look |
+| sten | npcs/ | 1.80 | 18,634 | 4.6 | mixamo; idle, walk, greet, look, sit |
+| pell_thaw | npcs/ | 1.80 | 18,829 | 5.0 | mixamo; idle, walk, greet, look, sit |
+| ivo (existing) | npcs/ | 1.55 | 18,156 | 4.9 | + sit (free preset) |
+| arne_thaw | npcs/ | 1.85 | 19,225 | 4.9 | mixamo; idle, walk, greet, look, sit + text-prompt sit_talk ("Relaxed Conversation", on the grass) |
+| liv | npcs/ | 1.10 | 18,710 | 4.6 | mixamo; idle, walk, greet, look, sit |
+| asta | npcs/ | 1.10 | 18,365 | 4.6 | mixamo; idle, walk, greet, look, sit + sit_talk (Arne's motion reused by id, free) |
+| bearer_child | characters/ | 1.20 | 18,726 | 4.3 | mixamo; idle, walk, greet, look |
+| eyvind_thaw | npcs/ | 1.85 | 19,532 | 4.7 | mixamo; idle, walk, greet, look |
+| sigga_thaw | npcs/ | 1.75 | 18,681 | 5.1 | mixamo; idle, walk, greet, look |
+
+The `sit` preset is a seated loop on a seat: feet on the floor, hips at about 0.34 of the figure's height, head dipping and lifting. It needs a sod, crate or bench about 0.27 × height tall. Known issues: Asta's smock spreads into a flat disc in `sit_talk`. The lineup's fish-kettle is the RIME landmark (icicles), because there is no THAW kettle. The release scenes are not yet placed in the area JSON (LOWE.md §8 still marks the Lowe one "art pending").
