@@ -8,6 +8,7 @@ extends Node
 ##   --shot-pack         populate sample gear/relics and open InventoryUI
 ##   --quit-after=N         quit after N frames (no capture)
 ##   --shot-nohud           hide every CanvasLayer (HUD, zone titles) for art comparisons
+##   --gfx=0|1|2            force the graphics tier (lavapipe defaults to 1: no SDFGI/SSIL/SSR)
 ##   --hearth-frame=N       rest at the first hearth on frame N; with
 ##   --shot-seq=s1,s2,...   captures PATH_0.png.. that many seconds after it
 ##   --hearth-toggle        make that rest turn the world (THAW <-> RIME)
@@ -48,6 +49,8 @@ func _ready() -> void:
 			_cam_spec = arg.get_slice("=", 1)
 		elif arg == "--shot-nohud":
 			_no_hud = true
+		elif arg.begins_with("--gfx="):
+			EnvRig.graphics_quality = clampi(int(arg.get_slice("=", 1)), 0, 2)
 		elif arg == "--shot-pack":
 			_open_pack = true
 		elif arg == "--shot-gourd":
