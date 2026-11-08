@@ -199,3 +199,28 @@ Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 
 | 2026-11-07 | remesh quad 10k | lm_high_seat | f64dfbbb-… | 40 | — | op 9d095a0b |
 | 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_guest_post | f2b65695-c6cc-495c-b801-c3bb762273c6 | 55 | — | op 5fa9023e |
 | 2026-11-07 | remesh quad 10k | lm_guest_post | f2b65695-… | 40 | — | op f8852834 |
+| 2026-11-07 | *Thornwold* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | hedgelayer | fc9fff19-c42d-4729-8ffd-2c7f9af187b4 | 65 | — | op b077e8a9 |
+| 2026-11-07 | remesh quad 10k | hedgelayer | fc9fff19-… | 40 | — | op e74fafe2 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | hedgelayer | fc9fff19-… | 20 | — | op 805ad93d; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: raise_wall ("Crouching Wall Raise"), step_into ("Sidestep and Crouch"), thorn_lash ("Whip-Like Arm Motion") | hedgelayer | fc9fff19-… | 60 | — | ops 88482e68, 9a498d0f, 98aabc44; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | collier | ae7d4e61-02dc-4ba3-9e53-7f4b4bdf89b1 | 55 | — | op eb079a7f |
+| 2026-11-07 | remesh quad 10k | collier | ae7d4e61-… | 40 | — | op 9e579a99 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | collier | ae7d4e61-… | 20 | — | op 65ee82f9; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | rime_stag | dc56938d-250b-4b3c-9d68-f8a786c69858 | 55 | — | op 54e43e6d |
+| 2026-11-07 | remesh quad 10k | rime_stag | dc56938d-… | 40 | — | op c60f39ff |
+| 2026-11-07 | rig check_only + rig quadruped; animate ×1 presets (walk) | rime_stag | dc56938d-… | 20 | — | op 69f997c4; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | linnet | 1eaa5afb-f069-4c0c-911d-e39a61c35e29 | 55 | — | op 3720be38 |
+| 2026-11-07 | remesh quad 10k | linnet | 1eaa5afb-… | 40 | — | op 6936dd41 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | linnet | 1eaa5afb-… | 20 | — | op 716c82ef; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_collier | 5fbcd35d-2163-4ddb-95bf-ba6449f15320 | 55 | — | op 55da262f |
+| 2026-11-07 | remesh quad 10k | bearer_collier | 5fbcd35d-… | 40 | — | op de4b0f8d |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_collier | 5fbcd35d-… | 20 | — | op a8ad8e36; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | hedging_bill | 674d2d48-521d-4634-bed1-72cc1fa7e770 | 55 | — | op 1ca81af4 |
+| 2026-11-07 | remesh quad 10k | hedging_bill | 674d2d48-… | 40 | — | op 76bad1a0 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | song_cord | c8871160-48e0-44b9-83f4-e5201c4d313b | 55 | — | op 07b03de9 |
+| 2026-11-07 | remesh quad 10k | song_cord | c8871160-… | 40 | — | op e99100ca |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_charcoal_clamp | 26b155ef-bcd3-4ac9-8f46-1b2ffd73c49b | 55 | — | op db903d2d |
+| 2026-11-07 | remesh quad 10k | lm_charcoal_clamp | 26b155ef-… | 40 | — | op 3657282b |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_hedge_gate | 7ba622b2-e81a-4d5d-ad19-3f54cdaf68fc | 55 | — | op 2bd4aeca |
+| 2026-11-07 | remesh quad 10k | lm_hedge_gate | 7ba622b2-… | 40 | — | op c7ed4582 |
