@@ -36,5 +36,13 @@
   "absorb": 66.0,
   "duration": 8.0,
   "desc": "A skin of remembered warmth that takes the cold's anger first, and goes out doing it."
+ },
+ "turf_song": {
+  "name": "Turf-Laying Song",
+  "breath": 50,
+  "type": "ward",
+  "absorb": 60.0,
+  "duration": 8.0,
+  "desc": "Sung by barrow-keepers while the turf goes back, to keep the spades together. Most of it is counting. Aud gets the numbers in the wrong order and finishes on the right one."
  }
 }

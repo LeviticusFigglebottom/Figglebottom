@@ -283,7 +283,10 @@ func _st_alert(dt: float) -> void:
 
 var _rise_until := 0.0
 
-const IDLE_POSES := {"sit": "sit_mend"}
+## Idle chores (spawner "pose"): a looping clip held until the foe rises.
+## sit = mending nothing (Saltfell); sit_up = one of the barrow dead, sat up
+## facing the road; kneel = a keener at a closed door (LOWE.md 2).
+const IDLE_POSES := {"sit": "sit_mend", "sit_up": "sit_up", "kneel": "kneel_keen"}
 
 func _apply_idle_pose() -> void:
 	if idle_pose == "" or not vis.is_humanoid() or not IDLE_POSES.has(idle_pose):
@@ -447,7 +450,8 @@ func _begin_attack(a: Dictionary) -> void:
 	var anim_name: String = a.get("anim", "atk_r")
 	var w := float(a.get("windup", 0.5)) / _speed_mult()
 	vis.play_timed(anim_name, maxf(w, 0.05), 0.08)
-	_atk_dir = -vis.global_transform.basis.z
+	_atk_dir = _aim_dir()
+	_atk_off = _line_offset()
 	_tele = null
 	if a.has("telegraph"):
 		_tele_at = w * float(a.get("telegraph_lock", 0.7))
@@ -464,6 +468,24 @@ func _hit_times() -> Array:
 var _hit_i := 0
 var _chained := false
 var _atk_dir := Vector3.FORWARD
+## Where a line strike starts along the aim: data "offset", or, for one laid
+## where the Bearer stands ("at_target": true), centred on him at commit.
+var _atk_off := 0.0
+
+## The committed aim. "aim": "back" strikes behind the body (the Turfwright
+## dropping the turf door on his back onto whoever stands there).
+func _aim_dir() -> Vector3:
+	var f := -vis.global_transform.basis.z
+	return -f if String(_atk.get("aim", "front")) == "back" else f
+
+func _line_offset() -> float:
+	var off := float(_atk.get("offset", 0.0))
+	if bool(_atk.get("at_target", false)) and target != null and is_instance_valid(target):
+		var to := target.global_position - global_position
+		to.y = 0.0
+		var reach := float(_atk.get("range", 12.0))
+		off = clampf(to.length(), 0.0, reach) - float(_atk.get("length", 3.0)) * 0.5
+	return off
 var _tele: Node = null
 var _tele_at := -1.0
 
@@ -479,7 +501,8 @@ func _st_attack(dt: float) -> void:
 	# track the player through most of the windup, commit at the end
 	if t < w * 0.7 and _target_valid():
 		_face(target.global_position - global_position, dt, float(_atk.get("track", 1.2)))
-		_atk_dir = -vis.global_transform.basis.z
+		_atk_dir = _aim_dir()
+		_atk_off = _line_offset()
 	if state != ES.ATTACK:
 		return
 	# the floor tell appears once the aim is committed, and glows to the strike
@@ -562,7 +585,7 @@ func _spawn_telegraph(remaining: float) -> Node:
 	var kind := String(tg.get("shape", "rect"))
 	var size: Array = tg.get("size", [1.0, 4.0])
 	var xf := Transform3D(Basis.looking_at(_atk_dir, Vector3.UP), global_position)
-	xf.origin += _atk_dir * float(tg.get("offset", 0.0))
+	xf.origin += _atk_dir * (_atk_off if _atk.get("at_target", false) else float(tg.get("offset", 0.0)))
 	var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
 	return FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1),
 			Color(tint[0], tint[1], tint[2]))
@@ -619,7 +642,7 @@ func in_strip(pos: Vector3, length: float, width: float, offset := 0.0) -> bool:
 func _line_strike() -> void:
 	var length := float(_atk.get("length", 4.0))
 	var width := float(_atk.get("width", 1.2))
-	var offset := float(_atk.get("offset", 0.0))
+	var offset := _atk_off
 	var p := _player()
 	if p != null and not p.get("dead") and in_strip(p.global_position, length, width, offset):
 		var hb: Hurtbox = p.get("hurtbox")
@@ -633,7 +656,7 @@ func _line_strike() -> void:
 	if _atk.has("ridge"):
 		var rd: Dictionary = _atk["ridge"]
 		var r := IceRidge.new()
-		r.setup(length, float(rd.get("life", 10.0)), int(rd.get("breaks", 2)))
+		r.setup(length, float(rd.get("life", 10.0)), int(rd.get("breaks", 2)), String(rd.get("style", "ice")))
 		get_parent().add_child(r)
 		var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
 		r.global_transform = Transform3D(Basis.looking_at(fwd, Vector3.UP), global_position + fwd * offset)

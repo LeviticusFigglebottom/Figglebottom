@@ -1,25 +1,93 @@
 {
- "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md.",
+ "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md and LOWE.md.",
  "toast": "A keepsake is remembered.",
  "threads": [
   {
    "id": "ingra_rye",
    "title": "Ingra's rye",
    "steps": [
-    {"flag": "ks_ingra_met", "line": "Ingra is a sack of rye short and blames a dog."},
-    {"flag": "ks_ingra_rye_found", "line": "The rye was in the byre, under the dog. It had been his bed."},
-    {"flag": "ks_ingra_rye", "line": "Ingra said he was a good dog."},
-    {"flag": "ks_ingra_count", "line": "Ingra is counting bowls."}
+    {
+     "flag": "ks_ingra_met",
+     "line": "Ingra is a sack of rye short and blames a dog."
+    },
+    {
+     "flag": "ks_ingra_rye_found",
+     "line": "The rye was in the byre, under the dog. It had been his bed."
+    },
+    {
+     "flag": "ks_ingra_rye",
+     "line": "Ingra said he was a good dog."
+    },
+    {
+     "flag": "ks_ingra_count",
+     "line": "Ingra is counting bowls."
+    }
    ]
   },
   {
    "id": "brede_float",
    "title": "Brede's float",
    "steps": [
-    {"flag": "ks_brede_met", "line": "Brede lost a cork float off the herring net."},
-    {"flag": "ks_brede_float_found", "line": "The float was in the ice, where the tide stopped."},
-    {"flag": "ks_brede_float", "line": "Brede says the wrong knot on the back makes it lucky."},
-    {"flag": "ks_brede_mending", "line": "Brede is mending the net himself."}
+    {
+     "flag": "ks_brede_met",
+     "line": "Brede lost a cork float off the herring net."
+    },
+    {
+     "flag": "ks_brede_float_found",
+     "line": "The float was in the ice, where the tide stopped."
+    },
+    {
+     "flag": "ks_brede_float",
+     "line": "Brede says the wrong knot on the back makes it lucky."
+    },
+    {
+     "flag": "ks_brede_mending",
+     "line": "Brede is mending the net himself."
+    }
+   ]
+  },
+  {
+   "id": "hesk_tongs",
+   "title": "Hesk's tongs",
+   "steps": [
+    {
+     "flag": "ks_hesk_met",
+     "line": "Hesk dropped his good tongs in the bog, raking for iron."
+    },
+    {
+     "flag": "ks_hesk_tongs_found",
+     "line": "The tongs were frozen into the bog, jaws down."
+    },
+    {
+     "flag": "ks_hesk_tongs",
+     "line": "Hesk said they were never that good, and took them."
+    },
+    {
+     "flag": "ks_hesk_wind",
+     "line": "Hesk says the wind has come right."
+    }
+   ]
+  },
+  {
+   "id": "aud_cord",
+   "title": "Orm's cord",
+   "steps": [
+    {
+     "flag": "ks_aud_met",
+     "line": "Aud ties heather on Orm's mound every evening, the last one on the road."
+    },
+    {
+     "flag": "ks_aud_cord_found",
+     "line": "Orm's cord was in the first barrow on the road."
+    },
+    {
+     "flag": "ks_aud_cord",
+     "line": "Aud says Orm tied his knots too tight to read."
+    },
+    {
+     "flag": "ks_aud_heather",
+     "line": "Aud has moved her heather to the first mound. She says it was always there."
+    }
    ]
   }
  ]

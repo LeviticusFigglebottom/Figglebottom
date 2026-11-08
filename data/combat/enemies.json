@@ -634,7 +634,7 @@
   "hp": 90,
   "poise": 50,
   "poise_regen": 7,
-  "speed": 1.6,
+  "speed": 1.5,
   "turn": 5.0,
   "aggro_sight": 10.0,
   "aggro_fov": 130.0,
@@ -647,48 +647,86 @@
   "hurt_r": 0.45,
   "hurt_h": 1.75,
   "col_r": 0.4,
-  "stagger_time": 1.1,
+  "stagger_time": 1.2,
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.9,
   "attacks": [
    {
-    "id": "swipe",
-    "range": 2.1,
-    "windup": 0.62,
-    "active": 0.16,
-    "recover": 0.85,
-    "dmg": 16,
-    "poise_dmg": 18,
-    "reach": 1.7,
-    "width": 1.8,
-    "height": 1.4,
-    "cooldown": 1.4,
-    "anim": "atk_r",
-    "lunge": 1.5
+    "id": "hammer_fist",
+    "_tell": "right fist drawn up past the ear, turf flakes shake off the shoulder (0.9 s); one heavy overhand. Parryable. May follow with a Back-fist.",
+    "range": 2.2,
+    "windup": 0.9,
+    "active": 0.18,
+    "recover": 1.0,
+    "dmg": 26,
+    "poise_dmg": 32,
+    "cooldown": 2.0,
+    "anim": "atk_over",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.2,
+    "chain": "back_fist",
+    "chain_chance": 0.4
    },
    {
-    "id": "flail",
-    "range": 1.8,
-    "windup": 0.8,
-    "active": 0.34,
-    "recover": 1.1,
-    "dmg": 11,
-    "poise_dmg": 12,
-    "reach": 1.6,
-    "width": 2.2,
-    "height": 1.4,
-    "cooldown": 4.2,
-    "anim": "atk_double",
+    "id": "back_fist",
+    "_tell": "weight shifts to the left foot (0.55 s); a left backhand. Only after a Hammer-fist.",
+    "range": 2.2,
+    "windup": 0.55,
+    "active": 0.16,
+    "recover": 0.9,
+    "dmg": 18,
+    "poise_dmg": 20,
+    "cooldown": 0.0,
+    "anim": "atk_back",
     "hands": [
-     "right",
      "left"
     ],
-    "lunge": 1.0
+    "lunge": 0.8,
+    "chain_only": true
+   },
+   {
+    "id": "door_fall",
+    "_tell": "both arms rise, it leans back, frost-breath twice (1.3 s); it falls forward full length like a turf door coming down over a 1.8 x 3.4 m strip. Not blockable. Then 2 s lying there and getting up.",
+    "type": "line",
+    "range": 3.6,
+    "min_range": 1.0,
+    "length": 3.4,
+    "width": 1.8,
+    "offset": 0.3,
+    "blockable": false,
+    "windup": 1.3,
+    "active": 0.2,
+    "recover": 2.0,
+    "dmg": 40,
+    "poise_dmg": 60,
+    "cooldown": 7.0,
+    "anim": "door_fall",
+    "breath": "twice",
+    "track": 0.9,
+    "kind": "physical",
+    "shake": 0.45,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.8,
+      3.4
+     ],
+     "offset": 0.3,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
    }
   ],
   "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
-  "warmth": 34
+  "warmth": 34,
+  "rise_time": 2.4,
+  "_ai": "LOWE.md 5. Sits up in a barrow mouth facing the road (pose sit_up) and rises slowly when the Bearer comes into sight."
  },
  "keener": {
   "name": "Keener",
@@ -696,9 +734,9 @@
   "hp": 50,
   "poise": 30,
   "poise_regen": 7,
-  "speed": 2.4,
+  "speed": 2.2,
   "turn": 5.0,
-  "aggro_sight": 14.0,
+  "aggro_sight": 16.0,
   "aggro_fov": 130.0,
   "aggro_hear": 4.0,
   "leash": 26.0,
@@ -715,50 +753,107 @@
   "stride": 1.9,
   "attacks": [
    {
-    "id": "swipe",
-    "range": 2.1,
-    "windup": 0.62,
-    "active": 0.16,
-    "recover": 0.85,
-    "dmg": 16,
-    "poise_dmg": 18,
-    "reach": 1.7,
-    "width": 1.8,
-    "height": 1.4,
-    "cooldown": 1.4,
-    "anim": "atk_r",
-    "lunge": 1.5
+    "id": "breath_note",
+    "_tell": "head tips back, the mask lifts, a thin held breath (0.9 s); one slow note of frost.",
+    "type": "ranged",
+    "range": 14.0,
+    "min_range": 3.0,
+    "count": 1,
+    "proj_speed": 8.0,
+    "windup": 0.9,
+    "active": 0.1,
+    "recover": 0.8,
+    "dmg": 14,
+    "poise_dmg": 8,
+    "cooldown": 2.4,
+    "anim": "keen_draw",
+    "breath": "held",
+    "kind": "frost",
+    "proj_color": [
+     0.78,
+     0.88,
+     1.0
+    ]
    },
    {
-    "id": "flail",
-    "range": 1.8,
+    "id": "keen",
+    "_tell": "both hands to the mask, it rocks forward twice, a long held breath (1.5 s); three notes in a fan.",
+    "type": "ranged",
+    "range": 13.0,
+    "min_range": 3.5,
+    "count": 3,
+    "spread_deg": 16.0,
+    "proj_speed": 7.5,
+    "windup": 1.5,
+    "active": 0.1,
+    "recover": 1.0,
+    "dmg": 16,
+    "poise_dmg": 10,
+    "cooldown": 7.0,
+    "anim": "keen_rock",
+    "breath": "held",
+    "kind": "frost",
+    "proj_color": [
+     0.78,
+     0.88,
+     1.0
+    ]
+   },
+   {
+    "id": "hush",
+    "_tell": "turns its face away, shoulders rise (0.7 s); a 2.8 m ring glows; it breathes out on whoever is close. Knocks back.",
+    "type": "nova",
+    "nova_kind": "frost",
+    "nova_radius": 2.8,
+    "range": 2.6,
+    "windup": 0.7,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 14,
+    "poise_dmg": 40,
+    "cooldown": 4.0,
+    "anim": "hush",
+    "breath": "forward",
+    "kind": "frost",
+    "track": 0.0,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.8
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "rouse",
+    "_tell": "straightens, hands drop, breath straight up (0.8 s); every idle frost-taken within 16 m turns to the Bearer and comes. No damage.",
+    "type": "alert",
+    "radius": 16.0,
+    "range": 12.0,
     "windup": 0.8,
-    "active": 0.34,
-    "recover": 1.1,
-    "dmg": 11,
-    "poise_dmg": 12,
-    "reach": 1.6,
-    "width": 2.2,
-    "height": 1.4,
-    "cooldown": 4.2,
-    "anim": "atk_double",
-    "hands": [
-     "right",
-     "left"
-    ],
-    "lunge": 1.0
+    "active": 0.1,
+    "recover": 0.6,
+    "cooldown": 45.0,
+    "anim": "rouse",
+    "breath": "up"
    }
   ],
   "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
-  "warmth": 26
+  "warmth": 26,
+  "keep_range": 7.0,
+  "_ai": "LOWE.md 5. Keeps its distance (keep_range) and breathes the tune at the Bearer; breathes out on anyone who closes in; now and then rouses the idle dead nearby."
  },
  "cairn_carrier": {
   "name": "Cairn-carrier",
   "desc": "Frozen stones have grown across its shoulders. It carries them up the hill and does not know why.",
   "hp": 130,
-  "poise": 80,
+  "poise": 90,
   "poise_regen": 7,
-  "speed": 1.5,
+  "speed": 1.4,
   "turn": 5.0,
   "aggro_sight": 10.0,
   "aggro_fov": 130.0,
@@ -769,166 +864,518 @@
   "arm_h": 1.16,
   "arm_dx": 0.27,
   "hurt_r": 0.6,
-  "hurt_h": 2.0,
+  "hurt_h": 2.1,
   "col_r": 0.55,
-  "stagger_time": 0.9,
+  "stagger_time": 1.0,
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.9,
   "attacks": [
    {
-    "id": "swipe",
-    "range": 2.1,
-    "windup": 0.62,
-    "active": 0.16,
-    "recover": 0.85,
-    "dmg": 16,
-    "poise_dmg": 18,
-    "reach": 1.7,
-    "width": 1.8,
-    "height": 1.4,
-    "cooldown": 1.4,
-    "anim": "atk_r",
-    "lunge": 1.5
+    "id": "yoke_swing",
+    "_tell": "twists the whole torso away, the stones grind (1.0 s); the yoke swings round, a 220 degree sweep at 2.4 m. Roll away, not through.",
+    "range": 2.6,
+    "windup": 1.0,
+    "active": 0.25,
+    "recover": 1.2,
+    "dmg": 26,
+    "poise_dmg": 50,
+    "reach": 2.4,
+    "width": 3.4,
+    "height": 1.8,
+    "arc": 220,
+    "cooldown": 2.6,
+    "anim": "yoke_twist",
+    "lunge": 0.4,
+    "body_hitbox": true
    },
    {
-    "id": "flail",
-    "range": 1.8,
-    "windup": 0.8,
-    "active": 0.34,
-    "recover": 1.1,
-    "dmg": 11,
-    "poise_dmg": 12,
-    "reach": 1.6,
-    "width": 2.2,
-    "height": 1.4,
-    "cooldown": 4.2,
-    "anim": "atk_double",
-    "hands": [
-     "right",
-     "left"
-    ],
-    "lunge": 1.0
+    "id": "set_stone",
+    "_tell": "stoops, both hands to the yoke, lifts one stone over its head (1.6 s); a 1.6 m square glows ahead; the stone comes down and stays as a cairn for 14 s. Not blockable. Two heavy blows knock the cairn down.",
+    "type": "line",
+    "range": 4.0,
+    "min_range": 1.2,
+    "length": 1.6,
+    "width": 1.6,
+    "offset": 1.2,
+    "blockable": false,
+    "ridge": {
+     "life": 14.0,
+     "breaks": 2,
+     "style": "stone"
+    },
+    "windup": 1.6,
+    "active": 0.2,
+    "recover": 1.4,
+    "dmg": 34,
+    "poise_dmg": 50,
+    "cooldown": 8.0,
+    "anim": "lift_stone",
+    "track": 0.8,
+    "kind": "physical",
+    "shake": 0.5,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.6,
+      1.6
+     ],
+     "offset": 1.2,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "stone_toss",
+    "_tell": "one stone lifted to the shoulder (1.3 s); a slow heavy lob at a Bearer more than 6 m off.",
+    "type": "ranged",
+    "range": 14.0,
+    "min_range": 6.0,
+    "count": 1,
+    "proj_speed": 9.0,
+    "windup": 1.3,
+    "active": 0.1,
+    "recover": 1.2,
+    "dmg": 28,
+    "poise_dmg": 30,
+    "cooldown": 6.0,
+    "anim": "lift_stone",
+    "kind": "physical",
+    "proj_color": [
+     0.55,
+     0.6,
+     0.58
+    ]
    }
   ],
   "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
   "warmth": 44,
-  "vis_scale": 1.1
+  "vis_scale": 1.1,
+  "_ai": "LOWE.md 5. Carries its stones uphill; sets one down as a cairn in the Bearer's way; lobs one when kept at a distance."
  },
  "turfwright": {
   "name": "The Turfwright",
   "release_flag": "ks_turfwright_released",
   "release_card": "THE TURFWRIGHT — RELEASED",
   "desc": "Arne Holm, who cut and laid barrow-turf for every neighbourhood on the coast. He stopped with the last turf on his spade.",
-  "hp": 1100,
-  "poise": 130,
+  "hp": 1150,
+  "poise": 140,
   "poise_regen": 30,
-  "speed": 2.3,
-  "turn": 4.0,
+  "speed": 2.2,
+  "turn": 3.6,
   "aggro_sight": 40.0,
   "aggro_fov": 360.0,
   "aggro_hear": 40.0,
   "leash": 999.0,
   "body": "mannequin_holdfast",
   "model": "turfwright",
-  "arm_h": 1.95,
-  "arm_dx": 0.55,
-  "hurt_r": 1.0,
-  "hurt_h": 2.8,
-  "col_r": 0.7,
+  "arm_h": 2.2,
+  "arm_dx": 0.6,
+  "hurt_r": 1.1,
+  "hurt_h": 3.2,
+  "col_r": 0.8,
   "stagger_time": 1.6,
   "is_boss": true,
-  "anim_amp": 0.8,
-  "anim_sway": 1.35,
-  "stride": 2.0,
-  "vis_scale": 1.55,
+  "stride": 2.2,
   "attacks": [
    {
-    "id": "drag_swing",
+    "id": "spade_chop",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "spade-arm drawn up across his body, left fist braced (0.8 s); one heavy downward chop. Parryable on the blade.",
     "range": 3.4,
-    "windup": 0.9,
-    "active": 0.24,
-    "recover": 1.3,
+    "windup": 0.8,
+    "active": 0.22,
+    "recover": 1.2,
     "dmg": 34,
     "poise_dmg": 60,
-    "reach": 3.0,
-    "width": 3.4,
-    "height": 1.8,
-    "cooldown": 2.2,
+    "cooldown": 2.0,
     "anim": "atk_r",
-    "lunge": 2.4,
-    "arc": 65
+    "hands": [
+     "right"
+    ],
+    "lunge": 2.0,
+    "parry_stagger": true
    },
    {
-    "id": "post_slam",
-    "range": 2.8,
-    "windup": 1.1,
-    "active": 0.2,
-    "recover": 1.6,
-    "dmg": 46,
-    "poise_dmg": 80,
-    "reach": 2.6,
-    "width": 2.6,
-    "height": 2.2,
-    "cooldown": 4.5,
-    "anim": "atk_over",
-    "lunge": 1.2,
-    "shockwave": 4.5,
-    "arc": 110
-   },
-   {
-    "id": "backswing",
-    "range": 2.0,
-    "windup": 0.45,
-    "active": 0.18,
-    "recover": 0.9,
-    "dmg": 24,
-    "poise_dmg": 40,
-    "reach": 2.2,
-    "width": 3.0,
-    "height": 1.6,
-    "cooldown": 3.0,
-    "anim": "atk_back",
-    "lunge": 0.8
-   },
-   {
-    "id": "gale_spin",
-    "range": 3.2,
+    "id": "ground_cut",
+    "phases": [
+     1,
+     2,
+     3
+    ],
+    "_tell": "plants his feet, sets the blade to the ground and leans on it, breath forward (1.3 s); a 1 x 12 m strip glows toward the Bearer. The cut runs along the ground and the lifted sod stands as a low wall for 8 s. Phase 1: a Cross cut half the time; phase 2: always; phase 3: slower, never.",
+    "type": "line",
+    "range": 12.0,
+    "min_range": 3.0,
+    "length": 12.0,
+    "width": 1.0,
+    "offset": 1.0,
+    "ridge": {
+     "life": 8.0,
+     "breaks": 2,
+     "style": "sod"
+    },
     "windup": 1.3,
-    "active": 0.5,
-    "recover": 1.8,
+    "active": 0.2,
+    "recover": 1.1,
+    "dmg": 28,
+    "poise_dmg": 30,
+    "cooldown": 6.0,
+    "anim": "ground_cut",
+    "breath": "forward",
+    "track": 1.0,
+    "kind": "physical",
+    "shake": 0.4,
+    "chain": "cross_cut",
+    "chain_chance": 0.5,
+    "by_phase": {
+     "2": {
+      "chain_chance": 1.0
+     },
+     "3": {
+      "chain_chance": 0.0,
+      "windup": 1.5
+     }
+    },
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.0,
+      12.0
+     ],
+     "offset": 1.0,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "cross_cut",
+    "_tell": "pulls the blade free and re-aims, one step (0.9 s); a second cut at the Bearer's new place. Only after a Ground cut.",
+    "type": "line",
+    "chain_only": true,
+    "range": 12.0,
+    "length": 12.0,
+    "width": 1.0,
+    "offset": 1.0,
+    "ridge": {
+     "life": 8.0,
+     "breaks": 2,
+     "style": "sod"
+    },
+    "windup": 0.9,
+    "active": 0.2,
+    "recover": 1.2,
+    "dmg": 26,
+    "poise_dmg": 30,
+    "cooldown": 0.0,
+    "anim": "ground_cut",
+    "track": 1.4,
+    "kind": "physical",
+    "shake": 0.35,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.0,
+      12.0
+     ],
+     "offset": 1.0,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "back_drop",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "the Bearer is behind him for over 1.2 s: he straightens, the door on his back creaks (0.9 s); a 4 x 4.5 m patch behind him glows; he drops his back like a lid onto it. Not blockable.",
+    "type": "line",
+    "aim": "back",
+    "pick": false,
+    "behind_deg": 110.0,
+    "behind_time": 1.2,
+    "range": 5.0,
+    "length": 4.5,
+    "width": 4.0,
+    "offset": 0.3,
+    "blockable": false,
+    "windup": 0.9,
+    "active": 0.25,
+    "recover": 1.6,
+    "dmg": 44,
+    "poise_dmg": 70,
+    "cooldown": 6.0,
+    "anim": "back_drop",
+    "track": 0.0,
+    "kind": "physical",
+    "shake": 0.6,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      4.0,
+      4.5
+     ],
+     "offset": 0.3,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "stack_sod",
+    "phases": [
+     2
+    ],
+    "_tell": "lifts a block of turf, both arms, over his chest (1.4 s); a 1.4 x 3 m patch glows where the Bearer stands; he lays it there and it stays as a wall for 12 s. Not blockable.",
+    "type": "line",
+    "at_target": true,
+    "range": 13.0,
+    "min_range": 3.5,
+    "length": 3.0,
+    "width": 1.4,
+    "blockable": false,
+    "ridge": {
+     "life": 12.0,
+     "breaks": 2,
+     "style": "sod"
+    },
+    "windup": 1.4,
+    "active": 0.2,
+    "recover": 1.0,
     "dmg": 30,
     "poise_dmg": 50,
-    "reach": 3.2,
-    "width": 6.0,
-    "height": 1.8,
     "cooldown": 7.0,
-    "anim": "atk_spin",
-    "lunge": 2.0,
-    "phase2_only": true
+    "anim": "stack_sod",
+    "track": 1.0,
+    "kind": "physical",
+    "shake": 0.45,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.4,
+      3.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
    },
    {
-    "id": "frost_heave",
-    "range": 6.0,
-    "windup": 1.5,
-    "active": 0.3,
-    "recover": 2.0,
-    "dmg": 38,
+    "id": "sod_throw",
+    "phases": [
+     2
+    ],
+    "_tell": "one sod lifted to the shoulder (1.0 s); a slow heavy lob at a Bearer more than 6 m off.",
+    "type": "ranged",
+    "range": 16.0,
+    "min_range": 6.0,
+    "count": 1,
+    "proj_speed": 12.0,
+    "windup": 1.0,
+    "active": 0.1,
+    "recover": 1.0,
+    "dmg": 26,
     "poise_dmg": 30,
-    "reach": 0.5,
-    "width": 0.5,
-    "height": 0.5,
-    "cooldown": 9.0,
+    "cooldown": 5.0,
     "anim": "atk_over",
-    "lunge": 0.0,
-    "shockwave": 7.5,
-    "phase2_only": true,
-    "arc": 110,
-    "kind": "frost"
+    "kind": "physical",
+    "proj_color": [
+     0.42,
+     0.33,
+     0.22
+    ]
+   },
+   {
+    "id": "drag_swing",
+    "phases": [
+     2
+    ],
+    "_tell": "spade dragged back along the ground (0.9 s); a wide 130 degree sweep.",
+    "range": 3.4,
+    "windup": 0.9,
+    "active": 0.26,
+    "recover": 1.3,
+    "dmg": 30,
+    "poise_dmg": 50,
+    "reach": 3.0,
+    "width": 3.6,
+    "height": 1.8,
+    "arc": 130,
+    "cooldown": 3.5,
+    "anim": "atk_2h_sweep",
+    "hands": [
+     "right"
+    ],
+    "lunge": 2.0
+   },
+   {
+    "id": "one_hand_chop",
+    "phases": [
+     3
+    ],
+    "_tell": "spade drawn up, the sod held tight (0.9 s); one chop, slower.",
+    "range": 3.2,
+    "windup": 0.9,
+    "active": 0.22,
+    "recover": 1.3,
+    "dmg": 30,
+    "poise_dmg": 50,
+    "cooldown": 2.2,
+    "anim": "atk_r",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.6,
+    "parry_stagger": true
+   },
+   {
+    "id": "last_turf",
+    "phases": [
+     3
+    ],
+    "_tell": "the Bearer more than 6 m off: he turns to the door, kneels and lifts the sod to the doorway with both hands (2.0 s). No attack. He holds it there, his back to the Bearer: open. Hits do not stop him. Left alone 5 s, he lowers it to his chest and stands.",
+    "type": "hold",
+    "range": 99.0,
+    "min_range": 6.0,
+    "quiet": 5.0,
+    "windup": 2.0,
+    "active": 0.1,
+    "recover": 0.0,
+    "cooldown": 12.0,
+    "anim": "last_turf_kneel",
+    "breath": "held"
    }
   ],
-  "phase2_at": 0.55,
   "sfx_alert": "res://assets/audio/holdfast_roar.wav",
-  "warmth": 1500
+  "warmth": 1500,
+  "bar_name": "THE TURFWRIGHT",
+  "class": "res://src/enemies/turfwright.gd",
+  "_fight": "LOWE.md 6. Phases by HP fraction (phase_at): 1 above 0.6, 2 to 0.25, 3 below. Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: he holds the last sod up to the twins' door until the Bearer is within wake_dist or strikes him. door_ahead: metres from where he stands to the doorway, along the way he first faces. guard_r: in phase 3 he keeps this close to the door. arena_walls: the phase-two sod walls, metres from where he first stood (x his right as he turns to the Bearer, z toward the way in).",
+  "phase_at": [
+   0.6,
+   0.25
+  ],
+  "phase_speed": [
+   1.0,
+   1.05,
+   0.85
+  ],
+  "wake_dist": 6.0,
+  "door_ahead": 9.0,
+  "threshold_out": 4.0,
+  "guard_r": 7.5,
+  "door_sill": 0.5,
+  "spade_reach": 0.55,
+  "sod_size": [
+   0.75,
+   0.2,
+   0.5
+  ],
+  "parry_stagger_mult": 1.6,
+  "arena_walls": [
+   {
+    "from": [
+     3.54,
+     10.54
+    ],
+    "to": [
+     8.49,
+     15.49
+    ]
+   },
+   {
+    "from": [
+     3.54,
+     3.46
+    ],
+    "to": [
+     8.49,
+     -1.49
+    ]
+   },
+   {
+    "from": [
+     -3.54,
+     3.46
+    ],
+    "to": [
+     -8.49,
+     -1.49
+    ]
+   },
+   {
+    "from": [
+     -3.54,
+     10.54
+    ],
+    "to": [
+     -8.49,
+     15.49
+    ]
+   }
+  ],
+  "transitions": {
+   "wake": {
+    "_tell": "lowers the spade, sets the sod down on the threshold stone, square, with both hands, and turns round; the bar appears",
+    "time": 2.6,
+    "anim": "set_down",
+    "events": [
+     [
+      1.1,
+      "set_down"
+     ]
+    ]
+   },
+   "p2": {
+    "_tell": "drives the spade into the ground and pulls: four walls of stacked sod rise in a cross and cut the hollow into bays",
+    "time": 2.6,
+    "anim": "drive_spade",
+    "events": [
+     [
+      1.15,
+      "raise_walls"
+     ]
+    ]
+   },
+   "p3": {
+    "_tell": "stops; stoops for the sod on the threshold and holds it to his chest in his left arm; the bay walls slump",
+    "time": 2.8,
+    "anim": "take_turf",
+    "events": [
+     [
+      0.9,
+      "walls_slump"
+     ],
+     [
+      1.5,
+      "take_turf"
+     ]
+    ]
+   }
+  },
+  "release_drop": {
+   "item": "item_tally_stick",
+   "label": "Take the tally-stick",
+   "pickup_id": "tally_stick",
+   "ahead": 2.2
+  },
+  "release_hearth": "hs_open_barrow"
  }
 }

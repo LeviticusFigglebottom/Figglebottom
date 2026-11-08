@@ -63,6 +63,12 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | Barrow-sleeper / Keener / Cairn-carrier | enemies (the Lowe) | |
 | Hesk | NPC (the Lowe) | travelling smith |
 | Aud | NPC (the Lowe) | barrow-keeper's widow |
+| Orm | character (the Lowe) | Aud's late husband, keeper of the Kin-Mounds for forty years |
+| Liv and Asta | characters (the Lowe) | the Turfwright's twin daughters |
+| the Drying Stacks / the Open Barrow | Hearthstones (the Lowe) | the road's end; the twins' barrow, woken on release |
+| Turf-Laying Song | song | ward; taught by Aud |
+| Turf Spade / Post Maul | weapons (the Lowe) | `turf_spade`, `maul` |
+| Orm's Working Cloak | armour (body) | Aud's gift, `armour_barrow_cloak` |
 | Sefa | NPC (travelling) | maskwright |
 | the Ice-Cutter (Old Pell) | Holdfast (Kettle Fjord) | kept a hole open in the ice for his grandson |
 | Ivo | NPC (Kettle Fjord) | the Ice-Cutter's grandson |

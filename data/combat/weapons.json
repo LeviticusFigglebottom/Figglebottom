@@ -26,8 +26,8 @@
   }
  },
  "maul": {
-  "name": "Maul",
-  "desc": "A post-driving maul. Slow to lift, slower to argue with.",
+  "name": "Post Maul",
+  "desc": "A round of split oak on an ash haft, bound with two iron rings, for driving fence posts. Hesk carries it from steading to steading and sells it when he is short. The leather on the grip is wrapped over an older wrap.",
   "class": "great_hammer",
   "kit": "maul",
   "damage": 74.976,
@@ -48,6 +48,33 @@
   "block": {
    "stab": 1.0,
    "chip": 0.25
+  }
+ },
+ "turf_spade": {
+  "name": "Turf Spade",
+  "desc": "A peat-spade with a long narrow blade and one side wing, for cutting turf in strips. The ash handle has gone silver. It was wedged under a barrow door on the Kin-Mounds to hold the door up.",
+  "class": "halberd",
+  "kit": "turf_spade",
+  "damage": 56.0,
+  "poise_damage": 30,
+  "scaling": {
+   "might": 0.45,
+   "craft": 0.4
+  },
+  "stamina": {
+   "light": 20,
+   "heavy": 34,
+   "sprint": 24
+  },
+  "moveset": "halberd",
+  "two_handed": true,
+  "block": {
+   "stab": 1.1,
+   "chip": 0.3
+  },
+  "upgrade": {
+   "per_level": 7,
+   "max": 5
   }
  },
  "spear": {
