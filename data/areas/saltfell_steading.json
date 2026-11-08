@@ -1131,7 +1131,7 @@
     60.5
    ],
    "rot": 200,
-   "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\n\nKeep hearth in the boat-shed, and it will remember for you."
+   "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\nThe hearth is in the boat-shed."
   },
   {
    "at": [
@@ -1204,6 +1204,19 @@
    "tag": "rime",
    "set_flag": "ks_brede_float_found",
    "label": "Chip the float out of the ice"
+  },
+  {
+   "id": "mending_needle",
+   "at": [
+    0.0,
+    22.02,
+    -43.8
+   ],
+   "item": "item_mending_needle",
+   "scene": "res://assets/models/weapons/mending_needle.glb",
+   "tag": "base",
+   "require_flag": "ks_netmender_released",
+   "label": "Take the mending needle"
   }
  ],
  "scripted": [
@@ -1220,6 +1233,21 @@
      11.6,
      31.6
     ]
+   }
+  },
+  {
+   "script": "res://src/world/drawbridge.gd",
+   "at": [
+    -8.0,
+    22.11,
+    -82.5
+   ],
+   "rot": 180,
+   "params": {
+    "flag": "lowe_bridge_down",
+    "length": 13.6,
+    "width": 2.4,
+    "operable": false
    }
   }
  ],
@@ -3321,23 +3349,6 @@
     -79.7
    ],
    "spawn_yaw": 0
-  }
- ],
- "scripted": [
-  {
-   "script": "res://src/world/drawbridge.gd",
-   "at": [
-    -8.0,
-    22.11,
-    -82.5
-   ],
-   "rot": 180,
-   "params": {
-    "flag": "lowe_bridge_down",
-    "length": 13.6,
-    "width": 2.4,
-    "operable": false
-   }
   }
  ]
 }

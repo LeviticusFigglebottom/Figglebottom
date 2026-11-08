@@ -187,6 +187,12 @@ pickups = [
     # and Brede's float, frozen into the face of the tide wall
     {"id": "net_float", "at": at(-8.0, 78.8), "item": "item_net_float", "kit": "net_float", "tag": "rime",
      "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice"},
+    # the Mending Needle where she sat (SLICE.md 6). The release sets one down
+    # at once (Game._release_leavings, same id); this entry keeps it there if
+    # the journey is saved and resumed before it is taken.
+    {"id": "mending_needle", "at": [0.0, SH + 0.02, -43.8], "item": "item_mending_needle",
+     "scene": "res://assets/models/weapons/mending_needle.glb", "tag": "base",
+     "require_flag": "ks_netmender_released", "label": "Take the mending needle"},
 ]
 # the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
 # arena; she hauls it and lights it (src/world/net_floor.gd)
@@ -199,7 +205,7 @@ npcs = [
     {"id": "brede", "at": at(-6.2, 73.4), "rot": 160, "tag": "thaw"},
 ]
 plaques = [
-    {"at": at(-1.0, 60.5), "rot": 200, "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\n\nKeep hearth in the boat-shed, and it will remember for you."},
+    {"at": at(-1.0, 60.5), "rot": 200, "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\nThe hearth is in the boat-shed."},
     {"at": at(3.4, -17.6), "rot": 180, "tag": "rime", "text": "THE LONGHOUSE\n\nThe door is iced shut from the inside.\nSomeone is still mending in there."},
 ]
 
@@ -340,12 +346,13 @@ D = {
     "npcs": npcs,
     "plaques": plaques,
     "pickups": pickups,
-    "scripted": scripted,
+    # one list: a second "scripted" key below used to overwrite this one,
+    # and the Longhouse lost its net floor (the drawbridge seam joins it)
+    "scripted": scripted + [seams("saltfell_steading")[1]],
     "scatter": scatter,
     "edges": edges,
     # the seams to the Lowe: the cliff-top pass and the drawbridge
     "portals": seams("saltfell_steading")[0],
-    "scripted": [seams("saltfell_steading")[1]],
 }
 
 if __name__ == "__main__":

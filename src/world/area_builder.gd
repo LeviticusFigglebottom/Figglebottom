@@ -160,6 +160,7 @@ static func build(area_id: String) -> Area:
 		k.label = spec.get("label", "Take")
 		k.appear_flag = spec.get("appear_flag", "")
 		k.display_kit = spec.get("kit", "")
+		k.display_scene = spec.get("scene", "")
 		k.set_flag = spec.get("set_flag", "")
 		area.attach(k, spec.get("tag", "base"))
 		_place(k, spec)
