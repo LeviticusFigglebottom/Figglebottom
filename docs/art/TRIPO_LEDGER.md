@@ -132,3 +132,143 @@ Budget for the batch: about 3,000 credits. Balance at start: 21,870 (`tripo_stat
 | 2026-11-07 | tripo_animate prompt (text_to_motion) ×3: ground cut ("Arm Chop Motion"), stack sod ("Lifting and Placing Block"), back drop ("Backward Fall and Sit Up") | turfwright | 954b9c38-… | 60 | — | ops c881a910, 3bdae36c, 14a0bb2d; shipped as clips |
 | 2026-11-07 | tripo_animate prompt, **failed** (HTTP 406 "Failed to acquire lock": three prompt clips sent in parallel to one project) | turfwright | 954b9c38-… | 20 | — | op f58b2808; charged, not refunded; retried alone |
 | 2026-11-07 | **Lowe batch total** (11 generations incl. 1 superseded, 10 remeshes, 7 rigs, 4 text_to_motion) | | | **1,235** | **20,635** | reconciled with the `tripo_status` ledger |
+
+## Regions 3-7 batch (branch art/regions-3-7, 2026-11-07)
+
+Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 20,635 (`tripo_status`, checked before each batch). Reference images, multiview expansions and every reference re-roll via `tripo_image` are free on the plan (prompts in PROVENANCE; picks in `docs/art/concept/refs/`). Rows are grouped by region, in commit order. Bosses: multiview + extreme + three prompt clips each, sent one at a time per project (no 406s this batch).
+
+| Date | Action | Asset | Project id | Cost | Balance after | Note |
+|---|---|---|---|---|---|---|
+| 2026-11-07 | tripo_status | — | — | 0 | 20,635 | batch start |
+| 2026-11-07 | remesh quad 10k **failed** (HTTP 502, retried automatically) | feast_cleaver | — | 0 | — | not charged (balance reconciles exactly) |
+| 2026-11-07 | *Kettle Fjord* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | ice_cutter | 16bd3f55-57da-438e-b84e-79515c88d0d6 | 65 | — | op dbc22378 |
+| 2026-11-07 | remesh quad 10k | ice_cutter | 16bd3f55-… | 40 | — | op 435c06e6 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | ice_cutter | 16bd3f55-… | 20 | — | op 25f36461; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: drill_down ("Drilling Ice"), haul_trace ("Hauling Rope"), ring_cut ("Turning and Stabbing") | ice_cutter | 16bd3f55-… | 60 | — | ops 9868064c, c2b9c458, d330d4ce; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | ice_fisher | fcc44eb6-fe4c-4e8a-a940-adb1663988d9 | 55 | — | op 689bb502 |
+| 2026-11-07 | remesh quad 10k | ice_fisher | fcc44eb6-… | 40 | — | op 385475f9 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | ice_fisher | fcc44eb6-… | 20 | — | op 6ef89d05; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | sledge_dog | 443f57f2-7d68-4a15-be9a-218e8107d28a | 55 | — | op 19b47f01 |
+| 2026-11-07 | remesh quad 10k | sledge_dog | 443f57f2-… | 40 | — | op 719594f2 |
+| 2026-11-07 | rig check_only + rig quadruped; animate ×1 presets (walk) | sledge_dog | 443f57f2-… | 20 | — | op a071c3e7; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | sealer | a36746a3-1dfc-4610-9a73-f1cdbbc40375 | 55 | — | op bca441dc |
+| 2026-11-07 | remesh quad 10k | sealer | a36746a3-… | 40 | — | op 01d2ae1f |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | sealer | a36746a3-… | 20 | — | op 00309b13; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | ivo | 199eba5c-780e-4d63-a0d8-26d8d2a11bfb | 55 | — | op d32fe972 |
+| 2026-11-07 | remesh quad 10k | ivo | 199eba5c-… | 40 | — | op c0dced18 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | ivo | 199eba5c-… | 20 | — | op 5e53fd29; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_icefur | 894a4459-a224-466f-b4dd-e9cc3cf9c5ad | 55 | — | op 0bc077ee |
+| 2026-11-07 | remesh quad 10k | bearer_icefur | 894a4459-… | 40 | — | op 4f476662 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_icefur | 894a4459-… | 20 | — | op b1481c25; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | ice_auger | 78e6abdc-2f7c-48c7-9618-63911bd46704 | 55 | — | op ab552650 |
+| 2026-11-07 | remesh quad 10k | ice_auger | 78e6abdc-… | 40 | — | op 93126257 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | sealer_harpoon | 2119103e-6f70-4854-aa3f-f35c3b1ce393 | 55 | — | op 2b95fbe2 |
+| 2026-11-07 | remesh quad 10k | sealer_harpoon | 2119103e-… | 40 | — | op 39d443cc |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_fish_kettle | 20be4ec8-fdc5-4e08-8651-142d6bdfa79b | 55 | — | op a4d78a82 |
+| 2026-11-07 | remesh quad 10k | lm_fish_kettle | 20be4ec8-… | 40 | — | op 8a3ec9f0 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_sledge | 45765576-8ec0-4968-b4b7-d3b856eca468 | 55 | — | op 967d31e5 |
+| 2026-11-07 | remesh quad 10k | lm_sledge | 45765576-… | 40 | — | op 3f7b0e92 |
+| 2026-11-07 | *Tarnhall* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | host | c4b2784f-f744-4923-9671-2d59c5c1e885 | 65 | — | op 9f231363 |
+| 2026-11-07 | remesh quad 10k | host | c4b2784f-… | 40 | — | op ff47c6af |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | host | c4b2784f-… | 20 | — | op e088a97c; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: table_sweep ("Heavy Swing Body Turn"), bench_throw ("Throwing Heavy Object"), raise_guests ("Summoning Gesture") | host | c4b2784f-… | 60 | — | ops 8b023ae2, dd9e4310, 4606cafd; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | feast_guest | 2e938f2d-901a-4a92-b493-8d6f841a43d6 | 55 | — | op 54cb4c10 |
+| 2026-11-07 | remesh quad 10k | feast_guest | 2e938f2d-… | 40 | — | op 7533aede |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | feast_guest | 2e938f2d-… | 20 | — | op d9e7f28f; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | cupbearer | 44722431-02ac-4bc1-adcc-fab16e8ff84c | 55 | — | op 00d793a1 |
+| 2026-11-07 | remesh quad 10k | cupbearer | 44722431-… | 40 | — | op 8706e383 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | cupbearer | 44722431-… | 20 | — | op cf365dcb; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | hall_champion | 429779ab-a604-461b-a7d8-b703a059020a | 55 | — | op 2a6a7158 |
+| 2026-11-07 | remesh quad 10k | hall_champion | 429779ab-… | 40 | — | op 963a81d0 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | hall_champion | 429779ab-… | 20 | — | op ea8ec8e9; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lusse | 0041637c-4363-46ef-9794-b0ca42ffa72b | 55 | — | op 2612c769 |
+| 2026-11-07 | remesh quad 10k | lusse | 0041637c-… | 40 | — | op 88b1547d |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | lusse | 0041637c-… | 20 | — | op 5322d332; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_hall | 358062ea-da2b-40b4-8303-ac8282d5944d | 55 | — | op 4818b331 |
+| 2026-11-07 | remesh quad 10k | bearer_hall | 358062ea-… | 40 | — | op 50572762 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_hall | 358062ea-… | 20 | — | op 6ee8be7f; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | feast_cleaver | 4478c00f-b3ee-422f-81f4-3d08f396d608 | 55 | — | op bd343cb7 |
+| 2026-11-07 | remesh quad 10k | feast_cleaver | 4478c00f-… | 40 | — | op c8865cc9 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | tarnhall_shield | bd2ce6db-5f0a-41e0-8118-0dab4306c21c | 55 | — | op b0acade9 |
+| 2026-11-07 | remesh quad 10k | tarnhall_shield | bd2ce6db-… | 40 | — | op d400b947 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_hall_doors | 83f88b15-b017-4cc8-96c2-92156fe74414 | 55 | — | op ff4e5fae |
+| 2026-11-07 | remesh quad 10k | lm_hall_doors | 83f88b15-… | 40 | — | op 89780a3a |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_high_seat | f64dfbbb-5de2-4db2-9d68-bff6285beb48 | 55 | — | op d4e96e6e |
+| 2026-11-07 | remesh quad 10k | lm_high_seat | f64dfbbb-… | 40 | — | op 9d095a0b |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_guest_post | f2b65695-c6cc-495c-b801-c3bb762273c6 | 55 | — | op 5fa9023e |
+| 2026-11-07 | remesh quad 10k | lm_guest_post | f2b65695-… | 40 | — | op f8852834 |
+| 2026-11-07 | *Thornwold* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | hedgelayer | fc9fff19-c42d-4729-8ffd-2c7f9af187b4 | 65 | — | op b077e8a9 |
+| 2026-11-07 | remesh quad 10k | hedgelayer | fc9fff19-… | 40 | — | op e74fafe2 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | hedgelayer | fc9fff19-… | 20 | — | op 805ad93d; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: raise_wall ("Crouching Wall Raise"), step_into ("Sidestep and Crouch"), thorn_lash ("Whip-Like Arm Motion") | hedgelayer | fc9fff19-… | 60 | — | ops 88482e68, 9a498d0f, 98aabc44; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | collier | ae7d4e61-02dc-4ba3-9e53-7f4b4bdf89b1 | 55 | — | op eb079a7f |
+| 2026-11-07 | remesh quad 10k | collier | ae7d4e61-… | 40 | — | op 9e579a99 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | collier | ae7d4e61-… | 20 | — | op 65ee82f9; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | rime_stag | dc56938d-250b-4b3c-9d68-f8a786c69858 | 55 | — | op 54e43e6d |
+| 2026-11-07 | remesh quad 10k | rime_stag | dc56938d-… | 40 | — | op c60f39ff |
+| 2026-11-07 | rig check_only + rig quadruped; animate ×1 presets (walk) | rime_stag | dc56938d-… | 20 | — | op 69f997c4; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | linnet | 1eaa5afb-f069-4c0c-911d-e39a61c35e29 | 55 | — | op 3720be38 |
+| 2026-11-07 | remesh quad 10k | linnet | 1eaa5afb-… | 40 | — | op 6936dd41 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | linnet | 1eaa5afb-… | 20 | — | op 716c82ef; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_collier | 5fbcd35d-2163-4ddb-95bf-ba6449f15320 | 55 | — | op 55da262f |
+| 2026-11-07 | remesh quad 10k | bearer_collier | 5fbcd35d-… | 40 | — | op de4b0f8d |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_collier | 5fbcd35d-… | 20 | — | op a8ad8e36; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | hedging_bill | 674d2d48-521d-4634-bed1-72cc1fa7e770 | 55 | — | op 1ca81af4 |
+| 2026-11-07 | remesh quad 10k | hedging_bill | 674d2d48-… | 40 | — | op 76bad1a0 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | song_cord | c8871160-48e0-44b9-83f4-e5201c4d313b | 55 | — | op 07b03de9 |
+| 2026-11-07 | remesh quad 10k | song_cord | c8871160-… | 40 | — | op e99100ca |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_charcoal_clamp | 26b155ef-bcd3-4ac9-8f46-1b2ffd73c49b | 55 | — | op db903d2d |
+| 2026-11-07 | remesh quad 10k | lm_charcoal_clamp | 26b155ef-… | 40 | — | op 3657282b |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_hedge_gate | 7ba622b2-e81a-4d5d-ad19-3f54cdaf68fc | 55 | — | op 2bd4aeca |
+| 2026-11-07 | remesh quad 10k | lm_hedge_gate | 7ba622b2-… | 40 | — | op c7ed4582 |
+| 2026-11-07 | *Shepherd's Reach* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | fellcaller | 1992a83d-bf21-4fa6-a958-f36592fa8f36 | 65 | — | op 243fe64d |
+| 2026-11-07 | remesh quad 10k | fellcaller | 1992a83d-… | 40 | — | op a9ccd57f |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | fellcaller | 1992a83d-… | 20 | — | op d54b3c7f; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: call ("Calling Out Loudly"), ram_charge ("Head-Down Charge"), summon ("Pointing Forward") | fellcaller | 1992a83d-… | 60 | — | ops a5a11e28, 30abb28f, 6d99ce4d; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | frost_ram | 758eaafa-afc8-40ba-9139-388c982fae19 | 55 | — | op 0f242a58 |
+| 2026-11-07 | remesh quad 10k | frost_ram | 758eaafa-… | 40 | — | op b78bf495 |
+| 2026-11-07 | rig check_only + rig quadruped; animate ×1 presets (walk) | frost_ram | 758eaafa-… | 20 | — | op 9e94800f; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | drover | 00622e07-7810-4e39-a488-28c35caf507f | 55 | — | op d93a46c7 |
+| 2026-11-07 | remesh quad 10k | drover | 00622e07-… | 40 | — | op 01ad389e |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | drover | 00622e07-… | 20 | — | op 4f0766cd; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | old_calder | d29bc9c8-33aa-4659-b9f5-25b1f6a25bd0 | 55 | — | op 1fc32096 |
+| 2026-11-07 | remesh quad 10k | old_calder | d29bc9c8-… | 40 | — | op 1a03535d |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | old_calder | d29bc9c8-… | 20 | — | op 489f0c54; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_fleece | 1200c512-a477-4d44-b95a-8edee9d4ecf5 | 55 | — | op 2963787f |
+| 2026-11-07 | remesh quad 10k | bearer_fleece | 1200c512-… | 40 | — | op 744f6ea7 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_fleece | 1200c512-… | 20 | — | op 8f1179b3; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | shepherd_crook | 242c0d6d-3a8b-41b2-8eca-196500663b43 | 55 | — | op a925334c |
+| 2026-11-07 | remesh quad 10k | shepherd_crook | 242c0d6d-… | 40 | — | op 9d9a4be3 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | fellcaller_horn | 4534daf0-67a0-41d9-93d5-140fe5e1de50 | 55 | — | op 2b212684 |
+| 2026-11-07 | remesh quad 10k | fellcaller_horn | 4534daf0-… | 40 | — | op 7ea30440 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_sheiling | a6cab8ce-7439-4e00-af6b-44efff17923e | 55 | — | op 3430fc39 |
+| 2026-11-07 | remesh quad 10k | lm_sheiling | a6cab8ce-… | 40 | — | op b7756020 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_fold_cairn | 04a1c969-885a-4d19-ab75-3f3bdf2603e3 | 55 | — | op 26cbbc2f |
+| 2026-11-07 | remesh quad 10k | lm_fold_cairn | 04a1c969-… | 40 | — | op 8bfc82be |
+| 2026-11-07 | *the Coldwell* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | leadvoice | f3995e1c-dba9-4028-9a88-6c5e04b17a78 | 65 | — | op 980a6766 |
+| 2026-11-07 | remesh quad 10k | leadvoice | f3995e1c-… | 40 | — | op c0b57541 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | leadvoice | f3995e1c-… | 20 | — | op 46c9f5ec; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×4, sent one at a time: hold_note ("Singing with Open Arms"), rise ("Standing Up"), shelter_superseded ("Protective Body Curl; superseded: the ice cloak tore into flying sheets, re-prompted gentler"), shelter ("Gentle Bow with Folded Arms") | leadvoice | f3995e1c-… | 80 | — | ops 4043a60d, 6420f9b8, 7a02da80, 27ba504c; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | upwalker | b430ac57-502f-4568-a293-207de3578e0c | 55 | — | op 656354b7 |
+| 2026-11-07 | remesh quad 10k | upwalker | b430ac57-… | 40 | — | op 26e07a27 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | upwalker | b430ac57-… | 20 | — | op 58686337; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | unsung | 0377db53-e147-41cf-8666-5b8a5819ddc0 | 55 | — | op e2407d5c |
+| 2026-11-07 | remesh quad 10k | unsung | 0377db53-… | 40 | — | op ab0ba73e |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | unsung | 0377db53-… | 20 | — | op 605dc373; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | maren_thaw | d9ef8e2f-f7a4-426c-9085-c23eca621e3a | 55 | — | op dc76cacd |
+| 2026-11-07 | remesh quad 10k | maren_thaw | d9ef8e2f-… | 40 | — | op 19bb3786 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | maren_thaw | d9ef8e2f-… | 20 | — | op c10c07c4; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | wren | 77dd6d55-a4cc-4553-9658-ce504d0045f6 | 55 | — | op dc51bb0d |
+| 2026-11-07 | remesh quad 10k | wren | 77dd6d55-… | 40 | — | op e4dc2930 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | wren | 77dd6d55-… | 20 | — | op 52e09c57; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_outsong | e12b03e5-ae5e-4cea-a58e-c8a56f106329 | 55 | — | op 5be11ff2 |
+| 2026-11-07 | remesh quad 10k | bearer_outsong | e12b03e5-… | 40 | — | op ad666992 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_outsong | e12b03e5-… | 20 | — | op da6107ad; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_wellhead | b23cb8f4-0ea2-432a-a850-5047697a3c32 | 55 | — | op 50db9f4d |
+| 2026-11-07 | remesh quad 10k | lm_wellhead | b23cb8f4-… | 40 | — | op dae02322 |
+| 2026-11-08 | **Regions 3-7 batch total** (46 generations: 5 multiview at extreme + 41 image_to_model; 46 remeshes; 28 rigs; 16 text_to_motion, one superseded) | | | **5,300** | **15,335** | reconciled with `tripo_status`: 5 × 65 + 41 × 55 + 46 × 40 + 28 × 20 + 16 × 20 |
