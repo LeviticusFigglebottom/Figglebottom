@@ -15,6 +15,13 @@ uniform vec3 deep_tint : source_color = vec3(0.16, 0.30, 0.40);
 uniform float clarity = 1.3;      // metres before the ice reads opaque
 uniform sampler2D screen_tex : hint_screen_texture, filter_linear_mipmap;
 uniform sampler2D depth_tex : hint_depth_texture, filter_nearest;
+// look pass: the CC0 ice and snow photo sets (MaterialLib binds them)
+uniform sampler2D ice_alb : source_color, hint_default_white, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D ice_nrm : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D snow_alb : source_color, hint_default_white, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform vec3 ice_mean = vec3(1.0);
+uniform vec3 snow_mean = vec3(1.0);
+uniform float photo = 0.0;   // 1 once the sets are bound
 
 global uniform float rh_state_blend;
 global uniform float rh_wave_r;
@@ -90,9 +97,17 @@ void fragment() {
 	vec3 under = textureLod(screen_tex, SCREEN_UV + bend, 0.0).rgb;
 	float op = 1.0 - exp(-through / clarity);
 	vec3 seen = mix(under * mix(vec3(1.0), ice_tint, 0.4) * 1.3, deep_tint, op);
+	// photo detail: trapped bubbles and fractures in the ice, grain in the frost
+	vec3 ice_ph = mix(vec3(1.0), texture(ice_alb, wp * 0.16).rgb / max(ice_mean, vec3(0.01)), photo);
+	float ice_l = dot(ice_ph, vec3(0.3, 0.5, 0.2));
+	seen *= mix(vec3(1.0), ice_ph, 0.3);
+	crk = max(crk, smoothstep(1.7, 2.4, ice_l) * 0.25 * photo * (1.0 - snow));
+	vec3 snow_ph = mix(vec3(1.0), texture(snow_alb, wp * 0.3).rgb / max(snow_mean, vec3(0.01)), photo);
 	// the surface itself: snow-white frost, pale cracks, a cold sheen
-	vec3 frost_c = vec3(0.86, 0.9, 0.95);
+	vec3 frost_c = vec3(0.86, 0.9, 0.95) * snow_ph;
 	float cover = clamp(snow * 0.85 + crk * 0.6 + 0.04, 0.0, 1.0);
+	vec2 inr = (texture(ice_nrm, wp * 0.16).rg * 2.0 - 1.0) * 0.35 * photo * (1.0 - cover);
+	NORMAL = normalize((VIEW_MATRIX * vec4(normalize(vec3(inr.x, 1.0, -inr.y)), 0.0)).xyz);
 	ALBEDO = frost_c * cover + ice_tint * 0.12 * (1.0 - cover);
 	EMISSION = seen * (1.0 - cover);
 	ROUGHNESS = mix(0.06, 0.85, cover);
