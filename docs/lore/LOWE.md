@@ -79,7 +79,7 @@ Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
 ### RIME
 
 - The bog is frozen and walkable. A cairn-carrier works its way round the rim, carrying its stones uphill to nowhere.
-- **Hesk's tongs**, frozen into the bog ice near the cutting, handles up (`item_hesk_tongs`; sets `ks_hesk_tongs_found`). The prompt is *Chip the tongs out of the ice*.
+- **Hesk's tongs**, frozen into the bog ice at the edge of the peat island, handles up (`item_hesk_tongs`; sets `ks_hesk_tongs_found`). The prompt is *Chip the tongs out of the ice*.
 - The peat island: two lumps of bog-iron (already placed).
 
 ---

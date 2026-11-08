@@ -154,30 +154,165 @@
   "name": "Aud, barrow-keeper's widow",
   "short_name": "Aud",
   "body": "mannequin_thaw",
+  "model": "aud",
+  "first_flags": [
+   "ks_aud_met"
+  ],
   "lines_first": [
-   "Mind the road. They like you on the road.",
-   "That one's the Holms'. That one's the miller's people. That one's empty, whatever anyone tells you.",
-   "My husband kept these forty years. I know every mound on the Lowe. I'm wrong about two of them and I'll thank you not to say which."
+   "Keep to the road, love. The turf's soft either side and I'm not pulling you out.",
+   "Aud. Orm kept these mounds forty years and I kept Orm, so I know them as well as he did. Better. He'd say so himself.",
+   "That's the Holms' lot. That's the miller's people, all eleven, and the miller still owes for three of them. That one's empty, whatever anyone tells you.",
+   "Orm's the last one on the road. I tie him a bit of heather every evening. He liked the purple. Bring me white and you can take it back.",
+   "His cord went in with him. Every burial on the hill, in knots. His brother wanted the knife put in. I won."
   ],
   "lines_repeat": [
-   "Turf goes back the same day. That's the whole of it.",
-   "Arne cut every sod on this hill. You can tell his by the edge."
+   "Turf goes back the same day. That's the whole of the job. Orm made it sound harder.",
+   "Arne Holm cut every sod on this hill. You can tell his by the edge. Straight as a shelf.",
+   "His girls were up here this morning, the pair of them, stealing his spade. He let them."
   ],
-  "services": []
+  "on_talk": [
+   {
+    "needs_item": "item_orm_cord",
+    "absent_flag": "ks_aud_cord",
+    "take_item": true,
+    "set_flag": "ks_aud_cord",
+    "toast": "Aud takes the cord."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_turfwright_released",
+    "set_flag": "ks_aud_heather",
+    "lines": [
+     "I've moved the heather. It was always that one. I don't know why you're looking at me like that.",
+     "Arne's sat out with his girls again. They'll be on about the window. They always are."
+    ]
+   },
+   {
+    "flag": "ks_aud_cord",
+    "lines": [
+     "That's Orm's cord. He tied his knots too tight. You can't read a word of it, so don't try.",
+     "First on the road. It says a lot of things. He tied it in the dark half the time.",
+     "You'll want his other cloak. He was buried in the good one."
+    ]
+   }
+  ],
+  "services": [
+   {
+    "id": "buy_turf_song",
+    "type": "buy",
+    "item": "turf_song",
+    "warmth": 240,
+    "once_flag": "bought_turf_song",
+    "label": "Learn the Turf-Laying Song",
+    "line_done": "It's counting, mostly. Count with the spade, not ahead of it. Orm counted ahead of it."
+   },
+   {
+    "id": "give_barrow_cloak",
+    "type": "gift",
+    "item": "armour_barrow_cloak",
+    "require_flag": "ks_aud_cord",
+    "once_flag": "got_barrow_cloak",
+    "label": "Take Orm's working cloak",
+    "line_done": "He was long in the arm. Turn the cuffs back. Don't cut them."
+   },
+   {
+    "id": "rest_level",
+    "type": "level_up",
+    "label": "Sit on the wall with Aud"
+   }
+  ]
  },
  "hesk": {
   "name": "Hesk, travelling smith",
   "short_name": "Hesk",
   "body": "mannequin_thaw",
+  "model": "hesk",
+  "first_flags": [
+   "ks_hesk_met"
+  ],
   "lines_first": [
-   "Don't stand there, you're in my draught.",
-   "Bog-iron. You rake it out of the black water and it comes up looking like dung. Give it a day in here and it's a hinge.",
-   "If you find any, bring it. I'll make it into something you won't be ashamed of."
+   "Don't stand there, you're in my draught. There. No. There.",
+   "Hesk. I do the coast twice a year, when the wind lets me. On the Lowe it never lets me.",
+   "Bog-iron. You rake it out of the black water and it comes up looking like something the dog left. Give it a day in here and it's a hinge.",
+   "Lost my good tongs in the bog this morning, raking. Went in to the elbow after them. I'm not going in to the shoulder for anyone's tongs, not even mine.",
+   "If you've iron, I'll put it in that blade. If you've not, sit out of the wind and don't touch anything."
   ],
   "lines_repeat": [
    "Wind's wrong again. It's always wrong on the Lowe.",
-   "Bring me iron. I'll do the rest."
+   "Arne wants his spade edged before the Melt. I told him I'm a smith, not a miracle.",
+   "These are borrowed tongs. You can tell. They don't like me."
   ],
-  "services": []
+  "on_talk": [
+   {
+    "needs_item": "item_hesk_tongs",
+    "absent_flag": "ks_hesk_tongs",
+    "take_item": true,
+    "set_flag": "ks_hesk_tongs",
+    "reward_item": "bog_iron",
+    "reward_count": 1,
+    "toast": "Hesk takes the tongs. Received: Bog-iron ×1"
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_turfwright_released",
+    "set_flag": "ks_hesk_wind",
+    "lines": [
+     "Wind's come right. First time all summer. I don't trust it.",
+     "Fire's drawing like a chimney. Pass me that, quick, before it changes its mind."
+    ]
+   },
+   {
+    "flag": "ks_hesk_tongs",
+    "lines": [
+     "Never that good, these. Bent in the rein. I'll have them back all the same.",
+     "Put your blade on the stone. I'll do it for less. Don't go telling people."
+    ]
+   }
+  ],
+  "services": [
+   {
+    "id": "fold_iron",
+    "type": "upgrade",
+    "warmth": 220,
+    "absent_flag": "ks_hesk_tongs",
+    "label": "Fold bog-iron into the blade",
+    "line_done": "There. It'll hold an edge now. Try not to use it on stones.",
+    "line_no_glass": "No iron, no edge. Go and rake some. Mind the black water.",
+    "line_no_warmth": "%d warmth for the fire. Peat doesn't cut itself.",
+    "line_max": "There's no more iron going in that. It'd snap."
+   },
+   {
+    "id": "fold_iron_kin",
+    "type": "upgrade",
+    "warmth": 140,
+    "require_flag": "ks_hesk_tongs",
+    "label": "Fold bog-iron into the blade",
+    "line_done": "There. It'll hold an edge now. Try not to use it on stones.",
+    "line_no_glass": "No iron, no edge. Go and rake some. Mind the black water.",
+    "line_no_warmth": "%d warmth for the fire. Peat doesn't cut itself.",
+    "line_max": "There's no more iron going in that. It'd snap."
+   },
+   {
+    "id": "buy_bog_iron",
+    "type": "buy",
+    "item": "bog_iron",
+    "count": 1,
+    "warmth": 150,
+    "limit": 2,
+    "label": "Buy a lump of bog-iron",
+    "line_done": "Last of what I raked before the tongs went in."
+   },
+   {
+    "id": "buy_maul",
+    "type": "buy",
+    "item": "maul",
+    "warmth": 600,
+    "once_flag": "bought_maul",
+    "label": "Buy the post maul",
+    "line_done": "Drive posts with it. Or don't. It's yours, I'm not asking."
+   }
+  ]
  }
 }
