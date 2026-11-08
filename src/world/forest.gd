@@ -146,7 +146,13 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 			t2.origin -= c
 			mm.set_instance_transform(i, t2)
 		var mmi := MultiMeshInstance3D.new()
-		mmi.name = "Forest_%s_%s_%d_%d" % [key, tag, k.x, k.y]
+		var label := key
+		if key.begins_with("hero|"):
+			# keep the node names the primitives had (tests and tools find
+			# "Forest_tree_*"); the key itself carries '|'
+			var hn := key.split("|")[1]
+			label = ("tree_" if hn.begins_with("tr_") else "hedge_") + hn
+		mmi.name = "Forest_%s_%s_%d_%d" % [label, tag, k.x, k.y]
 		mmi.multimesh = mm
 		mmi.position = c
 		mmi.visibility_range_end = range_end
