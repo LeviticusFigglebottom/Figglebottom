@@ -913,7 +913,7 @@ func _sweep_vfx(radius: float, arc: float, inner: float) -> void:
 ## A lob (the Host's bench throw): something heavy leaves the hands at the
 ## strike and comes down "flight" seconds later on the committed spot
 ## ("at_target" puts it where the Bearer stood; "lob": {"radius", "flight",
-## "lead", "size"}). Whoever is inside "radius" when it lands is hit. With
+## "lead", "size", "spread", "spread_r", "color"}). Whoever is inside "radius" when it lands is hit. With
 ## "lead" a second follows where he is running to, under its own glow.
 var lobbed: Array = []
 signal lob_landed(at: Vector3)
@@ -933,6 +933,11 @@ func _lob() -> void:
 		var ahead := target.global_position + v * lead
 		if ahead.distance_to(spots[0]) > float(lb.get("radius", 2.0)) * 1.4:
 			spots.append(Vector3(ahead.x, spots[0].y, ahead.z))
+	# "spread": n throws in a ring round the first, "spread_r" out (a Collier's coals)
+	var n_spread := int(lb.get("spread", 1))
+	for i in range(1, n_spread):
+		var a := TAU * float(i) / float(n_spread - 1) + randf() * 0.6
+		spots.append(spots[0] + Vector3(cos(a), 0.0, sin(a)) * float(lb.get("spread_r", 2.0)))
 	var flight := float(lb.get("flight", 0.5))
 	var from := global_position + Vector3.UP * float(cfg.get("arm_h", 1.4)) * 1.2
 	for i in spots.size():
@@ -953,7 +958,8 @@ func _throw_one(from: Vector3, at: Vector3, flight: float, lb: Dictionary) -> vo
 	bm.size = Vector3(sz[0], sz[1], sz[2])
 	body.mesh = bm
 	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.27, 0.2, 0.14)
+	var lc: Array = lb.get("color", [0.27, 0.2, 0.14])
+	m.albedo_color = Color(lc[0], lc[1], lc[2])
 	m.roughness = 0.9
 	body.material_override = m
 	get_parent().add_child(body)

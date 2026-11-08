@@ -171,5 +171,31 @@
  "item_barrel_head": {
   "name": "Fish-Barrel Head",
   "desc": "The round pine head of a fish barrel, branded with a trader's mark: a knot inside a ring. Forty barrels came up the water for the feast. This one had only been started on; the nails are half drawn."
+ },
+ "item_song_cord": {
+  "name": "Linnet's Song-cord",
+  "desc": "A knotted cord of plaited oat and yellow wool with a bone toggle, the knots of all sizes. It is an Outsong, tied by the one it was for, the night before she needed it. The last knot is left loose."
+ },
+ "item_birch_ring": {
+  "name": "Ring of Plaited Birch",
+  "desc": "A ring of birch bark plaited round on itself, small enough for one finger. It was in the ash at the foot of the eastmost clamp, where it would have been taken off to work. Eyvind plaited it in an evening and spent a week saying it was nothing."
+ },
+ "item_knucklebone": {
+  "name": "Knucklebone",
+  "desc": "A sheep's knucklebone, worn smooth. It was in the middle of the drove-road, on the side going east. There is a tooth-mark on it."
+ },
+ "armour_collier": {
+  "name": "Collier's Leathers",
+  "desc": "A soot-black leather apron and jerkin over oat wool, scorched at the hems, for working the clamps. The leather is cracked at the elbows. It smells of smoke whatever you do to it.",
+  "armour": {
+   "slot": "body",
+   "poise": 7,
+   "absorb": {
+    "phys": 0.1,
+    "frost": 0.1,
+    "fire": 0.2
+   },
+   "weight": 7.5
+  }
  }
 }

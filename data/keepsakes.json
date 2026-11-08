@@ -1,5 +1,5 @@
 {
- "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7, docs/lore/TARNHALL.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md, KETTLE.md and TARNHALL.md.",
+ "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7, docs/lore/TARNHALL.md §7, docs/lore/THORNWOLD.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md, KETTLE.md, TARNHALL.md and THORNWOLD.md.",
  "toast": "A keepsake is remembered.",
  "threads": [
   {
@@ -175,6 +175,38 @@
     {
      "flag": "ks_ottar_air",
      "line": "Somebody opened the doors, and Ottar went and stood in them."
+    }
+   ]
+  },
+  {
+   "id": "song_cord",
+   "title": "Linnet's song-cord",
+   "steps": [
+    {
+     "flag": "ks_linnet_met",
+     "line": "Linnet and Eyvind cannot agree where the gate goes. Neither of them wants to."
+    },
+    {
+     "flag": "ks_birch_ring",
+     "line": "The birch ring was in the ash at the eastmost clamp. Linnet took it off to work."
+    },
+    {
+     "flag": "ks_song_cord_found",
+     "line": "At the grave was a knotted cord. Nobody here could read it."
+    },
+    {
+     "flag": "ks_song_cord_read",
+     "line": "Lusse read Linnet's cord. It is an Outsong, tied by the one it was for."
+    }
+   ]
+  },
+  {
+   "id": "knucklebones",
+   "title": "Knucklebones",
+   "steps": [
+    {
+     "flag": "ks_knucklebone_found",
+     "line": "There was a knucklebone in the middle of the drove-road, on the side going east."
     }
    ]
   }

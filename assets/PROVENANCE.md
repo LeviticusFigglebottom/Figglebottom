@@ -195,3 +195,5 @@ Every generated asset has one row here. Raw Tripo downloads are never committed:
 | assets/models/props/guest_tally.tscn | procedural: Godot primitives (coiled plaited cord, knots) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/ottar_stick.tscn | procedural: Godot primitives (rowan shaft, bark grip, horn cap) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/barrel_head.tscn | procedural: Godot primitives (pine disc, brand, nails) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/knucklebone.tscn | procedural: Godot primitives (capsule, ends) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/birch_ring.tscn | procedural: Godot primitives (tori) | — | — | — | none | tools/art/procedural/small_props.py |

@@ -52,11 +52,15 @@ static func build(area_id: String) -> Area:
 	for spec in def.get("props", []):
 		_piece(area, spec, _prop_collides(spec))
 	for spec in def.get("landmarks", []):
+		if not _flag_ok(spec):
+			continue    # (Thornwold's gate: leaning on the hedge, then laid down)
 		# a Tripo scene set as dressing (collision stripped; blockers do that)
 		var lm := BuildingGen._landmark(String(spec["scene"]))
 		if lm != null:
 			area.attach(lm, String(spec.get("tag", "base")))
 			_place(lm, spec)
+			if spec.has("tilt"):
+				lm.rotation_degrees.x = float(spec["tilt"])
 			if spec.has("scale"):
 				lm.scale = Vector3.ONE * float(spec["scale"])
 			if spec.has("blocker"):

@@ -71,6 +71,7 @@ const SLOT_ICON := {
 	"ice_auger": "res://assets/ui/icons/ice_auger.png",
 	"sealer_harpoon": "res://assets/ui/icons/harpoon.png",
 	"feast_cleaver": "res://assets/ui/icons/cleaver.png",
+	"hedging_bill": "res://assets/ui/icons/bill.png",
 	"gourd": "res://assets/ui/icons/gourd.png",
 	"torch": "res://assets/ui/icons/torch.png",
 }
