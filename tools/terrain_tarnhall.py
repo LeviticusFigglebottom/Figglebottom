@@ -28,7 +28,7 @@ def height(x, z):
 
 def path_weight(x, z):
     rd, _, _ = T.road(x, z)
-    best = 1.0 - smooth(1.2, 3.0, rd) if x < 133 else 0.0
+    best = 1.0 - smooth(2.4, 3.6, rd) if x < 133 else 0.0
     cd, _ = T.causeway_d(x, z)
     if T.tarn_e(x, z) < 1.0:
         best = max(best, 1.0 - smooth(1.5, 2.8, cd))
@@ -107,7 +107,7 @@ def terrain_block():
         "far_origin": [FAR_X0, FAR_Z0], "far_cell": FAR_CELL, "far_size": FAR_N,
         "chunk": 32, "generator": "tools/terrain_tarnhall.py", "seed": S.SEED,
         # high grazing round the tarn, grey fell rock
-        "palette": {"turf_a": [0.20, 0.25, 0.11], "turf_b": [0.30, 0.29, 0.14], "rock_col": [0.30, 0.30, 0.31]},
+        "palette": {"turf_a": [0.16, 0.17, 0.13], "turf_b": [0.21, 0.2, 0.16], "rock_col": [0.31, 0.31, 0.32]},
     }
 
 
