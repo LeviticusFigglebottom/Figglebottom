@@ -5,6 +5,12 @@ extends Node3D
 
 var npc_id := ""
 var cfg: Dictionary = {}
+## The area's own spec for this soul (pose and seat may be set per place:
+## the same Ivo stands by the dogs, or sits at the kettle after the release).
+var spec: Dictionary = {}
+## Seated (npcs.json or area "pose": "sit", "sit_talk"): keeps its clip, does
+## not turn for the Bearer, does not stand to greet.
+var seated := false
 
 var _vis: CharVisual
 
@@ -28,9 +34,13 @@ func _ready() -> void:
 		m.add_child(held)
 		KitLib.add_flame_lights(held, 1.2, 3.0)
 	# kneeling souls keep their pose; they do not turn for you
-	if cfg.get("pose", "") == "kneel":
+	var pose := String(spec.get("pose", cfg.get("pose", "")))
+	if pose == "kneel":
 		_vis.play("pray", 0.0)
 		set_physics_process(false)
+	elif pose.begins_with("sit"):
+		_sit(pose)
+	_overhear = cfg.get("overhear", [])
 	# a body: you cannot walk through a living soul
 	var tag := String(get_meta("state_tag", "thaw"))
 	var bit: int = RH.L_WORLD_THAW if tag == "thaw" else (RH.L_WORLD_RIME if tag == "rime" else RH.L_WORLD_BASE)
@@ -59,6 +69,9 @@ var _look_t := 6.0
 
 func _physics_process(dt: float) -> void:
 	if _vis == null or not is_visible_in_tree():
+		return
+	_tick_overhear(dt)
+	if seated:
 		return
 	if _vis.is_humanoid():
 		_vis.locomotion(dt, 0.0)   # a finished greet or look yields to idle
@@ -89,14 +102,83 @@ func _on_talk(player) -> void:
 	var to: Vector3 = player.global_position - global_position
 	if to.length_squared() > 0.001:
 		var ty := atan2(-to.x, -to.z) - global_rotation.y
-		_vis.rotation.y = ty
+		if not seated:
+			_vis.rotation.y = ty
 		if player.get("vis") != null:
 			player.vis.rotation.y = atan2(to.x, to.z)
 	player.enter_dialogue()
-	_vis.play("greet" if _vis.is_humanoid() and _vis.rig.has_clip("greet") else "talk", 0.4)
+	if not seated:   # (a seated soul talks from where it sits)
+		_vis.play("greet" if _vis.is_humanoid() and _vis.rig.has_clip("greet") else "talk", 0.4)
 	var ui := DialogueUI.new(cfg, self)
 	ui.tree_exited.connect(func() -> void:
-		if is_instance_valid(_vis):
+		if is_instance_valid(_vis) and not seated:
 			_vis.back_to_idle(0.4))
 	get_tree().root.add_child(ui)
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+
+# ---------------------------------------------------------------- sitting
+## Sit (the model's own "sit" loop, feet on the floor, hips at about a third
+## of its height) on a seat sized to it: a sod or a crate under the pelvis
+## ("seat": "turf" | "wood" | "none"; design "height" in metres). "sit_talk"
+## sits on the ground itself and needs none. A clip the model lacks falls
+## back to "sit".
+func _sit(pose: String) -> void:
+	seated = true
+	var clip := pose
+	if _vis.is_humanoid() and not _vis.rig.has_clip(clip):
+		clip = "sit"
+	_vis.play(clip, 0.0)
+	var seat := String(spec.get("seat", cfg.get("seat", "turf" if clip == "sit" else "none")))
+	if seat == "none" or clip != "sit":
+		return
+	var h := float(cfg.get("height", 1.8))
+	var mi := MeshInstance3D.new()
+	mi.name = "Seat"
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.36 * h, SEAT_FRAC * h, 0.3 * h)
+	mi.mesh = bm
+	# under the pelvis, a little behind the body's origin (it faces -Z)
+	mi.position = Vector3(0, SEAT_FRAC * h * 0.5, 0.1 * h)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = SEAT_COLOURS.get(seat, SEAT_COLOURS["turf"])
+	mat.roughness = 0.95
+	mi.material_override = mat
+	add_child(mi)
+
+const SEAT_FRAC := 0.27
+const SEAT_COLOURS := {"turf": Color(0.26, 0.22, 0.14), "wood": Color(0.36, 0.28, 0.19)}
+
+# ---------------------------------------------------------------- overheard
+## A conversation the Bearer can only overhear ("overhear": [[speaker id,
+## line], ...] in npcs.json): within overhear_r metres it plays a line every
+## overhear_every seconds, low over the belt, and rests a while at the end.
+var _overhear: Array = []
+var _over_i := 0
+var _over_t := 0.0
+signal overheard(speaker: String, line: String)
+
+func _tick_overhear(dt: float) -> void:
+	if _overhear.is_empty():
+		return
+	_over_t -= dt
+	if _over_t > 0.0:
+		return
+	var p = Game.player
+	if p == null or not is_instance_valid(p):
+		return
+	var r := float(cfg.get("overhear_r", 8.0))
+	if global_position.distance_squared_to(p.global_position) > r * r:
+		_over_t = 0.5
+		return
+	var entry: Array = _overhear[_over_i]
+	var who := String(entry[0])
+	var name := String(DB.npc(who).get("short_name", who.capitalize())) if who != "" else ""
+	for hud in get_tree().get_nodes_in_group("hud"):
+		if hud.has_method("show_overheard"):
+			hud.show_overheard(name, String(entry[1]))
+	overheard.emit(who, String(entry[1]))
+	_over_i += 1
+	_over_t = float(cfg.get("overhear_every", 4.6))
+	if _over_i >= _overhear.size():
+		_over_i = 0
+		_over_t += float(cfg.get("overhear_rest", 14.0))
