@@ -34,7 +34,9 @@ func _ready() -> void:
 	add_child(_zone)
 	if display_scene != "" and ResourceLoader.exists(display_scene):
 		var mesh := (load(display_scene) as PackedScene).instantiate() as Node3D
-		mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
+		if not mesh.get_meta("upright", false):
+			mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
+		# (a thing that stands, like the Host's cup, says so: metadata/upright)
 		mesh.position.y = 0.05
 		add_child(mesh)
 		var gl := OmniLight3D.new()

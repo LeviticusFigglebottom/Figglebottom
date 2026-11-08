@@ -378,6 +378,7 @@ func _lowe_foe_stage(p: Player, id: String, hint: Vector3, atk: String, frac: fl
 		e.vis.idle(0.0)
 	if _f >= 6:
 		_side_cam(p, e, cam_dist, cam_h, look, 50.0)
+		_quiet_card()
 	if _f < 50:
 		# nothing before the beat: a hole cut under the staged Bearer would
 		# take him (the fjord does not care for i-frames) and the shot with him
@@ -660,12 +661,180 @@ func _quiet_titles() -> void:
 	for z in get_tree().current_scene.find_children("*", "ZoneTitles", true, false):
 		z.queue_free()
 
-## The region's own arrival card is not the beat either.
+## The region's own arrival card (not the release card) is not the beat either.
 func _quiet_card() -> void:
 	for hud in get_tree().get_nodes_in_group("hud"):
 		var tl = hud.get("_title_layer")
 		if tl != null and is_instance_valid(tl):
 			tl.queue_free()
+
+# ------------------------------------------------------------------ Tarnhall
+## (tarnhall; docs/screens/tarnhall_enc_*.png): tarnhall_guest, tarnhall_cupbearer,
+## tarnhall_champion, host_p1, host_p1b, host_p2, host_p2b, host_p3,
+## tarnhall_release, tarnhall_doors (RIME); tarnhall_lusse, tarnhall_ottar
+## (THAW). And kettle_crack (kettle_fjord, RIME): the ice cracking first.
+const HALL_FLOOR := Vector3(200.0, 24.4, -326.5)   # the open floor south of the table
+
+func _st_tarnhall_guest(p: Player) -> void:
+	_lowe_foe_stage(p, "feast_guest", Vector3(202, 0, -320), "toast", 0.8, 1.9, 4.6, 1.2, 1.0)
+
+func _st_tarnhall_cupbearer(p: Player) -> void:
+	_lowe_foe_stage(p, "cupbearer", Vector3(220, 0, -328.5), "going_round", 0.8, 2.2, 4.4, 1.4, 1.0,
+			Vector3(208.0, 24.55, -319.0))
+
+func _st_tarnhall_champion(p: Player) -> void:
+	# (the camera on its shield side: the board grown into the left forearm)
+	_lowe_foe_stage(p, "hall_champion", Vector3(222.6, 0, -323.2), "shield_rush", 0.8, 6.0, -6.0, 1.8, 1.0,
+			Vector3(204.0, 24.55, -321.0))
+
+func _st_kettle_crack(p: Player) -> void:
+	# the cracks spread a second before the ice opens: frozen half a second out
+	_lowe_foe_stage(p, "ice_fisher", Vector3(-33, 0, -328.8), "cut_hole", 0.62, 3.5, 4.6, 2.2, 0.4,
+			Vector3(-40, 0.15, -338))
+
+## The Host: woken at the table, the phase set, the Bearer on the hall floor
+## `gap` metres off; `atk` started and frozen `frac` of the way through its
+## windup (or `after` seconds past the strike), or a transition frozen at
+## `trans_t` seconds. The camera stands behind the Bearer's right shoulder,
+## under the roof.
+var _host_set := false
+
+func _host_stage(p: Player, ph: int, atk: String, frac: float, gap: float, after := -1.0,
+		trans := "", trans_t := 0.0, cam_back := 4.6, cam_up := 2.6, side := 2.6) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("host", Vector3(200, 0, -330))
+		if _foe == null:
+			return
+	var h := _foe as Host
+	if h == null:
+		return
+	if not _host_set:
+		_host_set = true
+		_t0 = _clock
+		h.target = p
+		h._stand_done()
+		h._set_state(Enemy.ES.COMBAT)
+		h.vis.idle(0.0)
+		h.phase = ph
+		if ph >= 2:
+			h.hp = h.max_hp * 0.5
+		if ph >= 3:
+			h.hp = h.max_hp * 0.2
+		h.vis.rotation.y = PI   # facing the hall floor (+z)
+		for a in h.cfg.get("attacks", []):
+			h._cooldowns[String(a["id"])] = 99.0
+		_place_player(p, h.global_position + Vector3(0.6, 0.1, gap), 0.0)
+	var to := h.global_position - p.global_position
+	to.y = 0
+	p.vis.rotation.y = atan2(-to.x, -to.z)
+	# from the east end of the open floor, looking along the hall across the
+	# pair (a camera behind the Bearer would stand in the south wall)
+	var mid := h.global_position.lerp(p.global_position, 0.45)
+	_cam.global_position = mid + Vector3(side, cam_up, cam_back)
+	_cam.look_at(mid + Vector3.UP * 1.4, Vector3.UP)
+	if _cam_fix.size() == 2:   # a beat at the bench, not between the two of them
+		_cam.global_position = h.global_position + (_cam_fix[0] as Vector3)
+		_cam.look_at(h.global_position + (_cam_fix[1] as Vector3), Vector3.UP)
+	_cam.fov = 60.0
+	_quiet_card()
+	if _clock - _t0 < 0.8:
+		return
+	if not _started:
+		_started = true
+		_t1 = _clock
+		if trans != "":
+			h._begin_transition(trans)
+		else:
+			h._cooldowns.clear()
+			h._begin_attack(h.attack_by_id(atk))
+		return
+	if trans != "":
+		if h.state == Enemy.ES.TRANSITION and h.state_t >= trans_t:
+			_freeze()
+		return
+	if h.state == Enemy.ES.HOLD and h.state_t >= 1.2:
+		_freeze()
+	elif after >= 0.0:
+		var w := float(h.attack_by_id(atk)["windup"]) / h._speed_mult()
+		if _clock - _t1 >= w + after:
+			_freeze()
+	elif h.state == Enemy.ES.ATTACK and String(h._atk.get("id", "")) == atk \
+			and h.state_t >= float(h._atk["windup"]) / h._speed_mult() * frac:
+		_freeze()
+
+func _st_host_p1(p: Player) -> void:
+	_host_stage(p, 1, "table_sweep", 0.85, 4.2, -1.0, "", 0.0, 1.6, 3.6, 8.0)
+
+func _st_host_p1b(p: Player) -> void:
+	_host_stage(p, 1, "bench_throw", 0.0, 7.0, 0.22, "", 0.0, 1.4, 3.2, 8.5)
+
+var _cam_fix: Array = []
+
+func _st_host_p2(p: Player) -> void:
+	# the guests standing up out of their places beside him
+	_cam_fix = [Vector3(-4.5, 3.0, 4.0), Vector3(3.0, 1.4, -1.0)]
+	_host_stage(p, 2, "", 0.0, 6.0, -1.0, "p2", 2.0, 1.0, 3.0, 8.0)
+
+func _st_host_p2b(p: Player) -> void:
+	_host_stage(p, 2, "tip_horn", 0.0, 7.5, 1.8, "", 0.0, 1.4, 4.0, 8.5)
+
+func _st_host_p3(p: Player) -> void:
+	_host_stage(p, 3, "pour", 1.0, 7.0, -1.0, "", 0.0, 1.2, 2.8, 7.0)
+
+## Release: he sits down at the table; the guests sit; the cup beside him.
+func _st_tarnhall_release(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("host", Vector3(200, 0, -330))
+	var h := _foe as Host
+	if h == null:
+		return
+	if not h.released:
+		h.target = p
+		h._stand_done()
+		h.raise_guests(2)
+		_place_player(p, h.global_position + Vector3(1.2, 0.1, 5.0), 0.0)
+		h._die()
+		_t0 = _clock
+	_cam.global_position = h.global_position + Vector3(4.6, 2.6, 6.4)
+	_cam.look_at(h.global_position + Vector3(-0.6, 1.4, 0.4), Vector3.UP)
+	_cam.fov = 58.0
+	if _clock - _t0 > 3.2:
+		_freeze()
+
+## The doors: the bar lifted, the leaves open on the tarn; the tally on the post.
+func _st_tarnhall_doors(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("host", Vector3(200, 0, -330))
+	var h := _foe as Host
+	if h == null:
+		return
+	if not h.released:
+		h.target = p
+		h._stand_done()
+		_place_player(p, Vector3(191.5, 24.5, -326.0), -PI / 2)   # behind the camera
+		h._die()
+		_t0 = _clock
+	_cam.global_position = Vector3(188.5, 26.6, -325.4)
+	_cam.look_at(Vector3(180.0, 25.4, -328.6), Vector3.UP)
+	_cam.fov = 62.0
+	if _clock - _t0 > 2.6:
+		_freeze()
+
+func _st_tarnhall_lusse(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_npc_talk_stage(p, "lusse", 1)
+
+func _st_tarnhall_ottar(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_npc_talk_stage(p, "ottar", 2)
 
 # ------------------------------------------------------------------ release scenes
 ## The post-release THAW scenes (docs/screens/release_*.png; run with

@@ -44,5 +44,13 @@
   "absorb": 60.0,
   "duration": 8.0,
   "desc": "Sung by barrow-keepers while the turf goes back, to keep the spades together. Most of it is counting. Aud gets the numbers in the wrong order and finishes on the right one."
+ },
+ "goat_song": {
+  "name": "The Goat Song",
+  "breath": 48,
+  "type": "burst",
+  "damage": 84.0,
+  "radius": 5.6,
+  "desc": "A hall song about a goat that ate a sail, then the mast, then the man who said it couldn't. Thirty-one verses and one chorus. Lusse sings the verses. Anyone in earshot is the chorus, and she stops the song until they are."
  }
 }

@@ -4790,56 +4790,6 @@
     -333.5
    ],
    "rot": -90
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    186.5,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    192.79,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    195.93,
-    24.3,
-    -335.55
-   ],
-   "rot": 0,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    202.21,
-    24.3,
-    -335.55
-   ],
-   "rot": 0,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    205.36,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
   }
  ],
  "gates": [
@@ -4886,6 +4836,27 @@
     -331.0
    ],
    "rot": 250
+  },
+  {
+   "id": "hs_byres",
+   "name": "the Byres",
+   "at": [
+    219.6,
+    24.3,
+    -322.0
+   ],
+   "rot": 180
+  },
+  {
+   "id": "hs_long_table",
+   "name": "the Long Table",
+   "at": [
+    197.0,
+    24.3,
+    -327.4
+   ],
+   "rot": 90,
+   "require_flag": "ks_host_released"
   }
  ],
  "spawners": [
@@ -4969,17 +4940,88 @@
    "dead_once": true
   },
   {
+   "enemy": "hall_champion",
+   "stand_in": "cairn_carrier",
+   "id": "champion_byre_door",
+   "at": [
+    222.6,
+    24.4,
+    -323.2
+   ],
+   "face": 180
+  },
+  {
    "enemy": "host",
    "stand_in": "netmender",
    "id": "host",
    "at": [
     200.0,
     24.400000000000002,
-    -327.0
+    -330.6
    ],
-   "face": 90,
+   "face": 0,
    "dead_once": true,
    "frost_veil_id": "long_table_veil"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_0_s",
+   "at": [
+    186.5,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_2_s",
+   "at": [
+    192.79,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_3_n",
+   "at": [
+    195.93,
+    24.400000000000002,
+    -335.55
+   ],
+   "face": 180,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_5_n",
+   "at": [
+    202.21,
+    24.400000000000002,
+    -335.55
+   ],
+   "face": 180,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_6_s",
+   "at": [
+    205.36,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
   }
  ],
  "frost_veils": [
@@ -5003,6 +5045,16 @@
     -328.0
    ],
    "rot": 200,
+   "tag": "thaw"
+  },
+  {
+   "id": "ottar",
+   "at": [
+    182.2,
+    24.3,
+    -330.4
+   ],
+   "rot": 270,
    "tag": "thaw"
   }
  ],
@@ -5040,6 +5092,57 @@
    "warmth": 45,
    "tag": "base",
    "label": "Take the guest's horn"
+  },
+  {
+   "id": "feast_cleaver",
+   "at": [
+    227.0,
+    24.3,
+    -327.8
+   ],
+   "item": "feast_cleaver",
+   "tag": "rime",
+   "scene": "res://assets/models/weapons/feast_cleaver.glb",
+   "label": "Take the carving cleaver"
+  },
+  {
+   "id": "barrel_head",
+   "at": [
+    224.6,
+    24.3,
+    -322.5
+   ],
+   "item": "item_barrel_head",
+   "tag": "rime",
+   "scene": "res://assets/models/props/barrel_head.tscn",
+   "label": "Prise off the barrel head"
+  },
+  {
+   "id": "ottar_staff",
+   "at": [
+    181.2,
+    24.3,
+    -330.6
+   ],
+   "item": "item_ottar_staff",
+   "tag": "rime",
+   "scene": "res://assets/models/props/ottar_stick.tscn",
+   "label": "Take the walking stick",
+   "set_flag": "ks_ottar_staff_found"
+  },
+  {
+   "id": "guest_tally",
+   "at": [
+    181.7,
+    24.3,
+    -326.6
+   ],
+   "item": "item_guest_tally",
+   "tag": "rime",
+   "scene": "res://assets/models/props/guest_tally.tscn",
+   "label": "Untie the guest-tally",
+   "appear_flag": "ks_host_released",
+   "set_flag": "ks_guest_tally_found"
   }
  ],
  "portals": [

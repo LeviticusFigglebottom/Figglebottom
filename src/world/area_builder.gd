@@ -105,6 +105,8 @@ static func build(area_id: String) -> Area:
 				g.add_child(lm)
 		_place(g, spec)
 	for spec in def.get("spawners", []):
+		if not _flag_ok(spec):
+			continue    # (Tarnhall's seated guests are gone once the Host is released)
 		var s := Spawner.new()
 		s.enemy_id = spec.get("enemy", "rimewalker")
 		# a foe still being made (art in flight) fights as its stand-in until
