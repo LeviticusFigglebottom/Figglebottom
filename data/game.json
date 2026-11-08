@@ -135,7 +135,8 @@
   "bog_seconds": 3.0
  },
  "render": {
-  "_doc": "Per graphics-quality tier (Low, High, Ultra). shadow_distance: the sun's shadow reach in metres.",
-  "shadow_distance": [70.0, 100.0, 135.0]
+  "_doc": "shadow_distance: the sun's shadow reach in metres per graphics-quality tier (Low, High, Ultra). prop_ranges: [small_max_m, small_range_m, mid_max_m, mid_range_m]; kit props whose largest side is at most small_max_m stop drawing past small_range_m, up to mid_max_m past mid_range_m; larger kit always draws.",
+  "shadow_distance": [70.0, 100.0, 135.0],
+  "prop_ranges": [1.6, 60.0, 4.5, 120.0]
  }
 }
