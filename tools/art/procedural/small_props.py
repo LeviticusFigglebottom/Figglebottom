@@ -12,6 +12,7 @@ and its flat side faces +X, because Pickup lays a display scene on its side
     assets/models/props/barrel_head.tscn   a fish-barrel head, branded
     assets/models/props/knucklebone.tscn   a sheep's knucklebone (THORNWOLD.md 8)
     assets/models/props/birch_ring.tscn    a ring of plaited birch
+    assets/models/props/hedge_gate.tscn    the five-bar gate Eyvind never hung
 
 Run: python3 tools/art/procedural/small_props.py"""
 import os
@@ -184,3 +185,21 @@ nodes = [("BirchRing", "Node3D", None, {}),
          ("Band", "MeshInstance3D", ".", {"transform": rotz % (0, 0.0, 0), "mesh": 'SubResource("band")'}),
          ("Plait", "MeshInstance3D", ".", {"transform": rotz % (0.002, 0.0, 0), "mesh": 'SubResource("plait")'})]
 scene("birch_ring", res, nodes)
+
+# the gate Eyvind made and never hung (THORNWOLD.md 4, 9): a five-bar field gate
+# of riven ash, 3 m wide, standing in the XY plane (hinge stile at -X). The
+# landmark leans it on the hedge, then lays it flat across the gap (tilt -90).
+res = [mat("ash", 0.62, 0.55, 0.44, 0.9), mat("ashdark", 0.45, 0.39, 0.3, 0.9),
+       ("rail", "BoxMesh", {"size": "Vector3(3.0, 0.09, 0.06)", "material": 'SubResource("ash")'}),
+       ("stile", "BoxMesh", {"size": "Vector3(0.12, 1.3, 0.1)", "material": 'SubResource("ashdark")'}),
+       ("brace", "BoxMesh", {"size": "Vector3(3.15, 0.08, 0.05)", "material": 'SubResource("ash")'})]
+nodes = [("HedgeGate", "Node3D", None, {}),
+         ("StileHinge", "MeshInstance3D", ".", {"transform": xf(x=-1.5, y=0.65), "mesh": 'SubResource("stile")'}),
+         ("StileLatch", "MeshInstance3D", ".", {"transform": xf(x=1.5, y=0.65), "mesh": 'SubResource("stile")'})]
+for i in range(5):
+    nodes.append(("Rail%d" % i, "MeshInstance3D", ".", {"transform": xf(y=0.12 + i * 0.27, z=0.02), "mesh": 'SubResource("rail")'}))
+a = math.atan2(1.08, 3.0)
+c, s_ = math.cos(a), math.sin(a)
+nodes.append(("Brace", "MeshInstance3D", ".",
+              {"transform": "Transform3D(%g, %g, 0, %g, %g, 0, 0, 0, 1, 0, 0.66, -0.04)" % (c, -s_, s_, c), "mesh": 'SubResource("brace")'}))
+scene("hedge_gate", res, nodes, upright=True)

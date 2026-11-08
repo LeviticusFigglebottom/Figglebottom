@@ -224,26 +224,25 @@
  ],
  "landmarks": [
   {
-   "scene": "res://assets/models/landmarks/lm_hedge_gate.glb",
+   "scene": "res://assets/models/props/hedge_gate.tscn",
    "at": [
-    442.2,
-    37.63,
-    -320.4
+    441.6,
+    37.66,
+    -320.6
    ],
    "rot": 75,
-   "scale": 0.8,
+   "tilt": -14,
    "absent_flag": "ks_hedgelayer_released"
   },
   {
-   "scene": "res://assets/models/landmarks/lm_hedge_gate.glb",
+   "scene": "res://assets/models/props/hedge_gate.tscn",
    "at": [
     440.0,
-    37.63,
+    37.72,
     -325.0
    ],
    "rot": 90,
    "tilt": -90,
-   "scale": 0.8,
    "require_flag": "ks_hedgelayer_released"
   },
   {

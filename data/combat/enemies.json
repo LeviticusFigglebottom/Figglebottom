@@ -3043,14 +3043,14 @@
    "scene": "res://assets/models/props/song_cord.glb"
   },
   "release_gate_laid": {
-   "scene": "res://assets/models/landmarks/lm_hedge_gate.glb",
+   "scene": "res://assets/models/props/hedge_gate.tscn",
    "off": [
     -12.0,
     0.0
    ],
    "rot": 90.0,
    "tilt": -90.0,
-   "scale": 0.8
+   "scale": 1.0
   },
   "attacks": [
    {

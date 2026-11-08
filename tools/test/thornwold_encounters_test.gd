@@ -339,7 +339,7 @@ func _npcs() -> Dictionary:
 
 func _gates() -> Array:
 	return area.find_children("*", "Node3D", true, false).filter(func(n):
-		return (n as Node3D).scene_file_path.ends_with("lm_hedge_gate.glb") and (n as Node3D).is_visible_in_tree())
+		return (n as Node3D).scene_file_path.ends_with("hedge_gate.tscn") and (n as Node3D).is_visible_in_tree())
 
 func _build(id: String, state: RH.WState) -> void:
 	if area != null and is_instance_valid(area):
@@ -396,9 +396,13 @@ func _wood() -> void:
 	await _build("thornwold", RH.WState.RIME)
 	for pid in ["knucklebone", "birch_ring", "hedging_bill"]:
 		check(_pickup(pid) != null, "%s is placed" % pid)
+	var salt: Array = DB.area_def("saltfell_steading").get("pickups", [])
+	check(salt.any(func(pk): return pk.get("item", "") == "ks_knucklebones" and pk.get("set_flag", "") == "ks_knucklebones_found"),
+		"the four lie by the small grave at Saltfell")
+	World.set_flag("ks_knucklebones_found")   # (found there first)
 	if _pickup("knucklebone") != null:
 		_pickup("knucklebone")._on_take(player)
-	check(_lines_of("knucklebones") == _expected("knucklebones", 1), "a knucklebone on the road, going east")
+	check(_lines_of("knucklebones") == _expected("knucklebones", 2), "and the fifth on the road, going east: the thread joins")
 	if _pickup("birch_ring") != null:
 		_pickup("birch_ring")._on_take(player)
 	var kinds := {}

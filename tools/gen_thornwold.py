@@ -100,13 +100,15 @@ for a, r0, r1 in ((150.0, R2 + 0.8, R3 - 0.8), (230.0, R1 + 0.8, R2 - 0.8)):
 # the gap with no gate in it (Tripo), at the innermost ring
 # the gate he never hung: made, and left leaning on the inside of the ring
 # beside the gap where it should go (Tripo)
-LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_hedge_gate.glb",
-                  "at": at(GX - R1 + 2.2, GZ + 4.6, -0.05), "rot": 75, "scale": 0.8,
+# (the five-bar gate itself, a small procedural prop: lm_hedge_gate is the Tripo
+# hedge gap with the grave, not a gate)
+LANDMARKS.append({"scene": "res://assets/models/props/hedge_gate.tscn",
+                  "at": at(GX - R1 + 1.6, GZ + 4.4, -0.02), "rot": 75, "tilt": -14,
                   "absent_flag": "ks_hedgelayer_released"})
 # on release it lies down flat across the gap (THORNWOLD.md 9; the Hedgelayer's
 # release_gate_laid lays the same one in the fight)
-LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_hedge_gate.glb",
-                  "at": at(GX - R1, GZ, -0.05), "rot": 90, "tilt": -90, "scale": 0.8,
+LANDMARKS.append({"scene": "res://assets/models/props/hedge_gate.tscn",
+                  "at": at(GX - R1, GZ, 0.04), "rot": 90, "tilt": -90,
                   "require_flag": "ks_hedgelayer_released"})
 # the grave under the oldest pine
 _gy = g(GX + 2.5, GZ)

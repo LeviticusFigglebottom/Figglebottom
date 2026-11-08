@@ -197,3 +197,4 @@ Every generated asset has one row here. Raw Tripo downloads are never committed:
 | assets/models/props/barrel_head.tscn | procedural: Godot primitives (pine disc, brand, nails) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/knucklebone.tscn | procedural: Godot primitives (capsule, ends) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/birch_ring.tscn | procedural: Godot primitives (tori) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/hedge_gate.tscn | procedural: Godot primitives (five-bar gate: stiles, rails, brace) | — | — | — | none | tools/art/procedural/small_props.py |

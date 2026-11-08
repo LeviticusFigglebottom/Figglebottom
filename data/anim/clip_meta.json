@@ -1484,7 +1484,7 @@
    "rig": "quadruped",
    "yaw_deg": 180.0,
    "stride": 2.2,
-   "scale": 1.8,
+   "scale": 1.15,
    "_note": "Tripo quadruped (one real clip: walk), posed like the Hearthhound (QuadRig; the rig faces -Z: +X tips a leg forward and lifts a nose). Its rig: front legs 0_Left_Limb_* (under Spine_3) and 0_Right_Limb_* (under Spine_2), hind legs 1_*_Limb_* under Spine_0, neck and head Head_0..2.",
    "poses": {
     "lower": {

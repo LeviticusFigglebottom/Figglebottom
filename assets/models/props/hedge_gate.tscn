@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="StandardMaterial3D" id="ash"]
+albedo_color = Color(0.620, 0.550, 0.440, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="ashdark"]
+albedo_color = Color(0.450, 0.390, 0.300, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="rail"]
+size = Vector3(3.0, 0.09, 0.06)
+material = SubResource("ash")
+
+[sub_resource type="BoxMesh" id="stile"]
+size = Vector3(0.12, 1.3, 0.1)
+material = SubResource("ashdark")
+
+[sub_resource type="BoxMesh" id="brace"]
+size = Vector3(3.15, 0.08, 0.05)
+material = SubResource("ash")
+
+[node name="HedgeGate" type="Node3D"]
+metadata/upright = true
+
+[node name="StileHinge" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.65, 0)
+mesh = SubResource("stile")
+
+[node name="StileLatch" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.65, 0)
+mesh = SubResource("stile")
+
+[node name="Rail0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0.02)
+mesh = SubResource("rail")
+
+[node name="Rail1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39, 0.02)
+mesh = SubResource("rail")
+
+[node name="Rail2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0.02)
+mesh = SubResource("rail")
+
+[node name="Rail3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.93, 0.02)
+mesh = SubResource("rail")
+
+[node name="Rail4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0.02)
+mesh = SubResource("rail")
+
+[node name="Brace" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.940887, -0.338719, 0, 0.338719, 0.940887, 0, 0, 0, 1, 0, 0.66, -0.04)
+mesh = SubResource("brace")

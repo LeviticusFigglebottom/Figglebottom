@@ -205,6 +205,10 @@
    "title": "Knucklebones",
    "steps": [
     {
+     "flag": "ks_knucklebones_found",
+     "line": "Four knucklebones were in the turf by the small grave on the cliff. The set has five."
+    },
+    {
      "flag": "ks_knucklebone_found",
      "line": "There was a knucklebone in the middle of the drove-road, on the side going east."
     }

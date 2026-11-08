@@ -187,6 +187,10 @@ pickups = [
     # and Brede's float, frozen into the face of the tide wall
     {"id": "net_float", "at": at(-8.0, 78.8), "item": "item_net_float", "kit": "net_float", "tag": "rime",
      "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice"},
+    # Wren's knucklebones, four of five, in the turf by the small grave (SLICE.md 8; THORNWOLD.md 7)
+    {"id": "knucklebones", "at": at(42.0, 15.5), "item": "ks_knucklebones", "tag": "rime",
+     "scene": "res://assets/models/props/knucklebone.tscn", "set_flag": "ks_knucklebones_found",
+     "label": "Pick up the knucklebones"},
 ]
 # the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
 # arena; she hauls it and lights it (src/world/net_floor.gd)
@@ -340,12 +344,13 @@ D = {
     "npcs": npcs,
     "plaques": plaques,
     "pickups": pickups,
-    "scripted": scripted,
+    # the Longhouse net floor and the drawbridge seam: ONE list (a second
+    # "scripted" key here silently replaced the first, and the net floor was lost)
+    "scripted": scripted + [seams("saltfell_steading")[1]],
     "scatter": scatter,
     "edges": edges,
     # the seams to the Lowe: the cliff-top pass and the drawbridge
     "portals": seams("saltfell_steading")[0],
-    "scripted": [seams("saltfell_steading")[1]],
 }
 
 if __name__ == "__main__":

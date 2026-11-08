@@ -221,11 +221,12 @@ Twenties, tall and lean, hedging gloves through his belt, a hedging bill over hi
 
 **Keepsakes: "Knucklebones"**
 
-One step for now; the thread runs on toward the Bearer's own story (the Coldwell).
+It begins at Saltfell and runs on toward the Bearer's own story (the Coldwell).
 
 | Step | Flag | Set when | Journal line |
 |---|---|---|---|
-| 1 | `ks_knucklebone_found` | Pick up `item_knucklebone` on the drove-road (RIME) | "There was a knucklebone in the middle of the drove-road, on the side going east." |
+| 1 | `ks_knucklebones_found` | Pick up `ks_knucklebones` in the turf by the small grave at Saltfell (RIME) | "Four knucklebones were in the turf by the small grave on the cliff. The set has five." |
+| 2 | `ks_knucklebone_found` | Pick up `item_knucklebone` on the drove-road (RIME) | "There was a knucklebone in the middle of the drove-road, on the side going east." |
 
 ---
 

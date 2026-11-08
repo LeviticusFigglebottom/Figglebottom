@@ -906,10 +906,13 @@ var _kettle_side := -1.0   # (the shelf side, not the cliff)
 ## hedgelayer_p1, hedgelayer_p2, hedgelayer_p3, thorn_release (RIME);
 ## thorn_argument (THAW), thorn_after (THAW, --flag=ks_hedgelayer_released).
 func _st_thorn_collier(p: Player) -> void:
-	_lowe_foe_stage(p, "collier", Vector3(380, 0, -312), "rake", 0.8, 2.0, 4.4, 1.3, 1.0)
+	# on the clearing's open floor (on the road the camera would stand in the thorn)
+	_lowe_foe_stage(p, "collier", Vector3(380, 0, -312), "rake", 0.8, 2.0, 4.4, 1.3, 1.0,
+			Vector3(343.0, 34.5, -303.0))
 
 func _st_thorn_stag(p: Player) -> void:
-	_lowe_foe_stage(p, "rime_stag", Vector3(400, 0, -300), "bound", 0.7, 7.0, 6.4, 1.8, 1.0)
+	_lowe_foe_stage(p, "rime_stag", Vector3(400, 0, -300), "bound", 0.7, 7.0, 7.0, 2.4, 1.2,
+			Vector3(348.0, 34.5, -300.0))
 
 ## The Hedgelayer: woken, the phase set (with its ring), the Bearer `gap`
 ## metres off toward the middle of the grave's clearing; `atk` started and
@@ -942,16 +945,28 @@ func _hl_stage(p: Player, ph: int, atk: String, frac: float, gap: float, after :
 		h._set_state(Enemy.ES.COMBAT)
 		for a in h.cfg.get("attacks", []):
 			h._cooldowns[String(a["id"])] = 99.0
+		# round the ring from him (not toward the grave: the pine and the turf
+		# are there), so what he raises lands on open floor
 		var to_g := h.grave_point() - h.global_position
 		to_g.y = 0
-		var at := h.global_position + to_g.normalized() * gap
+		var tang := to_g.normalized().cross(Vector3.UP)
+		var at := h.global_position + (tang * 0.85 + to_g.normalized() * 0.3).normalized() * gap
 		_place_player(p, Vector3(at.x, h.global_position.y + 0.3, at.z), 0.0)
 	var mid := h.global_position.lerp(p.global_position, 0.5)
 	var axis := p.global_position - h.global_position
 	axis.y = 0
 	var side := axis.normalized().cross(Vector3.UP)
-	_cam.global_position = mid + side * cam.x + Vector3.UP * cam.y + axis.normalized() * cam.z
-	_cam.look_at(mid + Vector3.UP * 1.2, Vector3.UP)
+	if cam.y < 0.0:
+		# behind the Bearer, looking at him
+		_cam.global_position = p.global_position - axis.normalized() * absf(cam.z) + side * cam.x + Vector3.UP * absf(cam.y)
+		_cam.look_at(h.global_position + Vector3.UP * 1.8, Vector3.UP)
+	elif cam.z < 0.0:
+		# over his shoulder: past him to the Bearer and what rises behind
+		_cam.global_position = h.global_position + side * cam.x + Vector3.UP * cam.y + axis.normalized() * cam.z
+		_cam.look_at(p.global_position + axis.normalized() * 1.5 + Vector3.UP * 1.0, Vector3.UP)
+	else:
+		_cam.global_position = mid + side * cam.x + Vector3.UP * cam.y + axis.normalized() * cam.z
+		_cam.look_at(mid + Vector3.UP * 1.2, Vector3.UP)
 	_cam.fov = 58.0
 	if _clock - _t0 < 0.8:
 		return
@@ -973,14 +988,14 @@ func _hl_stage(p: Player, ph: int, atk: String, frac: float, gap: float, after :
 		_freeze()
 
 func _st_hedgelayer_p1(p: Player) -> void:
-	_hl_stage(p, 1, "raise_wall", 0.0, 7.0, 0.7, Vector3(6.0, 3.4, 5.0))
+	_hl_stage(p, 1, "raise_wall", 0.0, 6.0, 0.7, Vector3(2.2, 3.6, -4.5))
 
 func _st_hedgelayer_p2(p: Player) -> void:
 	# in the hedge: the circle glowing where he will step out
-	_hl_stage(p, 2, "step_into", 0.0, 5.0, 0.9 + 1.2 + 0.35, Vector3(6.0, 4.2, 4.0))
+	_hl_stage(p, 2, "step_into", 0.0, 5.0, 1.2 + 0.4, Vector3(2.5, 4.4, -4.0))
 
 func _st_hedgelayer_p3(p: Player) -> void:
-	_hl_stage(p, 3, "where_it_goes", 1.0, 6.5, -1.0, Vector3(5.0, 3.0, 5.0))
+	_hl_stage(p, 3, "where_it_goes", 1.0, 4.0, -1.0, Vector3(1.4, -2.6, 3.4))
 
 ## Release: he kneels at the gap; the ring unlays; the gate lies down; the cord.
 func _st_thorn_release(p: Player) -> void:
@@ -1001,8 +1016,10 @@ func _st_thorn_release(p: Player) -> void:
 		h._die()
 		_t0 = _clock
 	var g2 := h.grave_point()
-	_cam.global_position = g2 + Vector3(-17.0, 4.2, 7.0)
-	_cam.look_at(g2 + Vector3(-9.0, 0.4, 0.0), Vector3.UP)
+	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
+		(v as Node3D).visible = false   # (it falls as meltwater; the beat is the gate)
+	_cam.global_position = g2 + Vector3(-6.5, 3.2, 4.5)
+	_cam.look_at(g2 + Vector3(-11.5, 0.3, 0.0), Vector3.UP)
 	_cam.fov = 58.0
 	if _clock - _t0 > 3.0:
 		_freeze()
@@ -1010,5 +1027,26 @@ func _st_thorn_release(p: Player) -> void:
 func _st_thorn_argument(p: Player) -> void:
 	_release_stage(p, "eyvind", Vector3(1.6, 1.6, 5.0), 0.9, 2)
 
+## After: the two of them either side of the gap, the gate lying flat
+## across it between them; from the road side, outside the rings.
 func _st_thorn_after(p: Player) -> void:
-	_release_stage(p, "eyvind_gate", Vector3(-1.8, 1.7, 5.2), 0.8, 4)
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	var e := _find_npc("eyvind_gate")
+	var l := _find_npc("linnet")
+	if e == null or l == null:
+		return
+	var mid := (e.global_position + l.global_position) * 0.5
+	var out := Vector3(-1, 0, 0)   # the rings' gap faces west, to the road
+	if _f == 3:
+		_place_player(p, mid + out * 7.4 + Vector3.UP * 0.3, atan2(-out.x, -out.z) + PI)
+		_t0 = _clock
+		e.overheard.connect(func(_w, _l): _heard += 1)
+	_cam.global_position = mid + out * 6.2 + Vector3(0, 2.2, 1.2)
+	_cam.look_at(mid + Vector3(1.2, 0.7, 0), Vector3.UP)
+	_cam.fov = 52.0
+	if _heard >= 4 and _clock - _t0 > 1.0:
+		_hold_clock += get_process_delta_time()
+		if _hold_clock > 1.0:
+			_freeze()
