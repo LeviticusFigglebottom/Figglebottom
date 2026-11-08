@@ -665,7 +665,7 @@ func _run() -> void:
 	await _shot("netmender_mending")
 	# a software renderer runs the duel at a frame or two a second; the
 	# Bearer's swings lose contact frames there, so the shots run hits harder
-	Game.test_boss_dmg_mult = 3.0 if shots_dir == "" else 6.0
+	Game.test_boss_dmg_mult = 3.0 if shots_dir == "" else 20.0
 	var phases := {}
 	var t_fight := 0
 	var deaths := 0
