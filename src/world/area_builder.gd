@@ -63,6 +63,8 @@ static func build(area_id: String) -> Area:
 		_solid_box(area, spec)
 
 	for spec in def.get("hearths", []):
+		if not _flag_ok(spec):
+			continue   # a hearth that wakes later (the Long Hearth, on release)
 		var l := Hearthstone.new()
 		l.hearth_id = spec.get("id", "hearth")
 		l.display_name = spec.get("name", "Hearthstone")
@@ -86,6 +88,7 @@ static func build(area_id: String) -> Area:
 			s.enemy_id = String(spec["stand_in"])
 		s.face_deg = float(spec.get("face", 0))
 		s.dead_once = spec.get("dead_once", false)
+		s.pose = String(spec.get("pose", ""))
 		s.spawn_flag = "slain_" + spec.get("id", spec.get("enemy", "e"))
 		s.area_id = area_id
 		var tag: String = spec.get("tag", "rime")

@@ -15,6 +15,8 @@ var label := "Take"
 var appear_flag := ""
 ## optional true shape (quest relics): shown instead of the candelabrum
 var display_kit := ""
+## or a Tripo mesh (the Mending Needle where the Netmender sat)
+var display_scene := ""
 ## a story flag raised on taking it (a Keepsakes step, say)
 var set_flag := ""
 
@@ -30,7 +32,19 @@ func _ready() -> void:
 	_zone.setup_zone(1.2, 1.4)
 	_zone.activated.connect(_on_take)
 	add_child(_zone)
-	if display_kit != "" and KitLib.has_piece(display_kit):
+	if display_scene != "" and ResourceLoader.exists(display_scene):
+		var mesh := (load(display_scene) as PackedScene).instantiate() as Node3D
+		mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
+		mesh.position.y = 0.05
+		add_child(mesh)
+		var gl := OmniLight3D.new()
+		gl.light_color = Color(0.95, 0.93, 0.86)
+		gl.light_energy = 1.0
+		gl.omni_range = 2.4
+		gl.shadow_enabled = false
+		gl.position.y = 0.6
+		add_child(gl)
+	elif display_kit != "" and KitLib.has_piece(display_kit):
 		# a relic shows ITSELF — its own shape on the stones, kept in a
 		# small gold shimmer instead of the brazier
 		var relic := KitLib.instance(display_kit)

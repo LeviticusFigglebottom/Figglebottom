@@ -31,6 +31,7 @@ var _seq_i := 0
 var _multi: Array = []    # Array of [path, cam_spec]
 var _multi_i := 0
 var _multi_step := 0
+var _enc: EncShots = null   # staged encounter shots (src/debug/enc_shots.gd)
 
 func _ready() -> void:
 	# the shot harness must keep ticking while the tree is paused (e.g. to
@@ -49,6 +50,9 @@ func _ready() -> void:
 			_trigger_gourd = true
 		elif arg.begins_with("--shot-stage="):
 			_stage = arg.get_slice("=", 1)
+		elif arg.begins_with("--enc-shot="):
+			_enc = EncShots.new()
+			_enc.stage = arg.get_slice("=", 1)
 		elif arg.begins_with("--state="):
 			forced_state = arg.get_slice("=", 1)
 		elif arg.begins_with("--flag="):
@@ -71,6 +75,11 @@ func _ready() -> void:
 			if not _multi.is_empty() and _shot_path == "":
 				_shot_path = String(_multi[0][0])
 				_cam_spec = String(_multi[0][1])
+	if _enc != null:
+		_enc.path = _shot_path
+		add_child(_enc)
+		_shot_path = ""   # the encounter stage saves on its own beat
+		return
 	if _shot_path != "" and _frames_left < 0:
 		_frames_left = 30
 	_frames_total = _frames_left

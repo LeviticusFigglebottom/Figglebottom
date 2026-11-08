@@ -123,12 +123,17 @@ func _on_enter(player) -> void:
 func _engage_boss() -> void:
 	if boss_spawner != null and boss_spawner.current != null and not boss_spawner.current.dead:
 		var boss := boss_spawner.current
-		boss.target = Game.player
-		boss._set_state(Enemy.ES.ALERT)
-		AudioDirector.sfx_at(boss.cfg.get("sfx_alert", ""), boss.global_position, 2.0)
-		AudioDirector.boss_theme(boss.id, 1.5)
-		for hud in get_tree().get_nodes_in_group("hud"):
-			hud.show_boss(boss)
+		if boss.has_method("engage_from_veil"):
+			# a holdfast with an intro (the Netmender keeps mending until the
+			# Bearer comes close): she raises the bar and the music herself
+			boss.engage_from_veil(Game.player)
+		else:
+			boss.target = Game.player
+			boss._set_state(Enemy.ES.ALERT)
+			AudioDirector.sfx_at(boss.cfg.get("sfx_alert", ""), boss.global_position, 2.0)
+			AudioDirector.boss_theme(boss.id, 1.5)
+			for hud in get_tree().get_nodes_in_group("hud"):
+				hud.show_boss(boss)
 		boss.died.connect(_on_boss_dead)
 	_set_aux(true)
 	Game.arena_locked = true
@@ -178,3 +183,28 @@ func dissolve() -> void:
 	var tw := create_tween()
 	tw.tween_property(_plane, "transparency", 1.0, 2.0)
 	tw.tween_callback(_plane.hide)
+	_meltwater()
+
+## The veil falls as meltwater: drops run down where it stood.
+func _meltwater() -> void:
+	if not is_inside_tree():
+		return
+	var p := CPUParticles3D.new()
+	p.amount = 140
+	p.lifetime = 1.0
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	p.emission_box_extents = Vector3(plane_size.x * 0.5, plane_size.y * 0.4, 0.05)
+	p.direction = Vector3.DOWN
+	p.spread = 4.0
+	p.initial_velocity_min = 1.0
+	p.initial_velocity_max = 2.4
+	p.gravity = Vector3(0, -9.8, 0)
+	p.scale_amount_min = 0.02
+	p.scale_amount_max = 0.05
+	p.color = Color(0.75, 0.86, 1.0, 0.7)
+	p.mesh = AreaPortal.make_mote_quad(1.0)
+	add_child(p)
+	p.position = Vector3(0, plane_size.y * 0.55, 0)
+	p.emitting = true
+	RH.stop_emitting_after(p, 2.2)
+	RH.free_after(p, 3.6)

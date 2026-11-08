@@ -5,7 +5,10 @@ extends CharacterBody3D
 
 signal died(enemy)
 
-enum ES { IDLE, ALERT, APPROACH, COMBAT, ATTACK, STAGGER, DEAD }
+## RETURN, GRAB, INTRO, TRANSITION and HOLD belong to the slice's special
+## foes (a hound walking back to its threshold, a hound's grab, a holdfast's
+## intro, phase change and hold); the base ticks them through _st_extra().
+enum ES { IDLE, ALERT, APPROACH, COMBAT, ATTACK, STAGGER, DEAD, RETURN, GRAB, INTRO, TRANSITION, HOLD }
 
 var id := "rimewalker"
 var cfg: Dictionary = {}
@@ -29,6 +32,11 @@ var _think_t := 0.0
 var _strafe_dir := 1.0
 var _blocking := false
 var phase := 1
+## An idle chore from the area data (spawner "pose"): "sit" = sitting at a
+## chore, mending nothing (SLICE.md 5). Such a foe rises slowly when the
+## Bearer comes into perception (data rise_time).
+var idle_pose := ""
+var _risen := true
 
 # corner recovery: pursuing into a wall wedge used to pin bosses in place —
 # wanting to move but making no ground. Track real progress; when wedged,
@@ -117,6 +125,7 @@ func _ready() -> void:
 	hitbox.on_contact = _on_hit_contact
 	_build_blade_hitbox()
 	_build_fist_hitbox()
+	_apply_idle_pose()
 
 	# floating health bar for regular foes; bosses ride the big HUD bar instead
 	if not cfg.get("is_boss", false):
@@ -144,6 +153,7 @@ func _physics_process(dt: float) -> void:
 		ES.COMBAT: _st_combat(dt)
 		ES.ATTACK: _st_attack(dt)
 		ES.STAGGER: _st_stagger(dt)
+		_: _st_extra(dt)
 	move_and_slide()
 	_track_progress(dt)
 	# stride cycles while moving; action clips own the rig during ATTACK/STAGGER
@@ -259,9 +269,27 @@ func _st_idle(dt: float) -> void:
 			AudioDirector.sfx_at(cfg["sfx_alert"], global_position, -2.0, randf_range(0.9, 1.1))
 
 func _st_alert(dt: float) -> void:
-	_face(target.global_position - global_position, dt, 1.6)
-	if state_t >= 0.42:
+	if not _risen:
+		# a sitter gets up first: slowly, the chore set down
+		_risen = true
+		var rise := float(cfg.get("rise_time", 1.8))
+		vis.play("stand_up", 0.25, vis.clip_length("stand_up") / maxf(rise, 0.1))
+		_rise_until = rise
+	_face(target.global_position - global_position, dt, 1.6 if _rise_until <= 0.0 else 0.4)
+	if state_t >= maxf(0.42, _rise_until):
+		_rise_until = 0.0
+		vis.idle(0.3)
 		_set_state(ES.APPROACH)
+
+var _rise_until := 0.0
+
+const IDLE_POSES := {"sit": "sit_mend"}
+
+func _apply_idle_pose() -> void:
+	if idle_pose == "" or not vis.is_humanoid() or not IDLE_POSES.has(idle_pose):
+		return
+	vis.play(String(IDLE_POSES[idle_pose]), 0.0)
+	_risen = false
 
 func _st_approach(dt: float) -> void:
 	if not _target_valid():
@@ -351,25 +379,52 @@ func _target_valid() -> bool:
 func _max_attack_range() -> float:
 	var m := 0.0
 	for a in cfg.get("attacks", []):
-		if a.get("phase2_only", false) and phase < 2:
-			continue
-		if a.get("phase1_only", false) and phase >= 2:
-			continue
-		m = maxf(m, float(a.get("range", 2)))
+		if _attack_allowed(a):
+			m = maxf(m, float(a.get("range", 2)))
 	return m
+
+## Whether an attack is in this phase's repertoire and may be chosen freely.
+## Data keys: "phases": [1, 2] (or the older phase1_only / phase2_only),
+## "pick": false for moves only a trigger or a chain starts.
+func _attack_allowed(a: Dictionary) -> bool:
+	if a.get("phase2_only", false) and phase < 2:
+		return false
+	if a.get("phase1_only", false) and phase >= 2:
+		return false
+	if a.has("phases") and not (phase in a["phases"] or float(phase) in a["phases"]):
+		return false
+	return a.get("pick", true) and not a.get("chain_only", false)
+
+## A subclass may veto a pick (e.g. "only if ridges stand").
+func _attack_usable(_a: Dictionary) -> bool:
+	return true
 
 func _pick_attack(dist: float) -> Dictionary:
 	var pool: Array = []
 	for a in cfg.get("attacks", []):
-		if a.get("phase2_only", false) and phase < 2:
+		if not _attack_allowed(a) or not _attack_usable(a):
 			continue
-		if a.get("phase1_only", false) and phase >= 2:
-			continue
-		if dist <= float(a.get("range", 2)) and _cooldowns.get(a["id"], 0.0) <= 0.0:
-			pool.append(a)
+		if dist <= float(a.get("range", 2)) and float(a.get("min_range", 0.0)) <= dist \
+				and _cooldowns.get(a["id"], 0.0) <= 0.0:
+			for i in int(a.get("weight", 1)):
+				pool.append(a)
 	if pool.is_empty():
 		return {}
 	return pool[randi() % pool.size()]
+
+func attack_by_id(aid: String) -> Dictionary:
+	for a in cfg.get("attacks", []):
+		if String(a.get("id", "")) == aid:
+			return a
+	return {}
+
+## Timing multiplier for the current phase: data "phase_speed" ([p1, p2, p3]),
+## else the old rule (a second phase runs 1.35x).
+func _speed_mult() -> float:
+	var ps: Array = cfg.get("phase_speed", [])
+	if not ps.is_empty():
+		return float(ps[clampi(phase - 1, 0, ps.size() - 1)])
+	return 1.35 if phase >= 2 else 1.0
 
 ## Each attack clip is played at a speed that lands its CONTACT beat exactly
 ## when the hitbox opens (end of windup). The beats are data:
@@ -377,57 +432,268 @@ func _pick_attack(dist: float) -> Dictionary:
 ## humanoids). Before this, clips ran at their authored duration while damage
 ## followed the data windup, so slow attacks visibly struck early.
 func _begin_attack(a: Dictionary) -> void:
+	# per-phase overrides ("by_phase": {"2": {"hits": [...]}}) ride on a copy
+	var bp: Dictionary = a.get("by_phase", {})
+	if bp.has(str(phase)):
+		a = a.duplicate()
+		a.merge(bp[str(phase)], true)
 	_atk = a
 	_atk_done = false
+	_hit_i = 0
+	_chained = false
 	_blocking = false
 	_cooldowns[a["id"]] = float(a.get("cooldown", 2.0))
 	_set_state(ES.ATTACK)
-	var speed_mult := 1.35 if phase >= 2 else 1.0
 	var anim_name: String = a.get("anim", "atk_r")
-	var w := float(a.get("windup", 0.5)) / speed_mult
+	var w := float(a.get("windup", 0.5)) / _speed_mult()
 	vis.play_timed(anim_name, maxf(w, 0.05), 0.08)
+	_atk_dir = -vis.global_transform.basis.z
+	_tele = null
+	if a.has("telegraph"):
+		_tele_at = w * float(a.get("telegraph_lock", 0.7))
+	if a.has("sfx_windup"):
+		AudioDirector.sfx_at(String(a["sfx_windup"]), global_position, -4.0)
+	if a.has("breath"):
+		breath_puff(String(a["breath"]), w)
+
+## Seconds after the windup at which each strike of a multi-strike attack
+## lands ("hits": [0, 0.22, 0.6]); one strike at 0 by default.
+func _hit_times() -> Array:
+	return _atk.get("hits", [0.0])
+
+var _hit_i := 0
+var _chained := false
+var _atk_dir := Vector3.FORWARD
+var _tele: Node = null
+var _tele_at := -1.0
 
 func _st_attack(dt: float) -> void:
 	_sync_blade()   # the blade box wears the weapon's frame through the swing
-	var speed_mult := 1.35 if phase >= 2 else 1.0
-	var w: float = float(_atk["windup"]) / speed_mult
-	var act: float = float(_atk["active"]) / speed_mult
-	var rec: float = float(_atk["recover"]) / speed_mult
+	var sm := _speed_mult()
+	var w: float = float(_atk["windup"]) / sm
+	var act: float = float(_atk["active"]) / sm
+	var rec: float = float(_atk["recover"]) / sm
+	var hits := _hit_times()
+	var last: float = float(hits[hits.size() - 1]) / sm
 	var t := state_t
 	# track the player through most of the windup, commit at the end
 	if t < w * 0.7 and _target_valid():
-		_face(target.global_position - global_position, dt, 1.2)
-	if t >= w and t < w + act:
-		var fwd := -vis.global_transform.basis.z
+		_face(target.global_position - global_position, dt, float(_atk.get("track", 1.2)))
+		_atk_dir = -vis.global_transform.basis.z
+	if state != ES.ATTACK:
+		return
+	# the floor tell appears once the aim is committed, and glows to the strike
+	if _atk.has("telegraph") and _tele == null and t >= _tele_at:
+		_tele = _spawn_telegraph(w - t)
+	var in_strike := false
+	for h in hits:
+		var ht := w + float(h) / sm
+		if t >= ht and t < ht + act:
+			in_strike = true
+	if in_strike:
 		var lunge := float(_atk.get("lunge", 1.5))
-		velocity.x = fwd.x * lunge
-		velocity.z = fwd.z * lunge
+		velocity.x = _atk_dir.x * lunge
+		velocity.z = _atk_dir.z * lunge
 	else:
 		velocity.x = move_toward(velocity.x, 0, 14 * dt)
 		velocity.z = move_toward(velocity.z, 0, 14 * dt)
-	if not _atk_done and t >= w:
-		_atk_done = true
-		match _atk.get("type", "melee"):
-			"ranged": _fire_projectiles()
-			"summon": _summon()
-			"nova": _ember_nova(float(_atk.get("nova_radius", 4.2)))
-			_:
-				_open_hitbox()
-				if vis.trail != null:
-					vis.trail.visible = true
-				AudioDirector.sfx_at("res://assets/audio/swing.wav", global_position, -11.0,
-						randf_range(0.88, 1.04))
-		if _atk.has("shockwave"):
-			_shockwave.call_deferred(float(_atk["shockwave"]))
-	if vis.trail != null and _atk_done and t >= w + act:
+	# each strike in turn
+	while _hit_i < hits.size() and t >= w + float(hits[_hit_i]) / sm:
+		if _hit_i > 0:
+			# the next strike re-arms the same volumes (begin_swing clears who
+			# was struck); ending them first would land a deferred disable
+			# after the re-arm and swallow the strike
+			if _atk.has("hit_anim"):
+				vis.play_timed(String(_atk["hit_anim"]), maxf(float(_atk.get("hit_lead", 0.12)), 0.05), 0.05)
+		_strike()
+		_hit_i += 1
+	_atk_done = _hit_i > 0
+	# between strikes the volumes stay armed but bite nothing (no packet):
+	# re-arming next strike must not race a deferred disable
+	if _atk_done and not in_strike and _hit_i < hits.size():
+		for hb in [hitbox, blade_hitbox, fist_hitbox]:
+			if hb != null:
+				(hb as Hitbox).packet = null
+	if vis.trail != null and _atk_done and t >= w + last + act:
 		vis.trail.visible = false
-	if _atk_done and t >= w + act and (hitbox.monitoring
+	if _atk_done and t >= w + last + act and (hitbox.monitoring
 			or (blade_hitbox != null and blade_hitbox.monitoring)
 			or (fist_hitbox != null and fist_hitbox.monitoring)):
 		_end_all_swings()
-	if t >= w + act + rec:
-		_set_state(ES.COMBAT)
-		vis.idle()
+	# a follow-up flows out of the strike ("chain": "back_stroke")
+	if _atk.has("chain") and not _chained and t >= w + last + act:
+		_chained = true
+		var nxt := attack_by_id(String(_atk["chain"]))
+		if not nxt.is_empty() and randf() < float(_atk.get("chain_chance", 1.0)) and _target_valid():
+			_begin_attack(nxt)
+			return
+	if t >= w + last + act + rec:
+		_attack_finished()
+
+## One strike of the current attack, by type (data-driven):
+##   melee (default), ranged, summon, nova, line, net, haul, alert.
+func _strike() -> void:
+	match _atk.get("type", "melee"):
+		"ranged": _fire_projectiles()
+		"summon": _summon()
+		"nova": _ember_nova(float(_atk.get("nova_radius", 4.2)))
+		"line": _line_strike()
+		"net": _net_cast()
+		"haul": _haul()
+		"alert": _alert_others(float(_atk.get("radius", 15.0)))
+		"none": pass
+		_:
+			_open_hitbox()
+			if vis.trail != null:
+				vis.trail.visible = true
+			AudioDirector.sfx_at("res://assets/audio/swing.wav", global_position, -11.0,
+					randf_range(0.88, 1.04))
+	if _atk.has("shockwave"):
+		_shockwave.call_deferred(float(_atk["shockwave"]))
+
+## The attack's whole timeline has run: back to circling (subclasses may
+## queue a follow-up, e.g. the net cast's haul into a stitch).
+func _attack_finished() -> void:
+	_set_state(ES.COMBAT)
+	vis.idle()
+
+func _spawn_telegraph(remaining: float) -> Node:
+	var tg: Dictionary = _atk["telegraph"]
+	var kind := String(tg.get("shape", "rect"))
+	var size: Array = tg.get("size", [1.0, 4.0])
+	var xf := Transform3D(Basis.looking_at(_atk_dir, Vector3.UP), global_position)
+	xf.origin += _atk_dir * float(tg.get("offset", 0.0))
+	var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
+	return FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1),
+			Color(tint[0], tint[1], tint[2]))
+
+## The frost-breath tell (SPEC.md 7): a plume from the mask a beat before a
+## move. kind: "up" (rises straight up: Ship oars), "forward" (a snort),
+## "held" (thin and slow: the Cast), "twice" (two puffs: the double fall).
+func breath_puff(kind: String, over := 0.6) -> void:
+	var head := global_position + Vector3.UP * float(cfg.get("hurt_h", 1.6)) * 0.95
+	if vis.is_humanoid() and vis.skel != null and vis.skel.find_bone("mixamorig_Head") >= 0:
+		head = vis.bone_xform("mixamorig_Head").origin + Vector3.UP * 0.08
+	elif cfg.has("head_offset"):
+		var ho: Array = cfg["head_offset"]
+		head = vis.global_transform * Vector3(ho[0], ho[1], ho[2])
+	var fwd := -vis.global_transform.basis.z
+	var p := CPUParticles3D.new()
+	p.amount = 26 if kind != "held" else 14
+	p.lifetime = clampf(over, 0.4, 1.6)
+	p.one_shot = true
+	p.explosiveness = 0.2 if kind == "held" else 0.65
+	p.direction = Vector3.UP if kind == "up" else (fwd + Vector3.UP * 0.3).normalized()
+	p.spread = 12.0 if kind == "up" else 24.0
+	p.initial_velocity_min = 0.5
+	p.initial_velocity_max = 1.4 if kind != "held" else 0.6
+	p.gravity = Vector3(0, 0.35, 0)
+	p.scale_amount_min = 0.06
+	p.scale_amount_max = 0.16
+	p.color = Color(0.9, 0.95, 1.0, 0.5)
+	p.mesh = AreaPortal.make_mote_quad(1.0)
+	get_parent().add_child(p)
+	p.global_position = head + fwd * 0.18
+	p.emitting = true
+	RH.free_after(p, p.lifetime + 0.4)
+	if kind == "twice":
+		var tw := create_tween()
+		tw.tween_interval(over * 0.45)
+		tw.tween_callback(func():
+			if is_instance_valid(p):
+				p.restart())
+
+## Ground-plane test against the committed aim: inside a strip `width` wide
+## running `length` forward from `offset` metres ahead.
+func in_strip(pos: Vector3, length: float, width: float, offset := 0.0) -> bool:
+	var to := pos - global_position
+	to.y = 0.0
+	var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
+	var along := to.dot(fwd) - offset
+	var side := absf(to.dot(fwd.cross(Vector3.UP)))
+	return along >= -0.4 and along <= length and side <= width * 0.5
+
+## A line of ice along the floor (the Oarsman's ship-oars slam, the
+## Netmender's Knot and Sea-weight): damages what stands in the strip, and may
+## leave a ridge that blocks movement ("ridge": {"life": 10, "breaks": 2}).
+func _line_strike() -> void:
+	var length := float(_atk.get("length", 4.0))
+	var width := float(_atk.get("width", 1.2))
+	var offset := float(_atk.get("offset", 0.0))
+	var p := _player()
+	if p != null and not p.get("dead") and in_strip(p.global_position, length, width, offset):
+		var hb: Hurtbox = p.get("hurtbox")
+		var pk := DamagePacket.new(float(_atk.get("dmg", 20)), float(_atk.get("poise_dmg", 20)), self)
+		pk.kind = String(_atk.get("kind", "frost"))   # an ice line is frost unless data says not
+		pk.can_be_parried = false
+		pk.can_be_blocked = bool(_atk.get("blockable", true))
+		if hb != null:
+			hb.receive(pk)
+	_line_vfx(length, width, offset)
+	if _atk.has("ridge"):
+		var rd: Dictionary = _atk["ridge"]
+		var r := IceRidge.new()
+		r.setup(length, float(rd.get("life", 10.0)), int(rd.get("breaks", 2)))
+		get_parent().add_child(r)
+		var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
+		r.global_transform = Transform3D(Basis.looking_at(fwd, Vector3.UP), global_position + fwd * offset)
+		_on_ridge(r)
+	Juice.shake(float(_atk.get("shake", 0.35)), 0.25)
+	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, -4.0, 1.5)
+
+## A subclass keeps the ridges it raised (the Netmender mends them).
+func _on_ridge(_r: IceRidge) -> void:
+	pass
+
+func _line_vfx(length: float, width: float, offset: float) -> void:
+	var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
+	var p := CPUParticles3D.new()
+	p.amount = int(clampf(length * width * 10.0, 30, 220))
+	p.lifetime = 0.7
+	p.one_shot = true
+	p.explosiveness = 0.85
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	p.emission_box_extents = Vector3(width * 0.5, 0.1, length * 0.5)
+	p.direction = Vector3.UP
+	p.spread = 30.0
+	p.initial_velocity_min = 1.5
+	p.initial_velocity_max = 4.0
+	p.gravity = Vector3(0, -9.0, 0)
+	p.scale_amount_min = 0.05
+	p.scale_amount_max = 0.12
+	p.color = Color(0.8, 0.9, 1.0, 0.9)
+	p.mesh = AreaPortal.make_mote_quad(1.4)
+	get_parent().add_child(p)
+	p.global_transform = Transform3D(Basis.looking_at(fwd, Vector3.UP),
+			global_position + fwd * (offset + length * 0.5) + Vector3.UP * 0.1)
+	p.emitting = true
+	RH.free_after(p, 1.2)
+
+## Override points for the net and haul types (the Netmender).
+func _net_cast() -> void:
+	pass
+
+func _haul() -> void:
+	pass
+
+## A warning to every frost-taken within `radius` (the Hearthhound's bark):
+## each one idle turns toward the Bearer and comes.
+func _alert_others(radius: float) -> int:
+	var n := 0
+	var p := _player()
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		var en := e as Enemy
+		if en == null or en == self or en.dead or not en.can_process():
+			continue
+		if en.global_position.distance_to(global_position) > radius:
+			continue
+		if en.state == ES.IDLE and p != null:
+			en.target = p
+			en._set_state(ES.ALERT)
+			n += 1
+	Juice.shake(0.15, 0.2)
+	AudioDirector.sfx_at(cfg.get("sfx_alert", ""), global_position, 2.0, 1.4)
+	return n
 
 ## The blade's own hit volume: merge the mounted weapon's mesh extents in
 ## mount space, wrap them with a hand's width of forgiveness, and hang the
@@ -658,11 +924,16 @@ func _ember_nova(radius: float) -> void:
 		if d < radius and seen and p.has_method("take_hit"):
 			var hb: Hurtbox = p.get("hurtbox")
 			var pk := DamagePacket.new(float(_atk.get("dmg", 30)), float(_atk.get("poise_dmg", 35)), self)
-			pk.kind = "ember"
+			pk.kind = String(_atk.get("kind", _atk.get("nova_kind", "ember")))
 			pk.can_be_parried = false
 			if hb != null:
 				hb.receive(pk)
-	_ring_vfx(radius, true)
+	var frost := String(_atk.get("nova_kind", "ember")) == "frost"
+	_ring_vfx(radius, not frost)
+	if frost:   # a cold sweep (the Netmender's net train): no ember light
+		Juice.shake(0.4, 0.28)
+		AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -1.0, 0.7)
+		return
 	# the ring itself burns gold, and a breath of light rides it out
 	var flash := OmniLight3D.new()
 	flash.light_color = Color(1.0, 0.9, 0.6)
@@ -736,6 +1007,11 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 		# it must never overwrite the long window
 		_stagger(1.6)
 
+## States a subclass adds (RETURN, GRAB, INTRO, TRANSITION, HOLD).
+func _st_extra(dt: float) -> void:
+	velocity.x = move_toward(velocity.x, 0, 10 * dt)
+	velocity.z = move_toward(velocity.z, 0, 10 * dt)
+
 func _st_stagger(dt: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 10 * dt)
 	velocity.z = move_toward(velocity.z, 0, 10 * dt)
@@ -800,6 +1076,10 @@ func take_hit(packet: DamagePacket) -> void:
 	if poise <= 0.0:
 		poise = float(cfg.get("poise", 30))
 		_stagger()
+	_check_phase()
+
+## Boss phase gates (a subclass may run its own: the Netmender's three).
+func _check_phase() -> void:
 	if cfg.get("is_boss", false) and phase == 1 and hp <= max_hp * float(cfg.get("phase2_at", 0.5)):
 		phase = 2
 		_enrage()
@@ -844,13 +1124,24 @@ func _die() -> void:
 	_fade_out.call_deferred()
 
 func _fade_out() -> void:
-	await get_tree().create_timer(2.6, false).timeout
+	# Tripo bodies carry imported StandardMaterial3Ds: give them the frost
+	# dissolve first, or they would simply vanish at the end
+	FrostDissolve.apply(vis)
+	await get_tree().create_timer(float(cfg.get("death_linger", 2.6)), false).timeout
+	if not is_instance_valid(self):
+		return
+	var dur := float(cfg.get("death_dissolve", 1.6))
 	var t := 0.0
-	while t < 1.2 and is_instance_valid(self):
+	var shattered := false
+	while t < dur and is_instance_valid(self):
 		t += get_process_delta_time()
-		_set_dissolve(t / 1.2)
+		_set_dissolve(t / dur)
+		if not shattered and t / dur > 0.4:
+			shattered = true
+			FrostDissolve.shards(get_parent(), global_position, float(cfg.get("hurt_h", 1.6)))
 		await get_tree().process_frame
-	queue_free()
+	if is_instance_valid(self):
+		queue_free()
 
 func _set_dissolve(v: float) -> void:
 	RH.set_dissolve(vis, v)

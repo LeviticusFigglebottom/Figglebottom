@@ -106,3 +106,16 @@ This is the state on 2026-11-07. `tools/test/anim_test.gd` prints the derived sp
 - `slash` is a single overhead-diagonal preset. Every attack id shares it, differing only in rate. Attack variety waits on more presets.
 - The Tripo materials are `StandardMaterial3D`, so the death dissolve shader does not apply. Humanoid foes are freed after the fade timer instead of dissolving.
 - Screenshots come from the staged shots in `src/debug/shot.gd`: `--shot-stage=swing`, `foe_death` and `boss`. Each one freezes the tree on its gameplay beat before capturing, because headless frames render slower than physics ticks. The resulting images are `docs/screens/chars_*.png`.
+
+## Update: slice cast (feat/slice-encounters)
+
+- **Real clips win across aliases.** Resolution now tries every candidate name for a real clip before it falls back to any overlay, so `roll` → `dodge_roll` takes the real Tripo clip.
+- **Per-model rows:**
+  - `models.<id>.clips` holds a model's own section times, and `root_lock` pins travelling hips over the feet.
+  - `skip_clips` keeps a weak real clip out, so its overlay plays instead.
+- **Clip split for the Bearer:**
+  - Real, judged on pose sheets (`--sandbox=pose_sheet`): `dodge_roll`, `drink`, `rest` (kneel) and `parry`.
+  - Kept procedural: `block`, `heavy_overhead` and `stagger` (which falls back to the real `hit`).
+- **Carry layer.** `models.<id>.carry` is an arms-only layer that holds a two-handed weapon through locomotion (the Oarsman's oar). `set_carry()` can hold it through actions as well (the Netmender's left hand in her last phase).
+- **Death.** The "humanoid foes are freed after the fade timer" consequence is replaced: `FrostDissolve` swaps a Tripo body's StandardMaterial3Ds for `frost_dissolve.gdshader` copies on death, so the body frosts over and shatters.
+- **Quadrupeds.** These use `QuadRig` (ADR 0006) instead of this layer.

@@ -828,7 +828,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func show_boss(boss: Node) -> void:
 	_boss = boss
 	_boss_ghost_ratio = 1.0
-	boss_name.text = boss.cfg.get("name", "???")
+	boss_name.text = boss.cfg.get("bar_name", boss.cfg.get("name", "???"))
 	boss_root.visible = true
 
 func hide_boss() -> void:

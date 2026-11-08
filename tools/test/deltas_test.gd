@@ -261,11 +261,13 @@ func _armour() -> void:
 	check(player.roll_tier() == "light" and player.roll_param("duration") < float(R["duration"]), "bare is the light roll")
 	check(_near(player.max_poise, base), "bare poise is the base 30")
 	player.equip_armour("body", "armour_traveller_coat")
+	# (the Netmender's moves follow SLICE.md 6 now: her ice knots and the
+	# sea-weight are the frost blows; the old frost heave is gone)
 	var heave := {}
 	for a in DB.enemy("netmender")["attacks"]:
-		if a["id"] == "frost_heave":
+		if a["id"] == "knot":
 			heave = a
-	check(String(heave.get("kind", "")) == "frost", "the Netmender's frost heave strikes as frost")
+	check(String(heave.get("kind", "")) == "frost", "the Netmender's ice knots strike as frost")
 	for id in ["test_helm", "test_mitts", "test_greaves"]:
 		items.erase(id)
 		player.inventory.erase(id)

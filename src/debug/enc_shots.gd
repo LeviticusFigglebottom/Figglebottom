@@ -1,0 +1,355 @@
+class_name EncShots
+extends Node
+## Staged encounter screenshots (docs/screens/enc_*.png). Shot adds this node
+## when the command line carries --enc-shot=<stage>; it stages the beat in the
+## live area, frames a camera, freezes the tree on the beat and saves.
+##   tools/shot.sh docs/screens/enc_bearer_idle.png --area=saltfell_steading \
+##       --state=thaw --enc-shot=bearer_idle
+## Stages: bearer_idle, bearer_roll, bearer_drink, oarsman_stroke, hound_lunge,
+## netmender_p1, netmender_p2, netmender_p3, ingra_thaw, release.
+
+var stage := ""
+var path := ""
+var _f := 0
+var _foe: Node3D = null
+var _cam: Camera3D
+var _done := false
+var _hold := -1
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+var _clock := 0.0   # game seconds since boot (headless frames run slow)
+
+func _process(dt: float) -> void:
+	if _done:
+		return
+	if Engine.time_scale > 0.0:
+		_clock += dt
+	if _hold >= 0:
+		_hold -= 1
+		if _hold == 0:
+			_save()
+		return
+	var p: Player = Game.player
+	if p == null:
+		return
+	_f += 1
+	if _f == 1:
+		p.invulnerable = true
+		p.sim_active = true
+		p.hurtbox.monitorable = false
+		_cam = Camera3D.new()
+		_cam.name = "EncCam"
+		get_tree().current_scene.add_child(_cam)
+	if _f > 1:
+		_cam.current = true
+	call("_st_" + stage, p)
+
+## Stop game time on the beat. time_scale 0 rather than a pause: paused
+## skeletons stop publishing their pose to the renderer, so the photo would
+## show a frame from before the beat.
+func _freeze(frames := 6) -> void:
+	Engine.time_scale = 0.0
+	_hold = frames
+	if _foe != null and is_instance_valid(_foe) and _foe is Enemy:
+		var e := _foe as Enemy
+		print("[shot] freeze: %s state %d atk %s t %.2f clip %s tells %d" % [e.id, e.state, e._atk.get("id", "-"),
+				e.state_t, e.vis.current_clip(), get_tree().current_scene.find_children("*", "FloorTelegraph", true, false).size()])
+
+func _save() -> void:
+	_done = true
+	var img := get_viewport().get_texture().get_image()
+	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	img.save_png(path)
+	print("[shot] saved ", path)
+	AudioDirector.shutdown()
+	get_tree().quit()
+
+## Camera at `eye` offset from `at` in the frame of `yaw_node` (x right, y up,
+## z toward the node's face), looking at `at` + look_up.
+func _frame(at: Vector3, basis_from: Node3D, eye: Vector3, look_up := 0.9, fov := 45.0) -> void:
+	var b := basis_from.global_transform.basis.orthonormalized()
+	var fwd := -b.z
+	fwd.y = 0
+	fwd = fwd.normalized()
+	var right := fwd.cross(Vector3.UP)
+	var tgt := at + Vector3.UP * look_up
+	_cam.global_position = tgt + right * eye.x + Vector3.UP * eye.y + fwd * eye.z
+	_cam.look_at(tgt, Vector3.UP)
+	_cam.fov = fov
+
+func _place_player(p: Player, pos: Vector3, yaw: float) -> void:
+	p.global_position = pos
+	p.velocity = Vector3.ZERO
+	p.vis.rotation.y = yaw
+	p.cam.yaw = yaw
+
+func _ground(x: float, z: float, from_y := 120.0) -> Vector3:
+	var q := PhysicsRayQueryParameters3D.create(Vector3(x, from_y, z), Vector3(x, -50, z), RH.M_WORLD_ALL)
+	var hit := get_viewport().get_world_3d().direct_space_state.intersect_ray(q)
+	return hit["position"] if not hit.is_empty() else Vector3(x, 0, z)
+
+# ------------------------------------------------------------------ the Bearer
+func _bearer_spot(p: Player) -> void:
+	if _f == 2:
+		# the Strand below the boat-shed (or the arena sandbox floor)
+		var at := _ground(-6.0, 57.0) if Game.current_area != null else Vector3(0, 0, 4)
+		_place_player(p, at + Vector3.UP * 0.1, deg_to_rad(200))
+
+func _st_bearer_idle(p: Player) -> void:
+	_bearer_spot(p)
+	if _f > 2:
+		_frame(p.global_position, p.vis, Vector3(-1.0, 0.25, 2.6), 0.95, 42.0)
+	if _f == 70:
+		_freeze()
+
+func _st_bearer_roll(p: Player) -> void:
+	_bearer_spot(p)
+	if _f > 2:
+		_frame(p.global_position, p.vis, Vector3(-3.2, 0.3, 0.6), 0.6, 45.0)
+	if _f == 60:
+		p.stamina = p.max_stamina
+		p._try_roll(-p.vis.global_transform.basis.z)
+	if _f > 60 and p.state == Player.S.ROLL and p.state_t >= 0.2:
+		_freeze()
+
+func _st_bearer_drink(p: Player) -> void:
+	_bearer_spot(p)
+	if _f > 2:
+		_frame(p.global_position, p.vis, Vector3(-1.3, 0.2, 2.4), 1.2, 40.0)
+	if _f == 60:
+		p.hp = p.max_hp * 0.5
+		p.try_gourd()
+	if _f > 60 and p.state == Player.S.GOURD and p.state_t >= 0.62:
+		_freeze()
+
+# ------------------------------------------------------------------ villagers
+func _find_npc(id: String) -> NPC:
+	for n in get_tree().current_scene.find_children("*", "NPC", true, false):
+		if (n as NPC).npc_id == id and (n as NPC).is_visible_in_tree():
+			return n
+	return null
+
+func _st_ingra_thaw(p: Player) -> void:
+	var ing := _find_npc("steward_ingra")
+	if ing == null:
+		return
+	var fwd := -ing.global_transform.basis.z
+	if _f == 3:
+		_place_player(p, ing.global_position + fwd * 2.6 + Vector3.UP * 0.2, atan2(fwd.x, fwd.z))
+	if _f > 3:
+		_frame(ing.global_position, ing, Vector3(1.6, 0.25, 3.2), 0.95, 40.0)
+	if _f == 50:
+		ing._vis.play("greet", 0.3)
+	if _f > 50 and ing._vis.rig != null and ing._vis.rig.action_time() >= 1.4:
+		_freeze()
+
+# ------------------------------------------------------------------ death
+## A slain Tripo foe frosts over and shatters (FrostDissolve), captured mid-way.
+var _t0 := 0.0
+
+func _first_foe(id: String) -> Enemy:
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		if e is Enemy and (e as Enemy).id == id and not (e as Enemy).dead and (e as Enemy).can_process():
+			return e
+	return null
+
+func _st_foe_dissolve(p: Player) -> void:
+	if _f == 10:
+		_foe = _first_foe("rimewalker")
+		(_foe as Enemy)._die()
+		_t0 = _clock
+	if _foe != null and is_instance_valid(_foe):
+		_frame(_foe.global_position, _foe, Vector3(1.6, 0.8, -3.4), 0.4, 42.0)
+		if _diss_of(_foe) >= 0.45:
+			_freeze()
+
+func _diss_of(n: Node) -> float:
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var m = (mi as MeshInstance3D).get_surface_override_material(0)
+		if m is ShaderMaterial and m.get_shader_parameter("death_diss") != null:
+			return float(m.get_shader_parameter("death_diss"))
+	return 0.0
+
+# ------------------------------------------------------------------ foes
+func _spawn_foe(id: String, pos: Vector3) -> Enemy:
+	var ecfg: Dictionary = DB.table("enemies").get(id, {})
+	var e: Enemy = load(ecfg["class"]).new() if ecfg.has("class") else Enemy.new()
+	e.setup(id)
+	get_tree().current_scene.add_child(e)
+	e.global_position = pos
+	return e
+
+## Face-off: the foe found in the area (or spawned in the sandbox) squares up
+## to the Bearer `gap` metres away; returns it once placed.
+var near_hint := Vector3.INF   # pick the foe of that kind nearest this point
+
+func _foe_near(id: String, at: Vector3) -> Enemy:
+	var best: Enemy = null
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		var en := e as Enemy
+		if en == null or en.id != id or en.dead or not en.can_process():
+			continue
+		if best == null or en.global_position.distance_to(at) < best.global_position.distance_to(at):
+			best = en
+	return best
+
+func _face_off(p: Player, id: String, gap: float) -> Enemy:
+	if _f == 3:
+		var e: Enemy = null
+		if Game.current_area != null:
+			e = _foe_near(id, near_hint) if near_hint != Vector3.INF else _first_foe(id)
+		if e == null:
+			e = _spawn_foe(id, p.global_position + Vector3(0, 0.1, -gap))
+		_foe = e
+	if _foe == null or not is_instance_valid(_foe):
+		return null
+	var e2 := _foe as Enemy
+	if _f == 6:
+		var fwd := -e2.vis.global_transform.basis.z
+		fwd.y = 0
+		_place_player(p, e2.global_position + fwd.normalized() * gap + Vector3.UP * 0.1, 0.0)
+	if _f >= 6:
+		var d := e2.global_position - p.global_position
+		d.y = 0
+		p.vis.rotation.y = atan2(-d.x, -d.z)
+		if e2.state != Enemy.ES.ATTACK:
+			e2.vis.rotation.y = atan2(d.x, d.z)
+			e2.velocity = Vector3.ZERO
+		e2.target = p
+	return e2
+
+func _side_cam(p: Player, e: Node3D, dist := 4.4, h := 0.5, look := 1.0, fov := 46.0) -> void:
+	var mid := (p.global_position + e.global_position) * 0.5
+	var axis := e.global_position - p.global_position
+	axis.y = 0
+	var side := axis.normalized().cross(Vector3.UP)
+	var tgt := mid + Vector3.UP * look
+	_cam.global_position = tgt + side * dist + Vector3.UP * h - axis.normalized() * 0.8
+	_cam.look_at(tgt, Vector3.UP)
+	_cam.fov = fov
+
+func _st_oarsman_stroke(p: Player) -> void:
+	near_hint = Vector3(9.0, 0, 76.5)   # the waterline, facing the sea
+	var e := _face_off(p, "oarsman", 3.2)
+	if e == null:
+		return
+	if _f >= 6:
+		_side_cam(p, e)
+	if _f == 50:
+		e._begin_attack(e.attack_by_id(OS.get_environment("ENC_ATK") if OS.get_environment("ENC_ATK") != "" else "stroke"))
+	if _f > 50 and e.state == Enemy.ES.ATTACK and e.state_t >= float(e._atk["windup"]) + float(OS.get_environment("ENC_DT") if OS.get_environment("ENC_DT") != "" else "0.06"):
+		_freeze()
+
+func _st_hound_lunge(p: Player) -> void:
+	near_hint = Vector3(0.0, 0, -16.6)   # across the Longhouse threshold
+	var e := _face_off(p, "hearthhound", 3.0)
+	if e == null:
+		return
+	if _f == 4:
+		e.set("barked", true)
+	if _f >= 6:
+		_side_cam(p, e, 3.6, 0.2, 0.6, 46.0)
+	if _f == 50:
+		e._begin_attack(e.attack_by_id(OS.get_environment("ENC_ATK") if OS.get_environment("ENC_ATK") != "" else "lunge_bite"))
+	if _f > 50 and e.state == Enemy.ES.ATTACK and e.state_t >= float(e._atk["windup"]) + float(OS.get_environment("ENC_DT") if OS.get_environment("ENC_DT") != "" else "0.1"):
+		_freeze()
+
+func _st_hound_lie(p: Player) -> void:
+	if _f == 3:
+		_foe = _first_foe("hearthhound") if Game.current_area != null else _spawn_foe("hearthhound", p.global_position + Vector3(0, 0.1, -5.0))
+		_place_player(p, p.global_position + Vector3(8, 0, 6), 0.0)   # out of its sight
+	if _foe != null and _f >= 4:
+		_frame(_foe.global_position, _foe.vis, Vector3(2.2, 0.6, 2.2), 0.3, 40.0)
+	if _f == 60:
+		_freeze()
+
+# ------------------------------------------------------------------ the Netmender
+## Wake her (the Bearer walks up behind her), set the phase, face her from
+## `gap` metres, start `atk` and freeze `frac` of the way through its windup.
+var _nm_phase_set := false
+var _started := false
+
+func _netmender_stage(p: Player, ph: int, atk: String, frac: float, gap := 7.0) -> void:
+	if _f == 3:
+		_foe = _foe_near("netmender", Vector3(0, 0, -46))
+		if _foe == null:
+			return
+		_place_player(p, _foe.global_position + Vector3(0, 0.1, 3.4), PI)
+	var nm := _foe as Netmender
+	if nm == null:
+		return
+	if not nm.stood:
+		_frame(nm.global_position, p.vis, Vector3(1.6, 1.6, -3.0), 1.6, 50.0)
+		return
+	if not _nm_phase_set:
+		_nm_phase_set = true
+		_t0 = _clock
+		nm.phase = ph
+		if ph >= 2:
+			nm.hp = nm.max_hp * 0.5
+			nm._haul_floor(2.0)
+			nm._slam_furniture()
+		if ph >= 3:
+			nm.hp = nm.max_hp * 0.2
+			nm.vis.rig.set_carry("left_behind", ["mixamorig_LeftShoulder", "mixamorig_LeftArm",
+					"mixamorig_LeftForeArm", "mixamorig_LeftHand"], true)
+		nm.vis.rotation.y = PI   # turned to face the door, and the Bearer
+		var fwd := -nm.vis.global_transform.basis.z
+		_place_player(p, nm.global_position + fwd * gap + Vector3.UP * 0.1, 0.0)
+	var to := nm.global_position - p.global_position
+	p.vis.rotation.y = atan2(-to.x, -to.z)
+	var back := -to
+	back.y = 0
+	back = back.normalized()
+	var right := back.cross(Vector3.UP)
+	_cam.global_position = p.global_position + back * 3.4 - right * 1.5 + Vector3.UP * 2.3
+	_cam.look_at(nm.global_position + Vector3.UP * 1.7, Vector3.UP)
+	_cam.fov = 52.0
+	if not _started and _clock - _t0 > 0.6:
+		_started = true
+		nm._cooldowns.clear()
+		nm._begin_attack(nm.attack_by_id(atk))
+	if _started and nm.state == Enemy.ES.ATTACK and String(nm._atk.get("id", "")) == atk \
+			and nm.state_t >= float(nm._atk["windup"]) / nm._speed_mult() * frac:
+		_freeze()
+
+func _st_netmender_p1(p: Player) -> void:
+	_netmender_stage(p, 1, "knot", 0.85, 7.0)
+
+func _st_netmender_p2(p: Player) -> void:
+	_netmender_stage(p, 2, "sea_weight", 0.8, 7.5)
+
+func _st_netmender_p3(p: Player) -> void:
+	_netmender_stage(p, 3, "last_cast", 0.85, 6.5)
+
+## Release: she sits back down; the card, the needle where she sat.
+func _st_release(p: Player) -> void:
+	if _f == 3:
+		_foe = _foe_near("netmender", Vector3(0, 0, -46))
+		if _foe == null:
+			return
+		_place_player(p, _foe.global_position + Vector3(0, 0.1, 3.4), PI)
+	var nm := _foe as Netmender
+	if nm == null:
+		return
+	if not nm.stood:
+		return
+	if not nm.released:
+		nm.vis.rotation.y = PI   # turned to face the door, and the Bearer
+		var fwd := -nm.vis.global_transform.basis.z
+		_place_player(p, nm.global_position + fwd * 5.0 + Vector3.UP * 0.1, 0.0)
+		nm._die()
+		_t0 = _clock
+	var to := nm.global_position - p.global_position
+	p.vis.rotation.y = atan2(-to.x, -to.z)
+	var back := -to
+	back.y = 0
+	back = back.normalized()
+	var right := back.cross(Vector3.UP)
+	_cam.global_position = p.global_position + back * 2.8 - right * 1.6 + Vector3.UP * 2.0
+	_cam.look_at(nm.global_position + Vector3.UP * 1.0 - back * -1.0, Vector3.UP)
+	_cam.fov = 52.0
+	if _clock - _t0 > 2.4:
+		_freeze()

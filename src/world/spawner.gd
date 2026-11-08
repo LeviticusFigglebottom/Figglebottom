@@ -7,6 +7,7 @@ extends Node3D
 @export var dead_once := false     # minibosses: stay dead once killed
 @export var face_deg := 0.0
 var spawn_flag := ""               # area flag name for dead_once tracking
+var pose := ""                     # idle chore ("sit"), see Enemy.idle_pose
 var area_id := ""
 
 var current: Enemy = null
@@ -26,6 +27,7 @@ func respawn() -> void:
 	else:
 		current = Enemy.new()
 	current.setup(enemy_id)
+	current.idle_pose = pose
 	add_child(current)
 	current.global_position = global_position
 	current.vis.rotation.y = deg_to_rad(face_deg)

@@ -18,6 +18,10 @@ var head_mount: Node3D
 var weapon_kit := ""
 ## Humanoid mode: the AnimationTree driver (null for mannequins).
 var rig: HumanoidRig = null
+## Quadruped mode (clip_meta.json models.<id>.rig == "quadruped"): one real
+## walk clip plus weighted procedural poses (QuadRig).
+var quad: QuadRig = null
+var _quad_clip := ""
 var model_id := ""
 
 ## How each weapon kit rides the fist outside active attack swings.
@@ -87,6 +91,8 @@ func build_body(skel_id: String, amp := 1.0, sway := 1.0, vis_scale := 1.0) -> v
 ## Humanoid body from clip_meta.json "models". Returns false (nothing built)
 ## when the model is unknown, so callers fall back to a mannequin.
 func build_model(id: String) -> bool:
+	if String(HumanoidLib.model_cfg(id).get("rig", "")) == "quadruped":
+		return false   # build_quadruped's
 	if not HumanoidLib.has_model(id):
 		push_warning("CharVisual: no humanoid model '%s'; using a mannequin" % id)
 		return false
@@ -112,19 +118,51 @@ func build_model(id: String) -> bool:
 	rig.setup(id, skel)
 	return true
 
+## A Tripo quadruped from clip_meta.json: its glb's walk plays by ground
+## speed, everything else is a QuadRig pose. False when not a quadruped.
+func build_quadruped(id: String) -> bool:
+	var cfg := HumanoidLib.model_cfg(id)
+	if String(cfg.get("rig", "")) != "quadruped" or not ResourceLoader.exists(String(cfg.get("scene", ""))):
+		return false
+	body = Node3D.new()
+	body.name = "Body"
+	add_child(body)
+	var holder := Node3D.new()
+	holder.name = "Model"
+	holder.rotation_degrees.y = float(cfg.get("yaw_deg", 180.0))
+	holder.scale = Vector3.ONE * float(cfg.get("scale", 1.0))
+	body.add_child(holder)
+	var inst := HumanoidLib.instance_model(id)
+	holder.add_child(inst)
+	skel = inst.find_child("Skeleton3D", true, false) as Skeleton3D
+	model_id = id
+	quad = QuadRig.new()
+	quad.name = "Quad"
+	add_child(quad)
+	quad.setup(skel, inst.find_child("AnimationPlayer", true, false) as AnimationPlayer, cfg.get("poses", {}))
+	quad.stride = float(cfg.get("stride", 1.4))
+	return true
+
 func is_humanoid() -> bool:
 	return rig != null
+
+func is_quadruped() -> bool:
+	return quad != null
 
 ## The clip that owns the rig ("" once a one-shot has finished).
 func current_clip() -> String:
 	if rig != null:
 		return rig.current_clip()
+	if quad != null:
+		return _quad_clip
 	return String(anim.current_animation) if anim != null else ""
 
 ## Length (s at 1x) of a clip as it plays: the section for humanoids.
 func clip_length(clip: String) -> float:
 	if rig != null:
 		return rig.clip_length(clip)
+	if quad != null:
+		return 1.0
 	if anim != null and anim.has_animation(clip):
 		return anim.get_animation(clip).length
 	return 1.0
@@ -264,6 +302,9 @@ func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 	if rig != null:
 		rig.play(clip, blend, speed)
 		return
+	if quad != null:
+		_quad_play(clip, blend / maxf(speed, 0.05))
+		return
 	if anim == null:
 		return
 	anim.speed_scale = 1.0
@@ -277,6 +318,9 @@ func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi := INF) -> float:
 	if rig != null:
 		return rig.play_timed(clip, contact_at, blend, lo, hi)
+	if quad != null:
+		_quad_play(clip, contact_at)   # a pose eases in over the windup
+		return 1.0
 	var rate := clampf(HumanoidLib.mannequin_contact(clip) / maxf(contact_at, 0.02), lo, hi)
 	play(clip, blend, rate)
 	return rate
@@ -284,6 +328,9 @@ func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi :=
 func back_to_idle(blend := 0.2) -> void:
 	if rig != null:
 		rig.stop_action(blend)
+		return
+	if quad != null:
+		_quad_play("", blend)
 		return
 	if anim == null:
 		return
@@ -301,6 +348,9 @@ func idle(blend := 0.25) -> void:
 func locomotion(dt: float, ground_speed: float, accel_lean := Vector2.ZERO, grounded := true) -> void:
 	if rig != null:
 		_humanoid_locomotion(dt, ground_speed, accel_lean, grounded)
+		return
+	if quad != null:
+		quad.gait(dt, ground_speed if grounded else 0.0)
 		return
 	if anim == null:
 		return
@@ -346,3 +396,13 @@ func _humanoid_locomotion(dt: float, ground_speed: float, accel_lean: Vector2, g
 		if idx != _step_i:
 			_step_i = idx
 			AudioDirector.footstep(global_position, idx, step_volume)
+
+## Quadruped clip vocabulary -> poses ("death" lies it on its side; an
+## unknown clip, or "", releases every pose back to the stand).
+func _quad_play(clip: String, blend: float) -> void:
+	var pose := String((HumanoidLib.model_cfg(model_id).get("pose_alias", {}) as Dictionary).get(clip, clip))
+	_quad_clip = clip
+	if quad.poses.has(pose):
+		quad.only(pose, blend)
+	else:
+		quad.only("", blend)

@@ -896,6 +896,17 @@
     23.5
    ],
    "rot": 200
+  },
+  {
+   "id": "hs_long_hearth",
+   "name": "the Long Hearth",
+   "at": [
+    0.0,
+    22.0,
+    -26.4
+   ],
+   "rot": 180,
+   "require_flag": "ks_netmender_released"
   }
  ],
  "gates": [
@@ -927,10 +938,11 @@
    "id": "strand_racks_b",
    "at": [
     -26.0,
-    1.21,
-    69.0
+    1.67,
+    66.6
    ],
-   "face": -140
+   "face": -140,
+   "pose": "sit"
   },
   {
    "enemy": "rimewalker",
@@ -943,6 +955,17 @@
    "face": 120
   },
   {
+   "enemy": "rimewalker",
+   "id": "strand_racks_d",
+   "at": [
+    -37.5,
+    2.68,
+    61.0
+   ],
+   "face": 20,
+   "pose": "sit"
+  },
+  {
    "enemy": "oarsman",
    "id": "strand_waterline",
    "at": [
@@ -950,17 +973,27 @@
     0.43,
     76.5
    ],
-   "face": 0
+   "face": 180
   },
   {
-   "enemy": "rimewalker",
-   "id": "path_turn",
+   "enemy": "oarsman",
+   "id": "strand_rower_bow",
    "at": [
-    -64.0,
-    9.98,
-    46.0
+    2.6,
+    2.44,
+    64.4
    ],
-   "face": 90
+   "face": 174
+  },
+  {
+   "enemy": "oarsman",
+   "id": "strand_rower_stern",
+   "at": [
+    2.8,
+    2.0,
+    66.8
+   ],
+   "face": 174
   },
   {
    "enemy": "rimewalker",
@@ -984,13 +1017,24 @@
   },
   {
    "enemy": "rimewalker",
+   "id": "yard_well",
+   "at": [
+    2.0,
+    21.9,
+    3.0
+   ],
+   "face": 200
+  },
+  {
+   "enemy": "rimewalker",
    "id": "yard_graves",
    "at": [
     40.0,
     22.0,
     17.0
    ],
-   "face": 30
+   "face": 30,
+   "pose": "sit"
   },
   {
    "enemy": "oarsman",
@@ -1000,7 +1044,17 @@
     22.36,
     33.0
    ],
-   "face": 0
+   "face": 180
+  },
+  {
+   "enemy": "oarsman",
+   "id": "cliff_edge_w",
+   "at": [
+    6.0,
+    21.92,
+    34.0
+   ],
+   "face": 180
   },
   {
    "enemy": "hearthhound",
@@ -1014,13 +1068,13 @@
   },
   {
    "enemy": "hearthhound",
-   "id": "yard_hound",
+   "id": "threshold_hound",
    "at": [
-    -14.0,
-    22.04,
-    -22.0
+    0.0,
+    22.03,
+    -16.6
    ],
-   "face": 200
+   "face": 90
   },
   {
    "enemy": "netmender",
@@ -1030,7 +1084,7 @@
     22.1,
     -46.0
    ],
-   "face": 180,
+   "face": 0,
    "dead_once": true,
    "frost_veil_id": "hall_veil"
   }
@@ -1150,6 +1204,23 @@
    "tag": "rime",
    "set_flag": "ks_brede_float_found",
    "label": "Chip the float out of the ice"
+  }
+ ],
+ "scripted": [
+  {
+   "script": "res://src/world/net_floor.gd",
+   "at": [
+    0.0,
+    22.0,
+    -36.0
+   ],
+   "tag": "rime",
+   "params": {
+    "size": [
+     11.6,
+     31.6
+    ]
+   }
   }
  ],
  "scatter": {

@@ -142,25 +142,38 @@ PROPS.append({"kit": "bench_3m", "at": [0, SH, -50.6], "scale": [1.2, 1.4, 1.4]}
 hearths = [
     {"id": "hs_boat_shed", "name": "the Boat-Shed", "at": at(23.0, 55.5), "rot": 0},
     {"id": "hs_salt_house", "name": "the Salt House", "at": at(-26.0, 23.5), "rot": 200},
+    # cold and inert until the Netmender is released; then it catches (SLICE.md 1, 6)
+    {"id": "hs_long_hearth", "name": "the Long Hearth", "at": [0.0, SH, -26.4], "rot": 180,
+     "require_flag": "ks_netmender_released"},
 ]
 sd = store_doors[("W", 0)]
 sd = rot_off(sd[0], sd[1], 13.0, -1.8, 0)
 spawners = [
-    # the Strand
+    # the Strand (SLICE.md 2, RIME): four along the racks, two of them sitting
+    # at a chore and mending nothing; one Oarsman at the waterline facing the
+    # sea; two more seated in a row, as though in a boat (beside the drawn-up
+    # boat: the slice's one boat-shed holds the first hearth)
     {"enemy": "rimewalker", "id": "strand_racks_a", "at": at(-35.0, 68.0, 0.1), "face": 160},
-    {"enemy": "rimewalker", "id": "strand_racks_b", "at": at(-26.0, 69.0, 0.1), "face": -140},
+    {"enemy": "rimewalker", "id": "strand_racks_b", "at": at(-26.0, 66.6, 0.1), "face": -140, "pose": "sit"},
     {"enemy": "rimewalker", "id": "strand_racks_c", "at": at(-45.0, 70.0, 0.1), "face": 120},
-    {"enemy": "oarsman", "id": "strand_waterline", "at": at(9.0, 76.5, 0.1), "face": 0},
-    # the cliff path: the west turn
-    {"enemy": "rimewalker", "id": "path_turn", "at": at(-64.0, 46.0, 0.1), "face": 90},
-    # the yard
+    {"enemy": "rimewalker", "id": "strand_racks_d", "at": at(-37.5, 61.0, 0.1), "face": 20, "pose": "sit"},
+    {"enemy": "oarsman", "id": "strand_waterline", "at": at(9.0, 76.5, 0.1), "face": 180},
+    {"enemy": "oarsman", "id": "strand_rower_bow", "at": at(2.6, 64.4, 0.1), "face": 174},
+    {"enemy": "oarsman", "id": "strand_rower_stern", "at": at(2.8, 66.8, 0.1), "face": 174},
+    # the yard (SLICE.md 3, RIME): three in the yard (one in the store-house
+    # doorway, counting), a Hearthhound across the Longhouse threshold and one
+    # in the byre (on the rye sack), two Oarsmen at the cliff edge, and one
+    # sitting by the small grave
     {"enemy": "rimewalker", "id": "yard_racks", "at": at(-4.0, 12.0, 0.1), "face": 160},
     {"enemy": "rimewalker", "id": "yard_store", "at": at(sd[0], sd[1], 0.1), "face": -100},
-    {"enemy": "rimewalker", "id": "yard_graves", "at": at(40.0, 17.0, 0.1), "face": 30},
-    {"enemy": "oarsman", "id": "cliff_edge_e", "at": at(46.0, 33.0, 0.1), "face": 0},
+    {"enemy": "rimewalker", "id": "yard_well", "at": at(2.0, 3.0, 0.1), "face": 200},
+    {"enemy": "rimewalker", "id": "yard_graves", "at": at(40.0, 17.0, 0.1), "face": 30, "pose": "sit"},
+    {"enemy": "oarsman", "id": "cliff_edge_e", "at": at(46.0, 33.0, 0.1), "face": 180},
+    {"enemy": "oarsman", "id": "cliff_edge_w", "at": at(6.0, 34.0, 0.1), "face": 180},
     {"enemy": "hearthhound", "id": "byre_hound", "at": at(-27.0, -13.0, 0.1), "face": -90},
-    {"enemy": "hearthhound", "id": "yard_hound", "at": at(-14.0, -22.0, 0.1), "face": 200},
-    {"enemy": "netmender", "id": "netmender", "at": [0.0, SH + 0.1, -46.0], "face": 180,
+    {"enemy": "hearthhound", "id": "threshold_hound", "at": at(0.0, -16.6, 0.1), "face": 90},
+    # the Longhouse: at the high end, her back to the door, mending
+    {"enemy": "netmender", "id": "netmender", "at": [0.0, SH + 0.1, -46.0], "face": 0,
      "dead_once": True, "frost_veil_id": "hall_veil"},
 ]
 pickups = [
@@ -174,6 +187,12 @@ pickups = [
     # and Brede's float, frozen into the face of the tide wall
     {"id": "net_float", "at": at(-8.0, 78.8), "item": "item_net_float", "kit": "net_float", "tag": "rime",
      "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice"},
+]
+# the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
+# arena; she hauls it and lights it (src/world/net_floor.gd)
+scripted = [
+    {"script": "res://src/world/net_floor.gd", "at": [0.0, SH, -36.0], "tag": "rime",
+     "params": {"size": [11.6, 31.6]}},
 ]
 npcs = [
     {"id": "steward_ingra", "at": at(14.0, -5.0), "rot": -60, "tag": "thaw"},
@@ -321,6 +340,7 @@ D = {
     "npcs": npcs,
     "plaques": plaques,
     "pickups": pickups,
+    "scripted": scripted,
     "scatter": scatter,
     "edges": edges,
     # the seams to the Lowe: the cliff-top pass and the drawbridge

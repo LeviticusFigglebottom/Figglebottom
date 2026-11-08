@@ -47,13 +47,17 @@ func _run() -> void:
 	check(boss.target == player, "the holdfast wakes")
 	check(fog._seal.collision_layer != 0, "the veil seals at your back")
 
-	print("== he fights; the maul breaks poise")
+	print("== she keeps mending until the Bearer comes close; then she fights")
+	check(boss.state == Enemy.ES.IDLE and not boss.get("stood"), "past the veil she still mends")
+	player.global_position = boss.global_position + Vector3(0, 0.2, 3.4)
+	await ticks(150)
+	check(boss.get("stood"), "within 4 m she ties off the knot and stands")
 	var hp0 := player.hp
 	var waited := 0
 	while player.hp >= hp0 and waited < 900:
 		waited += 10
 		await ticks(10)
-	check(player.hp < hp0, "the maul lands (hp %.0f -> %.0f after %d ticks; boss at %s, Bearer at %s)" % [hp0, player.hp, waited,
+	check(player.hp < hp0, "her needles land (hp %.0f -> %.0f after %d ticks; boss at %s, Bearer at %s)" % [hp0, player.hp, waited,
 		str(boss.global_position.snapped(Vector3.ONE * 0.1)), str(player.global_position.snapped(Vector3.ONE * 0.1))])
 
 	print("== death mid-fight re-arms the veil (the arena can be re-entered)")
@@ -80,6 +84,8 @@ func _run() -> void:
 	it.activate(player)
 	await ticks(80)
 	check(boss.target == player, "the holdfast wakes a second time")
+	player.global_position = boss.global_position + Vector3(0, 0.2, 3.4)
+	await ticks(150)
 
 	print("== phase two at half might")
 	boss.take_hit(DamagePacket.new(boss.max_hp * 0.5, 0, player))

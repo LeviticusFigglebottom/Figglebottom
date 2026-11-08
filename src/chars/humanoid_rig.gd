@@ -5,6 +5,8 @@ extends AnimationTree
 ##   loco (BlendSpace1D idle 0 / walk 1 / run 2) -> loco_rate (TimeScale) --\
 ##   act0 (Animation) -> act0_seek (TimeSeek) --\                           mix (Blend2) -> output
 ##   act1 (Animation) -> act1_seek (TimeSeek) ---> slot (Blend2) ---------/
+##   mix -> upper (Blend2, arm tracks only) <- carry (Animation): a model's
+##   "carry" clip holds a two-handed weapon through locomotion
 ##
 ## Two action slots let one action cross-fade into the next. Action time is
 ## owned here, not by the tree: each physics tick both slots are seeked to
@@ -36,6 +38,8 @@ var _w_slot_speed := 10.0
 var _loco_rate := 1.0
 var _loco_pos := 0.0
 var _loco_phase := 0.0             # seconds into the dominant loco cycle
+var _carry := ""                   # arms-only carry clip ("" = none)
+var _carry_always := false         # the carry holds through actions too
 
 func setup(id: String, skel: Skeleton3D) -> void:
 	model_id = id
@@ -73,18 +77,35 @@ func setup(id: String, skel: Skeleton3D) -> void:
 	bt.add_node("mix", AnimationNodeBlend2.new())
 	bt.connect_node("mix", 0, "loco_rate")
 	bt.connect_node("mix", 1, "slot")
-	bt.connect_node("output", 0, "mix")
+	# the upper-body carry layer (arms only); weight 0 unless the model has one
+	var up := AnimationNodeBlend2.new()
+	up.filter_enabled = true
+	for side in ["Left", "Right"]:
+		for b in ["Shoulder", "Arm", "ForeArm", "Hand"]:
+			up.set_filter_path(NodePath("Skeleton3D:mixamorig_%s%s" % [side, b]), true)
+	bt.add_node("upper", up)
+	var carry := AnimationNodeAnimation.new()
+	_carry = String(HumanoidLib.model_cfg(id).get("carry", ""))
+	carry.animation = qualified(_carry) if _carry != "" and qualified(_carry) != "" else qualified("idle")
+	if _carry != "" and qualified(_carry) == "":
+		_carry = ""
+	bt.add_node("carry", carry)
+	bt.connect_node("upper", 0, "mix")
+	bt.connect_node("upper", 1, "carry")
+	bt.connect_node("output", 0, "upper")
 	tree_root = bt
 	active = true
 	_push()
 	advance(0.0)
 
-## Library-qualified animation for a game clip. Each candidate name (the
-## clip, then its aliases) is looked up real-first: the model's own real clip,
-## the shared real clip, then the procedural overlays. So a real "roll"
-## dropped into any rig's glb replaces the overlay everywhere it is missing.
+## Library-qualified animation for a game clip. Real beats procedural across
+## every candidate name (the clip, then its aliases, best first; the model's
+## own clip before the shared one), and only then does the first overlay
+## found play. So a real "dodge_roll" aliased under "roll" replaces the roll
+## overlay, while the game name still wins among real clips.
 func qualified(clip: String) -> String:
 	var shared := HumanoidLib.shared_library()
+	var fallback := ""
 	for c in HumanoidLib.candidates(clip):
 		var hits := []
 		if own != null and own.has_animation(c):
@@ -94,13 +115,32 @@ func qualified(clip: String) -> String:
 		for q in hits:
 			if not HumanoidLib.is_procedural(get_animation(q)):
 				return q
-		if not hits.is_empty():
-			return hits[0]
-	return ""
+		if fallback == "" and not hits.is_empty():
+			fallback = hits[0]
+	return fallback
 
 func _resolved_name(clip: String) -> String:
 	var q := qualified(clip)
 	return q.trim_prefix("own/")
+
+## Swap the arms-only layer: `clip` on `bones` (mixamorig_* names); with
+## `always` it holds through actions as well (the Netmender's left hand stays
+## behind her back for the whole last phase). "" clears it.
+func set_carry(clip: String, bones: Array = [], always := false) -> void:
+	var up := (tree_root as AnimationNodeBlendTree).get_node("upper") as AnimationNodeBlend2
+	var carry := (tree_root as AnimationNodeBlendTree).get_node("carry") as AnimationNodeAnimation
+	if clip == "" or qualified(clip) == "":
+		_carry = ""
+		return
+	if not bones.is_empty():
+		for side in ["Left", "Right"]:
+			for b in ["Shoulder", "Arm", "ForeArm", "Hand"]:
+				up.set_filter_path(NodePath("Skeleton3D:mixamorig_%s%s" % [side, b]), false)
+		for b in bones:
+			up.set_filter_path(NodePath("Skeleton3D:" + String(b)), true)
+	carry.animation = qualified(clip)
+	_carry = clip
+	_carry_always = always
 
 func has_clip(clip: String) -> bool:
 	return qualified(clip) != ""
@@ -110,8 +150,10 @@ func clip_anim(clip: String) -> Animation:
 	return get_animation(q) if q != "" else null
 
 func _section(clip: String) -> Vector3:   # (start, contact, end)
-	var a := clip_anim(clip)
-	var info := HumanoidLib.clip_info(_resolved_name(clip), HumanoidLib.is_procedural(a))
+	var q := qualified(clip)
+	var a := get_animation(q) if q != "" else null
+	var info := HumanoidLib.clip_info(q.trim_prefix("own/"), HumanoidLib.is_procedural(a),
+			model_id if q.begins_with("own/") else String(HumanoidLib.meta().get("donor", "")))
 	var length := a.length if a != null else 1.0
 	var s := float(info.get("start", 0.0))
 	var e := minf(float(info.get("end", length)), length)
@@ -250,3 +292,8 @@ func _push() -> void:
 	set("parameters/act1_seek/seek_request", _t[1])
 	set("parameters/slot/blend_amount", _w_slot)
 	set("parameters/mix/blend_amount", _w_act)
+	# the carry pose holds the arms whenever no action owns them
+	var cw := 0.0
+	if _carry != "":
+		cw = 1.0 if _carry_always else (1.0 - _w_act)
+	set("parameters/upper/blend_amount", cw)

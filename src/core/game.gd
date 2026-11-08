@@ -91,12 +91,52 @@ func on_boss_slain(area_id: String, boss: Node = null) -> void:
 		title_card.emit(String(bcfg["release_card"]), 3.0)
 	else:
 		toast.emit("The holdfast rests. The memory is yours to keep or let go.")
+	_release_leavings(boss, bcfg)
 	area_cleared.emit(area_id)
 	# the Outsong is sung for them; the world's music returns once it ends
 	var after := ""
 	if current_area != null and current_area.area_id == area_id:
 		after = current_area.env.music_for(World.get_area_state(area_id))
 	AudioDirector.play_outsong(after, 4.0)
+
+## What a released holdfast leaves (SLICE.md 6), from its data:
+##   release_drop: {item, scene, label, pickup_id, ahead} -> a pickup set down
+##     in front of where it sat, toward the Bearer, so it is seen at once
+##   release_hearth: a hearths entry id (gated on release_flag in the area
+##     data) that wakes now, so a rebuilt area keeps it
+func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
+	var drop: Dictionary = bcfg.get("release_drop", {})
+	if not drop.is_empty() and boss is Node3D and boss.is_inside_tree():
+		var b := boss as Node3D
+		var k := Pickup.new()
+		k.pickup_id = String(drop.get("pickup_id", "release_drop"))
+		k.area_id = current_area_id
+		k.item_id = String(drop.get("item", ""))
+		k.label = String(drop.get("label", "Take"))
+		k.display_scene = String(drop.get("scene", ""))
+		var holder: Node = current_area.base if current_area != null else b.get_parent()
+		holder.add_child(k)
+		var toward := Vector3.ZERO
+		if player != null and is_instance_valid(player):
+			toward = (player as Node3D).global_position - b.global_position
+		toward.y = 0.0
+		if toward.length() < 0.1:
+			toward = Vector3(0, 0, 1)
+		k.global_position = b.global_position + toward.normalized() * float(drop.get("ahead", 2.2)) + Vector3.UP * 0.02
+	var hid := String(bcfg.get("release_hearth", ""))
+	if hid != "" and current_area != null and find_hearth(hid) == null:
+		var def: Dictionary = current_area.get_meta("def", {})
+		for spec in def.get("hearths", []):
+			if String(spec.get("id", "")) != hid:
+				continue
+			var h := Hearthstone.new()
+			h.hearth_id = hid
+			h.display_name = String(spec.get("name", "Hearthstone"))
+			h.area = current_area
+			current_area.base.add_child(h)
+			h.position = Vector3(spec["at"][0], spec["at"][1], spec["at"][2])
+			h.rotation.y = deg_to_rad(float(spec.get("rot", 0)))
+			AudioDirector.sfx_at("res://assets/audio/swell_warm.wav", h.global_position, -2.0)
 
 func snapshot_player() -> void:
 	if player == null:

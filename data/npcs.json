@@ -79,7 +79,8 @@
     "type": "level_up",
     "label": "Sit by the fire"
    }
-  ]
+  ],
+  "model": "ingra"
  },
  "brede": {
   "name": "Brede",
@@ -146,7 +147,8 @@
     "label": "Buy a lump of bog-iron",
     "line_done": "Raked it up for sinkers. You'll do better with it."
    }
-  ]
+  ],
+  "model": "brede"
  },
  "aud": {
   "name": "Aud, barrow-keeper's widow",

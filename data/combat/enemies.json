@@ -77,7 +77,6 @@
   "leash": 999.0,
   "body": "mannequin_holdfast",
   "model": "netmender",
-  "weapon": "maul",
   "arm_h": 1.95,
   "arm_dx": 0.55,
   "hurt_r": 1.0,
@@ -85,98 +84,370 @@
   "col_r": 0.7,
   "stagger_time": 1.6,
   "is_boss": true,
-  "anim_amp": 0.8,
-  "anim_sway": 1.35,
   "stride": 2.0,
-  "vis_scale": 1.55,
   "attacks": [
    {
-    "id": "drag_swing",
-    "range": 3.4,
-    "windup": 0.9,
-    "active": 0.24,
-    "recover": 1.3,
-    "dmg": 34,
-    "poise_dmg": 60,
-    "reach": 3.0,
-    "width": 3.4,
-    "height": 1.8,
-    "cooldown": 2.2,
-    "anim": "atk_r",
-    "lunge": 2.4,
-    "arc": 65
+    "id": "needle_stitch",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "right hand draws back to the ear, fingers together (0.6 s); three quick stabs, the third a beat late. Parryable. Phase 2 adds a fourth.",
+    "range": 2.5,
+    "windup": 0.6,
+    "active": 0.12,
+    "hits": [
+     0.0,
+     0.2,
+     0.62
+    ],
+    "by_phase": {
+     "2": {
+      "hits": [
+       0.0,
+       0.2,
+       0.42,
+       0.84
+      ]
+     }
+    },
+    "recover": 0.9,
+    "dmg": 15,
+    "poise_dmg": 16,
+    "cooldown": 2.0,
+    "anim": "needle_draw",
+    "hit_anim": "needle_stab",
+    "hit_lead": 0.12,
+    "hands": [
+     "right"
+    ],
+    "lunge": 3.0,
+    "parry_stagger": true
    },
    {
-    "id": "post_slam",
-    "range": 2.8,
+    "id": "cast",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "turns half away, gathers the net train into her left arm, frost-breath held (1.1 s); the net flies in an 8 m fan. Caught: snared 1.5 s (mash to break), then hauled in to a stitch. Roll sideways.",
+    "type": "net",
+    "range": 8.0,
+    "min_range": 3.5,
+    "net_range": 8.0,
+    "fan_deg": 60.0,
     "windup": 1.1,
     "active": 0.2,
-    "recover": 1.6,
-    "dmg": 46,
-    "poise_dmg": 80,
-    "reach": 2.6,
-    "width": 2.6,
-    "height": 2.2,
-    "cooldown": 4.5,
-    "anim": "atk_over",
-    "lunge": 1.2,
-    "shockwave": 4.5,
-    "arc": 110
-   },
-   {
-    "id": "backswing",
-    "range": 2.0,
-    "windup": 0.45,
-    "active": 0.18,
-    "recover": 0.9,
-    "dmg": 24,
-    "poise_dmg": 40,
-    "reach": 2.2,
-    "width": 3.0,
-    "height": 1.6,
-    "cooldown": 3.0,
-    "anim": "atk_back",
-    "lunge": 0.8
-   },
-   {
-    "id": "gale_spin",
-    "range": 3.2,
-    "windup": 1.3,
-    "active": 0.5,
-    "recover": 1.8,
-    "dmg": 30,
-    "poise_dmg": 50,
-    "reach": 3.2,
-    "width": 6.0,
-    "height": 1.8,
+    "recover": 1.0,
+    "snare": 1.5,
+    "mash": 5,
+    "haul_to": 2.2,
+    "then": "needle_stitch",
     "cooldown": 7.0,
-    "anim": "atk_spin",
-    "lunge": 2.0,
-    "phase2_only": true
+    "anim": "net_gather",
+    "breath": "held",
+    "track": 0.9,
+    "telegraph": {
+     "shape": "fan",
+     "size": [
+      8.0,
+      60.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
    },
    {
-    "id": "frost_heave",
-    "range": 6.0,
-    "windup": 1.5,
-    "active": 0.3,
-    "recover": 2.0,
-    "dmg": 38,
-    "poise_dmg": 30,
-    "reach": 0.5,
-    "width": 0.5,
-    "height": 0.5,
-    "cooldown": 9.0,
-    "anim": "atk_over",
-    "lunge": 0.0,
-    "shockwave": 7.5,
-    "phase2_only": true,
-    "arc": 110,
+    "id": "turn_away",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "the Bearer is behind her for more than 1.5 s: she hunches and turns, Brede's mask swings into view (0.8 s); a 360 sweep of the net train, low, that knocks down.",
+    "type": "nova",
+    "nova_kind": "frost",
+    "nova_radius": 4.4,
+    "pick": false,
+    "behind_deg": 110.0,
+    "behind_time": 1.5,
+    "range": 99.0,
+    "windup": 0.8,
+    "active": 0.45,
+    "recover": 1.0,
+    "dmg": 22,
+    "poise_dmg": 70,
+    "cooldown": 6.0,
+    "anim": "turn_hunch",
+    "track": 0.0,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      4.4
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
     "kind": "frost"
+   },
+   {
+    "id": "knot",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "kneels, both hands to the floor; the floor-net glows faint blue along a line toward the Bearer (1.4 s); a line of ice-knots erupts and leaves a ridge for 10 s that blocks movement.",
+    "type": "line",
+    "range": 13.0,
+    "min_range": 4.0,
+    "length": 14.0,
+    "width": 1.2,
+    "offset": 0.8,
+    "ridge": {
+     "life": 10.0,
+     "breaks": 2
+    },
+    "windup": 1.4,
+    "active": 0.2,
+    "recover": 1.2,
+    "dmg": 24,
+    "poise_dmg": 30,
+    "cooldown": 9.0,
+    "anim": "kneel_knot",
+    "track": 1.0,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.2,
+      14.0
+     ],
+     "offset": 0.8,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "kind": "frost"
+   },
+   {
+    "id": "haul",
+    "phases": [
+     2
+    ],
+    "_tell": "leans back, arms crossed over her chest, a creak of rope through the room (1.0 s); the floor-net drags everything 3 m toward her, then a stitch. Sprint away to hold position.",
+    "type": "haul",
+    "range": 12.0,
+    "min_range": 3.5,
+    "pull": 3.0,
+    "pull_time": 0.8,
+    "then": "needle_stitch",
+    "windup": 1.0,
+    "active": 0.8,
+    "recover": 0.4,
+    "cooldown": 9.0,
+    "anim": "haul_lean",
+    "sfx_windup": "res://assets/audio/whoosh_l.wav",
+    "track": 0.6
+   },
+   {
+    "id": "sea_weight",
+    "phases": [
+     2
+    ],
+    "_tell": "rises to full height, the net train lifted over her head like a sail, Brede's figure visible (1.6 s); the whole net comes down in front of her, 10 x 4 m. Then a 2 s punish window.",
+    "type": "line",
+    "range": 9.0,
+    "length": 10.0,
+    "width": 4.0,
+    "offset": 0.5,
+    "blockable": false,
+    "windup": 1.6,
+    "active": 0.2,
+    "recover": 2.0,
+    "dmg": 46,
+    "poise_dmg": 70,
+    "cooldown": 10.0,
+    "anim": "sea_weight",
+    "track": 0.9,
+    "shake": 0.6,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      4.0,
+      10.0
+     ],
+     "offset": 0.5,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "kind": "frost"
+   },
+   {
+    "id": "mend_floor",
+    "phases": [
+     2
+    ],
+    "_tell": "kneels at a ridge she made (0.8 s); every ridge is frozen anew and stands longer. Two heavy hits break a ridge.",
+    "type": "mend",
+    "range": 99.0,
+    "extend": 8.0,
+    "windup": 0.8,
+    "active": 0.1,
+    "recover": 0.8,
+    "cooldown": 12.0,
+    "anim": "kneel_knot"
+   },
+   {
+    "id": "one_hand_stitch",
+    "phases": [
+     3
+    ],
+    "_tell": "right hand to the ear (0.7 s); two stabs.",
+    "range": 2.5,
+    "windup": 0.7,
+    "active": 0.12,
+    "hits": [
+     0.0,
+     0.28
+    ],
+    "recover": 1.0,
+    "dmg": 16,
+    "poise_dmg": 16,
+    "cooldown": 2.2,
+    "anim": "needle_draw",
+    "hit_anim": "needle_stab",
+    "hit_lead": 0.12,
+    "hands": [
+     "right"
+    ],
+    "lunge": 3.0,
+    "parry_stagger": true
+   },
+   {
+    "id": "last_cast",
+    "phases": [
+     3
+    ],
+    "_tell": "as the Cast, but she does not turn away: the net comes from over her shoulder (1.3 s); a wider fan, 10 m.",
+    "type": "net",
+    "range": 10.0,
+    "min_range": 3.5,
+    "net_range": 10.0,
+    "fan_deg": 80.0,
+    "windup": 1.3,
+    "active": 0.2,
+    "recover": 1.1,
+    "snare": 1.5,
+    "mash": 5,
+    "haul_to": 2.2,
+    "then": "one_hand_stitch",
+    "cooldown": 8.0,
+    "anim": "net_shoulder",
+    "breath": "held",
+    "track": 0.9,
+    "telegraph": {
+     "shape": "fan",
+     "size": [
+      10.0,
+      80.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "hold",
+    "phases": [
+     3
+    ],
+    "_tell": "crouches over, curls around Brede (2.0 s). No attack; the breath slows. She is open: this is the moment. Left alone 6 s, she stands and resumes.",
+    "type": "hold",
+    "range": 99.0,
+    "quiet": 6.0,
+    "windup": 2.0,
+    "active": 0.1,
+    "recover": 0.0,
+    "cooldown": 14.0,
+    "anim": "hold_curl",
+    "breath": "held"
    }
   ],
-  "phase2_at": 0.55,
   "sfx_alert": "res://assets/audio/holdfast_roar.wav",
-  "warmth": 1200
+  "warmth": 1200,
+  "class": "res://src/enemies/netmender.gd",
+  "bar_name": "THE NETMENDER",
+  "_fight": "SLICE.md 6. Phases by HP fraction (phase_at): 1 above 0.6, 2 to 0.25, 3 below. Each attack lists the phases it belongs to; by_phase overrides a field per phase. phase_speed scales every timing (phase 3 is slower). Telegraphs: body (anim + breath) and, for moves that cover ground, a floor glow over the exact area (telegraph). Intro: she mends until the Bearer is within wake_dist or strikes her.",
+  "phase_at": [
+   0.6,
+   0.25
+  ],
+  "phase_speed": [
+   1.0,
+   1.0,
+   0.82
+  ],
+  "wake_dist": 4.0,
+  "floor_slide": 2.0,
+  "parry_stagger_mult": 1.8,
+  "transitions": {
+   "wake": {
+    "_tell": "stops mending, ties off the knot, bites the twine (a sound), stands; the bar appears",
+    "time": 2.0,
+    "anim": "stand_up",
+    "events": [
+     [
+      0.35,
+      "bite"
+     ]
+    ]
+   },
+   "p2": {
+    "_tell": "grabs the floor-net with both hands and pulls: the floor slides 2 m toward her, the tables and benches at the walls slam over",
+    "time": 2.6,
+    "anim": "grab_floor",
+    "events": [
+     [
+      1.2,
+      "haul_floor"
+     ],
+     [
+      1.35,
+      "slam_tables"
+     ]
+    ]
+   },
+   "p3": {
+    "_tell": "she stops and puts her hand through the net at her back to hold his; from now on the left hand stays behind her",
+    "time": 2.4,
+    "anim": "reach_back",
+    "events": [
+     [
+      1.6,
+      "hold_hand"
+     ]
+    ]
+   }
+  },
+  "release_drop": {
+   "item": "item_mending_needle",
+   "scene": "res://assets/models/weapons/mending_needle.glb",
+   "label": "Take the mending needle",
+   "pickup_id": "mending_needle",
+   "ahead": 2.2
+  },
+  "release_hearth": "hs_long_hearth"
  },
  "oarsman": {
   "name": "Oarsman",
@@ -194,7 +465,7 @@
   "arm_h": 1.16,
   "arm_dx": 0.27,
   "hurt_r": 0.5,
-  "hurt_h": 1.55,
+  "hurt_h": 1.75,
   "col_r": 0.45,
   "stagger_time": 0.9,
   "anim_amp": 1.15,
@@ -203,39 +474,79 @@
   "attacks": [
    {
     "id": "stroke",
+    "_tell": "oar drawn back past the right side, torso coils (0.8 s); a wide sweep across the front, 3 m reach. Roll through toward him.",
     "range": 3.0,
     "windup": 0.8,
-    "active": 0.2,
+    "active": 0.22,
     "recover": 1.0,
     "dmg": 20,
     "poise_dmg": 22,
-    "reach": 2.8,
-    "width": 3.0,
-    "height": 1.4,
     "cooldown": 1.8,
-    "anim": "atk_r",
-    "lunge": 0.8
+    "anim": "oar_stroke",
+    "lunge": 0.6,
+    "chain": "back_stroke",
+    "chain_chance": 0.65
+   },
+   {
+    "id": "back_stroke",
+    "_tell": "pauses at the end of the Stroke, feet shuffle (0.5 s); the sweep comes back the other way. Only after a Stroke.",
+    "range": 3.0,
+    "windup": 0.5,
+    "active": 0.2,
+    "recover": 1.1,
+    "dmg": 18,
+    "poise_dmg": 20,
+    "cooldown": 0.0,
+    "anim": "oar_back",
+    "lunge": 0.4,
+    "chain_only": true
    },
    {
     "id": "ship_oars",
-    "range": 2.6,
+    "_tell": "oar raised vertical and held, frost-breath rises straight up (1.2 s); the blade slams down and an ice shockwave runs 4 m forward. Then 1.4 s dragging the oar back up: the riposte window.",
+    "type": "line",
+    "range": 4.2,
     "windup": 1.2,
-    "active": 0.22,
+    "active": 0.2,
     "recover": 1.4,
     "dmg": 28,
-    "poise_dmg": 30,
-    "reach": 2.6,
-    "width": 1.6,
-    "height": 1.6,
+    "poise_dmg": 34,
     "cooldown": 5.0,
-    "anim": "atk_double",
-    "lunge": 0.6
+    "anim": "oar_ship",
+    "lunge": 0.0,
+    "length": 4.0,
+    "width": 1.4,
+    "offset": 0.8,
+    "breath": "up",
+    "track": 0.9,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.4,
+      4.0
+     ],
+     "offset": 0.8,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "kind": "frost"
    }
   ],
   "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
   "warmth": 28,
-  "weapon": "spear",
-  "vis_scale": 1.12
+  "model": "oarsman",
+  "class": "res://src/enemies/oarsman.gd",
+  "oar": {
+   "_doc": "the procedural ice oar (src/enemies/oarsman.gd): metres along the shaft",
+   "length": 3.0,
+   "grip": 0.45,
+   "hit_from": 1.0,
+   "blade_len": 0.85,
+   "blade_w": 0.3
+  }
  },
  "hearthhound": {
   "name": "Hearthhound",
@@ -243,42 +554,79 @@
   "hp": 40,
   "poise": 20,
   "poise_regen": 7,
-  "speed": 3.6,
+  "speed": 4.2,
   "turn": 7.0,
   "aggro_sight": 9.0,
   "aggro_fov": 130.0,
   "aggro_hear": 6.0,
   "leash": 8.0,
   "body": "mannequin_rime",
-  "arm_h": 1.16,
+  "arm_h": 0.5,
   "arm_dx": 0.27,
-  "hurt_r": 0.4,
-  "hurt_h": 1.2,
-  "col_r": 0.35,
+  "hurt_r": 0.42,
+  "hurt_h": 0.8,
+  "col_r": 0.32,
   "stagger_time": 0.6,
   "anim_amp": 1.15,
   "anim_sway": 1.6,
-  "stride": 1.4,
+  "stride": 1.1,
   "attacks": [
    {
     "id": "lunge_bite",
-    "range": 2.6,
+    "_tell": "crouches, ears flatten, frost-breath snort (0.5 s); a fast forward lunge, 2.5 m.",
+    "range": 3.0,
+    "min_range": 0.8,
     "windup": 0.5,
-    "active": 0.14,
+    "active": 0.3,
     "recover": 0.8,
     "dmg": 14,
     "poise_dmg": 14,
-    "reach": 1.5,
-    "width": 1.2,
+    "reach": 1.3,
+    "width": 1.0,
     "height": 1.0,
     "cooldown": 1.6,
-    "anim": "atk_r",
-    "lunge": 2.5
+    "anim": "atk_lunge",
+    "hit_anim": "bite",
+    "lunge": 8.0,
+    "breath": "forward",
+    "body_hitbox": true,
+    "arc": 80
+   },
+   {
+    "id": "guard_bark",
+    "_tell": "sits up, chest swells (0.7 s); a bark that alerts all frost-taken within 15 m. No damage.",
+    "type": "alert",
+    "radius": 15.0,
+    "range": 30.0,
+    "windup": 0.7,
+    "active": 0.1,
+    "recover": 0.6,
+    "cooldown": 30.0,
+    "anim": "atk_bark",
+    "pick": false,
+    "breath": "up"
    }
   ],
   "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
   "warmth": 18,
-  "vis_scale": 0.72
+  "model": "hearthhound",
+  "class": "res://src/enemies/hearthhound.gd",
+  "head_offset": [
+   0.0,
+   0.62,
+   -0.55
+  ],
+  "_ai": "threshold guard (src/enemies/hearthhound.gd): lies across its threshold; on sight it sits up and barks once (alerting all frost-taken within radius), then fights within leash metres of home, and walks back to lie down when pulled further. A lunge that lands from behind becomes a grab: it holds and shakes, mash to break.",
+  "grab": {
+   "_doc": "a lunge that hits the Bearer from behind (angle between his facing and the hound, deg) holds him",
+   "behind_deg": 100.0,
+   "max_time": 2.4,
+   "mash": 6,
+   "tick": 0.4,
+   "dmg": 6.0,
+   "poise_dmg": 4.0,
+   "release_stagger": 1.2
+  }
  },
  "barrow_sleeper": {
   "name": "Barrow-sleeper",
