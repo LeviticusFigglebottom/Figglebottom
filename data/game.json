@@ -33,7 +33,10 @@
    "sprint": 7.2,
    "accel": 14.0,
    "turn_speed": 11.0,
-   "strafe": 3.0
+   "strafe": 3.0,
+   "step_height": 0.35,
+   "step_probe": 0.12,
+   "snap_down": 0.35
   },
   "gourd": {
    "charges": 3,
