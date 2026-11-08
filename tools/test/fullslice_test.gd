@@ -569,12 +569,27 @@ func _run() -> void:
 		if not player.dead:
 			await _walk_to(flt.global_position, 400, 0.6, true)
 		await _shot("strand_float")
-		await ticks(4)
-		if _near_interact("Chip the float") != null:
-			player.try_interact()
+		var walls := area.rime_layer.find_children("*", "TideWall", true, false)
+		check(walls.size() == 1, "the tide froze into a wall along the Strand")
+		await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
+		await ticks(2)
+		check(_near_interact("Chip the float") != null, "the float shows its prompt")
+		player.try_interact()
 		await ticks(6)
+		check(int(player.inventory.get("item_net_float", 0)) == 0, "a hand alone cannot free it")
+		# face the wall and bring the blade down hard
+		for attempt in 4:
+			if int(player.inventory.get("item_net_float", 0)) == 1:
+				break
+			var dw := flt.global_position - player.global_position if is_instance_valid(flt) else Vector3.FORWARD
+			player.cam.yaw = atan2(-dw.x, -dw.z)
+			player.vis.rotation.y = player.cam.yaw
+			player.sim_move = Vector3.ZERO
+			await _until(func(): return player.state == Player.S.MOVE and player.stamina > 30.0, 4.0)
+			player.try_attack(true)
+			await _secs(1.4)
 	check(int(player.inventory.get("item_net_float", 0)) == 1 and World.flag("ks_brede_float_found"),
-		"the float is chipped out of the ice")
+		"a heavy blow chips the float out of the ice")
 	await _shot("strand_rime")
 
 	_set_leg("death")

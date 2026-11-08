@@ -189,6 +189,8 @@ static func build(area_id: String) -> Area:
 		k.display_kit = spec.get("kit", "")
 		k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
 		k.set_flag = spec.get("set_flag", "")
+		k.display_lift = float(spec.get("lift", 0.0))
+		k.chip_heavy = bool(spec.get("chip_heavy", false))
 		area.attach(k, spec.get("tag", "base"))
 		_place(k, spec)
 	for spec in def.get("flag_gates", []):

@@ -1204,14 +1204,16 @@
    "id": "net_float",
    "at": [
     -8.0,
-    0.08,
-    78.8
+    0.11,
+    78.4
    ],
    "item": "item_net_float",
    "kit": "net_float",
    "tag": "rime",
    "set_flag": "ks_brede_float_found",
-   "label": "Chip the float out of the ice"
+   "label": "Chip the float out of the ice",
+   "lift": 1.25,
+   "chip_heavy": true
   },
   {
    "id": "mending_needle",
@@ -1240,6 +1242,82 @@
     "size": [
      11.6,
      31.6
+    ]
+   }
+  },
+  {
+   "script": "res://src/world/tide_wall.gd",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tag": "rime",
+   "params": {
+    "points": [
+     [
+      -64,
+      76.6
+     ],
+     [
+      -54,
+      76.3
+     ],
+     [
+      -46,
+      76.0
+     ],
+     [
+      -38,
+      76.4
+     ],
+     [
+      -30,
+      76.6
+     ],
+     [
+      -22,
+      76.6
+     ],
+     [
+      -14,
+      77.8
+     ],
+     [
+      -6,
+      79.5
+     ],
+     [
+      2,
+      80.3
+     ],
+     [
+      10,
+      79.6
+     ],
+     [
+      18,
+      78.6
+     ],
+     [
+      26,
+      76.8
+     ],
+     [
+      34,
+      76.0
+     ],
+     [
+      44,
+      76.4
+     ]
+    ],
+    "height": 3.0,
+    "gaps": [
+     [
+      -36.0,
+      -23.0
+     ]
     ]
    }
   },

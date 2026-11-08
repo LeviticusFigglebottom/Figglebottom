@@ -187,8 +187,11 @@ pickups = [
     {"id": "rye_sack", "at": at(-27.4, -11.9), "item": "item_rye_sack", "kit": "rye_sack", "tag": "rime",
      "set_flag": "ks_ingra_rye_found", "label": "Take the rye sack"},
     # and Brede's float, frozen into the face of the tide wall
-    {"id": "net_float", "at": at(-8.0, 78.8), "item": "item_net_float", "kit": "net_float", "tag": "rime",
-     "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice"},
+    # frozen into the land face of the tide wall at chest height; a heavy blow
+    # chips it free (SLICE.md 2). The prompt zone stays on the shingle.
+    {"id": "net_float", "at": at(-8.0, 78.4), "item": "item_net_float", "kit": "net_float", "tag": "rime",
+     "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice",
+     "lift": 1.25, "chip_heavy": True},
     # the Mending Needle where she sat (SLICE.md 6). The release sets one down
     # at once (Game._release_leavings, same id); this entry keeps it there if
     # the journey is saved and resumed before it is taken.
@@ -198,6 +201,15 @@ pickups = [
 ]
 # the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
 # arena; she hauls it and lights it (src/world/net_floor.gd)
+# RIME: the tide froze mid-surge (SLICE.md 2). A glass wall ~3 m high along
+# the old waterline, a metre or two seaward of it, open where the frozen
+# channel runs out to the sea stack.
+TIDE_LINE = [(-64, 76.6), (-54, 76.3), (-46, 76.0), (-38, 76.4), (-30, 76.6), (-22, 76.6),
+             (-14, 77.8), (-6, 79.5), (2, 80.3), (10, 79.6), (18, 78.6), (26, 76.8),
+             (34, 76.0), (44, 76.4)]
+TIDE_WALL = {"script": "res://src/world/tide_wall.gd", "at": [0.0, 0.0, 0.0], "tag": "rime",
+             "params": {"points": [[x, z] for x, z in TIDE_LINE], "height": 3.0, "gaps": [[-36.0, -23.0]]}}
+
 scripted = [
     {"script": "res://src/world/net_floor.gd", "at": [0.0, SH, -36.0], "tag": "rime",
      "params": {"size": [11.6, 31.6]}},
@@ -353,7 +365,7 @@ D = {
     "pickups": pickups,
     # one list: a second "scripted" key below used to overwrite this one,
     # and the Longhouse lost its net floor (the drawbridge seam joins it)
-    "scripted": scripted + [seams("saltfell_steading")[1]],
+    "scripted": scripted + [TIDE_WALL, seams("saltfell_steading")[1]],
     "scatter": scatter,
     "edges": edges,
     # the seams to the Lowe: the cliff-top pass and the drawbridge
