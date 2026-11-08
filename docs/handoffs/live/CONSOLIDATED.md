@@ -12,7 +12,7 @@ _Last updated: 2026-11-07 (founding session)_
 - **The Lowe:**
   - **World:** terrain, the bridge shortcut, and the bog route, with Tripo models placed.
   - **Encounters:** pending, on the branch below.
-- **Tripo:** about 4,065 credits spent. The balance was about 20,635 before the regions 3–7 batch; check the ledger.
+- **Tripo:** about 4,065 credits spent. The balance was 15,335 after the regions 3–7 batch (about 9,365 spent in total); every region now has its Tripo heroes.
 - **Audio has never been listened to.** The owner should play it and give feedback.
 
 ## In flight (worktree → branch)
@@ -21,7 +21,6 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/fb-qa` | `fix/slice-qa` | Full-slice end-to-end test, bug fixes, a player-eye screenshot pass, and perf. Notes go in `docs/qa/` |
 | `/home/user/fb-enc2` | `feat/lowe-encounters` | `docs/lore/LOWE.md`, the Lowe foes' movesets, the Turfwright's three phases, Hesk and Aud's lines and threads |
 | `/home/user/figglebottom` | `feat/lowe-polish-kettle` | Lowe RIME ground cover and sod stacks, then the Kettle Fjord region |
-| `/home/user/fb-art3` | `art/regions-3-7` | Remaining Tripo heroes. It stops if the balance falls below 12,000 |
 | `/home/user/fb-lead` | `main` | Lead merges here. The owner approved the lead merging reviewed, green branches |
 
 ## Next exact step
