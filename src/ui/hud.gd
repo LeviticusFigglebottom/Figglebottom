@@ -63,6 +63,9 @@ const SLOT_ICON := {
 	"bow": "res://assets/ui/icons/bow.png",
 	"greatblade": "res://assets/ui/icons/greatblade.png",
 	"maul": "res://assets/ui/icons/maul.png",
+	"turf_spade": "res://assets/ui/icons/turf_spade.png",
+	"ice_auger": "res://assets/ui/icons/ice_auger.png",
+	"sealer_harpoon": "res://assets/ui/icons/harpoon.png",
 	"gourd": "res://assets/ui/icons/gourd.png",
 	"torch": "res://assets/ui/icons/torch.png",
 }

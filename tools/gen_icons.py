@@ -241,6 +241,131 @@ def icon_mask():
     return im
 
 
+# --- the Lowe and Kettle Fjord (LOWE.md 9, KETTLE.md 8) -------------------
+WOAD = (70, 104, 150, 255)
+
+
+def icon_turf_spade():
+    """A long ash haft, a T-grip, a narrow blade with one side wing."""
+    im, d = canvas()
+    d.polygon(rot([(62, 30), (66, 30), (66, 118), (62, 118)], 35), fill=DARK)
+    d.polygon(rot([(54, 116), (74, 116), (74, 122), (54, 122)], 35), fill=DARK)
+    d.polygon(rot([(56, 6), (72, 6), (72, 34), (56, 34)], 35), fill=INK)
+    d.polygon(rot([(72, 10), (80, 10), (80, 30), (72, 30)], 35), fill=INK)
+    return im
+
+
+def icon_ice_auger():
+    """An auger: a T-handle, a shaft, a spiral bit."""
+    im, d = canvas()
+    d.polygon(rot([(62, 40), (66, 40), (66, 116), (62, 116)], 40), fill=DARK)
+    d.polygon(rot([(50, 112), (78, 112), (78, 120), (50, 120)], 40), fill=DARK)
+    for k in range(5):
+        y = 8 + k * 7
+        d.polygon(rot([(56, y + 6), (72, y), (72, y + 3), (56, y + 9)], 40), fill=INK)
+    d.polygon(rot([(62, 40), (66, 40), (64, 6)], 40), fill=INK)
+    return im
+
+
+def icon_harpoon():
+    """A barbed head on a long shaft, a coil of line below it."""
+    im, d = canvas()
+    d.polygon(rot([(62, 28), (66, 28), (66, 124), (62, 124)], 40), fill=DARK)
+    d.polygon(rot([(64, 2), (71, 20), (66, 18), (66, 30), (62, 30), (62, 18), (57, 20)], 40), fill=INK)
+    d.polygon(rot([(66, 22), (74, 30), (66, 26)], 40), fill=INK)
+    c = rot([(64, 48)], 40)[0]
+    d.ellipse((c[0] - 12, c[1] - 9, c[0] + 12, c[1] + 9), outline=INK, width=3)
+    return im
+
+
+def icon_mitten():
+    im, d = canvas()
+    d.rounded_rectangle((36, 22, 88, 96), radius=26, fill=WOOL)
+    d.rounded_rectangle((80, 50, 104, 84), radius=12, fill=(118, 118, 116, 255))   # the darned thumb
+    d.line([(84, 60), (100, 72)], fill=INK, width=2)
+    d.line([(84, 70), (98, 80)], fill=INK, width=2)
+    d.rectangle((36, 92, 88, 110), fill=(110, 110, 108, 255))                    # the cuff
+    return im
+
+
+def icon_knot_cord():
+    """A cord with knots along it, the last one loose and different."""
+    im, d = canvas()
+    pts = [(14 + i * 2.5, 64 + 22 * math.sin(i * 0.16)) for i in range(41)]
+    d.line(pts, fill=DARK, width=4)
+    for k in range(1, 7):
+        x, y = pts[k * 5]
+        d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=INK)
+    x, y = pts[38]
+    d.ellipse((x - 8, y - 8, x + 8, y + 8), outline=EMBER, width=3)
+    return im
+
+
+def icon_ladle():
+    im, d = canvas()
+    d.polygon(rot([(62, 10), (66, 10), (66, 92), (62, 92)], 30), fill=DARK)
+    c = rot([(64, 100)], 30)[0]
+    d.ellipse((c[0] - 18, c[1] - 14, c[0] + 18, c[1] + 14), fill=INK)
+    h = rot([(64, 10)], 30)[0]
+    d.arc((h[0] - 8, h[1] - 8, h[0] + 8, h[1] + 8), 180, 360, fill=DARK, width=4)
+    return im
+
+
+def icon_tally():
+    """A hazel stick, notched down both edges; the last two cut halfway."""
+    im, d = canvas()
+    body = [(58, 8), (70, 8), (70, 120), (58, 120)]
+    d.polygon(rot(body, 35), fill=(150, 116, 80, 255))
+    for k in range(9):
+        y = 16 + k * 9
+        side = 58 if k % 2 else 64
+        d.polygon(rot([(side, y), (side + 6, y), (side + 6, y + 3), (side, y + 3)], 35), fill=DARK)
+    for y in (104, 110):
+        d.polygon(rot([(64, y), (67, y), (67, y + 3), (64, y + 3)], 35), fill=EMBER)
+    return im
+
+
+def icon_tongs():
+    im, d = canvas()
+    d.line(rot([(52, 120), (60, 40), (66, 14)], 0), fill=(110, 100, 92, 255), width=6)
+    d.line(rot([(76, 120), (68, 40), (62, 14)], 0), fill=(110, 100, 92, 255), width=6)
+    d.ellipse((58, 36, 70, 48), fill=INK)
+    return im
+
+
+def icon_spindles():
+    im, d = canvas()
+    for dx, worn in ((-16, True), (16, False)):
+        d.line([(64 + dx, 10), (64 + dx, 118)], fill=(150, 116, 80, 255) if not worn else (120, 120, 116, 255), width=5)
+        d.ellipse((64 + dx - 14, 80, 64 + dx + 14, 96), fill=INK if worn else (200, 192, 176, 255))
+    d.line([(48, 40), (80, 40)], fill=EMBER, width=3)    # tied together with yarn
+    return im
+
+
+def icon_woad_thread():
+    im, d = canvas()
+    d.polygon([(30, 70), (56, 52), (96, 58), (104, 84), (74, 100), (36, 94)], fill=(130, 130, 124, 255))
+    d.line([(26, 80), (110, 74)], fill=WOAD, width=6)
+    d.line([(64, 76), (52, 30), (40, 18)], fill=WOAD, width=4)
+    return im
+
+
+def icon_armour_cloak():
+    im, d = canvas()
+    d.polygon([(40, 14), (88, 14), (110, 112), (18, 112)], fill=(122, 92, 62, 255))
+    d.ellipse((76, 22, 90, 36), fill=INK)     # the iron pin at the right shoulder
+    d.line((64, 20, 64, 112), fill=DARK, width=3)
+    return im
+
+
+def icon_armour_icefur():
+    im, d = canvas()
+    d.polygon([(40, 8), (88, 8), (96, 30), (32, 30)], fill=(196, 196, 190, 255))   # the hood
+    _coat(d, (170, 170, 164, 255), (226, 222, 212, 255))
+    d.line((30, 108, 98, 108), fill=(226, 222, 212, 255), width=6)                 # fleece at the hem
+    return im
+
+
 # --- armour (Pack: the Armour leaf) ------------------------------------------
 GHOST = (120, 104, 80, 150)
 WOOL = (150, 150, 146, 255)
