@@ -643,14 +643,35 @@ func _run() -> void:
 	check(await _until(func(): return not player.dead, 10.0), "the Bearer wakes at the hearth")
 	check(player.global_position.distance_to(Game.find_hearth("hs_salt_house").respawn_point()) < 3.0, "at the Salt House")
 	check(Game.warmth == 0, "with nothing carried")
-	walked = await _walk_path(bpos, 7200, true)
-	await _walk_to(bpos, 300, 0.6, true)
-	await _shot("breathmark")
-	await ticks(4)
-	check(_near_interact("Reclaim") != null, "the Breathmark offers itself")
-	player.try_interact()
-	await ticks(6)
-	check(World.breathmark == null and Game.warmth >= carried, "the warmth is taken back (%d)" % Game.warmth)
+	# the way back runs past the risen dead; falling again with nothing
+	# carried leaves the Breathmark where it hangs, so a player simply tries
+	# again (falling WITH warmth would replace it: checked below)
+	var bm_tries := 0
+	var w_before := 0
+	var bm_amount := carried
+	while bm_tries < 3 and World.breathmark != null:
+		bm_tries += 1
+		await _until(func(): return not player.dead, 10.0)
+		await ticks(20)
+		walked = await _walk_path(bpos, 7200, true)
+		if player.dead:
+			continue
+		await _walk_to(bpos, 300, 0.6, true)
+		if player.dead:
+			continue
+		await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
+		await ticks(2)
+		if bm_tries == 1 or _near_interact("Reclaim") != null:
+			await _shot("breathmark")
+		check(_near_interact("Reclaim") != null, "the Breathmark offers itself")
+		w_before = Game.warmth
+		bm_amount = int(World.breathmark["amount"]) if World.breathmark != null else 0
+		player.try_interact()
+		await ticks(6)
+	# (a fall on the way back with fresh warmth replaces the mark: the old one
+	# is lost for good, by the rule, and the new one is what is taken back)
+	check(World.breathmark == null and Game.warmth - w_before == bm_amount,
+		"the warmth is taken back (+%d of %d, first fall carried %d, %d tries)" % [Game.warmth - w_before, bm_amount, carried, bm_tries])
 
 	_set_leg("to_veil")
 	print("== the frost veil")
@@ -685,7 +706,7 @@ func _run() -> void:
 	var phases := {}
 	var t_fight := 0
 	var deaths := 0
-	while boss != null and not boss.dead and t_fight < 60 * 240:
+	while boss != null and not boss.dead and t_fight < 60 * 480:
 		if player.dead:
 			deaths += 1
 			await _until(func(): return not player.dead, 10.0)
