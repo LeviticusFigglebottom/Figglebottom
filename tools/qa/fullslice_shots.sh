@@ -7,7 +7,7 @@ cd "$(dirname "$0")/../.."
 SHOTS="${1:-docs/screens}"
 PERF="${2:-docs/qa/perf_route.json}"
 mkdir -p "$SHOTS" "$(dirname "$PERF")"
-timeout 3600 xvfb-run -a -s "-screen 0 1280x720x24" godot --path . \
+timeout 7000 xvfb-run -a -s "-screen 0 1280x720x24" godot --path . \
   --rendering-driver vulkan --resolution 1280x720 \
   -- --test=fullslice "--fullslice-shots=$(realpath "$SHOTS")" "--perf=$(realpath -m "$PERF")" 2>&1 \
   | grep --line-buffered -vE "ALSA|snd_|libpulse|dummy driver|^\s*$"

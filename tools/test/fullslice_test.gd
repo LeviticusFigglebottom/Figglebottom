@@ -34,6 +34,10 @@ func _ready() -> void:
 			shots_dir = a.get_slice("=", 1)
 		elif a.begins_with("--perf="):
 			perf_path = a.get_slice("=", 1)
+	if shots_dir != "":
+		# software rendering runs a few frames a second; let physics keep
+		# game time near real time instead of crawling at 8 steps a frame
+		Engine.max_physics_steps_per_frame = 30
 	_run.call_deferred()
 
 # ------------------------------------------------------------------ helpers
