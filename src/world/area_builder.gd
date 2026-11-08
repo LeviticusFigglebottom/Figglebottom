@@ -734,7 +734,11 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 	var mx := _v3(spec["max"])
 	var center := (mn + mx) * 0.5
 	var size := mx - mn
-	var mat := MaterialLib.get_mat(spec.get("mat", "M_stone"), _state_mode(tag))
+	var fam := String(spec.get("mat", "M_stone"))
+	# a wide, thin timber box is a deck, a jetty or a bridge: lay it in planks
+	if fam == "M_wood" and size.y < 0.5 and maxf(size.x, size.z) > 1.5 and minf(size.x, size.z) > 0.8:
+		fam = "M_planks"
+	var mat := MaterialLib.get_mat(fam, _state_mode(tag))
 	var mi := MeshInstance3D.new()
 	var bm := BoxMesh.new()
 	bm.size = size
