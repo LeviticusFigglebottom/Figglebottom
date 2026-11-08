@@ -126,5 +126,30 @@
    },
    "weight": 7.0
   }
+ },
+ "item_ivo_mitten": {
+  "name": "Ivo's Mitten",
+  "desc": "A child's mitten of felted grey wool with a leather palm, the thumb darned in a different grey. It was frozen into the new ice over the hole, palm up. The darn is his grandfather's; the stitches are too big."
+ },
+ "item_kettle_ladle": {
+  "name": "Kettle Ladle",
+  "desc": "An iron ladle as long as an arm, for the fish-kettles, with a hook at the end to hang it on the pot. It was standing upright in a pot of supper on the hook in the end house. The fire under the pot had been banked up and banked up again."
+ },
+ "item_halla_cord": {
+  "name": "Halla's Knot-Cord",
+  "desc": "A trader's cargo cord, tarred, a knot for every barrel and bale and passenger, in the trader's own tight hand. The last knot is tied loose, by someone who knew the knots but not well. It says one man, sick."
+ },
+ "armour_icefur": {
+  "name": "Ice-Fur Coat",
+  "desc": "A coat of grey sheepskin worn fleece-in, with a felt hood, made in the south for the crossing. It is too warm for a summer evening. Sten gave it away in one.",
+  "armour": {
+   "slot": "body",
+   "poise": 5,
+   "absorb": {
+    "phys": 0.07,
+    "frost": 0.2
+   },
+   "weight": 6.5
+  }
  }
 }

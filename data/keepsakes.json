@@ -1,5 +1,5 @@
 {
- "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md and LOWE.md.",
+ "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md and KETTLE.md.",
  "toast": "A keepsake is remembered.",
  "threads": [
   {
@@ -87,6 +87,50 @@
     {
      "flag": "ks_aud_heather",
      "line": "Aud has moved her heather to the first mound. She says it was always there."
+    }
+   ]
+  },
+  {
+   "id": "ivo_mitten",
+   "title": "Ivo's mitten",
+   "steps": [
+    {
+     "flag": "ks_ivo_met",
+     "line": "Ivo is harnessing the dogs and says he is not going anywhere."
+    },
+    {
+     "flag": "ks_ivo_supper",
+     "line": "The supper was still on the hook. The ladle was frozen standing up in it."
+    },
+    {
+     "flag": "ks_ivo_mitten_found",
+     "line": "The mitten was in the ice where the hole had been, palm up."
+    },
+    {
+     "flag": "ks_ivo_mitten",
+     "line": "Ivo put the mitten on. Both of his are his own now."
+    }
+   ]
+  },
+  {
+   "id": "halla_cord",
+   "title": "Halla's cord",
+   "steps": [
+    {
+     "flag": "ks_halla_met",
+     "line": "Halla keeps her cargo on a knot-cord and says every knot on it is hers."
+    },
+    {
+     "flag": "ks_halla_cord_found",
+     "line": "Halla's cord was tied to the mooring post. There was a knot at the end in another hand."
+    },
+    {
+     "flag": "ks_halla_cord",
+     "line": "Halla read the last knot and called Sten over, and then told him to stay where he was."
+    },
+    {
+     "flag": "ks_halla_bed",
+     "line": "Halla has put Sten by the fire in the end house."
     }
    ]
   }

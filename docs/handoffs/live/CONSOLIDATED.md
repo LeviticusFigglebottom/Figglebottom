@@ -21,6 +21,7 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/fb-qa` | `fix/slice-qa` | Full-slice end-to-end test, bug fixes, a player-eye screenshot pass, and perf. Notes go in `docs/qa/` |
 | `/home/user/fb-enc2` | `feat/lowe-encounters` | `docs/lore/LOWE.md`, the Lowe foes' movesets, the Turfwright's three phases, Hesk and Aud's lines and threads |
 | `/home/user/figglebottom` | `feat/lowe-polish-kettle` | Lowe RIME ground cover and sod stacks, then the Kettle Fjord region |
+| `/home/user/fb-enc3` | `feat/kettle-encounters` | `docs/lore/KETTLE.md`; Kettle foes, the Ice-Cutter's three phases (runtime thin ice), Ivo, Halla and Sten with their threads; icons for the Lowe and Kettle items; `kettle_encounters` suite; `docs/screens/kettle_enc_*.png`. Touches only the Kettle generator's spawner, pickup, npc and hearth lists. |
 | `/home/user/fb-lead` | `main` | Lead merges here. The owner approved the lead merging reviewed, green branches |
 
 ## Next exact step

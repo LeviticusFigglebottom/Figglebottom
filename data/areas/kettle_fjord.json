@@ -3539,7 +3539,8 @@
     0.15,
     -333.1
    ],
-   "face": 30
+   "face": 30,
+   "pose": "kneel_fish"
   },
   {
    "enemy": "ice_fisher",
@@ -3550,7 +3551,8 @@
     0.15,
     -328.81
    ],
-   "face": -60
+   "face": -60,
+   "pose": "kneel_fish"
   },
   {
    "enemy": "ice_fisher",
@@ -3583,7 +3585,7 @@
     0.15,
     -323.81
    ],
-   "face": 0
+   "face": 60
   },
   {
    "enemy": "sledge_dog",
@@ -3594,7 +3596,7 @@
     0.15,
     -322.31
    ],
-   "face": 10
+   "face": 60
   },
   {
    "enemy": "sealer",
@@ -3625,9 +3627,9 @@
    "at": [
     22.0,
     0.15,
-    -322.16
+    -319.8
    ],
-   "face": 0,
+   "face": 180,
    "dead_once": true,
    "frost_veil_id": "breathing_hole_veil"
   }
@@ -3654,6 +3656,26 @@
    ],
    "rot": 150,
    "tag": "thaw"
+  },
+  {
+   "id": "halla",
+   "at": [
+    -41.0,
+    1.8,
+    -311.17
+   ],
+   "rot": 140,
+   "tag": "thaw"
+  },
+  {
+   "id": "sten",
+   "at": [
+    -35.5,
+    1.8,
+    -310.72
+   ],
+   "rot": 170,
+   "tag": "thaw"
   }
  ],
  "plaques": [
@@ -3671,13 +3693,14 @@
   {
    "id": "kettle_ladle",
    "at": [
-    -38.5,
+    -47.4,
     1.83,
-    -323.92
+    -326.92
    ],
-   "warmth": 50,
-   "tag": "base",
-   "label": "Take the fish-kettle ladle"
+   "item": "item_kettle_ladle",
+   "tag": "rime",
+   "label": "Take the ladle",
+   "set_flag": "ks_ivo_supper"
   },
   {
    "id": "north_shore_cache",
@@ -3690,6 +3713,42 @@
    "count": 2,
    "tag": "rime",
    "label": "Pry up what the ice holds"
+  },
+  {
+   "id": "halla_cord",
+   "at": [
+    -36.9,
+    0.06,
+    -331.42
+   ],
+   "item": "item_halla_cord",
+   "tag": "rime",
+   "label": "Untie the cord",
+   "set_flag": "ks_halla_cord_found"
+  },
+  {
+   "id": "ice_auger",
+   "at": [
+    -30.2,
+    1.83,
+    -324.3
+   ],
+   "item": "ice_auger",
+   "tag": "rime",
+   "label": "Take the auger",
+   "scene": "res://assets/models/weapons/ice_auger.glb"
+  },
+  {
+   "id": "sealer_harpoon",
+   "at": [
+    -82.5,
+    0.06,
+    -331.71
+   ],
+   "item": "sealer_harpoon",
+   "tag": "rime",
+   "label": "Work the harpoon free",
+   "scene": "res://assets/models/weapons/sealer_harpoon.glb"
   }
  ],
  "portals": [

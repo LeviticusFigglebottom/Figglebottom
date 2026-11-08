@@ -686,6 +686,356 @@
      "root_lock": true
     }
    }
+  },
+  "ice_cutter": {
+   "scene": "res://assets/models/bosses/ice_cutter.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "keeps his own idle/walk/slash/hit plus drill_down, haul_trace, ring_cut (text-prompt clips, sectioned here off the hand and hips tracks); borrows the rest. The auger grown through his right forearm is the right-hand hit volume.",
+   "unarmed": {
+    "_note": "the auger through his right forearm, pointing down; the frozen left mitten",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.5,
+     "offset": [
+      0.0,
+      0.7,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.36,
+     "offset": [
+      0.0,
+      0.12,
+      0.0
+     ]
+    }
+   },
+   "clips": {
+    "slash": {
+     "start": 1.0,
+     "contact": 2.15,
+     "end": 3.3
+    },
+    "drill_down": {
+     "start": 0.2,
+     "contact": 2.2,
+     "end": 3.2
+    },
+    "haul_trace": {
+     "start": 0.3,
+     "contact": 2.3,
+     "end": 3.4
+    },
+    "ring_cut": {
+     "start": 0.3,
+     "contact": 1.25,
+     "end": 2.6
+    }
+   }
+  },
+  "ice_fisher": {
+   "scene": "res://assets/models/enemies/ice_fisher.glb",
+   "yaw_deg": 180.0,
+   "own_clips": false,
+   "bare_hands": true,
+   "_note": "Kettle frost-taken (KETTLE.md 5): rides the shared clip library; its own moves are overlays",
+   "unarmed": {
+    "_note": "grown ice: picks (fisher), a club and a hook (sealer); a sphere rides each hand bone",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.26,
+     "offset": [
+      0.0,
+      0.3,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.26,
+     "offset": [
+      0.0,
+      0.3,
+      0.0
+     ]
+    }
+   }
+  },
+  "sealer": {
+   "scene": "res://assets/models/enemies/sealer.glb",
+   "yaw_deg": 180.0,
+   "own_clips": false,
+   "bare_hands": true,
+   "_note": "Kettle frost-taken (KETTLE.md 5): rides the shared clip library; its own moves are overlays",
+   "unarmed": {
+    "_note": "grown ice: picks (fisher), a club and a hook (sealer); a sphere rides each hand bone",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.34,
+     "offset": [
+      0.0,
+      0.14,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.26,
+     "offset": [
+      0.0,
+      0.14,
+      0.0
+     ]
+    }
+   }
+  },
+  "ivo": {
+   "scene": "res://assets/models/npcs/ivo.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW-only villager (Kettle Fjord): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
+   }
+  },
+  "sledge_dog": {
+   "scene": "res://assets/models/enemies/sledge_dog.glb",
+   "rig": "quadruped",
+   "yaw_deg": 0.0,
+   "stride": 1.2,
+   "scale": 0.72,
+   "_note": "Tripo quadruped (one real clip: walk), posed like the Hearthhound (QuadRig). Its rig differs: front upper legs are 0_*_Limb_0 (under a shoulder bone), hind thighs 1_*_Limb_0, knees 1_*_Limb_1, a real tail (Tail_0). Its glb faces the other way from the hound's: yaw_deg 0.",
+   "poses": {
+    "crouch": {
+     "_root": [
+      0,
+      -0.14,
+      0
+     ],
+     "tripo__Spine_0": [
+      -10,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      -34,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      -12,
+      0,
+      0
+     ],
+     "tripo__Tail_0": [
+      -40,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      -26,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      -26,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      44,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      44,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -60,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -60,
+      0,
+      0
+     ]
+    },
+    "lunge": {
+     "_root": [
+      0,
+      0.03,
+      0
+     ],
+     "tripo__Spine_0": [
+      5,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      16,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      0,
+      0,
+      0
+     ],
+     "tripo__Tail_0": [
+      25,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      48,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      48,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      -42,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      -42,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      10,
+      0,
+      0
+     ]
+    },
+    "hold": {
+     "_root": [
+      0,
+      -0.03,
+      0
+     ],
+     "tripo__Head_1": [
+      -12,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      -4,
+      0,
+      0
+     ]
+    },
+    "dead": {
+     "_root": [
+      0,
+      -0.17,
+      0
+     ],
+     "tripo__Spine_0": [
+      0,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      0,
+      0,
+      0
+     ],
+     "tripo__Tail_0": [
+      0,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      20,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      20,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__Root": [
+      0,
+      0,
+      84
+     ]
+    },
+    "flinch": {
+     "_root": [
+      0,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      10,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      4,
+      0,
+      0
+     ]
+    }
+   },
+   "pose_alias": {
+    "death": "dead",
+    "stagger": "flinch",
+    "hit": "flinch",
+    "bite": "lunge",
+    "atk_lunge": "crouch"
+   }
   }
  },
  "mounts": {
@@ -789,6 +1139,22 @@
     1.55
    ],
    "_note": "grip at origin, blade +Y"
+  },
+  "ice_auger": {
+   "scene": "res://assets/models/weapons/ice_auger.glb",
+   "trail": [
+    0.1,
+    1.4
+   ],
+   "_note": "grip at origin, bit +Y"
+  },
+  "sealer_harpoon": {
+   "scene": "res://assets/models/weapons/sealer_harpoon.glb",
+   "trail": [
+    0.1,
+    1.8
+   ],
+   "_note": "grip at origin, head +Y"
   }
  },
  "clips": {
@@ -1084,6 +1450,60 @@
     "start": 0.0,
     "end": 3.0
    }
+  },
+  "pick_cut": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.0,
+    "contact": 1.4
+   }
+  },
+  "hook_throw": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.8,
+    "contact": 1.0
+   }
+  },
+  "kneel_drill": {
+   "loop": true,
+   "procedural": {}
+  },
+  "rise_auger": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.6
+   }
+  },
+  "kneel_hole": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.8
+   }
+  },
+  "kneel_down": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.0,
+    "contact": 2.0
+   }
+  },
+  "whistle": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.2,
+    "contact": 1.6
+   }
+  },
+  "rest_auger": {
+   "procedural": {
+    "start": 0.0,
+    "end": 3.0
+   }
+  },
+  "kneel_fish": {
+   "loop": true,
+   "procedural": {}
   }
  },
  "aliases": {

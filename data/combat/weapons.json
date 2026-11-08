@@ -77,6 +77,60 @@
    "max": 5
   }
  },
+ "ice_auger": {
+  "name": "Ice-Cutter's Auger",
+  "desc": "A long iron ice-auger with an oak cross-handle, for cutting fishing holes. Used as a spear it does not care much what it goes through. The leather on the shaft is worn through in two places, where two hands held it every winter.",
+  "class": "spear",
+  "kit": "ice_auger",
+  "damage": 50.0,
+  "poise_damage": 24,
+  "scaling": {
+   "might": 0.35,
+   "craft": 0.55
+  },
+  "stamina": {
+   "light": 16,
+   "heavy": 28,
+   "sprint": 19
+  },
+  "moveset": "spear",
+  "two_handed": true,
+  "block": {
+   "stab": 1.2,
+   "chip": 0.32
+  },
+  "upgrade": {
+   "per_level": 6,
+   "max": 5
+  }
+ },
+ "sealer_harpoon": {
+  "name": "Sealer's Harpoon",
+  "desc": "A barbed bog-iron head on a bone foreshaft and an ash shaft, a coil of rawhide line tied below the head. Sealers wait at a breathing hole for hours to throw it once. The line has been spliced so often that it is mostly splice.",
+  "class": "spear",
+  "kit": "sealer_harpoon",
+  "damage": 46.0,
+  "poise_damage": 20,
+  "scaling": {
+   "might": 0.2,
+   "craft": 0.7
+  },
+  "stamina": {
+   "light": 15,
+   "heavy": 26,
+   "sprint": 18
+  },
+  "moveset": "spear",
+  "two_handed": true,
+  "block": {
+   "stab": 1.25,
+   "chip": 0.34
+  },
+  "upgrade": {
+   "per_level": 5,
+   "max": 5
+  }
+ },
  "spear": {
   "name": "Spear",
   "desc": "An ash-hafted spear with a leaf head. Keeps the cold at arm's length and a little more.",

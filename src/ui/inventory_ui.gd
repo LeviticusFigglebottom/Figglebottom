@@ -624,6 +624,12 @@ func _icon_for(id: String) -> String:
 		"item_mending_needle": "needle", "ks_child_mask": "mask",
 		"fostering_horn": "crest",
 		"armour_traveller_coat": "armour_coat", "armour_saltfell_oilskins": "armour_oilskins",
+		# the Lowe and Kettle Fjord
+		"turf_spade": "turf_spade", "ice_auger": "ice_auger", "sealer_harpoon": "harpoon",
+		"turf_song": "song", "armour_barrow_cloak": "armour_cloak", "armour_icefur": "armour_icefur",
+		"item_tally_stick": "tally", "item_twin_spindles": "spindles", "item_orm_cord": "knot_cord",
+		"item_halla_cord": "knot_cord", "item_hesk_tongs": "tongs", "ks_woad_thread": "woad_thread",
+		"item_ivo_mitten": "mitten", "item_kettle_ladle": "ladle",
 	}
 	return "res://assets/ui/icons/%s.png" % by.get(id, "relic")
 
