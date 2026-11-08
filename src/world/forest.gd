@@ -18,6 +18,28 @@ const STYLES := {
 	"thicket": {"fam": "M_thorn", "stems": 11, "lean": 0.2, "core": 0.75},
 }
 
+## Tripo hero meshes (docs/art/LOOK_PASS.md, tools/art/manifest.json): each
+## kind picks among its variants per instance; a "<name>_far.glb" (decimated)
+## takes over past NEAR. Shaded through MaterialLib.hero_mat with the family
+## given (snow crust, THAW/RIME branch) plus wind sway. Missing files fall
+## back to the primitives below, so the API and layout never change.
+##   kind -> [[glb name, family, wind sway m, wind height m], ...]
+const HERO_TREES := {
+	"pine": [["tr_pine_a", "M_needles", 0.35, 14.0], ["tr_pine_b", "M_needles", 0.3, 12.0]],
+	"birch": [["tr_birch_a2", "M_leaves", 0.45, 10.0], ["tr_birch_b", "M_leaves", 0.45, 10.0]],
+	"grave_pine": [["tr_grave_pine", "M_needles", 0.2, 10.0]],
+	"snag": [["tr_snag", "M_bark_pine", 0.05, 9.0]],
+}
+## style -> [glb name, family]: one ~2 m hedge section, repeated along the line
+const HERO_HEDGES := {
+	"laid": ["hd_laid2", "M_thorn"],
+	"thicket": ["hd_laid2", "M_thorn"],
+	"thorn": ["hd_thorn2", "M_rime"],
+}
+const HERO_DIR := "res://assets/models/forest/"
+const NEAR := 70.0
+const HEDGE_NEAR := 45.0
+
 static var _cache: Dictionary = {}
 
 static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Array) -> void:
@@ -53,7 +75,25 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 		var z := float(at[1])
 		_tree(trees, String(p["kind"]), Vector3(x, terrain.height_at(x, z) - 0.15, z), float(p.get("scale", 1.0)), rng)
 	for kind in trees:
-		_emit(area, "tree_" + kind, "base", trees[kind], 160.0)
+		var vs: Array = []
+		for hv in HERO_TREES.get(kind, []):
+			if ResourceLoader.exists(HERO_DIR + String(hv[0]) + ".glb"):
+				vs.append(hv)
+		if vs.is_empty():
+			# grave pine and snag fall back to the plain pine
+			_emit(area, "tree_" + ("birch" if kind == "birch" else "pine"), "base", trees[kind], 160.0)
+		else:
+			for vi in vs.size():
+				var pick: Array = []
+				for i in trees[kind].size():
+					if i % vs.size() == vi:
+						pick.append(trees[kind][i])
+				var key := "hero|%s|%s|%s|%s" % [vs[vi][0], vs[vi][1], vs[vi][2], vs[vi][3]]
+				if ResourceLoader.exists(HERO_DIR + String(vs[vi][0]) + "_far.glb"):
+					_emit(area, key, "base", pick, NEAR, 0.0)
+					_emit(area, key.replace("hero|%s|" % vs[vi][0], "hero|%s_far|" % vs[vi][0]), "base", pick, 220.0, NEAR)
+				else:
+					_emit(area, key, "base", pick, 180.0)
 		_tree_bodies(area, kind, trees[kind])
 	for hd in spec.get("hedges", []):
 		_hedge(area, terrain, hd, rng)
@@ -74,7 +114,7 @@ static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
 		body.collision_mask = 0
 		var cs := CollisionShape3D.new()
 		var cyl := CylinderShape3D.new()
-		cyl.radius = (0.3 if kind == "pine" else 0.2) * sv.x
+		cyl.radius = {"pine": 0.3, "grave_pine": 0.7, "snag": 0.25}.get(kind, 0.2) * sv.x
 		cyl.height = 4.0
 		cs.shape = cyl
 		cs.position = Vector3(0, 2.0, 0)
@@ -83,7 +123,7 @@ static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
 		area.attach(body, "base")
 
 ## Chunked MultiMeshes of one mesh.
-static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float) -> void:
+static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float, range_begin := 0.0) -> void:
 	var mode := 1 if tag == "thaw" else (2 if tag == "rime" else 0)
 	var mesh := _mesh(key, mode)
 	var chunks: Dictionary = {}
@@ -111,6 +151,9 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 		mmi.position = c
 		mmi.visibility_range_end = range_end
 		mmi.visibility_range_end_margin = 10.0
+		if range_begin > 0.0:
+			mmi.visibility_range_begin = range_begin
+			mmi.visibility_range_begin_margin = 10.0
 		area.attach(mmi, tag)
 
 # ------------------------------------------------------------ meshes
@@ -119,6 +162,11 @@ static func _mesh(key: String, mode: int) -> Mesh:
 	var ck := "%s|%d" % [key, mode]
 	if _cache.has(ck):
 		return _cache[ck]
+	if key.begins_with("hero|"):
+		var hp := key.split("|")
+		var hm := _hero(hp[1], hp[2], mode, float(hp[3]) if hp.size() > 3 else 0.0, float(hp[4]) if hp.size() > 4 else 10.0)
+		_cache[ck] = hm
+		return hm
 	var am := ArrayMesh.new()
 	match key:
 		"tree_pine":
@@ -154,6 +202,40 @@ static func _mesh(key: String, mode: int) -> Mesh:
 	_cache[ck] = am
 	return am
 
+## The first mesh of a hero GLB re-shaded through MaterialLib.hero_mat, with
+## wind sway on the material when asked for.
+static func _hero(name: String, fam: String, mode: int, sway: float, sway_h: float) -> Mesh:
+	var path := HERO_DIR + name + ".glb"
+	if not ResourceLoader.exists(path):
+		return null
+	var inst := (load(path) as PackedScene).instantiate()
+	var out: Mesh = null
+	for c in inst.find_children("*", "MeshInstance3D", true, false):
+		var src := (c as MeshInstance3D).mesh
+		if src == null:
+			continue
+		out = src.duplicate() as Mesh
+		for si in out.get_surface_count():
+			var m := MaterialLib.hero_mat(src.surface_get_material(si), fam, mode)
+			if sway > 0.0:
+				m = m.duplicate()
+				m.set_shader_parameter("wind_sway", sway)
+				m.set_shader_parameter("wind_height", sway_h)
+			out.surface_set_material(si, m)
+		break
+	inst.free()
+	return out
+
+## A hero hedge section's length along its own X (the GLBs are processed to
+## run along X), for spacing them down a line.
+static func _hero_len(name: String) -> float:
+	var ck := "len|" + name
+	if not _cache.has(ck):
+		var m := _hero(name, "M_thorn", 0, 0.0, 1.0)
+		_cache[ck] = m.get_aabb() if m != null else AABB()
+	var bb: AABB = _cache[ck]
+	return bb.size.x
+
 static func _cyl(rt: float, rb: float, h: float, segs: int) -> CylinderMesh:
 	var cm := CylinderMesh.new()
 	cm.top_radius = rt
@@ -187,7 +269,14 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 	var pts: Array = hd["pts"]
 	var stems: Array = []
 	var cores: Array = []
+	var heroes: Array = []
 	var bit := AreaBuilder._tag_bit(tag)
+	var hh: Array = HERO_HEDGES.get(style, [])
+	var hero_ok := not hh.is_empty() and ResourceLoader.exists(HERO_DIR + String(hh[0]) + ".glb")
+	var hlen := _hero_len(String(hh[0])) if hero_ok else 0.0
+	var hbb: AABB = _cache.get("len|" + String(hh[0]), AABB()) if hero_ok else AABB()
+	if hlen < 0.3:
+		hero_ok = false
 	for k in pts.size() - 1:
 		var a := Vector2(float(pts[k][0]), float(pts[k][1]))
 		var b := Vector2(float(pts[k + 1][0]), float(pts[k + 1][1]))
@@ -197,8 +286,27 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			continue
 		var dir := d / L
 		var yaw := atan2(-dir.y, dir.x)
+		if hero_ok:
+			# sections end to end with a little overlap, each turned and
+			# flipped at random so the repeat never lines up
+			var nsec := maxi(1, int(ceil(L / (hlen * 0.85))))
+			var step := L / nsec
+			for i in nsec:
+				var p := a + dir * (step * (i + 0.5))
+				var y := terrain.height_at(p.x, p.y)
+				# a tall wall is two courses of sections, not one stretched
+				# section (stretching turns thorn into reeds)
+				var hy := maxf(hbb.size.y, 0.3)
+				var rows := maxi(1, int(ceil(h / (hy * 1.6))))
+				for r in rows:
+					var fl := 1.0 if rng.randf() < 0.5 else -1.0
+					var rb := Basis(Vector3.UP, yaw + (PI if fl < 0.0 else 0.0))
+					# upper courses narrower and sunk into the one below, so
+					# their footing strip hides inside its mass
+					var sc := Vector3(step / hlen * (1.12 + 0.1 * r), h / rows / hy * rng.randf_range(1.3, 1.45), w / maxf(hbb.size.z, 0.3) * (1.0 - 0.32 * r))
+					heroes.append(Transform3D(rb.scaled_local(sc), Vector3(p.x, y - 0.08 + r * h / rows * 0.6, p.y)))
 		# stems
-		var t := 0.0
+		var t := 0.0 if not hero_ok else L
 		while t < L:
 			var p := a + dir * t
 			var y := terrain.height_at(p.x, p.y)
@@ -220,7 +328,8 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			var seg := L / n
 			var cb := Basis(Vector3.UP, yaw)
 			var core := float(st["core"])
-			cores.append(Transform3D(cb.scaled_local(Vector3(seg * 1.02, h * core, w * core)), Vector3(p0.x, y0 + h * core * 0.5 - 0.05, p0.y)))
+			if not hero_ok:
+				cores.append(Transform3D(cb.scaled_local(Vector3(seg * 1.02, h * core, w * core)), Vector3(p0.x, y0 + h * core * 0.5 - 0.05, p0.y)))
 			var body := StaticBody3D.new()
 			body.collision_layer = 1 << (bit - 1)
 			body.collision_mask = 0
@@ -231,5 +340,13 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			body.add_child(cs)
 			body.transform = Transform3D(cb, Vector3(p0.x, y0 + h * 0.5, p0.y))
 			area.attach(body, tag)
+	if hero_ok:
+		var hk := "hero|%s|%s|0.04|1.5" % [hh[0], hh[1]]
+		if ResourceLoader.exists(HERO_DIR + String(hh[0]) + "_far.glb"):
+			_emit(area, hk, tag, heroes, HEDGE_NEAR)
+			_emit(area, hk.replace("hero|%s|" % hh[0], "hero|%s_far|" % hh[0]), tag, heroes, 150.0, HEDGE_NEAR)
+		else:
+			_emit(area, hk, tag, heroes, 140.0)
+		return
 	_emit(area, "stem|" + style, tag, stems, 120.0)
 	_emit(area, "core|" + style, tag, cores, 140.0)

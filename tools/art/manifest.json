@@ -2659,6 +2659,226 @@
       "texture_max": 1024,
       "collision": null,
       "output": "assets/models/scatter/sc_driftlog.glb"
+    },
+    {
+      "name": "sc_cliffchunk",
+      "category": "scatter",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "599c3c21-67c2-4af1-97bc-badc2eca95e5",
+        "task_id": "ef5f3d17-109f-4938-b6f3-7c8d963207de",
+        "remesh_operator": "825e720c-321c-46c1-9dfd-c0d4bac628d7",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/sc_cliffchunk/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 1.8
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/scatter/sc_cliffchunk.glb"
+    },
+    {
+      "name": "kit_drying_rack_hero",
+      "category": "kit",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "f96ba1d1-dba4-4451-81fa-0e3ef6d240b2",
+        "task_id": "5d4fb84c-9ec4-461f-872a-67a9c3b7b6e2",
+        "remesh_operator": "1f06a186-fa59-49cc-b597-f2bb88e3aac1",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/kit_drying_rack_hero/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 4.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 2048,
+      "collision": null,
+      "output": "assets/models/kit/kit_drying_rack_hero.glb"
+    },
+    {
+      "name": "tr_pine_a",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "700942b3-c1d9-4f3d-bc65-579a5d15ee4f",
+        "task_id": "ce33cabf-449c-4309-9f14-a8403e0b397f",
+        "remesh_operator": "404dbc03-bb16-4cb4-b0b7-a4c56bcfd91e",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/tr_pine_a/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 16.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/tr_pine_a.glb"
+    },
+    {
+      "name": "tr_birch_b",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "cb606706-5564-4ecd-ac65-739dda948004",
+        "task_id": "f63e99e5-a103-4bb7-b431-d00cc798648e",
+        "remesh_operator": "15aed169-2026-41d3-84a6-0102c445c183",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/tr_birch_b/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 11.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/tr_birch_b.glb"
+    },
+    {
+      "name": "tr_grave_pine",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "0352ccd9-ad72-47e8-afa4-60d29b1d3116",
+        "task_id": "bd08d7ab-5783-4b93-a462-685a476ef936",
+        "remesh_operator": "78500520-4e5c-4016-89b6-df53d0870141",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/tr_grave_pine/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 11.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/tr_grave_pine.glb"
+    },
+    {
+      "name": "tr_snag",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "ec1a1cc5-b453-4324-b103-bd7f15d0efd3",
+        "task_id": "0c824130-d962-4203-b9a8-1576b1fb1f6d",
+        "remesh_operator": "e3d131b0-4e52-4dec-badf-81910e003728",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/tr_snag/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 10.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/tr_snag.glb"
+    },
+    {
+      "name": "tr_birch_a2",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "45c3dd54-e5a8-4115-b085-60c00578b769",
+        "task_id": "d2cbf4a3-cb08-4b0c-bbd8-7a1079be0bef",
+        "remesh_operator": "8cecffdf-ab9a-4507-a291-caed015545d6",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/tr_birch_a2/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 12.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/tr_birch_a2.glb"
+    },
+    {
+      "name": "hd_laid2",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "cbb954a9-1853-48c5-b1d4-06d0c2125698",
+        "task_id": "411d0ce8-6266-442f-9a55-df4d4cd540a9",
+        "remesh_operator": "67df3e6d-1653-495e-a676-6395f1fd1d95",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/hd_laid2/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 2.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/hd_laid2.glb"
+    },
+    {
+      "name": "hd_thorn2",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "b223d29f-70f7-43b5-a2c6-fb358d9cae5e",
+        "task_id": "49178711-f3a4-4d44-b357-8b1f3a9a1a2c",
+        "remesh_operator": "d38f81ce-b079-41da-840f-f42e8a99eb71",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/hd_thorn2/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 2.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/hd_thorn2.glb"
+    },
+    {
+      "name": "tr_pine_b",
+      "category": "forest",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image multiview -> tripo_generate_multiview",
+        "project_id": "2b41bfdb-cd7b-4544-aded-bed712a10835",
+        "task_id": "b09d8162-8c9a-4af8-a3bb-76c853c5499a",
+        "remesh_operator": "c3323155-5f5b-4780-b135-bbd4dca20813",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed"
+      },
+      "input": "raw/tr_pine_b/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "height": 13.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/forest/tr_pine_b.glb"
     }
   ]
 }

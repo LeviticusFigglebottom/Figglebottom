@@ -47,7 +47,11 @@ uniform float tex_strength : hint_range(0.0, 1.0) = 0.0;   // 0 = legacy flat lo
 uniform float tex_tint : hint_range(0.0, 1.0) = 1.0;       // 1 = mean pulled to albedo
 uniform float tex_contrast = 1.0;           // detail contrast around the mean
 uniform int uv_mode = 0;                    // 0 object triplanar, 1 mesh UV in metres
-uniform float board_tone = 1.0;             // uv mode: ProcMesh UV2.x per-board tone (0 for imported meshes)
+uniform float board_tone = 1.0;
+// wind sway for trees and hedges (Forest hero meshes): object-space bend that
+// grows with height squared; RIME freezes it
+uniform float wind_sway = 0.0;              // metres of tip travel
+uniform float wind_height = 12.0;           // height the full sway is reached at             // uv mode: ProcMesh UV2.x per-board tone (0 for imported meshes)
 uniform int use_local_triplanar = 0; // 1 = lock triplanar to mesh/limb space (characters)
 // RIME snow: the snow set, sampled top-down
 uniform sampler2D snow_tex : source_color, hint_default_white, filter_linear_mipmap_anisotropic, repeat_enable;
@@ -108,6 +112,15 @@ float vnoise(vec3 p) {
 }
 
 void vertex() {
+	if (wind_sway > 0.0) {
+		vec3 org = MODEL_MATRIX[3].xyz;
+		float hgt = clamp(VERTEX.y / wind_height, 0.0, 1.4);
+		float ph = dot(org.xz, vec2(0.13, 0.17));
+		float g = sin(TIME * 0.8 + ph) * 0.6 + sin(TIME * 2.1 + ph * 1.7 + VERTEX.y * 0.3) * 0.25;
+		float frozen = 1.0 - 0.85 * local_rime(org);
+		vec3 wdir = (inverse(MODEL_MATRIX) * vec4(0.8, 0.0, -0.6, 0.0)).xyz;
+		VERTEX += normalize(wdir) * g * wind_sway * hgt * hgt * frozen;
+	}
 	v_local_pos = VERTEX;
 	v_local_nrm = normalize(NORMAL);
 	v_world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
