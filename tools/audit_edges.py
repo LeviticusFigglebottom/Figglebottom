@@ -150,6 +150,18 @@ def audit(area_id):
                     if 0 <= i < NX and 0 <= j < NZ:
                         hh[(i, j)] = max(hh.get((i, j), H(i, j)), sf["y"])
 
+        # thicket and hedge cells (per state): not walkable, a classed edge
+        thick_s = set()
+        for t in E.get("thickets", []):
+            if t.get("tag", "base") not in ("base", state):
+                continue
+            xs = [p[0] for p in t["poly"]]
+            zs = [p[1] for p in t["poly"]]
+            for j in range(int(min(zs) - Z0) - 1, int(max(zs) - Z0) + 2):
+                for i in range(int(min(xs) - X0) - 1, int(max(xs) - X0) + 2):
+                    if 0 <= i < NX and 0 <= j < NZ and _in_poly(X0 + i, Z0 + j, t["poly"]):
+                        thick_s.add((i, j))
+
         # walls that stand in one state only (a door barred in RIME)
         walls_s = set(walls)
         for sw in E.get("state_walls", []):
@@ -168,7 +180,7 @@ def audit(area_id):
                                           if k.get("tag", "base") in ("base", state))
 
         def walkable(i, j):
-            if (i, j) in walls_s or (i, j) in gate_cells or (i, j) in seam_cells:
+            if (i, j) in walls_s or (i, j) in gate_cells or (i, j) in seam_cells or (i, j) in thick_s:
                 return False
             if killed(i, j):
                 return False
@@ -223,7 +235,7 @@ def audit(area_id):
                               if k.get("tag", "base") in ("base", state))
                     classes["water" if wet else "cliff"] += 1     # bog water / a lethal ravine
                     continue
-                if any(_in_poly(x, z, t["poly"]) for t in thickets):
+                if n in thick_s:
                     classes["thicket"] += 1
                     continue
                 dh = h(*n) - h(i, j)
