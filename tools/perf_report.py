@@ -30,6 +30,7 @@ def table(rows):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")   # Windows consoles default to cp1252
     d = sys.argv[1]
     worst = int(sys.argv[sys.argv.index("--worst") + 1]) if "--worst" in sys.argv else 5
     meta, rows = load(d)
