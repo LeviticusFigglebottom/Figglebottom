@@ -153,11 +153,12 @@ static func _fence(groups: Dictionary, terrain: Terrain, f: Dictionary, rng: Ran
 ## Tripo hero meshes (assets/models/scatter, tools/art/manifest.json) that
 ## replace the primitive stand-ins: each instance picks one variant, so a
 ## field of a few hundred stones uses a handful of real rocks turned and
-## scaled every way. Missing files fall back to the primitives.
+## scaled every way ([glb, family, size factor to fit the primitive's slot]).
+## Missing files fall back to the primitives.
 const HERO := {
-	"rock": [["sc_stone", "M_stone_dark"], ["sc_slab", "M_stone_dark"]],
-	"boulder": [["sc_boulder", "M_stone_dark"], ["sc_slab", "M_stone_dark"]],
-	"driftwood": [["sc_driftlog", "M_drift"]],
+	"rock": [["sc_stone", "M_stone_dark", 1.0], ["sc_slab", "M_stone_dark", 0.6], ["sc_cliffchunk", "M_stone_dark", 0.62]],
+	"boulder": [["sc_boulder", "M_stone_dark", 1.0], ["sc_cliffchunk", "M_stone_dark", 1.1], ["sc_slab", "M_stone_dark", 1.05]],
+	"driftwood": [["sc_driftlog", "M_drift", 1.0]],
 }
 
 ## One MultiMesh per kind, tag (and hero variant), plus colliders for what
@@ -168,14 +169,16 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 	for hv in HERO.get(kind, []):
 		var hm := _hero_mesh(String(hv[0]), String(hv[1]), mode)
 		if hm != null:
-			variants.append([String(hv[0]), hm])
+			variants.append([String(hv[0]), hm, float(hv[2])])
 	if variants.is_empty():
-		variants.append([kind, _mesh(kind, mode)])
+		variants.append([kind, _mesh(kind, mode), 1.0])
 	for vi in variants.size():
 		var pick: Array = []
 		for i in xfs.size():
 			if i % variants.size() == vi:
-				pick.append(xfs[i])
+				var t: Transform3D = xfs[i]
+				t.basis = t.basis.scaled_local(Vector3.ONE * float(variants[vi][2]))
+				pick.append(t)
 		if pick.is_empty():
 			continue
 		var mm := MultiMesh.new()

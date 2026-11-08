@@ -86,6 +86,7 @@ static func has_piece(id: String) -> bool:
 ##   glb, family, length (m along local Z), yaw (deg), lift (m), flip (keel up)
 const HERO_PIECES := {
 	"boat": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 6.0, "yaw": 90.0, "lift": 0.0},
+	"drying_rack": {"glb": "res://assets/models/kit/kit_drying_rack_hero.glb", "family": "M_wood", "length": 4.0, "yaw": 90.0, "lift": 0.0},
 	"boat_upturned": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 5.8, "yaw": 90.0, "lift": 1.32, "flip": true},
 }
 
