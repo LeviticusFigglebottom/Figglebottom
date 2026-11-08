@@ -20,6 +20,8 @@ const STOPS := [
 	{"id": "saltfell_steading", "from": Vector3(16.0, 26.0, -26.0), "to": Vector3(-14.0, 26.0, -26.0), "look": Vector3(0, 30.0, -130)},
 ]
 const STOP_T := 11.0
+## The ledger names the winter as the player chose it, not by its data id.
+const DIFF_NAMES := {"gentle": "The Gentle Thaw", "long": "The Long Winter", "hard": "The Hard Frost"}
 
 var _stage: Node3D
 var _cam: Camera3D
@@ -263,7 +265,7 @@ func _slot_label(i: int, sum) -> String:
 	var hours := int(sum["play_s"]) / 3600
 	var mins := (int(sum["play_s"]) % 3600) / 60
 	return "%s   Level %d  ·  %s  ·  %s  ·  %dh %02dm" % [
-		name_, sum["level"], area_name, String(sum["difficulty"]), hours, mins]
+		name_, sum["level"], area_name, DIFF_NAMES.get(String(sum["difficulty"]), "The Long Winter"), hours, mins]
 
 func _pick_slot(i: int) -> void:
 	if _slots_mode == "new" and World.slot_summary(i) != null and _armed_slot != i:
