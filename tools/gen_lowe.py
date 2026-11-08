@@ -125,16 +125,23 @@ def door_front(bid, out=2.2):
 
 
 spawners = []
+# the barrow dead sit up in the barrow mouths facing the road (LOWE.md 2);
+# a character faces -z, so the door's own yaw is turned round
 for bid, _x, _z, _w, _l in L.LONG_BARROWS:
     if bid == "kin_c":
         continue
     fx, fz = door_front(bid)
     spawners.append({"enemy": "barrow_sleeper", "stand_in": "rimewalker", "id": "sleeper_" + bid,
-                     "at": at(fx, fz, 0.1), "face": r2(DOORS[bid][0])})
+                     "at": at(fx, fz, 0.1), "face": r2(DOORS[bid][0] + 180), "pose": "sit_up"})
+# the closed barrow: one keener kneels at its door, its back to the road
+cfx, cfz = door_front("kin_c", 1.6)
 spawners += [
     {"enemy": "keener", "stand_in": "oarsman", "id": "keener_road", "at": at(-30, -128, 0.1), "face": 200},
+    {"enemy": "keener", "stand_in": "oarsman", "id": "keener_closed", "at": at(cfx, cfz, 0.1),
+     "face": r2(DOORS["kin_c"][0]), "pose": "kneel"},
     {"enemy": "keener", "stand_in": "oarsman", "id": "keener_mounds", "at": at(14, -147, 0.1), "face": 160},
     {"enemy": "cairn_carrier", "stand_in": "rimewalker", "id": "carrier_bog", "at": at(-60, -160, 0.1), "face": 30},
+    {"enemy": "cairn_carrier", "stand_in": "rimewalker", "id": "carrier_road", "at": at(22, -158, 0.1), "face": 150},
     {"enemy": "barrow_sleeper", "stand_in": "rimewalker", "id": "sleeper_bridge", "at": at(-12, -95, 0.1), "face": 180},
     {"enemy": "turfwright", "stand_in": "netmender", "id": "turfwright", "at": [r2(CX), r2(A + 0.1), r2(CZ - 7)],
      "face": 0, "dead_once": True, "frost_veil_id": "open_barrow_veil"},
@@ -142,11 +149,27 @@ spawners += [
 
 kin_a = [b for b in L.LONG_BARROWS if b[0] == "kin_a"][0]
 pa = rot_off(kin_a[1], kin_a[2], DOORS["kin_a"][0], 0, kin_a[4] * 0.5 - 5.0)
+ca = door_front("kin_a", -0.6)       # just inside the door, where the sleeper sat
+sa = door_front("kin_d", 0.4)        # the spade propping the door
+wa = door_front("kin_c", 0.5)        # on the turf before the closed door
+ta = door_front("twin", 5.6)         # the threshold stone, below the twins' door
+M = "res://assets/models/"
 pickups = [
     {"id": "peat_island_iron", "at": [r2(L.ISLAND[0] + 0.5), r2(W + 0.5), r2(L.ISLAND[1] + 0.8)], "item": "bog_iron",
      "count": 2, "tag": "rime", "label": "Pry up the bog-iron"},
     {"id": "kin_a_grave_goods", "at": [r2(pa[0]), g(pa[0], pa[1]), r2(pa[1])], "warmth": 60, "tag": "rime",
      "label": "Take what was left for the road"},
+    # LOWE.md 2, 3, 8: the Keepsakes threads and the region's finds
+    {"id": "orm_cord", "at": at(ca[0], ca[1]), "item": "item_orm_cord", "tag": "rime",
+     "label": "Take the knot-cord", "set_flag": "ks_aud_cord_found"},
+    {"id": "hesk_tongs", "at": at(-43.15, -185.8), "item": "item_hesk_tongs", "tag": "rime",
+     "label": "Chip the tongs out of the ice", "set_flag": "ks_hesk_tongs_found"},
+    {"id": "turf_spade", "at": at(sa[0], sa[1]), "item": "turf_spade", "tag": "rime",
+     "label": "Work the spade loose", "scene": M + "weapons/turf_spade.glb"},
+    {"id": "woad_thread", "at": at(wa[0], wa[1]), "item": "ks_woad_thread", "tag": "rime",
+     "label": "Untie the thread"},
+    {"id": "twin_spindles", "at": at(ta[0], ta[1]), "item": "item_twin_spindles", "tag": "rime",
+     "label": "Take the spindles", "require_flag": "ks_turfwright_released"},
 ]
 
 portals, bridge = seams("lowe_barrows")
@@ -191,7 +214,14 @@ D = {
     "houses": HOUSES,
     "boxes": BOXES,
     "blockers": BLOCKERS,
-    "hearths": [{"id": "hs_barrow_road", "name": "the Barrow Road", "at": at(-82, -104), "rot": 140}],
+    "hearths": [
+        {"id": "hs_barrow_road", "name": "the Barrow Road", "at": at(-82, -104), "rot": 140},
+        # the road's end, in the lee of a drying stack (LOWE.md 1)
+        {"id": "hs_drying_stacks", "name": "the Drying Stacks", "at": at(32, -166), "rot": 210},
+        # wakes when the Turfwright is released (enemies.json release_hearth)
+        {"id": "hs_open_barrow", "name": "the Open Barrow", "at": at(39.5, -203.5), "rot": 160,
+         "require_flag": "ks_turfwright_released"},
+    ],
     "spawners": spawners,
     "frost_veils": [{"id": "open_barrow_veil", "at": VEIL, "rot": 0, "tag": "rime"}],
     "npcs": [
