@@ -290,3 +290,14 @@ Budget for the batch: about 2,500 credits, stop below 11,000. Balance at start: 
 | 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | pell_thaw | 7ddee1c8-6dfc-45df-b2c2-ee366bc6491c | 55 | — | op e53d1134 |
 | 2026-11-08 | remesh quad 10k | pell_thaw | 7ddee1c8-… | 40 | — | op 155bc8e5 |
 | 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | pell_thaw | 7ddee1c8-… | 20 | — | op 3461a306; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | arne_thaw | 3a0a3466-d4b8-43f9-932c-c30660c4cacc | 55 | — | op 1969b700 |
+| 2026-11-08 | remesh quad 10k | arne_thaw | 3a0a3466-… | 40 | — | op 5b1d9eeb |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | arne_thaw | 3a0a3466-… | 20 | — | op 1d59bfc7; presets free |
+| 2026-11-08 | tripo_animate prompt (text_to_motion): sit_talk ("Relaxed Conversation") | arne_thaw | 3a0a3466-… | 20 | — | op 5faa3aad |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | liv | e478dc45-0b43-4b5c-b8b4-4e7307c43a38 | 55 | — | op 03bc05a9 |
+| 2026-11-08 | remesh quad 10k | liv | e478dc45-… | 40 | — | op f8691a3c |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | liv | e478dc45-… | 20 | — | op 9341e50b; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | asta | fa3a113a-772f-415a-b81b-041682659f08 | 55 | — | op 533bb3c3 |
+| 2026-11-08 | remesh quad 10k | asta | fa3a113a-… | 40 | — | op 7de4ad2c |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | asta | fa3a113a-… | 20 | — | op b8986d60; presets free |
+| 2026-11-08 | tripo_animate motion_asset_id (reuse of arne_thaw's "Relaxed Conversation"): sit_talk | asta | fa3a113a-… | 0 | — | op 042e3d8e |
