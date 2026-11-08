@@ -180,7 +180,7 @@ Transition (2.8 s, invulnerable): the frost on the floor goes grey. He walks bac
 | **Pour** (`pour`) | The Bearer more than 6 m off: he turns to the table and lifts a horn (1.6 s) | No attack. He fills the horns along the table, his back to the Bearer: open. Hits do not stop him. Every guest standing is mended. Left alone 5 s, a guest stands at an empty place and he turns back. |
 | Horn fist, Tip the horn, Raise the guests | as above | |
 
-**Release.** At 0 he sets the horn down on the table and sits on the end of the bench, the table on his back settled along the one on the floor. The guests still standing sit down where they are. Across the hall the bar on the front doors lifts and the doors swing open by themselves (`gate_hall_doors`). The frost veil at the byre door falls as meltwater. Title card. On the end of the table where he sat is his own horn, the only empty one; the prompt is *Take the Host's cup*. On the inside of the door-post the guest-tally can now be untied.
+**Release.** At 0 he sets the horn down on the table and sits on the end of the bench, the table on his back settled along the one on the floor. The guests still standing sit down where they are. Across the hall the bar on the front doors lifts and the doors swing open by themselves (`gate_hall_doors`). The frost veil at the byre door falls as meltwater. Title card. On the boards beside him, where he set it down, is his own horn, the only empty one; the prompt is *Take the Host's cup*. On the inside of the door-post the guest-tally can now be untied.
 
 **Music cue notes:** phase 1 is the hall noise with no song in it, benches scraping. Phase 2 adds the guests' feet on the boards and a low hum under the pour. Phase 3 is the pour alone, a horn filling, again, and again.
 
@@ -304,7 +304,7 @@ Voice per `WRITING.md`: a plain fact, then one human detail. No morals.
 - **In the arena, at once:** he sets the horn down and sits on the bench end; the guests still up sit where they are; his frost pools go grey and are gone; the veil melts; the card.
 - **The doors:** the bar lifts and the front doors swing open (`release_gates`: `hall_doors` sets the area flag `gate_hall_doors` and swings the leaves now; the rebuilt area builds them open).
 - **Flag:** `ks_host_released` (`release_flag`), which turns both threads and shows the tally.
-- **Drop:** `item_host_cup` (`release_drop`), set on the table end beside where he sat.
+- **Drop:** `item_host_cup` (`release_drop`), set down beside where he sat, toward the Bearer.
 - **The tally:** the guest-tally pickup on the door-post (`appear_flag` `ks_host_released`), which raises `ks_guest_tally_found`.
 - **Hearth:** `hs_long_table` wakes at the cold fire (`release_hearth`).
 
