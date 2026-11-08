@@ -452,7 +452,13 @@ func _lay_gate_down() -> void:
 	get_parent().add_child(laid_gate)
 	var off: Array = gd.get("off", [0.0, 0.0])
 	var at := grave_point() + Vector3(float(off[0]), 0.0, float(off[1]))
-	laid_gate.global_position = Vector3(at.x, global_position.y - 0.05, at.z)
+	var gy := global_position.y
+	var from := Vector3(at.x, global_position.y + 1.2, at.z)   # (under the hedge tops and the pine)
+	var q := PhysicsRayQueryParameters3D.create(from, from + Vector3.DOWN * 4.0, RH.M_WORLD_ALL)
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if not hit.is_empty():
+		gy = (hit["position"] as Vector3).y   # on the ground in the gap, not where he stood
+	laid_gate.global_position = Vector3(at.x, gy + 0.04, at.z)
 	laid_gate.rotation_degrees = Vector3(float(gd.get("tilt", -90.0)), float(gd.get("rot", 0.0)), 0.0)
 	laid_gate.scale = Vector3.ONE * float(gd.get("scale", 0.8))
 	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", laid_gate.global_position, -2.0, 0.45)
