@@ -173,3 +173,7 @@ Every generated asset has one row here. Raw Tripo downloads are never committed:
 | docs/art/concept/refs/lm_wellhead_ref.jpg | reference image for lm_wellhead (prompt in the lm_wellhead.glb row) | — | — | tripo_image | — | PIL resize to 1024 |
 | assets/models/props/tally_stick.tscn | procedural: Godot primitives (hazel rod, notches) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/ivo_mitten.tscn | procedural: Godot primitives (felt mitten, leather palm, darned thumb) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/host_cup.tscn | procedural: Godot primitives (ox-horn on a birch foot, tin band) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/guest_tally.tscn | procedural: Godot primitives (coiled plaited cord, knots) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/ottar_stick.tscn | procedural: Godot primitives (rowan shaft, bark grip, horn cap) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/barrel_head.tscn | procedural: Godot primitives (pine disc, brand, nails) | — | — | — | none | tools/art/procedural/small_props.py |

@@ -1,0 +1,84 @@
+[gd_scene load_steps=10 format=3]
+
+[sub_resource type="StandardMaterial3D" id="horn"]
+albedo_color = Color(0.620, 0.520, 0.360, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="tip"]
+albedo_color = Color(0.250, 0.200, 0.150, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="birch"]
+albedo_color = Color(0.780, 0.700, 0.550, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="tin"]
+albedo_color = Color(0.700, 0.720, 0.740, 1)
+roughness = 0.35
+
+[sub_resource type="StandardMaterial3D" id="dust"]
+albedo_color = Color(0.420, 0.380, 0.330, 1)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="seg"]
+top_radius = 0.05
+bottom_radius = 0.04
+height = 0.07
+radial_segments = 12
+material = SubResource("horn")
+
+[sub_resource type="CylinderMesh" id="foot"]
+top_radius = 0.035
+bottom_radius = 0.06
+height = 0.05
+radial_segments = 12
+material = SubResource("birch")
+
+[sub_resource type="CylinderMesh" id="band"]
+top_radius = 0.058
+bottom_radius = 0.058
+height = 0.022
+radial_segments = 14
+material = SubResource("tin")
+
+[sub_resource type="CylinderMesh" id="inside"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 0.004
+radial_segments = 14
+material = SubResource("dust")
+
+[node name="HostCup" type="Node3D"]
+metadata/upright = true
+
+[node name="Foot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
+mesh = SubResource("foot")
+
+[node name="H0" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.55, 0, 0, 0, 1, 0, 0, 0, 0.55, -0, 0.08, 0)
+mesh = SubResource("seg")
+
+[node name="H1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6625, 0, 0, 0, 1, 0, 0, 0, 0.6625, -0.0171449, 0.142, 0)
+mesh = SubResource("seg")
+
+[node name="H2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.775, 0, 0, 0, 1, 0, 0, 0, 0.775, -0.0322109, 0.204, 0)
+mesh = SubResource("seg")
+
+[node name="H3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8875, 0, 0, 0, 1, 0, 0, 0, 0.8875, -0.0433712, 0.266, 0)
+mesh = SubResource("seg")
+
+[node name="H4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0492725, 0.328, 0)
+mesh = SubResource("seg")
+
+[node name="Band" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0)
+mesh = SubResource("band")
+
+[node name="Dust" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.355, 0)
+mesh = SubResource("inside")

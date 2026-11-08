@@ -151,5 +151,25 @@
    },
    "weight": 6.5
   }
+ },
+ "item_host_cup": {
+  "name": "The Host's Cup",
+  "desc": "A big ox-horn on a turned birch foot, banded in tin at the rim, from the high seat of Tarnhall. Every horn on the long table was full and frozen over. This one was dry, with a skin of dust inside it."
+ },
+ "item_guest_tally": {
+  "name": "Guest-Tally",
+  "desc": "A long plaited cord of yellow and oat wool, knotted once for each guest let in at the door. Lusse plaited it; the knots are the Host's, big and careful. Near the end the knots are all one knot, untied and tied again until the wool has felted."
+ },
+ "goat_song": {
+  "name": "The Goat Song",
+  "desc": "A hall song about a goat that ate a sail, then the mast, then the man who said it couldn't. Thirty-one verses and one chorus. Lusse sings the verses. Anyone in earshot is the chorus, and she stops the song until they are."
+ },
+ "item_ottar_staff": {
+  "name": "Ottar's Stick",
+  "desc": "A rowan walking stick with a horn cap, the bark left on for the grip. It was leaning inside the barred door, where you put a thing so you will see it on your way out. The mud on the tip is from the steps coming up."
+ },
+ "item_barrel_head": {
+  "name": "Fish-Barrel Head",
+  "desc": "The round pine head of a fish barrel, branded with a trader's mark: a knot inside a ring. Forty barrels came up the water for the feast. This one had only been started on; the nails are half drawn."
  }
 }
