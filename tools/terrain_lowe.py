@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_saltfell as S  # noqa: E402
+import tarn_land as T  # noqa: E402
 from terrain_saltfell import fbm, smooth, vnoise, _lerp, _seg_dist, _pad_weight  # noqa: E402
 
 OUT_DIR = S.OUT_DIR
@@ -151,6 +152,7 @@ def height(x, z):
             h = max(h, W + 0.5 - max(0.0, di - ISLAND[2]) * 0.6)
     if z < -224:
         h = _kettle_carve(x, z, h)
+        h = T.tarn_land(x, z, h)
     return h
 
 
@@ -197,6 +199,32 @@ def _road_t(x, z):
 _ROAD_Y0 = None
 
 
+def wall_rib(x, south):
+    """Along each fjord wall: 1 on a buttress crest, 0 in a gully between."""
+    return 1.0 - abs(2.0 * vnoise(x * 0.045 + (0.0 if south else 17.0), 0.3, 120) - 1.0)
+
+
+# gullies on the north wall that carry a fall into the fjord (THAW running,
+# RIME frozen); gen_kettle hangs the water down them
+FALLS_X = [-118.0, -64.0, -6.0]
+
+
+def fjord_wall(x, z, wd, south):
+    """The fjord's walls: sheer buttresses, gullies recessed between them with
+    scree fanned at their foot, the rock in ledged beds (turf grows on the
+    ledges: the terrain shader greens anything flat enough)."""
+    r = wall_rib(x, south)
+    for fx in ([] if south else FALLS_X):
+        r = min(r, 0.15 + 0.85 * smooth(2.0, 7.0, abs(x - fx)))
+    recess = 4.5 * (1.0 - r) ** 2                     # gullies cut back into the wall
+    wd2 = max(0.0, wd - recess)
+    steep = 2.6 * (0.65 + 0.75 * r)                   # buttresses sheer, gullies broken
+    wall = SHELF_Y + 0.5 + max(0.0, S.strata(wd2 * steep, x, z, 95))
+    # a scree fan spilling out of each gully's foot
+    fan = (1.0 - r) ** 2 * max(0.0, 1.0 - wd2 / 5.0) * (1.6 + 0.8 * fbm(x * 0.3, z * 0.3, 1, 121))
+    return wall + fan * smooth(0.0, 1.5, wd)
+
+
 def shelf_width(x):
     """How far the shingle shelf runs out from the south wall (to the waterline)."""
     return 12.0 + 2.0 * fbm(x * 0.05, 1.3, 1, 92)
@@ -222,13 +250,12 @@ def _kettle_carve(x, z, h):
                 if d > hw - shelf_w and sp < 0.4 and x > -128:
                     # a shingle lip shelving down into the water
                     lip = smooth(hw - shelf_w, hw - shelf_w + 5.0, d)
-                    floor = max(floor, _lerp(-0.6, SHELF_Y, lip))
+                    floor = max(floor, _lerp(-0.6, SHELF_Y + 0.08 * fbm(x * 0.3, z * 0.3, 1, 93), lip))
                 # rock ribs run down from the wall into the water, cutting the shelf
                 floor = max(floor, 10.0 * sp - (hw - d) * 2.2)
             h = min(h, floor)
         else:
-            wall = SHELF_Y + 0.5 + max(0.0, S.strata(max(0.0, d - hw) * 2.6, x, z, 95))  # (strata dips below 0)
-            h = min(h, wall)
+            h = min(h, fjord_wall(x, z, d - hw, south))
     # the Kettle Road: down through a cleft in the wall to the shelf
     rd, rt = _road_t(x, z)
     if rd < 14:

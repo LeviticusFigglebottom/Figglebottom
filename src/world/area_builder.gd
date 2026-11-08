@@ -28,6 +28,8 @@ static func build(area_id: String) -> Area:
 		area.nav_aabb = AABB(Vector3(nb[0], nb[1], nb[2]), Vector3(nb[3] - nb[0], nb[4] - nb[1], nb[5] - nb[2]))
 	for spec in def.get("water", []):
 		_water(area, spec)
+	for spec in def.get("falls", []):
+		_falls(area, spec)
 	for spec in def.get("hazards", []):
 		var hz := HazardVolume.new()
 		hz.kind = String(spec.get("kind", "fall"))
@@ -49,6 +51,14 @@ static func build(area_id: String) -> Area:
 		_piece(area, spec, true)
 	for spec in def.get("props", []):
 		_piece(area, spec, _prop_collides(spec))
+	for spec in def.get("landmarks", []):
+		# a Tripo scene set as dressing (collision stripped; blockers do that)
+		var lm := BuildingGen._landmark(String(spec["scene"]))
+		if lm != null:
+			area.attach(lm, String(spec.get("tag", "base")))
+			_place(lm, spec)
+			if spec.has("scale"):
+				lm.scale = Vector3.ONE * float(spec["scale"])
 	for spec in def.get("skyline", []):
 		var sk: Dictionary = spec.duplicate()
 		sk["flames"] = false
@@ -78,7 +88,21 @@ static func build(area_id: String) -> Area:
 		g.area_id = area_id
 		g.locked_prompt = spec.get("locked_prompt", "Barred from the other side")
 		g.door_width = float(spec.get("width", 3.6))
-		area.base.add_child(g)
+		if spec.has("tag"):
+			g.layer_bit = _tag_bit(String(spec["tag"]))
+			area.attach(g, String(spec["tag"]))    # (Tarnhall's doors: barred in RIME only)
+		else:
+			area.base.add_child(g)
+		if spec.has("dressing"):
+			# the gate's look (a Tripo pair of doors): shown while it is barred
+			var dr: Dictionary = spec["dressing"]
+			var lm := BuildingGen._landmark(String(dr["scene"]))
+			if lm != null:
+				lm.set_meta("gate_dressing", true)
+				lm.position = _v3(dr.get("offset", [0, 0, 0]))
+				lm.rotation.y = deg_to_rad(float(dr.get("rot", 0)))
+				lm.scale = Vector3.ONE * float(dr.get("scale", 1.0))
+				g.add_child(lm)
 		_place(g, spec)
 	for spec in def.get("spawners", []):
 		var s := Spawner.new()
@@ -86,6 +110,7 @@ static func build(area_id: String) -> Area:
 		# a foe still being made (art in flight) fights as its stand-in until
 		# its row lands in enemies.json; the id stays, so the model drops in
 		if not DB.table("enemies").has(s.enemy_id) and spec.has("stand_in"):
+			s.stand_in_for = s.enemy_id
 			s.enemy_id = String(spec["stand_in"])
 		s.face_deg = float(spec.get("face", 0))
 		s.dead_once = spec.get("dead_once", false)
@@ -251,7 +276,100 @@ static func _keep_clear(def: Dictionary) -> Array:
 			out.append(Vector3(p.x, p.z, radii[key]))
 	var st := _v3(def.get("start", {}).get("pos", [0, 0, 0]))
 	out.append(Vector3(st.x, st.z, 3.0))
+	# no grass on a house floor: a chain of discs down each house's length
+	for h in def.get("houses", []):
+		if String(h.get("kind", "house")) == "barrow":
+			continue
+		var w := float(h["size"][0])
+		var l := float(h["size"][1])
+		var a := deg_to_rad(float(h.get("yaw", 0.0)))
+		var ax := Vector2(sin(a), cos(a))           # local +z in world xz
+		var t := -l * 0.5 + w * 0.35
+		while t <= l * 0.5 - w * 0.35 + 0.01:
+			out.append(Vector3(float(h["center"][0]) + ax.x * t, float(h["center"][1]) + ax.y * t, w * 0.5 + 0.2))
+			t += w * 0.3
 	return out
+
+## A fall of water hung down a gully: a ribbon through "pts" (top first),
+## "width" across along "side". Tag thaw = running water with spray at the
+## foot; tag rime = the same fall frozen.
+static func _falls(area: Area, spec: Dictionary) -> void:
+	var tag: String = spec.get("tag", "thaw")
+	var pts: Array = spec["pts"]
+	var side := _v3(spec.get("side", [1, 0, 0])).normalized()
+	var w0 := float(spec.get("width", 2.0))
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var run := 0.0
+	var total := 0.0
+	for i in range(1, pts.size()):
+		total += _v3(pts[i]).distance_to(_v3(pts[i - 1]))
+	var prev := Vector3.ZERO
+	for i in pts.size():
+		var p := _v3(pts[i])
+		if i > 0:
+			run += p.distance_to(prev)
+		prev = p
+		var v := run / maxf(total, 0.01)
+		var w := w0 * (0.7 + 0.6 * v)          # spreading as it falls
+		if not spec.has("side"):
+			# a stream: across its flow, level
+			var a2 := _v3(pts[maxi(i - 1, 0)])
+			var b2 := _v3(pts[mini(i + 1, pts.size() - 1)])
+			var fl := Vector3(b2.x - a2.x, 0.0, b2.z - a2.z)
+			if fl.length_squared() > 0.0001:
+				side = Vector3(-fl.z, 0.0, fl.x).normalized()
+			w = w0
+		st.set_uv(Vector2(0, v * total * 0.2))
+		st.add_vertex(p - side * w * 0.5)
+		st.set_uv(Vector2(1, v * total * 0.2))
+		st.add_vertex(p + side * w * 0.5)
+	for i in pts.size() - 1:
+		var a := i * 2
+		st.add_index(a); st.add_index(a + 1); st.add_index(a + 2)
+		st.add_index(a + 1); st.add_index(a + 3); st.add_index(a + 2)
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.name = "Falls"
+	mi.mesh = st.commit()
+	mi.material_override = MaterialLib.get_mat("M_falls", _state_mode(tag))
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	area.attach(mi, tag)
+	if tag == "thaw":
+		# spray where it lands
+		var foot := _v3(pts[pts.size() - 1])
+		var mist := CPUParticles3D.new()
+		mist.amount = 24
+		mist.lifetime = 2.2
+		mist.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+		mist.emission_box_extents = Vector3(w0 * 0.6, 0.3, 0.8)
+		mist.direction = Vector3(0, 1, 0)
+		mist.spread = 50.0
+		mist.initial_velocity_min = 0.6
+		mist.initial_velocity_max = 1.6
+		mist.gravity = Vector3(0, -0.15, 0)
+		mist.scale_amount_min = 1.2
+		mist.scale_amount_max = 2.6
+		var q := QuadMesh.new()
+		q.size = Vector2(1.2, 1.2)
+		var m := StandardMaterial3D.new()
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+		m.albedo_color = Color(0.95, 0.93, 0.88, 0.16)
+		var g := Gradient.new()
+		g.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 0)])
+		var gt := GradientTexture2D.new()
+		gt.gradient = g
+		gt.fill = GradientTexture2D.FILL_RADIAL
+		gt.fill_from = Vector2(0.5, 0.5)
+		gt.fill_to = Vector2(1.0, 0.5)
+		m.albedo_texture = gt
+		q.material = m
+		mist.mesh = q
+		mist.visibility_range_end = 140.0
+		area.attach(mist, "thaw")
+		mist.position = foot + Vector3(0, 0.4, 0)
 
 ## Sea, river and pool planes on the existing water shader.
 static func _water(area: Area, spec: Dictionary) -> void:

@@ -150,6 +150,15 @@ def audit(area_id):
                     if 0 <= i < NX and 0 <= j < NZ:
                         hh[(i, j)] = max(hh.get((i, j), H(i, j)), sf["y"])
 
+        # walls that stand in one state only (a door barred in RIME)
+        walls_s = set(walls)
+        for sw in E.get("state_walls", []):
+            if sw.get("tag", "base") not in ("base", state):
+                continue
+            for j in range(int(sw["min"][1] - Z0), int(sw["max"][1] - Z0) + 1):
+                for i in range(int(sw["min"][0] - X0), int(sw["max"][0] - X0) + 1):
+                    walls_s.add((i, j))
+
         def h(i, j):
             return hh.get((i, j), H(i, j))
 
@@ -159,7 +168,7 @@ def audit(area_id):
                                           if k.get("tag", "base") in ("base", state))
 
         def walkable(i, j):
-            if (i, j) in walls or (i, j) in gate_cells or (i, j) in seam_cells:
+            if (i, j) in walls_s or (i, j) in gate_cells or (i, j) in seam_cells:
                 return False
             if killed(i, j):
                 return False
@@ -202,7 +211,7 @@ def audit(area_id):
                 if n in seam_cells:
                     classes["seam"] += 1
                     continue
-                if n in walls or n in gate_cells:
+                if n in walls_s or n in gate_cells:
                     classes["building"] += 1
                     continue
                 if h(*n) < deep:

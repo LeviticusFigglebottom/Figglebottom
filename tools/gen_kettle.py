@@ -21,6 +21,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_kettle as K  # noqa: E402
 import terrain_lowe as L  # noqa: E402
 from seams_kettle import seam  # noqa: E402
+from seams_tarnhall import seam as tarn_seam  # noqa: E402
+import tarn_land as TL  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if __name__ == "__main__" and "--keep-terrain" not in sys.argv:
@@ -48,7 +50,7 @@ def edge_z(x):
     return L.fjord_z(x) + L.fjord_half(x) - L.shelf_width(x)
 
 
-DECK = L.SHELF_Y + 0.03         # jetties and hut platforms stand this high
+DECK = L.SHELF_Y + 0.32         # jetties and hut platforms: a natural step up off the shingle
 HOUSES, BUILDINGS, PROPS, BOXES, BLOCKERS, FLOORS = [], [], [], [], [], []
 
 
@@ -70,6 +72,8 @@ def deck(x0, z0, x1, z1, tag="base"):
 # --- the jetties round the two rock spurs that cut the shelf (THAW route)
 for spx, spw in L.SHELF_SPURS:
     xa, xb = spx - spw - 4.0, spx + spw + 4.0
+    if spx > -30:
+        xa = spx - spw + 0.6          # (the third fish-house stands where the leg would)
     za, zb = edge_z(xa), edge_z(xb)
     zo = min(za, zb) - 7.0
     deck(xa - 1.2, za + 5.6, xa + 1.2, zo)          # out from the shelf
@@ -96,7 +100,7 @@ BOXES.append({"min": [TRADER[0] - 0.1, 0.4, TRADER[1] - 0.1], "max": [TRADER[0] 
 for k, (bx, dz, rot) in enumerate([(-88, -10, 70), (-60, -16, 100), (-12, -12, 75), (2, -22, 110), (-100, -18, 60)]):
     bz = edge_z(bx) + dz
     PROPS.append({"kit": "boat", "at": [bx, 0.05, r2(bz)], "rot": rot, "tag": "thaw", "embed": True})
-    PROPS.append({"kit": "boat", "at": [bx + 3, -0.5, r2(bz - 6)], "rot": rot + 25, "tag": "rime", "collide": False, "embed": True})
+    PROPS.append({"kit": "boat", "at": [bx + 3, -1.0, r2(bz - 6)], "rot": rot + 25, "tag": "rime", "collide": False, "embed": True})
 # the fish-kettles on the shelf
 for (kx, dz) in [(-54, 6.0), (-22, 5.5), (-17, 6.0)]:
     PROPS.append({"kit": "fish_kettle", "at": at(kx, edge_z(kx) + dz), "rot": kx * 7 % 360})
@@ -105,7 +109,7 @@ for (kx, dz) in [(-54, 6.0), (-22, 5.5), (-17, 6.0)]:
 ICE = {"min": [-150.0, -0.6, -365.0], "max": [46.0, 0.05, -275.0]}
 BLOCKERS.append({"min": ICE["min"], "max": ICE["max"], "tag": "rime"})
 BOXES.append({"min": [ICE["min"][0], 0.02, ICE["min"][2]], "max": [ICE["max"][0], 0.07, ICE["max"][2]],
-              "mat": "M_ice", "tag": "rime", "collide": False})
+              "mat": "M_ice_sheet", "tag": "rime", "collide": False})
 
 
 def thaw_water_blockers():
@@ -151,7 +155,12 @@ hazards = [
 for t in THIN:
     BLOCKERS.append({"min": [t["min"][0] - 0.3, -1.0, t["min"][2] - 0.3], "max": [t["max"][0] + 0.3, 8.0, t["max"][2] + 0.3],
                      "tag": "rime", "nav_only": True})
-water = [{"at": [0, 0.0, -300], "size": [4000, 4000]}]
+# THAW: open water everywhere. RIME: clear ice over the fjord (the boats show
+# through it) on dark depths; open sea beyond the floe edge.
+water = [{"at": [0, 0.0, -300], "size": [4000, 4000], "tag": "thaw"},
+         {"at": [-675.0, 0.0, -300], "size": [1050, 4000], "tag": "rime"},
+         {"at": [-52.0, -3.0, -320], "size": [200, 100], "tag": "rime"},
+         {"at": [446.0, 0.0, -300], "size": [800, 4000], "tag": "rime"}]
 for t in THIN:
     water.append({"at": [r2((t["min"][0] + t["max"][0]) * 0.5), 0.08, r2((t["min"][2] + t["max"][2]) * 0.5)],
                   "size": [r2(t["max"][0] - t["min"][0]), r2(t["max"][2] - t["min"][2])], "tag": "rime"})
@@ -181,6 +190,62 @@ for k in range(26):
         continue
     place.append({"kind": "ice_floe", "at": [r2(x), r2(z)], "y": -0.15, "rot": r2(k * 61 % 360),
                   "scale": [r2(1.4 + 0.8 * abs(math.sin(k))), 0.6, 1.6], "tag": "rime"})
+
+# --- the walls: falls down the north gullies, running in THAW, frozen in RIME
+FALLS = []
+for fx in L.FALLS_X:
+    fzz = fz(fx) - L.fjord_half(fx)            # the north waterline
+    pts, top = [], None
+    zz = fzz - 40.0
+    while zz <= fzz + 0.6:
+        hh = L.height(fx, zz)
+        if top is None or hh < top - 0.3:
+            pts.append([fx, r2(hh + 0.3), r2(zz)])
+            top = hh
+        zz += 1.0
+    pts[-1][1] = 0.05
+    if len(pts) >= 4:
+        FALLS.append({"pts": pts, "width": 2.2, "side": [1, 0, 0], "tag": "thaw"})
+        FALLS.append({"pts": [[p[0], p[1] + 0.15, p[2] + 0.2] for p in pts], "width": 3.0, "side": [1, 0, 0], "tag": "rime"})
+
+# the tarn's outflow down the Tarn Steps, over the lip into the fjord head
+_st = TL.stream(L.height)
+FALLS.append({"pts": _st, "width": 2.4, "tag": "thaw"})
+FALLS.append({"pts": [[p[0], p[1] + 0.12, p[2]] for p in _st], "width": 2.8, "tag": "rime"})
+
+# --- the shelf: nets drying, fish racks, boats hauled up, rope and creels
+# (kept to the wall side so the shelf stays a walk; nothing on a jetty root,
+# a house walk, a hearth or where the foes stand)
+KEEP_CLEAR = [f["min"][0] for f in FLOORS] + [f["max"][0] for f in FLOORS] + [-104, -58, -52, -90, -12, -54, -22, -17]
+SHELF_KIT = ["net_frame", "drying_rack", "boat_upturned", "creel_stack", "net_frame", "rope_coil", "drying_rack", "creel_stack"]
+
+
+def wall_foot(x):
+    """The back of the shelf, a little short of where the wall rises."""
+    z = fz(x) + L.fjord_half(x)
+    while L.height(x, z) > L.SHELF_Y + 0.08 and z > edge_z(x) + 6:
+        z -= 0.5
+    return z - 1.6
+
+
+k = 0
+x = -124.0
+while x < 34.0:
+    if all(abs(x - c) > 4.0 for c in KEEP_CLEAR) and not (-80 < x < -64) and not (-26 < x < -10 and False):
+        kit = SHELF_KIT[k % len(SHELF_KIT)]
+        zf = wall_foot(x)
+        if zf - edge_z(x) > 7.5:
+            big = kit in ("boat_upturned", "drying_rack", "net_frame")
+            PROPS.append({"kit": kit, "at": at(x, zf - (1.0 if kit == "boat_upturned" else 0.0)),
+                          "rot": 90 if kit == "boat_upturned" else (k * 13) % 9 - 4, "collide": kit == "boat_upturned"})
+            if not big:
+                PROPS.append({"kit": "rope_coil", "at": at(x + 1.4, zf + 0.2), "rot": k * 40 % 360, "collide": False})
+        k += 1
+    x += 6.5
+# coils and creels on the jetty roots and the house walks
+for f in FLOORS[:]:
+    if f["tag"] == "base" and f["max"][1] - f["min"][1] > 5 and f["max"][0] - f["min"][0] < 3:
+        PROPS.append({"kit": "rope_coil", "at": [r2(f["min"][0] + 0.45), DECK, r2(f["max"][1] - 1.2)], "rot": 30, "collide": False})
 
 # --- people and the frost-taken
 SH = lambda x, d=0.0: at(x, edge_z(x) + 7.5 + d)  # noqa: E731
@@ -238,7 +303,7 @@ START = arrive["spawn"]
 edges = {
     "doc": "tools/audit_edges.py: jetties and hut platforms are THAW/RIME floors; the RIME ice is a floor over the fjord.",
     "walk_max_deg": 45.0, "water_level": 0.0, "drown_depth": 1.15,
-    "nav_bounds": [-150, -368, 50, -236],
+    "nav_bounds": [-150, -368, 58, -236],
     "buildings": BUILDINGS, "thickets": [],
     "state_floors": FLOORS + [{"tag": "rime", "min": [ICE["min"][0], ICE["min"][2]], "max": [ICE["max"][0], ICE["max"][2]], "y": 0.05}],
     "gates": [],
@@ -248,17 +313,25 @@ D = {
     "id": "kettle_fjord",
     "name": "Kettle Fjord",
     "start": {"pos": START, "yaw": arrive["spawn_yaw"]},
-    "env": {"thaw": {"sun_rot": [-24, -100], "sun_energy": 2.4, "fog_density": 0.0012, "vol_density": 0.004},
+    # THAW: a low evening sun straight down the fjord from the sea, its light
+    # thrown back warm off the water onto the walls
+    "env": {"thaw": {"sun_rot": [-13, -96], "sun_energy": 2.8, "fog_density": 0.0012, "vol_density": 0.006,
+                     "ambient_energy": 0.62, "exposure": 1.08,
+                     "fill_color": [1.0, 0.7, 0.42], "fill_energy": 0.7, "fill_rot": [28, 84]},
             "rime": {"sun_rot": [-24, -60], "fog_density": 0.007, "vol_density": 0.018}},
     "terrain": K.terrain_block(),
-    "nav_bounds": [-150, -16, -368, 50, 70, -236],
+    "nav_bounds": [-150, -16, -368, 58, 70, -236],
     "weather": {"gulls": True, "gull_y": 30.0, "gull_dz": -20.0, "spindrift": 12},
     "water": water,
+    "falls": FALLS,
+    "scripted": [{"script": "res://src/world/god_rays.gd", "at": [gx, 14.0, r2(fz(gx) + 4)], "tag": "thaw",
+                  "params": {"count": 6, "span_x": 30, "span_z": 26, "sun": [-13, -96], "seed_v": int(gx) % 97}}
+                 for gx in (-112.0, -64.0, -16.0)],
     "hazards": hazards,
     "zones": [
         {"name": "THE LANDING ICE", "min": [-150, -370], "max": [-66, -236]},
         {"name": "THE FISH-HOUSES", "min": [-66, -370], "max": [-14, -236]},
-        {"name": "THE BREATHING HOLE", "min": [-14, -370], "max": [50, -236]},
+        {"name": "THE BREATHING HOLE", "min": [-14, -370], "max": [60, -236]},
     ],
     "houses": HOUSES,
     "boxes": BOXES,
@@ -270,7 +343,7 @@ D = {
     "npcs": npcs,
     "plaques": [{"at": SH(-108, 1.0), "rot": 160, "text": "KETTLE FJORD\n\nThe ice comes in the Hearth-months, and the fishing moves out onto it."}],
     "pickups": pickups,
-    "portals": [portal],
+    "portals": [portal, tarn_seam("kettle_fjord")],
     "scatter": {
         "seed": 7070,
         "clear": [[b["center"][0], b["center"][1], 7.0] for b in BUILDINGS] + [[HOLE[0], HOLE[1], ARENA_R + 2]],

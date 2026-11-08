@@ -9,6 +9,10 @@ extends Node3D
 var spawn_flag := ""               # area flag name for dead_once tracking
 var pose := ""                     # idle chore ("sit"), see Enemy.idle_pose
 var area_id := ""
+## the roster id this spawner stands in for (its own row not in yet): the
+## stand-in fights, but never carries the stand-in's story (no release flag,
+## card or leavings of the holdfast it borrows the body of)
+var stand_in_for := ""
 
 var current: Enemy = null
 
@@ -28,6 +32,13 @@ func respawn() -> void:
 	else:
 		current = Enemy.new()
 	current.setup(enemy_id)
+	if stand_in_for != "":
+		var c: Dictionary = current.cfg.duplicate(true)
+		for k in ["release_flag", "release_card", "release_drop", "release_hearth"]:
+			c.erase(k)
+		c["name"] = stand_in_for.capitalize()
+		current.cfg = c
+		current.set_meta("roster_id", stand_in_for)
 	current.idle_pose = pose
 	add_child(current)
 	current.global_position = global_position

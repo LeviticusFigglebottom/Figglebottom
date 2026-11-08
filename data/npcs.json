@@ -458,5 +458,20 @@
     "line_done": "Have it. I'm roasting. Don't let her see, it's on the cargo cord."
    }
   ]
+ },
+ "lusse": {
+  "name": "Lusse",
+  "short_name": "Lusse",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "You came up the steps in time. Sit. No, there. We're on the ninth verse.",
+   "The goat ate the sail, and the mast, and then it ate the man who said it couldn't. Chorus! You know the chorus.",
+   "Gaute's bought fish from the trader's boat. Good fish. Nobody's cooked so much fish since my wedding."
+  ],
+  "lines_repeat": [
+   "Again, from the goat. Louder.",
+   "Somebody's coughing on the far bench. Pass him a horn, it'll settle him."
+  ],
+  "services": []
  }
 }

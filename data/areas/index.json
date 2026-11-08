@@ -2,7 +2,8 @@
  "areas": [
   "saltfell_steading",
   "lowe_barrows",
-  "kettle_fjord"
+  "kettle_fjord",
+  "tarnhall"
  ],
  "graph": {
   "saltfell_steading": {
@@ -13,7 +14,11 @@
    "kettle_fjord": "the Kettle Road"
   },
   "kettle_fjord": {
-   "lowe_barrows": "the Kettle Road"
+   "lowe_barrows": "the Kettle Road",
+   "tarnhall": "the Tarn Steps"
+  },
+  "tarnhall": {
+   "kettle_fjord": "the Tarn Steps"
   }
  }
 }

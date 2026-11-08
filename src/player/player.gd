@@ -119,6 +119,7 @@ var _nadir_light: OmniLight3D
 
 var sim_move := Vector3.ZERO      # sim driver writes camera-space intent here
 var sim_active := false
+var _floor_y := -INF                # last grounded height (step-up / stair snap)
 var sim_block := false
 var sim_sprint := false
 
@@ -140,6 +141,8 @@ func _ready() -> void:
 	cs.shape = cap
 	cs.position.y = 0.85
 	add_child(cs)
+	# stair snapping: stay on the ground walking down steps and deck edges
+	floor_snap_length = maxf(floor_snap_length, float(T["move"].get("snap_down", 0.1)))
 
 	vis = PlayerVisual.new()
 	vis.name = "Vis"
@@ -391,7 +394,12 @@ func _physics_process(dt: float) -> void:
 			velocity.z = move_toward(velocity.z, 0, 20 * dt)
 
 	_regen(dt)
+	_step_up(dt)
 	move_and_slide()
+	if is_on_floor():
+		_floor_y = global_position.y
+	elif _floor_y - global_position.y >= -0.05 and _floor_y - global_position.y < float(T["move"].get("snap_down", 0.0)):
+		_snap_down()
 	_unwedge(dt)
 
 	var gs := Vector2(velocity.x, velocity.z).length()
@@ -434,6 +442,90 @@ func _set_state(s: S) -> void:
 # so this never fights ordinary sliding.
 var _wedge_t := 0.0
 const _WEDGE_DEPTH := 0.12
+## Step up onto a kerb, threshold or deck edge no higher than move/step_height
+## (game.json). A capsule on move_and_slide alone stops dead at any ledge
+## taller than its own rounding. Probe: blocked ahead by something wall-like ->
+## room to rise -> free ahead once risen -> walkable ground under that point.
+## Then lift the body by the measured rise and let move_and_slide carry on.
+func _step_up(dt: float) -> void:
+	# (just lifted onto a step counts as grounded: the next riser may come
+	# before move_and_slide has settled the feet)
+	if dead or not (is_on_floor() or absf(global_position.y - _floor_y) < 0.05):
+		return
+	var hv := Vector3(velocity.x, 0.0, velocity.z)
+	if hv.length_squared() < 0.01:
+		return
+	var step_h := float(T["move"].get("step_height", 0.0))
+	if step_h <= 0.0:
+		return
+	var probe := hv.normalized() * maxf(hv.length() * dt, float(T["move"].get("step_probe", 0.12)))
+	var p := PhysicsTestMotionParameters3D.new()
+	var r := PhysicsTestMotionResult3D.new()
+	p.margin = safe_margin
+	p.from = global_transform
+	p.motion = probe
+	p.max_collisions = 4
+	if not PhysicsServer3D.body_test_motion(get_rid(), p, r):
+		return                                   # nothing ahead
+	var wall := false
+	for i in r.get_collision_count():
+		wall = wall or r.get_collision_normal(i).y <= 0.75
+	if not wall:
+		return                                   # only floor or a slope: move_and_slide walks it
+	p.max_collisions = 1
+	p.motion = Vector3.UP * step_h
+	if PhysicsServer3D.body_test_motion(get_rid(), p, r):
+		return                                   # no headroom
+	var up := global_transform
+	up.origin.y += step_h
+	p.from = up
+	p.motion = probe
+	if PhysicsServer3D.body_test_motion(get_rid(), p, r):
+		return                                   # still blocked: too tall to step
+	var fwd := up
+	fwd.origin += probe
+	p.from = fwd
+	p.motion = Vector3.DOWN * (step_h + 0.05)
+	if not PhysicsServer3D.body_test_motion(get_rid(), p, r):
+		return
+	if r.get_collision_normal().y < cos(floor_max_angle):
+		return                                   # would stand on something too steep
+	var rise := step_h - r.get_travel().length()
+	if rise <= 0.02:
+		return
+	global_position.y += rise + 0.01
+	_floor_y = global_position.y
+	velocity.y = maxf(velocity.y, 0.0)
+
+## Stair snapping past a step's edge: the capsule's rounded foot rolls over the
+## nosing, where the contact is too steep to count as floor and the built-in
+## snap lets go. Look straight down instead; if walkable ground lies within
+## move/snap_down, set the Bearer on it once the body clears the nosing.
+func _snap_down() -> void:
+	if dead or velocity.y > 0.0:
+		return
+	var snap := float(T["move"].get("snap_down", 0.0))
+	if snap <= 0.0:
+		return
+	var from := global_position + Vector3.UP * 0.2
+	var q := PhysicsRayQueryParameters3D.create(from, Vector3(global_position.x, minf(_floor_y, global_position.y) - snap, global_position.z), collision_mask)
+	q.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty() or hit["normal"].y < cos(floor_max_angle):
+		return
+	var to := global_transform
+	to.origin.y = hit["position"].y + 0.01
+	var p := PhysicsTestMotionParameters3D.new()
+	p.from = to
+	p.motion = Vector3.ZERO
+	p.margin = safe_margin
+	p.recovery_as_collision = true
+	if PhysicsServer3D.body_test_motion(get_rid(), p):
+		return                                   # still over the nosing
+	global_position = to.origin
+	velocity.y = 0.0
+	apply_floor_snap()
+
 func _unwedge(dt: float) -> void:
 	if dead:
 		return
