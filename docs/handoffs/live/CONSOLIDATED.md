@@ -22,6 +22,7 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/fb-audio` | `feat/audio-frost` | Music, ambience and foley, plus the frost/melt wavefront |
 | `/home/user/fb-art3` | `art/regions-3-7` | Remaining Tripo heroes. Budget about 6,000; it stops if the balance falls below 12,000. |
 | `/home/user/figglebottom` | `feat/lowe-polish-kettle` | Lowe RIME polish, then the Kettle Fjord region |
+| `/home/user/fb-qa` | `fix/slice-qa` | Slice QA: full-loop test (`tools/test/fullslice_test.gd`, 103 checks), 19 fixes, screenshots `docs/screens/slice_*`, `docs/qa/SLICE_QA.md` (ranked remaining issues), `docs/qa/PERF.md`. Ready for review, not merged. |
 | `/home/user/fb-lead` | `main` | Lead merges here. The owner has approved the lead merging reviewed, green branches. |
 
 ## Next exact step
