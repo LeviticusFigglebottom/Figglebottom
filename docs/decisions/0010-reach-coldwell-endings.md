@@ -41,11 +41,7 @@ The last two regions (`WORLD.md` §5.6, §5.7) close the line up the water. Thor
      - "Keep the horn shut, and sit" chooses `hearth_kept`.
    - `choose()` sets `ending_<id>` once and emits `chosen(ending)`.
    - The cutscenes, credits and post-game hang off that signal. They are not built here.
-6. **The THAW sky** changes in `data/state_profiles.json` only:
-   - a blue zenith over a warm low-sun horizon, instead of the flat dusk orange;
-   - a neutral fog and ambient.
-   - The shader's existing cloud deck now reads against it.
-   - The Coldwell overrides its THAW to a clear spring morning (the last Melt).
+6. **The sky is not touched here.** The THAW/RIME sky belongs to the art pass (art/look-pass-2). The Coldwell's THAW override, a clear spring morning (the last Melt), sets the sun, fog and ambient only.
 7. **New kit and material.** The `sheep` kit piece and the `M_wool` MaterialLib family (which takes snow). No one-off materials.
 
 ## Consequences

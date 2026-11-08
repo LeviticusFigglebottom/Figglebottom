@@ -152,9 +152,10 @@ D = {
     "name": "The Coldwell",
     "start": {"pos": START, "yaw": arrive["spawn_yaw"]},
     # THAW is the last Melt, a spring morning, not the midsummer evening
-    "env": {"thaw": {"sun_rot": [-34, -100], "sun_energy": 2.4, "sun_color": [1.0, 0.95, 0.86], "fog_density": 0.0008, "vol_density": 0.004,
+    # (light and fog only: the sky colours belong to the art pass)
+    "env": {"thaw": {"sun_rot": [-34, -100], "sun_energy": 2.4, "sun_color": [1.0, 0.95, 0.86], "fog_density": 0.0006, "vol_density": 0.0015,
                      "ambient": [0.36, 0.38, 0.42], "ambient_energy": 0.72, "exposure": 1.04, "saturation": 1.0,
-                     "bg_top": [0.22, 0.36, 0.58], "bg_horizon": [0.86, 0.82, 0.74], "fog_color": [0.74, 0.76, 0.78]},
+                     "fog_color": [0.74, 0.76, 0.78]},
             "rime": {"sun_rot": [-20, -100], "fog_density": 0.004, "vol_density": 0.01}},
     "terrain": K.terrain_block(),
     "nav_bounds": [676, 40, -556, 964, 220, -364],

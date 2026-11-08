@@ -21,8 +21,8 @@
     0.95,
     0.86
    ],
-   "fog_density": 0.0008,
-   "vol_density": 0.004,
+   "fog_density": 0.0006,
+   "vol_density": 0.0015,
    "ambient": [
     0.36,
     0.38,
@@ -31,16 +31,6 @@
    "ambient_energy": 0.72,
    "exposure": 1.04,
    "saturation": 1.0,
-   "bg_top": [
-    0.22,
-    0.36,
-    0.58
-   ],
-   "bg_horizon": [
-    0.86,
-    0.82,
-    0.74
-   ],
    "fog_color": [
     0.74,
     0.76,
