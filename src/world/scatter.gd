@@ -150,17 +150,41 @@ static func _fence(groups: Dictionary, terrain: Terrain, f: Dictionary, rng: Ran
 ## One MultiMesh per kind and tag, plus colliders for what you can't walk through.
 static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 	var mode := 1 if tag == "thaw" else (2 if tag == "rime" else 0)
-	var mm := MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = _mesh(kind, mode)
-	mm.instance_count = xfs.size()
-	for i in xfs.size():
-		mm.set_instance_transform(i, xfs[i])
-	var mmi := MultiMeshInstance3D.new()
-	mmi.name = "Scatter_%s_%s" % [kind, tag]
-	mmi.multimesh = mm
-	mmi.visibility_range_end = 70.0 if kind in ["rock", "hummock", "driftwood"] else 0.0
-	area.attach(mmi, tag)
+	# chunked like the ground cover: one area-wide MultiMesh was never
+	# frustum-culled, and its 70 m range was measured to the middle of the
+	# whole area, so the Strand's pebbles blinked out as you walked the beach
+	var chunks: Dictionary = {}
+	for xf in xfs:
+		var o: Vector3 = (xf as Transform3D).origin
+		var key := Vector2i(int(floor(o.x / SCATTER_CHUNK)), int(floor(o.z / SCATTER_CHUNK)))
+		if not chunks.has(key):
+			chunks[key] = []
+		chunks[key].append(xf)
+	var mesh := _mesh(kind, mode)
+	var small: bool = kind in ["rock", "hummock", "driftwood"]
+	for key in chunks:
+		var cx: Array = chunks[key]
+		var c := Vector3.ZERO
+		for xf in cx:
+			c += (xf as Transform3D).origin
+		c /= float(cx.size())
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = mesh
+		mm.instance_count = cx.size()
+		for i in cx.size():
+			var t: Transform3D = cx[i]
+			t.origin -= c
+			mm.set_instance_transform(i, t)
+		var mmi := MultiMeshInstance3D.new()
+		mmi.name = "Scatter_%s_%s_%d_%d" % [kind, tag, key.x, key.y]
+		mmi.multimesh = mm
+		mmi.position = c
+		if small:
+			mmi.visibility_range_end = 70.0
+			mmi.visibility_range_end_margin = 8.0
+			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+		area.attach(mmi, tag)
 	var bit := AreaBuilder._tag_bit(tag)
 	for xf in xfs:
 		var t: Transform3D = xf
@@ -346,6 +370,7 @@ static func _wattle(mode: int) -> ArrayMesh:
 
 const VEG_SHADER := preload("res://shaders/grass.gdshader")
 const VEG_CHUNK := 24.0
+const SCATTER_CHUNK := 32.0
 
 ## "veg": [{"kind": "grass"|"heather"|"sedge", "region": [x0, z0, x1, z1],
 ##          "density": per m2, "h": [min, max], "tag", "range": m}]
