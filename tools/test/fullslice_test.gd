@@ -44,9 +44,12 @@ func _ready() -> void:
 func _secs(s: float):
 	await ticks(int(s * 60.0))
 
+## Waits on game time, and at least as long in wall time: a software
+## renderer can spend seconds of real time building a title stop.
 func _until(cond: Callable, max_s := 20.0) -> bool:
 	var n := 0
-	while not cond.call() and n < int(max_s * 60.0):
+	var t0 := Time.get_ticks_msec()
+	while not cond.call() and (n < int(max_s * 60.0) or Time.get_ticks_msec() - t0 < int(max_s * 1000.0)):
 		await ticks(5)
 		n += 5
 	return cond.call()
@@ -393,7 +396,7 @@ func _run() -> void:
 	key.keycode = KEY_SPACE
 	key.pressed = true
 	get_tree().root.push_input(key)
-	var title: Node = await _wait_child("res://src/ui/title_screen.gd", 30.0)
+	var title: Node = await _wait_child("res://src/ui/title_screen.gd", 90.0)
 	check(title != null, "a key lets the card go; the title rises")
 	await _secs(1.5)
 	await _shot("title")
@@ -405,7 +408,7 @@ func _run() -> void:
 	var slots: Array = title._slots_box.get_children().filter(func(c): return c is Button)
 	check(slots.size() == 4 and String(slots[0].text).begins_with("Hearth I"), "three hearths and Back")
 	slots[0].pressed.emit()
-	var diff: Node = await _wait_child("res://src/ui/difficulty_ui.gd", 30.0)
+	var diff: Node = await _wait_child("res://src/ui/difficulty_ui.gd", 90.0)
 	check(diff != null, "the winter is weighed after New journey")
 	await ticks(4)
 	check(String(diff._rows[1].text).contains("(default)"), "The Long Winter is marked as the default")
@@ -780,7 +783,7 @@ func _run() -> void:
 	check(titles.has("Return to the Title"), "the pause sheet offers the title (%s)" % str(titles))
 	if titles.has("Return to the Title"):
 		pb[titles.find("Return to the Title")].pressed.emit()
-	title = await _wait_child("res://src/ui/title_screen.gd", 30.0)
+	title = await _wait_child("res://src/ui/title_screen.gd", 90.0)
 	check(title != null, "back at the title")
 	check(Game.player == null, "the world is put away")
 	check(title != null and title.has_save, "Resume the hearth is offered")
