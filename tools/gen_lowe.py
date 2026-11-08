@@ -155,11 +155,12 @@ sa = door_front("kin_d", 0.4)        # the spade propping the door
 wa = door_front("kin_c", 0.5)        # on the turf before the closed door
 ta = door_front("twin", 5.6)         # the threshold stone, below the twins' door
 # after the release, THAW (LOWE.md 8): Arne sits outside the twins' barrow
-# with Liv and Asta on a summer evening, facing out from the door, the girls
+# with Liv and Asta on a summer evening, facing out from the door (clear of
+# the sods stacked at its mouth), the girls
 # half turned to him
 TY = DOORS["twin"][0]
 RELEASE_SCENE = []
-for (nid, ox, oz, turn) in [("arne", 0.0, 3.0, 0), ("liv", -1.35, 3.5, 28), ("asta", 1.35, 3.5, -28)]:
+for (nid, ox, oz, turn) in [("arne", 0.0, 6.2, 0), ("liv", -1.35, 6.7, 28), ("asta", 1.35, 6.7, -28)]:
     sx, sz = rot_off(DOORS["twin"][1][0], DOORS["twin"][1][1], TY, ox, oz)
     RELEASE_SCENE.append({"id": nid, "at": at(sx, sz), "rot": r2((TY + 180 + turn) % 360), "tag": "thaw",
                           "require_flag": "ks_turfwright_released"})
