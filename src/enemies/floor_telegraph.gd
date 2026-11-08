@@ -11,7 +11,8 @@ var _mat: StandardMaterial3D
 var color := Color(0.3, 0.58, 1.0)
 
 ## shape: "rect" (size = [width, length], from the origin forward along -Z),
-## "fan" (size = [range, degrees]), "ring" (size = [radius]).
+## "fan" (size = [range, degrees]), "ring" (size = [radius], a disc),
+## "annulus" (size = [inner, outer]).
 static func spawn(parent: Node, xform: Transform3D, shape: String, size: Array, duration: float,
 		tint := Color(0.55, 0.8, 1.0)) -> FloorTelegraph:
 	var t := FloorTelegraph.new()
@@ -77,6 +78,16 @@ static func _shape_mesh(shape: String, size: Array) -> Mesh:
 				st.set_uv(Vector2(0, 0)); st.add_vertex(Vector3.ZERO)
 				st.set_uv(Vector2(1, 1)); st.add_vertex(p1)
 				st.set_uv(Vector2(1, 1)); st.add_vertex(p0)
+		"annulus":   # a band: size = [inner, outer]
+			var ri := float(size[0])
+			var ro := float(size[1])
+			var segs3 := 48
+			for i in segs3:
+				var c0 := TAU * float(i) / segs3
+				var c1 := TAU * float(i + 1) / segs3
+				var a0 := Vector3(cos(c0), 0, sin(c0))
+				var a1 := Vector3(cos(c1), 0, sin(c1))
+				_quad(st, a0 * ri, a0 * ro, a1 * ro, a1 * ri, 0.0, 1.0)
 		_:   # ring disc
 			var rr := float(size[0])
 			var segs2 := 32

@@ -18,6 +18,7 @@ func _ready() -> void:
 
 func respawn() -> void:
 	if dead_once and area_id != "" and World.area_flag(area_id, spawn_flag):
+		_reseal.call_deferred()
 		return
 	if current != null and is_instance_valid(current):
 		current.queue_free()
@@ -33,3 +34,17 @@ func respawn() -> void:
 	current.vis.rotation.y = deg_to_rad(face_deg)
 	if dead_once:
 		current.died.connect(func(_e): World.set_area_flag(area_id, spawn_flag))
+
+## A released Holdfast that closed a hole (release_seal) keeps it closed in a
+## rebuilt area: the hole lies hole_ahead metres along the way it faced.
+func _reseal() -> void:
+	var ecfg: Dictionary = DB.table("enemies").get(enemy_id, {})
+	if not ecfg.has("release_seal") or not is_inside_tree():
+		return
+	var a := deg_to_rad(face_deg)
+	var at := global_position + Vector3(-sin(a), 0, -cos(a)) * float(ecfg.get("hole_ahead", 0.0))
+	var area: Node = get_parent()
+	while area != null and not (area is Area):
+		area = area.get_parent()
+	BrokenIce.seal_at(area if area != null else get_parent(), at,
+			float((ecfg["release_seal"] as Dictionary).get("radius", 2.0)))
