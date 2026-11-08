@@ -4,6 +4,8 @@ class_name BuildingGen
 ## overhangs the eaves and gables with a grass fringe, and gable ends with
 ## crossed barge-boards curling into carved, interlaced (non-runic) finials.
 ## Fixed seed per building id, so a house always looks the same.
+## Every board, stone and sod is a ProcMesh box with metre UVs (grain along
+## the board), shaded by MaterialLib's photo sets in uv mode.
 ##
 ## spec: {"id", "center": [x, z], "size": [w, l], "yaw", "y", "doors": [[side, bay]],
 ##        "open": [sides], "wall_h", "tag", "gate_doors": [[side, bay]]}
@@ -118,11 +120,10 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 			sd[0] + Vector3(0, 0.2 if sz.y > 3.0 else 0.0, 0), Vector3.ZERO)
 	for pair in [[plank, "M_wood"], [stone, "M_drystone"], [turf, "M_turf"], [beam, "M_wood_dark"], [far, "M_wood"]]:
 		var st: SurfaceTool = pair[0]
-		st.generate_normals()
-		var mesh := st.commit()
-		if mesh.get_surface_count() == 0:
+		var mesh := ProcMesh.finish(st)
+		if mesh == null or mesh.get_surface_count() == 0:
 			continue
-		mesh.surface_set_material(0, MaterialLib.get_mat(String(pair[1]), mode))
+		mesh.surface_set_material(0, MaterialLib.get_mat(String(pair[1]), mode, true))
 		var mi := MeshInstance3D.new()
 		mi.mesh = mesh
 		mi.name = String(pair[1])
@@ -163,9 +164,7 @@ static func _wall_pt(along_x: bool, off: float, t: float, y: float) -> Vector3:
 	return Vector3(t, y, off) if along_x else Vector3(off, y, t)
 
 static func _box(st: SurfaceTool, size: Vector3, pos: Vector3, rot_deg: Vector3) -> void:
-	var bm := BoxMesh.new()
-	bm.size = size
-	st.append_from(bm, 0, Transform3D(Basis.from_euler(rot_deg * PI / 180.0), pos))
+	ProcMesh.box(st, size, Transform3D(Basis.from_euler(rot_deg * PI / 180.0), pos))
 
 ## Thick turf over boards, overhanging eaves and gables, a turf roll on the
 ## ridge and a ragged grass fringe hanging at the eaves.
@@ -181,21 +180,21 @@ static func _roof(turf: SurfaceTool, plank: SurfaceTool, beam: SurfaceTool, w: f
 		var basis := Basis(Vector3.BACK, -s * ang)
 		var mid := Vector3(s * half * 0.5, h + rise * 0.5 - 0.05, 0)
 		var n := basis * Vector3.UP
-		turf.append_from(_bm(Vector3(slope, 0.55, length)), 0, Transform3D(basis, mid + n * 0.33))
-		plank.append_from(_bm(Vector3(slope + 0.05, 0.1, length - 0.1)), 0, Transform3D(basis, mid))
+		ProcMesh.box(turf, Vector3(slope, 0.55, length), Transform3D(basis, mid + n * 0.33))
+		ProcMesh.box(plank, Vector3(slope + 0.05, 0.1, length - 0.1), Transform3D(basis, mid))
 		# grass fringe along the eave: ragged tufts hanging over the edge
 		var eave := Vector3(s * half, h - 0.1, 0)
 		var z := -length * 0.5 + 0.2
 		while z < length * 0.5 - 0.2:
 			var tw := rng.randf_range(0.3, 0.6)
 			var th := rng.randf_range(0.25, 0.55)
-			turf.append_from(_bm(Vector3(0.22, th, tw)), 0,
+			ProcMesh.box(turf, Vector3(0.22, th, tw),
 				Transform3D(Basis(Vector3.BACK, -s * rng.randf_range(0.2, 0.5)), eave + Vector3(s * 0.05, -th * 0.35 + 0.2, z)))
 			z += tw * 0.8
 		# rafter ends showing under the turf
 		var zr := -l * 0.5
 		while zr <= l * 0.5 + 0.01:
-			beam.append_from(_bm(Vector3(half + 0.1, 0.16, 0.14)), 0,
+			ProcMesh.box(beam, Vector3(half + 0.1, 0.16, 0.14),
 				Transform3D(basis, Vector3(s * half * 0.5, h + rise * 0.5 - 0.22, zr)))
 			zr += 2.0
 	# the ridge roll
@@ -204,7 +203,7 @@ static func _roof(turf: SurfaceTool, plank: SurfaceTool, beam: SurfaceTool, w: f
 	cm.bottom_radius = 0.42
 	cm.height = length
 	cm.radial_segments = 8
-	turf.append_from(cm, 0, Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3(0, h + rise + 0.3, 0)))
+	ProcMesh.append(turf, cm, Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3(0, h + rise + 0.3, 0)), Vector2(TAU * 0.42, length))
 
 ## A gable end: vertical boards filling the triangle (or left open on an open
 ## side), crossed barge-boards that run past the ridge into curled horns, and
@@ -220,7 +219,7 @@ static func _gable(plank: SurfaceTool, beam: SurfaceTool, w: float, h: float, zo
 			var cx := x + pw * 0.5
 			var top := rise * (1.0 - absf(cx) / (half + 0.75 * 0.0)) - 0.05
 			if top > 0.1:
-				plank.append_from(_bm(Vector3(pw * 0.95, top, 0.1)), 0,
+				ProcMesh.box(plank, Vector3(pw * 0.95, top, 0.1),
 					Transform3D(Basis.IDENTITY, Vector3(cx, h + top * 0.5, zoff + s * 0.05)))
 			x += pw
 	# barge-boards, crossing above the ridge
@@ -233,7 +232,7 @@ static func _gable(plank: SurfaceTool, beam: SurfaceTool, w: float, h: float, zo
 		var basis := Basis(Vector3.BACK, -side * ang)
 		# shifted toward the ridge so each board runs ~0.45 m past it
 		var centre := Vector3(side * (bh * 0.5 - 0.4 * cos(ang)), h + rise * 0.5 + 0.4 * sin(ang) + 0.3, zb)
-		beam.append_from(_bm(Vector3(blen, 0.32, 0.1)), 0, Transform3D(basis, centre))
+		ProcMesh.box(beam, Vector3(blen, 0.32, 0.1), Transform3D(basis, centre))
 	# horns: each board end curls back on itself (a quarter torus each)
 	var apex := Vector3(0, h + rise + 0.75, zb)
 	for side in [-1.0, 1.0]:
@@ -242,7 +241,7 @@ static func _gable(plank: SurfaceTool, beam: SurfaceTool, w: float, h: float, zo
 		tm.outer_radius = 0.3
 		tm.rings = 10
 		tm.ring_segments = 6
-		beam.append_from(tm, 0, Transform3D(Basis(Vector3.RIGHT, PI * 0.5), apex + Vector3(side * 0.42, 0.25, 0)))
+		ProcMesh.append(beam, tm, Transform3D(Basis(Vector3.RIGHT, PI * 0.5), apex + Vector3(side * 0.42, 0.25, 0)), Vector2(TAU * 0.3, 0.6))
 	# the knot boss: two interlaced rings and a cross-band, carved in the boards
 	if not open_end:
 		var kc := Vector3(0, h + rise * 0.38, zoff + s * 0.14)
@@ -254,7 +253,7 @@ static func _gable(plank: SurfaceTool, beam: SurfaceTool, w: float, h: float, zo
 			tk.ring_segments = 6
 			var b := Basis(Vector3.RIGHT, PI * 0.5).scaled(Vector3(1.0, 1.0, 0.55))
 			var a := k * TAU / 3.0 + PI * 0.5
-			beam.append_from(tk, 0, Transform3D(b, kc + Vector3(cos(a), sin(a), 0) * 0.17))
+			ProcMesh.append(beam, tk, Transform3D(b, kc + Vector3(cos(a), sin(a), 0) * 0.17), Vector2(TAU * 0.28, 0.5))
 
 static func _bm(size: Vector3) -> BoxMesh:
 	var bm := BoxMesh.new()
@@ -352,9 +351,14 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 	solids.append([Vector3(0, 1.4, (front - pass_l - 0.3 - l * 0.5 + 0.6) * 0.5 - 0.3), Vector3(pass_w + 0.8, 2.8, maxf(0.5, front - pass_l - 0.3 + l * 0.5 - 0.6))])
 	for pair in [[stone, "M_drystone"], [turf, "M_turf"]]:
 		var st: SurfaceTool = pair[0]
-		st.generate_normals()
-		var mesh := st.commit()
-		mesh.surface_set_material(0, MaterialLib.get_mat(String(pair[1]), 0))
+		var mesh: ArrayMesh
+		if pair[0] == stone:
+			mesh = ProcMesh.finish(st)
+		else:
+			# the lumpy mound has no metre UVs: object-aligned triplanar
+			st.generate_normals()
+			mesh = st.commit()
+		mesh.surface_set_material(0, MaterialLib.get_mat(String(pair[1]), 0, pair[0] == stone))
 		var mi := MeshInstance3D.new()
 		mi.mesh = mesh
 		mi.name = String(pair[1])
@@ -421,10 +425,9 @@ static func _turf_door(size: Vector3, collide: bool, bit: int) -> Node3D:
 		var sh := rng.randf_range(0.22, 0.3)
 		_box(st, Vector3(size.x, sh * 0.95, size.z), Vector3(rng.randf_range(-0.04, 0.04), y + sh * 0.5, 0), Vector3(0, 0, rng.randf_range(-2, 2)))
 		y += sh
-	st.generate_normals()
 	var mi := MeshInstance3D.new()
-	mi.mesh = st.commit()
-	mi.mesh.surface_set_material(0, MaterialLib.get_mat("M_peat", 0))
+	mi.mesh = ProcMesh.finish(st)
+	mi.mesh.surface_set_material(0, MaterialLib.get_mat("M_peat", 0, true))
 	n.add_child(mi)
 	if collide:
 		var body := StaticBody3D.new()

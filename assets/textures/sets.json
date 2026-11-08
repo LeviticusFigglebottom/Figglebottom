@@ -1,0 +1,211 @@
+{
+ "drystone": {
+  "id": "stacked_stone_wall",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.1164,
+   0.1107,
+   0.0881
+  ],
+  "rough_mean": 0.82
+ },
+ "felt": {
+  "id": "Fabric034",
+  "src": "ambientcg",
+  "res": 1,
+  "mean_lin": [
+   0.2803,
+   0.266,
+   0.2393
+  ],
+  "rough_mean": 0.818
+ },
+ "fieldstone": {
+  "id": "rock_face_04",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1204,
+   0.1098,
+   0.0892
+  ],
+  "rough_mean": 0.958
+ },
+ "heather": {
+  "id": "brown_mud_leaves_01",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.1124,
+   0.0869,
+   0.0509
+  ],
+  "rough_mean": 0.92
+ },
+ "ice": {
+  "id": "Ice003",
+  "src": "ambientcg",
+  "res": 1,
+  "mean_lin": [
+   0.252,
+   0.3401,
+   0.3977
+  ],
+  "rough_mean": 0.14
+ },
+ "iron": {
+  "id": "rust_coarse_01",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.066,
+   0.0425,
+   0.03
+  ],
+  "rough_mean": 0.777
+ },
+ "leather": {
+  "id": "fabric_leather_01",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1304,
+   0.0741,
+   0.0467
+  ],
+  "rough_mean": 0.643
+ },
+ "path": {
+  "id": "rocky_trail",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.1954,
+   0.1555,
+   0.1182
+  ],
+  "rough_mean": 0.649
+ },
+ "peat": {
+  "id": "brown_mud_02",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.059,
+   0.0473,
+   0.0349
+  ],
+  "rough_mean": 0.952
+ },
+ "planks": {
+  "id": "weathered_planks",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.0977,
+   0.0771,
+   0.0602
+  ],
+  "rough_mean": 0.736
+ },
+ "rock": {
+  "id": "lichen_rock",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.1079,
+   0.1118,
+   0.0941
+  ],
+  "rough_mean": 0.801
+ },
+ "rope": {
+  "id": "Rope001",
+  "src": "ambientcg",
+  "res": 1,
+  "mean_lin": [
+   0.1975,
+   0.1613,
+   0.1089
+  ],
+  "rough_mean": 0.65
+ },
+ "schist": {
+  "id": "dark_rock_02",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.0779,
+   0.0811,
+   0.0692
+  ],
+  "rough_mean": 0.824
+ },
+ "shingle": {
+  "id": "ganges_river_pebbles",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.2016,
+   0.1888,
+   0.1675
+  ],
+  "rough_mean": 0.808
+ },
+ "snow": {
+  "id": "Snow006",
+  "src": "ambientcg",
+  "res": 2,
+  "mean_lin": [
+   0.6994,
+   0.7308,
+   0.7657
+  ],
+  "rough_mean": 0.51
+ },
+ "snow_packed": {
+  "id": "snow_01",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.5557,
+   0.5934,
+   0.6542
+  ],
+  "rough_mean": 0.937
+ },
+ "timber": {
+  "id": "rough_wood",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.1631,
+   0.1415,
+   0.1165
+  ],
+  "rough_mean": 0.51
+ },
+ "turf": {
+  "id": "forrest_ground_01",
+  "src": "polyhaven",
+  "res": 2,
+  "mean_lin": [
+   0.202,
+   0.1911,
+   0.1027
+  ],
+  "rough_mean": 0.937
+ },
+ "wool": {
+  "id": "Fabric031",
+  "src": "ambientcg",
+  "res": 1,
+  "mean_lin": [
+   0.2238,
+   0.2071,
+   0.1782
+  ],
+  "rough_mean": 0.609
+ }
+}

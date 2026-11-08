@@ -15,7 +15,7 @@
 			0.29,
 			0.28
 		],
-		"ambient_energy": 0.48,
+		"ambient_energy": 0.58,
 		"sky_contribution": 0.22,
 		"ssao_intensity": 1.65,
 		"bg_top": [
@@ -34,15 +34,15 @@
 			0.34
 		],
 		"fog_density": 0.0018,
-		"vol_density": 0.0075,
+		"vol_density": 0.0062,
 		"vol_albedo": [
 			0.95,
 			0.8,
 			0.58
 		],
 		"exposure": 0.98,
-		"contrast": 1.09,
-		"saturation": 1.02,
+		"contrast": 1.06,
+		"saturation": 0.97,
 		"glow": 0.65,
 		"music": "res://assets/audio/music/theme_thaw.ogg",
 		"ambience": "res://assets/audio/ambience/amb_thaw.ogg",

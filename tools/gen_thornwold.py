@@ -200,8 +200,12 @@ forest = {
         {"kind": "birch", "count": 260, "region": [x0 + 4, z0 + 4, x1 - 4, z1 - 4], "scale": [0.8, 1.25], "path_max": 0.2},
         {"kind": "pine", "count": 170, "region": [x0 + 4, z0 + 4, x1 - 4, z1 - 4], "scale": [0.85, 1.3], "path_max": 0.2},
         {"kind": "pine", "count": 40, "region": [x0 - 30, z0 - 30, x1 + 10, z1 + 20], "scale": [0.9, 1.4], "path_max": 0.2, "slope_min": 0.55},
+        # dead standing pines among the living (Forest falls back to a pine
+        # when the hero snag is missing)
+        {"kind": "snag", "count": 16, "region": [x0 + 4, z0 + 4, x1 - 4, z1 - 4], "scale": [0.85, 1.15], "path_max": 0.2},
     ],
-    "place": [{"kind": "pine", "at": [r2(GX + 0.5), r2(GZ - 2.2)], "scale": 1.7}],
+    # the oldest pine, over the grave: its own gnarled hero (a big pine when missing)
+    "place": [{"kind": "grave_pine", "at": [r2(GX + 0.5), r2(GZ - 2.2)], "scale": 1.3}],
     "hedges": HEDGES,
 }
 

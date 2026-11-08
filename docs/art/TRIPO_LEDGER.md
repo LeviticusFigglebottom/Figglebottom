@@ -311,3 +311,10 @@ Budget for the batch: about 2,500 credits, stop below 11,000. Balance at start: 
 | 2026-11-08 | remesh quad 10k | sigga_thaw | 7383bb7b-… | 40 | — | op b864114b |
 | 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | sigga_thaw | 7383bb7b-… | 20 | — | op 3c8b4f78; presets free |
 | 2026-11-08 | **NPCs and release scenes batch total** (9 image_to_model at detailed; 9 remeshes; 9 rigs; 1 text_to_motion; presets and one motion reuse free) | | | **1,055** | **14,280** | reconciled with `tripo_status`: 9 × 55 + 9 × 40 + 9 × 20 + 1 × 20 |
+| 2026-11-08 | image_to_model ×4 + quad remesh 3k ×4 (look pass) | sc_boulder, sc_slab, sc_stone, sc_driftlog | 583846a0 / e8c05e96 / 7153e8f2 / abfdf4a2 | 380 | — | ops 51faee04 e6bc4c71 8976a843 96e0d566; remesh 4866b8a8 db92af1a 939a6575 b4740d92 |
+| 2026-11-08 | tripo_import + tripo_texture on our own procedural drying rack (GLB, cleaned GLB, subdivided, OBJ, use_original_uv false) and one remesh of the import | look_drying_rack_* | cdada439, a8fdc889, 850da858, ead73139, 11db2d1c | 0 | — | every attempt "Illegal input", all refunded (status cancelled). Studio does not operate on imported meshes |
+| 2026-11-08 | texture (standard) on a Tripo project, diagnostic | sc_boulder project | 583846a0 | 10 | — | op 81163040: texturing works on generated projects; result not used |
+| 2026-11-08 | image_to_model + remesh 6k | kit_drying_rack_hero | f96ba1d1 | 95 | — | ops 5d4fb84c, 1f06a186 |
+| 2026-11-08 | image_to_model + remesh 3k | sc_cliffchunk | 599c3c21 | 95 | — | ops ef5f3d17, 825e720c |
+| 2026-11-08 | image_to_model ×8 + remesh 5k ×8 (Thornwold trees and hedges) | tr_pine_a, tr_pine_b (flat, superseded), tr_birch_a2, tr_birch_b, tr_grave_pine, tr_snag, hd_laid2, hd_thorn2 | see manifest | 760 | — | the first tr_pine_b came out 1.75 m deep (single-image flattening): 95 wasted |
+| 2026-11-08 | multiview_to_model + remesh 5k | tr_pine_b (round) | 2b41bfdb | 95 | 12,845 | ops b09d8162, c3323155. **Look pass total 1,435** (580 core scope, 855 forest), reconciled with the `tripo_status` ledger |

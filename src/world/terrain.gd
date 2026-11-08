@@ -29,7 +29,27 @@ func material() -> ShaderMaterial:
 		for k in pal:
 			var c: Array = pal[k]
 			_mat.set_shader_parameter(k, Color(c[0], c[1], c[2]))
+		_bind_sets(_mat)
 	return _mat
+
+## The CC0 photo sets each splat layer samples (MaterialLib.tex_set). A
+## landform can swap a layer's set in its terrain block: "sets": {"rock": "rock"}.
+const LAYER_SETS := {"turf": "turf", "heath": "heather", "shingle": "shingle", "path": "path",
+	"rock": "schist", "snow": "snow", "snowp": "snow_packed"}
+
+func _bind_sets(m: ShaderMaterial) -> void:
+	var over: Dictionary = spec.get("sets", {})
+	var ok := true
+	for layer in LAYER_SETS:
+		var ts := MaterialLib.tex_set(String(over.get(layer, LAYER_SETS[layer])))
+		if ts.is_empty():
+			ok = false
+			continue
+		m.set_shader_parameter(layer + "_alb", ts["albedo"])
+		m.set_shader_parameter(layer + "_nrm", ts["normal"])
+		m.set_shader_parameter(layer + "_orh", ts["orh"])
+		m.set_shader_parameter(layer + "_mean", ts["mean"])
+	m.set_shader_parameter("has_tex", 1.0 if ok else 0.0)
 
 func setup(s: Dictionary) -> bool:
 	spec = s

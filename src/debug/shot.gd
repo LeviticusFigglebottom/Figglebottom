@@ -7,6 +7,8 @@ extends Node
 ##   --state=thaw|rime     force initial world state for the loaded area
 ##   --shot-pack         populate sample gear/relics and open InventoryUI
 ##   --quit-after=N         quit after N frames (no capture)
+##   --shot-nohud           hide every CanvasLayer (HUD, zone titles) for art comparisons
+##   --gfx=0|1|2            force the graphics tier (lavapipe defaults to 1: no SDFGI/SSIL/SSR)
 ##   --hearth-frame=N       rest at the first hearth on frame N; with
 ##   --shot-seq=s1,s2,...   captures PATH_0.png.. that many seconds after it
 ##   --hearth-toggle        make that rest turn the world (THAW <-> RIME)
@@ -16,6 +18,7 @@ var _frames_left := -1
 var _quit_after := -1
 var _cam_spec := ""
 var _open_pack := false
+var _no_hud := false
 var _trigger_gourd := false
 var _stage := ""          # "combat" | "death" | "rest" | "swing" | "foe_death" | "boss"
 var _stage_frame := 0
@@ -44,6 +47,10 @@ func _ready() -> void:
 			_frames_left = int(arg.get_slice("=", 1))
 		elif arg.begins_with("--shot-cam="):
 			_cam_spec = arg.get_slice("=", 1)
+		elif arg == "--shot-nohud":
+			_no_hud = true
+		elif arg.begins_with("--gfx="):
+			EnvRig.graphics_quality = clampi(int(arg.get_slice("=", 1)), 0, 2)
 		elif arg == "--shot-pack":
 			_open_pack = true
 		elif arg == "--shot-gourd":
@@ -108,6 +115,9 @@ func _process(_d: float) -> void:
 				get_tree().quit()
 	if _shot_path == "" or _frames_left < 0 or not _seq.is_empty():
 		return
+	if _no_hud:
+		for cl in get_tree().root.find_children("*", "CanvasLayer", true, false):
+			(cl as CanvasLayer).visible = false
 	if _cam_spec != "" and not _trigger_gourd and Game.player != null and Game.player.hurtbox != null:
 		Game.player.hurtbox.monitorable = false
 		Game.player.hurtbox.monitoring = false

@@ -150,20 +150,48 @@ static func _fence(groups: Dictionary, terrain: Terrain, f: Dictionary, rng: Ran
 			var pos := Vector3(mid.x, (h0 + h1) * 0.5 - 0.06, mid.y)
 			_add(groups, kind, tag, Transform3D(basis.scaled_local(Vector3(len_s, rng.randf_range(0.9, 1.1), 1.0)), pos))
 
-## One MultiMesh per kind and tag, plus colliders for what you can't walk through.
+## Tripo hero meshes (assets/models/scatter, tools/art/manifest.json) that
+## replace the primitive stand-ins: each instance picks one variant, so a
+## field of a few hundred stones uses a handful of real rocks turned and
+## scaled every way ([glb, family, size factor to fit the primitive's slot]).
+## Missing files fall back to the primitives.
+const HERO := {
+	"rock": [["sc_stone", "M_stone_dark", 1.0], ["sc_slab", "M_stone_dark", 0.6], ["sc_cliffchunk", "M_stone_dark", 0.62]],
+	"boulder": [["sc_boulder", "M_stone_dark", 1.0], ["sc_cliffchunk", "M_stone_dark", 1.1], ["sc_slab", "M_stone_dark", 1.05]],
+	"driftwood": [["sc_driftlog", "M_drift", 1.0]],
+}
+
+## One MultiMesh per kind, tag (and hero variant), plus colliders for what
+## you can't walk through.
 static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 	var mode := 1 if tag == "thaw" else (2 if tag == "rime" else 0)
-	var mm := MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = _mesh(kind, mode)
-	mm.instance_count = xfs.size()
-	for i in xfs.size():
-		mm.set_instance_transform(i, xfs[i])
-	var mmi := MultiMeshInstance3D.new()
-	mmi.name = "Scatter_%s_%s" % [kind, tag]
-	mmi.multimesh = mm
-	mmi.visibility_range_end = 70.0 if kind in ["rock", "hummock", "driftwood"] else 0.0
-	area.attach(mmi, tag)
+	var variants: Array = []
+	for hv in HERO.get(kind, []):
+		var hm := _hero_mesh(String(hv[0]), String(hv[1]), mode)
+		if hm != null:
+			variants.append([String(hv[0]), hm, float(hv[2])])
+	if variants.is_empty():
+		variants.append([kind, _mesh(kind, mode), 1.0])
+	for vi in variants.size():
+		var pick: Array = []
+		for i in xfs.size():
+			if i % variants.size() == vi:
+				var t: Transform3D = xfs[i]
+				t.basis = t.basis.scaled_local(Vector3.ONE * float(variants[vi][2]))
+				pick.append(t)
+		if pick.is_empty():
+			continue
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = variants[vi][1]
+		mm.instance_count = pick.size()
+		for i in pick.size():
+			mm.set_instance_transform(i, pick[i])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.name = "Scatter_%s_%s" % [kind, tag] + ("" if variants.size() == 1 else "_%d" % vi)
+		mmi.multimesh = mm
+		mmi.visibility_range_end = 70.0 if kind in ["rock", "hummock", "driftwood"] else 0.0
+		area.attach(mmi, tag)
 	var bit := AreaBuilder._tag_bit(tag)
 	for xf in xfs:
 		var t: Transform3D = xf
@@ -231,6 +259,27 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 
 # ------------------------------------------------------------ meshes
 
+## The first mesh in a hero GLB, re-shaded through MaterialLib.hero_mat.
+static func _hero_mesh(name: String, family: String, mode: int) -> Mesh:
+	var key := "hero|%s|%d" % [name, mode]
+	if _mesh_cache.has(key):
+		return _mesh_cache[key]
+	var path := "res://assets/models/scatter/%s.glb" % name
+	var out: Mesh = null
+	if ResourceLoader.exists(path):
+		var inst := (load(path) as PackedScene).instantiate()
+		for c in inst.find_children("*", "MeshInstance3D", true, false):
+			var src := (c as MeshInstance3D).mesh
+			if src == null:
+				continue
+			out = src.duplicate() as Mesh
+			for s in out.get_surface_count():
+				out.surface_set_material(s, MaterialLib.hero_mat(src.surface_get_material(s), family, mode))
+			break
+		inst.free()
+	_mesh_cache[key] = out
+	return out
+
 static func _mesh(kind: String, mode: int) -> Mesh:
 	var key := "%s|%d" % [kind, mode]
 	if _mesh_cache.has(key):
@@ -282,12 +331,9 @@ static func _box_stack(boxes: Array, fam: String, mode: int) -> ArrayMesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for b in boxes:
-		var bm := BoxMesh.new()
-		bm.size = b[0]
-		var xf := Transform3D(Basis.from_euler(Vector3(b[2]) * PI / 180.0), b[1])
-		st.append_from(bm, 0, xf)
-	var mesh := st.commit()
-	mesh.surface_set_material(0, MaterialLib.get_mat(fam, mode))
+		ProcMesh.box(st, b[0], Transform3D(Basis.from_euler(Vector3(b[2]) * PI / 180.0), b[1]))
+	var mesh := ProcMesh.finish(st)
+	mesh.surface_set_material(0, MaterialLib.get_mat(fam, mode, true))
 	return mesh
 
 static func _driftwood(mode: int) -> ArrayMesh:
@@ -298,15 +344,15 @@ static func _driftwood(mode: int) -> ArrayMesh:
 	cm.bottom_radius = 0.16
 	cm.height = 2.8
 	cm.radial_segments = 7
-	st.append_from(cm, 0, Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(0, 0.13, 0)))
+	ProcMesh.append(st, cm, Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(0, 0.13, 0)), Vector2(TAU * 0.13, 2.8))
 	var br := CylinderMesh.new()
 	br.top_radius = 0.03
 	br.bottom_radius = 0.07
 	br.height = 1.0
 	br.radial_segments = 5
-	st.append_from(br, 0, Transform3D(Basis(Vector3.UP, 0.7) * Basis(Vector3.BACK, 1.0), Vector3(0.7, 0.3, 0.2)))
-	var mesh := st.commit()
-	mesh.surface_set_material(0, MaterialLib.get_mat("M_drift", mode))
+	ProcMesh.append(st, br, Transform3D(Basis(Vector3.UP, 0.7) * Basis(Vector3.BACK, 1.0), Vector3(0.7, 0.3, 0.2)), Vector2(TAU * 0.05, 1.0), Vector2(0.3, 0.7))
+	var mesh := ProcMesh.finish(st)
+	mesh.surface_set_material(0, MaterialLib.get_mat("M_drift", mode, true))
 	return mesh
 
 ## Cut sods stacked to dry: uneven blocks, each layer laid a little askew,
@@ -330,20 +376,14 @@ static func _peat(mode: int) -> ArrayMesh:
 			var pos := Vector3(-0.5 + (k + 0.5) * (1.0 / n) + lean + rng.randf_range(-0.05, 0.05), y + bh * 0.5, rng.randf_range(-0.08, 0.08))
 			var rot := Vector3(rng.randf_range(-6, 6), rng.randf_range(-14, 14) + (layer % 2) * 8, rng.randf_range(-7, 7) - layer * 2.5)
 			var xf := Transform3D(Basis.from_euler(rot * PI / 180.0), pos)
-			var bm := BoxMesh.new()
-			bm.size = Vector3(bw * 0.96, bh, bd)
-			peat.append_from(bm, 0, xf)
+			ProcMesh.box(peat, Vector3(bw * 0.96, bh, bd), xf)
 			if layer == layers - 1 or (k == n - 1 and rng.randf() < 0.3):
-				var gm := BoxMesh.new()
-				gm.size = Vector3(bw * 1.02, 0.07, bd * 1.02)
-				grass.append_from(gm, 0, xf * Transform3D(Basis.IDENTITY, Vector3(0, bh * 0.5 + 0.03, 0)))
+				ProcMesh.box(grass, Vector3(bw * 1.02, 0.07, bd * 1.02), xf * Transform3D(Basis.IDENTITY, Vector3(0, bh * 0.5 + 0.03, 0)))
 		y += 0.25
-	peat.generate_normals()
-	grass.generate_normals()
-	var mesh := peat.commit()
-	mesh.surface_set_material(0, MaterialLib.get_mat("M_peat", mode))
-	grass.commit(mesh)
-	mesh.surface_set_material(1, MaterialLib.get_mat("M_turf", mode))
+	var mesh := ProcMesh.finish(peat)
+	mesh.surface_set_material(0, MaterialLib.get_mat("M_peat", mode, true))
+	ProcMesh.finish(grass, mesh)
+	mesh.surface_set_material(1, MaterialLib.get_mat("M_turf", mode, true))
 	return mesh
 
 ## Dry-stone dyke, 2 m: irregular stones in two courses with a cope.
@@ -464,26 +504,29 @@ static func _veg_mesh(kind: String, tag: String) -> ArrayMesh:
 	var blades := 13
 	var hgt := Vector2(0.18, 0.4)
 	var wid := 0.035
-	var cols: Array = [Color(0.20, 0.28, 0.09), Color(0.28, 0.32, 0.12), Color(0.24, 0.26, 0.10), Color(0.33, 0.31, 0.14)]
+	# linear vertex colours, muted to sit with the turf photo and the Tripo
+	# albedos (the old values read as plastic lime and coral)
+	var cols: Array = [Color(0.12, 0.16, 0.06), Color(0.17, 0.19, 0.08), Color(0.14, 0.15, 0.07), Color(0.21, 0.20, 0.10)]
 	var spread := 0.18
 	match kind:
 		"heather":
-			blades = 34
-			hgt = Vector2(0.1, 0.19)
-			wid = 0.2
-			spread = 0.3
-			cols = [Color(0.30, 0.10, 0.06), Color(0.36, 0.14, 0.08), Color(0.26, 0.12, 0.09), Color(0.38, 0.22, 0.20)]
+			# many fine woody sprigs, not a few wide petals
+			blades = 64
+			hgt = Vector2(0.12, 0.26)
+			wid = 0.075
+			spread = 0.28
+			cols = [Color(0.13, 0.07, 0.07), Color(0.17, 0.09, 0.10), Color(0.11, 0.08, 0.06), Color(0.16, 0.12, 0.11)]
 		"sedge":
 			blades = 7
 			hgt = Vector2(0.5, 0.85)
 			wid = 0.035
 			spread = 0.12
-			cols = [Color(0.42, 0.40, 0.20), Color(0.50, 0.44, 0.22)]
+			cols = [Color(0.27, 0.25, 0.13), Color(0.33, 0.29, 0.15)]
 	for i in blades:
 		var a := rng.randf() * TAU
 		var r := rng.randf() * spread
 		var base := Vector3(cos(a) * r, 0, sin(a) * r)
-		var lean := Vector3(cos(a), 0, sin(a)) * (rng.randf_range(0.6, 1.1) if kind == "heather" else rng.randf_range(0.05, 0.25))
+		var lean := Vector3(cos(a), 0, sin(a)) * (rng.randf_range(0.25, 0.6) if kind == "heather" else rng.randf_range(0.05, 0.25))
 		var h := rng.randf_range(hgt.x, hgt.y)
 		var side := Vector3(-sin(a + 1.2), 0, cos(a + 1.2)) * wid * 0.5
 		var tip := base + lean * h * 2.0 + Vector3(0, h, 0)
