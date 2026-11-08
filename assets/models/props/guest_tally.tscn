@@ -1,0 +1,124 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="StandardMaterial3D" id="yellow"]
+albedo_color = Color(0.720, 0.600, 0.300, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="oat"]
+albedo_color = Color(0.800, 0.740, 0.600, 1)
+roughness = 0.95
+
+[sub_resource type="TorusMesh" id="cord"]
+inner_radius = 0.08
+outer_radius = 0.1
+rings = 24
+ring_segments = 6
+material = SubResource("yellow")
+
+[sub_resource type="TorusMesh" id="cord2"]
+inner_radius = 0.055
+outer_radius = 0.075
+rings = 20
+ring_segments = 6
+material = SubResource("oat")
+
+[sub_resource type="SphereMesh" id="knot"]
+radius = 0.016
+height = 0.032
+radial_segments = 6
+rings = 4
+material = SubResource("oat")
+
+[node name="GuestTally" type="Node3D"]
+
+[node name="Coil" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("cord")
+
+[node name="Coil2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.012, 0, 0)
+mesh = SubResource("cord2")
+
+[node name="K0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.09, 0)
+mesh = SubResource("knot")
+
+[node name="K1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.0831492, 0.0344415)
+mesh = SubResource("knot")
+
+[node name="K2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.0636396, 0.0636396)
+mesh = SubResource("knot")
+
+[node name="K3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.0344415, 0.0831492)
+mesh = SubResource("knot")
+
+[node name="K4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 5.51091e-18, 0.09)
+mesh = SubResource("knot")
+
+[node name="K5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.0344415, 0.0831492)
+mesh = SubResource("knot")
+
+[node name="K6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.0636396, 0.0636396)
+mesh = SubResource("knot")
+
+[node name="K7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.0831492, 0.0344415)
+mesh = SubResource("knot")
+
+[node name="K8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.09, 1.10218e-17)
+mesh = SubResource("knot")
+
+[node name="K9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.0831492, -0.0344415)
+mesh = SubResource("knot")
+
+[node name="K10" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.0636396, -0.0636396)
+mesh = SubResource("knot")
+
+[node name="K11" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.0344415, -0.0831492)
+mesh = SubResource("knot")
+
+[node name="K12" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -1.65327e-17, -0.09)
+mesh = SubResource("knot")
+
+[node name="K13" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.0344415, -0.0831492)
+mesh = SubResource("knot")
+
+[node name="K14" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.0636396, -0.0636396)
+mesh = SubResource("knot")
+
+[node name="K15" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.0831492, -0.0344415)
+mesh = SubResource("knot")
+
+[node name="End0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0.03, -0, 0.12)
+mesh = SubResource("knot")
+
+[node name="End1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0.03, -0.02, 0.132)
+mesh = SubResource("knot")
+
+[node name="End2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0.03, -0.04, 0.144)
+mesh = SubResource("knot")
+
+[node name="End3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0.03, -0.06, 0.156)
+mesh = SubResource("knot")
+
+[node name="End4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0.03, -0.08, 0.168)
+mesh = SubResource("knot")

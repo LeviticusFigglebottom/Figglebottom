@@ -230,5 +230,31 @@
    "chip": 0.5
   },
   "no_attack": true
+ },
+ "feast_cleaver": {
+  "name": "Host's Carving Cleaver",
+  "desc": "A broad black-iron cleaver with a knotwork oak handle and a ring at the butt, for carving at the feast. It goes through the joint and into the board under it. The ring is for hanging it by the high seat, on a nail he drove in himself, crooked.",
+  "class": "longsword",
+  "kit": "feast_cleaver",
+  "damage": 52.0,
+  "poise_damage": 28,
+  "scaling": {
+   "might": 0.65,
+   "craft": 0.15
+  },
+  "stamina": {
+   "light": 19,
+   "heavy": 33,
+   "sprint": 22
+  },
+  "moveset": "longsword",
+  "upgrade": {
+   "per_level": 6,
+   "max": 5
+  },
+  "block": {
+   "stab": 0.8,
+   "chip": 0.18
+  }
  }
 }

@@ -1238,6 +1238,161 @@
      "root_lock": true
     }
    }
+  },
+  "feast_guest": {
+   "scene": "res://assets/models/enemies/feast_guest.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "Tarnhall frost-taken (TARNHALL.md 5): own idle/walk/run/slash/hit/defeat (the slash, both fists over the head and down, is The toast; sectioned off the hand tracks); the cuffs are overlays",
+   "unarmed": {
+    "_note": "rounded fists of ice",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.32,
+     "offset": [
+      0.0,
+      0.1,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.32,
+     "offset": [
+      0.0,
+      0.1,
+      0.0
+     ]
+    }
+   },
+   "clips": {
+    "slash": {
+     "start": 1.0,
+     "contact": 2.1,
+     "end": 3.4
+    }
+   }
+  },
+  "cupbearer": {
+   "scene": "res://assets/models/enemies/cupbearer.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "Tarnhall frost-taken (TARNHALL.md 5): own idle/walk/run/slash/hit/defeat (the slash is the Slice); the lunge and going round are overlays",
+   "unarmed": {
+    "_note": "thin straight ice blades: the spheres ride out along them",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.42,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.24,
+     "offset": [
+      0.0,
+      0.42,
+      0.0
+     ]
+    }
+   },
+   "clips": {
+    "slash": {
+     "start": 1.0,
+     "contact": 2.1,
+     "end": 3.4
+    }
+   }
+  },
+  "hall_champion": {
+   "scene": "res://assets/models/enemies/hall_champion.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "Tarnhall frost-taken (TARNHALL.md 5): own idle/walk/run/slash/hit/defeat (the slash is the Mace); the shield bash and rush are overlays",
+   "unarmed": {
+    "_note": "the ice mace-head fist; the board shield grown into the left forearm",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.4,
+     "offset": [
+      0.0,
+      0.14,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftForeArm",
+     "radius": 0.55,
+     "offset": [
+      0.0,
+      0.2,
+      0.0
+     ]
+    }
+   },
+   "clips": {
+    "slash": {
+     "start": 1.0,
+     "contact": 2.1,
+     "end": 3.4
+    }
+   }
+  },
+  "host": {
+   "scene": "res://assets/models/bosses/host.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "bare_hands": true,
+   "_note": "keeps his own idle/walk/slash/hit/defeat plus table_sweep, bench_throw, raise_guests (text-prompt clips, sectioned here off the hand and hips tracks); borrows the rest. The horn frozen in his right fist is the right-hand hit volume; the sweep and the bench are area strikes (the table on his back).",
+   "unarmed": {
+    "_note": "the horn-fist and the left fist",
+    "right": {
+     "bone": "mixamorig_RightHand",
+     "radius": 0.62,
+     "offset": [
+      0.0,
+      0.2,
+      0.0
+     ]
+    },
+    "left": {
+     "bone": "mixamorig_LeftHand",
+     "radius": 0.5,
+     "offset": [
+      0.0,
+      0.15,
+      0.0
+     ]
+    }
+   },
+   "clips": {
+    "slash": {
+     "start": 1.0,
+     "contact": 2.2,
+     "end": 3.3
+    },
+    "table_sweep": {
+     "start": 0.3,
+     "contact": 1.8,
+     "end": 3.2
+    },
+    "bench_throw": {
+     "start": 1.2,
+     "contact": 3.1,
+     "end": 3.7
+    },
+    "raise_guests": {
+     "start": 0.3,
+     "contact": 1.75,
+     "end": 3.0
+    }
+   }
   }
  },
  "mounts": {
@@ -1357,6 +1512,14 @@
     1.8
    ],
    "_note": "grip at origin, head +Y"
+  },
+  "feast_cleaver": {
+   "scene": "res://assets/models/weapons/feast_cleaver.glb",
+   "trail": [
+    0.12,
+    0.6
+   ],
+   "_note": "the Host's carving cleaver (TARNHALL.md 8): grip at origin, blade +Y"
   }
  },
  "clips": {
@@ -1706,6 +1869,75 @@
   "kneel_fish": {
    "loop": true,
    "procedural": {}
+  },
+  "sit_feast": {
+   "loop": true,
+   "procedural": {}
+  },
+  "cuff_swing": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.4,
+    "contact": 0.75
+   }
+  },
+  "cuff_back": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.2,
+    "contact": 0.55
+   }
+  },
+  "blade_lunge": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.5,
+    "contact": 0.85
+   }
+  },
+  "tray_spin": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.2,
+    "contact": 0.8
+   }
+  },
+  "shield_bash": {
+   "procedural": {
+    "start": 0.0,
+    "end": 1.2,
+    "contact": 0.55
+   }
+  },
+  "shield_set": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.0,
+    "contact": 0.8
+   }
+  },
+  "pour_horn": {
+   "loop": true,
+   "procedural": {}
+  },
+  "host_set_horn": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.6
+   }
+  },
+  "horn_tip": {
+   "procedural": {
+    "start": 0.0,
+    "end": 2.0,
+    "contact": 1.2
+   }
+  },
+  "host_sit": {
+   "procedural": {
+    "start": 0.0,
+    "end": 3.0
+   }
   }
  },
  "aliases": {

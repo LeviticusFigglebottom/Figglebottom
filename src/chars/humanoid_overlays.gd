@@ -618,6 +618,121 @@ static func kettle_tables() -> Dictionary:
 		}), "pos": {"Hips": [[0.0, 0, 0, 0], [1.0, 0, -0.36, 0.06], [3.0, 0, -0.4, 0.06]]}},
 	}
 
+## Tarnhall (TARNHALL.md 5, 6): the feast-guests in their seats, the
+## Cupbearers' blades, the Hall-champion's shield, and the Host's horn.
+static func tarnhall_tables() -> Dictionary:
+	var sit_legs := {
+		"LeftUpLeg": [[0.0, -84, 0, 8]], "RightUpLeg": [[0.0, -82, 0, -8]],
+		"LeftLeg": [[0.0, 84, 0, 0]], "RightLeg": [[0.0, 86, 0, 0]],
+	}
+	# going round: three turns on the spot after the windup (90-degree keys)
+	var spin: Array = [[0.0, 0, 0, 0], [0.8, 0, -20, 0]]
+	var turns := 12
+	for i in range(1, turns + 1):
+		spin.append([0.8 + 1.05 * float(i) / turns, 0, -20 + 90 * i, 0])
+	spin.append([2.2, 0, 0, 0])
+	return {
+		# a guest in its place at the long table: forearms on the board, head bowed
+		"sit_feast": {"len": 4.0, "loop": true, "rot": _merge(sit_legs, {
+			"Spine": [[0.0, 14, 0, 0], [2.0, 16, 0, 0], [4.0, 14, 0, 0]],
+			"Head": [[0.0, 18, 0, 0], [2.0, 22, 0, 0], [4.0, 18, 0, 0]],
+			"LeftArm": [[0.0, -52, 0, -6], [4.0, -52, 0, -6]],
+			"RightArm": [[0.0, -54, 0, 6], [4.0, -54, 0, 6]],
+			"LeftForeArm": [[0.0, -58, 0, 0], [4.0, -58, 0, 0]],
+			"RightForeArm": [[0.0, -62, 0, 0], [4.0, -62, 0, 0]],
+		}), "pos": {"Hips": [[0.0, 0, -0.5, 0.08], [4.0, 0, -0.5, 0.08]]}},
+
+		# Cuff: the right ice-fist swung round flat, shoulder first
+		"cuff_swing": {"len": 1.4, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.55, -4, -38, 0], [0.8, 8, 34, 0], [1.4, 0, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.55, -20, 0, -80], [0.8, -90, 0, -70], [1.0, -80, 0, -40], [1.4, 0, 0, 0]],
+			"RightForeArm": [[0.0, 0, 0, 0], [0.55, -60, 0, 0], [0.8, -10, 0, 0], [1.4, 0, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [0.55, -30, 0, -10], [1.4, 0, 0, 0]],
+		}},
+		# Left cuff: the weight goes over, the left fist low and up
+		"cuff_back": {"len": 1.2, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.4, 6, 30, 0], [0.6, 10, -30, 0], [1.2, 0, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [0.4, 20, 0, 30], [0.6, -80, 0, 50], [1.2, 0, 0, 0]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [0.4, -50, 0, 0], [0.6, -14, 0, 0], [1.2, 0, 0, 0]],
+		}},
+
+		# Lunge: right shoulder drops, the left blade goes back, then the run
+		"blade_lunge": {"len": 1.5, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.6, 18, 26, 0], [0.85, 26, -14, 0], [1.5, 0, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [0.6, 40, 0, 20], [0.85, -96, 0, 6], [1.2, -90, 0, 6], [1.5, 0, 0, 0]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [0.6, -40, 0, 0], [0.85, -4, 0, 0], [1.5, 0, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.6, -20, 0, -24], [1.5, 0, 0, 0]],
+			"LeftUpLeg": [[0.0, 0, 0, 0], [0.85, -40, 0, 4], [1.2, -30, 0, 4], [1.5, 0, 0, 0]],
+			"LeftLeg": [[0.0, 0, 0, 0], [0.85, 30, 0, 0], [1.5, 0, 0, 0]],
+		}, "pos": {"Hips": [[0.0, 0, 0, 0], [0.6, 0, -0.08, 0], [0.85, 0, -0.12, 0.1], [1.5, 0, 0, 0]]}},
+
+		# Going round: side-on, both blades out low like a tray, three turns
+		"tray_spin": {"len": 2.2, "rot": {
+			"Hips": spin,
+			"LeftArm": [[0.0, 0, 0, 0], [0.8, -30, 0, -70], [1.85, -30, 0, -70], [2.2, 0, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.8, -30, 0, 70], [1.85, -30, 0, 70], [2.2, 0, 0, 0]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [0.8, -20, 0, 0], [2.2, 0, 0, 0]],
+			"RightForeArm": [[0.0, 0, 0, 0], [0.8, -20, 0, 0], [2.2, 0, 0, 0]],
+		}, "pos": {"Hips": [[0.0, 0, 0, 0], [0.8, 0, -0.08, 0], [1.85, 0, -0.08, 0], [2.2, 0, 0, 0]]}},
+
+		# Shield bash: the shield squared and driven out, a short step
+		"shield_bash": {"len": 1.2, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.4, 4, -24, 0], [0.55, 14, 16, 0], [1.2, 0, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [0.4, -50, 0, -20], [0.55, -84, 0, -6], [1.2, 0, 0, 0]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [0.4, -90, 0, 0], [0.55, -40, 0, 0], [1.2, 0, 0, 0]],
+			"LeftUpLeg": [[0.0, 0, 0, 0], [0.55, -30, 0, 4], [1.2, 0, 0, 0]],
+			"LeftLeg": [[0.0, 0, 0, 0], [0.55, 20, 0, 0], [1.2, 0, 0, 0]],
+		}},
+		# Shield rush: the shield set, the head down behind it, and run
+		"shield_set": {"len": 2.0, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.8, 24, -10, 0], [2.0, 24, -10, 0]],
+			"Head": [[0.0, 0, 0, 0], [0.8, 20, 0, 0], [2.0, 20, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [0.8, -76, 0, -14], [2.0, -76, 0, -14]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [0.8, -96, 0, 0], [2.0, -96, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.8, 20, 0, 10], [2.0, 20, 0, 10]],
+			"LeftUpLeg": [[0.0, 0, 0, 0], [0.8, -36, 0, 4], [1.2, -10, 0, 4], [1.6, -36, 0, 4], [2.0, -10, 0, 4]],
+			"RightUpLeg": [[0.0, 0, 0, 0], [0.8, -10, 0, -4], [1.2, -36, 0, -4], [1.6, -10, 0, -4], [2.0, -36, 0, -4]],
+			"LeftLeg": [[0.0, 0, 0, 0], [0.8, 40, 0, 0], [2.0, 40, 0, 0]],
+			"RightLeg": [[0.0, 0, 0, 0], [0.8, 30, 0, 0], [2.0, 30, 0, 0]],
+		}, "pos": {"Hips": [[0.0, 0, 0, 0], [0.8, 0, -0.1, 0.04], [2.0, 0, -0.1, 0.04]]}},
+
+		# --- the Host. A horn in his right fist; the table on his back.
+		# Walking the table: the horn held out over the next place, tipping
+		"pour_horn": {"len": 2.4, "loop": true, "rot": {
+			"Spine": [[0.0, 12, 0, 0], [1.2, 16, -6, 0], [2.4, 12, 0, 0]],
+			"Head": [[0.0, 20, 0, 0], [1.2, 24, -4, 0], [2.4, 20, 0, 0]],
+			"RightArm": [[0.0, -62, 0, 8], [1.2, -70, 0, 4], [2.4, -62, 0, 8]],
+			"RightForeArm": [[0.0, -30, 0, 0], [0.6, -30, -40, 0], [1.2, -24, -60, 0], [1.8, -30, -30, 0], [2.4, -30, 0, 0]],
+			"LeftArm": [[0.0, -10, 0, -8], [2.4, -10, 0, -8]],
+		}},
+		# Wake: he sets the horn down on the table in front of a guest and turns
+		"host_set_horn": {"len": 2.6, "rot": {
+			"Spine": [[0.0, 12, 0, 0], [0.9, 30, 0, 0], [1.4, 30, 0, 0], [2.0, 4, 30, 0], [2.6, 0, 0, 0]],
+			"Head": [[0.0, 20, 0, 0], [0.9, 26, 0, 0], [1.6, 0, 40, 0], [2.6, 0, 0, 0]],
+			"RightArm": [[0.0, -62, 0, 8], [0.9, -56, 0, 4], [1.3, -50, 0, 4], [1.8, -10, 0, 10], [2.6, 0, 0, 0]],
+			"RightForeArm": [[0.0, -30, 0, 0], [0.9, -40, 0, 0], [1.8, -10, 0, 0], [2.6, 0, 0, 0]],
+		}},
+		# Tip the horn: the right arm goes back over the shoulder to the table
+		# on his back, lifts a great horn off it and tips it out ahead of him
+		"horn_tip": {"len": 2.0, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.6, -14, -24, 0], [1.2, 22, 8, 0], [2.0, 0, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.6, -170, 0, 10], [0.9, -160, 0, 10], [1.2, -80, 0, 6], [1.5, -70, 0, 6], [2.0, 0, 0, 0]],
+			"RightForeArm": [[0.0, 0, 0, 0], [0.6, -90, 0, 0], [1.2, -10, -70, 0], [1.5, -10, -80, 0], [2.0, 0, 0, 0]],
+			"Head": [[0.0, 0, 0, 0], [0.6, -16, 0, 0], [1.2, 16, 0, 0], [2.0, 0, 0, 0]],
+		}},
+		# Release: he sets the horn down and sits on the end of the bench
+		"host_sit": {"len": 3.0, "rot": _merge(sit_legs, {
+			"LeftUpLeg": [[0.0, 0, 0, 0], [1.4, -84, 0, 8]], "RightUpLeg": [[0.0, 0, 0, 0], [1.4, -82, 0, -8]],
+			"LeftLeg": [[0.0, 0, 0, 0], [1.4, 84, 0, 0]], "RightLeg": [[0.0, 0, 0, 0], [1.4, 86, 0, 0]],
+			"Spine": [[0.0, 0, 0, 0], [1.4, 10, 0, 0], [3.0, 26, 0, 0]],
+			"Head": [[0.0, 0, 0, 0], [1.4, 10, 0, 0], [3.0, 30, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.8, -50, 0, 8], [1.4, -30, 0, 6], [3.0, -24, 0, 4]],
+			"RightForeArm": [[0.0, 0, 0, 0], [0.8, -40, 0, 0], [3.0, -50, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [3.0, -24, 0, -4]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [3.0, -50, 0, 0]],
+		}), "pos": {"Hips": [[0.0, 0, 0, 0], [1.4, 0, -0.5, 0.08], [3.0, 0, -0.52, 0.08]]}},
+	}
+
 static func _merge(a: Dictionary, b: Dictionary) -> Dictionary:
 	var out := a.duplicate()
 	out.merge(b, true)
@@ -647,6 +762,7 @@ static func build(skel: Skeleton3D, idle: Animation) -> Dictionary:
 	tabs.merge(netmender_tables())
 	tabs.merge(lowe_tables())
 	tabs.merge(kettle_tables())
+	tabs.merge(tarnhall_tables())
 	for clip in tabs:
 		var c: Dictionary = tabs[clip]
 		var a := Animation.new()

@@ -125,7 +125,7 @@ func _run() -> void:
 		"the Tarn Steps and Tarn Causeway hearths stand")
 	var names := area.base.get_children().map(func(n): return String(n.name))
 	check(names.has("House_hall") and names.has("House_byres"), "the great hall and the byres at its east gable")
-	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 1, "Lusse keeps the thaw")
+	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 2, "Lusse and Ottar keep the thaw")
 	check(player.is_on_floor(), "the Bearer stands at the foot of the Tarn Steps")
 
 	print("== one continuous seam down to Kettle Fjord")
@@ -192,9 +192,9 @@ func _run() -> void:
 	if veils.size() == 1:
 		var veil: FrostVeil = veils[0]
 		var boss: Node = veil.boss_spawner.current if veil.boss_spawner != null else null
-		check(boss != null and boss.cfg.get("is_boss", false), "the Host (stand-in) waits behind the veil")
-		check(boss != null and String(boss.cfg.get("release_flag", "")) == "" and boss.get_meta("roster_id", "") == "host",
-			"a stand-in never carries the borrowed holdfast's release")
+		check(boss != null and boss.cfg.get("is_boss", false), "the Host waits behind the veil")
+		check(boss != null and boss is Host and String(boss.cfg.get("release_flag", "")) == "ks_host_released",
+			"the Host himself, no stand-in, with his own release")
 
 	print("== RIME: the doors barred, the way round by the byres")
 	var gate: ShortcutGate = area.rime_layer.find_children("*", "ShortcutGate", true, false)[0]

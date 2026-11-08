@@ -513,6 +513,39 @@
    ],
    "rot": 238,
    "tag": "thaw"
+  },
+  {
+   "id": "arne",
+   "at": [
+    46.0,
+    45.81,
+    -207.8
+   ],
+   "rot": 180.0,
+   "tag": "thaw",
+   "require_flag": "ks_turfwright_released"
+  },
+  {
+   "id": "liv",
+   "at": [
+    44.65,
+    45.68,
+    -207.3
+   ],
+   "rot": 208.0,
+   "tag": "thaw",
+   "require_flag": "ks_turfwright_released"
+  },
+  {
+   "id": "asta",
+   "at": [
+    47.35,
+    45.69,
+    -207.3
+   ],
+   "rot": 152.0,
+   "tag": "thaw",
+   "require_flag": "ks_turfwright_released"
   }
  ],
  "plaques": [

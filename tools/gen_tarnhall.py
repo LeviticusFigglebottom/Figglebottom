@@ -124,6 +124,7 @@ while x < TX1 - 0.6:
                       "mat": "M_drift", "tag": "base", "collide": False})
     k += 1
     x += 1.6
+SEATS = []
 # the guests. THAW: the benches packed. RIME: the same guests, white, in
 # their seats (the Tripo feast-guest as a still); some stand when you come in.
 for i in range(8):
@@ -133,8 +134,10 @@ for i in range(8):
         if (i + (side > 0)) % 2 == 0:
             PROPS.append({"kit": "mannequin_thaw", "at": [r2(gx), FY, r2(gz)], "rot": 0 if side > 0 else 180, "tag": "thaw", "collide": False})
         elif i % 3 != 1:
-            LANDMARKS.append({"scene": "res://assets/models/enemies/feast_guest.glb", "at": [r2(gx), FY, r2(gz)],
-                              "rot": 180 if side > 0 else 0, "tag": "rime"})
+            # seated in their places (sit_feast); the Host raises them (TARNHALL.md 6)
+            SEATS.append({"enemy": "feast_guest_seated", "id": "seat_%d_%s" % (i, "s" if side > 0 else "n"),
+                          "at": [r2(gx), FY + 0.1, r2(gz)], "face": 0 if side > 0 else 180, "pose": "sit_feast",
+                          "absent_flag": "ks_host_released"})
 # the long hearth down the middle of the floor: fires burning along it in
 # THAW (light through the smoke-holes above), cold ash in RIME
 HEARTH_Z = HALL_C[1] + 1.6
@@ -259,6 +262,11 @@ def on_road(i, f, dy=0.0, off=0.0):
 hearths = [
     {"id": "hs_tarn_steps", "name": "the Tarn Steps", "at": on_road(3, 0.5, 0.0, 2.0), "rot": 200},
     {"id": "hs_tarn_causeway", "name": "the Tarn Causeway", "at": at(124.0, -331.0), "rot": 250},
+    # the byre yard by the cattle door: nearest hearth to the Host (TARNHALL.md 1)
+    {"id": "hs_byres", "name": "the Byres", "at": at(BYRE_C[0] - 4.0, BYRE_C[1] + 8.0), "rot": 180},
+    # the hall's cold fire, woken when he is released (release_hearth)
+    {"id": "hs_long_table", "name": "the Long Table", "at": [r2(HALL_C[0] - 1.0), FY, r2(HALL_C[1] + 2.6)], "rot": 90,
+     "require_flag": "ks_host_released"},
 ]
 spawners = [
     {"enemy": "feast_guest", "stand_in": "rimewalker", "id": "guest_steps", "at": on_road(4, 0.6, 0.1), "face": 240},
@@ -270,16 +278,31 @@ spawners = [
     {"enemy": "cupbearer", "stand_in": "keener", "id": "cupbearer_byre_b", "at": [r2(BYRE_X0 + 10.5), FY + 0.1, r2(BYRE_C[1] + 1.0)], "face": 270},
     {"enemy": "hall_champion", "stand_in": "cairn_carrier", "id": "champion_bridge", "at": at(T.CHANNEL[1] + 6.0, BRIDGE_Z + 0.6, 0.1), "face": 90,
      "dead_once": True},
-    {"enemy": "host", "stand_in": "netmender", "id": "host", "at": [r2(HALL_C[0] + 2.0), FY + 0.1, r2(HALL_C[1] + 3.0)], "face": 90,
+    # at the cattle door, facing out into the yard (TARNHALL.md 3)
+    {"enemy": "hall_champion", "stand_in": "cairn_carrier", "id": "champion_byre_door", "at": at(BYRE_DOOR[0], BYRE_DOOR[1] + 1.8, 0.1), "face": 180},
+    # the Host at the long table, filling the horns (TARNHALL.md 4, 6)
+    {"enemy": "host", "stand_in": "netmender", "id": "host", "at": [r2(HALL_C[0] + 2.0), FY + 0.1, r2(TABLE_Z + 3.0)], "face": 0,
      "dead_once": True, "frost_veil_id": "long_table_veil"},
-]
+] + SEATS
 VEIL = [r2(BYRE_X0 + 1.4), FY, DOOR_Z]
 pickups = [
     {"id": "byre_cache", "at": [r2(BYRE_C[0] + 4.6), FY, r2(BYRE_C[1] - 3.2)], "item": "bog_iron", "count": 2, "tag": "rime",
      "label": "Pry up what the byre floor holds"},
     {"id": "tarn_horn", "at": [r2(HALL_X0 - 4.6), PORCH_Y, r2(HALL_C[1] + 5.8)], "warmth": 45, "tag": "base", "label": "Take the guest's horn"},
+    # TARNHALL.md 3, 4, 9
+    {"id": "feast_cleaver", "at": [r2(BYRE_C[0] + 3.4), FY, r2(BYRE_C[1] + 2.2)], "item": "feast_cleaver", "tag": "rime",
+     "scene": "res://assets/models/weapons/feast_cleaver.glb", "label": "Take the carving cleaver"},
+    {"id": "barrel_head", "at": at(BYRE_C[0] + 1.0, BYRE_C[1] + 7.5), "item": "item_barrel_head", "tag": "rime",
+     "scene": "res://assets/models/props/barrel_head.tscn", "label": "Prise off the barrel head"},
+    {"id": "ottar_staff", "at": [r2(HALL_X0 + 1.2), FY, r2(DOOR_Z - 1.6)], "item": "item_ottar_staff", "tag": "rime",
+     "scene": "res://assets/models/props/ottar_stick.tscn", "label": "Take the walking stick", "set_flag": "ks_ottar_staff_found"},
+    {"id": "guest_tally", "at": [r2(HALL_X0 + 1.7), FY, r2(DOOR_Z + 2.4)], "item": "item_guest_tally", "tag": "rime",
+     "scene": "res://assets/models/props/guest_tally.tscn", "label": "Untie the guest-tally",
+     "appear_flag": "ks_host_released", "set_flag": "ks_guest_tally_found"},
 ]
-npcs = [{"id": "lusse", "at": [r2(HALL_C[0] + 1.0), FY, r2(HALL_C[1] + 4.6)], "rot": 200, "tag": "thaw"}]
+npcs = [{"id": "lusse", "at": [r2(HALL_C[0] + 1.0), FY, r2(HALL_C[1] + 4.6)], "rot": 200, "tag": "thaw"},
+        # just inside the front door with his boots on (TARNHALL.md 7)
+        {"id": "ottar", "at": [r2(HALL_X0 + 2.2), FY, r2(DOOR_Z - 1.4)], "rot": 270, "tag": "thaw"}]
 
 portal = seam("tarnhall")
 arrive = seam("kettle_fjord")       # Kettle's side of the seam sets you down here
