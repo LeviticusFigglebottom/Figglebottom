@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3]
+
+[sub_resource type="StandardMaterial3D" id="wool"]
+albedo_color = Color(0.520, 0.530, 0.550, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="darn"]
+albedo_color = Color(0.380, 0.390, 0.420, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="leather"]
+albedo_color = Color(0.360, 0.250, 0.160, 1)
+roughness = 0.7
+
+[sub_resource type="CapsuleMesh" id="hand"]
+radius = 0.065
+height = 0.24
+material = SubResource("wool")
+
+[sub_resource type="CapsuleMesh" id="thumb"]
+radius = 0.026
+height = 0.1
+material = SubResource("darn")
+
+[sub_resource type="BoxMesh" id="palm"]
+size = Vector3(0.01, 0.12, 0.09)
+material = SubResource("leather")
+
+[sub_resource type="CylinderMesh" id="cuff"]
+top_radius = 0.07
+bottom_radius = 0.07
+height = 0.04
+material = SubResource("wool")
+
+[node name="Mitten" type="Node3D"]
+
+[node name="Hand" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.45, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
+mesh = SubResource("hand")
+
+[node name="Palm" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03, 0.12, 0)
+mesh = SubResource("palm")
+
+[node name="Thumb" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.82, -0.57, 0, 0.57, 0.82, 0, 0.12, 0.07)
+mesh = SubResource("thumb")
+
+[node name="Cuff" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+mesh = SubResource("cuff")

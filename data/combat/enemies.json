@@ -1374,8 +1374,607 @@
    "item": "item_tally_stick",
    "label": "Take the tally-stick",
    "pickup_id": "tally_stick",
-   "ahead": 2.2
+   "ahead": 2.2,
+   "scene": "res://assets/models/props/tally_stick.tscn"
   },
   "release_hearth": "hs_open_barrow"
+ },
+ "ice_fisher": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.9,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Ice-fisher",
+  "desc": "A fisher the frost took kneeling at a hole. Both hands have grown into ice-picks.",
+  "model": "ice_fisher",
+  "hp": 60,
+  "poise": 30,
+  "speed": 2.2,
+  "aggro_sight": 11.0,
+  "hurt_r": 0.45,
+  "hurt_h": 1.6,
+  "col_r": 0.4,
+  "stagger_time": 0.9,
+  "warmth": 30,
+  "rise_time": 1.6,
+  "_ai": "KETTLE.md 5. Kneels at a hole that is not there (pose kneel_fish) and rises when the Bearer comes into sight; jabs, and cuts a hole in the ice under him.",
+  "attacks": [
+   {
+    "id": "pick",
+    "_tell": "right pick drawn back to the shoulder (0.5 s); a quick jab. Parryable. Often a second with the left.",
+    "range": 2.0,
+    "windup": 0.5,
+    "active": 0.14,
+    "recover": 0.7,
+    "dmg": 14,
+    "poise_dmg": 14,
+    "cooldown": 1.6,
+    "anim": "atk_thrust",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.8,
+    "chain": "pick_left",
+    "chain_chance": 0.55
+   },
+   {
+    "id": "pick_left",
+    "_tell": "weight forward, the left shoulder drops (0.4 s). Only after a Pick.",
+    "range": 2.0,
+    "windup": 0.4,
+    "active": 0.14,
+    "recover": 0.8,
+    "dmg": 12,
+    "poise_dmg": 12,
+    "cooldown": 0.0,
+    "anim": "atk_back",
+    "hands": [
+     "left"
+    ],
+    "lunge": 1.4,
+    "chain_only": true
+   },
+   {
+    "id": "cut_hole",
+    "_tell": "drops to one knee, both picks raised over the head (1.4 s); a 2 m circle glows where the Bearer stands; the ice there breaks to black water for 6 s. Off it in a second or go under.",
+    "type": "break_ice",
+    "at_target": true,
+    "length": 0.0,
+    "range": 6.0,
+    "min_range": 1.5,
+    "ice": {
+     "shape": "disc",
+     "radius": 2.0,
+     "life": 6.0,
+     "sink": 1.0,
+     "shock": 10
+    },
+    "windup": 1.4,
+    "active": 0.2,
+    "recover": 1.2,
+    "poise_dmg": 20,
+    "cooldown": 8.0,
+    "anim": "pick_cut",
+    "track": 0.9,
+    "shake": 0.35,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "sealer": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.9,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Sealer",
+  "desc": "A sealer the frost took waiting at a breathing hole. The right arm has fused into a club, the left hand into a hook.",
+  "model": "sealer",
+  "hp": 110,
+  "poise": 70,
+  "speed": 1.7,
+  "aggro_sight": 10.0,
+  "hurt_r": 0.55,
+  "hurt_h": 1.9,
+  "col_r": 0.48,
+  "stagger_time": 1.0,
+  "warmth": 40,
+  "_ai": "KETTLE.md 5. Clubs, and hooks the Bearer in from range to club him.",
+  "attacks": [
+   {
+    "id": "club",
+    "_tell": "club raised high behind the head, frost-breath puffs (1.0 s); one heavy overhand. Not parryable.",
+    "range": 2.4,
+    "windup": 1.0,
+    "active": 0.2,
+    "recover": 1.1,
+    "dmg": 30,
+    "poise_dmg": 46,
+    "cooldown": 2.2,
+    "anim": "atk_over",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.2,
+    "breath": "twice",
+    "chain": "backhand",
+    "chain_chance": 0.4
+   },
+   {
+    "id": "backhand",
+    "_tell": "feet shuffle round (0.5 s); a backhand with the club. Only after a Club.",
+    "range": 2.4,
+    "windup": 0.5,
+    "active": 0.18,
+    "recover": 1.0,
+    "dmg": 20,
+    "poise_dmg": 26,
+    "cooldown": 0.0,
+    "anim": "atk_back",
+    "hands": [
+     "right"
+    ],
+    "lunge": 0.8,
+    "chain_only": true
+   },
+   {
+    "id": "hook",
+    "_tell": "left arm thrown back low, hook turned out, breath held (1.0 s); a 1.2 x 5 m strip glows; the hook catches and drags the Bearer in to 1.5 m (mash to break), then a Club. Roll sideways.",
+    "type": "hook",
+    "range": 5.5,
+    "min_range": 2.6,
+    "length": 5.0,
+    "width": 1.2,
+    "offset": 0.4,
+    "snare": 0.8,
+    "mash": 4,
+    "haul_to": 1.5,
+    "pull_time": 0.45,
+    "then": "club",
+    "windup": 1.0,
+    "active": 0.15,
+    "recover": 0.9,
+    "dmg": 6,
+    "poise_dmg": 10,
+    "cooldown": 7.0,
+    "anim": "hook_throw",
+    "breath": "held",
+    "track": 0.8,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.2,
+      5.0
+     ],
+     "offset": 0.4,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "sledge_dog": {
+  "poise_regen": 7,
+  "turn": 7.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 6.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 0.5,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.1,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Sledge-dog",
+  "desc": "A sledge-dog frozen in harness. They come in pairs.",
+  "model": "sledge_dog",
+  "hp": 38,
+  "poise": 18,
+  "speed": 4.6,
+  "aggro_sight": 12.0,
+  "hurt_r": 0.4,
+  "hurt_h": 0.8,
+  "col_r": 0.3,
+  "stagger_time": 0.6,
+  "warmth": 16,
+  "flank": true,
+  "keep_range": 3.5,
+  "head_offset": [
+   0.0,
+   0.6,
+   -0.55
+  ],
+  "_ai": "KETTLE.md 5. Pairs work from opposite sides (flank). A short snap, and the run down: flat out along a line and through.",
+  "attacks": [
+   {
+    "id": "snap",
+    "_tell": "crouches, ears back, a snort (0.45 s); a short lunge bite, 2.5 m.",
+    "range": 2.8,
+    "min_range": 0.6,
+    "windup": 0.45,
+    "active": 0.28,
+    "recover": 0.7,
+    "dmg": 12,
+    "poise_dmg": 12,
+    "reach": 1.3,
+    "width": 1.0,
+    "height": 1.0,
+    "cooldown": 1.5,
+    "anim": "atk_lunge",
+    "hit_anim": "bite",
+    "lunge": 7.5,
+    "breath": "forward",
+    "body_hitbox": true,
+    "arc": 80
+   },
+   {
+    "id": "run_down",
+    "_tell": "drops low, the traces tighten behind it (0.7 s); a 1.2 x 9 m strip glows; it runs flat out along the strip and through whoever is on it. Knocks down.",
+    "range": 9.0,
+    "min_range": 3.5,
+    "windup": 0.7,
+    "active": 0.75,
+    "recover": 0.8,
+    "dmg": 18,
+    "poise_dmg": 50,
+    "reach": 1.4,
+    "width": 1.2,
+    "height": 1.0,
+    "cooldown": 5.0,
+    "anim": "atk_lunge",
+    "hit_anim": "bite",
+    "lunge": 12.0,
+    "body_hitbox": true,
+    "arc": 100,
+    "track": 0.6,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.2,
+      9.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "ice_cutter": {
+  "name": "The Ice-Cutter",
+  "bar_name": "THE ICE-CUTTER",
+  "desc": "Old Pell, who cut the fishing holes every winter and ran the sledge-dogs. He has kept one hole open.",
+  "class": "res://src/enemies/ice_cutter.gd",
+  "model": "ice_cutter",
+  "body": "mannequin_holdfast",
+  "is_boss": true,
+  "hp": 1250,
+  "poise": 140,
+  "poise_regen": 30,
+  "speed": 2.0,
+  "turn": 3.8,
+  "aggro_sight": 40.0,
+  "aggro_fov": 360.0,
+  "aggro_hear": 40.0,
+  "leash": 999.0,
+  "arm_h": 2.0,
+  "arm_dx": 0.55,
+  "hurt_r": 1.0,
+  "hurt_h": 2.9,
+  "col_r": 0.7,
+  "stagger_time": 1.6,
+  "stride": 2.0,
+  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "warmth": 1800,
+  "_fight": "KETTLE.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: he kneels drilling at the rim until the Bearer is within wake_dist or strikes him. hole_ahead: metres from where he kneels to the hole's centre, along the way he first faces. guard_r: in phase 3 he keeps this close to the hole. ring_band: the phase-two band of broken ice round the arena (metres from the hole).",
+  "phase_at": [
+   0.6,
+   0.25
+  ],
+  "phase_speed": [
+   1.0,
+   1.05,
+   0.85
+  ],
+  "wake_dist": 6.0,
+  "hole_ahead": 2.64,
+  "guard_r": 4.0,
+  "kneel_off": 2.4,
+  "parry_stagger_mult": 1.6,
+  "ring_band": {
+   "inner": 9.0,
+   "outer": 10.5,
+   "sink": 0.7
+  },
+  "transitions": {
+   "wake": {
+    "_tell": "pulls the auger out of the ice, knocks the shavings off it against his boot, stands; the bar appears",
+    "time": 2.6,
+    "anim": "rise_auger",
+    "events": [
+     [
+      1.5,
+      "knock"
+     ]
+    ]
+   },
+   "p2": {
+    "_tell": "stands over the hole and cuts a ring round the whole arena with one turn of the auger: the band between 9 and 10.5 m breaks open for the phase",
+    "time": 2.6,
+    "anim": "ring_cut",
+    "events": [
+     [
+      1.3,
+      "ring_band"
+     ]
+    ]
+   },
+   "p3": {
+    "_tell": "the band closes over white; he goes back to the hole and kneels at it",
+    "time": 2.8,
+    "anim": "kneel_hole",
+    "events": [
+     [
+      0.4,
+      "band_close"
+     ]
+    ]
+   }
+  },
+  "release_flag": "ks_ice_cutter_released",
+  "release_card": "THE ICE-CUTTER — RELEASED",
+  "release_seal": {
+   "radius": 2.2
+  },
+  "release_drop": {
+   "item": "item_ivo_mitten",
+   "label": "Chip the mitten free",
+   "pickup_id": "ivo_mitten",
+   "at_seal": true,
+   "set_flag": "ks_ivo_mitten_found",
+   "scene": "res://assets/models/props/ivo_mitten.tscn"
+  },
+  "attacks": [
+   {
+    "id": "auger_thrust",
+    "_tell": "auger arm drawn back, the bit turning (0.8 s); a long downward thrust, 3.4 m. Parryable on the bit.",
+    "range": 3.4,
+    "windup": 0.8,
+    "active": 0.22,
+    "recover": 1.2,
+    "dmg": 32,
+    "poise_dmg": 56,
+    "cooldown": 2.0,
+    "anim": "atk_r",
+    "hands": [
+     "right"
+    ],
+    "lunge": 2.4,
+    "parry_stagger": true,
+    "by_phase": {
+     "3": {
+      "windup": 1.0
+     }
+    }
+   },
+   {
+    "id": "drill_down",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "sets the auger point to the ice and leans on it, breath forward (1.4 s); a 2.4 m circle glows under the Bearer; the ice there breaks to black water for 7 s. Phase 2: a second hole where the Bearer is running to.",
+    "type": "break_ice",
+    "at_target": true,
+    "length": 0.0,
+    "range": 12.0,
+    "min_range": 3.0,
+    "ice": {
+     "shape": "disc",
+     "radius": 2.4,
+     "life": 7.0,
+     "sink": 1.0,
+     "shock": 14
+    },
+    "by_phase": {
+     "2": {
+      "ice": {
+       "shape": "disc",
+       "radius": 2.4,
+       "life": 7.0,
+       "sink": 1.0,
+       "shock": 14,
+       "lead": 0.9
+      }
+     }
+    },
+    "windup": 1.4,
+    "active": 0.2,
+    "recover": 1.1,
+    "poise_dmg": 30,
+    "cooldown": 7.0,
+    "anim": "drill_down",
+    "breath": "forward",
+    "track": 1.0,
+    "shake": 0.4,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.4
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "trace",
+    "_tell": "the left hand gathers the traces at his waist and flings them (1.2 s); a 1.4 x 10 m strip glows; the trace catches and drags the Bearer to the hole's rim, not to him (mash to break). Then an Auger thrust.",
+    "type": "hook",
+    "range": 10.0,
+    "min_range": 3.5,
+    "length": 10.0,
+    "width": 1.4,
+    "offset": 0.5,
+    "snare": 1.0,
+    "mash": 5,
+    "haul_to": 2.4,
+    "pull_time": 0.7,
+    "then": "auger_thrust",
+    "windup": 1.2,
+    "active": 0.15,
+    "recover": 1.0,
+    "dmg": 8,
+    "poise_dmg": 12,
+    "cooldown": 8.0,
+    "anim": "haul_trace",
+    "breath": "held",
+    "track": 0.9,
+    "by_phase": {
+     "3": {
+      "windup": 1.4
+     }
+    },
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.4,
+      10.0
+     ],
+     "offset": 0.5,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "ring_cut",
+    "phases": [
+     2
+    ],
+    "_tell": "turns once on the spot, the auger tip trailing on the ice (1.3 s); a ring from 2.5 to 5 m round him glows and drops away for 6 s. Stand close or stand far.",
+    "type": "break_ice",
+    "range": 5.5,
+    "min_range": 2.0,
+    "ice": {
+     "shape": "ring",
+     "inner": 2.5,
+     "radius": 5.0,
+     "life": 6.0,
+     "sink": 1.0,
+     "shock": 16
+    },
+    "windup": 1.3,
+    "active": 0.2,
+    "recover": 1.2,
+    "poise_dmg": 30,
+    "cooldown": 8.0,
+    "anim": "ring_cut",
+    "track": 0.0,
+    "shake": 0.5,
+    "telegraph": {
+     "shape": "annulus",
+     "size": [
+      2.5,
+      5.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "dog_team",
+    "phases": [
+     2
+    ],
+    "_tell": "whistles through the mask and looks back over his shoulder (1.6 s); a 2.4 x 18 m strip glows past the Bearer; the dead dog team runs down it and is gone. Knocks down.",
+    "type": "line",
+    "range": 16.0,
+    "min_range": 4.0,
+    "length": 18.0,
+    "width": 2.4,
+    "offset": -2.0,
+    "blockable": false,
+    "dogs": 4,
+    "dog": "sledge_dog",
+    "windup": 1.6,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 26,
+    "poise_dmg": 70,
+    "cooldown": 10.0,
+    "anim": "whistle",
+    "track": 1.0,
+    "kind": "physical",
+    "shake": 0.4,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      2.4,
+      18.0
+     ],
+     "offset": -2.0,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "cut_fresh",
+    "phases": [
+     3
+    ],
+    "_tell": "the Bearer more than 5 m off: he turns to the hole, kneels and sets the auger to the rim (2.0 s). No attack. He drills, his back to the Bearer: open. Hits do not stop him. Left alone 5 s, he stands.",
+    "type": "hold",
+    "range": 99.0,
+    "min_range": 5.0,
+    "quiet": 5.0,
+    "windup": 2.0,
+    "active": 0.1,
+    "recover": 0.0,
+    "cooldown": 12.0,
+    "anim": "kneel_down"
+   }
+  ]
  }
 }
