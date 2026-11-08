@@ -1529,7 +1529,8 @@
         "idle": "raw/ivo/anims/idle.fbx",
         "walk": "raw/ivo/anims/walk.fbx",
         "greet": "raw/ivo/anims/greet_01.fbx",
-        "look": "raw/ivo/anims/look_around.fbx"
+        "look": "raw/ivo/anims/look_around.fbx",
+        "sit": "raw/ivo/anims/sit.fbx"
       },
       "loop": [
         "idle",
@@ -2567,6 +2568,252 @@
       },
       "origin": "bottom_center",
       "output": "assets/models/bosses/leadvoice.glb"
+    },
+    {
+      "name": "sten",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "d21f5777-f0be-42a0-9f99-3efed0404c2b",
+        "task_id": "de9e391e-3c50-4a5e-a5ee-3b740d125931",
+        "remesh_operator": "f1353ad1-c079-431e-81f2-22d488fd509e",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "06007718-30c6-48a5-b572-e0449564bd47",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/sten/rigged.fbx",
+      "anims": {
+        "idle": "raw/sten/anims/idle.fbx",
+        "walk": "raw/sten/anims/walk.fbx",
+        "greet": "raw/sten/anims/greet_01.fbx",
+        "look": "raw/sten/anims/look_around.fbx",
+        "sit": "raw/sten/anims/sit.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look",
+        "sit"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/sten.glb"
+    },
+    {
+      "name": "arne_thaw",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "3a0a3466-d4b8-43f9-932c-c30660c4cacc",
+        "task_id": "1969b700-ddf2-4388-8390-42688f398a18",
+        "remesh_operator": "5b1d9eeb-2a8a-4746-be4c-9183350ad3a5",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "1d59bfc7-1fd7-4baf-82f7-4786e050ac0b",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/arne_thaw/rigged.fbx",
+      "anims": {
+        "idle": "raw/arne_thaw/anims/idle.fbx",
+        "walk": "raw/arne_thaw/anims/walk.fbx",
+        "greet": "raw/arne_thaw/anims/greet_01.fbx",
+        "look": "raw/arne_thaw/anims/look_around.fbx",
+        "sit": "raw/arne_thaw/anims/sit.fbx",
+        "sit_talk": "raw/arne_thaw/anims/sit_talk.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look",
+        "sit"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "motion_titles": {
+        "sit_talk": "Relaxed Conversation"
+      },
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.85
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/arne_thaw.glb"
+    },
+    {
+      "name": "halla",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "2607d0f3-d719-407a-83bd-6df6f9f23a09",
+        "task_id": "3287a0fe-4f6b-412f-97fa-24287bb73c75",
+        "remesh_operator": "63aa2682-235f-4cce-8fc3-260369c4a107",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "87e2eccd-aad8-4425-9fbb-9878ac597ae4",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/halla/rigged.fbx",
+      "anims": {
+        "idle": "raw/halla/anims/idle.fbx",
+        "walk": "raw/halla/anims/walk.fbx",
+        "greet": "raw/halla/anims/greet_01.fbx",
+        "look": "raw/halla/anims/look_around.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.7
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/halla.glb"
+    },
+    {
+      "name": "asta",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "fa3a113a-772f-415a-b81b-041682659f08",
+        "task_id": "533bb3c3-9471-4fc1-b828-a2243d4d7638",
+        "remesh_operator": "7de4ad2c-4643-4f0e-97a5-755bac2dd24f",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "b8986d60-7bc7-4f8c-8f8b-50b248de6633",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/asta/rigged.fbx",
+      "anims": {
+        "idle": "raw/asta/anims/idle.fbx",
+        "walk": "raw/asta/anims/walk.fbx",
+        "greet": "raw/asta/anims/greet_01.fbx",
+        "look": "raw/asta/anims/look_around.fbx",
+        "sit": "raw/asta/anims/sit.fbx",
+        "sit_talk": "raw/asta/anims/sit_talk.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look",
+        "sit"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "motion_titles": {
+        "sit_talk": "Relaxed Conversation"
+      },
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.1
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/asta.glb"
+    },
+    {
+      "name": "liv",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "e478dc45-0b43-4b5c-b8b4-4e7307c43a38",
+        "task_id": "03bc05a9-eda3-4209-bbbf-46e147f4d402",
+        "remesh_operator": "f8691a3c-45b3-4b84-b43c-bf59da790628",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "9341e50b-7c59-4aaf-b3ec-be9e889e3fde",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/liv/rigged.fbx",
+      "anims": {
+        "idle": "raw/liv/anims/idle.fbx",
+        "walk": "raw/liv/anims/walk.fbx",
+        "greet": "raw/liv/anims/greet_01.fbx",
+        "look": "raw/liv/anims/look_around.fbx",
+        "sit": "raw/liv/anims/sit.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look",
+        "sit"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.1
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/liv.glb"
+    },
+    {
+      "name": "pell_thaw",
+      "category": "npcs",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "7ddee1c8-6dfc-45df-b2c2-ee366bc6491c",
+        "task_id": "e53d1134-10bd-4e6a-981e-7f90eba6e1a3",
+        "remesh_operator": "155bc8e5-0b5f-45d4-8b0d-624ea8099286",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "detailed",
+        "rig_operator": "3461a306-3458-4aca-9d9a-5f10452032b0",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/pell_thaw/rigged.fbx",
+      "anims": {
+        "idle": "raw/pell_thaw/anims/idle.fbx",
+        "walk": "raw/pell_thaw/anims/walk.fbx",
+        "greet": "raw/pell_thaw/anims/greet_01.fbx",
+        "look": "raw/pell_thaw/anims/look_around.fbx",
+        "sit": "raw/pell_thaw/anims/sit.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk",
+        "look",
+        "sit"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "yaw_deg": -90,
+      "target": {
+        "height": 1.8
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/npcs/pell_thaw.glb"
     }
   ]
 }

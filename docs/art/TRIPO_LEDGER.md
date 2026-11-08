@@ -272,3 +272,21 @@ Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 
 | 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_wellhead | b23cb8f4-0ea2-432a-a850-5047697a3c32 | 55 | — | op 50db9f4d |
 | 2026-11-07 | remesh quad 10k | lm_wellhead | b23cb8f4-… | 40 | — | op dae02322 |
 | 2026-11-08 | **Regions 3-7 batch total** (46 generations: 5 multiview at extreme + 41 image_to_model; 46 remeshes; 28 rigs; 16 text_to_motion, one superseded) | | | **5,300** | **15,335** | reconciled with `tripo_status`: 5 × 65 + 41 × 55 + 46 × 40 + 28 × 20 + 16 × 20 |
+
+## NPCs and release scenes batch (branch art/npcs-release-scenes, 2026-11-08)
+
+Budget for the batch: about 2,500 credits, stop below 11,000. Balance at start: 15,335 (`tripo_status`). Reference images (`tripo_image`, gpt_image_2.5_sunburst) are free and not itemised; prompts are in PROVENANCE.
+
+| Date | Action | Asset | Project id | Cost | Balance after | Note |
+|---|---|---|---|---|---|---|
+| 2026-11-08 | tripo_status | — | — | 0 | 15,335 | baseline |
+| 2026-11-08 | animate preset sit | ivo (existing project) | 199eba5c-… | 0 | — | op 89b3dcae; preset free; seated loop for the Kettle release scene |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | halla | 2607d0f3-d719-407a-83bd-6df6f9f23a09 | 55 | — | op 3287a0fe |
+| 2026-11-08 | remesh quad 10k | halla | 2607d0f3-… | 40 | — | op 63aa2682 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | halla | 2607d0f3-… | 20 | — | op 87e2eccd; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | sten | d21f5777-f0be-42a0-9f99-3efed0404c2b | 55 | — | op de9e391e |
+| 2026-11-08 | remesh quad 10k | sten | d21f5777-… | 40 | — | op f1353ad1 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | sten | d21f5777-… | 20 | — | op 06007718; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | pell_thaw | 7ddee1c8-6dfc-45df-b2c2-ee366bc6491c | 55 | — | op e53d1134 |
+| 2026-11-08 | remesh quad 10k | pell_thaw | 7ddee1c8-… | 40 | — | op 155bc8e5 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | pell_thaw | 7ddee1c8-… | 20 | — | op 3461a306; presets free |

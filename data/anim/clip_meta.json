@@ -797,7 +797,7 @@
    "scene": "res://assets/models/npcs/ivo.glb",
    "yaw_deg": 180.0,
    "own_clips": true,
-   "_note": "THAW-only villager (Kettle Fjord): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked.",
+   "_note": "THAW-only villager (Kettle Fjord): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked. sit is the seated loop (Kettle release scene, beside Old Pell).",
    "clips": {
     "greet": {
      "start": 0.0,
@@ -806,6 +806,10 @@
     },
     "look": {
      "loop": false,
+     "root_lock": true
+    },
+    "sit": {
+     "loop": true,
      "root_lock": true
     }
    }
@@ -1035,6 +1039,204 @@
     "hit": "flinch",
     "bite": "lunge",
     "atk_lunge": "crouch"
+   }
+  },
+  "lusse": {
+   "scene": "res://assets/models/npcs/lusse.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW-only villager (Tarnhall): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
+   }
+  },
+  "halla": {
+   "scene": "res://assets/models/npcs/halla.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW-only villager (Kettle Fjord): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
+   }
+  },
+  "sten": {
+   "scene": "res://assets/models/npcs/sten.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW-only villager (Kettle Fjord): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked. sit is the seated loop (on his crate): feet on the floor, hips at about 0.34 of his height.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    },
+    "sit": {
+     "loop": true,
+     "root_lock": true
+    }
+   }
+  },
+  "pell_thaw": {
+   "scene": "res://assets/models/npcs/pell_thaw.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW Old Pell (Kettle Fjord release scene): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked. sit is the seated loop by the fish-kettle.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    },
+    "sit": {
+     "loop": true,
+     "root_lock": true
+    }
+   }
+  },
+  "arne_thaw": {
+   "scene": "res://assets/models/npcs/arne_thaw.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW Arne Holm (Lowe release scene): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked. sit is the seated loop; sit_talk a talking loop sitting on the grass (text-prompt clip \"Relaxed Conversation\").",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    },
+    "sit": {
+     "loop": true,
+     "root_lock": true
+    },
+    "sit_talk": {
+     "loop": true,
+     "root_lock": true
+    }
+   }
+  },
+  "liv": {
+   "scene": "res://assets/models/npcs/liv.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "Liv, Arne's twin (Lowe release scene), child 1.1 m: own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked. sit is the seated loop.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    },
+    "sit": {
+     "loop": true,
+     "root_lock": true
+    }
+   }
+  },
+  "asta": {
+   "scene": "res://assets/models/npcs/asta.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "Asta, Arne's twin (Lowe release scene), child 1.1 m: own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked. sit is the seated loop; sit_talk reuses Arne's talking-on-the-grass motion.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    },
+    "sit": {
+     "loop": true,
+     "root_lock": true
+    },
+    "sit_talk": {
+     "loop": true,
+     "root_lock": true
+    }
+   }
+  },
+  "eyvind_thaw": {
+   "scene": "res://assets/models/npcs/eyvind_thaw.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW Eyvind Brask (Thornwold, the gate argument with Linnet): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
+   }
+  },
+  "sigga_thaw": {
+   "scene": "res://assets/models/npcs/sigga_thaw.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "THAW Sigga Calder (Shepherd's Reach, calling the flock): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
+   }
+  },
+  "bearer_child": {
+   "scene": "res://assets/models/characters/bearer_child.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "the Bearer as a child, 1.2 m (memory scenes): own idle/walk plus greet (on talk) and look (idle fidget). greet walks in the source: root locked. The fostering horn is part of the mesh at the left hip.",
+   "clips": {
+    "greet": {
+     "start": 0.0,
+     "end": 3.5,
+     "root_lock": true
+    },
+    "look": {
+     "loop": false,
+     "root_lock": true
+    }
    }
   }
  },
