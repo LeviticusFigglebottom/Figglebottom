@@ -187,26 +187,50 @@ SH = lambda x, d=0.0: at(x, edge_z(x) + 7.5 + d)  # noqa: E731
 hearths = [
     {"id": "hs_landing_ice", "name": "the Landing Ice", "at": SH(-104, 0.5), "rot": 180},
     {"id": "hs_fish_houses", "name": "the Fish-Houses", "at": SH(-58, 0.2), "rot": 160},
+    # no hearth wakes at the Breathing Hole (KETTLE.md 1): warmed to THAW it is
+    # open water, and the shelf above it is cut off from the road
 ]
+# KETTLE.md 2-4: the frost-taken where they froze
 spawners = [
-    {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_landing", "at": [-82.0, 0.15, r2(fz(-82) - 6)], "face": 30},
-    {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_houses", "at": [-33.0, 0.15, r2(fz(-33) - 2)], "face": -60},
+    {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_landing", "at": [-82.0, 0.15, r2(fz(-82) - 6)], "face": 30,
+     "pose": "kneel_fish"},
+    {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_houses", "at": [-33.0, 0.15, r2(fz(-33) - 2)], "face": -60,
+     "pose": "kneel_fish"},
     {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_head", "at": [4.0, 0.15, r2(fz(4))], "face": 90},
     {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_road", "at": at(-100, -276, 0.1), "face": 200},
-    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_a", "at": [-58.0, 0.15, r2(fz(-58) + 4)], "face": 0},
-    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_b", "at": [-56.5, 0.15, r2(fz(-56) + 5.5)], "face": 10},
+    # the pair in harness below Ivo's place, facing out toward the fjord head
+    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_a", "at": [-58.0, 0.15, r2(fz(-58) + 4)], "face": 60},
+    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_b", "at": [-56.5, 0.15, r2(fz(-56) + 5.5)], "face": 60},
     {"enemy": "sealer", "stand_in": "oarsman", "id": "sealer_shelf", "at": SH(-12, 0.0), "face": 180},
     {"enemy": "sealer", "stand_in": "oarsman", "id": "sealer_jetty", "at": SH(-90, 0.0), "face": 90},
-    {"enemy": "ice_cutter", "stand_in": "netmender", "id": "ice_cutter", "at": [HOLE[0], 0.15, r2(HOLE[1] - 5)],
-     "face": 0, "dead_once": True, "frost_veil_id": "breathing_hole_veil"},
+    # he kneels at the north rim of the hole, facing it and the way in
+    {"enemy": "ice_cutter", "stand_in": "netmender", "id": "ice_cutter", "at": [HOLE[0], 0.15, r2(HOLE[1] - 2.64)],
+     "face": 180, "dead_once": True, "frost_veil_id": "breathing_hole_veil"},
 ]
+FH = [(hx, edge_z(hx) - 6.5) for hx, _y in FISH]      # the fish-house platforms' centres
+B0 = (-88 + 3, edge_z(-88) - 10 - 6)                  # a boat that was leaving, frozen in
 pickups = [
-    {"id": "kettle_ladle", "at": [-38.5, DECK, r2(edge_z(-38.5) - 6.5)], "warmth": 50, "tag": "base", "label": "Take the fish-kettle ladle"},
+    # Ivo's supper: the pot on its hook in the westmost house, the ladle standing up in it
+    {"id": "kettle_ladle", "at": [FH[0][0] + 0.6, DECK, r2(FH[0][1] - 1.0)], "item": "item_kettle_ladle", "tag": "rime",
+     "label": "Take the ladle", "set_flag": "ks_ivo_supper"},
     {"id": "north_shore_cache", "at": [-60.0, 0.06, r2(fz(-60) - L.fjord_half(-60) + 3.5)], "item": "bog_iron", "count": 2,
      "tag": "rime", "label": "Pry up what the ice holds"},
+    # Halla's cord, tied round the mooring post at the middle house
+    {"id": "halla_cord", "at": [TRADER[0] + 1.6, 0.06, r2(TRADER[1])], "item": "item_halla_cord", "tag": "rime",
+     "label": "Untie the cord", "set_flag": "ks_halla_cord_found"},
+    # the spare auger on the tool bench in the eastmost house
+    {"id": "ice_auger", "at": [FH[2][0] - 1.2, DECK, r2(FH[2][1] - 1.5)], "item": "ice_auger", "tag": "rime",
+     "label": "Take the auger", "scene": "res://assets/models/weapons/ice_auger.glb"},
+    # a sealer's harpoon frozen into the ice beside a boat that was leaving
+    {"id": "sealer_harpoon", "at": [r2(B0[0] + 2.5), 0.06, r2(B0[1] + 1.5)], "item": "sealer_harpoon", "tag": "rime",
+     "label": "Work the harpoon free", "scene": "res://assets/models/weapons/sealer_harpoon.glb"},
 ]
-npcs = [{"id": "ivo", "at": SH(-52, 0.4), "rot": 150, "tag": "thaw"}]
-
+npcs = [
+    {"id": "ivo", "at": SH(-52, 0.4), "rot": 150, "tag": "thaw"},
+    # the trader on the middle house's platform; her crewman on a crate at the foot of the walk
+    {"id": "halla", "at": [-37.0, DECK, r2(edge_z(-38.5) - 3.2)], "rot": 200, "tag": "thaw"},
+    {"id": "sten", "at": SH(-35.5, -1.2), "rot": 170, "tag": "thaw"},
+]
 portal = seam("kettle_fjord")
 arrive = seam("lowe_barrows")          # where the Lowe's side of the seam sets you down
 START = arrive["spawn"]

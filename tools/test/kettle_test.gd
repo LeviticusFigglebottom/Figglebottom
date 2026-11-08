@@ -84,7 +84,7 @@ func _run() -> void:
 		"the Landing Ice and Fish-Houses hearths stand")
 	var houses := area.base.get_children().filter(func(n): return String(n.name).begins_with("House_fishhouse"))
 	check(houses.size() == 3, "three fish-houses on stilts (%d)" % houses.size())
-	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 1, "Ivo keeps the thaw")
+	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 3, "Ivo, Halla and Sten keep the thaw")
 	check(player.is_on_floor(), "the Bearer stands on the Kettle Road")
 
 	print("== one continuous seam to the Lowe")
@@ -111,7 +111,7 @@ func _run() -> void:
 	var cache := AreaBuilder._v3(_pickup("north_shore_cache")["at"])
 	check(_reaches(_path(start, landing), landing), "the Kettle Road comes down to the Landing Ice")
 	check(_reaches(_path(landing, houses_h), houses_h), "the jetties carry the path round the spur to the Fish-Houses")
-	check(_reaches(_path(houses_h, hut_door), hut_door), "and out along the walk to the middle fish-house")
+	check(_reaches(_path(houses_h, hut_door), hut_door), "and out along the walk to the westmost fish-house")
 	var p_cache := _path(landing, cache)
 	check(not _reaches(p_cache, cache), "no thaw route over the open water to the north shore")
 	if _reaches(p_cache, cache):
