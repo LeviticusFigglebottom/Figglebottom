@@ -465,6 +465,7 @@ func _begin_attack(a: Dictionary) -> void:
 	_atk_dir = _aim_dir()
 	_atk_off = _line_offset()
 	_tele = null
+	_tele_shown = false
 	if a.has("telegraph"):
 		_tele_at = w * float(a.get("telegraph_lock", 0.7))
 	if a.has("sfx_windup"):
@@ -500,6 +501,9 @@ func _line_offset() -> float:
 	return off
 var _tele: Node = null
 var _tele_at := -1.0
+## Once per attack: a freed tell compares equal to null, so without this the
+## recovery spawned a fresh 0.1 s glow every tick after the strike.
+var _tele_shown := false
 
 func _st_attack(dt: float) -> void:
 	_sync_blade()   # the blade box wears the weapon's frame through the swing
@@ -518,7 +522,8 @@ func _st_attack(dt: float) -> void:
 	if state != ES.ATTACK:
 		return
 	# the floor tell appears once the aim is committed, and glows to the strike
-	if _atk.has("telegraph") and _tele == null and t >= _tele_at:
+	if _atk.has("telegraph") and not _tele_shown and t >= _tele_at:
+		_tele_shown = true
 		_tele = _spawn_telegraph(w - t)
 	var in_strike := false
 	for h in hits:

@@ -98,6 +98,9 @@ func _fisher() -> void:
 	await _secs(float(a["windup"]) * 0.2 + 0.1)
 	var ice := _open_ice()
 	check(ice.size() == 1 and (ice[0] as BrokenIce).covers(player.global_position), "the ice breaks open under him")
+	await ticks(12)
+	var tells := arena.find_children("*", "FloorTelegraph", true, false).filter(func(t): return not t.is_queued_for_deletion())
+	check(tells.is_empty(), "the glow gives way to the black water (%d tells left)" % tells.size())
 	check(ice.size() == 1 and (ice[0] as BrokenIce).volumes.size() > 0
 			and ((ice[0] as BrokenIce).volumes[0] as HazardVolume).kind == "thin", "a thin-ice hazard volume")
 	await _secs(1.4)
