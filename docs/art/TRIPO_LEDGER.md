@@ -249,3 +249,26 @@ Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 
 | 2026-11-07 | remesh quad 10k | lm_sheiling | a6cab8ce-… | 40 | — | op b7756020 |
 | 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_fold_cairn | 04a1c969-885a-4d19-ab75-3f3bdf2603e3 | 55 | — | op 26cbbc2f |
 | 2026-11-07 | remesh quad 10k | lm_fold_cairn | 04a1c969-… | 40 | — | op 8bfc82be |
+| 2026-11-07 | *the Coldwell* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | leadvoice | f3995e1c-dba9-4028-9a88-6c5e04b17a78 | 65 | — | op 980a6766 |
+| 2026-11-07 | remesh quad 10k | leadvoice | f3995e1c-… | 40 | — | op c0b57541 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | leadvoice | f3995e1c-… | 20 | — | op 46c9f5ec; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×4, sent one at a time: hold_note ("Singing with Open Arms"), rise ("Standing Up"), shelter_superseded ("Protective Body Curl; superseded: the ice cloak tore into flying sheets, re-prompted gentler"), shelter ("Gentle Bow with Folded Arms") | leadvoice | f3995e1c-… | 80 | — | ops 4043a60d, 6420f9b8, 7a02da80, 27ba504c; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | upwalker | b430ac57-502f-4568-a293-207de3578e0c | 55 | — | op 656354b7 |
+| 2026-11-07 | remesh quad 10k | upwalker | b430ac57-… | 40 | — | op 26e07a27 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | upwalker | b430ac57-… | 20 | — | op 58686337; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | unsung | 0377db53-e147-41cf-8666-5b8a5819ddc0 | 55 | — | op e2407d5c |
+| 2026-11-07 | remesh quad 10k | unsung | 0377db53-… | 40 | — | op ab0ba73e |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | unsung | 0377db53-… | 20 | — | op 605dc373; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | maren_thaw | d9ef8e2f-f7a4-426c-9085-c23eca621e3a | 55 | — | op dc76cacd |
+| 2026-11-07 | remesh quad 10k | maren_thaw | d9ef8e2f-… | 40 | — | op 19bb3786 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | maren_thaw | d9ef8e2f-… | 20 | — | op c10c07c4; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | wren | 77dd6d55-a4cc-4553-9658-ce504d0045f6 | 55 | — | op dc51bb0d |
+| 2026-11-07 | remesh quad 10k | wren | 77dd6d55-… | 40 | — | op e4dc2930 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | wren | 77dd6d55-… | 20 | — | op 52e09c57; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_outsong | e12b03e5-ae5e-4cea-a58e-c8a56f106329 | 55 | — | op 5be11ff2 |
+| 2026-11-07 | remesh quad 10k | bearer_outsong | e12b03e5-… | 40 | — | op ad666992 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_outsong | e12b03e5-… | 20 | — | op da6107ad; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_wellhead | b23cb8f4-0ea2-432a-a850-5047697a3c32 | 55 | — | op 50db9f4d |
+| 2026-11-07 | remesh quad 10k | lm_wellhead | b23cb8f4-… | 40 | — | op dae02322 |
+| 2026-11-08 | **Regions 3-7 batch total** (46 generations: 5 multiview at extreme + 41 image_to_model; 46 remeshes; 28 rigs; 16 text_to_motion, one superseded) | | | **5,300** | **15,335** | reconciled with `tripo_status`: 5 × 65 + 41 × 55 + 46 × 40 + 28 × 20 + 16 × 20 |

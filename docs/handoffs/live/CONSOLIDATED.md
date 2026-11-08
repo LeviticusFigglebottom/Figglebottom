@@ -20,6 +20,7 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/figglebottom` | `feat/terrain-polish` | Natural cliff and ravine shapes, procedural turf-roof buildings, terrain known issues |
 | `/home/user/fb-combat` | `feat/combat-deltas` | Lock-on switching, upgrade data, (stat−8) scaling, sprint attack, armour slots, `save_version` |
 | `/home/user/fb-ui` | `feat/ui-keepsakes` | UI re-skin and OFL font, house card, Keepsakes journal, Ingra and Brede lines verbatim from SLICE.md |
+| `/home/user/fb-art3` | `art/regions-3-7` | Tripo heroes for Kettle Fjord, Tarnhall, Thornwold, Shepherd's Reach and the Coldwell: 5 Holdfasts (multiview, extreme, 3 prompt clips each), 12 enemies, 6 NPCs, 5 Bearer armour sets, 8 weapons/props, 10 landmarks; 5,300 credits (balance 15,335). Lineups `art_lineup_<region>.tscn`; screens `docs/screens/art_<region>_*`; results in `docs/art/design/roster.md`. Not merged. |
 | `/home/user/fb-lead` | `main` | Lead merges here |
 
 ## Next exact step
