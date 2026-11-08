@@ -45,6 +45,22 @@ float vnoise(vec3 p) {
 	               mix(hash13(i + vec3(0, 1, 1)), hash13(i + vec3(1, 1, 1)), f.x), f.y), f.z);
 }
 
+// rounded pebbles (cell distance): the value-noise speckle read as a
+// blocky pixel mosaic on the Strand's shingle at walking distance
+float pebbles(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	float d = 1.0;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			vec2 g = vec2(float(x), float(y));
+			vec2 o = vec2(hash13(vec3(i + g, 1.7)), hash13(vec3(i + g, 9.1))) * 0.8 + 0.1;
+			d = min(d, length(g + o - f));
+		}
+	}
+	return d;
+}
+
 void vertex() {
 	v_wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	v_wn = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
@@ -64,7 +80,10 @@ void fragment() {
 	vec3 turf = mix(turf_a, turf_b, clamp(v_col.a * 0.7 + n_macro * 0.6 - 0.15, 0.0, 1.0));
 	turf *= 0.82 + 0.3 * n1 * n2 + 0.12 * n3;
 	// shingle: pebbly, grey-brown
-	float peb = smoothstep(0.35, 0.75, n3) * 0.25 + n2 * 0.2;
+	float pc = pebbles(v_wp.xz * 5.5 + vec2(n1, n2) * 0.9);
+	float flat_k = smoothstep(0.55, 0.9, n.y);   // pebbles lie on the flat, not up the face
+	float peb = (smoothstep(0.62, 0.2, pc) * 0.2 - smoothstep(0.5, 0.78, pc) * 0.08) * flat_k
+		+ n2 * 0.16 + smoothstep(0.35, 0.75, n3) * 0.1 * (1.0 - flat_k);
 	vec3 shingle = shingle_col * (0.78 + peb + 0.08 * n1);
 	// worn path: bare peaty earth with stones
 	vec3 path = path_col * (0.85 + 0.25 * n2) + vec3(0.06) * smoothstep(0.8, 0.95, n3);

@@ -293,7 +293,10 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_cyl(n, 0.3, 0.18, 0.2, Vector3(0, 0.9, 0), "M_iron", "bowl")
 			_flame(n, Vector3(0, 0.95, 0), 0.4, 0.17, "flame")
 		"plaque":
-			_box(n, Vector3(0.74, 1.2, 0.3), Vector3(0, 0.6, 0), "M_stone_trim", "rune_stone", Vector3(-6, 0, 0))
+			# a weathered board nailed to a driftwood stake, words cut with a
+			# knife (no carved stone: runes are off the table, ORIGINALITY.md)
+			_box(n, Vector3(0.12, 1.25, 0.12), Vector3(0, 0.62, 0.02), "M_wood_dark", "stake", Vector3(-4, 0, 0))
+			_box(n, Vector3(0.72, 0.46, 0.05), Vector3(0, 1.02, -0.06), "M_wood", "board", Vector3(-8, 0, 2))
 		"pell":
 			_cyl(n, 0.12, 0.12, 1.9, Vector3(0, 0.95, 0), "M_wood", "pole")
 			_box(n, Vector3(1.0, 0.12, 0.12), Vector3(0, 1.45, 0), "M_wood", "arms")
