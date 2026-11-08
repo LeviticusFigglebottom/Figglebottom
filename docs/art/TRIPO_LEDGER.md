@@ -169,3 +169,33 @@ Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 
 | 2026-11-07 | remesh quad 10k | lm_fish_kettle | 20be4ec8-… | 40 | — | op 8a3ec9f0 |
 | 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_sledge | 45765576-8ec0-4968-b4b7-d3b856eca468 | 55 | — | op 967d31e5 |
 | 2026-11-07 | remesh quad 10k | lm_sledge | 45765576-… | 40 | — | op 3f7b0e92 |
+| 2026-11-07 | *Tarnhall* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | host | c4b2784f-f744-4923-9671-2d59c5c1e885 | 65 | — | op 9f231363 |
+| 2026-11-07 | remesh quad 10k | host | c4b2784f-… | 40 | — | op ff47c6af |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | host | c4b2784f-… | 20 | — | op e088a97c; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: table_sweep ("Heavy Swing Body Turn"), bench_throw ("Throwing Heavy Object"), raise_guests ("Summoning Gesture") | host | c4b2784f-… | 60 | — | ops 8b023ae2, dd9e4310, 4606cafd; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | feast_guest | 2e938f2d-901a-4a92-b493-8d6f841a43d6 | 55 | — | op 54cb4c10 |
+| 2026-11-07 | remesh quad 10k | feast_guest | 2e938f2d-… | 40 | — | op 7533aede |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | feast_guest | 2e938f2d-… | 20 | — | op d9e7f28f; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | cupbearer | 44722431-02ac-4bc1-adcc-fab16e8ff84c | 55 | — | op 00d793a1 |
+| 2026-11-07 | remesh quad 10k | cupbearer | 44722431-… | 40 | — | op 8706e383 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | cupbearer | 44722431-… | 20 | — | op cf365dcb; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | hall_champion | 429779ab-a604-461b-a7d8-b703a059020a | 55 | — | op 2a6a7158 |
+| 2026-11-07 | remesh quad 10k | hall_champion | 429779ab-… | 40 | — | op 963a81d0 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | hall_champion | 429779ab-… | 20 | — | op ea8ec8e9; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lusse | 0041637c-4363-46ef-9794-b0ca42ffa72b | 55 | — | op 2612c769 |
+| 2026-11-07 | remesh quad 10k | lusse | 0041637c-… | 40 | — | op 88b1547d |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | lusse | 0041637c-… | 20 | — | op 5322d332; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_hall | 358062ea-da2b-40b4-8303-ac8282d5944d | 55 | — | op 4818b331 |
+| 2026-11-07 | remesh quad 10k | bearer_hall | 358062ea-… | 40 | — | op 50572762 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_hall | 358062ea-… | 20 | — | op 6ee8be7f; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | feast_cleaver | 4478c00f-b3ee-422f-81f4-3d08f396d608 | 55 | — | op bd343cb7 |
+| 2026-11-07 | remesh quad 10k | feast_cleaver | 4478c00f-… | 40 | — | op c8865cc9 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | tarnhall_shield | bd2ce6db-5f0a-41e0-8118-0dab4306c21c | 55 | — | op b0acade9 |
+| 2026-11-07 | remesh quad 10k | tarnhall_shield | bd2ce6db-… | 40 | — | op d400b947 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_hall_doors | 83f88b15-b017-4cc8-96c2-92156fe74414 | 55 | — | op ff4e5fae |
+| 2026-11-07 | remesh quad 10k | lm_hall_doors | 83f88b15-… | 40 | — | op 89780a3a |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_high_seat | f64dfbbb-5de2-4db2-9d68-bff6285beb48 | 55 | — | op d4e96e6e |
+| 2026-11-07 | remesh quad 10k | lm_high_seat | f64dfbbb-… | 40 | — | op 9d095a0b |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_guest_post | f2b65695-c6cc-495c-b801-c3bb762273c6 | 55 | — | op 5fa9023e |
+| 2026-11-07 | remesh quad 10k | lm_guest_post | f2b65695-… | 40 | — | op f8852834 |
