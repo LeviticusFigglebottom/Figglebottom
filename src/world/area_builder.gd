@@ -170,6 +170,7 @@ static func build(area_id: String) -> Area:
 			continue      # a soul may stand only before/after a turn of the story
 		var n := NPC.new()
 		n.npc_id = spec.get("id", "")
+		n.spec = spec
 		n.set_meta("state_tag", spec.get("tag", "thaw"))
 		area.attach(n, spec.get("tag", "thaw"))
 		_place(n, spec)

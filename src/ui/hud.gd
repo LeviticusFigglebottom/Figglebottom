@@ -19,6 +19,10 @@ var gourd_label: Label
 var warmth_label: Label
 var prompt_label: Label
 var toast_label: Label
+## Words overheard from souls the Bearer cannot speak to (a release scene):
+## "Liv: I'm having the window side." low over the belt, then gone.
+var overheard_label: Label
+var _overheard_tw: Tween
 var splash: Control
 var splash_label: Label
 var vignette: ColorRect
@@ -327,6 +331,18 @@ func _build() -> void:
 	toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast_label.modulate.a = 0.0
 	root.add_child(toast_label)
+
+	overheard_label = Label.new()
+	overheard_label.label_settings = _font("italic", 28, UITheme.BONE)
+	overheard_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	overheard_label.offset_left = -620
+	overheard_label.offset_right = 620
+	overheard_label.offset_top = -250
+	overheard_label.offset_bottom = -190
+	overheard_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	overheard_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	overheard_label.modulate.a = 0.0
+	root.add_child(overheard_label)
 
 	_build_hotbar(root)
 
@@ -772,6 +788,15 @@ func _on_transition(_a: String, to_state: RH.WState) -> void:
 
 var _toast_tw: Tween = null
 var _lore_opened_at := 0.0
+
+func show_overheard(who: String, line: String, hold := 3.4) -> void:
+	overheard_label.text = ("%s: %s" % [who, line]) if who != "" else line
+	if _overheard_tw != null and _overheard_tw.is_valid():
+		_overheard_tw.kill()
+	_overheard_tw = create_tween()
+	_overheard_tw.tween_property(overheard_label, "modulate:a", 0.92, 0.35)
+	_overheard_tw.tween_interval(hold)
+	_overheard_tw.tween_property(overheard_label, "modulate:a", 0.0, 0.6)
 
 func show_toast(text: String) -> void:
 	toast_label.text = text

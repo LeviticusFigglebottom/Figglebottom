@@ -358,7 +358,8 @@
     ]
    }
   ],
-  "services": []
+  "services": [],
+  "height": 1.55
  },
  "halla": {
   "name": "Halla, trader",
@@ -574,5 +575,117 @@
    }
   ],
   "services": []
+ },
+ "arne": {
+  "name": "Arne Holm",
+  "short_name": "Arne",
+  "body": "mannequin_thaw",
+  "model": "arne_thaw",
+  "height": 1.85,
+  "mute": true,
+  "pose": "sit_talk",
+  "_scene": "LOWE.md 8: after the release, THAW: outside the twins' barrow on a summer evening with Liv and Asta. Nobody in the scene can be spoken to; the Bearer overhears.",
+  "overhear": [
+   [
+    "liv",
+    "I'm having the side by the window."
+   ],
+   [
+    "arne",
+    "There's no window. It's a barrow."
+   ],
+   [
+    "asta",
+    "Then you'll cut one. You cut everything else."
+   ],
+   [
+    "arne",
+    "I'm not cutting a window in a barrow."
+   ],
+   [
+    "liv",
+    "Asta can have the cold side. She likes the cold."
+   ],
+   [
+    "asta",
+    "I don't. I said that once."
+   ],
+   [
+    "arne",
+    "You'll be old women by then. You'll have forgotten all about it."
+   ],
+   [
+    "liv",
+    "You'll have to remind us."
+   ],
+   [
+    "arne",
+    "I'll remind you."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "liv": {
+  "name": "Liv",
+  "short_name": "Liv",
+  "body": "mannequin_thaw",
+  "model": "liv",
+  "height": 1.1,
+  "mute": true,
+  "pose": "sit",
+  "seat": "turf"
+ },
+ "asta": {
+  "name": "Asta",
+  "short_name": "Asta",
+  "body": "mannequin_thaw",
+  "model": "asta",
+  "height": 1.1,
+  "mute": true,
+  "pose": "sit",
+  "seat": "turf",
+  "_pose": "sit, on a sod: her sit_talk spreads the smock into a flat disc on the grass"
+ },
+ "pell": {
+  "name": "Old Pell",
+  "short_name": "Pell",
+  "body": "mannequin_thaw",
+  "model": "pell_thaw",
+  "height": 1.8,
+  "mute": true,
+  "pose": "sit",
+  "seat": "wood",
+  "_scene": "KETTLE.md 9: after the release, THAW: at the fish-kettle with Ivo, supper on. He cannot be spoken to; the Bearer overhears.",
+  "overhear": [
+   [
+    "pell",
+    "Stir it from the bottom. It catches."
+   ],
+   [
+    "ivo",
+    "I am stirring it from the bottom."
+   ],
+   [
+    "pell",
+    "Then from lower down."
+   ],
+   [
+    "ivo",
+    "The ice'll be made by the new moon. You said."
+   ],
+   [
+    "pell",
+    "I said maybe. Eat your supper."
+   ],
+   [
+    "ivo",
+    "Fish again."
+   ],
+   [
+    "pell",
+    "Sixty years. I only know the one way."
+   ]
+  ],
+  "overhear_r": 8.0
  }
 }

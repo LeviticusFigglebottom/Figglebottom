@@ -835,3 +835,68 @@ func _st_tarnhall_ottar(p: Player) -> void:
 	if _f == 2:
 		_quiet_titles()
 	_npc_talk_stage(p, "ottar", 2)
+
+# ------------------------------------------------------------------ release scenes
+## The post-release THAW scenes (docs/screens/release_*.png; run with
+## --state=thaw and --flag=<the release flag>): release_lowe (Arne and the
+## twins outside their barrow), release_kettle (Pell and Ivo at the kettle).
+## The camera faces the group; the Bearer stands just behind it, in earshot,
+## and the beat is a line of their talk overheard.
+func _release_stage(p: Player, id: String, eye: Vector3, look_up: float, line := 1) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	var n := _find_npc(id)
+	if n == null:
+		return
+	var fwd := -n.global_transform.basis.z
+	fwd.y = 0
+	fwd = fwd.normalized()
+	var right := fwd.cross(Vector3.UP)
+	var cam := n.global_position + fwd * eye.z + right * eye.x + Vector3.UP * eye.y
+	if _f == 3:
+		_place_player(p, n.global_position + fwd * (eye.z + 1.2) + Vector3.UP * 0.3, atan2(fwd.x, fwd.z))
+		_t0 = _clock
+		n.overheard.connect(func(_w, _l): _heard += 1)
+	_cam.global_position = cam
+	_cam.look_at(n.global_position + Vector3.UP * look_up - right * eye.x * 0.3, Vector3.UP)
+	_cam.fov = 50.0
+	if _heard >= line and _clock - _t0 > 1.0:
+		_hold_clock += get_process_delta_time()
+		if _hold_clock > 1.0:
+			_freeze()
+
+var _heard := 0
+var _hold_clock := 0.0
+
+func _st_release_lowe(p: Player) -> void:
+	_release_stage(p, "arne", Vector3(0.6, 1.5, 4.6), 0.7, 3)
+
+## Pell and Ivo across the kettle: from the side, so the kettle sits between
+## them and not between them and the camera.
+func _st_release_kettle(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	var pell := _find_npc("pell")
+	var ivo := _find_npc("ivo")
+	if pell == null or ivo == null:
+		return
+	var mid := (pell.global_position + ivo.global_position) * 0.5
+	var axis := ivo.global_position - pell.global_position
+	axis.y = 0
+	var side := axis.normalized().cross(Vector3.UP) * _kettle_side
+	var cam := mid + side * 5.2 + Vector3.UP * 1.9
+	if _f == 3:
+		_place_player(p, mid + side * 6.6 + Vector3.UP * 0.3, atan2(side.x, side.z))
+		_t0 = _clock
+		pell.overheard.connect(func(_w, _l): _heard += 1)
+	_cam.global_position = cam
+	_cam.look_at(mid + Vector3.UP * 0.8, Vector3.UP)
+	_cam.fov = 50.0
+	if _heard >= 2 and _clock - _t0 > 1.0:
+		_hold_clock += get_process_delta_time()
+		if _hold_clock > 1.0:
+			_freeze()
+
+var _kettle_side := -1.0   # (the shelf side, not the cliff)
