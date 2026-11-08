@@ -9,6 +9,27 @@ var _current := ""
 var _seen: Dictionary = {}
 var _t := 0.0
 
+## The innermost named zone holding pos, or "".
+func name_at(pos: Vector3) -> String:
+	var here := ""
+	for z in zones:
+		var mn: Array = z["min"]
+		var mx: Array = z["max"]
+		if pos.x >= float(mn[0]) and pos.x <= float(mx[0]) and pos.z >= float(mn[1]) and pos.z <= float(mx[1]):
+			here = String(z["name"])
+	return here
+
+## The arrival card names the zone the Bearer lands in (THE STRAND on a new
+## journey, not the whole steading's name); remember it so it is not shown
+## twice.
+func arrival(pos: Vector3, fallback: String) -> String:
+	var here := name_at(pos)
+	_current = here
+	if here != "":
+		_seen[here] = true
+		return here
+	return fallback
+
 func _process(dt: float) -> void:
 	_t += dt
 	if _t < 0.5:
@@ -17,16 +38,9 @@ func _process(dt: float) -> void:
 	var p := Game.player as Node3D
 	if p == null or not is_instance_valid(p):
 		return
-	var here := ""
-	for z in zones:
-		var mn: Array = z["min"]
-		var mx: Array = z["max"]
-		var pos: Vector3 = p.global_position
-		if pos.x >= float(mn[0]) and pos.x <= float(mx[0]) and pos.z >= float(mn[1]) and pos.z <= float(mx[1]):
-			here = String(z["name"])
+	var here := name_at(p.global_position)
 	if here != _current:
 		_current = here
 		if here != "" and not _seen.has(here):
 			_seen[here] = true
-			if _seen.size() > 1:      # the arrival card already named the first
-				Game.area_title.emit(here)
+			Game.area_title.emit(here)
