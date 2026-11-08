@@ -12,7 +12,7 @@ const HALL_DS := preload("res://shaders/hall_ds.gdshader")
 const DOUBLE_SIDED := {}
 ## Families that take a snow crust on their top faces in RIME.
 const SNOW := {"M_stone": 0.85, "M_stone_trim": 0.85, "M_stone_dark": 0.8, "M_wood": 0.75, "M_wood_dark": 0.75, "M_drystone": 0.85,
-	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_drift": 0.85, "M_terrain": 0.9}
+	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_needles": 0.8, "M_leaves": 0.7, "M_thorn": 0.6, "M_bark_pine": 0.4, "M_drift": 0.85, "M_terrain": 0.9}
 
 ## Greybox: no detail textures ship; families render as flat shaded colour.
 const TEXTURES := {}
@@ -70,6 +70,12 @@ const FAMILIES := {
 	"M_steel":        {"albedo": Color(0.62, 0.65, 0.70), "rough": 0.30, "metallic": 0.90, "specular": 0.80, "normal_scale": 1.10, "rim": 1.0, "local_uv": 1, "moss": 0.0, "crack": 0.0, "wear": 0.3},
 	"M_plate_dark":   {"albedo": Color(0.24, 0.26, 0.31), "rough": 0.34, "metallic": 0.88, "specular": 0.76, "normal_scale": 1.15, "rim": 0.95, "local_uv": 1, "moss": 0.0, "crack": 0.0, "wear": 0.32},
 	"M_chainmail":    {"albedo": Color(0.38, 0.40, 0.45), "rough": 0.42, "metallic": 0.82, "specular": 0.68, "normal_scale": 1.35, "rim": 0.85, "local_uv": 1, "moss": 0.0, "crack": 0.0, "wear": 0.25},
+	# the wood (Thornwold): bark, needles, leaves, laid thorn
+	"M_bark_pine":    {"albedo": Color(0.30, 0.20, 0.14), "rough": 0.92, "metallic": 0.0, "specular": 0.35, "normal_scale": 1.3, "rim": 0.2, "moss": 0.35},
+	"M_bark_birch":   {"albedo": Color(0.58, 0.56, 0.52), "rough": 0.88, "metallic": 0.0, "specular": 0.40, "normal_scale": 1.1, "rim": 0.3, "moss": 0.15, "crack": 0.6},
+	"M_needles":      {"albedo": Color(0.12, 0.20, 0.12), "rough": 0.90, "metallic": 0.0, "specular": 0.30, "rim": 0.45, "sss": 0.3, "moss": 0.0, "crack": 0.0},
+	"M_leaves":       {"albedo": Color(0.32, 0.40, 0.16), "rough": 0.85, "metallic": 0.0, "specular": 0.30, "rim": 0.5, "sss": 0.45, "moss": 0.0, "crack": 0.0},
+	"M_thorn":        {"albedo": Color(0.24, 0.17, 0.11), "rough": 0.90, "metallic": 0.0, "specular": 0.35, "rim": 0.3, "moss": 0.25, "crack": 0.0},
 	"M_foliage":      {"albedo": Color(0.2, 0.32, 0.16), "rough": 0.88, "metallic": 0.0, "specular": 0.40, "rim": 0.55, "sss": 0.35, "moss": 0.0, "crack": 0.0, "vc": 1},
 	# polished pale stone: ivory marble, no moss (nothing decays
 	# above the hours), light cracking only. Gold trim rides M_gild.

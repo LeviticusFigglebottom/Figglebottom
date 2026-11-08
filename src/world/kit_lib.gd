@@ -47,6 +47,8 @@ const PIECES := {
 	"torch": {"size": [0.14, 0.14, 1.0], "origin": "grip-center"},
 	"shield_kite": {"size": [0.5, 0.1, 0.6], "origin": "strap"},
 	"fish_kettle": {"size": [1.6, 1.6, 2.2], "origin": "bottom-center"},
+	"hearth_fire": {"size": [1.4, 1.4, 0.9], "origin": "bottom-center"},
+	"hearth_logs": {"size": [1.4, 1.4, 0.4], "origin": "bottom-center"},
 	"net_frame": {"size": [3.6, 0.4, 2.5], "origin": "bottom-center"},
 	"rope_coil": {"size": [0.9, 0.9, 0.35], "origin": "bottom-center"},
 	"creel_stack": {"size": [1.4, 0.8, 1.2], "origin": "bottom-center"},
@@ -262,6 +264,14 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			for k in 5:
 				_box(n, Vector3(0.6, 0.12, 0.12), Vector3(0, 0.08, 0), "M_wood", "fire_log%d" % k, Vector3(0, k * 36, 0))
 			_flame(n, Vector3(0, 0.12, 0), 0.45, 0.28, "fire_flame")
+		"hearth_fire", "hearth_logs":
+			# a fire on the long hearth: split logs crossed on the embers
+			# (hearth_logs: the same fire, out; RIME)
+			for k in 4:
+				_box(n, Vector3(1.2, 0.14, 0.14), Vector3(0, 0.1 + (k % 2) * 0.12, 0), "M_wood_dark", "log%d" % k, Vector3(0, k * 47, 4))
+			_box(n, Vector3(1.0, 0.05, 0.8), Vector3(0, 0.03, 0), "M_ember" if id == "hearth_fire" else "M_stone_dark", "bed")
+			if id == "hearth_fire":
+				_flame(n, Vector3(0, 0.2, 0), 0.75, 0.35, "fire_flame")
 		"net_frame":
 			# a net hung to dry between two poles, sagging, floats along the head-rope
 			for sx in [-1.6, 1.6]:

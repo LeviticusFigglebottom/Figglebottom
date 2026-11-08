@@ -13,7 +13,7 @@ hall's east end.
 import math
 
 import terrain_saltfell as S
-from terrain_saltfell import fbm, smooth, _lerp
+from terrain_saltfell import fbm, smooth, _lerp, vnoise
 
 # the Tarn Steps: (x, z, road height). From the Kettle shelf to the tarn shore.
 STEPS = [(29.0, -295.5, 1.9), (43.0, -299.5, 3.4), (58.0, -305.5, 7.0), (73.0, -313.5, 11.6),
@@ -94,7 +94,15 @@ def tarn_land(x, z, h):
         wall_from = STREAM_OFF + 1.8
     else:
         wall_from = ROAD_HALF + 0.6
-    g += _rise((rd - wall_from) * 2.4, x, z, 142)
+    # the gorge walls as Kettle's: buttresses, gullies cut back between them,
+    # scree fanned at each gully's foot
+    r = 1.0 - abs(2.0 * vnoise(x * 0.06 + (13.0 if side > 0 else 0.0), 0.7, 150) - 1.0)
+    recess = 3.5 * (1.0 - r) ** 2
+    wd = rd - wall_from
+    g += _rise((wd - recess) * 2.4 * (0.65 + 0.75 * r), x, z, 142)
+    if wd > 0.0:
+        g += (1.0 - r) ** 2 * max(0.0, 1.0 - max(0.0, wd - recess) / 4.0) * (1.3 + 0.6 * fbm(x * 0.3, z * 0.3, 1, 151)) \
+            * smooth(0.0, 1.2, wd)
     gorge = min(fell, g)
     # the tarn basin: shore flats, the water, the island, the causeway
     e = tarn_e(x, z)
