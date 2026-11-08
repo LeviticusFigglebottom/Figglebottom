@@ -1669,10 +1669,20 @@ func take_hit(packet: DamagePacket) -> void:
 	Juice.shake(0.3, 0.2)
 	AudioDirector.sfx_at("res://assets/audio/impact_flesh.wav", global_position, -6.0, 0.85)
 	if hp <= 0.0:
+		_fell_to_land = packet.kind == "hazard"
 		_die()
 	elif poise <= 0.0:
 		poise = max_poise
 		_stagger(float(T["stagger_time"]))
+
+## Where the Breathmark hangs. Taken by the sea or a ravine, the death spot
+## is under water or out of reach; the warmth waits on the last ground stood
+## on instead, so the one chance to take it back is a real one.
+var _fell_to_land := false
+func breathmark_spot() -> Vector3:
+	if _fell_to_land and _last_ground != Vector3.ZERO:
+		return _last_ground
+	return global_position
 
 func _stagger(dur: float) -> void:
 	_stagger_dur = maxf(dur, 0.2)

@@ -841,7 +841,11 @@ func hide_boss() -> void:
 ## gold rule beneath — faded in, held a breath, and let go.
 var _title_layer: CanvasLayer = null
 
+## The last card raised, as authored (tests and the QA shots read it).
+var last_title := ""
+
 func show_area_title(text: String, hold := 2.2) -> void:
+	last_title = text
 	if _title_layer != null and is_instance_valid(_title_layer):
 		_title_layer.queue_free()
 	_title_layer = CanvasLayer.new()

@@ -19,6 +19,12 @@ var current_area_id := ""
 
 var warmth := 0
 var _death_flow_running := false
+## Test seam: run the real front door (house card, title, difficulty) even
+## headless. Only tools/test/fullslice_test.gd sets it.
+var front_door := false
+## Test seam: scales the Bearer's damage against holdfasts only, so a
+## headless run can finish a boss whose AI still fights. 1.0 in play.
+var test_boss_dmg_mult := 1.0
 ## A duel is live behind a sealed frost veil: the arena's doors refuse until the
 ## holdfast rests or the Bearer does. Set/cleared by the frost veils.
 var arena_locked := false
@@ -42,7 +48,7 @@ func _on_player_died() -> void:
 	# the drop: all carried warmth stay at the death site (replacing any
 	# previous breathmark — that one is lost forever)
 	if warmth > 0:
-		World.set_breathmark(current_area_id, player.global_position, warmth)
+		World.set_breathmark(current_area_id, player.breathmark_spot() if player.has_method("breathmark_spot") else player.global_position, warmth)
 	set_warmth(0)
 	World.save_game()
 	await get_tree().create_timer(float(DB.tuning("death/respawn_delay", 2.8)), false).timeout
@@ -211,7 +217,7 @@ func travel_to(area_id: String, spawn_pos: Vector3, spawn_yaw := 1e9) -> void:
 	refresh_breathmark()
 	snapshot_player()
 	World.save_game()
-	area_title.emit(next.display_name)
+	area_title.emit(next.arrival_title(spawn_pos))
 	player.lock_control(false)
 
 signal hearth_kept(hearth)
