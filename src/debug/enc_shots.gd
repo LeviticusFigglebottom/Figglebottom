@@ -900,3 +900,115 @@ func _st_release_kettle(p: Player) -> void:
 			_freeze()
 
 var _kettle_side := -1.0   # (the shelf side, not the cliff)
+
+# ------------------------------------------------------------------ Thornwold
+## (thornwold; docs/screens/thornwold_enc_*.png): thorn_collier, thorn_stag,
+## hedgelayer_p1, hedgelayer_p2, hedgelayer_p3, thorn_release (RIME);
+## thorn_argument (THAW), thorn_after (THAW, --flag=ks_hedgelayer_released).
+func _st_thorn_collier(p: Player) -> void:
+	_lowe_foe_stage(p, "collier", Vector3(380, 0, -312), "rake", 0.8, 2.0, 4.4, 1.3, 1.0)
+
+func _st_thorn_stag(p: Player) -> void:
+	_lowe_foe_stage(p, "rime_stag", Vector3(400, 0, -300), "bound", 0.7, 7.0, 6.4, 1.8, 1.0)
+
+## The Hedgelayer: woken, the phase set (with its ring), the Bearer `gap`
+## metres off toward the middle of the grave's clearing; `atk` started and
+## frozen `frac` of the way through its windup, or `after` seconds past it.
+var _hl_set := false
+
+func _hl_stage(p: Player, ph: int, atk: String, frac: float, gap: float, after := -1.0,
+		cam := Vector3(5.0, 3.6, 6.0), hold_t := 0.0) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_foe = _foe_near("hedgelayer", Vector3(448, 0, -321))
+	var h := _foe as Hedgelayer
+	if h == null:
+		return
+	if not _hl_set:
+		_hl_set = true
+		_t0 = _clock
+		h.target = p
+		h._stand_done()
+		h.vis.idle(0.0)
+		h.phase = ph
+		if ph >= 2:
+			h.hp = h.max_hp * 0.5
+			h._raise_ring(h.cfg["ring2"])
+		if ph >= 3:
+			h.hp = h.max_hp * 0.2
+			h._raise_ring(h.cfg["ring3"])
+		h._set_state(Enemy.ES.COMBAT)
+		for a in h.cfg.get("attacks", []):
+			h._cooldowns[String(a["id"])] = 99.0
+		var to_g := h.grave_point() - h.global_position
+		to_g.y = 0
+		var at := h.global_position + to_g.normalized() * gap
+		_place_player(p, Vector3(at.x, h.global_position.y + 0.3, at.z), 0.0)
+	var mid := h.global_position.lerp(p.global_position, 0.5)
+	var axis := p.global_position - h.global_position
+	axis.y = 0
+	var side := axis.normalized().cross(Vector3.UP)
+	_cam.global_position = mid + side * cam.x + Vector3.UP * cam.y + axis.normalized() * cam.z
+	_cam.look_at(mid + Vector3.UP * 1.2, Vector3.UP)
+	_cam.fov = 58.0
+	if _clock - _t0 < 0.8:
+		return
+	if not _started:
+		_started = true
+		_t1 = _clock
+		h._cooldowns.clear()
+		h.target = p
+		h._begin_attack(h.attack_by_id(atk))
+		return
+	if h.state == Enemy.ES.HOLD and h._hold_kind == "measure" and h.state_t >= 1.2:
+		_freeze()
+	elif after >= 0.0:
+		var w := float(h.attack_by_id(atk)["windup"]) / h._speed_mult()
+		if _clock - _t1 >= w + after:
+			_freeze()
+	elif h.state == Enemy.ES.ATTACK and String(h._atk.get("id", "")) == atk \
+			and h.state_t >= float(h._atk["windup"]) / h._speed_mult() * frac:
+		_freeze()
+
+func _st_hedgelayer_p1(p: Player) -> void:
+	_hl_stage(p, 1, "raise_wall", 0.0, 7.0, 0.7, Vector3(6.0, 3.4, 5.0))
+
+func _st_hedgelayer_p2(p: Player) -> void:
+	# in the hedge: the circle glowing where he will step out
+	_hl_stage(p, 2, "step_into", 0.0, 5.0, 0.9 + 1.2 + 0.35, Vector3(6.0, 4.2, 4.0))
+
+func _st_hedgelayer_p3(p: Player) -> void:
+	_hl_stage(p, 3, "where_it_goes", 1.0, 6.5, -1.0, Vector3(5.0, 3.0, 5.0))
+
+## Release: he kneels at the gap; the ring unlays; the gate lies down; the cord.
+func _st_thorn_release(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("hedgelayer", Vector3(448, 0, -321))
+	var h := _foe as Hedgelayer
+	if h == null:
+		return
+	if not h.released:
+		h.target = p
+		h._stand_done()
+		h.phase = 2
+		h._raise_ring(h.cfg["ring2"])
+		var g := h.grave_point()
+		_place_player(p, g + Vector3(-6.0, 0.3, 4.0), 0.0)
+		h._die()
+		_t0 = _clock
+	var g2 := h.grave_point()
+	_cam.global_position = g2 + Vector3(-17.0, 4.2, 7.0)
+	_cam.look_at(g2 + Vector3(-9.0, 0.4, 0.0), Vector3.UP)
+	_cam.fov = 58.0
+	if _clock - _t0 > 3.0:
+		_freeze()
+
+func _st_thorn_argument(p: Player) -> void:
+	_release_stage(p, "eyvind", Vector3(1.6, 1.6, 5.0), 0.9, 2)
+
+func _st_thorn_after(p: Player) -> void:
+	_release_stage(p, "eyvind_gate", Vector3(-1.8, 1.7, 5.2), 0.8, 4)
