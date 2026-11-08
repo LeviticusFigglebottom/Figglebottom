@@ -138,11 +138,11 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 	# release_gates: the bars he kept lift by themselves (TARNHALL.md 9); the
 	# area flag keeps them open when the area is rebuilt
 	for gid in bcfg.get("release_gates", []):
-		World.set_area_flag(current_area_id, "gate_" + String(gid))
 		if current_area != null:
 			for g in current_area.find_children("*", "ShortcutGate", true, false):
 				if String(g.get("gate_id")) == String(gid):
 					g.lift_bar()
+		World.set_area_flag(current_area_id, "gate_" + String(gid))
 	var hid := String(bcfg.get("release_hearth", ""))
 	if hid != "" and current_area != null and find_hearth(hid) == null:
 		var def: Dictionary = current_area.get_meta("def", {})

@@ -71,12 +71,9 @@ func open_pools() -> int:
 ## The guests still in their places: the white feast-guest stills the area
 ## lays along the benches in RIME (a landmark of the feast-guest model).
 func seated() -> Array:
-	var area: Node = Game.current_area if Game.current_area != null else get_parent()
 	var out: Array = []
-	for n in area.find_children("*", "Node3D", true, false):
-		var n3 := n as Node3D
-		if n3.scene_file_path.ends_with("feast_guest.glb") and n3.is_visible_in_tree() \
-				and not n3.has_meta("risen") and n3.get_parent() is Node3D:
+	for n3 in _places():
+		if n3.is_visible_in_tree() and not n3.has_meta("risen"):
 			out.append(n3)
 	out.sort_custom(func(a, b): return _seat_cost(a) < _seat_cost(b))
 	return out
@@ -119,6 +116,32 @@ func raise_guests(n: int) -> int:
 		guests_raised.emit(placed)
 		AudioDirector.sfx_at(cfg.get("sfx_alert", ""), global_position, -6.0, 1.3)
 	return placed
+
+## Every place at the table: the feast-guest stills, risen or not (not the
+## bodies of guests that are up: those are the same model, inside an Enemy).
+var _places_cache: Array = []
+
+func _places() -> Array:
+	_places_cache = _places_cache.filter(func(n): return is_instance_valid(n))
+	if not _places_cache.is_empty():
+		return _places_cache
+	var area: Node = Game.current_area if Game.current_area != null else get_parent()
+	var out: Array = []
+	for n in area.find_children("*", "Node3D", true, false):
+		var n3 := n as Node3D
+		if not n3.scene_file_path.ends_with("feast_guest.glb"):
+			continue
+		var up := n3.get_parent()
+		var in_body := false
+		while up != null and up != area:
+			if up is Enemy:
+				in_body = true
+				break
+			up = up.get_parent()
+		if not in_body:
+			out.append(n3)
+	_places_cache = out
+	return out
 
 ## Which way a seated still faces (a raw glb: its front is +Z), on the floor.
 static func _seat_faces(seat: Node3D) -> Vector3:
@@ -164,10 +187,8 @@ func _fill_horn(seat: Node3D) -> void:
 
 ## Every horn: the ones in front of empty places (Pour, the second sitting).
 func fill_empty_places() -> void:
-	var area: Node = Game.current_area if Game.current_area != null else get_parent()
-	for n in area.find_children("*", "Node3D", true, false):
-		var n3 := n as Node3D
-		if n3.scene_file_path.ends_with("feast_guest.glb") and n3.has_meta("risen") and not n3.has_meta("refilled"):
+	for n3 in _places():
+		if n3.has_meta("risen") and not n3.has_meta("refilled"):
 			n3.set_meta("refilled", true)
 			_fill_horn(n3)
 
@@ -347,16 +368,13 @@ func _st_attack(dt: float) -> void:
 
 ## Toward the nearest place at the table (a seat still, risen or not).
 func _table_dir() -> Vector3:
-	var area: Node = Game.current_area if Game.current_area != null else get_parent()
 	var best := Vector3.ZERO
 	var bd := 1e9
-	for n in area.find_children("*", "Node3D", true, false):
-		var n3 := n as Node3D
-		if n3.scene_file_path.ends_with("feast_guest.glb"):
-			var d := n3.global_position.distance_squared_to(global_position)
-			if d < bd:
-				bd = d
-				best = n3.global_position - global_position
+	for n3 in _places():
+		var d := (n3 as Node3D).global_position.distance_squared_to(global_position)
+		if d < bd:
+			bd = d
+			best = (n3 as Node3D).global_position - global_position
 	if best == Vector3.ZERO:
 		best = -vis.global_transform.basis.z
 	best.y = 0

@@ -470,6 +470,8 @@ func _begin_attack(a: Dictionary) -> void:
 	_tele_shown = false
 	_crack = null
 	_crack_shown = false
+	_tgt_last = Vector3.INF
+	_tgt_vel = Vector3.ZERO
 	if a.has("telegraph"):
 		_tele_at = w * float(a.get("telegraph_lock", 0.7))
 	if a.has("sfx_windup"):
@@ -509,6 +511,8 @@ var _tele_at := -1.0
 ## recovery spawned a fresh 0.1 s glow every tick after the strike.
 var _tele_shown := false
 var _crack: Node = null
+var _tgt_last := Vector3.INF
+var _tgt_vel := Vector3.ZERO
 var _crack_shown := false
 
 func _st_attack(dt: float) -> void:
@@ -520,6 +524,11 @@ func _st_attack(dt: float) -> void:
 	var hits := _hit_times()
 	var last: float = float(hits[hits.size() - 1]) / sm
 	var t := state_t
+	# how the target is really moving (a thrown thing leads it)
+	if _target_valid() and dt > 0.0:
+		if _tgt_last != Vector3.INF:
+			_tgt_vel = _tgt_vel.lerp((target.global_position - _tgt_last) / dt, 0.3)
+		_tgt_last = target.global_position
 	# track the player through most of the windup, commit at the end
 	if t < w * 0.7 and _target_valid():
 		_face(target.global_position - global_position, dt, float(_atk.get("track", 1.2)))
@@ -918,6 +927,8 @@ func _lob() -> void:
 	var lead := float(lb.get("lead", 0.0))
 	if lead > 0.0 and target is CharacterBody3D:
 		var v := (target as CharacterBody3D).velocity
+		if _tgt_vel.length() > v.length():
+			v = _tgt_vel   # how the Bearer has actually been moving through the windup
 		v.y = 0.0
 		var ahead := target.global_position + v * lead
 		if ahead.distance_to(spots[0]) > float(lb.get("radius", 2.0)) * 1.4:

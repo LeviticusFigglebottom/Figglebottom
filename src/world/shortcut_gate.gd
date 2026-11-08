@@ -82,6 +82,9 @@ func _apply_open(instant: bool) -> void:
 			c.visible = false         # (doors drawn as dressing swing out of the way)
 	var body := get_node("GateBody") as StaticBody3D
 	body.collision_layer = 0
+	# a gate on a state layer (Tarnhall's doors, RIME only): the layer's
+	# collision toggles restore orig_layer, so an open gate stays open
+	body.set_meta("orig_layer", 0)
 	for i in _leaves.size():
 		var leaf := _leaves[i]
 		# both leaves swing in toward the unbarring (-Z) side
