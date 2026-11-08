@@ -2567,6 +2567,98 @@
       },
       "origin": "bottom_center",
       "output": "assets/models/bosses/leadvoice.glb"
+    },
+    {
+      "name": "sc_boulder",
+      "category": "scatter",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "583846a0-02ff-4f3e-b89d-b5bb65085126",
+        "task_id": "51faee04-1ec7-4757-9917-137f65f8d129",
+        "remesh_operator": "4866b8a8-faa4-4638-94b6-8d3962e78ca3",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed",
+        "remesh_face_limit": 3000
+      },
+      "input": "raw/sc_boulder/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 2.1
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/scatter/sc_boulder.glb"
+    },
+    {
+      "name": "sc_slab",
+      "category": "scatter",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "e8c05e96-2754-48f5-ae03-0af8c11df440",
+        "task_id": "e6bc4c71-3faf-4b54-8607-df9fcaa0b413",
+        "remesh_operator": "db92af1a-6234-4502-b7ed-3179e1764aa4",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed",
+        "remesh_face_limit": 3000
+      },
+      "input": "raw/sc_slab/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 1.9
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/scatter/sc_slab.glb"
+    },
+    {
+      "name": "sc_stone",
+      "category": "scatter",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "7153e8f2-fde2-44c5-8d7b-5fa5fb7f4fe6",
+        "task_id": "8976a843-21cc-47c0-9ae5-fbe91dc392d1",
+        "remesh_operator": "939a6575-255d-4272-b200-32ce6b8b956c",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed",
+        "remesh_face_limit": 3000
+      },
+      "input": "raw/sc_stone/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 1.2
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/scatter/sc_stone.glb"
+    },
+    {
+      "name": "sc_driftlog",
+      "category": "scatter",
+      "kind": "static",
+      "source": {
+        "tool": "tripo_image -> tripo_generate_image",
+        "project_id": "abfdf4a2-7762-4054-9d8a-feef0951147a",
+        "task_id": "96e0d566-4b53-48c4-a81f-bdd9d4749693",
+        "remesh_operator": "b4740d92-cdf0-43c1-9c4e-f79a5be1a4e7",
+        "model_version": "v3.1-20260211",
+        "texture_quality": "detailed",
+        "remesh_face_limit": 3000
+      },
+      "input": "raw/sc_driftlog/remesh.fbx",
+      "yaw_deg": -90,
+      "target": {
+        "length": 3.0
+      },
+      "origin": "bottom_center",
+      "texture_max": 1024,
+      "collision": null,
+      "output": "assets/models/scatter/sc_driftlog.glb"
     }
   ]
 }
