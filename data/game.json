@@ -101,7 +101,8 @@
   "fov": 62,
   "sensitivity": 0.0035,
   "lock_distance_bias": 1.15,
-  "talk_yaw_off": 28.0,
+  "talk_yaw_off": 34.0,
+  "hide_body_within": 0.75,
   "lock": {
    "_doc": "Lock-on. Acquire within range/cone with line of sight; a horizontal flick (mouse px accumulated inside flick_window s) or the right stick past stick_threshold switches to the nearest target on that side, scored on screen by angle_weight*|angle from the horizontal| + distance_weight*(screen distance / viewport width). Breaks on the lock button, beyond break_range, or after los_grace s without line of sight.",
    "range": 16.0,

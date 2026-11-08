@@ -24,10 +24,13 @@ func _ready() -> void:
 	lbody.collision_mask = 0
 	var lcs := CollisionShape3D.new()
 	var lcyl := CapsuleShape3D.new()
+	# as tall as the standing stone, no taller: a 2.4 m invisible post
+	# folded the camera arm into the Bearer's cloak whenever the hearth was
+	# behind him (every rest at the Long Hearth, every wake at a hearth)
 	lcyl.radius = 0.38
-	lcyl.height = 2.4
+	lcyl.height = 1.4
 	lcs.shape = lcyl
-	lcs.position.y = 1.2
+	lcs.position.y = 0.7
 	lbody.add_child(lcs)
 	vis.add_child(lbody)
 	_flame = _find_flame(vis)

@@ -128,6 +128,12 @@ func _front_door(returning: bool) -> void:
 		spawn = hearth.respawn_point()
 	player.global_position = spawn
 	player.cam.yaw = deg_to_rad(float(def.get("start", {}).get("yaw", 0)))
+	if hearth != null and not fresh:
+		player.cam.yaw = hearth.global_rotation.y + PI   # wake facing out from the hearth
+	# the Bearer faces where the camera looks: a new journey opened on him
+	# staring back into the lens
+	if player.get("vis") != null:
+		player.vis.rotation.y = player.cam.yaw
 
 	_hud = HUD.new()
 	add_child(_hud)
