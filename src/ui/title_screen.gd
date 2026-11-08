@@ -26,6 +26,8 @@ const DIFF_NAMES := {"gentle": "The Gentle Thaw", "long": "The Long Winter", "ha
 var _stage: Node3D
 var _cam: Camera3D
 var _area: Node = null
+var _area_id := ""
+var _warmed := false
 var _deck: Array = []
 var _t := 0.0
 var _from := Vector3.ZERO
@@ -193,18 +195,26 @@ func _process(dt: float) -> void:
 func _swap_stop() -> void:
 	if _done:
 		return
-	if _area != null and is_instance_valid(_area):
-		RH.free_gently(_area)
-		_area = null
 	if _deck.is_empty():
 		_deck = STOPS.duplicate()
 		_deck.shuffle()
 	var stop: Dictionary = _deck.pop_back()
-	var area = AreaBuilder.build(stop["id"])
-	for sp in area.find_children("*", "Spawner", true, false):
-		sp.queue_free()
-	_stage.add_child(area)
-	_area = area
+	# the stops share quarters: keep the built one and only move the camera.
+	# Rebuilding the whole steading under every dip (terrain, navmesh, scatter)
+	# was the title's hitch, tens of seconds on a software renderer.
+	var area = _area if _area != null and is_instance_valid(_area) and _area_id == String(stop["id"]) else null
+	if area == null:
+		if _area != null and is_instance_valid(_area):
+			RH.free_gently(_area)
+		area = AreaBuilder.build(stop["id"])
+		for sp in area.find_children("*", "Spawner", true, false):
+			sp.queue_free()
+		_stage.add_child(area)
+		_area = area
+		_area_id = String(stop["id"])
+		if not _warmed:
+			_warmed = true
+			ShaderWarm.warm(_stage, _cam)
 	# state dressing WITHOUT StateDirector.snap: the title track owns the
 	# music, so the layers/env/shader globals are set by hand
 	var st: int = RH.WState.RIME if randf() < 0.5 else RH.WState.THAW
