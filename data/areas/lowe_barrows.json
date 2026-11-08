@@ -71,7 +71,7 @@
  "nav_bounds": [
   -124,
   10,
-  -262,
+  -266,
   70,
   90,
   -80
@@ -340,6 +340,27 @@
     -104
    ],
    "rot": 140
+  },
+  {
+   "id": "hs_drying_stacks",
+   "name": "the Drying Stacks",
+   "at": [
+    32,
+    40.06,
+    -166
+   ],
+   "rot": 210
+  },
+  {
+   "id": "hs_open_barrow",
+   "name": "the Open Barrow",
+   "at": [
+    39.5,
+    45.61,
+    -203.5
+   ],
+   "rot": 160,
+   "require_flag": "ks_turfwright_released"
   }
  ],
  "spawners": [
@@ -352,7 +373,8 @@
     31.7,
     -118.77
    ],
-   "face": 26.57
+   "face": 206.57,
+   "pose": "sit_up"
   },
   {
    "enemy": "barrow_sleeper",
@@ -363,7 +385,8 @@
     28.5,
     -120.18
    ],
-   "face": -160.02
+   "face": 19.98,
+   "pose": "sit_up"
   },
   {
    "enemy": "barrow_sleeper",
@@ -374,7 +397,8 @@
     32.29,
     -138.47
    ],
-   "face": -142.13
+   "face": 37.87,
+   "pose": "sit_up"
   },
   {
    "enemy": "keener",
@@ -386,6 +410,18 @@
     -128
    ],
    "face": 200
+  },
+  {
+   "enemy": "keener",
+   "stand_in": "oarsman",
+   "id": "keener_closed",
+   "at": [
+    1.77,
+    37.13,
+    -144.72
+   ],
+   "face": 24.44,
+   "pose": "kneel"
   },
   {
    "enemy": "keener",
@@ -408,6 +444,17 @@
     -160
    ],
    "face": 30
+  },
+  {
+   "enemy": "cairn_carrier",
+   "stand_in": "rimewalker",
+   "id": "carrier_road",
+   "at": [
+    22,
+    37.72,
+    -158
+   ],
+   "face": 150
   },
   {
    "enemy": "barrow_sleeper",
@@ -464,7 +511,7 @@
     44.24,
     -166
    ],
-   "rot": 120,
+   "rot": 238,
    "tag": "thaw"
   }
  ],
@@ -502,6 +549,65 @@
    "warmth": 60,
    "tag": "rime",
    "label": "Take what was left for the road"
+  },
+  {
+   "id": "orm_cord",
+   "at": [
+    -59.14,
+    31.6,
+    -121.28
+   ],
+   "item": "item_orm_cord",
+   "tag": "rime",
+   "label": "Take the knot-cord",
+   "set_flag": "ks_aud_cord_found"
+  },
+  {
+   "id": "hesk_tongs",
+   "at": [
+    -43.15,
+    43.99,
+    -185.8
+   ],
+   "item": "item_hesk_tongs",
+   "tag": "rime",
+   "label": "Chip the tongs out of the ice",
+   "set_flag": "ks_hesk_tongs_found"
+  },
+  {
+   "id": "turf_spade",
+   "at": [
+    18.07,
+    32.19,
+    -137.05
+   ],
+   "item": "turf_spade",
+   "tag": "rime",
+   "label": "Work the spade loose",
+   "scene": "res://assets/models/weapons/turf_spade.glb"
+  },
+  {
+   "id": "woad_thread",
+   "at": [
+    1.31,
+    37.03,
+    -145.72
+   ],
+   "item": "ks_woad_thread",
+   "tag": "rime",
+   "label": "Untie the thread"
+  },
+  {
+   "id": "twin_spindles",
+   "at": [
+    46.0,
+    46.13,
+    -208.4
+   ],
+   "item": "item_twin_spindles",
+   "tag": "rime",
+   "label": "Take the spindles",
+   "require_flag": "ks_turfwright_released"
   }
  ],
  "portals": [
@@ -544,6 +650,27 @@
     -71.7
    ],
    "spawn_yaw": 180
+  },
+  {
+   "to": "kettle_fjord",
+   "auto": true,
+   "at": [
+    -67.4,
+    36.43,
+    -255.4
+   ],
+   "rot": -135.0,
+   "zone": [
+    10,
+    6,
+    2
+   ],
+   "spawn": [
+    -70.23,
+    35.28,
+    -258.23
+   ],
+   "spawn_yaw": 45.0
   }
  ],
  "scripted": [
@@ -1699,7 +1826,7 @@
   "drown_depth": 1.15,
   "nav_bounds": [
    -124,
-   -262,
+   -266,
    70,
    -80
   ],

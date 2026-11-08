@@ -155,6 +155,7 @@ func _physics_process(dt: float) -> void:
 		ES.STAGGER: _st_stagger(dt)
 		_: _st_extra(dt)
 	move_and_slide()
+	_tick_pull(dt)
 	_track_progress(dt)
 	# stride cycles while moving; action clips own the rig during ATTACK/STAGGER
 	vis.locomotion(dt, Vector2(velocity.x, velocity.z).length(), Vector2.ZERO, is_on_floor())
@@ -283,7 +284,10 @@ func _st_alert(dt: float) -> void:
 
 var _rise_until := 0.0
 
-const IDLE_POSES := {"sit": "sit_mend"}
+## Idle chores (spawner "pose"): a looping clip held until the foe rises.
+## sit = mending nothing (Saltfell); sit_up = one of the barrow dead, sat up
+## facing the road; kneel = a keener at a closed door (LOWE.md 2).
+const IDLE_POSES := {"sit": "sit_mend", "sit_up": "sit_up", "kneel": "kneel_keen", "kneel_fish": "kneel_fish"}
 
 func _apply_idle_pose() -> void:
 	if idle_pose == "" or not vis.is_humanoid() or not IDLE_POSES.has(idle_pose):
@@ -345,6 +349,13 @@ func _st_combat(dt: float) -> void:
 	if not _los_clear():
 		_set_state(ES.APPROACH)
 		return
+	# a follow-up queued by a hook that landed ("then")
+	if _then_atk != "" and _pull_t <= 0.0:
+		var q := attack_by_id(_then_atk)
+		_then_atk = ""
+		if not q.is_empty() and dist <= float(q.get("range", 3.0)) + 0.6:
+			_begin_attack(q)
+			return
 	# choose an attack that's off cooldown and in range
 	var pick := _pick_attack(dist)
 	if not pick.is_empty():
@@ -353,7 +364,11 @@ func _st_combat(dt: float) -> void:
 	# reposition: slow strafe + keep spacing (singers back away instead)
 	if _think_t <= 0.0:
 		_think_t = randf_range(0.8, 1.6)
-		_strafe_dir = -_strafe_dir if randf() < 0.4 else _strafe_dir
+		# a pair works from opposite sides ("flank"): each keeps its own side
+		if cfg.get("flank", false):
+			_strafe_dir = 1.0 if get_instance_id() % 2 == 0 else -1.0
+		else:
+			_strafe_dir = -_strafe_dir if randf() < 0.4 else _strafe_dir
 		_blocking = cfg.has("block_arc") and randf() < 0.45
 	var fwd := to.normalized()
 	var side := fwd.cross(Vector3.UP) * _strafe_dir
@@ -447,8 +462,10 @@ func _begin_attack(a: Dictionary) -> void:
 	var anim_name: String = a.get("anim", "atk_r")
 	var w := float(a.get("windup", 0.5)) / _speed_mult()
 	vis.play_timed(anim_name, maxf(w, 0.05), 0.08)
-	_atk_dir = -vis.global_transform.basis.z
+	_atk_dir = _aim_dir()
+	_atk_off = _line_offset()
 	_tele = null
+	_tele_shown = false
 	if a.has("telegraph"):
 		_tele_at = w * float(a.get("telegraph_lock", 0.7))
 	if a.has("sfx_windup"):
@@ -464,8 +481,29 @@ func _hit_times() -> Array:
 var _hit_i := 0
 var _chained := false
 var _atk_dir := Vector3.FORWARD
+## Where a line strike starts along the aim: data "offset", or, for one laid
+## where the Bearer stands ("at_target": true), centred on him at commit.
+var _atk_off := 0.0
+
+## The committed aim. "aim": "back" strikes behind the body (the Turfwright
+## dropping the turf door on his back onto whoever stands there).
+func _aim_dir() -> Vector3:
+	var f := -vis.global_transform.basis.z
+	return -f if String(_atk.get("aim", "front")) == "back" else f
+
+func _line_offset() -> float:
+	var off := float(_atk.get("offset", 0.0))
+	if bool(_atk.get("at_target", false)) and target != null and is_instance_valid(target):
+		var to := target.global_position - global_position
+		to.y = 0.0
+		var reach := float(_atk.get("range", 12.0))
+		off = clampf(to.length(), 0.0, reach) - float(_atk.get("length", 3.0)) * 0.5
+	return off
 var _tele: Node = null
 var _tele_at := -1.0
+## Once per attack: a freed tell compares equal to null, so without this the
+## recovery spawned a fresh 0.1 s glow every tick after the strike.
+var _tele_shown := false
 
 func _st_attack(dt: float) -> void:
 	_sync_blade()   # the blade box wears the weapon's frame through the swing
@@ -479,11 +517,13 @@ func _st_attack(dt: float) -> void:
 	# track the player through most of the windup, commit at the end
 	if t < w * 0.7 and _target_valid():
 		_face(target.global_position - global_position, dt, float(_atk.get("track", 1.2)))
-		_atk_dir = -vis.global_transform.basis.z
+		_atk_dir = _aim_dir()
+		_atk_off = _line_offset()
 	if state != ES.ATTACK:
 		return
 	# the floor tell appears once the aim is committed, and glows to the strike
-	if _atk.has("telegraph") and _tele == null and t >= _tele_at:
+	if _atk.has("telegraph") and not _tele_shown and t >= _tele_at:
+		_tele_shown = true
 		_tele = _spawn_telegraph(w - t)
 	var in_strike := false
 	for h in hits:
@@ -531,7 +571,8 @@ func _st_attack(dt: float) -> void:
 		_attack_finished()
 
 ## One strike of the current attack, by type (data-driven):
-##   melee (default), ranged, summon, nova, line, net, haul, alert.
+##   melee (default), ranged, summon, nova, line, net, haul, break_ice, hook,
+##   alert.
 func _strike() -> void:
 	match _atk.get("type", "melee"):
 		"ranged": _fire_projectiles()
@@ -540,6 +581,8 @@ func _strike() -> void:
 		"line": _line_strike()
 		"net": _net_cast()
 		"haul": _haul()
+		"break_ice": _break_ice()
+		"hook": _hook()
 		"alert": _alert_others(float(_atk.get("radius", 15.0)))
 		"none": pass
 		_:
@@ -550,6 +593,109 @@ func _strike() -> void:
 					randf_range(0.88, 1.04))
 	if _atk.has("shockwave"):
 		_shockwave.call_deferred(float(_atk["shockwave"]))
+
+## Broken ice (KETTLE.md 5, 6): a disc of black water where the aim
+## committed ("ice": {"shape": "disc", "radius", "life", "sink"}, centred on
+## the Bearer with "at_target"), or a ring round the body ("shape": "ring",
+## "inner"). "lead" opens a second hole where he is running to. The water
+## takes whoever stays on it `sink` seconds; "shock" hurts whoever stands
+## on it when it opens.
+func _break_ice() -> void:
+	var ic: Dictionary = _atk.get("ice", {})
+	var shape := String(ic.get("shape", "disc"))
+	var centre := global_position
+	if shape != "ring":
+		centre += Vector3(_atk_dir.x, 0, _atk_dir.z).normalized() * _atk_off
+	var holes: Array = [centre]
+	if float(ic.get("lead", 0.0)) > 0.0 and target is CharacterBody3D:
+		var v := (target as CharacterBody3D).velocity
+		v.y = 0
+		var ahead := target.global_position + v * float(ic.get("lead", 0.0))
+		if ahead.distance_to(centre) > float(ic.get("radius", 2.0)) * 1.5:
+			holes.append(Vector3(ahead.x, centre.y, ahead.z))
+	for c in holes:
+		var b := BrokenIce.open(get_parent(), c, shape, float(ic.get("radius", 2.0)), float(ic.get("inner", 0.0)),
+				float(ic.get("life", 6.0)), float(ic.get("sink", 1.0)))
+		_on_broken_ice(b)
+		var p := _player()
+		if p != null and not p.get("dead") and b.covers(p.global_position) and float(ic.get("shock", 0.0)) > 0.0:
+			var pk := DamagePacket.new(float(ic["shock"]), float(_atk.get("poise_dmg", 20)), self)
+			pk.kind = "frost"
+			pk.can_be_parried = false
+			pk.can_be_blocked = false
+			var hb: Hurtbox = p.get("hurtbox")
+			if hb != null:
+				hb.receive(pk)
+	Juice.shake(float(_atk.get("shake", 0.35)), 0.25)
+
+## A subclass keeps the holes it broke (the Ice-Cutter closes them on release).
+func _on_broken_ice(_b: BrokenIce) -> void:
+	pass
+
+## Hook (the Sealer's hook, the Ice-Cutter's trace): whatever stands in the
+## strip ("length" x "width" from "offset") is caught, held "snare" seconds
+## (mash to break), and if he does not break it, dragged to "haul_to"
+## metres from the anchor (the body; a subclass may name another: the
+## Ice-Cutter drags to his hole), then "then" follows.
+var _then_atk := ""
+var _pull_t := 0.0
+var _pull_v := Vector3.ZERO
+var _pull_body: CharacterBody3D = null
+var hook_hold: GrabHold = null
+
+func _hook() -> void:
+	var p := _player()
+	_hook_vfx()
+	if p == null or p.get("dead"):
+		return
+	if not in_strip(p.global_position, float(_atk.get("length", 5.0)), float(_atk.get("width", 1.2)), _atk_off):
+		return
+	if p.has_method("is_invulnerable") and p.is_invulnerable():
+		return
+	var pk := DamagePacket.new(float(_atk.get("dmg", 8)), float(_atk.get("poise_dmg", 10)), self)
+	pk.can_be_parried = false
+	var hb: Hurtbox = p.get("hurtbox")
+	if hb != null:
+		hb.receive(pk)
+	var snare := float(_atk.get("snare", 0.0))
+	if snare > 0.0:
+		hook_hold = GrabHold.start(self, p, snare, int(_atk.get("mash", 5)))
+		hook_hold.released.connect(_on_hook_released.bind(p, float(_atk.get("haul_to", 1.5)),
+				String(_atk.get("then", "")), float(_atk.get("pull_time", 0.5))))
+	else:
+		_on_hook_released(false, p, float(_atk.get("haul_to", 1.5)), String(_atk.get("then", "")),
+				float(_atk.get("pull_time", 0.5)))
+
+func _on_hook_released(broken: bool, p: Node3D, haul_to: float, then: String, secs: float) -> void:
+	hook_hold = null
+	if broken or dead or not is_instance_valid(p) or p.get("dead"):
+		return
+	var to := _hook_anchor() - p.global_position
+	to.y = 0
+	var d := to.length() - haul_to
+	if d > 0.1 and p is CharacterBody3D:
+		_pull_body = p
+		_pull_v = to.normalized() * d / maxf(secs, 0.05)
+		_pull_t = secs
+	_then_atk = then
+
+## Where a hook drags the Bearer to.
+func _hook_anchor() -> Vector3:
+	return global_position
+
+func _tick_pull(dt: float) -> void:
+	if _pull_t <= 0.0:
+		return
+	_pull_t -= dt
+	if _pull_body != null and is_instance_valid(_pull_body):
+		_pull_body.move_and_collide(_pull_v * dt)
+	if _pull_t <= 0.0:
+		_pull_body = null
+
+## The line flying out along the strip: a quick streak of frost.
+func _hook_vfx() -> void:
+	var length := float(_atk.get("length", 5.0))
+	_line_vfx(length, 0.3, _atk_off)
 
 ## The attack's whole timeline has run: back to circling (subclasses may
 ## queue a follow-up, e.g. the net cast's haul into a stitch).
@@ -562,7 +708,7 @@ func _spawn_telegraph(remaining: float) -> Node:
 	var kind := String(tg.get("shape", "rect"))
 	var size: Array = tg.get("size", [1.0, 4.0])
 	var xf := Transform3D(Basis.looking_at(_atk_dir, Vector3.UP), global_position)
-	xf.origin += _atk_dir * float(tg.get("offset", 0.0))
+	xf.origin += _atk_dir * (_atk_off if _atk.get("at_target", false) else float(tg.get("offset", 0.0)))
 	var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
 	return FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1),
 			Color(tint[0], tint[1], tint[2]))
@@ -619,7 +765,7 @@ func in_strip(pos: Vector3, length: float, width: float, offset := 0.0) -> bool:
 func _line_strike() -> void:
 	var length := float(_atk.get("length", 4.0))
 	var width := float(_atk.get("width", 1.2))
-	var offset := float(_atk.get("offset", 0.0))
+	var offset := _atk_off
 	var p := _player()
 	if p != null and not p.get("dead") and in_strip(p.global_position, length, width, offset):
 		var hb: Hurtbox = p.get("hurtbox")
@@ -633,7 +779,7 @@ func _line_strike() -> void:
 	if _atk.has("ridge"):
 		var rd: Dictionary = _atk["ridge"]
 		var r := IceRidge.new()
-		r.setup(length, float(rd.get("life", 10.0)), int(rd.get("breaks", 2)))
+		r.setup(length, float(rd.get("life", 10.0)), int(rd.get("breaks", 2)), String(rd.get("style", "ice")))
 		get_parent().add_child(r)
 		var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
 		r.global_transform = Transform3D(Basis.looking_at(fwd, Vector3.UP), global_position + fwd * offset)
@@ -1106,6 +1252,9 @@ func on_parried(_host) -> void:
 func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
+	if hook_hold != null:
+		hook_hold.end(false)
+	_pull_t = 0.0
 	if hpbar != null:
 		hpbar.set_ratio(0.0)
 		hpbar.dismiss()

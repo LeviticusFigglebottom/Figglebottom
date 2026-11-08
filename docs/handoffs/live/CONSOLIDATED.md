@@ -2,34 +2,35 @@
 
 _Last updated: 2026-11-07 (founding session)_
 
-## State (on main, 349 checks green)
-- **Engine port** (ADR 0001).
-- **Mixamo animation layer** (ADR 0004).
-- **Combat deltas:** lock switching, sprint attack, armour slots, save_version 2.
-- **UI re-skin:** Alegreya, the bone and ember palette, the house card, the Keepsakes journal, and Ingra and Brede's lines word for word.
-- **Terrain** (ADR 0003, 0005, 0006):
-  - **Saltfell:** the Strand, the cliff path, the yard and the Longhouse.
-  - **The Lowe:** the barrow road, the kin-mounds, the bog route and the Open Barrow.
-  - **Connections between them:** a pass, plus a drawbridge shortcut.
-  - **Living ground cover and weather.**
-- **Tripo art** for the slice and the Lowe, plus 14 region concepts.
-  - **Credits:** about 4,065 spent; the balance is about 20,635 before the regions 3–7 batch.
+## State (on main f3d7b88: 714 checks, all green)
+| Region | World | Encounters and writing |
+|---|---|---|
+| Saltfell (vertical slice) | ✅ | ✅ |
+| The Lowe | ✅ | ✅ |
+| Kettle Fjord | ✅ (walls, dressing, see-through ice) | ✅ |
+| Tarnhall | ✅ | in flight |
+| Thornwold | in flight | todo |
+| Shepherd's Reach | todo | todo |
+| The Coldwell | todo | todo |
+
+- **Tripo:** every region's hero art is on main. The balance is 15,335.
+- **Controller:** the Bearer now steps up to 0.35 m and snaps down stairs.
+- **Disk:** keep it clean. Remove the worktrees of merged branches with `git worktree remove --force`. Raw downloads can be fetched again by Tripo project id.
 
 ## In flight (worktree → branch)
 | Worktree | Branch | Work |
 |---|---|---|
-| `/home/user/fb-enc` | `feat/slice-encounters` | Cast in game (the Bearer, NPCs, the Oarsman, the hound), the Netmender's three phases, death dissolve |
-| `/home/user/fb-audio` | `feat/audio-frost` | Music, ambience and foley, plus the frost/melt wavefront |
-| `/home/user/fb-art3` | `art/regions-3-7` | Remaining Tripo heroes. Budget about 6,000; it stops if the balance falls below 12,000. |
-| `/home/user/figglebottom` | `feat/lowe-polish-kettle` | Lowe RIME polish, then the Kettle Fjord region |
-| `/home/user/fb-qa` | `fix/slice-qa` | Slice QA: full-loop test (`tools/test/fullslice_test.gd`, 103 checks), 19 fixes, screenshots `docs/screens/slice_*`, `docs/qa/SLICE_QA.md` (ranked remaining issues), `docs/qa/PERF.md`. Ready for review, not merged. |
-| `/home/user/fb-lead` | `main` | Lead merges here. The owner has approved the lead merging reviewed, green branches. |
+| `/home/user/fb-qa` | `fix/slice-qa` | Full-slice end-to-end test, fixes, perf |
+| `/home/user/figglebottom` | `feat/thornwold` | Tarnhall light and a second seam, then the Thornwold region |
+| `/home/user/fb-enc4` | `feat/tarnhall-encounters` | `TARNHALL.md`, the Host's three phases, the hall doors |
+| `/home/user/fb-art4` | `art/npcs-release-scenes` | THAW NPC models (Halla, Sten, Arne and the twins, Pell and Ivo, the child Bearer) |
+| Owner's PC | `gpu/*` | Jobs in `LOCAL_GPU_TASKS.md`. Replies go via `LOCAL_OUTBOX.md`; the worker writes to `LOCAL_INBOX.md` on `gpu/inbox` |
 
 ## Next exact step
-1. Review each branch's screenshots and confirm its tests pass, then merge.
-2. Encounter pass for the Lowe: tune the Turfwright and the Lowe foes' movesets from WORLD.md.
-3. Regions 4–7 terrain.
-4. A performance pass.
+1. Review and merge branches as they land.
+2. Then Shepherd's Reach and the Coldwell, world first, then encounters.
+3. The endings: the Outsong and the Hearth Kept.
+4. Release-scene staging using the new NPC models.
 
 ## Tripo access (for future sessions)
 - **Tool:** the unofficial `Neko-Yukari/tripo-studio-mcp`. Clone it into the scratchpad and run it with `TRIPO_GATEWAY=0` and `TRIPO_STUDIO_STATE=<scratchpad>/tripo/studio-state.json`.

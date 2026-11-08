@@ -94,7 +94,7 @@ def audit(area_id):
     max_step = math.tan(math.radians(E.get("walk_max_deg", 45.0)))   # rise per 1 m
     deep = E.get("water_level", 0.0) - E.get("drown_depth", 1.15)
     hazards = d.get("hazards", [])
-    kills = [h for h in hazards if h["kind"] in ("kill", "drown", "bog")]
+    kills = [h for h in hazards if h["kind"] in ("kill", "drown", "bog", "thin")]
     guards = hazards
     walls = building_mask(E.get("buildings", []), X0, Z0, NX, NZ)
     # seams to other areas (auto portals): the land goes on, but this area
@@ -143,12 +143,21 @@ def audit(area_id):
                 for j in range(int(cz - rr - Z0), int(cz + rr - Z0) + 2):
                     for i in range(int(cx - rr - X0), int(cx + rr - X0) + 2):
                         if 0 <= i < NX and 0 <= j < NZ and math.hypot(X0 + i - cx, Z0 + j - cz) <= rr:
-                            hh[(i, j)] = max(H(i, j), sf["y"])
+                            hh[(i, j)] = max(hh.get((i, j), H(i, j)), sf["y"])
                 continue
             for j in range(int(sf["min"][1] - Z0), int(sf["max"][1] - Z0) + 1):
                 for i in range(int(sf["min"][0] - X0), int(sf["max"][0] - X0) + 1):
                     if 0 <= i < NX and 0 <= j < NZ:
-                        hh[(i, j)] = max(H(i, j), sf["y"])
+                        hh[(i, j)] = max(hh.get((i, j), H(i, j)), sf["y"])
+
+        # walls that stand in one state only (a door barred in RIME)
+        walls_s = set(walls)
+        for sw in E.get("state_walls", []):
+            if sw.get("tag", "base") not in ("base", state):
+                continue
+            for j in range(int(sw["min"][1] - Z0), int(sw["max"][1] - Z0) + 1):
+                for i in range(int(sw["min"][0] - X0), int(sw["max"][0] - X0) + 1):
+                    walls_s.add((i, j))
 
         def h(i, j):
             return hh.get((i, j), H(i, j))
@@ -159,7 +168,7 @@ def audit(area_id):
                                           if k.get("tag", "base") in ("base", state))
 
         def walkable(i, j):
-            if (i, j) in walls or (i, j) in gate_cells or (i, j) in seam_cells:
+            if (i, j) in walls_s or (i, j) in gate_cells or (i, j) in seam_cells:
                 return False
             if killed(i, j):
                 return False
@@ -202,7 +211,7 @@ def audit(area_id):
                 if n in seam_cells:
                     classes["seam"] += 1
                     continue
-                if n in walls or n in gate_cells:
+                if n in walls_s or n in gate_cells:
                     classes["building"] += 1
                     continue
                 if h(*n) < deep:
@@ -210,7 +219,7 @@ def audit(area_id):
                     continue
                 if killed(*n):
                     pt = (X0 + n[0], h(*n) + 0.5, Z0 + n[1])
-                    wet = any(k["kind"] in ("bog", "drown") and in_box(pt, k) for k in kills
+                    wet = any(k["kind"] in ("bog", "drown", "thin") and in_box(pt, k) for k in kills
                               if k.get("tag", "base") in ("base", state))
                     classes["water" if wet else "cliff"] += 1     # bog water / a lethal ravine
                     continue
@@ -258,6 +267,8 @@ def audit(area_id):
         outside = 0
         if nb:
             outside = sum(1 for (i, j) in seen if not (nb[0] <= X0 + i <= nb[2] and nb[1] <= Z0 + j <= nb[3]))
+            if outside and os.environ.get("AUDIT_DEBUG"):
+                print("   outside cells:", sorted({(X0 + i, Z0 + j) for (i, j) in seen if not (nb[0] <= X0 + i <= nb[2] and nb[1] <= Z0 + j <= nb[3])})[:: max(1, outside // 25)])
         summary = ", ".join(f"{k} {v}" for k, v in sorted(classes.items()))
         print(f"[{area_id}:{state}] {len(seen)} m2 walkable; edges: {summary}")
         for (x, z, why) in bad[:20]:
@@ -268,6 +279,10 @@ def audit(area_id):
             print(f"   UNGUARDED  drop at ({x:.0f}, {z:.0f}) lands at {tuple(round(v, 1) for v in land)} with no hazard volume")
         for u in unreached:
             print(f"   UNREACHABLE {u}")
+        if unreached:
+            xs = [X0 + i for (i, j) in seen]
+            zs = [Z0 + j for (i, j) in seen]
+            print(f"   (the flood from the start covers x {min(xs):.0f}..{max(xs):.0f}, z {min(zs):.0f}..{max(zs):.0f})")
         if outside:
             xs = [X0 + i for (i, j) in seen]
             zs = [Z0 + j for (i, j) in seen]

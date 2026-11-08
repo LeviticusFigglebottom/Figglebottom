@@ -1,0 +1,110 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="StandardMaterial3D" id="hazel"]
+albedo_color = Color(0.550, 0.420, 0.280, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="cut"]
+albedo_color = Color(0.220, 0.150, 0.090, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="rod"]
+top_radius = 0.022
+bottom_radius = 0.026
+height = 0.72
+radial_segments = 8
+material = SubResource("hazel")
+
+[sub_resource type="BoxMesh" id="notch"]
+size = Vector3(0.05, 0.008, 0.02)
+material = SubResource("cut")
+
+[sub_resource type="BoxMesh" id="half"]
+size = Vector3(0.05, 0.008, 0.01)
+material = SubResource("cut")
+
+[node name="TallyStick" type="Node3D"]
+
+[node name="Rod" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0)
+mesh = SubResource("rod")
+
+[node name="N0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, -0.022)
+mesh = SubResource("notch")
+
+[node name="N1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0.022)
+mesh = SubResource("notch")
+
+[node name="N2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, -0.022)
+mesh = SubResource("notch")
+
+[node name="N3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0.022)
+mesh = SubResource("notch")
+
+[node name="N4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, -0.022)
+mesh = SubResource("notch")
+
+[node name="N5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0.022)
+mesh = SubResource("notch")
+
+[node name="N6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, -0.022)
+mesh = SubResource("notch")
+
+[node name="N7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0.022)
+mesh = SubResource("notch")
+
+[node name="N8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.022)
+mesh = SubResource("notch")
+
+[node name="N9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.33, 0.022)
+mesh = SubResource("notch")
+
+[node name="N10" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, -0.022)
+mesh = SubResource("notch")
+
+[node name="N11" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39, 0.022)
+mesh = SubResource("notch")
+
+[node name="N12" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, -0.022)
+mesh = SubResource("notch")
+
+[node name="N13" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0.022)
+mesh = SubResource("notch")
+
+[node name="N14" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, -0.022)
+mesh = SubResource("notch")
+
+[node name="N15" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.51, 0.022)
+mesh = SubResource("notch")
+
+[node name="N16" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54, -0.022)
+mesh = SubResource("notch")
+
+[node name="N17" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.57, 0.022)
+mesh = SubResource("notch")
+
+[node name="Half0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0.026)
+mesh = SubResource("half")
+
+[node name="Half1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.665, 0.026)
+mesh = SubResource("half")

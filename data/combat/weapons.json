@@ -26,8 +26,8 @@
   }
  },
  "maul": {
-  "name": "Maul",
-  "desc": "A post-driving maul. Slow to lift, slower to argue with.",
+  "name": "Post Maul",
+  "desc": "A round of split oak on an ash haft, bound with two iron rings, for driving fence posts. Hesk carries it from steading to steading and sells it when he is short. The leather on the grip is wrapped over an older wrap.",
   "class": "great_hammer",
   "kit": "maul",
   "damage": 74.976,
@@ -48,6 +48,87 @@
   "block": {
    "stab": 1.0,
    "chip": 0.25
+  }
+ },
+ "turf_spade": {
+  "name": "Turf Spade",
+  "desc": "A peat-spade with a long narrow blade and one side wing, for cutting turf in strips. The ash handle has gone silver. It was wedged under a barrow door on the Kin-Mounds to hold the door up.",
+  "class": "halberd",
+  "kit": "turf_spade",
+  "damage": 56.0,
+  "poise_damage": 30,
+  "scaling": {
+   "might": 0.45,
+   "craft": 0.4
+  },
+  "stamina": {
+   "light": 20,
+   "heavy": 34,
+   "sprint": 24
+  },
+  "moveset": "halberd",
+  "two_handed": true,
+  "block": {
+   "stab": 1.1,
+   "chip": 0.3
+  },
+  "upgrade": {
+   "per_level": 7,
+   "max": 5
+  }
+ },
+ "ice_auger": {
+  "name": "Ice-Cutter's Auger",
+  "desc": "A long iron ice-auger with an oak cross-handle, for cutting fishing holes. Used as a spear it does not care much what it goes through. The leather on the shaft is worn through in two places, where two hands held it every winter.",
+  "class": "spear",
+  "kit": "ice_auger",
+  "damage": 50.0,
+  "poise_damage": 24,
+  "scaling": {
+   "might": 0.35,
+   "craft": 0.55
+  },
+  "stamina": {
+   "light": 16,
+   "heavy": 28,
+   "sprint": 19
+  },
+  "moveset": "spear",
+  "two_handed": true,
+  "block": {
+   "stab": 1.2,
+   "chip": 0.32
+  },
+  "upgrade": {
+   "per_level": 6,
+   "max": 5
+  }
+ },
+ "sealer_harpoon": {
+  "name": "Sealer's Harpoon",
+  "desc": "A barbed bog-iron head on a bone foreshaft and an ash shaft, a coil of rawhide line tied below the head. Sealers wait at a breathing hole for hours to throw it once. The line has been spliced so often that it is mostly splice.",
+  "class": "spear",
+  "kit": "sealer_harpoon",
+  "damage": 46.0,
+  "poise_damage": 20,
+  "scaling": {
+   "might": 0.2,
+   "craft": 0.7
+  },
+  "stamina": {
+   "light": 15,
+   "heavy": 26,
+   "sprint": 18
+  },
+  "moveset": "spear",
+  "two_handed": true,
+  "block": {
+   "stab": 1.25,
+   "chip": 0.34
+  },
+  "upgrade": {
+   "per_level": 5,
+   "max": 5
   }
  },
  "spear": {

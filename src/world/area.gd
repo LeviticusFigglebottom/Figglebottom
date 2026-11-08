@@ -264,9 +264,7 @@ func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	region.enabled = false
 	return region
 
-## The card shown on arriving at pos: the named zone there, else the area.
-func arrival_title(pos: Vector3) -> String:
-	var zt := get_node_or_null("ZoneTitles")
-	if zt != null and zt.has_method("arrival"):
-		return zt.arrival(pos, display_name)
+## The card shown on arriving at pos: the region's own name. ZoneTitles
+## follows it with the named place the Bearer stands in.
+func arrival_title(_pos: Vector3) -> String:
 	return display_name

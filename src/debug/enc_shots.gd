@@ -7,6 +7,9 @@ extends Node
 ##       --state=thaw --enc-shot=bearer_idle
 ## Stages: bearer_idle, bearer_roll, bearer_drink, oarsman_stroke, hound_lunge,
 ## netmender_p1, netmender_p2, netmender_p3, ingra_thaw, release.
+## The Lowe (lowe_barrows; docs/screens/lowe_enc_*.png): lowe_sleeper, lowe_keener,
+## lowe_carrier, turfwright_p1, turfwright_p2, turfwright_p3, lowe_release (RIME);
+## lowe_hesk, lowe_aud (THAW).
 
 var stage := ""
 var path := ""
@@ -353,3 +356,306 @@ func _st_release(p: Player) -> void:
 	_cam.fov = 52.0
 	if _clock - _t0 > 2.4:
 		_freeze()
+
+# ------------------------------------------------------------------ the Lowe
+## The Lowe's foes (LOWE.md 5): squared up to the Bearer, the signature move
+## frozen `frac` of the way through its windup so its tell (body and floor)
+## shows. Run in lowe_barrows, RIME.
+func _lowe_foe_stage(p: Player, id: String, hint: Vector3, atk: String, frac: float, gap: float,
+		cam_dist := 5.2, cam_h := 1.0, look := 1.0, move_to := Vector3.INF) -> void:
+	near_hint = hint
+	if _f == 2:
+		_quiet_titles()
+	var e := _face_off(p, id, gap)
+	if e == null:
+		return
+	if _f == 4 and move_to != Vector3.INF:
+		# stage it on open ground, clear of decks and walls the camera would hit
+		e.global_position = move_to
+		e.home = move_to
+		e.idle_pose = ""
+		e._risen = true
+		e.vis.idle(0.0)
+	if _f >= 6:
+		_side_cam(p, e, cam_dist, cam_h, look, 50.0)
+	if _f < 50:
+		# nothing before the beat: a hole cut under the staged Bearer would
+		# take him (the fjord does not care for i-frames) and the shot with him
+		for a in e.cfg.get("attacks", []):
+			e._cooldowns[String(a["id"])] = 99.0
+	if _f == 50:
+		e._cooldowns.clear()
+		e._begin_attack(e.attack_by_id(atk))
+	if _f > 50 and e.state == Enemy.ES.ATTACK and String(e._atk.get("id", "")) == atk \
+			and e.state_t >= float(e._atk["windup"]) * frac:
+		_freeze()
+
+func _st_lowe_sleeper(p: Player) -> void:
+	_lowe_foe_stage(p, "barrow_sleeper", Vector3(-57.9, 0, -118.8), "door_fall", 0.8, 2.4, 4.4, 1.0, 1.0)
+
+func _st_lowe_keener(p: Player) -> void:
+	_lowe_foe_stage(p, "keener", Vector3(-30, 0, -128), "keen", 1.12, 5.0, 4.6, 0.8, 1.2)
+
+func _st_lowe_carrier(p: Player) -> void:
+	_lowe_foe_stage(p, "cairn_carrier", Vector3(22, 0, -158), "set_stone", 0.8, 3.0, 5.6, 1.2, 1.2)
+
+## The Turfwright: wake him, set the phase, face him from `gap` metres,
+## start `atk` and freeze `frac` of the way through it (or into a hold).
+var _tw_set := false
+
+func _turfwright_stage(p: Player, ph: int, atk: String, frac: float, gap: float,
+		cam_back := 4.6, cam_up := 3.2) -> void:
+	if _f == 3:
+		_foe = _foe_near("turfwright", Vector3(46, 0, -205))
+		if _foe == null:
+			return
+		_place_player(p, _foe.global_position + Vector3(0, 0.1, 4.5), PI)
+	var tw := _foe as Turfwright
+	if tw == null:
+		return
+	if not tw.stood:
+		_frame(tw.global_position, p.vis, Vector3(2.0, 2.4, -4.0), 2.0, 55.0)
+		return
+	if not _tw_set:
+		_tw_set = true
+		_t0 = _clock
+		tw.phase = ph
+		if ph >= 2:
+			tw.hp = tw.max_hp * 0.5
+			tw._raise_walls()
+		if ph >= 3:
+			tw.hp = tw.max_hp * 0.2
+			for w in tw.walls:
+				(w as IceRidge).queue_free()
+			tw.walls.clear()
+			tw.sod_at = "chest"
+			tw.vis.rig.set_carry("turf_carry", ["mixamorig_LeftShoulder", "mixamorig_LeftArm",
+					"mixamorig_LeftForeArm", "mixamorig_LeftHand"], true)
+		tw.vis.rotation.y = PI   # turned to the way in, and the Bearer
+		var fwd := -tw.vis.global_transform.basis.z
+		_place_player(p, tw.global_position + fwd * gap + Vector3.UP * 0.1, 0.0)
+	var to := tw.global_position - p.global_position
+	p.vis.rotation.y = atan2(-to.x, -to.z)
+	var back := -to
+	back.y = 0
+	back = back.normalized()
+	var right := back.cross(Vector3.UP)
+	_cam.global_position = p.global_position + back * cam_back - right * 2.2 + Vector3.UP * cam_up
+	_cam.look_at(tw.global_position + Vector3.UP * 1.6 - back * 1.5, Vector3.UP)
+	_cam.fov = 56.0
+	if not _started and _clock - _t0 > 0.6:
+		_started = true
+		tw._cooldowns.clear()
+		tw._begin_attack(tw.attack_by_id(atk))
+	if _started and tw.state == Enemy.ES.HOLD and tw.state_t >= 0.8:
+		_freeze()
+	elif _started and tw.state == Enemy.ES.ATTACK and String(tw._atk.get("id", "")) == atk \
+			and String(tw._atk.get("type", "")) != "hold" \
+			and tw.state_t >= float(tw._atk["windup"]) / tw._speed_mult() * frac:
+		_freeze()
+
+func _st_turfwright_p1(p: Player) -> void:
+	_turfwright_stage(p, 1, "ground_cut", 0.85, 8.0)
+
+func _st_turfwright_p2(p: Player) -> void:
+	_turfwright_stage(p, 2, "stack_sod", 0.85, 8.0, 7.0, 5.0)
+
+func _st_turfwright_p3(p: Player) -> void:
+	_turfwright_stage(p, 3, "last_turf", 1.0, 9.0)
+
+## Release: he kneels and lays the sod in the doorway; the card; the stick.
+func _st_lowe_release(p: Player) -> void:
+	if _f == 3:
+		_foe = _foe_near("turfwright", Vector3(46, 0, -205))
+		if _foe == null:
+			return
+		_place_player(p, _foe.global_position + Vector3(0, 0.1, 4.5), PI)
+	var tw := _foe as Turfwright
+	if tw == null or not tw.stood:
+		return
+	if not tw.released:
+		tw.vis.rotation.y = PI
+		var fwd := -tw.vis.global_transform.basis.z
+		_place_player(p, tw.global_position + fwd * 6.0 + Vector3.UP * 0.1, 0.0)
+		tw._die()
+		_t0 = _clock
+	var to := tw.global_position - p.global_position
+	p.vis.rotation.y = atan2(-to.x, -to.z)
+	var back := -to
+	back.y = 0
+	back = back.normalized()
+	var right := back.cross(Vector3.UP)
+	_cam.global_position = p.global_position + back * 3.0 - right * 2.4 + Vector3.UP * 2.4
+	_cam.look_at(tw.global_position + Vector3.UP * 1.2, Vector3.UP)
+	_cam.fov = 54.0
+	if _clock - _t0 > 2.8:
+		_freeze()
+
+## Hesk and Aud in THAW, mid-conversation: the dialogue panel up on a line.
+func _npc_talk_stage(p: Player, id: String, line := 0, eye := Vector3(-1.3, 0.5, 3.1)) -> void:
+	var n := _find_npc(id)
+	if n == null:
+		return
+	var fwd := -n.global_transform.basis.z
+	if _f == 3:
+		_place_player(p, n.global_position + fwd * 2.2 + Vector3.UP * 0.2, atan2(fwd.x, fwd.z))
+	if _f > 3:
+		_frame(n.global_position, n, eye, 1.0, 40.0)
+	if _f == 40:
+		n._on_talk(p)
+	if _f == 46:
+		for ui in get_tree().root.find_children("*", "DialogueUI", true, false):
+			for i in line:
+				(ui as DialogueUI).advance()
+	if _f > 46 and ((n._vis.rig != null and n._vis.rig.action_time() >= 1.2) or (n._vis.rig == null and _f > 80)):
+		_freeze()   # (a mannequin stand-in has no greet clip to wait on)
+
+func _st_lowe_hesk(p: Player) -> void:
+	_npc_talk_stage(p, "hesk", 3)
+
+func _st_lowe_aud(p: Player) -> void:
+	_npc_talk_stage(p, "aud", 3)
+
+# ------------------------------------------------------------------ Kettle Fjord
+## (kettle_fjord; docs/screens/kettle_enc_*.png): kettle_fisher, kettle_sealer,
+## kettle_dogs, ice_cutter_p1, ice_cutter_p2, ice_cutter_p3, kettle_release
+## (RIME); kettle_ivo, kettle_halla, kettle_sten (THAW).
+func _st_kettle_fisher(p: Player) -> void:
+	_lowe_foe_stage(p, "ice_fisher", Vector3(-33, 0, -328.8), "cut_hole", 0.85, 3.5, 5.0, 1.4, 0.9,
+			Vector3(-40, 0.15, -338))
+
+func _st_kettle_sealer(p: Player) -> void:
+	_lowe_foe_stage(p, "sealer", Vector3(-12, 0, -303.7), "hook", 0.85, 4.0, 5.0, 1.0, 1.1,
+			Vector3(-8, 0.15, -330))
+
+func _st_kettle_dogs(p: Player) -> void:
+	_lowe_foe_stage(p, "sledge_dog", Vector3(-58, 0, -323.8), "run_down", 0.8, 6.0, 5.0, 1.6, 0.4,
+			Vector3(-46, 0.15, -340))
+
+## The Ice-Cutter: wake him, set the phase, face him across the ice from
+## `gap` metres, start `atk` and freeze `frac` of the way through it (or a
+## moment into a hold, or `after` seconds past the strike when the broken ice
+## is the thing to see).
+var _ic_set := false
+
+func _ice_cutter_stage(p: Player, ph: int, atk: String, frac: float, gap: float, after := -1.0,
+		cam_back := 5.0, cam_up := 3.6, step_off := false) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("ice_cutter", Vector3(22, 0, -320))
+		if _foe == null:
+			return
+		_place_player(p, _foe.global_position + Vector3(4.5, 0.1, 1.0), PI)
+	var ic := _foe as IceCutter
+	if ic == null:
+		return
+	if not ic.stood:
+		_frame(ic.global_position, p.vis, Vector3(2.0, 2.4, -4.0), 1.6, 55.0)
+		return
+	if not _ic_set:
+		_ic_set = true
+		_t0 = _clock
+		ic.phase = ph
+		if ph >= 2:
+			ic.hp = ic.max_hp * 0.5
+			ic._transition_event("ring_band")
+		if ph >= 3:
+			ic.hp = ic.max_hp * 0.2
+			ic._transition_event("band_close")
+		ic.vis.rotation.y = 0.0 if ph < 3 else PI
+		var fwd := -ic.vis.global_transform.basis.z
+		var at := ic.global_position + fwd * gap
+		if ph < 3:
+			# beyond the hole, toward the far shore, so the hole lies between them
+			at = ic.global_position - Vector3(0, 0, gap)
+			ic.vis.rotation.y = 0.0
+		_place_player(p, Vector3(at.x, 0.15, at.z), 0.0)
+	var to := ic.global_position - p.global_position
+	p.vis.rotation.y = atan2(-to.x, -to.z)
+	var back := -to
+	back.y = 0
+	back = back.normalized()
+	var right := back.cross(Vector3.UP)
+	_cam.global_position = p.global_position + back * cam_back - right * 2.4 + Vector3.UP * cam_up
+	_cam.look_at(ic.global_position + Vector3.UP * 1.2 - back * 1.5, Vector3.UP)
+	_cam.fov = 58.0
+	if not _started and _clock - _t0 > 0.6:
+		_started = true
+		ic._cooldowns.clear()
+		ic.target = p
+		ic._begin_attack(ic.attack_by_id(atk))
+		_t1 = _clock
+	if not _started:
+		return
+	if ic.state == Enemy.ES.HOLD and ic.state_t >= 0.8:
+		_freeze()
+	elif after >= 0.0:
+		var w := float(ic.attack_by_id(atk)["windup"]) / ic._speed_mult()
+		if step_off and not _stepped and _clock - _t1 >= w + 0.05:
+			# he steps off the broken ice in time: show the hole beside him
+			_stepped = true
+			_place_player(p, p.global_position + Vector3(3.4, 0, 0), 0.0)
+		if _clock - _t1 >= w + after:
+			_freeze()
+	elif ic.state == Enemy.ES.ATTACK and String(ic._atk.get("id", "")) == atk \
+			and String(ic._atk.get("type", "")) != "hold" \
+			and ic.state_t >= float(ic._atk["windup"]) / ic._speed_mult() * frac:
+		_freeze()
+
+var _t1 := 0.0
+var _stepped := false
+
+func _st_ice_cutter_p1(p: Player) -> void:
+	_ice_cutter_stage(p, 1, "drill_down", 0.0, 8.0, 1.2, 5.0, 3.6, true)
+
+func _st_ice_cutter_p2(p: Player) -> void:
+	_ice_cutter_stage(p, 2, "ring_cut", 0.0, 5.6, 1.0, 7.0, 6.0)   # inside the band
+
+func _st_ice_cutter_p3(p: Player) -> void:
+	_ice_cutter_stage(p, 3, "cut_fresh", 1.0, 8.0)
+
+## Release: he kneels at the rim; the hole skins over; the mitten; the card.
+func _st_kettle_release(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("ice_cutter", Vector3(22, 0, -320))
+		if _foe == null:
+			return
+		_place_player(p, _foe.global_position + Vector3(4.5, 0.1, 1.0), PI)
+	var ic := _foe as IceCutter
+	if ic == null or not ic.stood:
+		return
+	if not ic.released:
+		var hole := ic.hole_point()
+		_place_player(p, Vector3(hole.x + 1.0, 0.15, hole.z + 4.5), 0.0)
+		ic._die()
+		_t0 = _clock
+	var hole2 := ic.hole_point()
+	_cam.global_position = hole2 + Vector3(3.2, 3.0, 6.0)
+	_cam.look_at(hole2 + Vector3(0, 0.4, -0.8), Vector3.UP)
+	_cam.fov = 54.0
+	if _clock - _t0 > 2.8:
+		_freeze()
+
+func _st_kettle_ivo(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_npc_talk_stage(p, "ivo", 3)
+
+func _st_kettle_halla(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_npc_talk_stage(p, "halla", 2)
+
+func _st_kettle_sten(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_npc_talk_stage(p, "sten", 0)
+
+## Zone title cards fire as the staged Bearer is set down in a new zone; they
+## are not the beat being shown.
+func _quiet_titles() -> void:
+	for z in get_tree().current_scene.find_children("*", "ZoneTitles", true, false):
+		z.queue_free()

@@ -159,8 +159,14 @@ func blend(t: float) -> void:
 	var rb: Array = b["sun_rot"]
 	sun.rotation_degrees = Vector3(lerpf(ra[0], rb[0], t), lerpf(ra[1], rb[1], t), 0)
 	if sky_fill != null:
-		sky_fill.light_color = Color(0.82, 0.76, 0.68).lerp(Color(0.64, 0.72, 0.86), t)
-		sky_fill.light_energy = lerpf(0.22, 0.52, t)
+		# an area may warm or lift the bounce (a deep fjord at evening)
+		var fca: Color = _c(a["fill_color"]) if a.has("fill_color") else Color(0.82, 0.76, 0.68)
+		var fcb: Color = _c(b["fill_color"]) if b.has("fill_color") else Color(0.64, 0.72, 0.86)
+		sky_fill.light_color = fca.lerp(fcb, t)
+		sky_fill.light_energy = lerpf(float(a.get("fill_energy", 0.22)), float(b.get("fill_energy", 0.52)), t)
+		var fra: Array = a.get("fill_rot", [-68.0, 138.0])
+		var frb: Array = b.get("fill_rot", [-68.0, 138.0])
+		sky_fill.rotation_degrees = Vector3(lerpf(fra[0], frb[0], t), lerpf(fra[1], frb[1], t), 0.0)
 	e.ambient_light_color = _c(a["ambient"]).lerp(_c(b["ambient"]), t)
 	e.ambient_light_energy = lerpf(float(a["ambient_energy"]), float(b["ambient_energy"]), t)
 	e.ambient_light_sky_contribution = lerpf(a.get("sky_contribution", 0.20), b.get("sky_contribution", 0.14), t)

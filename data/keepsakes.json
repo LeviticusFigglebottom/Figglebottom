@@ -1,25 +1,137 @@
 {
- "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md.",
+ "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md and KETTLE.md.",
  "toast": "A keepsake is remembered.",
  "threads": [
   {
    "id": "ingra_rye",
    "title": "Ingra's rye",
    "steps": [
-    {"flag": "ks_ingra_met", "line": "Ingra is a sack of rye short and blames a dog."},
-    {"flag": "ks_ingra_rye_found", "line": "The rye was in the byre, under the dog. It had been his bed."},
-    {"flag": "ks_ingra_rye", "line": "Ingra said he was a good dog."},
-    {"flag": "ks_ingra_count", "line": "Ingra is counting bowls."}
+    {
+     "flag": "ks_ingra_met",
+     "line": "Ingra is a sack of rye short and blames a dog."
+    },
+    {
+     "flag": "ks_ingra_rye_found",
+     "line": "The rye was in the byre, under the dog. It had been his bed."
+    },
+    {
+     "flag": "ks_ingra_rye",
+     "line": "Ingra said he was a good dog."
+    },
+    {
+     "flag": "ks_ingra_count",
+     "line": "Ingra is counting bowls."
+    }
    ]
   },
   {
    "id": "brede_float",
    "title": "Brede's float",
    "steps": [
-    {"flag": "ks_brede_met", "line": "Brede lost a cork float off the herring net."},
-    {"flag": "ks_brede_float_found", "line": "The float was in the ice, where the tide stopped."},
-    {"flag": "ks_brede_float", "line": "Brede says the wrong knot on the back makes it lucky."},
-    {"flag": "ks_brede_mending", "line": "Brede is mending the net himself."}
+    {
+     "flag": "ks_brede_met",
+     "line": "Brede lost a cork float off the herring net."
+    },
+    {
+     "flag": "ks_brede_float_found",
+     "line": "The float was in the ice, where the tide stopped."
+    },
+    {
+     "flag": "ks_brede_float",
+     "line": "Brede says the wrong knot on the back makes it lucky."
+    },
+    {
+     "flag": "ks_brede_mending",
+     "line": "Brede is mending the net himself."
+    }
+   ]
+  },
+  {
+   "id": "hesk_tongs",
+   "title": "Hesk's tongs",
+   "steps": [
+    {
+     "flag": "ks_hesk_met",
+     "line": "Hesk dropped his good tongs in the bog, raking for iron."
+    },
+    {
+     "flag": "ks_hesk_tongs_found",
+     "line": "The tongs were frozen into the bog, jaws down."
+    },
+    {
+     "flag": "ks_hesk_tongs",
+     "line": "Hesk said they were never that good, and took them."
+    },
+    {
+     "flag": "ks_hesk_wind",
+     "line": "Hesk says the wind has come right."
+    }
+   ]
+  },
+  {
+   "id": "aud_cord",
+   "title": "Orm's cord",
+   "steps": [
+    {
+     "flag": "ks_aud_met",
+     "line": "Aud ties heather on Orm's mound every evening, the last one on the road."
+    },
+    {
+     "flag": "ks_aud_cord_found",
+     "line": "Orm's cord was in the first barrow on the road."
+    },
+    {
+     "flag": "ks_aud_cord",
+     "line": "Aud says Orm tied his knots too tight to read."
+    },
+    {
+     "flag": "ks_aud_heather",
+     "line": "Aud has moved her heather to the first mound. She says it was always there."
+    }
+   ]
+  },
+  {
+   "id": "ivo_mitten",
+   "title": "Ivo's mitten",
+   "steps": [
+    {
+     "flag": "ks_ivo_met",
+     "line": "Ivo is harnessing the dogs and says he is not going anywhere."
+    },
+    {
+     "flag": "ks_ivo_supper",
+     "line": "The supper was still on the hook. The ladle was frozen standing up in it."
+    },
+    {
+     "flag": "ks_ivo_mitten_found",
+     "line": "The mitten was in the ice where the hole had been, palm up."
+    },
+    {
+     "flag": "ks_ivo_mitten",
+     "line": "Ivo put the mitten on. Both of his are his own now."
+    }
+   ]
+  },
+  {
+   "id": "halla_cord",
+   "title": "Halla's cord",
+   "steps": [
+    {
+     "flag": "ks_halla_met",
+     "line": "Halla keeps her cargo on a knot-cord and says every knot on it is hers."
+    },
+    {
+     "flag": "ks_halla_cord_found",
+     "line": "Halla's cord was tied to the mooring post. There was a knot at the end in another hand."
+    },
+    {
+     "flag": "ks_halla_cord",
+     "line": "Halla read the last knot and called Sten over, and then told him to stay where he was."
+    },
+    {
+     "flag": "ks_halla_bed",
+     "line": "Halla has put Sten by the fire in the end house."
+    }
    ]
   }
  ]

@@ -106,11 +106,19 @@ func on_boss_slain(area_id: String, boss: Node = null) -> void:
 	AudioDirector.play_outsong(after, 4.0)
 
 ## What a released holdfast leaves (SLICE.md 6), from its data:
-##   release_drop: {item, scene, label, pickup_id, ahead} -> a pickup set down
-##     in front of where it sat, toward the Bearer, so it is seen at once
+##   release_drop: {item, scene, label, pickup_id, ahead, set_flag, at_seal} ->
+##     a pickup set down in front of where it sat, toward the Bearer, so it
+##     is seen at once (or, with at_seal, in the middle of the sealed hole)
+##   release_seal: {radius} -> the boss's seal_point() hole closes for good
 ##   release_hearth: a hearths entry id (gated on release_flag in the area
 ##     data) that wakes now, so a rebuilt area keeps it
 func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
+	# release_seal: the Holdfast's own hole closes (KETTLE.md 9)
+	var seal_at := Vector3.INF
+	if bcfg.has("release_seal") and boss != null and boss.has_method("seal_point"):
+		seal_at = boss.seal_point()
+		BrokenIce.seal_at(current_area if current_area != null else boss.get_parent(), seal_at,
+				float((bcfg["release_seal"] as Dictionary).get("radius", 2.0)))
 	var drop: Dictionary = bcfg.get("release_drop", {})
 	if not drop.is_empty() and boss is Node3D and boss.is_inside_tree():
 		var b := boss as Node3D
@@ -120,6 +128,7 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 		k.item_id = String(drop.get("item", ""))
 		k.label = String(drop.get("label", "Take"))
 		k.display_scene = String(drop.get("scene", ""))
+		k.set_flag = String(drop.get("set_flag", ""))
 		var holder: Node = current_area.base if current_area != null else b.get_parent()
 		holder.add_child(k)
 		var toward := Vector3.ZERO
@@ -129,6 +138,8 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 		if toward.length() < 0.1:
 			toward = Vector3(0, 0, 1)
 		k.global_position = b.global_position + toward.normalized() * float(drop.get("ahead", 2.2)) + Vector3.UP * 0.02
+		if bool(drop.get("at_seal", false)) and seal_at != Vector3.INF:
+			k.global_position = seal_at + Vector3.UP * 0.12   # frozen into the new ice
 	var hid := String(bcfg.get("release_hearth", ""))
 	if hid != "" and current_area != null and find_hearth(hid) == null:
 		var def: Dictionary = current_area.get_meta("def", {})

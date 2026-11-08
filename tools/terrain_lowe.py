@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_saltfell as S  # noqa: E402
+import tarn_land as T  # noqa: E402
 from terrain_saltfell import fbm, smooth, vnoise, _lerp, _seg_dist, _pad_weight  # noqa: E402
 
 OUT_DIR = S.OUT_DIR
@@ -115,8 +116,11 @@ def height(x, z):
     # the fell wall to the north: too steep to climb, the Lowe's back
     # broken by buttresses and hollows, it tops out into rolling fell
     wz = NORTH_WALL_Z + 14.0 * fbm(x * 0.02, 0.2, 2, 82) + 5.0 * fbm(x * 0.07, 0.9, 1, 86)
+    # gullies and buttresses: the wall advances and retreats every few metres
+    rib = 1.0 - abs(2.0 * vnoise(x * 0.07, 0.4, 88) - 1.0)
+    wz += 6.0 * (rib - 0.5)
     if z < wz:
-        rise = (wz - z) * 1.3
+        rise = (wz - z) * (1.15 + 0.5 * rib)
         h += min(30.0 + 10.0 * fbm(x * 0.015, z * 0.015, 2, 87), rise) + min(rise, 4.0) * fbm(x * 0.12, z * 0.12, 2, 83)
     # the Open Barrow: a hollow, levelled where the Turfwright cut it
     d = math.hypot(x - ARENA[0], z - ARENA[1])
@@ -146,7 +150,133 @@ def height(x, z):
         di = math.hypot(x - ISLAND[0], z - ISLAND[1])
         if di < ISLAND[2] + 2:
             h = max(h, W + 0.5 - max(0.0, di - ISLAND[2]) * 0.6)
+    if z < -224:
+        h = _kettle_carve(x, z, h)
+        h = T.tarn_land(x, z, h)
     return h
+
+
+# ------------------------------------------------------------------ Kettle Fjord
+# The fjord lies north of the Lowe's fell wall (WORLD.md 5.3): sheer walls,
+# sea-level water (ice in RIME), a broken shelf along its south shore. The
+# Kettle Road comes down to it from the Lowe through a cleft in the wall.
+
+def fjord_z(x):
+    return -322.0 + 6.0 * math.sin(x * 0.025) + 2.0 * fbm(x * 0.03, 5.5, 1, 91)
+
+
+def fjord_half(x):
+    return 24.0 + 5.0 * math.sin(x * 0.04 + 0.7)
+
+
+FJORD_HEAD_X = 42.0
+SHELF_Y = 1.8
+# where the south shelf is cut by rock running into the water (THAW: go round
+# on the jetties; RIME: walk the ice)
+SHELF_SPURS = [(-72.0, 7.0), (-18.0, 6.0)]
+KETTLE_ROAD = [(-70, -232), (-62, -250), (-74, -262), (-96, -270), (-110, -283), (-113, -300)]
+KETTLE_ROAD_END_Y = SHELF_Y + 0.3
+
+
+def _road_t(x, z):
+    """Distance to the Kettle Road and how far along it (0..1)."""
+    total = sum(math.hypot(KETTLE_ROAD[i + 1][0] - KETTLE_ROAD[i][0], KETTLE_ROAD[i + 1][1] - KETTLE_ROAD[i][1])
+                for i in range(len(KETTLE_ROAD) - 1))
+    best, bt, run = 1e9, 0.0, 0.0
+    for i in range(len(KETTLE_ROAD) - 1):
+        ax, az = KETTLE_ROAD[i]
+        bx, bz = KETTLE_ROAD[i + 1]
+        ex, ez = bx - ax, bz - az
+        L = math.hypot(ex, ez)
+        t = max(0.0, min(1.0, ((x - ax) * ex + (z - az) * ez) / (L * L)))
+        d = math.hypot(x - ax - t * ex, z - az - t * ez)
+        if d < best:
+            best, bt = d, (run + t * L) / total
+        run += L
+    return best, bt
+
+
+_ROAD_Y0 = None
+
+
+def wall_rib(x, south):
+    """Along each fjord wall: 1 on a buttress crest, 0 in a gully between."""
+    return 1.0 - abs(2.0 * vnoise(x * 0.045 + (0.0 if south else 17.0), 0.3, 120) - 1.0)
+
+
+# gullies on the north wall that carry a fall into the fjord (THAW running,
+# RIME frozen); gen_kettle hangs the water down them
+FALLS_X = [-118.0, -64.0, -6.0]
+
+
+def fjord_wall(x, z, wd, south):
+    """The fjord's walls: sheer buttresses, gullies recessed between them with
+    scree fanned at their foot, the rock in ledged beds (turf grows on the
+    ledges: the terrain shader greens anything flat enough)."""
+    r = wall_rib(x, south)
+    for fx in ([] if south else FALLS_X):
+        r = min(r, 0.15 + 0.85 * smooth(2.0, 7.0, abs(x - fx)))
+    recess = 4.5 * (1.0 - r) ** 2                     # gullies cut back into the wall
+    wd2 = max(0.0, wd - recess)
+    steep = 2.6 * (0.65 + 0.75 * r)                   # buttresses sheer, gullies broken
+    wall = SHELF_Y + 0.5 + max(0.0, S.strata(wd2 * steep, x, z, 95))
+    # a scree fan spilling out of each gully's foot
+    fan = (1.0 - r) ** 2 * max(0.0, 1.0 - wd2 / 5.0) * (1.6 + 0.8 * fbm(x * 0.3, z * 0.3, 1, 121))
+    return wall + fan * smooth(0.0, 1.5, wd)
+
+
+def shelf_width(x):
+    """How far the shingle shelf runs out from the south wall (to the waterline)."""
+    return 12.0 + 2.0 * fbm(x * 0.05, 1.3, 1, 92)
+
+
+def _kettle_carve(x, z, h):
+    global _ROAD_Y0
+    fz = fjord_z(x)
+    hw = fjord_half(x)
+    d = abs(z - fz)
+    head = smooth(FJORD_HEAD_X - 10.0, FJORD_HEAD_X + 6.0, x)     # the fjord's inland end
+    hw *= 1.0 - head
+    if d < hw + 60:
+        south = z > fz
+        if d < hw and hw > 2.0:
+            # water: deep in the middle, shoaling to the walls
+            floor = -14.0 * (1.0 - smooth(hw * 0.4, hw, d))
+            if south:
+                sp = 0.0
+                for spx, spw in SHELF_SPURS:
+                    sp = max(sp, 1.0 - smooth(spw * 0.4, spw, abs(x - spx)))
+                shelf_w = shelf_width(x)
+                if d > hw - shelf_w and sp < 0.4 and x > -128:
+                    # a shingle lip shelving down into the water
+                    lip = smooth(hw - shelf_w, hw - shelf_w + 5.0, d)
+                    floor = max(floor, _lerp(-0.6, SHELF_Y + 0.08 * fbm(x * 0.3, z * 0.3, 1, 93), lip))
+                # rock ribs run down from the wall into the water, cutting the shelf
+                floor = max(floor, 10.0 * sp - (hw - d) * 2.2)
+            h = min(h, floor)
+        else:
+            h = min(h, fjord_wall(x, z, d - hw, south))
+    # the Kettle Road: down through a cleft in the wall to the shelf
+    rd, rt = _road_t(x, z)
+    if rd < 14:
+        if _ROAD_Y0 is None:
+            _ROAD_Y0 = height_no_road(KETTLE_ROAD[0][0], KETTLE_ROAD[0][1])
+        ry = _lerp(_ROAD_Y0, KETTLE_ROAD_END_Y, smooth(0.0, 1.0, rt) * 0.3 + rt * 0.7)
+        cut = ry + max(0.0, S.strata(max(0.0, rd - 2.4) * 2.2, x, z, 97))
+        h = min(h, cut) if rt > 0.02 else h
+        if rd < 2.4:
+            h = ry + 0.1 * fbm(x * 0.4, z * 0.4, 1, 98)
+    return h
+
+
+def height_no_road(x, z):
+    """The moor height where the Kettle Road leaves it (no carving)."""
+    global _ROAD_Y0
+    saved = _ROAD_Y0
+    _ROAD_Y0 = 0.0
+    h = S.height(x, z)
+    _ROAD_Y0 = saved
+    return h + 1.8 * fbm(x * 0.025, z * 0.025, 3, 80) + 0.4 * fbm(x * 0.12, z * 0.12, 2, 79)
 
 
 def path_weight(x, z):

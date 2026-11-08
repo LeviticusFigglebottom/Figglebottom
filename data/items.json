@@ -89,5 +89,67 @@
  "item_mending_needle": {
   "name": "Mending Needle",
   "desc": "A net-needle of whalebone, loaded with tarred twine, from the Netmender's lap. The last net it worked has one hole mended fourteen times over. Each knot is a little looser than the one before it."
+ },
+ "item_tally_stick": {
+  "name": "Arne's Tally-Stick",
+  "desc": "A long hazel stick from Arne Holm's belt, notched down both edges, one notch for every barrow he turfed over on the coast. He could tell you whose each notch was. The last two sit side by side, and both are cut only halfway."
+ },
+ "item_twin_spindles": {
+  "name": "The Twins' Spindles",
+  "desc": "Two drop-spindles of birch with soapstone whorls, tied together with a bit of yarn. One shaft is grey from handling and its whorl is worn smooth. The other still has the knife marks on it."
+ },
+ "item_orm_cord": {
+  "name": "Orm's Knot-Cord",
+  "desc": "A barrow-keeper's cord as long as two arms, with a knot for every burial on the Kin-Mounds in the order of the mounds. Orm tied his knots tight and small. The last knot on the cord is looser, and a different knot."
+ },
+ "item_hesk_tongs": {
+  "name": "Hesk's Tongs",
+  "desc": "Smith's tongs of bog-iron with long reins, one rein bent from being used as a lever. Hesk has punched his mark into both reins, in case anyone on the Lowe was thinking of keeping them."
+ },
+ "ks_woad_thread": {
+  "name": "Woad Thread",
+  "desc": "A length of woad-blue wool tied round a flat stone on the turf of a closed barrow. It is knotted with a household knot, pulled tight with the teeth. The wool is still soft."
+ },
+ "turf_song": {
+  "name": "Turf-Laying Song",
+  "desc": "Sung by barrow-keepers while the turf goes back, to keep the spades together. Most of it is counting. Aud gets the numbers in the wrong order and finishes on the right one."
+ },
+ "armour_barrow_cloak": {
+  "name": "Orm's Working Cloak",
+  "desc": "A cloak of fulled brown wool pinned at the right shoulder, worn for cutting turf in the rain. Orm was long in the arm, and Aud never took the sleeves up. The hem is still stiff with Lowe mud.",
+  "armour": {
+   "slot": "body",
+   "poise": 6,
+   "absorb": {
+    "phys": 0.09,
+    "frost": 0.12
+   },
+   "weight": 7.0
+  }
+ },
+ "item_ivo_mitten": {
+  "name": "Ivo's Mitten",
+  "desc": "A child's mitten of felted grey wool with a leather palm, the thumb darned in a different grey. It was frozen into the new ice over the hole, palm up. The darn is his grandfather's; the stitches are too big."
+ },
+ "item_kettle_ladle": {
+  "name": "Kettle Ladle",
+  "desc": "An iron ladle as long as an arm, for the fish-kettles, with a hook at the end to hang it on the pot. It was standing upright in a pot of supper on the hook in the end house. The fire under the pot had been banked up and banked up again."
+ },
+ "item_halla_cord": {
+  "name": "Halla's Knot-Cord",
+  "desc": "A trader's cargo cord, tarred, a knot for every barrel and bale and passenger, in the trader's own tight hand. The last knot is tied loose, by someone who knew the knots but not well. It says one man, sick."
+ },
+ "armour_icefur": {
+  "name": "Ice-Fur Coat",
+  "desc": "A coat of grey sheepskin worn fleece-in, with a felt hood, made in the south for the crossing. It is too warm for a summer evening. Sten gave it away in one.",
+  "armour": {
+   "slot": "body",
+   "poise": 5,
+   "absorb": {
+    "phys": 0.07,
+    "frost": 0.2
+   },
+   "weight": 6.5
+  }
  }
 }

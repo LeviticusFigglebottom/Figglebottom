@@ -82,7 +82,8 @@ func _run() -> void:
 
 	print("== the journal data")
 	var defs := Keepsakes.threads_def()
-	check(defs.size() == 2, "two threads in the slice")
+	var ids_def := defs.map(func(t): return String(t["id"]))
+	check(ids_def.slice(0, 2) == ["ingra_rye", "brede_float"], "the slice's two threads come first")
 	check(_expected("ingra_rye", 1) == ["Ingra is a sack of rye short and blames a dog."], "Ingra's first line is SLICE.md's")
 	check(_expected("brede_float", 4)[3] == "Brede is mending the net himself.", "Brede's last line is SLICE.md's")
 	check(Keepsakes.journal().is_empty(), "a new journey remembers nothing")

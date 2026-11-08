@@ -875,3 +875,80 @@ Spend: `docs/art/TRIPO_LEDGER.md` (1,235 credits). Lineup: `scenes/sandbox/art_l
 | turf_spade | weapons/ | 1.60 | 18,303 | 1.1 | none; grip at origin, blade +Y, winged blade |
 | post_maul | weapons/ | 1.30 | 18,840 | 1.3 | none; grip at origin, head +Y |
 | lm_barrow_door (re-roll) | landmarks/ | 4.0 × 3.5 × 2.2 tall | 18,414 | 3.3 | convex; a turf mound with stone jambs, a turf-panel door and a propped spade |
+
+## Regions 3-7 batch results (2026-11-07, branch `art/regions-3-7`)
+
+Spend: `docs/art/TRIPO_LEDGER.md` (5,300 credits; 20,635 → 15,335). Lineups: `scenes/sandbox/art_lineup_<region>.tscn` on the shared `src/debug/art_lineup_region.gd`; screens `docs/screens/art_<region>_<shot>_{thaw,rime}.png`. Every slot was one 3D roll; only free reference images were re-rolled. Not made (outside these five regions): `sefa`, `lm_maskwright_cart` (travelling) and `bearer_child` (memory).
+
+### Kettle Fjord
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| ice_cutter (multiview, extreme) | bosses/ | 3.0 | 19,490 | 4.8 | mixamo; idle, walk, slash, hit, defeat + text-prompt drill_down, haul_trace, ring_cut |
+| ice_fisher | enemies/ | 1.7 | 19,808 | 5.1 | mixamo; 6 presets |
+| sealer | enemies/ | 2.0 | 19,132 | 4.8 | mixamo; 6 presets |
+| sledge_dog | enemies/ | 1.05 | 17,811 | 3.9 | quadruped; walk |
+| ivo | npcs/ | 1.55 | 18,156 | 4.4 | mixamo; idle, walk, greet, look |
+| bearer_icefur | characters/ | 1.8 | 19,203 | 4.7 | mixamo; 6 presets |
+| ice_auger | weapons/ | 1.5 | 17,472 | 1.2 | none; grip at origin, head +Y |
+| sealer_harpoon | weapons/ | 2.0 | 18,898 | 1.2 | none; grip at origin, head +Y |
+| lm_fish_kettle | landmarks/ | 2.0 | 19,405 | 3.4 | none; convex |
+| lm_sledge | landmarks/ | 3.0 | 18,135 | 3.3 | none; convex |
+
+### Tarnhall
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| host (multiview, extreme) | bosses/ | 4.0 | 19,460 | 4.7 | mixamo; idle, walk, slash, hit, defeat + text-prompt table_sweep, bench_throw, raise_guests |
+| feast_guest | enemies/ | 1.8 | 18,867 | 4.6 | mixamo; 6 presets |
+| cupbearer | enemies/ | 1.7 | 18,936 | 4.7 | mixamo; 6 presets |
+| hall_champion | enemies/ | 2.1 | 18,613 | 4.7 | mixamo; 6 presets |
+| lusse | npcs/ | 1.7 | 19,153 | 4.8 | mixamo; idle, walk, greet, look |
+| bearer_hall | characters/ | 1.8 | 19,258 | 4.2 | mixamo; 6 presets |
+| feast_cleaver | weapons/ | 0.7 | 18,402 | 1.1 | none; grip at origin, head +Y |
+| tarnhall_shield | weapons/ | 1.0 | 18,503 | 1.4 | none |
+| lm_hall_doors | landmarks/ | 6.0 | 19,143 | 3.4 | none; convex |
+| lm_high_seat | landmarks/ | 2.5 | 20,683 | 3.5 | none; convex |
+| lm_guest_post | landmarks/ | 3.0 | 18,823 | 4.1 | none; convex |
+
+### Thornwold
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| hedgelayer (multiview, extreme) | bosses/ | 3.6 | 19,341 | 5.0 | mixamo; idle, walk, slash, hit, defeat + text-prompt raise_wall, step_into, thorn_lash |
+| collier | enemies/ | 1.8 | 18,625 | 4.9 | mixamo; 6 presets |
+| rime_stag | enemies/ | 2.4 | 19,512 | 3.9 | quadruped; walk |
+| linnet | npcs/ | 1.65 | 19,196 | 4.3 | mixamo; idle, walk, greet, look |
+| bearer_collier | characters/ | 1.8 | 19,808 | 4.3 | mixamo; 6 presets |
+| hedging_bill | weapons/ | 1.9 | 18,679 | 1.3 | none; grip at origin, head +Y |
+| song_cord | props/ | 0.6 | 17,782 | 1.4 | none |
+| lm_charcoal_clamp | landmarks/ | 4.0 | 19,284 | 3.6 | none; convex |
+| lm_hedge_gate | landmarks/ | 4.0 | 21,934 | 4.5 | none; trimesh |
+
+### Shepherd's Reach
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| fellcaller (multiview, extreme) | bosses/ | 3.4 | 19,106 | 4.8 | mixamo; idle, walk, slash, hit, defeat + text-prompt call, ram_charge, summon |
+| frost_ram | enemies/ | 1.3 | 19,389 | 3.9 | quadruped; walk |
+| drover | enemies/ | 2.1 | 19,137 | 4.8 | mixamo; 6 presets |
+| old_calder | npcs/ | 1.75 | 19,016 | 4.3 | mixamo; idle, walk, greet, look |
+| bearer_fleece | characters/ | 1.8 | 17,963 | 4.4 | mixamo; 6 presets |
+| shepherd_crook | weapons/ | 1.8 | 17,309 | 1.2 | none; grip at origin, head +Y |
+| fellcaller_horn | props/ | 0.5 | 19,041 | 1.3 | none |
+| lm_sheiling | landmarks/ | 4.0 | 18,774 | 3.6 | none; convex |
+| lm_fold_cairn | landmarks/ | 2.5 | 19,834 | 3.7 | none; trimesh |
+
+### the Coldwell
+
+| Slot | GLB | Size (m) | Tris | MB | Rig / clips |
+|---|---|---|---|---|---|
+| leadvoice (multiview, extreme) | bosses/ | 4.0 | 18,927 | 4.5 | mixamo; idle, walk, slash, hit, defeat + text-prompt hold_note, rise, shelter |
+| upwalker | enemies/ | 1.9 | 19,090 | 5.2 | mixamo; 6 presets |
+| unsung | enemies/ | 1.8 | 19,447 | 5.0 | mixamo; 6 presets |
+| maren_thaw | npcs/ | 1.75 | 19,405 | 4.4 | mixamo; idle, walk, greet, look |
+| wren | npcs/ | 1.05 | 18,427 | 4.6 | mixamo; idle, walk, greet, look |
+| bearer_outsong | characters/ | 1.8 | 18,815 | 4.4 | mixamo; 6 presets |
+| lm_wellhead | landmarks/ | 8.0 | 18,999 | 3.4 | none; trimesh |
+
+Known issues: the Leadvoice's floor-length ice cloak is auto-skinned to the legs, so big moves tear its hem into separate sheets. The first `shelter` clip ("Protective Body Curl") was superseded by a gentler re-prompt ("Gentle Bow with Folded Arms"), and small hem fragments still separate in it. The custom cloak bones in this slot's rig spec are the real fix. `lm_hedge_gate` reads more like a woven lattice fence than a laid hedge. The Fellcaller's `ram_charge` travels far enough to leave the lineup's clip camera.

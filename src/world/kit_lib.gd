@@ -46,6 +46,11 @@ const PIECES := {
 	"bow": {"size": [0.08, 0.4, 1.6], "origin": "grip"},
 	"torch": {"size": [0.14, 0.14, 1.0], "origin": "grip-center"},
 	"shield_kite": {"size": [0.5, 0.1, 0.6], "origin": "strap"},
+	"fish_kettle": {"size": [1.6, 1.6, 2.2], "origin": "bottom-center"},
+	"net_frame": {"size": [3.6, 0.4, 2.5], "origin": "bottom-center"},
+	"rope_coil": {"size": [0.9, 0.9, 0.35], "origin": "bottom-center"},
+	"creel_stack": {"size": [1.4, 0.8, 1.2], "origin": "bottom-center"},
+	"boat_upturned": {"size": [1.8, 6.0, 1.5], "origin": "bottom-center"},
 	"door_leaf": {"size": [0.95, 0.12, 2.5], "origin": "bottom-center"},
 	"gable_8m": {"size": [4, 8, 3.2], "origin": "bottom-center"},
 	"gable_12m": {"size": [4, 12, 4.4], "origin": "bottom-center"},
@@ -156,6 +161,20 @@ static func _capsule(parent: Node3D, r: float, h: float, pos: Vector3, fam: Stri
 	return mi
 
 ## A flame tongue (M_flame shader) — add_flame_lights() finds it by name.
+static func _torus(parent: Node3D, r: float, thick: float, pos: Vector3, fam: String, nm := "torus") -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = nm
+	var tm := TorusMesh.new()
+	tm.inner_radius = r - thick
+	tm.outer_radius = r + thick
+	tm.rings = 16
+	tm.ring_segments = 6
+	tm.material = _ph(fam)
+	mi.mesh = tm
+	mi.position = pos
+	parent.add_child(mi)
+	return mi
+
 static func _flame(parent: Node3D, pos: Vector3, h: float, r: float, nm := "flame") -> MeshInstance3D:
 	return _cyl(parent, 0.0, r, h, pos + Vector3(0, h * 0.5, 0), "M_flame", nm, Vector3.ZERO, 8)
 
@@ -231,6 +250,51 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(-1.8, 1.8, 0), "M_wood", "post_l")
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(1.8, 1.8, 0), "M_wood", "post_r")
 			_box(n, Vector3(4.2, 0.4, 0.7), Vector3(0, 3.6, 0), "M_wood", "lintel")
+		"fish_kettle":
+			# a great iron fish-kettle on a tripod over the fire
+			for k in 3:
+				var a := TAU * k / 3.0
+				_box(n, Vector3(0.09, 2.3, 0.09), Vector3(cos(a) * 0.55, 1.05, sin(a) * 0.55), "M_wood_dark", "leg%d" % k,
+					Vector3(sin(a) * 14, 0, -cos(a) * 14))
+			_cyl(n, 0.62, 0.48, 0.75, Vector3(0, 0.95, 0), "M_iron", "kettle", Vector3.ZERO, 16)
+			_cyl(n, 0.58, 0.58, 0.04, Vector3(0, 1.31, 0), "M_marsh", "broth", Vector3.ZERO, 16)
+			_box(n, Vector3(0.04, 0.7, 0.04), Vector3(0, 1.75, 0), "M_iron", "chain")
+			for k in 5:
+				_box(n, Vector3(0.6, 0.12, 0.12), Vector3(0, 0.08, 0), "M_wood", "fire_log%d" % k, Vector3(0, k * 36, 0))
+			_flame(n, Vector3(0, 0.12, 0), 0.45, 0.28, "fire_flame")
+		"net_frame":
+			# a net hung to dry between two poles, sagging, floats along the head-rope
+			for sx in [-1.6, 1.6]:
+				_box(n, Vector3(0.1, 2.5, 0.1), Vector3(sx, 1.25, 0), "M_wood_dark", "pole", Vector3(0, 0, -sx * 2.0))
+			_box(n, Vector3(3.5, 0.05, 0.05), Vector3(0, 2.3, 0), "M_leather", "head_rope")
+			for k in 9:
+				var x := -1.4 + k * 0.35
+				var sag := 0.25 * (1.0 - pow(x / 1.5, 2.0))
+				_box(n, Vector3(0.018, 1.7 - sag, 0.018), Vector3(x, 1.45 - sag * 0.5 + 0.0, 0.06 * sin(k * 1.7)), "M_robe", "cord_v%d" % k)
+			for k in 6:
+				var y := 0.7 + k * 0.28
+				_box(n, Vector3(3.0, 0.018, 0.018), Vector3(0, y - 0.18 * (1.0 - k / 5.0), 0.04), "M_robe", "cord_h%d" % k,
+					Vector3(0, 0, sin(k * 2.1) * 2.0))
+			for k in 6:
+				_sphere(n, 0.07, Vector3(-1.25 + k * 0.5, 2.24, 0), "M_drift", "float%d" % k, Vector3(1, 0.8, 1))
+		"rope_coil":
+			for k in 3:
+				_torus(n, 0.3 - k * 0.04, 0.06, Vector3(0.02 * k, 0.06 + k * 0.1, -0.02 * k), "M_leather", "coil%d" % k)
+		"creel_stack":
+			# wicker creels, two stacked and one tipped beside them
+			_cyl(n, 0.34, 0.27, 0.48, Vector3(-0.25, 0.24, 0), "M_drift", "creel_a", Vector3.ZERO, 10)
+			_cyl(n, 0.34, 0.27, 0.48, Vector3(-0.22, 0.73, 0.03), "M_drift", "creel_b", Vector3(0, 0, 4), 10)
+			_cyl(n, 0.34, 0.27, 0.48, Vector3(0.45, 0.28, 0.1), "M_drift", "creel_c", Vector3(0, 30, 80), 10)
+			for k in 3:
+				_box(n, Vector3(0.7, 0.03, 0.03), Vector3(-0.24, 0.12 + k * 0.17, 0.33), "M_wood_dark", "band%d" % k)
+		"boat_upturned":
+			# a boat hauled up for the ice, keel to the sky on two trestles
+			for z in [-1.6, 1.6]:
+				_box(n, Vector3(1.6, 0.08, 0.1), Vector3(0, 0.62, z), "M_wood", "trestle_bar")
+				for sx in [-0.7, 0.7]:
+					_box(n, Vector3(0.08, 0.66, 0.08), Vector3(sx, 0.31, z), "M_wood", "trestle_leg", Vector3(0, 0, sx * 14))
+			_sphere(n, 1.0, Vector3(0, 0.7, 0), "M_wood", "hull", Vector3(0.85, 0.42, 3.0)).rotation_degrees = Vector3(0, 0, 180)
+			_box(n, Vector3(0.12, 0.2, 5.6), Vector3(0, 1.1, 0), "M_wood", "keel")
 		"door_leaf":
 			# one plank leaf: four boards on two ledges and a brace
 			for k in 4:

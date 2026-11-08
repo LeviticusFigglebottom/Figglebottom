@@ -29,3 +29,26 @@ Keep one `Enemy` state machine with data-driven attacks. Add only what the slice
 - A ground-covering move always shows its area on the floor for the length of the windup. What glows is what lands, so the fight can be learned.
 - Quadrupeds and the Netmender's special moves are procedural poses until real clips exist. A real clip of the same name replaces a humanoid overlay with no code change (ADR 0004). A quadruped needs a `pose_alias` entry.
 - The `encounters` suite covers each behaviour.
+
+## Update: the Lowe (feat/lowe-encounters)
+
+- **New generic keys:**
+  - `aim: "back"` strikes behind the body (the Turfwright's Back-drop).
+  - `at_target: true` lays a `line` strike centred on the Bearer at commit (Stack a sod).
+  - `ridge.style` dresses a ridge: `ice` (knots), `sod` (cut turf in courses) or `stone` (a cairn).
+- **Floor tells drape** over the ground they cover. On the Lowe's slopes a flat glow sank into the turf. They are also a little stronger, so they read on RIME snow.
+- **Subclass:** `Turfwright` (`src/enemies/turfwright.gd`) runs the intro, the three phases, the bay walls (`arena_walls`), the guard of the door (`guard_r`), the last turf (`hold`) and the release.
+- **Idle poses:** `sit_up` (the barrow dead) and `kneel` (a keener at a closed door) join `sit`.
+- The `lowe_encounters` suite covers each behaviour.
+
+## Update: Kettle Fjord (feat/kettle-encounters)
+
+- **`break_ice`** opens a disc (centred on the Bearer with `at_target`) or a ring round the body. The floor becomes black water for `life` seconds. It is a `BrokenIce` node (`src/enemies/broken_ice.gd`) that holds runtime `HazardVolume` kind `"thin"` volumes, so standing on it for `sink` seconds takes the Bearer. `lead` opens a second hole ahead of a running Bearer.
+- **`hook`** catches whatever stands in a strip, holds it (`snare`, mash to break, a `GrabHold`), drags it to `haul_to` metres from `_hook_anchor()` (the body by default; the Ice-Cutter's hole), then queues `then`. The Netmender's net predates it and keeps its own code.
+- **`flank`** keeps a pair of foes strafing to opposite sides.
+- **Floor tells** gain an `annulus` shape.
+- **Release:**
+  - `release_seal` closes the Holdfast's own hole: its thin volumes and water go, and new ice is laid over. A rebuilt area's spawner re-seals it.
+  - `release_drop.at_seal` sets the drop in the middle of that hole.
+  - `release_drop.set_flag` raises a Keepsakes flag on taking it.
+- **Subclass:** `IceCutter` (`src/enemies/ice_cutter.gd`). Base `Enemy` serves the quadruped Sledge-dog, as `QuadRig` poses with no subclass.

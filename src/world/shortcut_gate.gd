@@ -4,6 +4,7 @@ extends Node3D
 ## a lifeline in rime. Once opened, the flag persists.
 
 var gate_id := "gate"
+var layer_bit := RH.L_WORLD_BASE   # a gate that stands in one state only takes that state's layer
 var area_id := ""
 var locked_prompt := "Barred from the other side"
 ## Width of the opening the leaves fill (a house door is 1.9 m; the old
@@ -30,7 +31,7 @@ func _ready() -> void:
 	# static collision so the closed gate truly blocks (and splits navmesh)
 	var body := StaticBody3D.new()
 	body.name = "GateBody"
-	body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
+	body.collision_layer = 1 << (layer_bit - 1)
 	var cs := CollisionShape3D.new()
 	var box := BoxShape3D.new()
 	box.size = Vector3(door_width + 0.3, door_height, 0.14)
@@ -67,6 +68,9 @@ func _on_unbar(_p) -> void:
 func _apply_open(instant: bool) -> void:
 	_front.enabled = false
 	_back.enabled = false
+	for c in get_children():
+		if c.has_meta("gate_dressing"):
+			c.visible = false         # (doors drawn as dressing swing out of the way)
 	var body := get_node("GateBody") as StaticBody3D
 	body.collision_layer = 0
 	for i in _leaves.size():
