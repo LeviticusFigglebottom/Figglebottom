@@ -29,3 +29,14 @@ Keep one `Enemy` state machine with data-driven attacks. Add only what the slice
 - A ground-covering move always shows its area on the floor for the length of the windup. What glows is what lands, so the fight can be learned.
 - Quadrupeds and the Netmender's special moves are procedural poses until real clips exist. A real clip of the same name replaces a humanoid overlay with no code change (ADR 0004). A quadruped needs a `pose_alias` entry.
 - The `encounters` suite covers each behaviour.
+
+## Update: the Lowe (feat/lowe-encounters)
+
+- **New generic keys:**
+  - `aim: "back"` strikes behind the body (the Turfwright's Back-drop).
+  - `at_target: true` lays a `line` strike centred on the Bearer at commit (Stack a sod).
+  - `ridge.style` dresses a ridge: `ice` (knots), `sod` (cut turf in courses) or `stone` (a cairn).
+- **Floor tells drape** over the ground they cover. On the Lowe's slopes a flat glow sank into the turf. They are also a little stronger, so they read on RIME snow.
+- **Subclass:** `Turfwright` (`src/enemies/turfwright.gd`) runs the intro, the three phases, the bay walls (`arena_walls`), the guard of the door (`guard_r`), the last turf (`hold`) and the release.
+- **Idle poses:** `sit_up` (the barrow dead) and `kneel` (a keener at a closed door) join `sit`.
+- The `lowe_encounters` suite covers each behaviour.

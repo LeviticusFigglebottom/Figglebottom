@@ -22,6 +22,7 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/fb-audio` | `feat/audio-frost` | Music, ambience and foley, plus the frost/melt wavefront |
 | `/home/user/fb-art3` | `art/regions-3-7` | Remaining Tripo heroes. Budget about 6,000; it stops if the balance falls below 12,000. |
 | `/home/user/figglebottom` | `feat/lowe-polish-kettle` | Lowe RIME polish, then the Kettle Fjord region |
+| `/home/user/fb-enc2` | `feat/lowe-encounters` | `docs/lore/LOWE.md`; the Lowe foes' movesets, the Turfwright's three phases and release, Hesk and Aud with their threads; `lowe_encounters` suite; `docs/screens/lowe_enc_*.png`. Touches only the generator's spawner, pickup, npc and hearth lists. |
 | `/home/user/fb-lead` | `main` | Lead merges here. The owner has approved the lead merging reviewed, green branches. |
 
 ## Next exact step
