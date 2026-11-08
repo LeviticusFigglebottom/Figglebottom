@@ -534,6 +534,13 @@ func _fjord() -> void:
 	check(ic.released and World.flag("ks_ice_cutter_released"), "he is released (ks_ice_cutter_released)")
 	check("THE ICE-CUTTER — RELEASED" in cards, "the quiet card")
 	check(_hole_hazards(hole) == 0, "the hole skins over: no thin ice left under it")
+	var wet := []
+	for m in area.find_children("*", "MeshInstance3D", true, false):
+		var mi := m as MeshInstance3D
+		if mi.is_visible_in_tree() and mi.mesh is CylinderMesh and mi.global_position.y < 0.25 \
+				and Vector2(mi.global_position.x - hole.x, mi.global_position.z - hole.z).length() < 1.0:
+			wet.append("%s %s %s" % [mi.name, mi.mesh, mi.global_position])
+	check(wet.is_empty(), "no open water shows where the hole was %s" % str(wet))
 	check(ic.open_holes() == 0 and get_tree().get_nodes_in_group("broken_ice").filter(
 		func(b): return (b as BrokenIce).is_open()).is_empty(), "every hole he broke closes")
 	var mitten := _pickup("ivo_mitten")
@@ -546,6 +553,11 @@ func _fjord() -> void:
 	await _build(RH.WState.RIME)
 	await ticks(10)
 	check(_hole_hazards(hole) == 0, "the hole stays closed in a rebuilt fjord")
+	var wet2 := area.find_children("*", "MeshInstance3D", true, false).filter(func(m):
+		return (m as MeshInstance3D).is_visible_in_tree() and (m as MeshInstance3D).mesh is CylinderMesh \
+			and (m as MeshInstance3D).global_position.y < 0.25 \
+			and Vector2((m as Node3D).global_position.x - hole.x, (m as Node3D).global_position.z - hole.z).length() < 1.0)
+	check(wet2.is_empty(), "and no water shows there")
 
 	print("== after the release, both threads close")
 	await _build(RH.WState.THAW)

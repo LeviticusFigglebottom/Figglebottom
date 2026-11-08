@@ -141,7 +141,9 @@ static func seal_at(area: Node, at: Vector3, r: float) -> void:
 			hv.queue_free()
 	for w in area.find_children("*", "MeshInstance3D", true, false):
 		var mi := w as MeshInstance3D
-		if String(mi.name).contains("Water") and Vector2(mi.global_position.x - at.x, mi.global_position.z - at.z).length() <= 0.6:
+		# the area's water disc (a level CylinderMesh at the ice; its node name
+		# is not kept when the builder attaches it)
+		if mi.mesh is CylinderMesh and mi.global_position.y < at.y + 0.2 and not mi.is_in_group("sealed_ice") and Vector2(mi.global_position.x - at.x, mi.global_position.z - at.z).length() <= 0.6:
 			mi.visible = false
 			mi.set_meta("sealed", true)
 	for old in area.get_tree().get_nodes_in_group("sealed_ice") if area.is_inside_tree() else []:
