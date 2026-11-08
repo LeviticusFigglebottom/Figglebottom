@@ -142,8 +142,10 @@ PROPS.append({"kit": "bench_3m", "at": [0, SH, -50.6], "scale": [1.2, 1.4, 1.4]}
 hearths = [
     {"id": "hs_boat_shed", "name": "the Boat-Shed", "at": at(23.0, 55.5), "rot": 0},
     {"id": "hs_salt_house", "name": "the Salt House", "at": at(-26.0, 23.5), "rot": 200},
-    # cold and inert until the Netmender is released; then it catches (SLICE.md 1, 6)
-    {"id": "hs_long_hearth", "name": "the Long Hearth", "at": [0.0, SH, -26.4], "rot": 180,
+    # cold and inert until the Netmender is released; then it catches (SLICE.md 1, 6).
+    # Faces the door: the Bearer kneels (and wakes) on the open boards south of
+    # it; at 180 the respawn point sat on the hearth kerb.
+    {"id": "hs_long_hearth", "name": "the Long Hearth", "at": [0.0, SH, -26.4], "rot": 0,
      "require_flag": "ks_netmender_released"},
 ]
 sd = store_doors[("W", 0)]
