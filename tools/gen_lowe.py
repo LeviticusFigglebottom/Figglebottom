@@ -226,7 +226,8 @@ D = {
     "frost_veils": [{"id": "open_barrow_veil", "at": VEIL, "rot": 0, "tag": "rime"}],
     "npcs": [
         {"id": "aud", "at": at(-34, -121), "rot": 200, "tag": "thaw"},
-        {"id": "hesk", "at": at(-58, -166), "rot": 120, "tag": "thaw"},
+        # faces the bog path, with his back to the cutting (its floor is black water)
+        {"id": "hesk", "at": at(-58, -166), "rot": 238, "tag": "thaw"},
     ],
     "plaques": [
         {"at": at(-84, -95), "rot": 20, "text": "THE LOWE\n\nThe barrow hills. Each neighbourhood has its kin-mounds.\nThe turf goes back the same day."},

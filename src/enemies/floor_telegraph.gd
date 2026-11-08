@@ -111,6 +111,7 @@ func _process(dt: float) -> void:
 	# faint at once (you can always see it), full at the strike; a pulse
 	# quickens toward the end so the beat itself is readable
 	var pulse := 0.5 + 0.5 * sin(_t * lerpf(6.0, 22.0, k))
-	_mat.albedo_color.a = lerpf(0.18, 0.62, k * k) + 0.1 * pulse
+	# a little stronger than the boards needed: on RIME snow a pale glow washes out
+	_mat.albedo_color.a = lerpf(0.26, 0.74, k * k) + 0.1 * pulse
 	if _t >= life:
 		queue_free()
