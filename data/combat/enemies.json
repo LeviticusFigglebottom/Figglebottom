@@ -447,6 +447,7 @@
    "pickup_id": "mending_needle",
    "ahead": 2.2
   },
+  "release_clear": 3.2,
   "release_hearth": "hs_long_hearth"
  },
  "oarsman": {
