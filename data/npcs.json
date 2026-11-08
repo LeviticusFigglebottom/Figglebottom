@@ -364,6 +364,7 @@
   "name": "Halla, trader",
   "short_name": "Halla",
   "body": "mannequin_thaw",
+  "model": "halla",
   "first_flags": [
    "ks_halla_met"
   ],
@@ -437,6 +438,7 @@
   "name": "Sten, Halla's crewman",
   "short_name": "Sten",
   "body": "mannequin_thaw",
+  "model": "sten",
   "lines_first": [
    "Sorry. Don't mind me. It's the crossing, it gets in your chest.",
    "Sten. I row for Halla. When she lets me. She says I cough out of time.",
@@ -463,6 +465,7 @@
   "name": "Lusse",
   "short_name": "Lusse",
   "body": "mannequin_thaw",
+  "model": "lusse",
   "lines_first": [
    "You came up the steps in time. Sit. No, there. We're on the ninth verse.",
    "The goat ate the sail, and the mast, and then it ate the man who said it couldn't. Chorus! You know the chorus.",

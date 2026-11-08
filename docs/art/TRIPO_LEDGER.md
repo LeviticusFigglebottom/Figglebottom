@@ -272,3 +272,42 @@ Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 
 | 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_wellhead | b23cb8f4-0ea2-432a-a850-5047697a3c32 | 55 | — | op 50db9f4d |
 | 2026-11-07 | remesh quad 10k | lm_wellhead | b23cb8f4-… | 40 | — | op dae02322 |
 | 2026-11-08 | **Regions 3-7 batch total** (46 generations: 5 multiview at extreme + 41 image_to_model; 46 remeshes; 28 rigs; 16 text_to_motion, one superseded) | | | **5,300** | **15,335** | reconciled with `tripo_status`: 5 × 65 + 41 × 55 + 46 × 40 + 28 × 20 + 16 × 20 |
+
+## NPCs and release scenes batch (branch art/npcs-release-scenes, 2026-11-08)
+
+Budget for the batch: about 2,500 credits, stop below 11,000. Balance at start: 15,335 (`tripo_status`). Reference images (`tripo_image`, gpt_image_2.5_sunburst) are free and not itemised; prompts are in PROVENANCE.
+
+| Date | Action | Asset | Project id | Cost | Balance after | Note |
+|---|---|---|---|---|---|---|
+| 2026-11-08 | tripo_status | — | — | 0 | 15,335 | baseline |
+| 2026-11-08 | animate preset sit | ivo (existing project) | 199eba5c-… | 0 | — | op 89b3dcae; preset free; seated loop for the Kettle release scene |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | halla | 2607d0f3-d719-407a-83bd-6df6f9f23a09 | 55 | — | op 3287a0fe |
+| 2026-11-08 | remesh quad 10k | halla | 2607d0f3-… | 40 | — | op 63aa2682 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | halla | 2607d0f3-… | 20 | — | op 87e2eccd; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | sten | d21f5777-f0be-42a0-9f99-3efed0404c2b | 55 | — | op de9e391e |
+| 2026-11-08 | remesh quad 10k | sten | d21f5777-… | 40 | — | op f1353ad1 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | sten | d21f5777-… | 20 | — | op 06007718; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | pell_thaw | 7ddee1c8-6dfc-45df-b2c2-ee366bc6491c | 55 | — | op e53d1134 |
+| 2026-11-08 | remesh quad 10k | pell_thaw | 7ddee1c8-… | 40 | — | op 155bc8e5 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | pell_thaw | 7ddee1c8-… | 20 | — | op 3461a306; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | arne_thaw | 3a0a3466-d4b8-43f9-932c-c30660c4cacc | 55 | — | op 1969b700 |
+| 2026-11-08 | remesh quad 10k | arne_thaw | 3a0a3466-… | 40 | — | op 5b1d9eeb |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | arne_thaw | 3a0a3466-… | 20 | — | op 1d59bfc7; presets free |
+| 2026-11-08 | tripo_animate prompt (text_to_motion): sit_talk ("Relaxed Conversation") | arne_thaw | 3a0a3466-… | 20 | — | op 5faa3aad |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | liv | e478dc45-0b43-4b5c-b8b4-4e7307c43a38 | 55 | — | op 03bc05a9 |
+| 2026-11-08 | remesh quad 10k | liv | e478dc45-… | 40 | — | op f8691a3c |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | liv | e478dc45-… | 20 | — | op 9341e50b; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | asta | fa3a113a-772f-415a-b81b-041682659f08 | 55 | — | op 533bb3c3 |
+| 2026-11-08 | remesh quad 10k | asta | fa3a113a-… | 40 | — | op 7de4ad2c |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | asta | fa3a113a-… | 20 | — | op b8986d60; presets free |
+| 2026-11-08 | tripo_animate motion_asset_id (reuse of arne_thaw's "Relaxed Conversation"): sit_talk | asta | fa3a113a-… | 0 | — | op 042e3d8e |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_child | 7d37b622-31aa-43ad-9b15-3bf2a68887d3 | 55 | — | op fcc13843 |
+| 2026-11-08 | remesh quad 10k | bearer_child | 7d37b622-… | 40 | — | op 75f1a9ff |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | bearer_child | 7d37b622-… | 20 | — | op 7dbd635b; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | eyvind_thaw | 211d6360-d0f3-4951-b729-6451012ba293 | 55 | — | op 42bcd065 |
+| 2026-11-08 | remesh quad 10k | eyvind_thaw | 211d6360-… | 40 | — | op db3e53c1 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | eyvind_thaw | 211d6360-… | 20 | — | op 2dc05b78; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | sigga_thaw | 7383bb7b-ed29-455c-84ef-906f97b82062 | 55 | — | op 9680d792 |
+| 2026-11-08 | remesh quad 10k | sigga_thaw | 7383bb7b-… | 40 | — | op b864114b |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | sigga_thaw | 7383bb7b-… | 20 | — | op 3c8b4f78; presets free |
+| 2026-11-08 | **NPCs and release scenes batch total** (9 image_to_model at detailed; 9 remeshes; 9 rigs; 1 text_to_motion; presets and one motion reuse free) | | | **1,055** | **14,280** | reconciled with `tripo_status`: 9 × 55 + 9 × 40 + 9 × 20 + 1 × 20 |
