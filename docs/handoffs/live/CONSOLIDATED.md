@@ -2,35 +2,35 @@
 
 _Last updated: 2026-11-07 (founding session)_
 
-## State (on main, 456 checks across 11 suites, all green)
-- **The vertical slice (Saltfell) is feature-complete:**
-  - **The Bearer:** the Tripo model, with real dodge, drink, rest and parry clips.
-  - **NPCs:** Ingra and Brede, with their lines verbatim and both Keepsakes threads.
-  - **Enemies:** Rimewalkers (ice-club fists), the Oarsman (ice oar), and the Hearthhound (threshold guard, bark, grab).
-  - **The Netmender:** a three-phase fight with a frozen-net arena. Her release flow runs flag, then card, then needle, then Long Hearth, then Outsong.
-  - **Presentation:** the UI re-skin and the house card, composed music and ambience, foley, and the frost/melt wavefront.
-- **The Lowe:**
-  - **World:** terrain, the bridge shortcut, and the bog route, with Tripo models placed.
-  - **Encounters:** pending, on the branch below.
-- **Tripo:** about 4,065 credits spent. The balance was 15,335 after the regions 3–7 batch (about 9,365 spent in total); every region now has its Tripo heroes.
-- **Audio has never been listened to.** The owner should play it and give feedback.
+## State (on main f3d7b88: 714 checks, all green)
+| Region | World | Encounters and writing |
+|---|---|---|
+| Saltfell (vertical slice) | ✅ | ✅ |
+| The Lowe | ✅ | ✅ |
+| Kettle Fjord | ✅ (walls, dressing, see-through ice) | ✅ |
+| Tarnhall | ✅ | in flight |
+| Thornwold | in flight | todo |
+| Shepherd's Reach | todo | todo |
+| The Coldwell | todo | todo |
+
+- **Tripo:** every region's hero art is on main. The balance is 15,335.
+- **Controller:** the Bearer now steps up to 0.35 m and snaps down stairs.
+- **Disk:** keep it clean. Remove the worktrees of merged branches with `git worktree remove --force`. Raw downloads can be fetched again by Tripo project id.
 
 ## In flight (worktree → branch)
 | Worktree | Branch | Work |
 |---|---|---|
-| `/home/user/fb-qa` | `fix/slice-qa` | Full-slice end-to-end test, bug fixes, a player-eye screenshot pass, and perf. Notes go in `docs/qa/` |
-| `/home/user/fb-enc2` | `feat/lowe-encounters` | `docs/lore/LOWE.md`, the Lowe foes' movesets, the Turfwright's three phases, Hesk and Aud's lines and threads |
-| `/home/user/figglebottom` | `feat/lowe-polish-kettle` | Lowe RIME ground cover and sod stacks, then the Kettle Fjord region |
-| `/home/user/fb-enc3` | `feat/kettle-encounters` | `docs/lore/KETTLE.md`; Kettle foes, the Ice-Cutter's three phases (runtime thin ice), Ivo, Halla and Sten with their threads; icons for the Lowe and Kettle items; `kettle_encounters` suite; `docs/screens/kettle_enc_*.png`. Touches only the Kettle generator's spawner, pickup, npc and hearth lists. |
-| `/home/user/fb-lead` | `main` | Lead merges here. The owner approved the lead merging reviewed, green branches |
+| `/home/user/fb-qa` | `fix/slice-qa` | Full-slice end-to-end test, fixes, perf |
+| `/home/user/figglebottom` | `feat/thornwold` | Tarnhall light and a second seam, then the Thornwold region |
+| `/home/user/fb-enc4` | `feat/tarnhall-encounters` | `TARNHALL.md`, the Host's three phases, the hall doors |
+| `/home/user/fb-art4` | `art/npcs-release-scenes` | THAW NPC models (Halla, Sten, Arne and the twins, Pell and Ivo, the child Bearer) |
+| Owner's PC | `gpu/*` | Jobs in `LOCAL_GPU_TASKS.md`. Replies go via `LOCAL_OUTBOX.md`; the worker writes to `LOCAL_INBOX.md` on `gpu/inbox` |
 
 ## Next exact step
-1. Review and merge each branch above once its tests pass.
-2. Then:
-   - Kettle Fjord encounters
-   - the remaining regions' terrain and encounters (Tarnhall, Thornwold, Shepherd's Reach, the Coldwell)
-   - the two endings
-   - an export test on real hardware by the owner
+1. Review and merge branches as they land.
+2. Then Shepherd's Reach and the Coldwell, world first, then encounters.
+3. The endings: the Outsong and the Hearth Kept.
+4. Release-scene staging using the new NPC models.
 
 ## Tripo access (for future sessions)
 - **Tool:** the unofficial `Neko-Yukari/tripo-studio-mcp`. Clone it into the scratchpad and run it with `TRIPO_GATEWAY=0` and `TRIPO_STUDIO_STATE=<scratchpad>/tripo/studio-state.json`.
