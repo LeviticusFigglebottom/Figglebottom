@@ -224,3 +224,28 @@ Budget for the batch: about 6,000 credits, stop below 12,000. Balance at start: 
 | 2026-11-07 | remesh quad 10k | lm_charcoal_clamp | 26b155ef-… | 40 | — | op 3657282b |
 | 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_hedge_gate | 7ba622b2-e81a-4d5d-ad19-3f54cdaf68fc | 55 | — | op 2bd4aeca |
 | 2026-11-07 | remesh quad 10k | lm_hedge_gate | 7ba622b2-… | 40 | — | op c7ed4582 |
+| 2026-11-07 | *Shepherd's Reach* | | | | | |
+| 2026-11-07 | tripo_image + multiview (free) + multiview_to_model (v3.1, **extreme**) | fellcaller | 1992a83d-bf21-4fa6-a958-f36592fa8f36 | 65 | — | op 243fe64d |
+| 2026-11-07 | remesh quad 10k | fellcaller | 1992a83d-… | 40 | — | op a9ccd57f |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, slash, hit_to_body_01, defeat_02) | fellcaller | 1992a83d-… | 20 | — | op d54b3c7f; presets free |
+| 2026-11-07 | tripo_animate prompt (text_to_motion) ×3, sent one at a time: call ("Calling Out Loudly"), ram_charge ("Head-Down Charge"), summon ("Pointing Forward") | fellcaller | 1992a83d-… | 60 | — | ops a5a11e28, 30abb28f, 6d99ce4d; shipped as clips |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | frost_ram | 758eaafa-afc8-40ba-9139-388c982fae19 | 55 | — | op 0f242a58 |
+| 2026-11-07 | remesh quad 10k | frost_ram | 758eaafa-… | 40 | — | op b78bf495 |
+| 2026-11-07 | rig check_only + rig quadruped; animate ×1 presets (walk) | frost_ram | 758eaafa-… | 20 | — | op 9e94800f; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | drover | 00622e07-7810-4e39-a488-28c35caf507f | 55 | — | op d93a46c7 |
+| 2026-11-07 | remesh quad 10k | drover | 00622e07-… | 40 | — | op 01ad389e |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | drover | 00622e07-… | 20 | — | op 4f0766cd; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | old_calder | d29bc9c8-33aa-4659-b9f5-25b1f6a25bd0 | 55 | — | op 1fc32096 |
+| 2026-11-07 | remesh quad 10k | old_calder | d29bc9c8-… | 40 | — | op 1a03535d |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | old_calder | d29bc9c8-… | 20 | — | op 489f0c54; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_fleece | 1200c512-a477-4d44-b95a-8edee9d4ecf5 | 55 | — | op 2963787f |
+| 2026-11-07 | remesh quad 10k | bearer_fleece | 1200c512-… | 40 | — | op 744f6ea7 |
+| 2026-11-07 | rig check_only + rig biped/mixamo; animate ×6 presets (idle, walk, run, slash, hit_to_body_01, defeat_02) | bearer_fleece | 1200c512-… | 20 | — | op 8f1179b3; presets free |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | shepherd_crook | 242c0d6d-3a8b-41b2-8eca-196500663b43 | 55 | — | op a925334c |
+| 2026-11-07 | remesh quad 10k | shepherd_crook | 242c0d6d-… | 40 | — | op 9d9a4be3 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | fellcaller_horn | 4534daf0-67a0-41d9-93d5-140fe5e1de50 | 55 | — | op 2b212684 |
+| 2026-11-07 | remesh quad 10k | fellcaller_horn | 4534daf0-… | 40 | — | op 7ea30440 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_sheiling | a6cab8ce-7439-4e00-af6b-44efff17923e | 55 | — | op 3430fc39 |
+| 2026-11-07 | remesh quad 10k | lm_sheiling | a6cab8ce-… | 40 | — | op b7756020 |
+| 2026-11-07 | tripo_image (free) + image_to_model (v3.1, detailed) | lm_fold_cairn | 04a1c969-885a-4d19-ab75-3f3bdf2603e3 | 55 | — | op 26cbbc2f |
+| 2026-11-07 | remesh quad 10k | lm_fold_cairn | 04a1c969-… | 40 | — | op 8bfc82be |

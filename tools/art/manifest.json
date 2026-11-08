@@ -1220,52 +1220,6 @@
       "output": "assets/models/bosses/fellcaller.glb"
     },
     {
-      "name": "leadvoice",
-      "category": "bosses",
-      "kind": "character",
-      "source": {
-        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
-        "project_id": "f3995e1c-dba9-4028-9a88-6c5e04b17a78",
-        "task_id": "980a6766-04bb-4fdf-9715-64f97bdcbe06",
-        "remesh_operator": "c0b57541-b078-4163-b098-f8d909594447",
-        "model_version": "v3.1-20260211; rig v3.0-20260909",
-        "texture_quality": "extreme",
-        "rig_operator": "46c9f5ec-b947-473e-92a6-bac91cec9e39",
-        "rig": "biped/mixamo"
-      },
-      "input": "raw/leadvoice/rigged.fbx",
-      "anims": {
-        "idle": "raw/leadvoice/anims/idle.fbx",
-        "walk": "raw/leadvoice/anims/walk.fbx",
-        "slash": "raw/leadvoice/anims/slash.fbx",
-        "hit": "raw/leadvoice/anims/hit_to_body_01.fbx",
-        "defeat": "raw/leadvoice/anims/defeat_02.fbx",
-        "hold_note": "raw/leadvoice/anims/hold_note.fbx",
-        "rise": "raw/leadvoice/anims/rise.fbx",
-        "shelter": "raw/leadvoice/anims/shelter.fbx"
-      },
-      "loop": [
-        "idle",
-        "walk"
-      ],
-      "in_place": [
-        "walk"
-      ],
-      "collision": null,
-      "texture_max": 2048,
-      "motion_titles": {
-        "hold_note": "Singing with Open Arms",
-        "rise": "Standing Up",
-        "shelter": "Protective Body Curl"
-      },
-      "yaw_deg": -90,
-      "target": {
-        "height": 4.0
-      },
-      "origin": "bottom_center",
-      "output": "assets/models/bosses/leadvoice.glb"
-    },
-    {
       "name": "bearer_hall",
       "category": "characters",
       "kind": "character",
@@ -2567,6 +2521,52 @@
       "texture_max": 2048,
       "collision": "trimesh",
       "output": "assets/models/landmarks/lm_wellhead.glb"
+    },
+    {
+      "name": "leadvoice",
+      "category": "bosses",
+      "kind": "character",
+      "source": {
+        "tool": "tripo_image(multiview) -> tripo_generate_multiview",
+        "project_id": "f3995e1c-dba9-4028-9a88-6c5e04b17a78",
+        "task_id": "980a6766-04bb-4fdf-9715-64f97bdcbe06",
+        "remesh_operator": "c0b57541-b078-4163-b098-f8d909594447",
+        "model_version": "v3.1-20260211; rig v3.0-20260909",
+        "texture_quality": "extreme",
+        "rig_operator": "46c9f5ec-b947-473e-92a6-bac91cec9e39",
+        "rig": "biped/mixamo"
+      },
+      "input": "raw/leadvoice/rigged.fbx",
+      "anims": {
+        "idle": "raw/leadvoice/anims/idle.fbx",
+        "walk": "raw/leadvoice/anims/walk.fbx",
+        "slash": "raw/leadvoice/anims/slash.fbx",
+        "hit": "raw/leadvoice/anims/hit_to_body_01.fbx",
+        "defeat": "raw/leadvoice/anims/defeat_02.fbx",
+        "hold_note": "raw/leadvoice/anims/hold_note.fbx",
+        "rise": "raw/leadvoice/anims/rise.fbx",
+        "shelter": "raw/leadvoice/anims/shelter.fbx"
+      },
+      "loop": [
+        "idle",
+        "walk"
+      ],
+      "in_place": [
+        "walk"
+      ],
+      "collision": null,
+      "texture_max": 2048,
+      "motion_titles": {
+        "hold_note": "Singing with Open Arms",
+        "rise": "Standing Up",
+        "shelter": "Gentle Bow with Folded Arms"
+      },
+      "yaw_deg": -90,
+      "target": {
+        "height": 4.0
+      },
+      "origin": "bottom_center",
+      "output": "assets/models/bosses/leadvoice.glb"
     }
   ]
 }
