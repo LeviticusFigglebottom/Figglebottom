@@ -301,3 +301,13 @@ Budget for the batch: about 2,500 credits, stop below 11,000. Balance at start: 
 | 2026-11-08 | remesh quad 10k | asta | fa3a113a-… | 40 | — | op 7de4ad2c |
 | 2026-11-08 | rig check_only + rig biped/mixamo; animate ×5 presets (idle, walk, greet_01, look_around, sit) | asta | fa3a113a-… | 20 | — | op b8986d60; presets free |
 | 2026-11-08 | tripo_animate motion_asset_id (reuse of arne_thaw's "Relaxed Conversation"): sit_talk | asta | fa3a113a-… | 0 | — | op 042e3d8e |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | bearer_child | 7d37b622-31aa-43ad-9b15-3bf2a68887d3 | 55 | — | op fcc13843 |
+| 2026-11-08 | remesh quad 10k | bearer_child | 7d37b622-… | 40 | — | op 75f1a9ff |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | bearer_child | 7d37b622-… | 20 | — | op 7dbd635b; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | eyvind_thaw | 211d6360-d0f3-4951-b729-6451012ba293 | 55 | — | op 42bcd065 |
+| 2026-11-08 | remesh quad 10k | eyvind_thaw | 211d6360-… | 40 | — | op db3e53c1 |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | eyvind_thaw | 211d6360-… | 20 | — | op 2dc05b78; presets free |
+| 2026-11-08 | tripo_image (free) + image_to_model (v3.1, detailed) | sigga_thaw | 7383bb7b-ed29-455c-84ef-906f97b82062 | 55 | — | op 9680d792 |
+| 2026-11-08 | remesh quad 10k | sigga_thaw | 7383bb7b-… | 40 | — | op b864114b |
+| 2026-11-08 | rig check_only + rig biped/mixamo; animate ×4 presets (idle, walk, greet_01, look_around) | sigga_thaw | 7383bb7b-… | 20 | — | op 3c8b4f78; presets free |
+| 2026-11-08 | **NPCs and release scenes batch total** (9 image_to_model at detailed; 9 remeshes; 9 rigs; 1 text_to_motion; presets and one motion reuse free) | | | **1,055** | **14,280** | reconciled with `tripo_status`: 9 × 55 + 9 × 40 + 9 × 20 + 1 × 20 |
