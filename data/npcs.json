@@ -462,18 +462,116 @@
   ]
  },
  "lusse": {
-  "name": "Lusse",
+  "name": "Lusse, hall-singer",
   "short_name": "Lusse",
   "body": "mannequin_thaw",
   "model": "lusse",
   "lines_first": [
-   "You came up the steps in time. Sit. No, there. We're on the ninth verse.",
-   "The goat ate the sail, and the mast, and then it ate the man who said it couldn't. Chorus! You know the chorus.",
-   "Gaute's bought fish from the trader's boat. Good fish. Nobody's cooked so much fish since my wedding."
+   "You came up the steps in time. Sit. No, there, by the post. We're on the ninth verse.",
+   "The goat ate the sail. Then the mast. Then the man who said it couldn't. That's where you come in.",
+   "Gaute had me plait him a tally cord for the door. Seven neighbourhoods. My fingers are raw and he still says it's short.",
+   "Fish from the trader's boat. Good fish. Nobody's cooked so much fish since my wedding."
   ],
   "lines_repeat": [
    "Again, from the goat. Louder.",
-   "Somebody's coughing on the far bench. Pass him a horn, it'll settle him."
+   "Somebody's coughing on the far bench. Pass him a horn, it'll settle him.",
+   "You're flat. Everybody's flat. Gaute's flattest and he's the host, so that's how it goes now."
+  ],
+  "services": [
+   {
+    "id": "sing_goat_song",
+    "type": "gift",
+    "item": "goat_song",
+    "once_flag": "ks_goat_song",
+    "label": "Sing the chorus",
+    "line_done": "Not bad. Again, and this time come in when I point."
+   },
+   {
+    "id": "buy_long_note",
+    "type": "buy",
+    "item": "long_note",
+    "warmth": 300,
+    "once_flag": "bought_long_note",
+    "label": "Learn the Long Note",
+    "line_done": "From the belly. Not the throat. Gaute holds it from the throat, and listen to him."
+   }
+  ],
+  "first_flags": [
+   "ks_lusse_met"
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_guest_tally",
+    "absent_flag": "ks_guest_tally",
+    "take_item": true,
+    "set_flag": "ks_guest_tally",
+    "toast": "Lusse takes the tally."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_guest_tally",
+    "lines": [
+     "Forty-one. Forty-two. Hold it still. Forty-one.",
+     "From the goat, then. From the start. Everybody."
+    ]
+   },
+   {
+    "flag": "ks_host_released",
+    "lines": [
+     "Somebody's opened the doors. Good. You could stand a spoon in the air in here."
+    ]
+   },
+   {
+    "flag": "ks_goat_song",
+    "lines": [
+     "There. Now you'll have it in your head till the Melt. I'm not sorry."
+    ]
+   }
+  ]
+ },
+ "ottar": {
+  "name": "Ottar",
+  "short_name": "Ottar",
+  "body": "mannequin_thaw",
+  "first_flags": [
+   "ks_ottar_met"
+  ],
+  "lines_first": [
+   "I'm away. Boots are on. It's a long row and I want to be home before the light goes.",
+   "Ottar. Up the far end, past the falls. The wife's on her own with the calving.",
+   "Gaute says one more horn. He's been saying one more horn since noon.",
+   "I've left my stick by the door so I don't forget it. Don't let me forget it."
+  ],
+  "lines_repeat": [
+   "Any minute now.",
+   "Hear the far bench barking? It's the smoke. He never could build a fire.",
+   "One more and I'm away."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_ottar_staff",
+    "absent_flag": "ks_ottar_staff",
+    "take_item": true,
+    "set_flag": "ks_ottar_staff",
+    "toast": "Ottar takes his stick."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_host_released",
+    "set_flag": "ks_ottar_air",
+    "lines": [
+     "Who's opened the doors? Feel that. You can smell the tarn."
+    ]
+   },
+   {
+    "flag": "ks_ottar_staff",
+    "lines": [
+     "That's my stick. Where was that? I left it by the door.",
+     "Well. I'll sit for the end of the song, then."
+    ]
+   }
   ],
   "services": []
  }

@@ -11,7 +11,7 @@ var _mat: StandardMaterial3D
 var color := Color(0.3, 0.58, 1.0)
 
 ## shape: "rect" (size = [width, length], from the origin forward along -Z),
-## "fan" (size = [range, degrees]), "ring" (size = [radius], a disc),
+## "fan" (size = [range, degrees], or [range, degrees, inner]), "ring" (size = [radius], a disc),
 ## "annulus" (size = [inner, outer]).
 static func spawn(parent: Node, xform: Transform3D, shape: String, size: Array, duration: float,
 		tint := Color(0.55, 0.8, 1.0)) -> FloorTelegraph:
@@ -66,18 +66,22 @@ static func _shape_mesh(shape: String, size: Array) -> Mesh:
 				var u0 := float(i) / steps
 				var u1 := float(i + 1) / steps
 				_quad(st, Vector3(-w, 0, z0), Vector3(w, 0, z0), Vector3(w, 0, z1), Vector3(-w, 0, z1), u0, u1)
-		"fan":
+		"fan":   # size = [range, degrees] or [range, degrees, inner]
 			var r := float(size[0])
 			var half := deg_to_rad(float(size[1]) * 0.5)
-			var segs := 18
+			var rin := float(size[2]) if size.size() > 2 else 0.0
+			var segs := maxi(18, int(float(size[1]) / 8.0))
 			for i in segs:
 				var a0 := lerpf(-half, half, float(i) / segs)
 				var a1 := lerpf(-half, half, float(i + 1) / segs)
-				var p0 := Vector3(sin(a0), 0, -cos(a0)) * r
-				var p1 := Vector3(sin(a1), 0, -cos(a1)) * r
+				var d0 := Vector3(sin(a0), 0, -cos(a0))
+				var d1 := Vector3(sin(a1), 0, -cos(a1))
+				if rin > 0.0:
+					_quad(st, d0 * rin, d0 * r, d1 * r, d1 * rin, 0.0, 1.0)
+					continue
 				st.set_uv(Vector2(0, 0)); st.add_vertex(Vector3.ZERO)
-				st.set_uv(Vector2(1, 1)); st.add_vertex(p1)
-				st.set_uv(Vector2(1, 1)); st.add_vertex(p0)
+				st.set_uv(Vector2(1, 1)); st.add_vertex(d1 * r)
+				st.set_uv(Vector2(1, 1)); st.add_vertex(d0 * r)
 		"annulus":   # a band: size = [inner, outer]
 			var ri := float(size[0])
 			var ro := float(size[1])

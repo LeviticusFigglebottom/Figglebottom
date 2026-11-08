@@ -425,6 +425,68 @@ def icon_slot_legs():
     return im
 
 
+# --- Tarnhall (TARNHALL.md 8)
+def icon_cleaver():
+    """The Host's carving cleaver: a broad square blade, a knotwork handle, a ring at the butt."""
+    im, d = canvas()
+    d.polygon(rot([(46, 14), (82, 14), (82, 60), (46, 66)], 30), fill=INK)
+    d.polygon(rot([(60, 64), (68, 64), (68, 108), (60, 108)], 30), fill=DARK)
+    for y in (74, 84, 94):
+        d.polygon(rot([(60, y), (68, y + 4), (68, y + 6), (60, y + 2)], 30), fill=(150, 116, 80, 255))
+    c = rot([(64, 114)], 30)[0]
+    d.ellipse((c[0] - 7, c[1] - 7, c[0] + 7, c[1] + 7), outline=DARK, width=3)
+    return im
+
+
+def icon_host_cup():
+    """A big horn standing on a turned foot, tin at the rim; nothing in it."""
+    im, d = canvas()
+    d.polygon([(40, 112), (88, 112), (76, 100), (52, 100)], fill=(200, 180, 140, 255))   # the birch foot
+    d.polygon([(58, 100), (70, 100), (90, 30), (40, 30)], fill=(170, 140, 96, 255))       # the horn
+    d.ellipse((38, 22, 92, 38), fill=(70, 62, 54, 255))                                    # dry inside
+    d.arc((38, 22, 92, 38), 0, 360, fill=ICE, width=4)                                      # the tin rim
+    return im
+
+
+def icon_guest_tally():
+    """A coiled cord knotted all round; the knots at its end bunched together."""
+    im, d = canvas()
+    d.ellipse((22, 22, 106, 106), outline=(196, 160, 80, 255), width=8)
+    d.ellipse((36, 36, 92, 92), outline=(214, 200, 164, 255), width=6)
+    for k in range(12):
+        a = k * math.pi * 2 / 12
+        x, y = 64 + 42 * math.cos(a), 64 + 42 * math.sin(a)
+        d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=INK)
+    for k in range(4):   # the same knot, tied again
+        x, y = 100 + k * 3, 74 + k * 7
+        d.ellipse((x - 6, y - 6, x + 6, y + 6), fill=EMBER if k == 3 else INK)
+    return im
+
+
+def icon_stick():
+    """A rowan walking stick: bark grip, a horn cap, mud on the tip."""
+    im, d = canvas()
+    d.polygon(rot([(61, 18), (67, 18), (67, 120), (61, 120)], 30), fill=(150, 112, 76, 255))
+    d.polygon(rot([(60, 18), (68, 18), (68, 44), (60, 44)], 30), fill=DARK)
+    c = rot([(64, 14)], 30)[0]
+    d.ellipse((c[0] - 7, c[1] - 7, c[0] + 7, c[1] + 7), fill=(220, 196, 150, 255))
+    d.polygon(rot([(61, 110), (67, 110), (66, 122), (62, 122)], 30), fill=(70, 50, 34, 255))
+    return im
+
+
+def icon_barrel_head():
+    """A round barrel head of boards, a knot-in-a-ring brand, nails half out."""
+    im, d = canvas()
+    d.ellipse((16, 16, 112, 112), fill=(176, 144, 100, 255))
+    for x in (46, 64, 82):
+        d.line([(x, 20), (x, 108)], fill=(140, 110, 74, 255), width=2)
+    d.ellipse((44, 44, 84, 84), outline=DARK, width=5)
+    d.ellipse((58, 58, 70, 70), fill=DARK)
+    for x, y in ((30, 50), (96, 78)):
+        d.line([(x, y), (x + 6, y - 10)], fill=ICE, width=3)
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in list(globals().items()):
