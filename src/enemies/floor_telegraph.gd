@@ -21,7 +21,35 @@ static func spawn(parent: Node, xform: Transform3D, shape: String, size: Array, 
 	t.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(t)
 	t.global_transform = Transform3D(xform.basis.orthonormalized(), xform.origin + Vector3.UP * 0.1)
+	t._drape()
 	return t
+
+## Lay the glow over the ground it covers: on a hillside (the Lowe) a flat
+## plane would sink into the rising turf and the tell would vanish.
+func _drape() -> void:
+	if mesh == null or not is_inside_tree():
+		return
+	var space := get_world_3d().direct_space_state
+	var arr := mesh.surface_get_arrays(0)
+	var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var inv := global_transform.affine_inverse()
+	var cache := {}
+	for i in verts.size():
+		var key := verts[i]
+		if cache.has(key):
+			verts[i] = cache[key]
+			continue
+		var w := global_transform * verts[i]
+		var q := PhysicsRayQueryParameters3D.create(w + Vector3.UP * 2.5, w + Vector3.DOWN * 3.0, RH.M_WORLD_ALL)
+		var hit := space.intersect_ray(q)
+		if not hit.is_empty():
+			var y := (inv * ((hit["position"] as Vector3) + Vector3.UP * 0.06)).y
+			verts[i] = Vector3(verts[i].x, maxf(y, verts[i].y - 0.3), verts[i].z)
+		cache[key] = verts[i]
+	arr[Mesh.ARRAY_VERTEX] = verts
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	mesh = am
 
 static func _shape_mesh(shape: String, size: Array) -> Mesh:
 	var st := SurfaceTool.new()
