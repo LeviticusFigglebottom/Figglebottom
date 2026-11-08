@@ -19,6 +19,8 @@ const TEXTURES := {}
 const GLASS := preload("res://shaders/glass.gdshader")
 const FLAME := preload("res://shaders/flame.gdshader")
 const WATER := preload("res://shaders/water.gdshader")
+const ICE_SHEET := preload("res://shaders/ice_sheet.gdshader")
+const FALLS := preload("res://shaders/falls.gdshader")
 
 ## family -> {albedo, rough, metallic, specular, normal_scale, rim, sss, sheen, local_uv, extras...}
 const FAMILIES := {
@@ -121,6 +123,12 @@ static func get_mat(family: String, state_mode := 0) -> Material:
 		mat.set_shader_parameter("state_mode", state_mode)
 	elif family == "M_water":
 		mat.shader = WATER
+		mat.set_shader_parameter("state_mode", state_mode)
+	elif family == "M_ice_sheet":
+		mat.shader = ICE_SHEET
+		mat.set_shader_parameter("state_mode", state_mode)
+	elif family == "M_falls":
+		mat.shader = FALLS
 		mat.set_shader_parameter("state_mode", state_mode)
 	elif family == "M_flame":
 		mat.shader = FLAME
