@@ -142,5 +142,12 @@
   "_doc": "shadow_distance: the sun's shadow reach in metres per graphics-quality tier (Low, High, Ultra). prop_ranges: [small_max_m, small_range_m, mid_max_m, mid_range_m]; kit props whose largest side is at most small_max_m stop drawing past small_range_m, up to mid_max_m past mid_range_m; larger kit always draws.",
   "shadow_distance": [70.0, 100.0, 135.0],
   "prop_ranges": [1.6, 60.0, 4.5, 120.0]
+ },
+ "combat": {
+  "body_push": {
+   "_doc": "Soft separation between the Bearer and the frost-taken (player._part_from_foes). Outside a roll or backstep the Bearer is eased out of each foe's push radius (enemies.json push_r, else max(col_r, 0.9*hurt_r)) by at most max_step metres a physics tick. Rolls still pass through.",
+   "bearer_r": 0.34,
+   "max_step": 0.25
+  }
  }
 }

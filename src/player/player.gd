@@ -396,6 +396,7 @@ func _physics_process(dt: float) -> void:
 	_regen(dt)
 	_step_up(dt)
 	move_and_slide()
+	_part_from_foes()
 	if is_on_floor():
 		_floor_y = global_position.y
 	elif _floor_y - global_position.y >= -0.05 and _floor_y - global_position.y < float(T["move"].get("snap_down", 0.0)):
@@ -416,6 +417,37 @@ func _physics_process(dt: float) -> void:
 		_nadir_light.light_energy = lerpf(0.28, 0.48, bt)
 	if not sim_active:
 		cam.stick_look(Input.get_vector("cam_left", "cam_right", "cam_up", "cam_down"), dt)
+
+## Bodies keep their room. The Bearer's capsule does not collide with the
+## frost-taken (a hard contact wedged him on a 3 m Holdfast and let him
+## clip into her), so after each move he is eased back out of any foe's
+## body ring (combat/body_push in game.json, the foe's push_radius()). A
+## roll or backstep passes straight through, as before: the i-frame dodge
+## through a swing is part of the feel. Walking and lunging stop at the
+## body instead of inside it.
+func _part_from_foes() -> void:
+	if dead or state == S.ROLL or state == S.BACKSTEP:
+		return
+	var my_r := float(DB.tuning("combat/body_push/bearer_r", 0.34))
+	var max_step := float(DB.tuning("combat/body_push/max_step", 0.25))
+	for node in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		var e := node as Enemy
+		if e == null or e.dead or not e.is_inside_tree() or not e.can_process() or not e.is_visible_in_tree():
+			continue
+		if absf(e.global_position.y - global_position.y) > 2.0:
+			continue
+		var d := global_position - e.global_position
+		d.y = 0.0
+		var reach := my_r + e.push_radius()
+		var l := d.length()
+		if l >= reach:
+			continue
+		var n := d / l if l > 0.001 else Vector3(vis.global_transform.basis.z.x, 0.0, vis.global_transform.basis.z.z).normalized()
+		# a collide-move, so being pushed never shoves him through a wall
+		move_and_collide(n * minf(reach - l, max_step))
+		var inward := -velocity.dot(n)
+		if inward > 0.0:
+			velocity += n * inward
 
 func _set_state(s: S) -> void:
 	if s != S.MOVE:
@@ -1164,6 +1196,22 @@ func _open_hitbox(m: Dictionary) -> void:
 			float(weapon_data().get("poise_damage", 20)) * float(m.get("poise_mult", 1.0)), self)
 	pk.origin = global_position
 	hitbox.begin_swing(pk)
+	if _atk_is_heavy:
+		_chip_frozen(reach)
+
+## A heavy blow chips out what is frozen in close in front (the float in
+## the tide wall): pickups in group chip_heavy within reach and ahead.
+func _chip_frozen(reach: float) -> void:
+	var fwd := -vis.global_transform.basis.z
+	fwd.y = 0.0
+	for p in get_tree().get_nodes_in_group("chip_heavy"):
+		var n := p as Node3D
+		if n == null or not n.is_visible_in_tree():
+			continue
+		var d := n.global_position - global_position
+		d.y = 0.0
+		if d.length() <= reach + 0.9 and (d.length() < 0.4 or fwd.normalized().dot(d.normalized()) > 0.3):
+			n.call("chip", self)
 
 func _on_hit_contact(_hb: Area3D, result: String) -> void:
 	hit_landed.emit(_hb.owner, result)

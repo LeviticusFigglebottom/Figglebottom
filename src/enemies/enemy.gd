@@ -67,6 +67,12 @@ var hpbar: EnemyHealthBar
 ## a longer breath than a poise break).
 var _stagger_mult := 1.0
 
+## The ring the Bearer is kept out of (player._part_from_foes): the
+## visible body, not the thin nav capsule ("push_r" in enemies.json,
+## else the larger of col_r and 90 % of hurt_r).
+func push_radius() -> float:
+	return float(cfg.get("push_r", maxf(float(cfg.get("col_r", 0.4)), float(cfg.get("hurt_r", 0.45)) * 0.9)))
+
 func setup(enemy_id: String) -> void:
 	id = enemy_id
 	cfg = DB.enemy(id)
