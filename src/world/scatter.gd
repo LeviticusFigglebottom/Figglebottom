@@ -117,6 +117,9 @@ static func _seat(kind: String, pos: Vector3, nrm: Vector3, yaw: float, s: float
 			pos.y -= 0.08
 		"driftwood":
 			b = b * Basis(Vector3.FORWARD, rng.randf_range(-0.12, 0.12))
+		"peat_stack":
+			# some stacks built higher, some sagging
+			sv = Vector3(s * rng.randf_range(0.9, 1.15), s * rng.randf_range(0.75, 1.45), s * rng.randf_range(0.9, 1.1))
 		"standing_stone":
 			b = b * Basis(Vector3.RIGHT, rng.randf_range(-0.1, 0.1))
 			sv = Vector3(s, s, s * 0.5)     # a slab, not a boulder
@@ -306,14 +309,41 @@ static func _driftwood(mode: int) -> ArrayMesh:
 	mesh.surface_set_material(0, MaterialLib.get_mat("M_drift", mode))
 	return mesh
 
-## Cut peats stacked to dry, herringbone-ish, under a turf cap.
+## Cut sods stacked to dry: uneven blocks, each layer laid a little askew,
+## the stack slumping to one side; the top course still has its grass on.
 static func _peat(mode: int) -> ArrayMesh:
-	var boxes := []
-	for layer in 4:
-		var w := 1.5 - layer * 0.22
-		for k in 3:
-			boxes.append([Vector3(w, 0.26, 0.3), Vector3(0, 0.13 + layer * 0.27, -0.35 + k * 0.35), Vector3(0, (layer % 2) * 9 - 4, 0)])
-	var mesh := _box_stack(boxes, "M_peat", mode)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 31
+	var peat := SurfaceTool.new()
+	peat.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var grass := SurfaceTool.new()
+	grass.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var layers := 4
+	var y := 0.0
+	for layer in layers:
+		var lean := layer * 0.05
+		var n := 3 - int(layer / 2)
+		for k in n:
+			var bw := rng.randf_range(0.42, 0.58)
+			var bh := rng.randf_range(0.2, 0.3)
+			var bd := rng.randf_range(0.8, 1.15) - layer * 0.08
+			var pos := Vector3(-0.5 + (k + 0.5) * (1.0 / n) + lean + rng.randf_range(-0.05, 0.05), y + bh * 0.5, rng.randf_range(-0.08, 0.08))
+			var rot := Vector3(rng.randf_range(-6, 6), rng.randf_range(-14, 14) + (layer % 2) * 8, rng.randf_range(-7, 7) - layer * 2.5)
+			var xf := Transform3D(Basis.from_euler(rot * PI / 180.0), pos)
+			var bm := BoxMesh.new()
+			bm.size = Vector3(bw * 0.96, bh, bd)
+			peat.append_from(bm, 0, xf)
+			if layer == layers - 1 or (k == n - 1 and rng.randf() < 0.3):
+				var gm := BoxMesh.new()
+				gm.size = Vector3(bw * 1.02, 0.07, bd * 1.02)
+				grass.append_from(gm, 0, xf * Transform3D(Basis.IDENTITY, Vector3(0, bh * 0.5 + 0.03, 0)))
+		y += 0.25
+	peat.generate_normals()
+	grass.generate_normals()
+	var mesh := peat.commit()
+	mesh.surface_set_material(0, MaterialLib.get_mat("M_peat", mode))
+	grass.commit(mesh)
+	mesh.surface_set_material(1, MaterialLib.get_mat("M_turf", mode))
 	return mesh
 
 ## Dry-stone dyke, 2 m: irregular stones in two courses with a cope.
@@ -438,9 +468,9 @@ static func _veg_mesh(kind: String, tag: String) -> ArrayMesh:
 	var spread := 0.18
 	match kind:
 		"heather":
-			blades = 24
-			hgt = Vector2(0.1, 0.24)
-			wid = 0.15
+			blades = 34
+			hgt = Vector2(0.1, 0.19)
+			wid = 0.2
 			spread = 0.3
 			cols = [Color(0.30, 0.10, 0.06), Color(0.36, 0.14, 0.08), Color(0.26, 0.12, 0.09), Color(0.38, 0.22, 0.20)]
 		"sedge":
@@ -453,13 +483,19 @@ static func _veg_mesh(kind: String, tag: String) -> ArrayMesh:
 		var a := rng.randf() * TAU
 		var r := rng.randf() * spread
 		var base := Vector3(cos(a) * r, 0, sin(a) * r)
-		var lean := Vector3(cos(a), 0, sin(a)) * (rng.randf_range(0.35, 0.8) if kind == "heather" else rng.randf_range(0.05, 0.25))
+		var lean := Vector3(cos(a), 0, sin(a)) * (rng.randf_range(0.6, 1.1) if kind == "heather" else rng.randf_range(0.05, 0.25))
 		var h := rng.randf_range(hgt.x, hgt.y)
 		var side := Vector3(-sin(a + 1.2), 0, cos(a + 1.2)) * wid * 0.5
 		var tip := base + lean * h * 2.0 + Vector3(0, h, 0)
 		var c: Color = cols[rng.randi() % cols.size()]
 		var n := Vector3(cos(a), 0.6, sin(a)).normalized()
-		for v in [[base - side, 0.0], [base + side, 0.0], [tip, 1.0]]:
+		var tris: Array = [[base - side, 0.0], [base + side, 0.0], [tip, 1.0]]
+		if kind == "heather":
+			# blunt, bushy sprigs: a quad that barely narrows, not a spike
+			var tl: Vector3 = tip - side * 0.8
+			var tr: Vector3 = tip + side * 0.8
+			tris = [[base - side, 0.0], [base + side, 0.0], [tr, 1.0], [base - side, 0.0], [tr, 1.0], [tl, 1.0]]
+		for v in tris:
 			st.set_normal(n)
 			st.set_color(Color(c.r, c.g, c.b, v[1]))
 			st.add_vertex(v[0])

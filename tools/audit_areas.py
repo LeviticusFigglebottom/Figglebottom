@@ -40,6 +40,7 @@ def expand_row(r):
 
 
 TERRAIN = None   # sampler(x, z) of the area's committed heightmap, if any
+STATE_FLOORS = []
 
 
 def floors_at(fills, x, z, margin=0.05):
@@ -51,6 +52,12 @@ def floors_at(fills, x, z, margin=0.05):
     ys = []
     if TERRAIN is not None:
         ys.append(TERRAIN(x, z))
+    for sf in STATE_FLOORS:          # jetties, platforms, ice: floors too
+        if "min" in sf and sf["min"][0] - margin <= x <= sf["max"][0] + margin \
+                and sf["min"][1] - margin <= z <= sf["max"][1] + margin:
+            ys.append(sf["y"])
+        elif "radius" in sf and math.hypot(x - sf["center"][0], z - sf["center"][1]) <= sf["radius"]:
+            ys.append(sf["y"])
     for f in fills:
         mn, mx = v3(f["min"]), v3(f["max"])
         if mn[0] - margin <= x <= mx[0] + margin and mn[2] - margin <= z <= mx[2] + margin:
@@ -112,9 +119,10 @@ def flags_exclusive(a, b):
 
 
 def audit(area_id):
-    global TERRAIN
+    global TERRAIN, STATE_FLOORS
     d = json.load(open(f"data/areas/{area_id}.json"))
     TERRAIN = None
+    STATE_FLOORS = d.get("edges", {}).get("state_floors", [])
     if d.get("terrain"):
         sys.path.insert(0, "tools")
         mod = __import__(os.path.splitext(os.path.basename(d["terrain"]["generator"]))[0])
@@ -199,6 +207,8 @@ def audit(area_id):
         kit = p.get("kit", "")
         if kit in MOUNTED or (kit in ARCH and kit not in RAILING):
             continue
+        if p.get("embed"):
+            continue      # afloat or frozen into the ice on purpose
         at = v3(p["at"])
         is_rail = kit in RAILING
         # railings reach a bit further to find the floor edge they line; vertical

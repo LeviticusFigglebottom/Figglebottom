@@ -179,5 +179,20 @@
    "Bring me iron. I'll do the rest."
   ],
   "services": []
+ },
+ "ivo": {
+  "name": "Ivo",
+  "short_name": "Ivo",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Hold that one. Not by the collar, she bites.",
+   "Grandfather says the ice isn't made yet. It's made. I walked on it this morning, by the houses.",
+   "The healer's across at the far landing. Somebody's got to fetch her. Everybody keeps saying somebody."
+  ],
+  "lines_repeat": [
+   "I'm not going anywhere. That's what he said to say.",
+   "The dogs know the way. The dogs always know the way."
+  ],
+  "services": []
  }
 }

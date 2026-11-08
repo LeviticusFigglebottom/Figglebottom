@@ -8,9 +8,13 @@ var zones: Array = []
 var _current := ""
 var _seen: Dictionary = {}
 var _t := 0.0
+var _pending := ""
 
 func _process(dt: float) -> void:
 	_t += dt
+	if _pending != "" and _t >= 0.0:
+		Game.area_title.emit(_pending)
+		_pending = ""
 	if _t < 0.5:
 		return
 	_t = 0.0
@@ -28,5 +32,10 @@ func _process(dt: float) -> void:
 		_current = here
 		if here != "" and not _seen.has(here):
 			_seen[here] = true
-			if _seen.size() > 1:      # the arrival card already named the first
+			if _seen.size() > 1:
 				Game.area_title.emit(here)
+			else:
+				# arriving: the region's card first, then where you stand in it
+				_t = -2.6
+				_pending = here
+

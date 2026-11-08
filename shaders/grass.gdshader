@@ -41,12 +41,21 @@ void vertex() {
 	// sway in world space, then back into the instance's frame
 	vec3 off_w = vec3(wind_dir.x, -0.15, wind_dir.y) * bend;
 	VERTEX += (inverse(MODEL_MATRIX) * vec4(off_w, 0.0)).xyz;
-	// RIME: the snow has the clumps up to their tips
-	VERTEX.y *= 1.0 - 0.6 * rime;
+	// RIME: the snow has most clumps outright; the rest show only their tips
+	vec3 org = MODEL_MATRIX[3].xyz;
+	float keep = fract(sin(dot(org.xz, vec2(12.9898, 78.233))) * 43758.5453);
+	// the survivors stand as short stiff stubs gathered in a tuft, not
+	// blades splayed flat on the snow
+	VERTEX.y *= 1.0 - 0.55 * rime;
+	VERTEX.xz *= 1.0 - 0.6 * rime;
+	if (rime > 0.5 && keep < 0.8) {
+		VERTEX = vec3(0.0, -0.3, 0.0);
+	}
 	v_wp = wp;
 	v_h = h;
 	// clumps light like a soft dome, not like flat cards
-	NORMAL = normalize(mix(vec3(0.0, 1.0, 0.0), NORMAL, 0.35));
+	// (in RIME they light like the snow they stand in)
+	NORMAL = normalize(mix(vec3(0.0, 1.0, 0.0), NORMAL, 0.35 * (1.0 - rime)));
 }
 
 void fragment() {
@@ -60,9 +69,10 @@ void fragment() {
 	vec3 c = COLOR.rgb * mix(0.5, 0.9, v_h);
 	vec3 thaw_c = mix(c, c * tip_tint * 1.1, v_h * v_h * 0.35);
 	float luma = dot(c, vec3(0.3, 0.59, 0.11));
-	vec3 rime_c = mix(vec3(0.42, 0.47, 0.55) + vec3(luma) * 0.3, vec3(0.88, 0.92, 0.98), smoothstep(0.2, 0.8, v_h));
+	// frost-rimed tufts with a cap of snow: pale throughout, never dark blades
+	vec3 rime_c = mix(vec3(0.78, 0.82, 0.88) + vec3(luma) * 0.1, vec3(0.95, 0.97, 1.0), smoothstep(0.05, 0.5, v_h));
 	ALBEDO = mix(thaw_c, rime_c, rime);
 	ROUGHNESS = 0.9;
 	BACKLIGHT = mix(vec3(0.16, 0.14, 0.05), vec3(0.1, 0.12, 0.15), rime) * v_h;
-	AO = mix(0.55, 1.0, v_h);
+	AO = mix(mix(0.55, 0.95, rime), 1.0, v_h);
 }

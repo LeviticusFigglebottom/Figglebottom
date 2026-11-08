@@ -45,15 +45,16 @@ static func build(area: Area, terrain: Terrain, def: Dictionary) -> void:
 		if not terrain.contains(x, z) or terrain.drop_at(x, z, 4.0) < 8.0:
 			continue
 		var y := terrain.height_at(x, z)
-		var sd := _emitter(70, 2.6, Vector3(3.0, 0.4, 3.0), _quad(0.9, Color(0.92, 0.95, 1.0, 0.22), false))
+		var sd := _emitter(90, 1.8, Vector3(3.0, 0.3, 3.0), _streak(Color(0.92, 0.95, 1.0, 0.35)))
+		sd.particle_flag_align_y = true     # each fleck drawn out along its flight
 		sd.position = Vector3(x, y + 0.4, z)
-		sd.direction = Vector3(0.9, 0.25, -0.5)
+		sd.direction = Vector3(0.9, 0.12, -0.5)
 		sd.spread = 25.0
 		sd.initial_velocity_min = 2.0
 		sd.initial_velocity_max = 4.5
 		sd.gravity = Vector3(0, -0.6, 0)
-		sd.scale_amount_min = 0.8
-		sd.scale_amount_max = 2.2
+		sd.scale_amount_min = 0.6
+		sd.scale_amount_max = 1.4
 		sd.visibility_range_end = 120.0
 		area.rime_layer.add_child(sd)
 		made += 1
@@ -88,6 +89,29 @@ static func _falling(amount: int, box: Vector3, drift: Vector3, size: float, col
 	if glitter:
 		p.position.y = 0.5
 	return p
+
+## A thin streak of blown snow, long along its own Y (aligned to velocity).
+static func _streak(col: Color) -> QuadMesh:
+	var q := QuadMesh.new()
+	q.size = Vector2(0.07, 1.6)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	# no billboard: the emitter's align_y lays each streak along its flight
+	# (a fixed-Y billboard would stand every one of them upright like rain)
+	var grad := Gradient.new()
+	grad.offsets = PackedFloat32Array([0.0, 0.5, 1.0])
+	grad.colors = PackedColorArray([Color(col.r, col.g, col.b, 0.0), col, Color(col.r, col.g, col.b, 0.0)])
+	var gt := GradientTexture2D.new()
+	gt.gradient = grad
+	gt.fill_from = Vector2(0.5, 0.0)
+	gt.fill_to = Vector2(0.5, 1.0)
+	gt.width = 4
+	gt.height = 32
+	m.albedo_texture = gt
+	q.material = m
+	return q
 
 static func _quad(sz: float, col: Color, additive: bool) -> QuadMesh:
 	var q := QuadMesh.new()
