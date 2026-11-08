@@ -208,7 +208,7 @@ TIDE_LINE = [(-64, 76.6), (-54, 76.3), (-46, 76.0), (-38, 76.4), (-30, 76.6), (-
              (-14, 77.8), (-6, 79.5), (2, 80.3), (10, 79.6), (18, 78.6), (26, 76.8),
              (34, 76.0), (44, 76.4)]
 TIDE_WALL = {"script": "res://src/world/tide_wall.gd", "at": [0.0, 0.0, 0.0], "tag": "rime",
-             "params": {"points": [[x, z] for x, z in TIDE_LINE], "height": 3.0, "gaps": [[-36.0, -23.0]]}}
+             "params": {"points": [[x, z] for x, z in TIDE_LINE], "height": 3.9, "gaps": [[-36.0, -23.0]], "base_y": -0.6}}
 
 scripted = [
     {"script": "res://src/world/net_floor.gd", "at": [0.0, SH, -36.0], "tag": "rime",

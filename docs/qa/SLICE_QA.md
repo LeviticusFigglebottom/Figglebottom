@@ -48,22 +48,30 @@ Run it on its own with `tools/test.sh fullslice` (about 15 minutes headless). `t
 
 Before and after: `slice_fix_sign_before.png` and `slice_fix_strand_before/after.png` for #14–15; `slice_fix_veil_before/after.png` for #16.
 
+## Second pass (after merging main)
+
+| # | Was remaining issue | Fix | Commit |
+|---|---|---|---|
+| 20 | **The Bearer walked through enemies** and clipped into the Netmender. | After each move he is eased out of each foe's body ring by a collide-move: `Enemy.push_radius()` from `push_r`, else max(col_r, 0.9·hurt_r), which is 0.9 m for the Netmender against her 0.7 m nav capsule. Tuning is in `combat/body_push`. Rolls and backsteps skip it, so the i-frame dodge through a swing is unchanged. **Feel:** walking and lunges now stop at the body; hauls and grabs end at the ring; nothing hard-collides, so there is no wedging on a 3 m boss. `tools/test/body_test.gd` (8 checks). | 68d44fa |
+| 21 | **No tide wall; the float was invisible.** | `src/world/tide_wall.gd`: a rime glass wall about 3 m high along the old waterline, with its crest curling landward and kelp and an oar caught inside. It is open where the frozen channel runs to the sea stack. The float sits in its face at chest height with a glint, and only a heavy blow chips it free (pickup `chip_heavy`). The full-slice test chips it with a heavy swing. Before and after: `slice_fix_tide_before/after.png`. | d73e6a8 |
+| 22 | **The released Netmender sat inside the Long Hearth.** | `release_clear` (opt-in, 3.2 m) moves her off the hearth's spot before the needle and the hearth are set down. | 79df70b |
+| 23 | **Title hitch.** Each stop swap rebuilt the whole steading. | The stage is built once and only the camera moves. `ShaderWarm` draws one speck of each costly in-play material under the first fade (frost dissolve and its shatter branch, veil, net floor, flame, ice, the rime families). | 416bd6f |
+| 24 | **Per-enemy cost.** | **Measured, and my first-pass figure was wrong.** Each frost-taken is one skinned mesh (two for the Oarsman, with his oar) and has no lights. Its HP bar quads and hit-flash meshes stay hidden until used. The frost-shatter material is now shared per source material and cloned per body only as it dies. The ~260 small meshes in Saltfell are kit props built from primitives; see PERF.md. | 416bd6f |
+
 ## Remaining issues (ranked)
 
-1. **The Bearer walks through enemies** (`player.gd` collision mask has no enemy layer). In close fights he clips into the Netmender and the Oarsmen. Adding the layer changes the 1:1 combat feel and the unwedge behaviour, so it needs its own pass and a combat test.
-2. **The tide wall is missing.** SLICE.md §2 asks for a 3 m wall of frozen surge with the float set at chest height, chipped free with a heavy attack. In game the float is a plain pickup on the floe ice and can barely be seen (slice_14). It needs art and a `requires_heavy` pickup flag.
-3. **SLICE beats not yet built:**
+1. **SLICE beats not yet built:**
    - The THAW Longhouse door stop until Ingra's first talk.
    - Ingra coming in to the hall after two talks.
    - Brede on the gunwale, mending, after the release.
    - The frozen cat and washing line, the empty small grave, and the child's mask peg.
-4. **Entity draw calls.** About 20 meshes per frost-taken, with all 16 always in the tree. This is the largest remaining perf lever (PERF.md).
-5. **The title dolly builds a whole area synchronously at each stop swap.** It causes a visible hitch, and under software rendering it stalled the front door for tens of seconds.
-6. **The byre's stave walls let light through at the seams** (slice_11).
-7. **The RIME hearth trench** reads as a flat dark box with a pale kerb (slice_19).
-8. **The released Netmender sits wherever the fight ended.** If that is the hall's middle, the Long Hearth wakes inside her body (slice_21). The release should seat her at the high end, or the hearth should be placed clear of her.
-9. **Place cards are not persisted.** THE STRAND shows again after every load.
-10. **The level sheet names weapon families** (bow, spear, greatsword) that are not in the slice (slice_12).
+2. **Kit props are many small meshes.** A drying rack is 13 meshes, a hearth 6, the boat-shed gate 16. Merging each KitLib primitive piece into one mesh per material, after its collision is built, is the biggest draw-call lever left (PERF.md).
+3. **The released Netmender pops to her new seat.** The 3.2 m move is instant, under the release card. A sit-down slide would read better.
+4. **The byre's stave walls let light through at the seams** (slice_11).
+5. **The RIME hearth trench** reads as a flat dark box with a pale kerb (slice_19).
+6. **Place cards are not persisted.** The region and place cards show again after every load.
+7. **The level sheet names weapon families** (bow, spear, greatsword) that are not in the slice (slice_12).
+8. **The tide wall uses the shared opaque `M_ice`.** A glassier, see-through variant would show what is stopped inside, but MaterialLib and the art shaders belong to the art agent.
 
 ## Screenshots
 

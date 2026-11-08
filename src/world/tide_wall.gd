@@ -96,7 +96,7 @@ func _frozen_in(mid: Vector3, seg: Vector3) -> void:
 		km.size = Vector3(0.12, _rng.randf_range(0.8, 1.6), 0.03)
 		kelp.mesh = km
 		kelp.material_override = MaterialLib.get_mat("M_peat", 2)
-		kelp.position = p + landward * (thick * 0.42) + Vector3(0, _rng.randf_range(0.3, 1.6), 0)
+		kelp.position = p + landward * (thick * 0.5) + Vector3(0, _rng.randf_range(0.6, 2.2), 0)
 		kelp.rotation = Vector3(_rng.randf_range(-0.4, 0.4), atan2(-dir.z, dir.x), _rng.randf_range(-0.7, 0.7))
 		kelp.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		kelp.visibility_range_end = 60.0

@@ -48,15 +48,20 @@ RIME follows the same pattern; for example, longhouse_hall goes from 895 / 2258 
 
 ## Not done (next)
 
-Where Saltfell's 583 mesh instances come from, counted per owner:
+Where Saltfell's mesh instances come from, measured per owning script in RIME:
 
-- **331 belong to unnamed entity nodes.** These are spawners, NPCs, hearths, pickups and gates, and mostly the frost-taken's character visuals with their overlays: ice hands, masks and breath.
-- **161 are terrain chunks**, one per LOD per 32 m chunk; only one LOD of each is drawn.
-- **About 90 are kit props.**
+| Owner | Meshes | Visible at rest |
+|---|---|---|
+| Kit props and pieces (no script; primitive boxes and cylinders) | 261 | 214 |
+| Terrain chunks (two LODs per chunk; one is drawn) | 161 | 161 |
+| Spawners (16 frost-taken) | 96 | 21 |
+| Hearthstones (3) | 18 | 18 |
+| The boat-shed gate | 16 | 16 |
+| The tide wall | 19 | 19 |
 
-The houses are already merged into one mesh per material, with a far-LOD swap at 60 m.
+**Correction to the first pass:** the frost-taken are cheap. Each one is a single skinned mesh (the Oarsman has a second, for his oar) with no lights. Its HP bar and hit-flash quads stay hidden until they are used. The frost-shatter material is now shared per source material.
 
-1. **Entity visuals.** About 20 meshes per frost-taken: each of the 16 spawners puts a full character with its overlay parts in the scene, including sleepers out of sight. Giving the overlays a visibility range, or merging them into the body mesh at build time, is the biggest remaining lever on the yard's ~1000 draws.
+1. **Merge KitLib primitive pieces** into one mesh per material once their collision is built. A drying rack is 13 meshes, a hearth 6, a gate 16. This is the biggest draw-call lever left.
 2. **Turf veg chunks** are 24 m with a 55 m range. In the open yard about 60 chunks are in view, and each costs a colour draw and a depth pre-pass draw. A 32 m chunk would cut the count by about 40 % with the same number of instances.
 3. **Boss VFX.** The Netmender fight adds net VFX quads and ice ridges on every cast. Pool them if the boss frame shows up on real hardware.
 4. **Measure on a GPU.** Run the same two tools on a real card before setting a frame budget. llvmpipe numbers cannot do that.
