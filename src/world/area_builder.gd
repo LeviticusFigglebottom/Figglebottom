@@ -59,6 +59,21 @@ static func build(area_id: String) -> Area:
 			_place(lm, spec)
 			if spec.has("scale"):
 				lm.scale = Vector3.ONE * float(spec["scale"])
+			if spec.has("blocker"):
+				# a solid round the dressing (its own collision was stripped)
+				var bb := StaticBody3D.new()
+				bb.collision_layer = 1 << (_tag_bit(String(spec.get("tag", "base"))) - 1)
+				bb.collision_mask = 0
+				var bcs := CollisionShape3D.new()
+				var bsh := BoxShape3D.new()
+				bsh.size = _v3(spec["blocker"])
+				bcs.shape = bsh
+				bcs.position = Vector3(0, bsh.size.y * 0.5, 0)
+				bb.add_child(bcs)
+				area.attach(bb, String(spec.get("tag", "base")))
+				_place(bb, spec)
+			if spec.has("smoke"):
+				_smoke(area, _v3(spec["at"]) + Vector3(0, float(spec["smoke"]), 0))
 	for spec in def.get("skyline", []):
 		var sk: Dictionary = spec.duplicate()
 		sk["flames"] = false
@@ -222,6 +237,8 @@ static func build(area_id: String) -> Area:
 		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
 		Scatter.build_veg(area, area.terrain, def["scatter"].get("veg", []),
 				int(def["scatter"].get("seed", 1)) + 7, _keep_clear(def))
+	if area.terrain != null and def.has("forest"):
+		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
 	if area.terrain != null:
 		Weather.build(area, area.terrain, def)
 
@@ -370,6 +387,43 @@ static func _falls(area: Area, spec: Dictionary) -> void:
 		mist.visibility_range_end = 140.0
 		area.attach(mist, "thaw")
 		mist.position = foot + Vector3(0, 0.4, 0)
+
+## Smoke rising slow and thick from a clamp or a fire (THAW only).
+static func _smoke(area: Area, at: Vector3) -> void:
+	var p := CPUParticles3D.new()
+	p.amount = 28
+	p.lifetime = 6.0
+	p.direction = Vector3(0.15, 1, 0)
+	p.spread = 12.0
+	p.initial_velocity_min = 0.5
+	p.initial_velocity_max = 0.9
+	p.gravity = Vector3(0.12, 0.05, 0.02)
+	p.scale_amount_min = 1.0
+	p.scale_amount_max = 2.6
+	var q := QuadMesh.new()
+	q.size = Vector2(1.4, 1.4)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	m.vertex_color_use_as_albedo = true
+	var g := Gradient.new()
+	g.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 0)])
+	var gt := GradientTexture2D.new()
+	gt.gradient = g
+	gt.fill = GradientTexture2D.FILL_RADIAL
+	gt.fill_from = Vector2(0.5, 0.5)
+	gt.fill_to = Vector2(1.0, 0.5)
+	m.albedo_texture = gt
+	q.material = m
+	p.mesh = q
+	var ramp := Gradient.new()
+	ramp.colors = PackedColorArray([Color(0.75, 0.76, 0.78, 0.0), Color(0.78, 0.79, 0.8, 0.32), Color(0.85, 0.86, 0.88, 0.0)])
+	ramp.offsets = PackedFloat32Array([0.0, 0.25, 1.0])
+	p.color_ramp = ramp
+	p.visibility_range_end = 150.0
+	area.attach(p, "thaw")
+	p.position = at
 
 ## Sea, river and pool planes on the existing water shader.
 static func _water(area: Area, spec: Dictionary) -> void:
