@@ -85,13 +85,13 @@ scene("ivo_mitten", res, nodes)
 import math
 res = [mat("horn", 0.62, 0.52, 0.36, 0.5), mat("tip", 0.25, 0.2, 0.15, 0.5), mat("birch", 0.78, 0.7, 0.55),
        mat("tin", 0.7, 0.72, 0.74, 0.35), mat("dust", 0.42, 0.38, 0.33, 1.0),
-       ("seg", "CylinderMesh", {"top_radius": 0.05, "bottom_radius": 0.04, "height": 0.07, "radial_segments": 12,
+       ("seg", "CylinderMesh", {"top_radius": 0.085, "bottom_radius": 0.07, "height": 0.08, "radial_segments": 12,
                                 "material": 'SubResource("horn")'}),
-       ("foot", "CylinderMesh", {"top_radius": 0.035, "bottom_radius": 0.06, "height": 0.05, "radial_segments": 12,
+       ("foot", "CylinderMesh", {"top_radius": 0.05, "bottom_radius": 0.095, "height": 0.06, "radial_segments": 12,
                                  "material": 'SubResource("birch")'}),
-       ("band", "CylinderMesh", {"top_radius": 0.058, "bottom_radius": 0.058, "height": 0.022, "radial_segments": 14,
+       ("band", "CylinderMesh", {"top_radius": 0.092, "bottom_radius": 0.092, "height": 0.03, "radial_segments": 14,
                                  "material": 'SubResource("tin")'}),
-       ("inside", "CylinderMesh", {"top_radius": 0.05, "bottom_radius": 0.05, "height": 0.004, "radial_segments": 14,
+       ("inside", "CylinderMesh", {"top_radius": 0.08, "bottom_radius": 0.08, "height": 0.004, "radial_segments": 14,
                                    "material": 'SubResource("dust")'})]
 nodes = [("HostCup", "Node3D", None, {}),
          ("Foot", "MeshInstance3D", ".", {"transform": xf(y=0.025), "mesh": 'SubResource("foot")'})]
@@ -100,9 +100,9 @@ for i in range(5):
     k = i / 4.0
     sc = 0.55 + 0.45 * k
     x = -0.05 * math.sin(k * 1.4)
-    nodes.append(("H%d" % i, "MeshInstance3D", ".", {"transform": xf(sc, 1, sc, x=x, y=0.08 + i * 0.062), "mesh": 'SubResource("seg")'}))
-nodes.append(("Band", "MeshInstance3D", ".", {"transform": xf(y=0.36), "mesh": 'SubResource("band")'}))
-nodes.append(("Dust", "MeshInstance3D", ".", {"transform": xf(y=0.355), "mesh": 'SubResource("inside")'}))
+    nodes.append(("H%d" % i, "MeshInstance3D", ".", {"transform": xf(sc, 1, sc, x=x, y=0.09 + i * 0.07), "mesh": 'SubResource("seg")'}))
+nodes.append(("Band", "MeshInstance3D", ".", {"transform": xf(y=0.4), "mesh": 'SubResource("band")'}))
+nodes.append(("Dust", "MeshInstance3D", ".", {"transform": xf(y=0.395), "mesh": 'SubResource("inside")'}))
 scene("host_cup", res, nodes, upright=True)
 
 # the guest-tally: a long plaited cord, yellow and oat, coiled; knots along it

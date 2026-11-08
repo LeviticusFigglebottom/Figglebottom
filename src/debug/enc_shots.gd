@@ -679,12 +679,13 @@ func _st_tarnhall_guest(p: Player) -> void:
 	_lowe_foe_stage(p, "feast_guest", Vector3(202, 0, -320), "toast", 0.8, 1.9, 4.6, 1.2, 1.0)
 
 func _st_tarnhall_cupbearer(p: Player) -> void:
-	_lowe_foe_stage(p, "cupbearer", Vector3(220, 0, -328.5), "going_round", 1.0, 2.0, 4.4, 1.2, 1.0,
-			Vector3(214.0, 24.55, -316.0))
+	_lowe_foe_stage(p, "cupbearer", Vector3(220, 0, -328.5), "going_round", 0.8, 2.2, 4.4, 1.4, 1.0,
+			Vector3(208.0, 24.55, -319.0))
 
 func _st_tarnhall_champion(p: Player) -> void:
-	_lowe_foe_stage(p, "hall_champion", Vector3(222.6, 0, -323.2), "shield_rush", 0.8, 6.0, 6.0, 1.8, 1.0,
-			Vector3(220.0, 24.55, -312.0))
+	# (the camera on its shield side: the board grown into the left forearm)
+	_lowe_foe_stage(p, "hall_champion", Vector3(222.6, 0, -323.2), "shield_rush", 0.8, 6.0, -6.0, 1.8, 1.0,
+			Vector3(204.0, 24.55, -321.0))
 
 func _st_kettle_crack(p: Player) -> void:
 	# the cracks spread a second before the ice opens: frozen half a second out
@@ -773,8 +774,8 @@ var _cam_fix: Array = []
 
 func _st_host_p2(p: Player) -> void:
 	# the guests standing up out of their places beside him
-	_cam_fix = [Vector3(-2.5, 2.6, 6.8), Vector3(3.2, 1.1, -0.6)]
-	_host_stage(p, 2, "", 0.0, 6.0, -1.0, "p2", 2.9, 1.0, 3.0, 8.0)
+	_cam_fix = [Vector3(-4.5, 3.0, 4.0), Vector3(3.0, 1.4, -1.0)]
+	_host_stage(p, 2, "", 0.0, 6.0, -1.0, "p2", 2.0, 1.0, 3.0, 8.0)
 
 func _st_host_p2b(p: Player) -> void:
 	_host_stage(p, 2, "tip_horn", 0.0, 7.5, 1.8, "", 0.0, 1.4, 4.0, 8.5)
@@ -816,7 +817,7 @@ func _st_tarnhall_doors(p: Player) -> void:
 	if not h.released:
 		h.target = p
 		h._stand_done()
-		_place_player(p, Vector3(186.0, 24.5, -327.0), -PI / 2)
+		_place_player(p, Vector3(191.5, 24.5, -326.0), -PI / 2)   # behind the camera
 		h._die()
 		_t0 = _clock
 	_cam.global_position = Vector3(188.5, 26.6, -325.4)

@@ -68,12 +68,18 @@ func open_pools() -> int:
 	return pools.size()
 
 # ---------------------------------------------------------------- the seats
-## The guests still in their places: the white feast-guest stills the area
-## lays along the benches in RIME (a landmark of the feast-guest model).
+## The guests still in their places: the seated feast-guests the area spawns
+## along the benches in RIME (enemies data "seated", pose sit_feast), or a
+## white still of the feast-guest model.
 func seated() -> Array:
 	var out: Array = []
 	for n3 in _places():
-		if n3.is_visible_in_tree() and not n3.has_meta("risen"):
+		if n3.has_meta("risen"):
+			continue
+		if n3 is Enemy:
+			if not (n3 as Enemy).dead and (n3 as Enemy).state == ES.IDLE:
+				out.append(n3)
+		elif n3.is_visible_in_tree():
 			out.append(n3)
 	out.sort_custom(func(a, b): return _seat_cost(a) < _seat_cost(b))
 	return out
@@ -95,6 +101,17 @@ func raise_guests(n: int) -> int:
 		if placed >= n or standing_guests().size() >= cap:
 			break
 		var s3 := seat as Node3D
+		if s3 is Enemy:
+			# a seated guest stands up out of its place
+			var sg := s3 as Enemy
+			sg.set_meta("risen", true)
+			sg.target = target if target != null else _player()
+			if sg.target != null:
+				sg._set_state(ES.ALERT)
+			guests.append(sg)
+			_fill_horn(sg)
+			placed += 1
+			continue
 		var g := Enemy.new()
 		g.setup(String(_d("guest", "feast_guest")))
 		g.idle_pose = "sit_feast"
@@ -140,12 +157,17 @@ func _places() -> Array:
 			up = up.get_parent()
 		if not in_body:
 			out.append(n3)
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		if e is Enemy and (e as Enemy).cfg.get("seated", false) and (e as Enemy).can_process():
+			out.append(e)
 	_places_cache = out
 	return out
 
 ## Which way a seated still faces (a raw glb: its front is +Z), on the floor.
 static func _seat_faces(seat: Node3D) -> Vector3:
 	var f := seat.global_transform.basis.z
+	if seat is Enemy:
+		f = -(seat as Enemy).vis.global_transform.basis.z   # (an Enemy faces -Z)
 	f.y = 0.0
 	return f.normalized() if f.length() > 0.01 else Vector3.FORWARD
 
@@ -374,7 +396,9 @@ func _table_dir() -> Vector3:
 		var d := (n3 as Node3D).global_position.distance_squared_to(global_position)
 		if d < bd:
 			bd = d
-			best = (n3 as Node3D).global_position - global_position
+			best = _seat_faces(n3)   # the way the nearest place faces: across the table
+			if best.dot((n3 as Node3D).global_position - global_position) < 0.0:
+				best = (n3 as Node3D).global_position - global_position   # (a place across the table from him)
 	if best == Vector3.ZERO:
 		best = -vis.global_transform.basis.z
 	best.y = 0
@@ -434,6 +458,9 @@ func _die() -> void:
 	pools.clear()
 	for g in standing_guests():
 		_sit_guest(g)
+	for n in _places():   # and those still in their places stay there
+		if n is Enemy and not (n as Enemy).dead and not guests.has(n):
+			_sit_guest(n)
 	died.emit(self)
 	_release_flow.call_deferred()
 
@@ -464,8 +491,8 @@ func _fade_out() -> void:
 ## them with him (the area rebuild lays the stills again).
 func _exit_tree() -> void:
 	for g in guests:
-		if is_instance_valid(g):
-			g.queue_free()
+		if is_instance_valid(g) and not (g as Enemy).cfg.get("seated", false):
+			g.queue_free()   # (a seated guest belongs to its spawner)
 	guests.clear()
 	for s in filled:
 		if is_instance_valid(s):

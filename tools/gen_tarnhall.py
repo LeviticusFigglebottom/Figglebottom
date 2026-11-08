@@ -123,6 +123,7 @@ while x < TX1 - 0.6:
                       "mat": "M_drift", "tag": "base", "collide": False})
     k += 1
     x += 1.6
+SEATS = []
 # the guests. THAW: the benches packed. RIME: the same guests, white, in
 # their seats (the Tripo feast-guest as a still); some stand when you come in.
 for i in range(8):
@@ -132,8 +133,10 @@ for i in range(8):
         if (i + (side > 0)) % 2 == 0:
             PROPS.append({"kit": "mannequin_thaw", "at": [r2(gx), FY, r2(gz)], "rot": 0 if side > 0 else 180, "tag": "thaw", "collide": False})
         elif i % 3 != 1:
-            LANDMARKS.append({"scene": "res://assets/models/enemies/feast_guest.glb", "at": [r2(gx), FY, r2(gz)],
-                              "rot": 180 if side > 0 else 0, "tag": "rime"})
+            # seated in their places (sit_feast); the Host raises them (TARNHALL.md 6)
+            SEATS.append({"enemy": "feast_guest_seated", "id": "seat_%d_%s" % (i, "s" if side > 0 else "n"),
+                          "at": [r2(gx), FY + 0.1, r2(gz)], "face": 0 if side > 0 else 180, "pose": "sit_feast",
+                          "absent_flag": "ks_host_released"})
 # the hall's light: the fire along the middle of the floor (THAW), dead in RIME
 PROPS.append({"kit": "fish_kettle", "at": [r2(HALL_C[0] - 4), FY, r2(HALL_C[1] + 2.4)], "rot": 0, "tag": "thaw", "glow": [2.0, 2.4, 14.0]})
 PROPS.append({"kit": "fish_kettle", "at": [r2(HALL_C[0] + 8), FY, r2(HALL_C[1] + 2.4)], "rot": 40, "tag": "thaw", "glow": [2.0, 2.0, 12.0]})
@@ -271,7 +274,7 @@ spawners = [
     # the Host at the long table, filling the horns (TARNHALL.md 4, 6)
     {"enemy": "host", "stand_in": "netmender", "id": "host", "at": [r2(HALL_C[0] + 2.0), FY + 0.1, r2(TABLE_Z + 3.0)], "face": 0,
      "dead_once": True, "frost_veil_id": "long_table_veil"},
-]
+] + SEATS
 VEIL = [r2(BYRE_X0 + 1.4), FY, DOOR_Z]
 pickups = [
     {"id": "byre_cache", "at": [r2(BYRE_C[0] + 4.6), FY, r2(BYRE_C[1] - 3.2)], "item": "bog_iron", "count": 2, "tag": "rime",

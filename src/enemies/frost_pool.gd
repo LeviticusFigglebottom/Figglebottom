@@ -42,7 +42,7 @@ func _ready() -> void:
 	add_to_group("frost_pools")
 	_sheet = MeshInstance3D.new()
 	_sheet.mesh = FloorTelegraph._shape_mesh("ring", [1.0])
-	_sheet_mat = _flat_mat(Color(0.78, 0.88, 1.0, 0.0))
+	_sheet_mat = _flat_mat(Color(0.5, 0.72, 1.0, 0.0))   # glassy blue: it must read on RIME snow
 	_sheet.material_override = _sheet_mat
 	_sheet.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_sheet.position.y = 0.08
@@ -56,7 +56,7 @@ func _ready() -> void:
 	add_child(_rim)
 	_set_r(r_from)
 	var tw := create_tween()
-	tw.tween_property(_sheet_mat, "albedo_color:a", 0.72, 0.25)
+	tw.tween_property(_sheet_mat, "albedo_color:a", 0.62, 0.25)
 	tw.parallel().tween_property(_rim_mat, "albedo_color:a", 0.85, 0.25)
 
 static func _flat_mat(c: Color) -> StandardMaterial3D:

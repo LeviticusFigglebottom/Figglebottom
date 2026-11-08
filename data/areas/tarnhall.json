@@ -4790,56 +4790,6 @@
     -333.5
    ],
    "rot": -90
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    186.5,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    192.79,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    195.93,
-    24.3,
-    -335.55
-   ],
-   "rot": 0,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    202.21,
-    24.3,
-    -335.55
-   ],
-   "rot": 0,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    205.36,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
   }
  ],
  "gates": [
@@ -5012,6 +4962,66 @@
    "face": 0,
    "dead_once": true,
    "frost_veil_id": "long_table_veil"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_0_s",
+   "at": [
+    186.5,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_2_s",
+   "at": [
+    192.79,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_3_n",
+   "at": [
+    195.93,
+    24.400000000000002,
+    -335.55
+   ],
+   "face": 180,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_5_n",
+   "at": [
+    202.21,
+    24.400000000000002,
+    -335.55
+   ],
+   "face": 180,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_6_s",
+   "at": [
+    205.36,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
   }
  ],
  "frost_veils": [

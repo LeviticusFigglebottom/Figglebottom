@@ -21,29 +21,29 @@ albedo_color = Color(0.420, 0.380, 0.330, 1)
 roughness = 1.0
 
 [sub_resource type="CylinderMesh" id="seg"]
-top_radius = 0.05
-bottom_radius = 0.04
-height = 0.07
+top_radius = 0.085
+bottom_radius = 0.07
+height = 0.08
 radial_segments = 12
 material = SubResource("horn")
 
 [sub_resource type="CylinderMesh" id="foot"]
-top_radius = 0.035
-bottom_radius = 0.06
-height = 0.05
+top_radius = 0.05
+bottom_radius = 0.095
+height = 0.06
 radial_segments = 12
 material = SubResource("birch")
 
 [sub_resource type="CylinderMesh" id="band"]
-top_radius = 0.058
-bottom_radius = 0.058
-height = 0.022
+top_radius = 0.092
+bottom_radius = 0.092
+height = 0.03
 radial_segments = 14
 material = SubResource("tin")
 
 [sub_resource type="CylinderMesh" id="inside"]
-top_radius = 0.05
-bottom_radius = 0.05
+top_radius = 0.08
+bottom_radius = 0.08
 height = 0.004
 radial_segments = 14
 material = SubResource("dust")
@@ -56,29 +56,29 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
 mesh = SubResource("foot")
 
 [node name="H0" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.55, 0, 0, 0, 1, 0, 0, 0, 0.55, -0, 0.08, 0)
+transform = Transform3D(0.55, 0, 0, 0, 1, 0, 0, 0, 0.55, -0, 0.09, 0)
 mesh = SubResource("seg")
 
 [node name="H1" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.6625, 0, 0, 0, 1, 0, 0, 0, 0.6625, -0.0171449, 0.142, 0)
+transform = Transform3D(0.6625, 0, 0, 0, 1, 0, 0, 0, 0.6625, -0.0171449, 0.16, 0)
 mesh = SubResource("seg")
 
 [node name="H2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.775, 0, 0, 0, 1, 0, 0, 0, 0.775, -0.0322109, 0.204, 0)
+transform = Transform3D(0.775, 0, 0, 0, 1, 0, 0, 0, 0.775, -0.0322109, 0.23, 0)
 mesh = SubResource("seg")
 
 [node name="H3" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.8875, 0, 0, 0, 1, 0, 0, 0, 0.8875, -0.0433712, 0.266, 0)
+transform = Transform3D(0.8875, 0, 0, 0, 1, 0, 0, 0, 0.8875, -0.0433712, 0.3, 0)
 mesh = SubResource("seg")
 
 [node name="H4" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0492725, 0.328, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0492725, 0.37, 0)
 mesh = SubResource("seg")
 
 [node name="Band" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 mesh = SubResource("band")
 
 [node name="Dust" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.355, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.395, 0)
 mesh = SubResource("inside")

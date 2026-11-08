@@ -576,6 +576,12 @@ func _hall() -> void:
 		if e is Host and e.can_process():
 			host = e
 	check(host != null and host.seated().size() >= 3, "the Host at the table, guests in their places")
+	var sat: Array = host.seated() if host != null else []
+	check(not sat.is_empty() and sat.all(func(g): return g is Enemy and (g as Enemy).vis.current_clip() == "sit_feast"),
+		"seated on the benches (sit_feast), not standing stills")
+	player.global_position = (sat[0] as Node3D).global_position + Vector3(0, 0.3, 2.5) if not sat.is_empty() else player.global_position
+	await ticks(20)
+	check(not sat.is_empty() and (sat[0] as Enemy).state == Enemy.ES.IDLE, "they do not stand for the Bearer passing")
 	var cards := []
 	var on_card := func(t: String, _h: float): cards.append(t)
 	Game.title_card.connect(on_card)
@@ -610,6 +616,8 @@ func _hall() -> void:
 		tally._on_take(player)
 	check(World.flag("ks_guest_tally_found") and _lines_of("guest_tally") == _expected("guest_tally", 3), "the last knots, one knot")
 	await _build(RH.WState.RIME)
+	check(get_tree().get_nodes_in_group(RH.GROUP_ENEMIES).filter(func(e): return e.can_process() and (e as Enemy).cfg.get("seated", false)).is_empty(),
+		"the guests have gone from the benches")
 	gate = _gate()
 	check(gate != null and gate._is_open(), "the doors stay open in a rebuilt hall")
 	check(Game.find_hearth("hs_long_table") != null, "and the Long Table hearth stays lit")

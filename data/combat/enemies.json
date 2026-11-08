@@ -2606,5 +2606,103 @@
    }
   ],
   "release_anim": "defeat"
+ },
+ "feast_guest_seated": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 0.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.9,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Feast-guest",
+  "desc": "A guest the frost took in its seat at the feast. Both hands have grown into rounded fists of ice.",
+  "model": "feast_guest",
+  "hp": 70,
+  "poise": 36,
+  "speed": 2.0,
+  "aggro_sight": 0.0,
+  "hurt_r": 0.45,
+  "hurt_h": 1.7,
+  "col_r": 0.4,
+  "stagger_time": 1.0,
+  "warmth": 32,
+  "rise_time": 1.6,
+  "_ai": "TARNHALL.md 4, 6. A guest still in its place at the long table (pose sit_feast). It does not stand for the Bearer passing: the Host raises it, or a blow does. Otherwise a Feast-guest.",
+  "attacks": [
+   {
+    "id": "cuff",
+    "_tell": "right fist swung round flat, shoulder first (0.6 s). Parryable. Often the left after it.",
+    "range": 2.2,
+    "windup": 0.6,
+    "active": 0.16,
+    "recover": 0.8,
+    "dmg": 16,
+    "poise_dmg": 16,
+    "cooldown": 1.8,
+    "anim": "cuff_swing",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.6,
+    "chain": "cuff_left",
+    "chain_chance": 0.5
+   },
+   {
+    "id": "cuff_left",
+    "_tell": "the weight goes over, the left fist low (0.45 s). Only after a Cuff.",
+    "range": 2.2,
+    "windup": 0.45,
+    "active": 0.14,
+    "recover": 0.9,
+    "dmg": 13,
+    "poise_dmg": 12,
+    "cooldown": 0.0,
+    "anim": "cuff_back",
+    "hands": [
+     "left"
+    ],
+    "lunge": 1.2,
+    "chain_only": true
+   },
+   {
+    "id": "toast",
+    "_tell": "both fists lifted together over the head as if raising a horn, breath twice (1.2 s); a 2.2 m circle glows round it; both fists come down on the floor and everything in the circle is hit. Step out.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 2.2,
+     "arc": 360.0
+    },
+    "range": 2.0,
+    "windup": 1.2,
+    "active": 0.2,
+    "recover": 1.2,
+    "dmg": 24,
+    "poise_dmg": 40,
+    "cooldown": 7.0,
+    "anim": "slash",
+    "breath": "twice",
+    "track": 0.6,
+    "blockable": false,
+    "shake": 0.3,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.2
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ],
+  "seated": true
  }
 }
