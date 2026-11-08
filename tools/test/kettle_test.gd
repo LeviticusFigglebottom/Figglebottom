@@ -89,7 +89,10 @@ func _run() -> void:
 
 	print("== one continuous seam to the Lowe")
 	var seams := area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto)
-	check(seams.size() == 1 and seams[0].to_area == "lowe_barrows", "a single seam, back up the Kettle Road")
+	var up_road := seams.filter(func(p): return p.to_area == "lowe_barrows")
+	check(up_road.size() == 1, "one seam back up the Kettle Road")
+	check(seams.filter(func(p): return p.to_area == "tarnhall").size() == 1, "and one up the Tarn Steps to Tarnhall")
+	seams = up_road
 	var lowe: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/areas/lowe_barrows.json"))
 	var back: Array = lowe["portals"].filter(func(p): return p.get("to", "") == "kettle_fjord")
 	check(back.size() == 1, "the Lowe has the other side of it")
@@ -116,7 +119,9 @@ func _run() -> void:
 	check(not _reaches(p_cache, cache), "no thaw route over the open water to the north shore")
 	if _reaches(p_cache, cache):
 		print("    thaw path to the cache: ", p_cache.slice(0, 3), " ... ", p_cache.slice(p_cache.size() - 4))
-	check(absf(_ray_y(-72, -328, 20) - 2.1) < 0.3, "a jetty deck stands clear of the spur")
+	var deck_y := _ray_y(-72, -328, 20)
+	check(absf(deck_y - 2.12) < 0.1, "a jetty deck stands clear of the spur (y %.2f)" % deck_y)
+	check(deck_y - area.terrain.height_at(-83, -309) > 0.2, "a real step up off the shingle onto the planks")
 	player.global_position = landing + Vector3(0, 0.3, 0)
 	await ticks(6)
 	var walked: bool = await _walk_route([Vector3(-83.0, 0, -312.0), Vector3(-83.0, 0, -328.0),
