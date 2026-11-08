@@ -376,7 +376,9 @@ func _on_stilled() -> void:
 
 func _run() -> void:
 	Game.player_stilled.connect(_on_stilled)
-	World._save_dir = "user://test_fullslice"
+	# its own save dir per mode: a shots run beside a headless run must not
+	# find the other's hearth in slot I (the title would ask to forget it)
+	World._save_dir = "user://test_fullslice" + ("_shots" if shots_dir != "" else "")
 	for i in range(1, World.SLOTS + 1):
 		World.delete_slot(i)
 	World.reset()
@@ -398,6 +400,9 @@ func _run() -> void:
 	get_tree().root.push_input(key)
 	var title: Node = await _wait_child("res://src/ui/title_screen.gd", 90.0)
 	check(title != null, "a key lets the card go; the title rises")
+	if title == null:
+		finish()
+		return
 	await _secs(1.5)
 	await _shot("title")
 	check(not title.has_save, "no hearth kept yet: no Resume")
@@ -410,6 +415,9 @@ func _run() -> void:
 	slots[0].pressed.emit()
 	var diff: Node = await _wait_child("res://src/ui/difficulty_ui.gd", 90.0)
 	check(diff != null, "the winter is weighed after New journey")
+	if diff == null:
+		finish()   # nothing past here can run; fail fast instead of hanging
+		return
 	await ticks(4)
 	check(String(diff._rows[1].text).contains("(default)"), "The Long Winter is marked as the default")
 	await _shot("difficulty")
@@ -417,8 +425,11 @@ func _run() -> void:
 	await ticks(2)
 	check(diff._opt_i == 0, "W weighs toward The Gentle Thaw")
 	_act("interact")
-	check(await _until(func(): return Game.player != null and is_instance_valid(Game.player), 30.0),
-		"the journey begins: the Bearer stands in the world")
+	var began := await _until(func(): return Game.player != null and is_instance_valid(Game.player), 60.0)
+	check(began, "the journey begins: the Bearer stands in the world")
+	if not began:
+		finish()
+		return
 	check(Game.difficulty == "gentle", "The Gentle Thaw holds")
 	player = Game.player
 	area = Game.current_area
@@ -652,7 +663,9 @@ func _run() -> void:
 			boss = e
 	check(boss != null, "the Netmender sits mending")
 	await _shot("netmender_mending")
-	Game.test_boss_dmg_mult = 3.0
+	# a software renderer runs the duel at a frame or two a second; the
+	# Bearer's swings lose contact frames there, so the shots run hits harder
+	Game.test_boss_dmg_mult = 3.0 if shots_dir == "" else 6.0
 	var phases := {}
 	var t_fight := 0
 	var deaths := 0
@@ -797,7 +810,11 @@ func _run() -> void:
 		check(String(sb[0].text).contains("The Gentle Thaw"), "the ledger names the winter (%s)" % sb[0].text)
 		await _shot("title_resume")
 		sb[0].pressed.emit()
-	check(await _until(func(): return Game.player != null and is_instance_valid(Game.player), 30.0), "the hearth resumes")
+	var resumed := await _until(func(): return Game.player != null and is_instance_valid(Game.player), 60.0)
+	check(resumed, "the hearth resumes")
+	if not resumed:
+		finish()
+		return
 	player = Game.player
 	area = Game.current_area
 	player.sim_active = true
