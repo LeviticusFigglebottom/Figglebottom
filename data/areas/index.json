@@ -1,14 +1,19 @@
 {
  "areas": [
   "saltfell_steading",
-  "lowe_barrows"
+  "lowe_barrows",
+  "kettle_fjord"
  ],
  "graph": {
   "saltfell_steading": {
    "lowe_barrows": "the cliff-top pass; the drawbridge"
   },
   "lowe_barrows": {
-   "saltfell_steading": "the cliff-top pass; the drawbridge"
+   "saltfell_steading": "the cliff-top pass; the drawbridge",
+   "kettle_fjord": "the Kettle Road"
+  },
+  "kettle_fjord": {
+   "lowe_barrows": "the Kettle Road"
   }
  }
 }

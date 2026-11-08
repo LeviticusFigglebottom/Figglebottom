@@ -46,6 +46,7 @@ const PIECES := {
 	"bow": {"size": [0.08, 0.4, 1.6], "origin": "grip"},
 	"torch": {"size": [0.14, 0.14, 1.0], "origin": "grip-center"},
 	"shield_kite": {"size": [0.5, 0.1, 0.6], "origin": "strap"},
+	"fish_kettle": {"size": [1.6, 1.6, 2.2], "origin": "bottom-center"},
 	"door_leaf": {"size": [0.95, 0.12, 2.5], "origin": "bottom-center"},
 	"gable_8m": {"size": [4, 8, 3.2], "origin": "bottom-center"},
 	"gable_12m": {"size": [4, 12, 4.4], "origin": "bottom-center"},
@@ -231,6 +232,18 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(-1.8, 1.8, 0), "M_wood", "post_l")
 			_box(n, Vector3(0.4, 3.6, 0.6), Vector3(1.8, 1.8, 0), "M_wood", "post_r")
 			_box(n, Vector3(4.2, 0.4, 0.7), Vector3(0, 3.6, 0), "M_wood", "lintel")
+		"fish_kettle":
+			# a great iron fish-kettle on a tripod over the fire
+			for k in 3:
+				var a := TAU * k / 3.0
+				_box(n, Vector3(0.09, 2.3, 0.09), Vector3(cos(a) * 0.55, 1.05, sin(a) * 0.55), "M_wood_dark", "leg%d" % k,
+					Vector3(sin(a) * 14, 0, -cos(a) * 14))
+			_cyl(n, 0.62, 0.48, 0.75, Vector3(0, 0.95, 0), "M_iron", "kettle", Vector3.ZERO, 16)
+			_cyl(n, 0.58, 0.58, 0.04, Vector3(0, 1.31, 0), "M_marsh", "broth", Vector3.ZERO, 16)
+			_box(n, Vector3(0.04, 0.7, 0.04), Vector3(0, 1.75, 0), "M_iron", "chain")
+			for k in 5:
+				_box(n, Vector3(0.6, 0.12, 0.12), Vector3(0, 0.08, 0), "M_wood", "fire_log%d" % k, Vector3(0, k * 36, 0))
+			_flame(n, Vector3(0, 0.12, 0), 0.45, 0.28, "fire_flame")
 		"door_leaf":
 			# one plank leaf: four boards on two ledges and a brace
 			for k in 4:

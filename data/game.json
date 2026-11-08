@@ -129,6 +129,7 @@
   "fall_safe_speed": 13.0,
   "fall_lethal_speed": 24.0,
   "bog_drag": 0.55,
-  "bog_seconds": 3.0
+  "bog_seconds": 3.0,
+  "thin_ice_seconds": 0.7
  }
 }

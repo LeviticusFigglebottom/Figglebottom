@@ -7,12 +7,15 @@ extends Area3D
 ##             in on your feet does nothing
 ##   "bog"   — black peat water: it drags at the legs, and a Bearer who
 ##             stays in it past hazard/bog_seconds goes under
+##   "thin"  — thin ice over a crevasse or a cut hole: stand on it and it
+##             gives (hazard/thin_ice_seconds, or the spec's "seconds")
 ## Numbers live in data/game.json "hazard".
 
 var kind := "fall"
 var size := Vector3.ONE
 var _falling: Dictionary = {}    # body id -> worst downward speed this fall
-var _sunk: Dictionary = {}       # body id -> seconds in the bog
+var _sunk: Dictionary = {}       # body id -> seconds in the bog / on thin ice
+var seconds := -1.0              # override for "thin"
 
 func _ready() -> void:
 	add_to_group("hazards")
@@ -33,7 +36,7 @@ func _on_enter(b: Node3D) -> void:
 		_take(b as Player, 99999.0)
 
 func _physics_process(_dt: float) -> void:
-	if kind == "bog":
+	if kind == "bog" or kind == "thin":
 		_bog(_dt)
 		return
 	if kind != "fall":
@@ -62,11 +65,15 @@ func _bog(dt: float) -> void:
 		var p := b as Player
 		var key := p.get_instance_id()
 		inside[key] = true
-		var drag := float(DB.tuning("hazard/bog_drag", 0.55))
-		p.velocity.x *= drag
-		p.velocity.z *= drag
+		var limit := float(DB.tuning("hazard/bog_seconds", 3.0))
+		if kind == "bog":
+			var drag := float(DB.tuning("hazard/bog_drag", 0.55))
+			p.velocity.x *= drag
+			p.velocity.z *= drag
+		else:
+			limit = seconds if seconds >= 0.0 else float(DB.tuning("hazard/thin_ice_seconds", 0.7))
 		_sunk[key] = float(_sunk.get(key, 0.0)) + dt
-		if _sunk[key] > float(DB.tuning("hazard/bog_seconds", 3.0)):
+		if _sunk[key] > limit:
 			_sunk.erase(key)
 			_take(p, 99999.0)
 	for k in _sunk.keys():

@@ -31,6 +31,7 @@ static func build(area_id: String) -> Area:
 	for spec in def.get("hazards", []):
 		var hz := HazardVolume.new()
 		hz.kind = String(spec.get("kind", "fall"))
+		hz.seconds = float(spec.get("seconds", -1.0))
 		var hmn := _v3(spec["min"])
 		var hmx := _v3(spec["max"])
 		hz.size = hmx - hmn

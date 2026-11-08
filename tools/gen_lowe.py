@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_lowe as L  # noqa: E402
 import terrain_saltfell as S  # noqa: E402
 from seams_lowe import PASS, seams  # noqa: E402
+from seams_kettle import seam as kettle_seam  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if __name__ == "__main__" and "--keep-terrain" not in sys.argv:
@@ -155,7 +156,7 @@ START = [PASS["x"], r2(L.sample(PASS["x"], PASS["z"] - 5.0) + 0.2), PASS["z"] - 
 edges = {
     "doc": "tools/audit_edges.py classes every walkable boundary; seams to Saltfell are their own class.",
     "walk_max_deg": 45.0, "water_level": 0.0, "drown_depth": 1.15,
-    "nav_bounds": [-124, -262, 70, -80],
+    "nav_bounds": [-124, -266, 70, -80],
     "buildings": BUILDINGS, "thickets": [],
     "state_floors": [{"tag": "rime", "center": [L.BOG[0], L.BOG[1]], "radius": L.BOG_RIM, "y": r2(W)}],
     "gates": [],
@@ -168,7 +169,7 @@ D = {
     "env": {"thaw": {"sun_rot": [-10, -60], "sun_energy": 2.3, "fog_density": 0.0010, "vol_density": 0.004},
             "rime": {"sun_rot": [-30, -40], "fog_density": 0.006, "vol_density": 0.016}},
     "terrain": L.terrain_block(),
-    "nav_bounds": [-124, 10, -262, 70, 90, -80],
+    "nav_bounds": [-124, 10, -266, 70, 90, -80],
     "weather": {"gulls": False, "spindrift": 10},
     "water": [
         {"at": [0, 0.0, -200], "size": [4000, 4000]},
@@ -202,7 +203,7 @@ D = {
         {"at": at(-84, -95), "rot": 20, "text": "THE LOWE\n\nThe barrow hills. Each neighbourhood has its kin-mounds.\nThe turf goes back the same day."},
     ],
     "pickups": pickups,
-    "portals": portals,
+    "portals": portals + [kettle_seam("lowe_barrows")],
     "scripted": [bridge],
     "scatter": {
         "seed": 5150,
