@@ -62,6 +62,7 @@ func _on_activated(player) -> void:
 		return
 	player.lock_control(true)
 	player.velocity = Vector3.ZERO
+	get_tree().call_group("hud", "clear_area_title")
 	var ui := RestUI.new(self, player)
 	get_tree().root.add_child(ui)
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
