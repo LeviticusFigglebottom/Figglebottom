@@ -154,6 +154,15 @@ ca = door_front("kin_a", -0.6)       # just inside the door, where the sleeper s
 sa = door_front("kin_d", 0.4)        # the spade propping the door
 wa = door_front("kin_c", 0.5)        # on the turf before the closed door
 ta = door_front("twin", 5.6)         # the threshold stone, below the twins' door
+# after the release, THAW (LOWE.md 8): Arne sits outside the twins' barrow
+# with Liv and Asta on a summer evening, facing out from the door, the girls
+# half turned to him
+TY = DOORS["twin"][0]
+RELEASE_SCENE = []
+for (nid, ox, oz, turn) in [("arne", 0.0, 3.0, 0), ("liv", -1.35, 3.5, 28), ("asta", 1.35, 3.5, -28)]:
+    sx, sz = rot_off(DOORS["twin"][1][0], DOORS["twin"][1][1], TY, ox, oz)
+    RELEASE_SCENE.append({"id": nid, "at": at(sx, sz), "rot": r2((TY + 180 + turn) % 360), "tag": "thaw",
+                          "require_flag": "ks_turfwright_released"})
 M = "res://assets/models/"
 pickups = [
     {"id": "peat_island_iron", "at": [r2(L.ISLAND[0] + 0.5), r2(W + 0.5), r2(L.ISLAND[1] + 0.8)], "item": "bog_iron",
@@ -229,7 +238,7 @@ D = {
         {"id": "aud", "at": at(-34, -121), "rot": 200, "tag": "thaw"},
         # faces the bog path, with his back to the cutting (its floor is black water)
         {"id": "hesk", "at": at(-58, -166), "rot": 238, "tag": "thaw"},
-    ],
+    ] + RELEASE_SCENE,
     "plaques": [
         {"at": at(-84, -95), "rot": 20, "text": "THE LOWE\n\nThe barrow hills. Each neighbourhood has its kin-mounds.\nThe turf goes back the same day."},
     ],

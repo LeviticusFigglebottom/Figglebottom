@@ -290,8 +290,24 @@ pickups = [
     {"id": "sealer_harpoon", "at": [r2(B0[0] + 2.5), 0.06, r2(B0[1] + 1.5)], "item": "sealer_harpoon", "tag": "rime",
      "label": "Work the harpoon free", "scene": "res://assets/models/weapons/sealer_harpoon.glb"},
 ]
+KX = -54.0
+KZ = edge_z(KX) + 6.0                  # the westmost fish-kettle (see PROPS)
+
+
+def at_kettle(dx, dz):
+    """A place by the westmost kettle, and the yaw that faces it (a character faces -z)."""
+    x, z = KX + dx, KZ + dz
+    return at(x, z), r2(math.degrees(math.atan2(dx, dz)))
+
+
+PELL_AT, PELL_ROT = at_kettle(-1.7, 1.25)
+IVO_AT, IVO_ROT = at_kettle(1.6, 1.15)
 npcs = [
-    {"id": "ivo", "at": SH(-52, 0.4), "rot": 150, "tag": "thaw"},
+    {"id": "ivo", "at": SH(-52, 0.4), "rot": 150, "tag": "thaw", "absent_flag": "ks_ice_cutter_released"},
+    # after the release (KETTLE.md 9): Old Pell and Ivo at the kettle, supper on
+    {"id": "pell", "at": PELL_AT, "rot": PELL_ROT, "tag": "thaw", "require_flag": "ks_ice_cutter_released"},
+    {"id": "ivo", "at": IVO_AT, "rot": IVO_ROT, "tag": "thaw", "require_flag": "ks_ice_cutter_released",
+     "pose": "sit", "seat": "wood"},
     # the trader and her crewman at the foot of the middle house's walk
     {"id": "halla", "at": SH(-41.0, -0.8), "rot": 140, "tag": "thaw"},
     {"id": "sten", "at": SH(-35.5, -1.2), "rot": 170, "tag": "thaw"},
