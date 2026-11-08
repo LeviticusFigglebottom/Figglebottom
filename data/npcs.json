@@ -476,5 +476,48 @@
    "Somebody's coughing on the far bench. Pass him a horn, it'll settle him."
   ],
   "services": []
+ },
+ "old_calder": {
+  "name": "Old Calder",
+  "short_name": "Calder",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Hold still, Brokenhorn. Not you. Her. The one with the torn ear.",
+   "Wall comes down every winter and I put it back every summer. The wall and I have an understanding.",
+   "The lass calls them in at night. You'll hear her. Every sheep on the mountain looks up."
+  ],
+  "lines_repeat": [
+   "Forty-one, forty-two. Where's Smudge. There's Smudge.",
+   "Mind the beck. It's colder than it looks and it looks cold."
+  ],
+  "services": []
+ },
+ "maren": {
+  "name": "Maren",
+  "short_name": "Maren",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Have you come far? You look like you've come far.",
+   "We came up to see the water go. She's never seen it go.",
+   "Don't watch the flowers out of sight, love. They go all the way to the sea."
+  ],
+  "lines_repeat": [
+   "It's loud, isn't it. It's always this loud the first day.",
+   "Have you far to go?"
+  ],
+  "services": []
+ },
+ "wren": {
+  "name": "Wren",
+  "short_name": "Wren",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "That one's going to the sea.",
+   "And that one."
+  ],
+  "lines_repeat": [
+   "And that one."
+  ],
+  "services": []
  }
 }

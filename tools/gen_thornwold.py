@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_thornwold as K  # noqa: E402
 import thorn_land as T  # noqa: E402
 from seams_thornwold import seam  # noqa: E402
+from seams_high import seam as high_seam  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if __name__ == "__main__" and "--keep-terrain" not in sys.argv:
@@ -154,6 +155,7 @@ for (cx, cz, a0) in ((x1 - T.WOOD_R, z0 + T.WOOD_R, -90.0), (x1 - T.WOOD_R, z1 -
 edge.append(edge[0])
 # densify, then split into runs, open where the drove-road enters (west side)
 ROAD_IN_Z = T.DROVE[0][1]
+FELL_OUT_Z = -331.0            # the fell path up to Shepherd's Reach leaves the wood's east side
 dense = [edge[0]]
 for (ax, az), (bx, bz) in zip(edge, edge[1:]):
     n = max(1, int(math.hypot(bx - ax, bz - az) / 3.0))
@@ -161,7 +163,7 @@ for (ax, az), (bx, bz) in zip(edge, edge[1:]):
         dense.append([ax + (bx - ax) * k / n, az + (bz - az) * k / n])
 runs, cur = [], []
 for p in dense:
-    if p[0] < x0 + inset + 3.0 and abs(p[1] - ROAD_IN_Z) < 5.5:
+    if (p[0] < x0 + inset + 3.0 and abs(p[1] - ROAD_IN_Z) < 5.5) or (p[0] > x1 - inset - 3.0 and abs(p[1] - FELL_OUT_Z) < 5.5):
         if len(cur) > 1:
             runs.append(cur)
         cur = []
@@ -192,7 +194,7 @@ PROPS.append({"kit": "creel_stack", "at": at(CX - 3.0, CZ + 8.0), "rot": 30, "co
 PROPS.append({"kit": "rope_coil", "at": at(CX + 2.0, CZ - 6.0), "rot": 10, "collide": False})
 
 # --- forest -------------------------------------------------------------------
-FOREST_CLEAR = [[CX, CZ, CR], [GX, GZ, R3 + 3.0]]
+FOREST_CLEAR = [[CX, CZ, CR], [GX, GZ, R3 + 3.0], [481.0, -331.0, 6.0]]
 forest = {
     "seed": 5150,
     "clear": FOREST_CLEAR,
@@ -272,7 +274,7 @@ D = {
     "plaques": [{"at": at(T.DROVE[0][0] + 3.0, T.DROVE[0][1] - 5.5, 0.0), "rot": 250,
                  "text": "THORNWOLD\n\nThe drove-roads run between laid hedges. Charcoal clearings on the slopes."}],
     "pickups": pickups,
-    "portals": [portal],
+    "portals": [portal, high_seam("reach", "thornwold")],
     "forest": forest,
     "scatter": {
         "seed": 5151,

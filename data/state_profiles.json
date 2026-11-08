@@ -12,33 +12,33 @@
 		"sun_energy": 2.05,
 		"ambient": [
 			0.32,
-			0.29,
-			0.28
+			0.31,
+			0.33
 		],
 		"ambient_energy": 0.48,
 		"sky_contribution": 0.22,
 		"ssao_intensity": 1.65,
 		"bg_top": [
-			0.24,
-			0.16,
-			0.14
+			0.2,
+			0.3,
+			0.48
 		],
 		"bg_horizon": [
-			0.88,
-			0.58,
-			0.3
+			0.96,
+			0.7,
+			0.44
 		],
 		"fog_color": [
-			0.78,
-			0.56,
-			0.34
+			0.72,
+			0.64,
+			0.56
 		],
 		"fog_density": 0.0018,
 		"vol_density": 0.0075,
 		"vol_albedo": [
-			0.95,
-			0.8,
-			0.58
+			0.92,
+			0.84,
+			0.72
 		],
 		"exposure": 0.98,
 		"contrast": 1.09,
