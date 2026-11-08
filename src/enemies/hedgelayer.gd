@@ -155,7 +155,20 @@ func _st_transition(dt: float) -> void:
 		var ev: Array = _trans_events.pop_front()
 		_transition_event(String(ev[1]))
 	var tt := _transition_time()
-	if target != null and is_instance_valid(target) and (_trans != "wake" or state_t > tt * 0.4):
+	if (_trans == "p2" or _trans == "p3") and state_t < tt * 0.45:
+		# to where the ring's gap will be: on its line, on his side of the grave
+		var rr := float((_d("ring2" if _trans == "p2" else "ring3", {}) as Dictionary).get("radius", 8.0))
+		var from_g := global_position - grave_point()
+		from_g.y = 0
+		var want := grave_point() + (from_g.normalized() if from_g.length() > 0.2 else Vector3.LEFT) * rr
+		var to := want - global_position
+		to.y = 0
+		if to.length() > 0.3:
+			var v := to.normalized() * minf(float(cfg.get("speed", 2.2)) * 1.6, to.length() / 0.3)
+			velocity.x = v.x
+			velocity.z = v.z
+			_face(to, dt, 2.0)
+	elif target != null and is_instance_valid(target) and (_trans != "wake" or state_t > tt * 0.4):
 		_face(target.global_position - global_position, dt, 1.2)
 	if state_t >= tt:
 		if _trans == "wake":
