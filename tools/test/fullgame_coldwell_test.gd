@@ -68,7 +68,7 @@ func _on_warmth(now: int) -> void:
 func _init() -> void:
 	region = "coldwell"
 	aid = "coldwell"
-	start_fixture = "fullgame_start_coldwell_provisional"
+	start_fixture = "fullgame_after_reach"
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--fullgame-leg="):
 			_skip_to = a.get_slice("=", 1)
