@@ -421,6 +421,13 @@ func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi :=
 	if quad != null:
 		# the wind-up pose is struck quickly and HELD for the rest of the
 		# telegraph (it used to sink in slowly over the whole windup)
+		var st = (HumanoidLib.model_cfg(model_id).get("strikes", {}) as Dictionary).get(clip)
+		if st is Dictionary and quad.poses.has(String((st as Dictionary).get("load", ""))):
+			# a keyed strike: load, launch, extension, bite, landing, recover,
+			# timed off the windup (ADR 0012 pass 3)
+			_quad_clip = clip
+			quad.strike(st, contact_at)
+			return 1.0
 		_quad_play(clip, minf(contact_at, 0.18))
 		return 1.0
 	var rate := clampf(HumanoidLib.mannequin_contact(clip) / maxf(contact_at, 0.02), lo, hi)
