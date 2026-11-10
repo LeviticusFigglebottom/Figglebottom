@@ -3,6 +3,8 @@
 ## doing
 Format: worktree → branch.
 
+- `/home/user/fb-look2` → `art/look-pass-2`: look pass 2 (card grass, hearthstones, sky, gables, fences, ewes); pushed, awaiting merge
+
 - `/home/user/fb-ui` → `feat/ui-keepsakes`
   - UI re-skin (bone and ember, OFL font), house card, Keepsakes journal
   - Ingra and Brede's lines, verbatim from SLICE.md
@@ -18,6 +20,12 @@ Format: worktree → branch.
 - `/home/user/fb-audio` → `feat/audio-frost` (ready for review)
   - Frost/melt wavefront in `hall`, `hall_ds` and `terrain` (`shaders/wavefront.gdshaderinc`), snow-crystal and pollen/steam/drip wave particles
   - The score (THAW, RIME, the Outsong, the Netmender, title), ambiences and the foley pass: `docs/audio/MUSIC.md`
+
+- `/home/user/fb-end` → `feat/reach-coldwell-endings` (ready for review)
+  - Reach and Coldwell encounters and writing (`REACH.md`, `COLDWELL.md`)
+  - Both endings, the credits, the world after each (ADR 0013)
+- `/home/user/fb-anim` → `feat/combat-anims` (ready for review)
+  - Player combat clips: shared combat library, weapon-class clip sets and grips (ADR 0011)
 
 ## todo
 1. Wire Brede's `give_oilskins` gift once his NPC data lands.

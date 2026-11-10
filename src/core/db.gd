@@ -42,8 +42,16 @@ func moveset(id: String) -> Dictionary:
 func enemy(id: String) -> Dictionary:
 	return table("enemies").get(id, {})
 
+## An item's text may change with the story ("desc_when": [{flag, desc}],
+## first set flag wins): the fostering horn, looked at again at the wellhead.
 func item(id: String) -> Dictionary:
-	return table("items").get(id, {})
+	var it: Dictionary = table("items").get(id, {})
+	for w in it.get("desc_when", []):
+		if World.flag(String(w.get("flag", ""))):
+			var out := it.duplicate()
+			out["desc"] = String(w.get("desc", ""))
+			return out
+	return it
 
 func npc(id: String) -> Dictionary:
 	return table("npcs").get(id, {})

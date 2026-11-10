@@ -6057,6 +6057,20 @@
    "scene": "res://assets/models/props/ivo_mitten.tscn",
    "require_flag": "ks_ice_cutter_released",
    "audit_skip": "the hole under it is thin ice until the release seals it (release_seal)"
+  },
+  {
+   "id": "ice_tracks",
+   "at": [
+    -18.0,
+    0.06,
+    -315.9
+   ],
+   "rot": -90,
+   "tag": "rime",
+   "scene": "res://assets/models/props/ice_tracks.tscn",
+   "label": "Look at the tracks",
+   "set_flag": "ks_ice_tracks_seen",
+   "look": "One set of footprints, frozen in, going up the fjord by the thin ice in the middle where nobody walks.\n\nThe left stride is longer than the right. They do not go round anything."
   }
  ],
  "portals": [

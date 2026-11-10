@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="StandardMaterial3D" id="hide"]
+albedo_color = Color(0.300, 0.220, 0.150, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="sole"]
+albedo_color = Color(0.160, 0.120, 0.090, 1)
+roughness = 0.95
+
+[sub_resource type="CylinderMesh" id="shaft"]
+top_radius = 0.07
+bottom_radius = 0.06
+height = 0.26
+radial_segments = 10
+material = SubResource("hide")
+
+[sub_resource type="BoxMesh" id="foot"]
+size = Vector3(0.11, 0.08, 0.27)
+material = SubResource("hide")
+
+[sub_resource type="BoxMesh" id="sole"]
+size = Vector3(0.12, 0.02, 0.28)
+material = SubResource("sole")
+
+[node name="CalderBoots" type="Node3D"]
+metadata/upright = true
+
+[node name="Shaft0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.2, 0.07)
+mesh = SubResource("shaft")
+
+[node name="Foot0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.06, 0)
+mesh = SubResource("foot")
+
+[node name="Sole0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.01, 0)
+mesh = SubResource("sole")
+
+[node name="Shaft1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09, 0.2, 0.07)
+mesh = SubResource("shaft")
+
+[node name="Foot1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09, 0.06, 0)
+mesh = SubResource("foot")
+
+[node name="Sole1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09, 0.01, 0)
+mesh = SubResource("sole")

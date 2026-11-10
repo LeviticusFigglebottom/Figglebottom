@@ -60,10 +60,49 @@ func set_pose(name: String, weight := 1.0, blend := 0.2) -> void:
 	_w_to[name] = weight
 	_w_speed[name] = 1.0 / maxf(blend, 0.01)
 
+## pose -> [next pose, seconds before it, blend] (clip_meta pose_seq): an
+## extension pose hands over to its landing on a timer.
+var pose_seq: Dictionary = {}
+var _seq_next := ""
+var _seq_t := 0.0
+var _seq_blend := 0.1
+
+## A strike in flight (clip_meta models.<id>.strikes): the poses still to
+## come, each [pose, seconds from now, blend]. Timed off the attack's data
+## windup by strike(), so the launch always leaves just before contact.
+var _queue: Array = []
+
 ## Release every pose except `keep`.
 func only(keep: String, blend := 0.2) -> void:
+	_queue.clear()
+	_only(keep, blend)
+
+## Crouch-load now, held for the telegraph, then the keyed beats of the
+## strike: launch `lead` seconds before `contact_at`, and each later beat
+## [pose, seconds after the one before, blend] (full extension, bite or gore,
+## landing, recover).
+func strike(st: Dictionary, contact_at: float) -> void:
+	_queue.clear()
+	_only(String(st.get("load", "")), minf(contact_at * 0.5, float(st.get("rise", 0.16))))
+	var at := maxf(contact_at - float(st.get("lead", 0.1)), 0.0)
+	for beat in st.get("chain", []):
+		if not (beat is Array) or (beat as Array).size() < 3 or not poses.has(String(beat[0])):
+			continue
+		at += float(beat[1])
+		_queue.append([String(beat[0]), at, float(beat[2])])
+
+func striking() -> bool:
+	return not _queue.is_empty()
+
+func _only(keep: String, blend: float) -> void:
 	for n in poses:
 		set_pose(n, 1.0 if n == keep else 0.0, blend)
+	_seq_next = ""
+	var sq = pose_seq.get(keep)
+	if sq is Array and (sq as Array).size() >= 3 and poses.has(String(sq[0])):
+		_seq_next = String(sq[0])
+		_seq_t = float(sq[1])
+		_seq_blend = float(sq[2])
 
 func weight(name: String) -> float:
 	return float(_w.get(name, 0.0))
@@ -77,6 +116,17 @@ func gait(dt: float, ground_speed: float) -> void:
 func _physics_process(dt: float) -> void:
 	if skel == null:
 		return
+	if not _queue.is_empty():
+		for beat in _queue:
+			beat[1] -= dt
+		while not _queue.is_empty() and float(_queue[0][1]) <= 0.0:
+			var beat: Array = _queue.pop_front()
+			_only(String(beat[0]), float(beat[2]))
+	if _seq_next != "":
+		_seq_t -= dt
+		if _seq_t <= 0.0:
+			var nx := _seq_next
+			only(nx, _seq_blend)
 	for n in _w:
 		_w[n] = move_toward(_w[n], _w_to[n], dt * _w_speed[n])
 	_shake_t += dt

@@ -1,0 +1,56 @@
+# ADR 0012: Foe attack clips cut to their data windups
+
+- **Status:** accepted
+- **Date:** 2026-11-10
+- **Decider:** combat animation lead (feat/foe-anims)
+- **Follows:** ADR 0004, ADR 0011
+
+## Context
+
+Next to the Bearer's new moveset the foes looked weak. Most plain melee was one Tripo chop (`slash`) rate-scaled to windups of 0.35–1.2 s, or a stiff Euler overlay; quadruped wind-up poses sank in slowly over the whole windup. A long telegraph played as slow motion.
+
+## Decision
+
+Every covered attack gets **its own hand-keyed clip, built to that attack's windup** (`tools/anim/foe_clips.py`, read from `data/combat/enemies.json` at build time), so it plays at 1x:
+
+1. a quick rise into a clear anticipation shape (about a quarter second),
+2. that shape **held**, creeping a little further, for as long as the telegraph lasts,
+3. a 0.09–0.14 s strike landing exactly on the windup,
+4. an overshoot, a held follow-through, and a recovery.
+
+A long windup is a long hold, never a slow swing. Clips are archetypes (hook, backhand, overhead, double slam, thrust, throw, plant, low sweep, cross cut, shield rush, scoop, the Keener's sung shapes, the yoke twist, the three oar strokes) with per-foe amplitude, side and posture, solved on the same IK control rig as the Bearer's keyed clips.
+
+Runtime:
+
+- The build writes its own metadata into `clip_meta.json`: clips `f_<foe>_<attack>` with `contact` = the windup, a clip set `foe_<foe>` whose `"@<attack id>"` keys name them, and `models.<foe>.clip_set`.
+- `Enemy._begin_attack` passes `"@<attack id>"` as an alternative to `play_timed`; where it resolves, that clip plays under the attack's usual game name (so `current_clip()` and every test that reads it are unchanged).
+- Ordinary foes also take `stagger` → `react_front` and `death` → `fall_back` (the library's real fall). Holdfasts keep their own staggers, endings and signature clips; only their plain melee was replaced.
+- Quadrupeds: the wind-up pose is now reached in at most 0.18 s and held, instead of easing in over the whole windup.
+
+## Consequences
+
+- No timing data changed. Changing a windup in `enemies.json` means rebuilding the library (the `anim` suite fails until then: it checks every clip's contact against the data).
+- Not covered, left on their existing clips: the Netmender (her clips ride her own hunched idle), signature overlays (`door_fall`, `lift_stone`, `tray_spin`, the Holdfasts' prompt clips), and any foe rows that only exist on `feat/reach-coldwell-endings`.
+- The clips are authored on the Bearer's proportions and retargeted by the standard frame; very differently built bodies (the Turfwright's back load) can clip a raised arm into their own mesh.
+- Sheets: `tools/anim/foe_sheets.sh --all` writes `docs/screens/anim_foe_<id>_<attack>_sheet.png`.
+
+## Update: pass 2
+
+- **Root cause of foes striking sideways:** only seven models had ever been through `tools/art/humanoid_import.py`. Every other Mixamo foe and NPC still had an un-retargeted skeleton (rotated a quarter turn under its rig node, rest axes not the profile's), so shared clips and overlays played 90 degrees off their facing. The retarget options are now applied to every rigged character, with `fix_silhouette` on (the bulky bodies are rigged in an A-pose).
+- **Each foe is keyed on its own stance:** `tools/anim/dump_idles.gd` writes every model's idle pose from Godot's retargeted skeleton to `tools/anim/foe_idles.json`; the build uses it as the base pose, so the Netmender keeps her hunch and the carrier his stoop.
+- **Coverage is now 55 attacks**, including the Netmender (stitches, casts, sea weight, knot, mend), the Holdfasts' ground, throw and sweep moves, the carrier's stone set and toss, and the Cupbearer's whirl. A foe's hand raised above the shoulders is pushed wide and forward where the model carries a load (`clear`).
+- **Staggers** are per foe, on its own stance; Holdfasts' are slowed to fill their longer stagger. A foe's own attack clip suppresses the old `hit_anim` follow-up.
+- **Quadrupeds:** `tools/anim/quad_poses.py` derives a deeper load, a fuller extension and a new landing pose; `pose_seq` chains extension to landing.
+- Still on their old clips: Holdfast transitions, holds and release beats; `door_fall`; `back_drop`, `stack_sod`, `step_into`, `raise_guests`, `tip_horn`, `haul`, `turn_away`, `ring_cut`.
+
+## Update: pass 3
+
+- **Reviewed on sheets** (`tools/anim/foe_sheets.sh --all`, now 113 sheets: every clip in every foe clip set, plus the quadrupeds' poses).
+- **Archetypes can now carry more than three poses.** `telegraph` takes a `pre` pose (a reach or gather before the anticipation), a `mid` pose the strike passes through (an elbow that leads), and its own rise, strike, hold and recovery seconds; an archetype marked `.full` returns its whole key list (`tools/anim/foe_beats.py`).
+- **Weak clips rekeyed:** the Oarsman's back stroke (the oar now goes from behind his left side right round to his right), the Cupbearer's going-round (side-on with the blades level, then one stepped full turn per cut in the data's `hits`), the champion's shield bash (set behind an upright forearm, mace arm back), the Netmender's stitches (a jab per `hits` entry on her hunch, re-cocked at the ear before the late one), the Turfwright's chops (elbow bent and leading), the carrier's yoke swing (a 190-degree sweep with a step), the Keener's breath note, keen (hands to the mask, rocking twice) and hush (face turned away, shoulders up).
+- **Overhead wind-ups keep a bent elbow.** Hands were keyed at 2 m, past the arm's reach, which locked the arm straight.
+- **Signature moves hand-keyed**, replacing the text-prompt clips and overlays: `back_drop`, `stack_sod`, `step_into`, `raise_guests`, `tip_horn`, `haul`, `turn_away`, `ring_cut`, and the barrow-sleeper's `door_fall` (a rigid fall about the toes). `drill_down`, `haul_trace`, `table_sweep`, `bench_throw`, `raise_wall` and `thorn_lash` were already keyed in pass 2 and were kept; the trace is now thrown with the left hand, as its tell says.
+- **Intro, hold and release beats** are library clips answered by their game clip name in the foe's clip set (`beats` in `FOES`): the Netmender mending, tying off and biting the twine, sitting back down, curling over; the Turfwright pressing the sod to the door, lifting the last turf, laying it; the Ice-cutter drilling, kneeling to cut fresh, resting the auger; the Host pouring along the table, setting the horn down, sitting; the Hedgelayer laying a stem, measuring the gap, kneeling with his hands on the ground. Game code is unchanged: it still plays `sit_mend`, `lay_turf`, and so on.
+- **Quadrupeds** (`tools/anim/quad_poses.py`): poses are keyed per joint (upper leg, fore, pastern, thigh, shin, hock, neck, head) instead of scaled from the first art pass. `clip_meta` `models.<id>.strikes` chains load, launch, extension, bite or gore, landing and recover; `QuadRig.strike` times the launch off the attack's data windup. The stag's stray fore-hoof skin weights are rebound by `tools/art/fix_stag_hoof_weights.py`.
+- **Not covered: the Shepherd's Reach and Coldwell foes.** `origin/feat/reach-coldwell-endings` adds rows for `frost_ram`, `drover`, `upwalker`, `unsung`, `fellcaller` and `leadvoice`. That branch is not merged here, so they have no `FOES` entries and no strikes. After it lands: add them to `FOES` (and the ram to `quad_poses.py`), rebuild, and render their sheets.
+- **Still weak, by eye:** the Hedgelayer's `measure_gap` reads from the side as one raised arm (the camera, and his thin arms); the Netmender's seated beats are hard to read under her net and skirts; the Host's sit has no bench under it in the sheet, so judge it in the hall; the sledge dog's long spine chain keeps its crouch shallower than the hound's.

@@ -3216,5 +3216,985 @@
     "anim": "measure_gap"
    }
   ]
+ },
+ "drover": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 2.2,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Drover",
+  "desc": "A herd the frost took on the drift down. A crook of ice has grown from both hands, one piece, and it will not put it down.",
+  "model": "drover",
+  "hp": 110,
+  "poise": 48,
+  "speed": 2.3,
+  "aggro_sight": 13.0,
+  "hurt_r": 0.48,
+  "hurt_h": 2.0,
+  "col_r": 0.42,
+  "stagger_time": 1.0,
+  "warmth": 40,
+  "keep_range": 3.2,
+  "_ai": "REACH.md 5. Long-limbed, keeps a crook's length off. Sweeps the crook, hooks a leg and pulls the Bearer off his feet toward it, and whistles the rams in.",
+  "attacks": [
+   {
+    "id": "crook_sweep",
+    "_tell": "the crook carried back over the left shoulder, both hands (0.7 s); a long flat sweep, 3 m. Parryable.",
+    "range": 3.0,
+    "windup": 0.7,
+    "active": 0.2,
+    "recover": 0.9,
+    "dmg": 20,
+    "poise_dmg": 24,
+    "cooldown": 1.9,
+    "anim": "slash",
+    "hands": [
+     "right",
+     "left"
+    ],
+    "lunge": 1.8,
+    "body_hitbox": true,
+    "reach": 3.0,
+    "width": 2.6,
+    "height": 1.4,
+    "arc": 150.0
+   },
+   {
+    "id": "leg_hook",
+    "_tell": "the crook turned over, hook down, slid out along the ground (1.0 s); a 1.0 x 5 m strip glows; it takes the Bearer by the leg and pulls him in to 1.5 m (mash to break). Then a Crook sweep.",
+    "type": "hook",
+    "range": 5.0,
+    "min_range": 2.2,
+    "length": 5.0,
+    "width": 1.0,
+    "offset": 0.4,
+    "snare": 0.7,
+    "mash": 4,
+    "haul_to": 1.5,
+    "pull_time": 0.4,
+    "then": "crook_sweep",
+    "windup": 1.0,
+    "active": 0.15,
+    "recover": 0.8,
+    "dmg": 8,
+    "poise_dmg": 30,
+    "cooldown": 7.0,
+    "anim": "rake_sweep",
+    "breath": "held",
+    "track": 0.9,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.0,
+      5.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ],
+     "offset": 0.4
+    }
+   },
+   {
+    "id": "whistle_in",
+    "_tell": "two fingers to the mask, head back, breath straight up (0.9 s); every idle Frost-ram within 18 m lifts its head and comes. No damage.",
+    "type": "alert",
+    "radius": 18.0,
+    "range": 14.0,
+    "min_range": 3.0,
+    "windup": 0.9,
+    "active": 0.1,
+    "recover": 0.6,
+    "cooldown": 40.0,
+    "anim": "whistle",
+    "breath": "up"
+   }
+  ]
+ },
+ "frost_ram": {
+  "poise_regen": 7,
+  "turn": 6.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 6.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.2,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.3,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Frost-ram",
+  "desc": "A fell tup the frost took with its head down. The horns have gone on growing, in ice, a full turn more than a ram's should.",
+  "model": "frost_ram",
+  "hp": 70,
+  "poise": 60,
+  "speed": 3.6,
+  "aggro_sight": 12.0,
+  "hurt_r": 0.55,
+  "hurt_h": 1.1,
+  "col_r": 0.5,
+  "stagger_time": 0.9,
+  "warmth": 30,
+  "keep_range": 5.0,
+  "head_offset": [
+   0.0,
+   0.95,
+   -0.75
+  ],
+  "_ai": "REACH.md 5. Backs off to charging distance (keep_range), charges the length of a strip, butts whoever is close, and kicks out behind at whoever gets round it.",
+  "attacks": [
+   {
+    "id": "butt",
+    "_tell": "a step back, head tucked (0.5 s); a short drive forward, 2.4 m.",
+    "type": "line",
+    "kind": "physical",
+    "length": 2.6,
+    "width": 1.3,
+    "range": 2.6,
+    "windup": 0.5,
+    "active": 0.2,
+    "recover": 0.8,
+    "dmg": 14,
+    "poise_dmg": 34,
+    "cooldown": 1.8,
+    "anim": "butt",
+    "lunge": 5.0,
+    "track": 1.2,
+    "shake": 0.1
+   },
+   {
+    "id": "charge",
+    "_tell": "head right down, one forefoot scraping twice, breath forward (1.0 s); a 1.5 x 11 m strip glows; it runs the length of the strip. Knocks down. Not blockable. It cannot stop: it overruns and stands shaking its head (1.3 s).",
+    "type": "line",
+    "kind": "physical",
+    "length": 11.0,
+    "width": 1.5,
+    "blockable": false,
+    "range": 11.0,
+    "min_range": 4.0,
+    "windup": 1.0,
+    "active": 0.75,
+    "recover": 1.3,
+    "dmg": 26,
+    "poise_dmg": 80,
+    "cooldown": 5.0,
+    "anim": "charge",
+    "lunge": 14.0,
+    "track": 1.0,
+    "shake": 0.3,
+    "breath": "forward",
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.5,
+      11.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "kick",
+    "_tell": "the Bearer behind it: hindquarters drop, a glance back (0.45 s); both hind feet. 2.2 m behind.",
+    "type": "line",
+    "kind": "physical",
+    "aim": "back",
+    "length": 2.4,
+    "width": 1.4,
+    "range": 2.2,
+    "windup": 0.45,
+    "active": 0.15,
+    "recover": 0.7,
+    "dmg": 16,
+    "poise_dmg": 40,
+    "cooldown": 3.0,
+    "anim": "kick",
+    "track": 0.0,
+    "shake": 0.1,
+    "behind_only": true
+   }
+  ]
+ },
+ "fellcaller": {
+  "name": "The Fellcaller",
+  "bar_name": "THE FELLCALLER",
+  "desc": "Sigga Calder, whose calls carried three valleys. Her father walked up to the high fold in the night so she would not catch his cough. She has been calling the flock to him ever since.",
+  "class": "res://src/enemies/fellcaller.gd",
+  "model": "fellcaller",
+  "body": "mannequin_holdfast",
+  "is_boss": true,
+  "hp": 1600,
+  "poise": 150,
+  "poise_regen": 30,
+  "speed": 2.6,
+  "turn": 3.6,
+  "aggro_sight": 40.0,
+  "aggro_fov": 360.0,
+  "aggro_hear": 40.0,
+  "leash": 999.0,
+  "arm_h": 2.3,
+  "arm_dx": 0.6,
+  "hurt_r": 0.95,
+  "hurt_h": 3.2,
+  "col_r": 0.75,
+  "stagger_time": 1.6,
+  "stride": 2.3,
+  "sfx_alert": "res://assets/audio/horn_low.wav",
+  "warmth": 2600,
+  "_fight": "REACH.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: calling over the fold wall beside her father until the Bearer is within wake_dist or strikes her. father_off: [dx, dz] from where she stands to where he sits. guard_r: in phase 3 she will not go further than this from him.",
+  "phase_at": [
+   0.65,
+   0.3
+  ],
+  "phase_speed": [
+   1.0,
+   1.05,
+   1.1
+  ],
+  "wake_dist": 8.0,
+  "parry_stagger_mult": 1.5,
+  "father_off": [
+   3.0,
+   -1.2
+  ],
+  "guard_r": 7.0,
+  "herd_kit": "sheep",
+  "herd_remap": {
+   "M_fleece": "M_rime",
+   "M_wool": "M_rime",
+   "M_leather": "M_rime"
+  },
+  "transitions": {
+   "wake": {
+    "_tell": "the call stops in the middle; she lowers the horn and turns; the bar appears",
+    "time": 2.4,
+    "anim": "idle",
+    "events": [
+     [
+      0.8,
+      "turn"
+     ]
+    ]
+   },
+   "p2": {
+    "_tell": "both arms up, the horn over her head, a call that does not rise (3.0 s); two Frost-rams come over the fold wall",
+    "time": 3.0,
+    "anim": "summon",
+    "events": [
+     [
+      1.6,
+      "rams"
+     ]
+    ]
+   },
+   "p3": {
+    "_tell": "she goes back to her father and stands over him, between him and the Bearer (3.0 s)",
+    "time": 3.0,
+    "anim": "walk",
+    "events": [
+     [
+      2.2,
+      "stand_over"
+     ]
+    ]
+   }
+  },
+  "p2_rams": 2,
+  "release_flag": "ks_fellcaller_released",
+  "release_card": "THE FELLCALLER — RELEASED",
+  "release_hearth": "hs_high_fold",
+  "release_anim": "kneel_down",
+  "release_drop": {
+   "item": "item_fold_tally",
+   "label": "Take the fold-tally",
+   "pickup_id": "fold_tally",
+   "at_point": true,
+   "set_flag": "ks_fold_tally_found",
+   "scene": "res://assets/models/props/fold_tally.tscn"
+  },
+  "release_flock": {
+   "group": "flock_rime",
+   "lie": 0.58,
+   "over": 1.1
+  },
+  "attacks": [
+   {
+    "id": "horn_swing",
+    "_tell": "the calling horn drawn back across the body in the right fist (0.8 s); one long backhand, 3.4 m. Parryable.",
+    "range": 3.4,
+    "windup": 0.8,
+    "active": 0.22,
+    "recover": 1.1,
+    "dmg": 30,
+    "poise_dmg": 46,
+    "cooldown": 2.0,
+    "anim": "slash",
+    "hands": [
+     "right"
+    ],
+    "lunge": 2.2,
+    "parry_stagger": true
+   },
+   {
+    "id": "rising_cry",
+    "_tell": "the horn to the mask, her head goes back, breath straight up (1.5 s); a 6.5 m circle glows round her; the cry goes up and everything in the circle is staggered. Little damage. Roll through the end of it, or be outside. Phase 3: twice.",
+    "type": "nova",
+    "nova_kind": "frost",
+    "nova_radius": 6.5,
+    "kind": "frost",
+    "range": 6.0,
+    "windup": 1.5,
+    "active": 0.2,
+    "recover": 1.1,
+    "dmg": 14,
+    "poise_dmg": 95,
+    "cooldown": 7.0,
+    "anim": "call",
+    "breath": "up",
+    "track": 0.0,
+    "sfx_windup": "res://assets/audio/horn_low.wav",
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      6.5
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "by_phase": {
+     "3": {
+      "hits": [
+       0.0,
+       1.0
+      ],
+      "cooldown": 6.0
+     }
+    }
+   },
+   {
+    "id": "head_down",
+    "_tell": "she drops her head till the ram's horns point at the Bearer and scrapes one foot back (1.1 s); a 1.9 x 13 m strip glows; she runs the length of it. Knocks down. Not blockable. She overruns (1.4 s).",
+    "type": "line",
+    "kind": "physical",
+    "length": 13.0,
+    "width": 1.9,
+    "blockable": false,
+    "range": 13.0,
+    "min_range": 4.5,
+    "windup": 1.1,
+    "active": 0.8,
+    "recover": 1.4,
+    "dmg": 32,
+    "poise_dmg": 90,
+    "cooldown": 6.0,
+    "anim": "ram_charge",
+    "lunge": 15.0,
+    "track": 1.0,
+    "shake": 0.4,
+    "breath": "forward",
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.9,
+      13.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "call_them_in",
+    "phases": [
+     2,
+     3
+    ],
+    "_tell": "one arm out flat to the side, the horn at her mask, a long level call (1.6 s); a 3.2 x 20 m strip glows across the fold through where the Bearer stands; the flock comes over the wall and down the strip in a rush. Phase 3: a second strip across the first.",
+    "type": "herd",
+    "herd": {
+     "length": 20.0,
+     "width": 3.2,
+     "run": 1.3,
+     "count": 9,
+     "cross": false
+    },
+    "range": 16.0,
+    "min_range": 2.0,
+    "windup": 1.6,
+    "active": 1.3,
+    "recover": 0.9,
+    "dmg": 24,
+    "poise_dmg": 70,
+    "cooldown": 9.0,
+    "anim": "summon",
+    "breath": "held",
+    "track": 1.0,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      3.2,
+      20.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "by_phase": {
+     "3": {
+      "herd": {
+       "length": 20.0,
+       "width": 3.2,
+       "run": 1.3,
+       "count": 9,
+       "cross": true,
+       "cross_delay": 0.7
+      },
+      "cooldown": 8.0
+     }
+    }
+   },
+   {
+    "id": "bring_tups",
+    "phases": [
+     2
+    ],
+    "_tell": "two short calls, the horn dipped twice (1.2 s); with fewer than two Frost-rams standing, one more comes over the wall.",
+    "type": "summon",
+    "enemy": "frost_ram",
+    "count": 1,
+    "max_alive": 2,
+    "range": 99.0,
+    "windup": 1.2,
+    "active": 0.1,
+    "recover": 0.8,
+    "cooldown": 18.0,
+    "anim": "summon"
+   },
+   {
+    "id": "count_them",
+    "phases": [
+     3
+    ],
+    "_tell": "the Bearer more than 6 m off: she turns to her father, crouches to his height and calls once, low, the way you call a flock in for somebody else to count (1.6 s). No attack. Her back is to the Bearer: open. Hits do not stop her. Left alone 5 s, she stands and turns back.",
+    "type": "hold",
+    "range": 99.0,
+    "min_range": 6.0,
+    "quiet": 5.0,
+    "windup": 1.6,
+    "active": 0.1,
+    "recover": 0.0,
+    "cooldown": 12.0,
+    "anim": "call",
+    "hold_anim": "kneel_down",
+    "breath": "held"
+   }
+  ]
+ },
+ "upwalker": {
+  "poise_regen": 7,
+  "turn": 3.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.6,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Upwalker",
+  "desc": "One of the dead of the lower steadings, on its way up the water to wait for a spring. It got this far. It is in no hurry, and it does not step aside.",
+  "model": "upwalker",
+  "hp": 160,
+  "poise": 95,
+  "speed": 1.1,
+  "aggro_sight": 8.0,
+  "hurt_r": 0.55,
+  "hurt_h": 1.9,
+  "col_r": 0.5,
+  "stagger_time": 1.2,
+  "warmth": 52,
+  "block_arc": 140.0,
+  "block_chance": 0.8,
+  "_ai": "COLDWELL.md 5. Slow. Stands in the way with its shoulder turned (block_arc, block_chance): go round it, or wait for it to fall. Shoulders the Bearer back down the path, and falls forward its whole length.",
+  "attacks": [
+   {
+    "id": "shoulder",
+    "_tell": "turns side-on and drops the near shoulder, one slow step (0.9 s); a shove with the whole body. Little damage; it puts the Bearer back 3 m, down the path.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 2.2,
+     "arc": 120.0,
+     "shove": 3.0,
+     "shove_time": 0.35
+    },
+    "range": 2.0,
+    "windup": 0.9,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 12,
+    "poise_dmg": 50,
+    "cooldown": 2.6,
+    "anim": "shield_bash",
+    "track": 0.8,
+    "telegraph": {
+     "shape": "fan",
+     "size": [
+      2.2,
+      120.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "fall_forward",
+    "_tell": "stops, sways back on its heels, breath twice (1.3 s); a 1.4 x 3.6 m strip glows; it goes over on its face like a climber letting go. Heavy. Not blockable. It lies there (2.2 s) before it gets its knees under it: open.",
+    "type": "line",
+    "kind": "physical",
+    "length": 3.6,
+    "width": 1.4,
+    "blockable": false,
+    "range": 3.2,
+    "min_range": 1.0,
+    "windup": 1.3,
+    "active": 0.25,
+    "recover": 2.2,
+    "dmg": 36,
+    "poise_dmg": 80,
+    "cooldown": 7.0,
+    "anim": "door_fall",
+    "lunge": 2.5,
+    "track": 0.5,
+    "shake": 0.4,
+    "breath": "twice",
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.4,
+      3.6
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "unsung": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 2.1,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "The Unsung",
+  "desc": "Someone nobody sang for. The ice has gone clear, and there is very little left in it. Any song breaks it.",
+  "model": "unsung",
+  "hp": 45,
+  "poise": 18,
+  "speed": 2.9,
+  "aggro_sight": 14.0,
+  "hurt_r": 0.4,
+  "hurt_h": 1.75,
+  "col_r": 0.36,
+  "stagger_time": 0.7,
+  "warmth": 18,
+  "breaks_to": [
+   "ember",
+   "song"
+  ],
+  "death_linger": 0.3,
+  "death_dissolve": 0.7,
+  "_ai": "COLDWELL.md 5. Thin and quick, in twos. Reaches with both hands, one after the other, and breathes in close. A Song of any kind breaks it outright (breaks_to).",
+  "attacks": [
+   {
+    "id": "reach",
+    "_tell": "the right hand out, palm up, as if to be given something (0.5 s). Parryable. Often the left after it.",
+    "range": 2.0,
+    "windup": 0.5,
+    "active": 0.14,
+    "recover": 0.7,
+    "dmg": 11,
+    "poise_dmg": 10,
+    "cooldown": 1.5,
+    "anim": "cuff_swing",
+    "hands": [
+     "right"
+    ],
+    "lunge": 1.8,
+    "chain": "reach_left",
+    "chain_chance": 0.6,
+    "body_hitbox": true,
+    "reach": 1.5,
+    "width": 1.0,
+    "height": 1.2,
+    "arc": 90.0
+   },
+   {
+    "id": "reach_left",
+    "_tell": "the other hand (0.4 s). Only after a Reach.",
+    "range": 2.0,
+    "windup": 0.4,
+    "active": 0.14,
+    "recover": 0.8,
+    "dmg": 11,
+    "poise_dmg": 10,
+    "cooldown": 0.0,
+    "anim": "cuff_back",
+    "hands": [
+     "left"
+    ],
+    "lunge": 1.4,
+    "chain_only": true,
+    "body_hitbox": true,
+    "reach": 1.5,
+    "width": 1.0,
+    "height": 1.2,
+    "arc": 90.0
+   },
+   {
+    "id": "breath_in",
+    "_tell": "the mask tips back and it draws a long breath, as before a first note (1.0 s); a 2.4 m circle glows; no note comes: the cold does.",
+    "type": "nova",
+    "nova_kind": "frost",
+    "nova_radius": 2.4,
+    "kind": "frost",
+    "range": 2.2,
+    "windup": 1.0,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 13,
+    "poise_dmg": 24,
+    "cooldown": 6.0,
+    "anim": "keen_draw",
+    "breath": "held",
+    "track": 0.0,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.4
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "leadvoice": {
+  "name": "The Leadvoice",
+  "bar_name": "THE LEADVOICE",
+  "desc": "Maren of Saltfell, who began the Outsong at every burial on the coast. She sits at the wellhead with her youngest against her chest.",
+  "class": "res://src/enemies/leadvoice.gd",
+  "model": "leadvoice",
+  "body": "mannequin_holdfast",
+  "is_boss": true,
+  "hp": 1500,
+  "poise": 9999,
+  "poise_regen": 999,
+  "speed": 0.0,
+  "turn": 1.6,
+  "aggro_sight": 40.0,
+  "aggro_fov": 360.0,
+  "aggro_hear": 40.0,
+  "leash": 999.0,
+  "arm_h": 2.6,
+  "arm_dx": 0.6,
+  "hurt_r": 1.1,
+  "hurt_h": 2.6,
+  "col_r": 0.9,
+  "stagger_time": 1.2,
+  "stride": 2.2,
+  "sfx_alert": "",
+  "sfx_cast": "res://assets/audio/whoosh_l.wav",
+  "warmth": 0,
+  "_fight": "COLDWELL.md 6. She has no strike: nothing here opens a hand volume. Phases by HP fraction (phase_at). Phases 1 and 2 she stays sat (seat_clip held at its first frame); in phase 3 she stands, and a blade no longer counts (p3_blade): the Bearer stands within sing_r and sings (verses, verse_time each, broken by a blow). After each verse she bows her head (verse_bow) and the Unsung near are broken.",
+  "phase_at": [
+   0.6,
+   0.25
+  ],
+  "phase_speed": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "wake_dist": 10.0,
+  "seat_clip": "rise",
+  "seat_lift": 0.1,
+  "p3_blade": 0.0,
+  "sing_r": 4.4,
+  "verses": 3,
+  "verse_time": 2.4,
+  "verse_bow": 2.0,
+  "verse_breaks_r": 9.0,
+  "sfx_verse": "res://assets/audio/hum.wav",
+  "summon_ring": 6.5,
+  "transitions": {
+   "wake": {
+    "_tell": "she lifts her head from the child; the bar appears",
+    "time": 2.6,
+    "anim": "",
+    "events": []
+   },
+   "p2": {
+    "_tell": "her head comes right up and her shoulders with it (2.4 s); two of the Unsung stand up out of the ice",
+    "time": 2.4,
+    "anim": "",
+    "events": [
+     [
+      1.2,
+      "unsung"
+     ]
+    ]
+   },
+   "p3": {
+    "_tell": "she stands up, for the first time, the cloak tearing out of the ice of the spring (4.0 s)",
+    "time": 4.0,
+    "anim": "rise",
+    "events": [
+     [
+      2.6,
+      "stood"
+     ]
+    ]
+   }
+  },
+  "release_flag": "ks_leadvoice_released",
+  "release_card": "MAREN — RELEASED",
+  "release_outsong": false,
+  "release_drop": {
+   "item": "item_wren_band",
+   "label": "Take the band",
+   "pickup_id": "wren_band",
+   "ahead": 2.4,
+   "set_flag": "ks_wren_band_found",
+   "scene": "res://assets/models/props/woad_band.tscn"
+  },
+  "release_drop2": {
+   "item": "item_maren_mask",
+   "label": "Take the mask",
+   "pickup_id": "maren_mask",
+   "side": 1.3,
+   "ahead": 2.0,
+   "scene": "res://assets/models/props/mourning_mask.tscn"
+  },
+  "attacks": [
+   {
+    "id": "held_note",
+    "_tell": "her mask comes up off the child and stays up, a thin breath, held (1.4 s); a 1.8 x 12 m strip glows from her toward the Bearer; the air along it freezes and stands, a ridge of rime teeth to the hip, for 9 s. Two blows break it. Phase 2: wider.",
+    "type": "line",
+    "kind": "frost",
+    "length": 12.0,
+    "width": 1.8,
+    "offset": 2.4,
+    "range": 16.0,
+    "min_range": 4.6,
+    "windup": 1.4,
+    "active": 0.2,
+    "recover": 1.2,
+    "dmg": 20,
+    "poise_dmg": 30,
+    "cooldown": 5.0,
+    "anim": "hold_note",
+    "breath": "held",
+    "track": 0.8,
+    "lunge": 0.0,
+    "shake": 0.15,
+    "ridge": {
+     "life": 9.0,
+     "breaks": 2,
+     "style": "ice"
+    },
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.8,
+      12.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ],
+     "offset": 2.4
+    },
+    "by_phase": {
+     "2": {
+      "width": 2.6,
+      "telegraph": {
+       "shape": "rect",
+       "size": [
+        2.6,
+        12.0
+       ],
+       "color": [
+        0.3,
+        0.58,
+        1.0
+       ],
+       "offset": 2.4
+      }
+     },
+     "3": {
+      "cooldown": 4.0
+     }
+    }
+   },
+   {
+    "id": "shelter",
+    "_tell": "the Bearer within reach of the child: she folds herself down over it, both arms round (0.9 s); a 3.8 m circle glows; the cold comes off her back and puts the Bearer out to the edge of it. Hardly any damage.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 3.8,
+     "arc": 360.0,
+     "shove": 4.2,
+     "shove_time": 0.35
+    },
+    "kind": "frost",
+    "range": 3.2,
+    "windup": 0.9,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 6,
+    "poise_dmg": 60,
+    "cooldown": 3.4,
+    "anim": "shelter",
+    "lunge": 0.0,
+    "track": 0.0,
+    "blockable": false,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      3.8
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "long_note",
+    "phases": [
+     2,
+     3
+    ],
+    "_tell": "she draws herself up and the breath goes on and on (2.0 s); a band glows from 4.6 m out to 13 m, all the way round; everything in it is frozen through. Close to her there is nothing: stand inside it. Phase 3: twice.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 13.0,
+     "arc": 360.0,
+     "inner": 4.6
+    },
+    "kind": "frost",
+    "range": 18.0,
+    "min_range": 4.6,
+    "windup": 2.0,
+    "active": 0.25,
+    "recover": 1.3,
+    "dmg": 28,
+    "poise_dmg": 40,
+    "cooldown": 11.0,
+    "anim": "hold_note",
+    "breath": "held",
+    "lunge": 0.0,
+    "track": 0.0,
+    "blockable": false,
+    "telegraph": {
+     "shape": "annulus",
+     "size": [
+      4.6,
+      13.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "by_phase": {
+     "3": {
+      "hits": [
+       0.0,
+       1.3
+      ],
+      "cooldown": 10.0
+     }
+    }
+   },
+   {
+    "id": "not_yet",
+    "_tell": "she breathes in as if to begin, and holds it, and does not begin (1.8 s); with fewer than two of the Unsung standing, two stand up out of the ice between her and the Bearer (at most three).",
+    "type": "summon",
+    "enemy": "unsung",
+    "count": 2,
+    "below": 2,
+    "max_alive": 3,
+    "range": 99.0,
+    "windup": 1.8,
+    "active": 0.1,
+    "recover": 0.8,
+    "cooldown": 16.0,
+    "anim": "hold_note",
+    "breath": "held"
+   },
+   {
+    "id": "come_up",
+    "phases": [
+     2,
+     3
+    ],
+    "_tell": "her head turns to the gap in the stones and stays there (1.6 s); an Upwalker comes in up the river and stands in the way (at most one).",
+    "type": "summon",
+    "enemy": "upwalker",
+    "count": 1,
+    "below": 1,
+    "max_alive": 1,
+    "from_gap": true,
+    "range": 99.0,
+    "windup": 1.6,
+    "active": 0.1,
+    "recover": 0.8,
+    "cooldown": 26.0,
+    "anim": "hold_note"
+   }
+  ],
+  "boss_music": false
  }
 }

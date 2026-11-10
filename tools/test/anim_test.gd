@@ -118,12 +118,16 @@ func _run() -> void:
 	while rw.state == Enemy.ES.ATTACK and rw.state_t < windup and guard < 300:
 		guard += 1
 		await ticks(1)
-	var rate := (float(sec["contact"]) - rw.vis.rig.action_started_at()) / windup
+	# the foe's own clip for this attack ("@swipe", cut to its windup) answers atk_r
+	var asec: Vector3 = rw.vis.rig._section("atk_r")
+	var rate := (asec.y - rw.vis.rig.action_started_at()) / windup
 	var anim_t := rw.vis.rig.action_time()
 	var frame := 1.0 / float(Engine.physics_ticks_per_second)
-	var err := absf(anim_t - float(sec["contact"])) / rate
+	var err := absf(anim_t - asec.y) / rate
 	check(err <= frame + 1e-4, "contact frame at windup: clip %.3f vs contact %.3f (%.4f s off, 1 frame = %.4f)"
-		% [anim_t, float(sec["contact"]), err, frame])
+		% [anim_t, asec.y, err, frame])
+	check(rw.vis.rig.qualified("atk_r") == "f_rimewalker_swipe" and absf(rate - 1.0) < 0.02,
+		"the rimewalker's swipe is its own clip, played at 1x (%s, rate %.2f)" % [rw.vis.rig.qualified("atk_r"), rate])
 	check(rw.vis.current_clip() == "atk_r", "the attack clip owns the rig")
 	var f0 := rw.fist_position("right")
 	await ticks(2)
@@ -141,8 +145,8 @@ func _run() -> void:
 	rw.take_hit(DamagePacket.new(99999, 0, player))
 	await ticks(2)
 	check(rw.dead and rw.vis.current_clip() == "death", "dies into 'death' (%s)" % rw.vis.current_clip())
-	check(rw.vis.rig.qualified("death") == "death" and HumanoidLib.is_procedural(rw.vis.rig.clip_anim("death")),
-		"death is the shared procedural fall")
+	check(rw.vis.rig.qualified("death") == "fall_back" and not HumanoidLib.is_procedural(rw.vis.rig.clip_anim("death")),
+		"death is the library's real fall")
 	await ticks(110)
 	var hips1 := _bone_pos(rw.vis, "mixamorig_Hips").y - rw.global_position.y
 	check(hips1 < hips0 * 0.35, "the body falls (hips %.2f -> %.2f m)" % [hips0, hips1])
@@ -209,12 +213,16 @@ func _run() -> void:
 	shared.add_animation("roll", fake_roll)            # replaces the shared overlay
 	shared.add_animation("stagger", fake_stagger)      # outranks the "hit" alias
 	check(nm.vis.rig.qualified("roll") == "roll", "a real shared roll outranks her own overlay (%s)" % nm.vis.rig.qualified("roll"))
+	check(nm.vis.rig.qualified("stagger") == "f_netmender_stagger", "her own stagger clip (clip set) answers first (%s)" % nm.vis.rig.qualified("stagger"))
+	var nm_set: String = nm.vis.rig.clip_set
+	nm.vis.rig.clip_set = ""   # the plain alias chain, as a model without a clip set resolves it
 	check(nm.vis.rig.qualified("stagger") == "stagger", "a real stagger outranks the hit fallback")
 	check(absf(nm.vis.rig.clip_length("roll") - 1.5) < 0.01, "with no metadata it plays whole (%.2f s), not the overlay's 1.0 s"
 		% nm.vis.rig.clip_length("roll"))
 	shared.remove_animation("stagger")
 	shared.add_animation("roll", HumanoidOverlays.build(rw.vis.skel, shared.get_animation("idle"))["roll"])
 	check(nm.vis.rig.qualified("stagger") == "own/hit", "and without it stagger falls back to hit")
+	nm.vis.rig.clip_set = nm_set
 	var nm_head := _bone_pos(nm.vis, "mixamorig_HeadTop_End").y - nm.global_position.y
 	check(nm_head > 2.4, "she stands tall (head top %.2f m)" % nm_head)
 	check(nm.vis.weapon_mount == null, "bare-handed: the data maul is not mounted on her")
@@ -242,4 +250,134 @@ func _run() -> void:
 	await ticks(1)
 	check(pv.current_clip() == "attack_l1", "player attacks play on the humanoid")
 	pv.queue_free()
+
+	print("== foe attack clips are cut to their data windups")
+	var fsets: Dictionary = HumanoidLib.meta().get("clip_sets", {})
+	var fclips: Dictionary = HumanoidLib.meta().get("clips", {})
+	var fn := 0
+	var fbad := []
+	for sid in fsets:
+		if not String(sid).begins_with("foe_"):
+			continue
+		var foe_id := String(sid).trim_prefix("foe_")
+		var fcfg: Dictionary = DB.enemy(foe_id)
+		if String(HumanoidLib.model_cfg(String(fcfg.get("model", ""))).get("clip_set", "")) != String(sid):
+			fbad.append("%s: model has no clip_set" % foe_id)
+		for fa in fcfg.get("attacks", []):
+			var key := "@" + String(fa["id"])
+			if not (fsets[sid] as Dictionary).has(key):
+				continue
+			var cname := String(((fsets[sid] as Dictionary)[key] as Array)[0])
+			var frow: Dictionary = fclips.get(cname, {})
+			var fanim := HumanoidLib.shared_library().get_animation(cname) if HumanoidLib.shared_library().has_animation(cname) else null
+			fn += 1
+			# the clip's contact IS the windup: it plays at 1x, the strike lands on the tick
+			if fanim == null or absf(float(frow.get("contact", -1.0)) - float(fa["windup"])) > 1.0 / 60.0 \
+					or fanim.length + 0.02 < float(frow.get("end", 0.0)):
+				fbad.append("%s %s" % [foe_id, fa["id"]])
+	check(fn >= 30 and fbad.is_empty(), "%d foe attacks have a clip whose contact is the data windup %s" % [fn, str(fbad)])
+
+	print("== the combat library: weapon-class clip sets on the Bearer")
+	check(HumanoidLib.shared_library().has_animation("sw_light_a")
+			and not HumanoidLib.is_procedural(HumanoidLib.shared_library().get_animation("sw_light_a")),
+		"the combat library's clips are real clips in the shared library")
+	var pv3 := PlayerVisual.new()
+	add_child(pv3)
+	pv3.build("hewing_blade", "rimewalker")
+	check(pv3.rig.clip_set != "onehand" and pv3.rig.qualified("attack_l1") == "slash",
+		"models without clip_sets keep their own attack clips")
+	pv3.queue_free()
+	var dtick := 1.0 / float(Engine.physics_ticks_per_second)
+	var cseen := {}
+	for wid in ["hewing_blade", "greatblade", "maul", "turf_spade", "spear"]:
+		var cw: Dictionary = DB.weapon(wid)
+		player.inventory[wid] = 1
+		player._set_state(Player.S.MOVE)
+		player.equip_weapon(wid)
+		await ticks(2)
+		var prig: HumanoidRig = player.vis.rig
+		var ccls := HumanoidLib.weapon_class(String(cw.get("kit", wid)))
+		check(prig.clip_set == ccls and ccls != "", "%s fights with the '%s' clip set" % [wid, ccls])
+		var cmc := HumanoidLib.class_mount_cfg("weapon", ccls)
+		player.vis.play("block", 0.01)
+		await ticks(30)
+		check(player.vis.weapon_mount.rotation_degrees.distance_to(
+				Vector3(cmc["rot"][0], cmc["rot"][1], cmc["rot"][2])) < 0.5, "%s turns into the %s grip for an action" % [wid, ccls])
+		player.vis.back_to_idle(0.01)
+		await ticks(3)
+		var cms: Dictionary = DB.moveset(String(cw.get("moveset", "longsword")))
+		var cmoves: Array = (cms["lights"] as Array).duplicate()
+		cmoves.append(cms["heavy"])
+		if cms.has("sprint"):
+			cmoves.append(cms["sprint"])
+		for cm in cmoves:
+			var can := String(cm["anim"])
+			var cq := prig.qualified(can)
+			var is_lib := cq != "" and not cq.begins_with("own/") and not HumanoidLib.is_procedural(prig.get_animation(cq))
+			var cstrike := maxf(float(cm["windup"]) + float(cm["active"]) * 0.45, 0.12)
+			var csec: Vector3 = prig._section(can)
+			var crate := player.vis.play_timed(can, cstrike, 0.07, 0.55, 1.85)
+			var cn := int(round(cstrike / dtick))
+			await ticks(cn)
+			var coff := absf(prig.action_time() - csec.y)
+			# one physics frame of clip time, plus the rounding of the windup to ticks
+			var ctol := crate * dtick * 1.5
+			check(is_lib and csec.y > csec.x and coff <= ctol,
+				"%s %s -> %s: contact on the data windup (%.3f s, off %.3f s of clip, rate %.2f)" % [wid, can, cq, cstrike, coff, crate])
+			check(is_equal_approx(prig.action_started_at(), csec.x) and crate >= 0.55 and crate <= 1.85,
+				"%s %s plays its whole wind-up, unclamped (rate %.2f)" % [wid, can, crate])
+			cseen[cq] = true
+			player.vis.back_to_idle(0.01)
+			await ticks(3)
+		for can in ["riposte", "block", "block_hit", "parry", "stagger", "stagger_back", "death", "roll", "backstep"]:
+			var cq := prig.qualified(can)
+			check(cq != "" and not cq.begins_with("own/") and not HumanoidLib.is_procedural(prig.get_animation(cq)),
+				"%s %s resolves to a library clip (%s)" % [wid, can, cq])
+	check(cseen.size() >= 12, "the classes swing different clips (%d distinct attack clips)" % cseen.size())
+	# riposte, parry and roll have fixed gameplay beats: the clips are cut to them
+	player.equip_weapon("hewing_blade")
+	await ticks(2)
+	var prig2: HumanoidRig = player.vis.rig
+	check(absf(prig2.contact_time("riposte") - 0.34) <= dtick * 1.01,
+		"the riposte's point lands on the 0.34 s damage beat (%.2f s)" % prig2.contact_time("riposte"))
+	var cpr: Dictionary = DB.tuning("player/parry", {})
+	if cpr.is_empty():
+		cpr = (DB.table("game").get("player", {}) as Dictionary).get("parry", {})
+	var cpc := prig2.contact_time("parry")
+	check(cpc >= float(cpr.get("windup", 0.08)) and cpc <= float(cpr.get("windup", 0.08)) + float(cpr.get("window", 0.16)),
+		"the parry sweep peaks inside the parry window (%.2f s)" % cpc)
+	# the swing ribbon samples the pose on the physics tick, so it has an arc
+	# to draw however few frames get rendered
+	player.vis.play_timed("attack_l1", 0.3, 0.07, 0.55, 1.85)
+	await ticks(12)
+	player.vis.trail.visible = true
+	await ticks(8)
+	var tpts: Array = player.vis.trail.get("_pts")
+	var sweep := 0.0
+	for ti in range(1, tpts.size()):
+		sweep += (tpts[ti]["t"] as Vector3).distance_to(tpts[ti - 1]["t"])
+	check(tpts.size() >= 6 and sweep > 1.0, "the swing trail records the arc per physics tick (%d samples, %.2f m)" % [tpts.size(), sweep])
+	player.vis.trail.visible = false
+	player.vis.back_to_idle(0.01)
+	await ticks(3)
+	# a stagger from behind picks the forward lurch
+	player.invulnerable = false
+	player.poise = 0.01
+	player.hp = player.max_hp
+	var cbehind := DamagePacket.new(1, 50, null)
+	cbehind.origin = player.global_position + player.vis.global_transform.basis.z * 1.5
+	player.take_hit(cbehind)
+	await ticks(1)
+	check(player.state == Player.S.STAGGER and prig2.qualified(prig2.action_clip()) == "react_back",
+		"a blow from behind staggers forward (%s)" % prig2.action_clip())
+	player.invulnerable = true
+	await ticks(60)
+	player.inventory["bow"] = 1
+	player._set_state(Player.S.MOVE)
+	player.equip_weapon("bow")
+	await ticks(2)
+	check(player.vis.rig.clip_set == "bow" and player.vis.rig.qualified("bow_draw") == "bow_pull",
+		"the bow draws with its own clip")
+	check(player.vis.rig.qualified("bow_loose") == "bow_loose", "and looses with one")
+	player.equip_weapon("hewing_blade")
 	finish()

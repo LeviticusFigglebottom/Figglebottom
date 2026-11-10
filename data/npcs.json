@@ -843,14 +843,66 @@
   "name": "Old Calder",
   "short_name": "Calder",
   "body": "mannequin_thaw",
-  "lines_first": [
-   "Hold still, Brokenhorn. Not you. Her. The one with the torn ear.",
-   "Wall comes down every winter and I put it back every summer. The wall and I have an understanding.",
-   "The lass calls them in at night. You'll hear her. Every sheep on the mountain looks up."
+  "model": "old_calder",
+  "height": 1.75,
+  "_scene": "REACH.md 7: at the gap of the High Fold, putting the wall back. Two audiences (chapters): the wall and the count, then who came up the fell at the Melt. He hums three notes of what she was singing (line_sfx) and loses the fourth.",
+  "chapters": [
+   [
+    "Hold still, Brokenhorn. Not you. Her. The one with the torn ear.",
+    "Wall comes down every winter and I put it back every summer. The wall and I have an understanding.",
+    "That's my lass calling. Sigga. She'll have them in by dark, and then she'll count them, and she'll get forty-three.",
+    "It's forty-four. She's left the same one out since she was six. I've never said which."
+   ],
+   [
+    "Old Leadvoice's lass came up this way at the Melt. She's Leadvoice herself now, they tell me. I still see her with her knees skinned.",
+    "Had a little one up on her shoulders. Going up to see the water go.",
+    "Singing to it. Not one of the ones for the dead, I know those, I've stood outside enough doors. This went",
+    "Mm. Mm, mm.",
+    "No. It's gone. She'd know how it goes on."
+   ]
   ],
+  "chapter_flags": [
+   [
+    "ks_calder_met"
+   ],
+   [
+    "ks_calder_hum"
+   ]
+  ],
+  "line_sfx": {
+   "Mm. Mm, mm.": [
+    "res://assets/audio/hum.wav",
+    -2.0,
+    0.84
+   ]
+  },
   "lines_repeat": [
    "Forty-one, forty-two. Where's Smudge. There's Smudge.",
    "Mind the beck. It's colder than it looks and it looks cold."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_calder_boots",
+    "absent_flag": "ks_calder_boots_shown",
+    "set_flag": "ks_calder_boots_shown"
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_fellcaller_released",
+    "lines": [
+     "Wall's done. First time it's been done by dark since I was a young man.",
+     "I might sit a while."
+    ]
+   },
+   {
+    "flag": "ks_calder_boots_shown",
+    "lines": [
+     "Those are mine.",
+     "I've got mine on. Look.",
+     "Well. Put them by the door. Toes to the wall, or she'll only move them."
+    ]
+   }
   ],
   "services": []
  },
@@ -858,10 +910,20 @@
   "name": "Maren",
   "short_name": "Maren",
   "body": "mannequin_thaw",
-  "lines_first": [
-   "Have you come far? You look like you've come far.",
-   "We came up to see the water go. She's never seen it go.",
-   "Don't watch the flowers out of sight, love. They go all the way to the sea."
+  "model": "maren_thaw",
+  "height": 1.7,
+  "_scene": "COLDWELL.md 7: THAW here is the last Melt before the sickness. At the water's edge with Wren. She takes the Bearer for a stranger. Two audiences.",
+  "chapters": [
+   [
+    "Have you come far? You look like you've come far.",
+    "We came up to see the water go. She's never seen it go.",
+    "Don't watch them out of sight, love. Turn round. Turn round when everyone else does."
+   ],
+   [
+    "I've an older one, down the water. Fostered, with boat-builders. Went off with a coal in a horn and wouldn't let me carry it as far as the boat.",
+    "I said, keep it fed. As if anyone needs telling.",
+    "Have you far to go?"
+   ]
   ],
   "lines_repeat": [
    "It's loud, isn't it. It's always this loud the first day.",
@@ -873,6 +935,9 @@
   "name": "Wren",
   "short_name": "Wren",
   "body": "mannequin_thaw",
+  "model": "wren",
+  "height": 1.05,
+  "_scene": "COLDWELL.md 7: five, watching the flowers go. Shown the knucklebones (all five carried) she knows them for the same as hers.",
   "lines_first": [
    "That one's going to the sea.",
    "And that one."
@@ -880,6 +945,133 @@
   "lines_repeat": [
    "And that one."
   ],
+  "on_talk": [
+   {
+    "needs_item": "item_knucklebone",
+    "require_flag": "ks_knucklebones_found",
+    "absent_flag": "ks_knucklebones_shown",
+    "set_flag": "ks_knucklebones_shown"
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_knucklebones_shown",
+    "lines": [
+     "I've got some like that.",
+     "Mine have a bite in one. I did it. It didn't taste of anything."
+    ]
+   }
+  ],
   "services": []
+ },
+ "sigga": {
+  "name": "Sigga Calder",
+  "short_name": "Sigga",
+  "body": "mannequin_thaw",
+  "model": "sigga_thaw",
+  "height": 1.8,
+  "_scene": "REACH.md 7: on the slope under the High Fold, calling the flock in. Within earshot she and her father count at each other across the slope (overhear).",
+  "lines_first": [
+   "Stand there and they'll go round you. Stand anywhere else and they'll go through you.",
+   "Sigga. That's my father up at the wall, putting back what he put back last year.",
+   "He says forty-four. There are forty-three. I can count. He taught me.",
+   "He's had a cough since shearing. He says it's the wool. Before that it was the hay."
+  ],
+  "lines_repeat": [
+   "They come to a call. Dogs are for people who can't call.",
+   "If he asks, I've had my supper."
+  ],
+  "overhear": [
+   [
+    "sigga",
+    "Forty-three!"
+   ],
+   [
+    "old_calder",
+    "Forty-four!"
+   ],
+   [
+    "sigga",
+    "Forty-three, Da. I've been round twice."
+   ],
+   [
+    "old_calder",
+    "Then you've left her out twice."
+   ],
+   [
+    "sigga",
+    "Left who out?"
+   ],
+   [
+    "old_calder",
+    "Go round again."
+   ]
+  ],
+  "overhear_r": 14.0,
+  "services": [
+   {
+    "id": "give_fleece",
+    "type": "gift",
+    "item": "armour_fleece",
+    "once_flag": "got_fleece",
+    "label": "Take the spare fleece",
+    "line_done": "It's his old one. He won't wear it, he says it makes him cough. Everything makes him cough."
+   }
+  ]
+ },
+ "sigga_fold": {
+  "name": "Sigga Calder",
+  "short_name": "Sigga",
+  "body": "mannequin_thaw",
+  "model": "sigga_thaw",
+  "height": 1.8,
+  "mute": true,
+  "_scene": "REACH.md 9: after the release, THAW: in the High Fold beside her father, who is stood at the wall he has finished, his boots off beside him.",
+  "overhear": [
+   [
+    "sigga",
+    "Forty-four."
+   ],
+   [
+    "old_calder",
+    "There. Who was it?"
+   ],
+   [
+    "sigga",
+    "Me. You've got me down as a ewe."
+   ],
+   [
+    "old_calder",
+    "You came when you were called. That's all the stick knows."
+   ],
+   [
+    "sigga",
+    "Since when?"
+   ],
+   [
+    "old_calder",
+    "Since you were six."
+   ],
+   [
+    "sigga",
+    "Put your boots on, Da."
+   ],
+   [
+    "old_calder",
+    "In a bit."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "calder_rime": {
+  "name": "Old Calder",
+  "short_name": "Calder",
+  "body": "mannequin_thaw",
+  "model": "old_calder",
+  "height": 1.75,
+  "mute": true,
+  "frozen": true,
+  "pose": "lie",
+  "_scene": "REACH.md 4: RIME. Laid out at the foot of the fold cairn where she found him, on his back, rimed over. Not a foe; nothing to say."
  }
 }

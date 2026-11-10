@@ -145,7 +145,7 @@ func _run() -> void:
 	check(area.terrain != null and area.nav_thaw != null and area.nav_rime != null, "terrain and both navmeshes")
 	check(World.get_area_state("shepherds_reach") == RH.WState.THAW, "first visit finds the pasture in thaw")
 	check(Game.find_hearth("hs_fell_path") != null and Game.find_hearth("hs_sheilings") != null, "the Fell Path and Sheilings hearths stand")
-	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 1, "Old Calder keeps the thaw")
+	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 2, "Old Calder and Sigga keep the thaw")
 	var flock := _kits(area.thaw_layer, "sheep")
 	check(flock.size() >= 30, "the flocks on the high grass (%d)" % flock.size())
 	check(player.is_on_floor(), "the Bearer stands on the fell path")
@@ -184,7 +184,7 @@ func _run() -> void:
 	check(World.get_area_state("shepherds_reach") == RH.WState.RIME, "the Reach is rime")
 	await ticks(30)
 	var foes := get_tree().get_nodes_in_group(RH.GROUP_ENEMIES).filter(func(e): return e.can_process() and not e.dead)
-	check(foes.size() >= 6, "%d foes on the pasture (stand-ins until the art lands)" % foes.size())
+	check(foes.size() >= 6, "%d foes on the pasture" % foes.size())
 	var ids := {}
 	for sp in def["spawners"]:
 		ids[sp["enemy"]] = true
@@ -194,8 +194,8 @@ func _run() -> void:
 	if veils.size() == 1:
 		var veil: FrostVeil = veils[0]
 		var boss: Node = veil.boss_spawner.current if veil.boss_spawner != null else null
-		check(boss != null and boss.cfg.get("is_boss", false), "the Fellcaller (stand-in) waits behind the veil")
-		check(boss != null and String(boss.cfg.get("release_flag", "")) == "", "a stand-in never carries the borrowed holdfast's release")
+		check(boss is Fellcaller and boss.cfg.get("is_boss", false), "the Fellcaller waits behind the veil")
+		check(boss != null and String(boss.cfg.get("release_flag", "")) == "ks_fellcaller_released", "on her own row now, with her own release")
 	var frozen := _kits(area.rime_layer, "sheep")
 	check(frozen.size() >= 50, "a whole slope of white sheep (%d)" % frozen.size())
 	var facing := 0

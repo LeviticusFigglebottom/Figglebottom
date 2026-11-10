@@ -68,7 +68,17 @@
  "fostering_horn": {
   "name": "Fostering Horn",
   "key_item": true,
-  "desc": "A cow's horn with a soapstone stopper and a draught-hole, worn at the hip. Children of Saltfell carry a coal from the home hearth in one when they are sent down the water. The coal inside has been fed every evening since you were small."
+  "desc": "A cow's horn with a soapstone stopper and a draught-hole, worn at the hip. Children of Saltfell carry a coal from the home hearth in one when they are sent down the water. The coal inside has been fed every evening since you were small.",
+  "desc_when": [
+   {
+    "flag": "ending_outsong",
+    "desc": "A cow's horn with a soapstone stopper and a draught-hole, worn at the hip. It is empty. The inside is black to the lip."
+   },
+   {
+    "flag": "ks_horn_wellhead",
+    "desc": "The horn a child carries down the water. The coal inside has been fed for twenty years. It was given with an instruction, and the instruction was followed."
+   }
+  ]
  },
  "item_net_float": {
   "name": "Brede's Net-Float",
@@ -197,5 +207,43 @@
    },
    "weight": 7.5
   }
+ },
+ "item_fold_tally": {
+  "name": "Fold-Tally",
+  "desc": "A hazel stick notched down one edge: forty-three notches, one for every ewe put to the fell. Under them is one more, cut smaller, by a hand thirty years younger. Calder ran his thumb down it every night, and the small one is worn smooth."
+ },
+ "item_calder_boots": {
+  "name": "Calder's Boots",
+  "desc": "A pair of herd's boots, resoled more than once, the left heel worn down on the outside. They stood by the sheiling door with the toes to the wall, and the door was on the latch. They are dry inside."
+ },
+ "item_shepherd_whistle": {
+  "name": "Shepherd's Whistle",
+  "desc": "A whistle cut from a ewe's shin-bone, two holes, for working a dog at distance. Calder made it for Sigga when she was eight. She learned to call instead, and the lanyard is still tied for a child's neck."
+ },
+ "armour_fleece": {
+  "name": "Shepherd's Fleece",
+  "desc": "A coat of two fleeces sewn skin-side in, the wool left long, belted with rope. It turns sleet, and mostly it turns a tup's horn. One pocket is full of crumbled oatcake, kept for a ewe called Smudge.",
+  "armour": {
+   "slot": "body",
+   "poise": 8,
+   "absorb": {
+    "phys": 0.12,
+    "frost": 0.2,
+    "fire": 0.04
+   },
+   "weight": 8.0
+  }
+ },
+ "item_latch_wool": {
+  "name": "Scrap of Woad Wool",
+  "desc": "A scrap of woad-blue wool, pulled long, caught on the latch of the hall door at the height of a woman's hand. It is on the outside of the door. The bar was on the inside."
+ },
+ "item_wren_band": {
+  "name": "Wren's Band",
+  "desc": "A mask-band of woad-blue wool, the nap worn off where it sat on wood. It was tied round the swaddle with a household knot, pulled tight with the teeth. It is far too long for what it went round, and was wrapped three times."
+ },
+ "item_maren_mask": {
+  "name": "Maren's Mask",
+  "desc": "A mourning mask of pale birch, smooth, the brow cut the Saltfell way. The band is gone and the wood is darker where it sat. A mask is carved for one burial and burned on the hearth before morning. This one is fifteen winters old."
  }
 }

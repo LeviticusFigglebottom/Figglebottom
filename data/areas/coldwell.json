@@ -1429,7 +1429,8 @@
    "max": [
     964,
     -364
-   ]
+   ],
+   "set_flag": "ks_horn_wellhead"
   }
  ],
  "houses": [
@@ -1942,7 +1943,6 @@
  "spawners": [
   {
    "enemy": "upwalker",
-   "stand_in": "rimewalker",
    "id": "upwalker_low",
    "at": [
     753.6,
@@ -1953,7 +1953,6 @@
   },
   {
    "enemy": "upwalker",
-   "stand_in": "rimewalker",
    "id": "upwalker_falls",
    "at": [
     819.6,
@@ -1964,7 +1963,6 @@
   },
   {
    "enemy": "upwalker",
-   "stand_in": "rimewalker",
    "id": "upwalker_high",
    "at": [
     872.0,
@@ -1975,7 +1973,6 @@
   },
   {
    "enemy": "unsung",
-   "stand_in": "keener",
    "id": "unsung_level_a",
    "at": [
     906.0,
@@ -1986,7 +1983,6 @@
   },
   {
    "enemy": "unsung",
-   "stand_in": "keener",
    "id": "unsung_level_b",
    "at": [
     906.0,
@@ -1997,7 +1993,6 @@
   },
   {
    "enemy": "leadvoice",
-   "stand_in": "netmender",
    "id": "leadvoice",
    "at": [
     926.5,
@@ -2005,7 +2000,6 @@
     -478.0
    ],
    "face": 270,
-   "pose": "sit",
    "dead_once": true,
    "frost_veil_id": "wellhead_veil"
   }

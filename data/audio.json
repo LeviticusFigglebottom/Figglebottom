@@ -6,6 +6,7 @@
 		"boss_netmender": {"path": "res://assets/audio/music/boss_netmender.ogg", "loop": true, "fade": 1.5}
 	},
 	"boss_fallback": "boss_netmender",
+	"hum": "res://assets/audio/hum.wav",
 	"wave": {
 		"to_rime": "res://assets/audio/wave_to_rime.ogg",
 		"to_thaw": "res://assets/audio/wave_to_thaw.ogg",

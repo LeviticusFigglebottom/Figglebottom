@@ -118,7 +118,11 @@ func _enter_main() -> void:
 	_options = []
 	var aid := _aid()
 	var cur := World.get_area_state(aid)
-	if _stub_hearth():
+	if World.spring():
+		# after the Outsong: the stone is a stone (COLDWELL.md 10)
+		_options.append({"id": "rest", "label": "Keep hearth  (rest)"})
+		_options.append({"id": "cold", "label": "Warm the stone"})
+	elif _stub_hearth():
 		var def2: Dictionary = hearth.area.get_meta("def", {}) if hearth.area != null else {}
 		_options.append({"id": "rest", "label": String(def2.get("stub_label",
 			"Keep hearth  (rest — the memory here is thin)"))})
@@ -134,6 +138,8 @@ func _enter_main() -> void:
 	_options.append({"id": "leave", "label": "Rise"})
 	info_label.text = "The hearth holds the steading's memory." if not Game.toggle_free(aid) \
 		else "The holdfast rests. Keep the memory, or let it go, as you please."
+	if World.spring():
+		info_label.text = ""
 	_opt_i = 0
 	_render()
 
@@ -222,6 +228,9 @@ func choose(idx: int) -> void:
 		_do_hearth("rest_only" if (Game.toggle_free(_aid()) or _stub_hearth()) else "auto")
 	elif id == "toggle":
 		_do_hearth("toggle")
+	elif id == "cold":
+		info_label.text = "The horn is empty."
+		AudioDirector.sfx("res://assets/audio/ui_tick.wav", -10.0, 0.7)
 	elif id == "level":
 		_enter_level()
 	elif id == "back":

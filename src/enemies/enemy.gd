@@ -276,6 +276,9 @@ func _st_idle(dt: float) -> void:
 			AudioDirector.sfx_at(cfg["sfx_alert"], global_position, -2.0, randf_range(0.9, 1.1))
 
 func _st_alert(dt: float) -> void:
+	if target == null or not is_instance_valid(target):
+		_set_state(ES.IDLE)   # (roused with nobody to turn to)
+		return
 	if not _risen:
 		# a sitter gets up first: slowly, the chore set down
 		_risen = true
@@ -443,6 +446,9 @@ func _pick_attack(dist: float) -> Dictionary:
 	for a in cfg.get("attacks", []):
 		if not _attack_allowed(a) or not _attack_usable(a):
 			continue
+		# "behind_only": a move for whoever has got round it (the Frost-ram's kick)
+		if a.get("behind_only", false) and not _target_behind():
+			continue
 		if dist <= float(a.get("range", 2)) and float(a.get("min_range", 0.0)) <= dist \
 				and _cooldowns.get(a["id"], 0.0) <= 0.0:
 			for i in int(a.get("weight", 1)):
@@ -450,6 +456,13 @@ func _pick_attack(dist: float) -> Dictionary:
 	if pool.is_empty():
 		return {}
 	return pool[randi() % pool.size()]
+
+func _target_behind() -> bool:
+	if target == null or not is_instance_valid(target):
+		return false
+	var to := target.global_position - global_position
+	to.y = 0.0
+	return to.length() > 0.05 and (-vis.global_transform.basis.z).dot(to.normalized()) < -0.35
 
 func attack_by_id(aid: String) -> Dictionary:
 	for a in cfg.get("attacks", []):
@@ -485,7 +498,7 @@ func _begin_attack(a: Dictionary) -> void:
 	_set_state(ES.ATTACK)
 	var anim_name: String = a.get("anim", "atk_r")
 	var w := float(a.get("windup", 0.5)) / _speed_mult()
-	vis.play_timed(anim_name, maxf(w, 0.05), 0.08)
+	vis.play_timed(anim_name, maxf(w, 0.05), 0.08, 0.0, INF, "@" + String(a.get("id", "")))
 	_atk_dir = _aim_dir()
 	_atk_off = _line_offset()
 	_tele = null
@@ -591,7 +604,8 @@ func _st_attack(dt: float) -> void:
 			# the next strike re-arms the same volumes (begin_swing clears who
 			# was struck); ending them first would land a deferred disable
 			# after the re-arm and swallow the strike
-			if _atk.has("hit_anim"):
+			# a foe's own attack clip (ADR 0012) already carries its strike
+			if _atk.has("hit_anim") and not vis.has_clip("@" + String(_atk.get("id", ""))):
 				vis.play_timed(String(_atk["hit_anim"]), maxf(float(_atk.get("hit_lead", 0.12)), 0.05), 0.05)
 		_strike()
 		_hit_i += 1
@@ -1472,6 +1486,10 @@ func take_hit(packet: DamagePacket) -> void:
 	if dead:
 		return
 	hp -= packet.amount
+	# "breaks_to": damage kinds that end it outright (the Unsung break when
+	# sung at: every Song the Bearer has is one of these)
+	if packet.kind in cfg.get("breaks_to", []):
+		hp = 0.0
 	poise -= packet.poise_damage / stagger_resist
 	var hdir := (global_position - packet.origin).normalized() if packet.origin != Vector3.ZERO else vis.global_transform.basis.z
 	vis.flinch(hdir, 1.0)

@@ -541,6 +541,83 @@ def icon_armour_collier():
     return im
 
 
+# --- Shepherd's Reach, the Coldwell, and the pieces on the way up (REACH.md 8,
+# COLDWELL.md 8) ---------------------------------------------------------------
+def icon_fold_tally():
+    """A hazel stick notched down one edge; one more notch at the end, cut small."""
+    im, d = canvas()
+    d.polygon(rot([(58, 8), (70, 8), (72, 120), (56, 120)], 35), fill=(150, 118, 78, 255))
+    for i in range(11):
+        y = 18 + i * 8
+        d.line(rot([(70, y), (60, y + 3)], 35), fill=DARK, width=3)
+    d.line(rot([(70, 110), (65, 112)], 35), fill=INK, width=2)     # the small one
+    return im
+
+
+def icon_boots():
+    """A pair of herd's boots, toes to the wall."""
+    im, d = canvas()
+    for x in (26, 68):
+        d.polygon([(x + 6, 24), (x + 30, 24), (x + 30, 84), (x + 40, 96), (x + 40, 108), (x, 108), (x + 4, 84)],
+                  fill=(112, 84, 58, 255))
+        d.rectangle((x, 106, x + 40, 112), fill=DARK)
+        d.line([(x + 8, 34), (x + 28, 34)], fill=INK, width=2)
+    return im
+
+
+def icon_whistle():
+    """A bone whistle, two holes, a child's lanyard."""
+    im, d = canvas()
+    d.polygon(rot([(56, 40), (72, 40), (70, 112), (58, 112)], -30), fill=INK)
+    for y in (66, 86):
+        x0, y0 = rot([(64, y)], -30)[0]
+        d.ellipse((x0 - 4, y0 - 4, x0 + 4, y0 + 4), fill=(0, 0, 0, 0))
+    d.arc((14, 6, 62, 54), 20, 330, fill=DARK, width=3)
+    return im
+
+
+def icon_armour_fleece():
+    im, d = canvas()
+    _coat(d, (214, 204, 182, 255), (170, 156, 130, 255))
+    for y in (50, 66, 82, 98):
+        for x in range(36, 96, 12):
+            d.arc((x - 6, y - 6, x + 6, y + 6), 20, 160, fill=(170, 156, 130, 255), width=2)
+    d.line((34, 72, 94, 72), fill=DARK, width=3)                     # the rope belt
+    return im
+
+
+def icon_latch_wool():
+    """An iron latch with a scrap of woad wool caught on it."""
+    im, d = canvas()
+    d.rectangle((22, 50, 96, 62), fill=DARK)
+    d.polygon([(96, 44), (110, 56), (96, 68)], fill=DARK)
+    d.ellipse((52, 54, 74, 76), fill=WOAD)
+    d.line([(60, 74), (54, 104), (62, 116)], fill=WOAD, width=4)
+    d.line([(68, 74), (74, 98)], fill=WOAD, width=3)
+    return im
+
+
+def icon_woad_band():
+    """A mask-band, the knot still in it."""
+    im, d = canvas()
+    d.line([(14, 50), (40, 60), (64, 58), (90, 62), (114, 48)], fill=WOAD, width=10)
+    d.ellipse((54, 48, 76, 70), fill=WOAD)
+    d.line([(60, 68), (50, 100)], fill=WOAD, width=6)
+    d.line([(70, 68), (82, 104)], fill=WOAD, width=6)
+    return im
+
+
+def icon_bare_mask():
+    """A mourning mask with no band: the wood darker where one sat."""
+    im, d = canvas()
+    d.ellipse((28, 14, 100, 118), fill=INK)
+    d.ellipse((42, 48, 58, 60), fill=(0, 0, 0, 0))
+    d.ellipse((70, 48, 86, 60), fill=(0, 0, 0, 0))
+    d.line([(40, 40), (88, 40)], fill=DARK, width=4)
+    d.rectangle((30, 66, 98, 74), fill=(196, 184, 160, 255))
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in list(globals().items()):

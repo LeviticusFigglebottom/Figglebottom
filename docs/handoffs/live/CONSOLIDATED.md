@@ -1,36 +1,51 @@
 # Live handoff: Rimeholt
 
-_Last updated: 2026-11-07 (founding session)_
+_Last updated: 2026-11-10 (lead session, after the all-in merge)_
 
-## State (on main fd6bf02: 850 checks, all green)
-| Region | World | Encounters and writing |
+Read `docs/handoffs/live/TEAM.md` next: it has the roster, file ownership and how the sessions talk.
+
+## State (on main fd881f6)
+The whole game is on main, in structure:
+- **Seven regions.** Each has its landscape, encounters, a three-phase Holdfast, NPCs with Keepsakes threads, and a release.
+- **Both endings** (the Outsong, the Hearth Kept) and credits. See ADR 0013.
+- **The Bearer's combat clip library** (ADR 0011). Foe and boss attack clips are cut to their data windups (ADR 0012, pass 3).
+- **Look passes 1–4:**
+  - CC0 PBR texture library
+  - Tripo rocks, trees, hedges, props and gables
+  - textured grass
+  - a painted sky per state
+  - the Tripo hearthstone everywhere
+  - card flames
+- **Real-GPU work:**
+  - VRAM compression
+  - the water's sky term under SDFGI
+  - fog pockets
+  - nav re-path throttle
+  - weather on GPU particles
+
+**Tests.** About 1,400 checks across some 27 suites; CI runs them on every push. One known flake: `tarnhall_encounters`, "the second goes where he is running to". The QA env owns it.
+
+**Windows build.** The GPU worker exports it on the owner's PC, to `C:\Users\Aaron\Documents\Rimeholt_Windows_<date>_<sha>\Rimeholt.exe`. CI artifacts upload for main only (the storage quota was hit).
+
+## In flight
+| Who | Branch | Work |
 |---|---|---|
-| Saltfell (vertical slice) | ✅ | ✅ |
-| The Lowe | ✅ | ✅ |
-| Kettle Fjord | ✅ | ✅ |
-| Tarnhall | ✅ | ✅ (the Host, seated guests, Lusse, Ottar) |
-| Thornwold | ✅ (THAW/RIME hedge maze) | todo |
-| Shepherd's Reach | in flight | todo |
-| The Coldwell | in flight | todo, plus both endings |
+| GPU worker (owner's PC) | `gpu/npc-wiring`, `gpu/perf-3` | Rebuild the exe from main; wire the maren, wren and old_calder models; foe-foe crowding |
+| QA env (cloud) | `fix/qa-regions` | End-to-end walks for regions 2–5 (extend to Reach, Coldwell and the endings next); the bench flake |
+| World-fidelity env (cloud) | `art/world-fidelity` | Exposure per state, cliffs, snow, the Coldwell horizon, building construction detail, interiors |
+| Lead's agents (this box) | `feat/anims-4`, `art/look-pass-5` | See the task board |
 
-- **Tripo balance:** about 14,280, before the look pass.
-- **Owner feedback:** procedural assets clash with the Tripo art. The look pass fixes this: CC0 PBR textures, UVs, Tripo-textured buildings, Tripo rocks and trees.
-- **Test flake:** `kettle_encounters` ring-cut flaked under load. The test is now isolated: it closes old ice, puts other moves on cooldown, and waits for the ring to open.
+## Open questions for the owner
+- **Tripo calls:** paid generation was blocked by this session's permission system on 2026-11-10. Eight prop references and the ewe rigs are waiting on it.
+- **Music:** nobody has listened to it yet.
+- **Player hitbox:** it stays a data box and does not follow the blade. That was a feel decision; change it only if the owner asks.
 
-## In flight (worktree → branch)
-| Worktree | Branch | Work |
-|---|---|---|
-| `/home/user/fb-qa` | `fix/slice-qa` | Merge main in, then body collision, enemy draw calls, title hitch, the tide wall |
-| `/home/user/fb-look` | `art/unified-look` | The whole-world material/texture pass, plus trees and hedges |
-| `/home/user/figglebottom` | `feat/reach-coldwell` | Shepherd's Reach and the Coldwell worlds, the ending hook, the THAW sky |
-| `/home/user/fb-enc5` | `feat/release-scenes` | NPC sit support; the Lowe, Kettle and Tarnhall post-release THAW scenes |
-| Owner's PC | `gpu/*` | `LOCAL_GPU_TASKS.md`. Nothing has been received yet |
-
-## Next exact step
-1. Merge each branch above once its tests pass.
-2. Thornwold encounters (the Hedgelayer, Linnet, Eyvind), then Reach and Coldwell encounters.
-3. The endings.
-4. A full-game QA pass.
+## Known gaps
+- Real-GPU look: THAW exposure blow-out and faceted cliffs (world-fidelity env).
+- RIME constructs: frozen thorn, frost veils as flat cards.
+- Armour does not change the Bearer's model yet. Six `bearer_*.glb` outfits are unused.
+- New-region foes (drover, frost_ram, upwalker, unsung, fellcaller, leadvoice) lack their own attack clips.
+- Ottar has no model.
 
 ## Tripo access (for future sessions)
 - **Tool:** the unofficial `Neko-Yukari/tripo-studio-mcp`. Clone it into the scratchpad and run it with `TRIPO_GATEWAY=0` and `TRIPO_STUDIO_STATE=<scratchpad>/tripo/studio-state.json`.

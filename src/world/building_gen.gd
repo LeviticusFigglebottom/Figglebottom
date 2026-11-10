@@ -14,6 +14,66 @@ class_name BuildingGen
 const DOOR_W := 1.9
 const DOOR_H := 2.5
 
+## Tripo gable ends (docs/art/LOOK_PASS.md, pass 2). Each GLB is a gable front
+## 1 m wide with a stub of plank roof behind it, front facing +Z, base on the
+## eave line. It is stretched to the house: across to the barge-board span, up
+## so its roof line (apex_frac of its height; horns stand above) meets the turf
+## ridge, and back to tuck under the turf overhang. A missing file falls back
+## to the box-and-torus gable.
+##   "carved": dwellings and halls (crossed boards, curled horn finials, a knot roundel)
+##   "shed":   working sheds (plain crossed boards, loft hatch, net floats)
+const GABLES := {
+	"carved": {"glb": "res://assets/models/kit/kit_gable_carved.glb", "apex_frac": 0.84, "family": "M_wood"},
+	"shed": {"glb": "res://assets/models/kit/kit_gable_shed.glb", "apex_frac": 0.88, "family": "M_wood"},
+}
+## House ids that are working sheds unless the spec says "gable": "...".
+const SHED_IDS := ["fishhouse", "boatshed", "store", "byre", "wellhouse"]
+
+static func _gable_style(spec: Dictionary) -> String:
+	if spec.has("gable"):
+		return String(spec["gable"])
+	var id := String(spec.get("id", ""))
+	for k in SHED_IDS:
+		if id.begins_with(k):
+			return "shed"
+	return "carved"
+
+static var _gable_cache: Dictionary = {}
+
+static func _hero_gable(root: Node3D, style: String, w: float, h: float, zoff: float, s: float, mode: int) -> bool:
+	var g: Dictionary = GABLES.get(style, {})
+	if g.is_empty() or not ResourceLoader.exists(String(g["glb"])):
+		return false
+	var key := "%s|%d" % [style, mode]
+	if not _gable_cache.has(key):
+		var inst := (load(String(g["glb"])) as PackedScene).instantiate()
+		var found: Mesh = null
+		for c in inst.find_children("*", "MeshInstance3D", true, false):
+			var src := (c as MeshInstance3D).mesh
+			if src != null:
+				found = src.duplicate() as Mesh
+				for i in found.get_surface_count():
+					found.surface_set_material(i, MaterialLib.hero_mat(src.surface_get_material(i), String(g["family"]), mode))
+				break
+		inst.free()
+		_gable_cache[key] = found
+	var mesh: Mesh = _gable_cache[key]
+	if mesh == null:
+		return false
+	var bb := mesh.get_aabb()
+	var over := 0.75
+	var rise := w * 0.42
+	var depth := 1.05
+	var mi := MeshInstance3D.new()
+	mi.name = "gable_%s" % ("s" if s > 0.0 else "n")
+	mi.mesh = mesh
+	# the roof line of the piece meets the top of the turf at the ridge
+	var sc := Vector3((w + over * 2.0 + 0.5) / bb.size.x, (rise + 0.62) / (bb.size.y * float(g["apex_frac"])), depth / bb.size.z)
+	var basis := Basis(Vector3.UP, 0.0 if s > 0.0 else PI).scaled_local(sc)
+	mi.transform = Transform3D(basis, Vector3(0, h - 0.16, zoff + s * (over + 0.2 - depth * 0.5)))
+	root.add_child(mi)
+	return true
+
 static func build(area: Area, spec: Dictionary) -> Node3D:
 	if String(spec.get("kind", "house")) == "barrow":
 		return _barrow(area, spec)
@@ -39,8 +99,11 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 		if (d as Array).size() > 2:
 			door_shift["%s%d" % [String(d[0]), int(d[1])]] = float(d[2])
 
+	# the construction detail seen inside ~70 m (HouseDetail); the SurfaceTools
+	# below now carry only the corner posts, the gable ends and the far LOD
+	var hd := HouseDetail.new(spec, area.get_meta("def", {}), mode)
+	_hd = hd
 	var plank := SurfaceTool.new(); plank.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var stone := SurfaceTool.new(); stone.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var turf := SurfaceTool.new(); turf.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var beam := SurfaceTool.new(); beam.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var solids: Array = []    # [center, size, yaw] boxes for collision (local)
@@ -62,47 +125,12 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 			var b: float = sg[1]
 			if b - a < 0.05:
 				continue
-			# dry-stone footing: irregular blocks, a little proud of the wall
-			var t := a
-			while t < b - 0.05:
-				var bw := minf(rng.randf_range(0.45, 0.8), b - t)
-				var bh := rng.randf_range(0.38, 0.55)
-				var c := t + bw * 0.5
-				var p := _wall_pt(along_x, off, c, bh * 0.5)
-				_box(stone, Vector3(bw * 0.97, bh, rng.randf_range(0.5, 0.62)) if along_x else Vector3(rng.randf_range(0.5, 0.62), bh, bw * 0.97),
-					p, Vector3(0, rng.randf_range(-4, 4), rng.randf_range(-3, 3)))
-				t += bw
-			# staves: split planks, each its own height and lean
-			t = a
-			while t < b - 0.02:
-				var pw := minf(rng.randf_range(0.22, 0.3), b - t)
-				var ph := h - 0.4 + rng.randf_range(-0.04, 0.06)
-				var pc := t + pw * 0.5
-				var pp := _wall_pt(along_x, off, pc, 0.4 + ph * 0.5)
-				var sz := Vector3(pw * 0.96, ph, 0.12) if along_x else Vector3(0.12, ph, pw * 0.96)
-				_box(plank, sz, pp, Vector3(0, 0, rng.randf_range(-0.8, 0.8)) if along_x else Vector3(rng.randf_range(-0.8, 0.8), 0, 0))
-				t += pw
 			var mid := (a + b) * 0.5
 			solids.append([_wall_pt(along_x, off, mid, h * 0.5), Vector3(b - a, h, 0.4) if along_x else Vector3(0.4, h, b - a)])
-		# over each door: a lintel and short staves; posts either side
 		for g in gaps:
 			var gc: float = g
-			_box(beam, Vector3(DOOR_W + 0.5, 0.22, 0.26) if along_x else Vector3(0.26, 0.22, DOOR_W + 0.5),
-				_wall_pt(along_x, off, gc, DOOR_H + 0.11), Vector3.ZERO)
-			var t2 := gc - DOOR_W * 0.5
-			while t2 < gc + DOOR_W * 0.5 - 0.02:
-				var pw2 := 0.27
-				var ph2 := h - DOOR_H - 0.2
-				_box(plank, Vector3(pw2 * 0.96, ph2, 0.12) if along_x else Vector3(0.12, ph2, pw2 * 0.96),
-					_wall_pt(along_x, off, t2 + pw2 * 0.5, DOOR_H + 0.2 + ph2 * 0.5), Vector3.ZERO)
-				t2 += pw2
-			for s in [-1.0, 1.0]:
-				_box(beam, Vector3(0.24, DOOR_H + 0.2, 0.3) if along_x else Vector3(0.3, DOOR_H + 0.2, 0.24),
-					_wall_pt(along_x, off, gc + s * (DOOR_W * 0.5 + 0.12), (DOOR_H + 0.2) * 0.5), Vector3.ZERO)
 			solids.append([_wall_pt(along_x, off, gc, (h + DOOR_H) * 0.5 + 0.1), Vector3(DOOR_W, h - DOOR_H, 0.4) if along_x else Vector3(0.4, h - DOOR_H, DOOR_W)])
-		# wall plate along the top
-		_box(beam, Vector3(span + 0.3, 0.24, 0.3) if along_x else Vector3(0.3, 0.24, span + 0.3),
-			_wall_pt(along_x, off, 0.0, h + 0.12), Vector3.ZERO)
+	hd.build_walls()
 	# corner posts, adzed square, standing on the footing
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
@@ -110,20 +138,63 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 				Vector3(0, rng.randf_range(-6, 6), 0))
 
 	_roof(turf, plank, beam, w, l, h, rng)
+	_roof_grass(root, w, l, h, tag, rng.randi())
+	var gstyle := _gable_style(spec)
 	for sz in [-1.0, 1.0]:
+		if _hero_gable(root, gstyle, w, h, sz * l * 0.5, sz, mode):
+			continue
 		if (sz < 0 and "N" in opens) or (sz > 0 and "S" in opens):
 			_gable(plank, beam, w, h, sz * l * 0.5, sz, rng, true)
 		else:
 			_gable(plank, beam, w, h, sz * l * 0.5, sz, rng, false)
 
-	# far LOD: past ~40 m the split staves alias into moiré stripes, so the
-	# walls swap to plain plank-coloured slabs (the outline stays the same)
+	HouseInterior.build(hd, root)
+	if "--house-stats" in OS.get_cmdline_user_args():
+		# triangle budget per house, for docs/art/WORLD_FIDELITY.md
+		print("[house] %s %s %dx%d tris=%d (small parts %d, interior %d)" % [hd.id, hd.style, int(w), int(l), hd.tri_total(),
+			hd.iron.tri_count() + hd.fine.tri_count() + hd.bark.tri_count(),
+			hd.in_wood.tri_count() + hd.in_dark.tri_count() + hd.in_stone.tri_count() + hd.in_cloth.tri_count() + hd.in_rope.tri_count() + hd.in_hide.tri_count()])
+	if area.terrain != null:
+		# tell the land a house stands here (wall-foot shadow, worn doorways,
+		# no snow under the roof, drifts against the walls)
+		var dws: Array = []
+		for d in hd.doors:
+			var sx := hd.side_xf(String(d["side"]))
+			var wp := hd.world_of(sx * Vector3(float(d["t"]), 0, 0))
+			var wn := Basis(Vector3.UP, hd.yaw) * sx.basis.z
+			dws.append([wp.x, wp.z, wn.x, wn.z])
+		area.terrain.add_footprint(Vector2(root.position.x, root.position.z), Vector2(w * 0.5, l * 0.5),
+			hd.yaw, y, 2 if not opens.is_empty() else 0, dws)
+	hd.attach(root)
+	_hd = null
+	if tag == "base":
+		# RIME: snow banked against the walls (rime-only, melts with the wave)
+		var dm := hd.build_drifts(area.terrain)
+		if dm != null:
+			var dmi := MeshInstance3D.new()
+			dmi.name = "Drift_" + hd.id
+			dmi.mesh = dm
+			dmi.transform = root.transform
+			dmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			dmi.visibility_range_end = HouseDetail.LOD_MID
+			dmi.visibility_range_end_margin = 4.0
+			area.attach(dmi, "rime")
+	if hd.style == "hall" and hd.louvre_z != INF:
+		# woodsmoke drifting from the louvre while the house is lived in (THAW)
+		AreaBuilder._smoke(area, hd.louvre_world())
+	# far LOD: past HouseDetail.LOD_MID the boards alias into moiré stripes, so
+	# the walls swap to plain plank-coloured slabs on a stone band and the roof
+	# to plain turf slabs (the outline stays the same)
 	var far := SurfaceTool.new(); far.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var far_stone := SurfaceTool.new(); far_stone.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for sd in solids:
 		var sz: Vector3 = sd[1]
 		_box(far, Vector3(sz.x if sz.x > 0.5 else 0.16, sz.y - (0.4 if sz.y > 3.0 else 0.0), sz.z if sz.z > 0.5 else 0.16),
 			sd[0] + Vector3(0, 0.2 if sz.y > 3.0 else 0.0, 0), Vector3.ZERO)
-	for pair in [[plank, "M_wood"], [stone, "M_drystone"], [turf, "M_turf"], [beam, "M_wood_dark"], [far, "M_wood"]]:
+		if sz.y > DOOR_H:
+			_box(far_stone, Vector3(sz.x if sz.x > 0.5 else 0.56, 0.44, sz.z if sz.z > 0.5 else 0.56),
+				Vector3(sd[0].x, 0.22, sd[0].z), Vector3.ZERO)
+	for pair in [[plank, "M_wood", 0], [beam, "M_wood_dark", 0], [far, "M_wood", 1], [far_stone, "M_drystone", 1], [turf, "M_turf", 1]]:
 		var st: SurfaceTool = pair[0]
 		var mesh := ProcMesh.finish(st)
 		if mesh == null or mesh.get_surface_count() == 0:
@@ -131,13 +202,9 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 		mesh.surface_set_material(0, MaterialLib.get_mat(String(pair[1]), mode, true))
 		var mi := MeshInstance3D.new()
 		mi.mesh = mesh
-		mi.name = String(pair[1])
-		if pair[0] == plank:
-			mi.visibility_range_end = 60.0
-			mi.visibility_range_end_margin = 4.0
-		elif pair[0] == far:
-			mi.name = "walls_far"
-			mi.visibility_range_begin = 60.0
+		mi.name = String(pair[1]) + ("_far" if int(pair[2]) == 1 else "")
+		if int(pair[2]) == 1:
+			mi.visibility_range_begin = HouseDetail.LOD_MID
 			mi.visibility_range_begin_margin = 4.0
 		root.add_child(mi)
 
@@ -154,6 +221,10 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 	root.add_child(body)
 	area.attach(root, tag)
 	return root
+
+## The house being built: lets _roof and _gable (whose signatures the look
+## pass shares) reach the detail builder without new arguments.
+static var _hd: HouseDetail = null
 
 static func _segments(a: float, b: float, gaps: Array) -> Array:
 	var out: Array = []
@@ -181,27 +252,15 @@ static func _roof(turf: SurfaceTool, plank: SurfaceTool, beam: SurfaceTool, w: f
 	var slope := sqrt(half * half + rise * rise)
 	var ang := atan2(rise, half)
 	var length := l + over * 2.0
+	# near: boards on rafters, bark, a turf log, lumpy turf, weighted poles
+	if _hd != null:
+		_hd.build_roof()
+	# far (`turf` is the far-LOD tool): the plain slabs and the ridge roll
 	for s in [-1.0, 1.0]:
 		var basis := Basis(Vector3.BACK, -s * ang)
 		var mid := Vector3(s * half * 0.5, h + rise * 0.5 - 0.05, 0)
 		var n := basis * Vector3.UP
-		ProcMesh.box(turf, Vector3(slope, 0.55, length), Transform3D(basis, mid + n * 0.33))
-		ProcMesh.box(plank, Vector3(slope + 0.05, 0.1, length - 0.1), Transform3D(basis, mid))
-		# grass fringe along the eave: ragged tufts hanging over the edge
-		var eave := Vector3(s * half, h - 0.1, 0)
-		var z := -length * 0.5 + 0.2
-		while z < length * 0.5 - 0.2:
-			var tw := rng.randf_range(0.3, 0.6)
-			var th := rng.randf_range(0.25, 0.55)
-			ProcMesh.box(turf, Vector3(0.22, th, tw),
-				Transform3D(Basis(Vector3.BACK, -s * rng.randf_range(0.2, 0.5)), eave + Vector3(s * 0.05, -th * 0.35 + 0.2, z)))
-			z += tw * 0.8
-		# rafter ends showing under the turf
-		var zr := -l * 0.5
-		while zr <= l * 0.5 + 0.01:
-			ProcMesh.box(beam, Vector3(half + 0.1, 0.16, 0.14),
-				Transform3D(basis, Vector3(s * half * 0.5, h + rise * 0.5 - 0.22, zr)))
-			zr += 2.0
+		ProcMesh.box(turf, Vector3(slope, 0.62, length), Transform3D(basis, mid + n * 0.33))
 	# the ridge roll
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.42
@@ -209,6 +268,51 @@ static func _roof(turf: SurfaceTool, plank: SurfaceTool, beam: SurfaceTool, w: f
 	cm.height = length
 	cm.radial_segments = 8
 	ProcMesh.append(turf, cm, Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3(0, h + rise + 0.3, 0)), Vector2(TAU * 0.42, length))
+
+## A turf roof grows: the same card clumps as the ground (Scatter's grass),
+## small and close on both slopes, so the roof has a pile and a ragged skyline
+## at eye height instead of a clean green slab. Its own stream, so adding it
+## moved no board.
+static func _roof_grass(root: Node3D, w: float, l: float, h: float, tag: String, seed: int) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var over := 0.75
+	var half := w * 0.5 + over
+	var rise := w * 0.42
+	var slope := sqrt(half * half + rise * rise)
+	var ang := atan2(rise, half)
+	var length := l + over * 2.0
+	var xfs: Array = []
+	for s in [-1.0, 1.0]:
+		var basis := Basis(Vector3.BACK, -s * ang)
+		var mid := Vector3(s * half * 0.5, h + rise * 0.5 - 0.05, 0)
+		var n := int(slope * length * 2.2)
+		for i in n:
+			var u := rng.randf_range(-slope * 0.5 + 0.1, slope * 0.5 - 0.05)
+			var v := rng.randf_range(-length * 0.5 + 0.1, length * 0.5 - 0.1)
+			var p := mid + basis * Vector3(u, 0.58, v)
+			# clumps grow up, leaning a little with the slope
+			var up := Vector3.UP.lerp(basis * Vector3.UP, 0.35).normalized()
+			var b := Basis(Quaternion(Vector3.UP, up)) * Basis(Vector3.UP, rng.randf() * TAU)
+			var sc := rng.randf_range(0.45, 0.8)
+			xfs.append([Transform3D(b.scaled_local(Vector3(sc, sc * rng.randf_range(0.7, 1.0), sc)), p),
+				Color(rng.randf(), rng.randf() * 0.8, rng.randf(), rng.randf())])
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_custom_data = true
+	mm.mesh = Scatter._veg_mesh("grass", tag, MaterialLib.family_albedo("M_turf"))
+	mm.instance_count = xfs.size()
+	for i in xfs.size():
+		mm.set_instance_transform(i, xfs[i][0])
+		mm.set_instance_custom_data(i, xfs[i][1])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "roof_grass"
+	mmi.multimesh = mm
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mmi.visibility_range_end = 55.0
+	mmi.visibility_range_end_margin = 6.0
+	mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+	root.add_child(mmi)
 
 ## A gable end: vertical boards filling the triangle (or left open on an open
 ## side), crossed barge-boards that run past the ridge into curled horns, and
@@ -222,7 +326,8 @@ static func _gable(plank: SurfaceTool, beam: SurfaceTool, w: float, h: float, zo
 		while x < half - 0.05:
 			var pw := 0.26
 			var cx := x + pw * 0.5
-			var top := rise * (1.0 - absf(cx) / (half + 0.75 * 0.0)) - 0.05
+			# up to the underside of the roof boards (which overhang by 0.75)
+			var top := rise * (1.0 - (absf(cx) + pw * 0.5) / (half + 0.75)) - 0.12
 			if top > 0.1:
 				ProcMesh.box(plank, Vector3(pw * 0.95, top, 0.1),
 					Transform3D(Basis.IDENTITY, Vector3(cx, h + top * 0.5, zoff + s * 0.05)))
@@ -238,6 +343,8 @@ static func _gable(plank: SurfaceTool, beam: SurfaceTool, w: float, h: float, zo
 		# shifted toward the ridge so each board runs ~0.45 m past it
 		var centre := Vector3(side * (bh * 0.5 - 0.4 * cos(ang)), h + rise * 0.5 + 0.4 * sin(ang) + 0.3, zb)
 		ProcMesh.box(beam, Vector3(blen, 0.32, 0.1), Transform3D(basis, centre))
+		if _hd != null:
+			_carve_barge(_hd.fine, Transform3D(basis, centre), blen, s, side)
 	# horns: each board end curls back on itself (a quarter torus each)
 	var apex := Vector3(0, h + rise + 0.75, zb)
 	for side in [-1.0, 1.0]:
@@ -259,6 +366,31 @@ static func _gable(plank: SurfaceTool, beam: SurfaceTool, w: float, h: float, zo
 			var b := Basis(Vector3.RIGHT, PI * 0.5).scaled(Vector3(1.0, 1.0, 0.55))
 			var a := k * TAU / 3.0 + PI * 0.5
 			ProcMesh.append(beam, tk, Transform3D(b, kc + Vector3(cos(a), sin(a), 0) * 0.17), Vector2(TAU * 0.28, 0.5))
+
+## Carving on a barge-board: a two-strand interlace run between two fillets,
+## cut as raised three-sided ridges. Abstract knotwork, never letters.
+static func _carve_barge(buf: MeshBuf, xf: Transform3D, blen: float, s: float, side: float) -> void:
+	var keep := buf.xf
+	buf.xf = xf
+	var z0 := s * 0.056
+	var x0 := -blen * 0.5 + 0.55
+	var x1 := blen * 0.5 - 1.25
+	for e: float in [-1.0, 1.0]:
+		buf.box(Vector3(x1 - x0 + 0.3, 0.014, 0.012), Transform3D(Basis.IDENTITY, Vector3((x0 + x1) * 0.5, e * 0.125, z0)), 0)
+	var wave := 0.62          # one full twist of the interlace, metres
+	for strand: float in [0.0, PI]:
+		var pts := PackedVector3Array()
+		var x := x0
+		while x <= x1:
+			var ph := (x - x0) / wave * TAU + strand
+			# over and under: each strand rides up where it crosses the other
+			pts.append(Vector3(x, 0.082 * sin(ph), z0 + s * 0.007 * (1.0 + cos(ph * 2.0 + strand)) * (1.0 if strand == 0.0 else -1.0) * side * side))
+			x += 0.075
+		buf.tube(pts, 0.021, 3, Vector3(0, 0, 1))
+	# a lozenge boss closes each end of the run
+	for bx in [x0 - 0.16, x1 + 0.16]:
+		buf.box(Vector3(0.15, 0.15, 0.016), Transform3D(Basis(Vector3(0, 0, 1), PI * 0.25), Vector3(float(bx), 0, z0)), 0)
+	buf.xf = keep
 
 static func _bm(size: Vector3) -> BoxMesh:
 	var bm := BoxMesh.new()
@@ -283,7 +415,7 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 	root.name = "House_" + String(spec.get("id", "barrow"))
 	root.position = Vector3(float(spec["center"][0]), y, float(spec["center"][1]))
 	root.rotation.y = deg_to_rad(float(spec.get("yaw", 0.0)))
-	var stone := SurfaceTool.new(); stone.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var stone := MeshBuf.new(int(rng.randi() & 0xffff))
 	var turf := SurfaceTool.new(); turf.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var solids: Array = []
 	var front := l * 0.5
@@ -302,37 +434,64 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 			while course < ht:
 				var bh := rng.randf_range(0.18, 0.3)
 				var bz := front - smoothstep(wing * 0.5, wing, x) * 1.6
-				_box(stone, Vector3(bw * 0.95, bh * 0.95, rng.randf_range(0.55, 0.75)),
-					Vector3(side * (x + bw * 0.5), course + bh * 0.5, bz), Vector3(rng.randf_range(-3, 3), rng.randf_range(-6, 6), rng.randf_range(-3, 3)))
+				# coursed slabs: split faces, only their arrises knocked off
+				_stone(stone, Vector3(bw * 0.99, bh * 1.04, rng.randf_range(0.55, 0.75)),
+					Vector3(side * (x + bw * 0.5), course + bh * 0.5, bz + rng.randf_range(-0.04, 0.04)), Vector3(rng.randf_range(-3, 3), rng.randf_range(-6, 6), rng.randf_range(-3, 3)), 0.14)
 				course += bh
 			x += bw
 		solids.append([Vector3(side * (pass_w * 0.5 + (wing - pass_w * 0.5) * 0.5), wall_h * 0.5, front - 0.4),
 			Vector3(wing - pass_w * 0.5, wall_h, 1.2)])
 	# the lintel and the stones over the door
-	_box(stone, Vector3(pass_w + 1.0, 0.35, 0.8), Vector3(0, pass_h + 0.18, front), Vector3(0, 0, rng.randf_range(-2, 2)))
-	_box(stone, Vector3(pass_w + 0.6, wall_h - pass_h - 0.35, 0.65), Vector3(0, (wall_h + pass_h + 0.35) * 0.5, front), Vector3.ZERO)
+	_stone(stone, Vector3(pass_w + 1.0, 0.35, 0.8), Vector3(0, pass_h + 0.18, front), Vector3(0, 0, rng.randf_range(-2, 2)), 0.2)
+	_stone(stone, Vector3(pass_w + 0.6, wall_h - pass_h - 0.35, 0.65), Vector3(0, (wall_h + pass_h + 0.35) * 0.5, front), Vector3.ZERO, 0.16)
 	# the passage: walls of upright slabs, capstones over, a back stone
 	for side in [-1.0, 1.0]:
 		var z := front
 		while z > front - pass_l:
 			var sl := rng.randf_range(0.6, 1.0)
-			_box(stone, Vector3(0.35, pass_h + 0.1, sl * 0.95), Vector3(side * (pass_w * 0.5 + 0.17), (pass_h + 0.1) * 0.5, z - sl * 0.5),
-				Vector3(rng.randf_range(-3, 3), 0, rng.randf_range(-4, 4)))
+			_stone(stone, Vector3(0.35, pass_h + 0.1, sl * 0.98), Vector3(side * (pass_w * 0.5 + 0.17), (pass_h + 0.1) * 0.5, z - sl * 0.5),
+				Vector3(rng.randf_range(-3, 3), 0, rng.randf_range(-4, 4)), 0.16)
 			z -= sl
 		solids.append([Vector3(side * (pass_w * 0.5 + 0.2), pass_h * 0.5, front - pass_l * 0.5), Vector3(0.4, pass_h, pass_l)])
 	var zc := front
 	while zc > front - pass_l:
 		var cl := rng.randf_range(0.8, 1.2)
-		_box(stone, Vector3(pass_w + 0.9, 0.3, cl), Vector3(0, pass_h + 0.18, zc - cl * 0.5), Vector3(0, rng.randf_range(-5, 5), rng.randf_range(-3, 3)))
+		_stone(stone, Vector3(pass_w + 0.9, 0.3, cl), Vector3(0, pass_h + 0.18, zc - cl * 0.5), Vector3(0, rng.randf_range(-5, 5), rng.randf_range(-3, 3)))
 		zc -= cl
-	_box(stone, Vector3(pass_w + 0.4, pass_h + 0.2, 0.4), Vector3(0, pass_h * 0.5, front - pass_l), Vector3.ZERO)
+	_stone(stone, Vector3(pass_w + 0.4, pass_h + 0.2, 0.4), Vector3(0, pass_h * 0.5, front - pass_l), Vector3.ZERO)
 	solids.append([Vector3(0, pass_h * 0.5, front - pass_l - 0.1), Vector3(pass_w + 0.4, pass_h, 0.4)])
+	# orthostats: two tall slabs standing either side of the doorway
+	for side in [-1.0, 1.0]:
+		_stone(stone, Vector3(0.5, wall_h + 0.2, 0.36), Vector3(side * (pass_w * 0.5 + 0.34), (wall_h + 0.2) * 0.5 - 0.1, front + 0.2),
+			Vector3(rng.randf_range(-2, 4), rng.randf_range(-8, 8), side * rng.randf_range(1, 4)), 0.2)
+	# a threshold slab, and chinking stones wedged along the foot of the facade
+	_stone(stone, Vector3(pass_w + 0.5, 0.16, 1.1), Vector3(0, -0.02, front + 0.3), Vector3(0, rng.randf_range(-4, 4), 0), 0.25)
+	var cx := pass_w * 0.5 + 0.7
+	while cx < wing:
+		for side in [-1.0, 1.0]:
+			var cz := front - smoothstep(wing * 0.5, wing, cx) * 1.6 + 0.42
+			_stone(stone, Vector3(rng.randf_range(0.25, 0.5), rng.randf_range(0.16, 0.3), rng.randf_range(0.22, 0.38)),
+				Vector3(side * cx, 0.06, cz + rng.randf_range(-0.05, 0.08)), Vector3(rng.randf_range(-8, 8), rng.randf_range(0, 180), rng.randf_range(-8, 8)), 0.6)
+		cx += rng.randf_range(0.45, 0.9)
+	# the kerb: a ring of boulders holding the foot of the mound
+	var ka := w * 0.5 + 1.15
+	var kb := l * 0.5 - 0.05
+	var ang := 0.0
+	while ang < TAU:
+		var kp := Vector3(sin(ang) * ka, 0, cos(ang) * kb - 0.6)
+		var step := rng.randf_range(0.55, 1.0)
+		# the facade closes the front of the ring
+		if kp.z < front - 1.9:
+			var kh := rng.randf_range(0.3, 0.62)
+			_stone(stone, Vector3(step * 0.95, kh, rng.randf_range(0.4, 0.6)), kp + Vector3(0, kh * 0.5 - 0.12, 0),
+				Vector3(rng.randf_range(-6, 6), rad_to_deg(ang) + rng.randf_range(-12, 12), rng.randf_range(-5, 5)), rng.randf_range(0.45, 0.7))
+		ang += step / lerpf(kb, ka, absf(cos(ang)))
 	# the mound: a long whaleback of turf, lumpy, a little lop-sided
 	var sm := SphereMesh.new()
 	sm.radius = 1.0
 	sm.height = 2.0
-	sm.radial_segments = 18
-	sm.rings = 9
+	sm.radial_segments = 36
+	sm.rings = 16
 	var arr := sm.get_mesh_arrays()
 	var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 	var noise := FastNoiseLite.new()
@@ -341,7 +500,7 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 	var mh := 2.6 + w * 0.12
 	for i in verts.size():
 		var v := verts[i]
-		v *= 1.0 + 0.08 * noise.get_noise_3dv(v * 2.0)
+		v *= 1.0 + 0.08 * noise.get_noise_3dv(v * 2.0) + 0.03 * noise.get_noise_3dv(v * 6.5)
 		v = Vector3(v.x * (w * 0.5 + 1.2), maxf(v.y, -0.15) * mh, v.z * l * 0.5)
 		verts[i] = v
 	arr[Mesh.ARRAY_VERTEX] = verts
@@ -354,20 +513,28 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 	for side in [-1.0, 1.0]:
 		solids.append([Vector3(side * (pass_w * 0.5 + 0.4 + (mx - pass_w * 0.5 - 0.4) * 0.5), 1.4, -0.6), Vector3(mx - pass_w * 0.5 - 0.4, 2.8, l - 1.2)])
 	solids.append([Vector3(0, 1.4, (front - pass_l - 0.3 - l * 0.5 + 0.6) * 0.5 - 0.3), Vector3(pass_w + 0.8, 2.8, maxf(0.5, front - pass_l - 0.3 + l * 0.5 - 0.6))])
-	for pair in [[stone, "M_drystone"], [turf, "M_turf"]]:
-		var st: SurfaceTool = pair[0]
-		var mesh: ArrayMesh
-		if pair[0] == stone:
-			mesh = ProcMesh.finish(st)
-		else:
-			# the lumpy mound has no metre UVs: object-aligned triplanar
-			st.generate_normals()
-			mesh = st.commit()
-		mesh.surface_set_material(0, MaterialLib.get_mat(String(pair[1]), 0, pair[0] == stone))
-		var mi := MeshInstance3D.new()
-		mi.mesh = mesh
-		mi.name = String(pair[1])
-		root.add_child(mi)
+	# the stones carry wear / moss / AO: dark at the foot and down the passage,
+	# mossed low and on their north faces
+	var north := Basis(Vector3.UP, -root.rotation.y) * Vector3(0, 0, -1)
+	for i in stone.verts.size():
+		var p := stone.verts[i]
+		var ao := lerpf(0.5, 1.0, smoothstep(0.0, 0.6, p.y))
+		if absf(p.x) < pass_w * 0.5 + 0.5 and p.z < front - 0.2 and p.y < pass_h + 0.4:
+			ao *= lerpf(1.0, 0.3, smoothstep(front - 0.2, front - 3.5, p.z))
+		var moss := (0.3 + 0.7 * maxf(stone.nrms[i].dot(north), 0.0)) * (1.0 - smoothstep(0.4, 2.2, p.y)) + 0.45 * maxf(stone.nrms[i].y, 0.0)
+		stone.cols[i] = Color(0.45, clampf(moss, 0.0, 0.95), clampf(ao, 0.1, 0.97), 1.0)
+	var smi := MeshInstance3D.new()
+	smi.mesh = stone.commit(HouseDetail.mat("M_drystone", 0, "house", {"moss_strength": 1.0}))
+	smi.name = "M_drystone"
+	root.add_child(smi)
+	# the lumpy mound has no metre UVs: object-aligned triplanar
+	turf.generate_normals()
+	var tmesh := turf.commit()
+	tmesh.surface_set_material(0, MaterialLib.get_mat("M_turf", 0, false))
+	var tmi := MeshInstance3D.new()
+	tmi.mesh = tmesh
+	tmi.name = "M_turf"
+	root.add_child(tmi)
 	var body := StaticBody3D.new()
 	body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
 	body.collision_mask = 0
@@ -380,6 +547,11 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 		body.add_child(cs)
 	root.add_child(body)
 	area.attach(root, "base")
+	if area.terrain != null:
+		var mc := root.position + root.transform.basis * Vector3(0, 0, -0.6)
+		var dw := root.position + root.transform.basis * Vector3(0, 0, front + 0.4)
+		var dn := root.transform.basis * Vector3(0, 0, 1)
+		area.terrain.add_footprint(Vector2(mc.x, mc.z), Vector2(w * 0.5 + 0.9, l * 0.5 - 0.3), root.rotation.y, y, 1, [[dw.x, dw.z, dn.x, dn.z]])
 	# the turf door: in, in THAW; open and propped on a frozen spade in RIME
 	var door_tag := String(spec.get("door", "thaw_shut"))
 	var xf := root.transform
@@ -402,11 +574,21 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 			area.attach(propped, open_tag)
 	return root
 
+## A rounded field stone into a MeshBuf (the barrow's facade, passage, kerb).
+static func _stone(buf: MeshBuf, size: Vector3, pos: Vector3, rot_deg: Vector3, roundness := 0.36) -> void:
+	buf.stone(size, Transform3D(Basis.from_euler(rot_deg * PI / 180.0), pos), roundness)
+
+
 ## A landmark scene with its collision stripped (we place our own).
-static func _landmark(path: String) -> Node3D:
+static func _landmark(path: String, family := "", mode := 0) -> Node3D:
 	if not ResourceLoader.exists(path):
 		return null
 	var n := (load(path) as PackedScene).instantiate() as Node3D
+	# set pieces (lm_*) are world meshes: shade them through the hall shader so
+	# they take the RIME snow crust, the wavefront and the same grade as the
+	# ground they stand on. Their baked colour is kept (a light pull only).
+	# Figures used as dressing (frozen walkers, the stag) keep their own skins.
+	var world_mesh := path.get_file().begins_with("lm_")
 	var stack: Array[Node] = [n]
 	while not stack.is_empty():
 		var c: Node = stack.pop_back()
@@ -414,6 +596,11 @@ static func _landmark(path: String) -> Node3D:
 			c.get_parent().remove_child(c)
 			c.free()
 			continue
+		if world_mesh and c is MeshInstance3D and (c as MeshInstance3D).mesh != null:
+			var mi := c as MeshInstance3D
+			for i in mi.mesh.get_surface_count():
+				mi.set_surface_override_material(i, MaterialLib.hero_mat(mi.mesh.surface_get_material(i),
+					family if family != "" else "M_stone", mode, 0.2))
 		for ch in c.get_children():
 			stack.append(ch)
 	return n

@@ -280,6 +280,7 @@ spawners = [
 ]
 FH = [(hx, edge_z(hx) - 6.5) for hx, _y in FISH]      # the fish-house platforms' centres
 B0 = (-88 + 3, edge_z(-88) - 10 - 6)                  # a boat that was leaving, frozen in
+TRACKS = (-18.0, r2(fz(-18.0) + 9.0))     # out on the open ice, clear of the jetties and the cut holes
 pickups = [
     # Ivo's supper: the pot on its hook in the westmost house, the ladle standing up in it
     {"id": "kettle_ladle", "at": [FH[0][0] + 0.6, DECK, r2(FH[0][1] - 1.0)], "item": "item_kettle_ladle", "tag": "rime",
@@ -302,6 +303,10 @@ pickups = [
      "label": "Chip the mitten free", "set_flag": "ks_ivo_mitten_found",
      "scene": "res://assets/models/props/ivo_mitten.tscn", "require_flag": "ks_ice_cutter_released",
      "audit_skip": "the hole under it is thin ice until the release seals it (release_seal)"},
+    # WORLD.md 4.3: one set of footprints frozen into the ice out in the middle, going up the fjord
+    {"id": "ice_tracks", "at": [TRACKS[0], 0.06, TRACKS[1]], "rot": -90, "tag": "rime",
+     "scene": "res://assets/models/props/ice_tracks.tscn", "label": "Look at the tracks", "set_flag": "ks_ice_tracks_seen",
+     "look": "One set of footprints, frozen in, going up the fjord by the thin ice in the middle where nobody walks.\n\nThe left stride is longer than the right. They do not go round anything."},
 ]
 KX = -54.0
 KZ = edge_z(KX) + 6.0                  # the westmost fish-kettle (see PROPS)
