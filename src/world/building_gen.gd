@@ -14,10 +14,6 @@ class_name BuildingGen
 const DOOR_W := 1.9
 const DOOR_H := 2.5
 
-## The house being built: lets _roof and _gable (whose signatures the look
-## pass shares) reach the detail builder without new arguments.
-static var _hd: HouseDetail = null
-
 static func build(area: Area, spec: Dictionary) -> Node3D:
 	if String(spec.get("kind", "house")) == "barrow":
 		return _barrow(area, spec)
@@ -139,6 +135,10 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 	root.add_child(body)
 	area.attach(root, tag)
 	return root
+
+## The house being built: lets _roof and _gable (whose signatures the look
+## pass shares) reach the detail builder without new arguments.
+static var _hd: HouseDetail = null
 
 static func _segments(a: float, b: float, gaps: Array) -> Array:
 	var out: Array = []
