@@ -62,6 +62,11 @@ var _lean := Vector2.ZERO
 var _flinch_amp := 0.0
 var _flinch_phase := 0.0
 var _flinch_axis := Vector3(1, 0, 0)
+var _antic_t := 0.0
+var _antic_dur := 0.0
+var _antic_deg := 0.0
+var _dig := 0.0
+var _dig_rate := 1.0
 
 ## Locomotion clip substitutions (e.g. a two-handed carry:
 ## {"idle": "twohand_idle", "walk": "twohand_walk", "run": "twohand_walk"}).
@@ -189,6 +194,50 @@ func _process(dt: float) -> void:
 		body.rotation = _flinch_axis * wave
 	elif body.rotation != Vector3.ZERO:
 		body.rotation = Vector3.ZERO
+	# strike polish, added on top of the clip: a lean away through the
+	# wind-up that is spent by the contact frame, and a short dig forward on
+	# a landed hit. Both run on scaled time, so Juice's hit-stop freezes the
+	# dig (and the clip) on the impact pose.
+	if _antic_dur > 0.0:
+		_antic_t += dt
+		var u := _antic_t / _antic_dur
+		if u >= 1.0:
+			_antic_dur = 0.0
+		else:
+			body.rotation.x += deg_to_rad(_antic_deg) * sin(PI * u) * (1.0 - u)
+	if _dig > 0.0005:
+		body.rotation.x -= deg_to_rad(_dig)
+		_dig = move_toward(_dig, 0.0, dt * _dig_rate)
+
+## Lean away from the strike while it winds up (`windup` seconds to contact).
+func anticipate(windup: float) -> void:
+	var pol: Dictionary = HumanoidLib.meta().get("polish", {})
+	_antic_deg = float(pol.get("antic_lean_deg", 0.0))
+	_antic_dur = maxf(windup, 0.0) if rig != null and _antic_deg != 0.0 else 0.0
+	_antic_t = 0.0
+
+func cancel_anticipation() -> void:
+	_antic_dur = 0.0
+
+## A landed blow: the body digs in behind the weapon and eases back out.
+func impact_dig(might := 1.0) -> void:
+	if rig == null:
+		return
+	var pol: Dictionary = HumanoidLib.meta().get("polish", {})
+	_dig = float(pol.get("impact_dig_deg", 0.0)) * might
+	_dig_rate = _dig / maxf(float(pol.get("impact_dig_ease", 0.2)), 0.01)
+
+## Whether a clip resolves on this rig (humanoid: through sets and aliases).
+func has_clip(clip: String) -> bool:
+	if rig != null:
+		return rig.has_clip(clip)
+	return anim != null and anim.has_animation(clip)
+
+## A one-shot action has played out (a humanoid holds its last frame).
+func action_done() -> bool:
+	if rig != null:
+		return not rig.action_active()
+	return anim == null or not anim.is_playing()
 
 ## A gear mount that rides a bone. Returned node is a child of the
 ## BoneAttachment3D; offset/orient it freely, then parent kit pieces to it.
@@ -224,7 +273,8 @@ func mount_slot(slot: String) -> Node3D:
 	return m
 
 func _apply_slot(m: Node3D) -> void:
-	var c := HumanoidLib.mount_cfg(String(m.get_meta("slot", "weapon")))
+	# a weapon class may grip differently (mounts "weapon@twohand")
+	var c := HumanoidLib.class_mount_cfg(String(m.get_meta("slot", "weapon")), rig.clip_set if rig != null else "")
 	var p: Array = c.get("pos", [0, 0, 0])
 	var r: Array = c.get("rot", [0, 0, 0])
 	m.position = Vector3(p[0], p[1], p[2])
@@ -262,6 +312,9 @@ func set_weapon(kit_id: String) -> void:
 	for c in weapon_mount.get_children():
 		c.queue_free()
 	weapon_kit = kit_id
+	if rig != null and bool(HumanoidLib.model_cfg(model_id).get("clip_sets", false)):
+		# the weapon's class picks the clips that answer attack_l1, block, ...
+		rig.clip_set = HumanoidLib.weapon_class(kit_id)
 	if kit_id != "":
 		var w: Node3D = HumanoidLib.weapon_instance(kit_id) if rig != null else null
 		weapon_mount.add_child(w if w != null else KitLib.instance(kit_id))
