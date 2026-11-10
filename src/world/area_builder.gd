@@ -136,6 +136,7 @@ static func build(area_id: String) -> Area:
 		s.face_deg = float(spec.get("face", 0))
 		s.dead_once = spec.get("dead_once", false)
 		s.pose = String(spec.get("pose", ""))
+		s.absent_flag = String(spec.get("absent_flag", ""))
 		s.spawn_flag = "slain_" + spec.get("id", spec.get("enemy", "e"))
 		s.area_id = area_id
 		var tag: String = spec.get("tag", "rime")

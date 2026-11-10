@@ -14,6 +14,12 @@ var area_id := ""
 ## card or leavings of the holdfast it borrows the body of)
 var stand_in_for := ""
 
+## the area spec's "absent_flag": once that story flag is raised the foe is
+## gone for good (Tarnhall's seated guests, once the Host is released). The
+## builder leaves such a spawner out of a rebuilt area; this keeps a rest in
+## the same visit from seating them again.
+var absent_flag := ""
+
 var current: Enemy = null
 
 func _ready() -> void:
@@ -26,6 +32,9 @@ func respawn() -> void:
 		return
 	if current != null and is_instance_valid(current):
 		current.queue_free()
+	if absent_flag != "" and World.flag(absent_flag):
+		current = null
+		return
 	var ecfg: Dictionary = DB.table("enemies").get(enemy_id, {})
 	if ecfg.has("class"):
 		current = load(ecfg["class"]).new()
