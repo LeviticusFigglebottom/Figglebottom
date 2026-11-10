@@ -30,19 +30,22 @@ const SNOW := {"M_timber": 0.75, "M_planks": 0.8, "M_drystone_wall": 0.85, "M_sc
 const TEXTURES := {
 	"M_wood": ["timber", 0.55, 1.0], "M_timber": ["timber", 0.55, 1.0], "M_wood_dark": ["timber", 0.5, 1.0],
 	"M_drift": ["timber", 0.6, 1.0, 1.0, 1.2], "M_planks": ["planks", 0.4, 1.0],
-	"M_stone": ["fieldstone", 0.55, 1.0], "M_stone_trim": ["fieldstone", 0.6, 1.0], "M_drystone": ["fieldstone", 0.6, 1.0],
+	# fieldstone has white shell flecks that read as veined marble at full
+	# contrast on a box; walling stones take the stacked-stone set instead
+	"M_stone": ["fieldstone", 0.55, 1.0, 1.0, 0.55], "M_stone_trim": ["fieldstone", 0.6, 1.0, 1.0, 0.55], "M_drystone": ["drystone", 0.55, 1.0, 1.0, 0.85],
 	"M_stone_dark": ["rock", 0.4, 1.0], "M_schist": ["schist", 0.2, 1.0], "M_roof": ["schist", 0.35, 1.0],
 	"M_drystone_wall": ["drystone", 0.4, 1.0], "M_shingle": ["shingle", 0.45, 1.0],
 	"M_turf": ["turf", 0.4, 1.0], "M_peat": ["peat", 0.6, 1.0], "M_marsh": ["peat", 0.4, 1.0], "M_terrain": ["path", 0.3, 1.0],
 	"M_snow": ["snow", 0.3, 1.0], "M_ice": ["ice", 0.25, 0.85, 1.0, 0.7],
 	"M_iron": ["iron", 0.8, 1.0], "M_rope": ["rope", 2.5, 1.0],
-	"M_wool": ["wool", 1.4, 1.0], "M_felt": ["felt", 1.2, 1.0],
+	"M_wool": ["wool", 1.4, 1.0], "M_fleece": ["wool", 1.1, 1.0], "M_felt": ["felt", 1.2, 1.0],
 	"M_cloth": ["wool", 1.4, 1.0], "M_robe": ["wool", 1.4, 1.0], "M_robe_boss": ["wool", 1.4, 1.0], "M_rime_cloth": ["wool", 1.4, 1.0],
 	"M_habit": ["felt", 1.2, 1.0], "M_shroud": ["felt", 1.2, 1.0], "M_leather": ["leather", 1.2, 1.0],
 }
 const TEX_DIR := "res://assets/textures/"
 const GLASS := preload("res://shaders/glass.gdshader")
 const FLAME := preload("res://shaders/flame.gdshader")
+const COALS := preload("res://shaders/coals.gdshader")
 const WATER := preload("res://shaders/water.gdshader")
 const ICE_SHEET := preload("res://shaders/ice_sheet.gdshader")
 const FALLS := preload("res://shaders/falls.gdshader")
@@ -131,6 +134,8 @@ const FAMILIES := {
 	"M_shingle":      {"albedo": Color(0.47, 0.45, 0.41), "rough": 0.88, "metallic": 0.0, "specular": 0.40, "normal_scale": 1.2, "rim": 0.2, "moss": 0.0, "crack": 0.0},
 	"M_snow":         {"albedo": Color(0.86, 0.89, 0.94), "rough": 0.6, "metallic": 0.0, "specular": 0.5, "normal_scale": 0.8, "rim": 0.6, "sss": 0.2, "moss": 0.0, "crack": 0.0, "wear": 0.0},
 	"M_wool":         {"albedo": Color(0.52, 0.48, 0.41), "rough": 0.92, "metallic": 0.0, "specular": 0.30, "normal_scale": 1.0, "rim": 0.4, "sheen": 0.5, "local_uv": 1, "moss": 0.0, "crack": 0.0},
+	# living fleece on the Reach ewes: off-white undyed wool, a shade of cream in it
+	"M_fleece":       {"albedo": Color(0.7, 0.66, 0.56), "rough": 0.94, "metallic": 0.0, "specular": 0.28, "normal_scale": 1.0, "rim": 0.45, "sheen": 0.6, "local_uv": 1, "moss": 0.0, "crack": 0.0},
 	"M_felt":         {"albedo": Color(0.42, 0.40, 0.36), "rough": 0.95, "metallic": 0.0, "specular": 0.28, "normal_scale": 0.9, "rim": 0.4, "sheen": 0.4, "local_uv": 1, "moss": 0.0, "crack": 0.0},
 	"M_rope":         {"albedo": Color(0.46, 0.39, 0.29), "rough": 0.9, "metallic": 0.0, "specular": 0.30, "normal_scale": 1.3, "rim": 0.3, "moss": 0.1, "crack": 0.0, "wear": 0.2},
 	"M_cloud":        {"albedo": Color(0.96, 0.93, 0.87), "rough": 1.0, "metallic": 0.0, "specular": 0.25, "rim": 0.9, "sss": 0.45, "moss": 0.0, "crack": 0.0, "wear": 0.0},
@@ -184,11 +189,16 @@ static var _hero_cache: Dictionary = {}
 ## shaded by the hall shader, so it takes the same THAW warmth, RIME snow
 ## crust on its top faces, wavefront frost and dissolve as everything else.
 ## `family` supplies the non-texture behaviour (rim, snow, specular).
-static func hero_mat(src: Material, family: String, state_mode := 0) -> Material:
+## A family's authored mean colour (for things that must sit on it).
+static func family_albedo(family: String) -> Color:
+	return (FAMILIES.get(family, FAMILIES["M_stone"]) as Dictionary)["albedo"]
+
+## `tint`: how far the baked mean is pulled to the family albedo (0 keeps it).
+static func hero_mat(src: Material, family: String, state_mode := 0, tint := 0.55) -> Material:
 	var std := src as BaseMaterial3D
 	if std == null or std.albedo_texture == null:
 		return get_mat(family, state_mode)
-	var key := "%d|%s|%d" % [src.get_instance_id(), family, state_mode]
+	var key := "%d|%s|%d|%.2f" % [src.get_instance_id(), family, state_mode, tint]
 	if _hero_cache.has(key):
 		return _hero_cache[key]
 	var base := get_mat(family, state_mode) as ShaderMaterial
@@ -204,7 +214,7 @@ static func hero_mat(src: Material, family: String, state_mode := 0) -> Material
 	# a field of hero rocks sits in the same value range as the ground
 	var mean := _tex_mean(std.albedo_texture)
 	mat.set_shader_parameter("tex_mean", mean)
-	mat.set_shader_parameter("tex_tint", 0.55 if mean != Vector3.ZERO else 0.0)
+	mat.set_shader_parameter("tex_tint", tint if mean != Vector3.ZERO else 0.0)
 	mat.set_shader_parameter("tex_contrast", 1.0)
 	mat.set_shader_parameter("uv_mode", 1)
 	mat.set_shader_parameter("board_tone", 0.0)
@@ -263,6 +273,9 @@ static func get_mat(family: String, state_mode := 0, uv := false) -> Material:
 	elif family == "M_flame":
 		mat.shader = FLAME
 		mat.set_shader_parameter("state_mode", state_mode)
+	elif family == "M_coals":
+		# a hearth's bed: its own shader, lit in THAW and banked in RIME
+		mat.shader = COALS
 	else:
 		mat.shader = HALL_DS if DOUBLE_SIDED.has(family) else HALL
 		var f: Dictionary = FAMILIES.get(family, FAMILIES["M_stone"])

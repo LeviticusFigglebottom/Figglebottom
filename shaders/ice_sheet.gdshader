@@ -98,10 +98,14 @@ void fragment() {
 	float op = 1.0 - exp(-through / clarity);
 	vec3 seen = mix(under * mix(vec3(1.0), ice_tint, 0.4) * 1.3, deep_tint, op);
 	// photo detail: trapped bubbles and fractures in the ice, grain in the frost
-	vec3 ice_ph = mix(vec3(1.0), texture(ice_alb, wp * 0.16).rgb / max(ice_mean, vec3(0.01)), photo);
-	float ice_l = dot(ice_ph, vec3(0.3, 0.5, 0.2));
+	// Two samples at unrelated scales and a turn apart, so no feature repeats
+	// on a grid, and the photo's bright flecks are clamped: from above they
+	// read as a wallpaper of white blotches, not as ice.
+	vec2 wp_r = vec2(wp.x * 0.74 - wp.y * 0.67, wp.x * 0.67 + wp.y * 0.74);
+	vec3 ph_a = texture(ice_alb, wp * 0.16).rgb / max(ice_mean, vec3(0.01));
+	vec3 ph_b = texture(ice_alb, wp_r * 0.047 + 0.37).rgb / max(ice_mean, vec3(0.01));
+	vec3 ice_ph = mix(vec3(1.0), clamp(mix(ph_a, ph_b, 0.5), vec3(0.55), vec3(1.3)), photo);
 	seen *= mix(vec3(1.0), ice_ph, 0.3);
-	crk = max(crk, smoothstep(1.7, 2.4, ice_l) * 0.25 * photo * (1.0 - snow));
 	vec3 snow_ph = mix(vec3(1.0), texture(snow_alb, wp * 0.3).rgb / max(snow_mean, vec3(0.01)), photo);
 	// the surface itself: snow-white frost, pale cracks, a cold sheen
 	vec3 frost_c = vec3(0.86, 0.9, 0.95) * snow_ph;

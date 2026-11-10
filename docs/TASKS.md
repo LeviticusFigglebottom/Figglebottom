@@ -3,6 +3,8 @@
 ## doing
 Format: worktree → branch.
 
+- `/home/user/fb-look2` → `art/look-pass-2`: look pass 2 (card grass, hearthstones, sky, gables, fences, ewes); pushed, awaiting merge
+
 - `/home/user/fb-ui` → `feat/ui-keepsakes`
   - UI re-skin (bone and ember, OFL font), house card, Keepsakes journal
   - Ingra and Brede's lines, verbatim from SLICE.md

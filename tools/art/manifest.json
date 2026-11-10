@@ -3240,6 +3240,328 @@
    "texture_max": 1024,
    "collision": null,
    "output": "assets/models/forest/tr_pine_b.glb"
+  },
+  {
+   "name": "kit_gable_carved",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "a633a8cb-a158-496d-af5e-8c8070a23759",
+    "task_id": "9d86d3b4-2d4e-42ef-ab3c-b68c125cb8bf",
+    "remesh_operator": "93159174-196c-48bb-b020-0944866c805a",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kit_gable_carved/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "width": 1.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 2048,
+   "collision": null,
+   "output": "assets/models/kit/kit_gable_carved.glb"
+  },
+  {
+   "name": "kit_gable_shed",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "f67b8137-f933-406d-9fc1-1dc1f5d1a2c5",
+    "task_id": "9389cd97-4841-4e42-9334-ed6d8b37f80c",
+    "remesh_operator": "7974b59d-e746-4d62-9445-386d0e37956b",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kit_gable_shed/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "width": 1.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 2048,
+   "collision": null,
+   "output": "assets/models/kit/kit_gable_shed.glb"
+  },
+  {
+   "name": "kit_ewe_a",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "2b63a117-0cc8-4c49-8400-8a2884131250",
+    "task_id": "4fb08812-9d53-4604-9a8d-47529d882bf3",
+    "remesh_operator": "1151054e-a9d4-4896-b060-4a2e0fa92b23",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_ewe_a/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.15
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_ewe_a.glb"
+  },
+  {
+   "name": "kit_ewe_b",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "ce6b3bfb-3f5a-4a7a-b393-883c16100afe",
+    "task_id": "7e22ad2d-2a9b-4091-8da3-0652aef516ee",
+    "remesh_operator": "2edd3b9d-482d-4d24-9e52-546be307758d",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_ewe_b/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.2
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_ewe_b.glb"
+  },
+  {
+   "name": "sc_dyke",
+   "category": "scatter",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "22cf9edd-7d4a-4bab-b882-786305483e22",
+    "task_id": "98c6bffd-3944-4ba7-bbf2-e29c28f7acae",
+    "remesh_operator": "f2198715-b5f1-4dd7-96a8-d0de76d918ab",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sc_dyke/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.06
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/scatter/sc_dyke.glb"
+  },
+  {
+   "name": "sc_wattle",
+   "category": "scatter",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "65df4b4e-72f2-46b8-80bc-e3689f4be717",
+    "task_id": "7f13c137-e881-4578-ba7e-315ad3b1650b",
+    "remesh_operator": "293ee32d-b858-4a0f-be57-fceb795fec94",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/sc_wattle/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.06
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/scatter/sc_wattle.glb"
+  },
+  {
+   "name": "sc_peatstack",
+   "category": "scatter",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "782f530d-1a6f-44a9-ae91-758e7b27af1b",
+    "task_id": "ee6bce8c-08d3-489a-9dc3-3191aaf9e862",
+    "remesh_operator": "d36c77b2-1eee-4acb-9618-a33a2b601700",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/sc_peatstack/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.7
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/scatter/sc_peatstack.glb"
+  },
+  {
+   "name": "kit_brazier_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "69f46317-b3d2-4640-bb09-bef9c5dd337d",
+    "task_id": "ad604e12-65cc-4ab7-aba4-8af430ffee4f",
+    "remesh_operator": "57784e36-3e66-4d05-b2a6-ca0f2496b24a",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kit_brazier_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.8
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_brazier_hero.glb"
+  },
+  {
+   "name": "kit_table_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "31676177-118b-4ff1-b62a-20463251fb0d",
+    "task_id": "ec2e22b0-71f1-4a8e-be36-2be7920ad394",
+    "remesh_operator": "5e3a6a93-a920-4b8c-9b2b-057bc007d3b5",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kit_table_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 3.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_table_hero.glb"
+  },
+  {
+   "name": "kit_bench_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "36c78cc6-1bb1-4ee5-be46-bdae98140076",
+    "task_id": "b5054307-47ce-474d-8b74-571b46117f39",
+    "remesh_operator": "3caf29d3-30cd-4c19-9a39-f11250519cfe",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_bench_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 3.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_bench_hero.glb"
+  },
+  {
+   "name": "kit_barrel_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "65137946-3ab6-4457-a95e-7f594e6f3785",
+    "task_id": "a42ac921-1d39-4ab4-9f88-1bba8c236596",
+    "remesh_operator": "b2979c44-4796-4656-a79c-d2803792aa9a",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_barrel_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_barrel_hero.glb"
+  },
+  {
+   "name": "kit_rope_coil_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "8fcd4d8d-e439-4e16-b5f0-fa4fe5c02696",
+    "task_id": "6f2dde97-a404-458d-8fc9-586b23d2dc0f",
+    "remesh_operator": "8473109e-7ce9-4918-a411-7ca211fde020",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_rope_coil_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 0.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_rope_coil_hero.glb"
+  },
+  {
+   "name": "kit_creel_stack_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "f6186aee-1bdf-44b0-a357-15ddd2d858bf",
+    "task_id": "095be500-ab17-4c85-abac-5cec71c9902c",
+    "remesh_operator": "d5707f84-94bb-4fc3-903d-75014acdeeb6",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kit_creel_stack_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_creel_stack_hero.glb"
+  },
+  {
+   "name": "kit_well_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "fb1bac98-2f78-4920-be22-cf40879861d2",
+    "task_id": "d3274eef-b9d9-4f4b-ac75-b87d42eb6166",
+    "remesh_operator": "e291ea6d-45e0-4db9-a673-a460eb6dbb0e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kit_well_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_well_hero.glb"
   }
  ]
 }

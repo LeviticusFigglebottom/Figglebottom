@@ -159,6 +159,13 @@ const HERO := {
 	"rock": [["sc_stone", "M_stone_dark", 1.0], ["sc_slab", "M_stone_dark", 0.6], ["sc_cliffchunk", "M_stone_dark", 0.62]],
 	"boulder": [["sc_boulder", "M_stone_dark", 1.0], ["sc_cliffchunk", "M_stone_dark", 1.1], ["sc_slab", "M_stone_dark", 1.05]],
 	"driftwood": [["sc_driftlog", "M_drift", 1.0]],
+	# 2 m sections laid end to end: a little oversize so each buries its
+	# square end in the next
+	"stone_fence": [["sc_dyke", "M_drystone", 1.16]],
+	"wattle_fence": [["sc_wattle", "M_wood", 0.98]],
+	"peat_stack": [["sc_peatstack", "M_peat", 1.25]],
+	# the Lowe's carved stone, already made for the lineups
+	"standing_stone": [["res://assets/models/landmarks/lm_standing_stone.glb", "M_drystone", 0.78]],
 }
 
 ## One MultiMesh per kind, tag (and hero variant), plus colliders for what
@@ -281,7 +288,7 @@ static func _hero_mesh(name: String, family: String, mode: int) -> Mesh:
 	var key := "hero|%s|%d" % [name, mode]
 	if _mesh_cache.has(key):
 		return _mesh_cache[key]
-	var path := "res://assets/models/scatter/%s.glb" % name
+	var path := name if name.begins_with("res://") else "res://assets/models/scatter/%s.glb" % name
 	var out: Mesh = null
 	if ResourceLoader.exists(path):
 		var inst := (load(path) as PackedScene).instantiate()
@@ -431,24 +438,74 @@ static func _wattle(mode: int) -> ArrayMesh:
 
 # ------------------------------------------------------------ living ground cover
 
-const VEG_SHADER := preload("res://shaders/grass.gdshader")
+const VEG_SHADER := preload("res://shaders/veg_card.gdshader")
 const VEG_CHUNK := 24.0
+## Card clumps cut from the painted atlases (tools/art/veg_atlas.py).
+##   cell: metres across one atlas cell (the clump fills most of its width)
+##   cards: crossed cards per clump; lean: how far each tips outward (rad)
+##   wind: tip travel; keep/bury: RIME survivors and how deep they stand in snow
+const VEG_KINDS := {
+	"grass": {"atlas": "res://assets/textures/veg/T_veg_grass.png", "cell": 0.5, "cards": 3, "lean": 0.32,
+		"wind": 0.09, "keep": 0.3, "bury": 0.45, "dry": Color(0.36, 0.33, 0.16), "dryness": 0.6,
+		"tint_a": Color(0.58, 0.7, 0.4), "tint_b": Color(0.82, 0.84, 0.52)},
+	"heather": {"atlas": "res://assets/textures/veg/T_veg_heather.png", "cell": 0.64, "cards": 3, "lean": 0.36,
+		"wind": 0.035, "keep": 0.45, "bury": 0.4, "dry": Color(0.26, 0.2, 0.15), "dryness": 0.5,
+		"tint_a": Color(0.8, 0.8, 0.72), "tint_b": Color(0.95, 0.85, 0.8)},
+	# the pile of the turf itself: low rosettes laid almost flat, close-set and
+	# near the ground's own colour, so from above the clumps stand in a sward
+	# instead of reading as dots on a photo. Added under every grass rule.
+	"sward": {"atlas": "res://assets/textures/veg/T_veg_grass.png", "cell": 0.4, "cards": 3, "lean": 0.95, "root_shade": 0.92,
+		"wind": 0.02, "keep": 0.0, "bury": 0.5, "dry": Color(0.3, 0.29, 0.15), "dryness": 0.35,
+		"tint_a": Color(0.46, 0.6, 0.33), "tint_b": Color(0.62, 0.68, 0.4)},
+	"sedge": {"atlas": "res://assets/textures/veg/T_veg_sedge.png", "cell": 0.9, "cards": 3, "lean": 0.2,
+		"wind": 0.15, "keep": 0.55, "bury": 0.6, "dry": Color(0.45, 0.38, 0.2), "dryness": 0.8,
+		"tint_a": Color(0.72, 0.8, 0.6), "tint_b": Color(0.95, 0.92, 0.75)},
+}
+
+## Smooth value noise in metres: where a kind grows thick and where it thins.
+static func _patch(x: float, z: float, cell: float, seed: int) -> float:
+	var fx := x / cell
+	var fz := z / cell
+	var ix := floori(fx)
+	var iz := floori(fz)
+	var tx := fx - ix
+	var tz := fz - iz
+	tx = tx * tx * (3.0 - 2.0 * tx)
+	tz = tz * tz * (3.0 - 2.0 * tz)
+	var h := func(a: int, b: int) -> float:
+		return float(hash(Vector3i(a, b, seed)) % 10007) / 10007.0
+	return lerpf(lerpf(h.call(ix, iz), h.call(ix + 1, iz), tx), lerpf(h.call(ix, iz + 1), h.call(ix + 1, iz + 1), tx), tz)
 const SCATTER_CHUNK := 32.0
 
 ## "veg": [{"kind": "grass"|"heather"|"sedge", "region": [x0, z0, x1, z1],
 ##          "density": per m2, "h": [min, max], "tag", "range": m}]
-## Clumps crowd the edges of worn paths and settle in hollows; they thin on
+## Clumps gather in drifts (a kind grows thick in patches and thins between
+## them), crowd the edges of worn paths and settle in hollows; they thin on
 ## slopes and stay off bare shingle, wet shore, rock and the path itself.
 static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
+	var ground := Color(0.1, 0.11, 0.05)
+	if terrain.has_method("palette_color"):
+		ground = terrain.palette_color("turf_a")
+	# the sward rides on the grass rules, after them all, so adding it moved
+	# no existing clump
+	var all_rules: Array = rules.duplicate()
 	for rule in rules:
+		if String(rule.get("kind", "grass")) == "grass":
+			var sw: Dictionary = (rule as Dictionary).duplicate()
+			sw["kind"] = "sward"
+			sw["density"] = float(rule.get("density", 1.0)) * 4.0
+			sw["range"] = minf(float(rule.get("range", 55.0)), 32.0)
+			all_rules.append(sw)
+	for rule in all_rules:
 		var kind := String(rule.get("kind", "grass"))
 		var tag := String(rule.get("tag", "base"))
 		var reg: Array = rule.get("region", [-50, -50, 50, 50])
 		var hr: Array = rule.get("h", [-1000, 1000])
 		var dens := float(rule.get("density", 1.0))
 		var step := 1.0 / sqrt(maxf(dens, 0.01))
+		var kseed := hash(kind)
 		var chunks: Dictionary = {}
 		var x := float(reg[0])
 		while x < float(reg[2]):
@@ -476,17 +533,38 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 						+ terrain.height_at(px, pz + 3) + terrain.height_at(px, pz - 3)) * 0.25
 				p *= 1.0 + clampf((around - y) * 1.2, 0.0, 1.2)                     # hollows
 				p *= 0.55 + 0.45 * terrain.splat_at(px, pz, 3)
+				# drifts: thick patches a few metres across, thin ground between
+				var drift := _patch(px, pz, 7.0, kseed) * 0.65 + _patch(px, pz, 2.6, kseed + 1) * 0.35
+				if kind == "sward":
+					p *= lerpf(0.55, 1.5, smoothstep(0.25, 0.75, drift))
+				else:
+					p *= lerpf(0.08, 1.7, smoothstep(0.38, 0.74, drift))
 				if rng.randf() > p * 0.6 or _blocked(keep_clear, px, pz):
 					continue
-				var up := Vector3.UP.lerp(nrm, 0.5).normalized()
-				var b := Basis(Quaternion(Vector3.UP, up)) * Basis(Vector3.UP, rng.randf() * TAU)
-				var s := rng.randf_range(0.7, 1.35)
-				var key := Vector2i(int(floor(px / VEG_CHUNK)), int(floor(pz / VEG_CHUNK)))
-				if not chunks.has(key):
-					chunks[key] = []
-				chunks[key].append(Transform3D(b.scaled_local(Vector3(s, s * rng.randf_range(0.8, 1.2), s)), Vector3(px, y - 0.03, pz)))
+				# a clump and sometimes a smaller one grown out of its side
+				var n := 1 + (1 if kind != "sward" and rng.randf() < 0.3 else 0)
+				for j in n:
+					var qx := px
+					var qz := pz
+					var s := rng.randf_range(0.75, 1.4)
+					if j > 0:
+						var a := rng.randf() * TAU
+						qx += cos(a) * 0.3
+						qz += sin(a) * 0.3
+						s *= 0.65
+						if not terrain.contains(qx, qz) or terrain.splat_at(qx, qz, 1) > 0.55:
+							continue
+					var qy := terrain.height_at(qx, qz)
+					var up := Vector3.UP.lerp(nrm, 0.5).normalized()
+					var b := Basis(Quaternion(Vector3.UP, up)) * Basis(Vector3.UP, rng.randf() * TAU)
+					var key := Vector2i(int(floor(qx / VEG_CHUNK)), int(floor(qz / VEG_CHUNK)))
+					if not chunks.has(key):
+						chunks[key] = []
+					# custom: atlas cell, dryness (drier where the kind is thin), value, wind phase
+					var custom := Color(rng.randf(), clampf(rng.randf() * 0.7 + (0.5 - drift) * 0.8, 0.0, 1.0), rng.randf(), rng.randf())
+					chunks[key].append([Transform3D(b.scaled_local(Vector3(s, s * rng.randf_range(0.8, 1.15), s)), Vector3(qx, qy - 0.02, qz)), custom])
 			x += step
-		var mesh := _veg_mesh(kind, tag)
+		var mesh := _veg_mesh(kind, tag, ground)
 		var rng_end := float(rule.get("range", 55.0))
 		for key in chunks:
 			var xfs: Array = chunks[key]
@@ -494,12 +572,14 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			c.y = terrain.height_at(c.x, c.z)
 			var mm := MultiMesh.new()
 			mm.transform_format = MultiMesh.TRANSFORM_3D
+			mm.use_custom_data = true
 			mm.mesh = mesh
 			mm.instance_count = xfs.size()
 			for i in xfs.size():
-				var t: Transform3D = xfs[i]
+				var t: Transform3D = xfs[i][0]
 				t.origin -= c
 				mm.set_instance_transform(i, t)
+				mm.set_instance_custom_data(i, xfs[i][1])
 			var mmi := MultiMeshInstance3D.new()
 			mmi.name = "Veg_%s_%d_%d" % [kind, key.x, key.y]
 			mmi.multimesh = mm
@@ -511,62 +591,57 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			area.attach(mmi, tag)
 
-static func _veg_mesh(kind: String, tag: String) -> ArrayMesh:
-	var key := "veg|%s|%s" % [kind, tag]
+## One clump: a few cards crossed through the root, each tipped outward so
+## the clump has a top when seen from above, each in three rows so the wind
+## bends it instead of shearing it. Each card takes a different atlas cell.
+static func _veg_mesh(kind: String, tag: String, ground := Color(0.1, 0.11, 0.05)) -> ArrayMesh:
+	var key := "veg|%s|%s|%s" % [kind, tag, ground.to_html(false)]
 	if _mesh_cache.has(key):
 		return _mesh_cache[key]
-	var rng := RandomNumberGenerator.new()
-	rng.seed = hash(kind)
+	var k: Dictionary = VEG_KINDS.get(kind, VEG_KINDS["grass"])
+	var w := float(k["cell"])
+	var cards := int(k["cards"])
+	var lean := float(k["lean"])
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var blades := 13
-	var hgt := Vector2(0.18, 0.4)
-	var wid := 0.035
-	# linear vertex colours, muted to sit with the turf photo and the Tripo
-	# albedos (the old values read as plastic lime and coral)
-	var cols: Array = [Color(0.12, 0.16, 0.06), Color(0.17, 0.19, 0.08), Color(0.14, 0.15, 0.07), Color(0.21, 0.20, 0.10)]
-	var spread := 0.18
-	match kind:
-		"heather":
-			# many fine woody sprigs, not a few wide petals
-			blades = 64
-			hgt = Vector2(0.12, 0.26)
-			wid = 0.075
-			spread = 0.28
-			cols = [Color(0.13, 0.07, 0.07), Color(0.17, 0.09, 0.10), Color(0.11, 0.08, 0.06), Color(0.16, 0.12, 0.11)]
-		"sedge":
-			blades = 7
-			hgt = Vector2(0.5, 0.85)
-			wid = 0.035
-			spread = 0.12
-			cols = [Color(0.27, 0.25, 0.13), Color(0.33, 0.29, 0.15)]
-	for i in blades:
-		var a := rng.randf() * TAU
-		var r := rng.randf() * spread
-		var base := Vector3(cos(a) * r, 0, sin(a) * r)
-		var lean := Vector3(cos(a), 0, sin(a)) * (rng.randf_range(0.25, 0.6) if kind == "heather" else rng.randf_range(0.05, 0.25))
-		var h := rng.randf_range(hgt.x, hgt.y)
-		var side := Vector3(-sin(a + 1.2), 0, cos(a + 1.2)) * wid * 0.5
-		var tip := base + lean * h * 2.0 + Vector3(0, h, 0)
-		var c: Color = cols[rng.randi() % cols.size()]
-		var n := Vector3(cos(a), 0.6, sin(a)).normalized()
-		var tris: Array = [[base - side, 0.0], [base + side, 0.0], [tip, 1.0]]
-		if kind == "heather":
-			# blunt, bushy sprigs: a quad that barely narrows, not a spike
-			var tl: Vector3 = tip - side * 0.8
-			var tr: Vector3 = tip + side * 0.8
-			tris = [[base - side, 0.0], [base + side, 0.0], [tr, 1.0], [base - side, 0.0], [tr, 1.0], [tl, 1.0]]
-		for v in tris:
-			st.set_normal(n)
-			st.set_color(Color(c.r, c.g, c.b, v[1]))
-			st.add_vertex(v[0])
+	for i in cards:
+		var a := PI * (float(i) + 0.15 * sin(float(i) * 7.3)) / float(cards)
+		var right := Vector3(cos(a), 0, sin(a))
+		var out := Vector3(-sin(a), 0, cos(a)) * (1.0 if i % 2 == 0 else -1.0)
+		# the root sits a little behind the card's lean so the cards cross
+		var root := -out * w * 0.06
+		var rows: Array = []
+		for r in 3:
+			var h := float(r) * 0.5
+			# the lean grows with height: a card that curls outward
+			var pos := root + Vector3.UP * (w * h * cos(lean * h)) + out * (w * h * sin(lean * h))
+			rows.append([pos - right * w * 0.5, pos + right * w * 0.5, 1.0 - h])
+		for r in 2:
+			var lo: Array = rows[r]
+			var hi: Array = rows[r + 1]
+			var quad: Array = [[lo[0], Vector2(0, lo[2])], [lo[1], Vector2(1, lo[2])], [hi[1], Vector2(1, hi[2])],
+				[lo[0], Vector2(0, lo[2])], [hi[1], Vector2(1, hi[2])], [hi[0], Vector2(0, hi[2])]]
+			for v in quad:
+				st.set_normal(Vector3.UP)
+				st.set_uv(v[1])
+				st.set_uv2(Vector2(float(i), 0.0))
+				st.add_vertex(v[0])
 	var mesh := st.commit()
 	var mat := ShaderMaterial.new()
 	mat.shader = VEG_SHADER
+	mat.set_shader_parameter("atlas", load(String(k["atlas"])))
 	mat.set_shader_parameter("state_mode", 1 if tag == "thaw" else (2 if tag == "rime" else 0))
-	if kind == "heather":
-		mat.set_shader_parameter("wind_strength", 0.06)
-		mat.set_shader_parameter("tip_tint", Vector3(1.1, 0.85, 0.95))
+	mat.set_shader_parameter("wind_strength", float(k["wind"]))
+	mat.set_shader_parameter("rime_keep", float(k["keep"]))
+	mat.set_shader_parameter("rime_bury", float(k["bury"]) * w)
+	mat.set_shader_parameter("dry_col", k["dry"])
+	mat.set_shader_parameter("tint_a", k["tint_a"])
+	mat.set_shader_parameter("tint_b", k["tint_b"])
+	mat.set_shader_parameter("dryness", float(k["dryness"]))
+	mat.set_shader_parameter("root_shade", float(k.get("root_shade", 0.62)))
+	mat.set_shader_parameter("ground_col", ground)
 	mesh.surface_set_material(0, mat)
+	# the wind and the lean carry vertices outside the rest box
+	mesh.custom_aabb = AABB(Vector3(-w, -w * 0.6, -w), Vector3(w * 2.0, w * 1.9, w * 2.0))
 	_mesh_cache[key] = mesh
 	return mesh

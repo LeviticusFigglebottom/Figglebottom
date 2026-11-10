@@ -19,14 +19,14 @@
 		"sky_contribution": 0.22,
 		"ssao_intensity": 1.65,
 		"bg_top": [
-			0.24,
-			0.16,
-			0.14
+			0.11,
+			0.19,
+			0.36
 		],
 		"bg_horizon": [
-			0.88,
-			0.58,
-			0.3
+			0.9,
+			0.62,
+			0.38
 		],
 		"fog_color": [
 			0.78,
@@ -47,7 +47,31 @@
 		"music": "res://assets/audio/music/theme_thaw.ogg",
 		"ambience": "res://assets/audio/ambience/amb_thaw.ogg",
 		"music_fade_in": 4.0,
-		"ambience_fade": 3.0
+		"ambience_fade": 3.0,
+		"sky_mid": [
+			0.56,
+			0.5,
+			0.5
+		],
+		"sky_haze": [
+			1.0,
+			0.74,
+			0.44
+		],
+		"sky_cloud_lit": [
+			1.0,
+			0.66,
+			0.42
+		],
+		"sky_cloud_shade": [
+			0.24,
+			0.25,
+			0.37
+		],
+		"sky_cloud_cover": 0.5,
+		"sky_sun_disc": 1.0,
+		"sky_aurora": 0.0,
+		"sky_stars": 0.0
 	},
 	"rime": {
 		"sun_rot": [
@@ -69,14 +93,14 @@
 		"sky_contribution": 0.18,
 		"ssao_intensity": 1.7,
 		"bg_top": [
-			0.035,
-			0.048,
-			0.088
+			0.03,
+			0.045,
+			0.09
 		],
 		"bg_horizon": [
-			0.14,
-			0.18,
-			0.28
+			0.13,
+			0.17,
+			0.27
 		],
 		"fog_color": [
 			0.15,
@@ -97,6 +121,35 @@
 		"music": "res://assets/audio/music/theme_rime.ogg",
 		"ambience": "res://assets/audio/ambience/amb_rime.ogg",
 		"music_fade_in": 5.0,
-		"ambience_fade": 2.0
+		"ambience_fade": 2.0,
+		"sky_mid": [
+			0.075,
+			0.11,
+			0.19
+		],
+		"sky_haze": [
+			0.2,
+			0.26,
+			0.38
+		],
+		"sky_cloud_lit": [
+			0.3,
+			0.38,
+			0.56
+		],
+		"sky_cloud_shade": [
+			0.04,
+			0.055,
+			0.1
+		],
+		"sky_aurora_color": [
+			0.3,
+			0.9,
+			0.62
+		],
+		"sky_cloud_cover": 0.7,
+		"sky_sun_disc": 0.12,
+		"sky_aurora": 0.5,
+		"sky_stars": 0.6
 	}
 }

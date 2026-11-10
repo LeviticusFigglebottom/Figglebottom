@@ -144,6 +144,19 @@ func apply_quality_tier() -> void:
 		e.sdfgi_energy = 0.85
 	RenderingServer.global_shader_parameter_set("rh_water_sky_fill", 1.0 if e.sdfgi_enabled else 0.0)
 
+## Sky keys an older or partial profile may not carry ("sky_<key>").
+const SKY_DEFAULTS := {
+	"thaw": {"mid": [0.62, 0.5, 0.45], "haze": [1.0, 0.76, 0.46], "cloud_lit": [1.0, 0.72, 0.5],
+		"cloud_shade": [0.3, 0.27, 0.34], "aurora_color": [0.3, 0.9, 0.62],
+		"cloud_cover": 0.45, "sun_disc": 1.0, "aurora": 0.0, "stars": 0.0},
+	"rime": {"mid": [0.08, 0.11, 0.18], "haze": [0.2, 0.26, 0.38], "cloud_lit": [0.2, 0.25, 0.36],
+		"cloud_shade": [0.035, 0.045, 0.075], "aurora_color": [0.3, 0.9, 0.62],
+		"cloud_cover": 0.85, "sun_disc": 0.2, "aurora": 0.35, "stars": 0.6},
+}
+
+func _sky(profile: Dictionary, state_name: String, key: String) -> Variant:
+	return profile.get("sky_" + key, SKY_DEFAULTS[state_name][key])
+
 func _c(v: Array) -> Color:
 	return Color(v[0], v[1], v[2])
 
@@ -183,6 +196,7 @@ func blend(t: float) -> void:
 	e.adjustment_contrast = lerpf(a.get("contrast", 1.06), b.get("contrast", 1.08), t)
 	e.adjustment_saturation = lerpf(a.get("saturation", 1.06), b.get("saturation", 0.96), t)
 	e.glow_intensity = lerpf(a["glow"], b["glow"], t)
+	# the sky: every stop and amount is profile data (defaults in SKY_DEFAULTS)
 	var top := _c(a["bg_top"]).lerp(_c(b["bg_top"]), t)
 	var horizon := _c(a["bg_horizon"]).lerp(_c(b["bg_horizon"]), t)
 	sky_mat.set_shader_parameter("top_color", top)
@@ -192,6 +206,11 @@ func blend(t: float) -> void:
 	sky_mat.set_shader_parameter("rime", t)
 	RenderingServer.global_shader_parameter_set("rh_sky_top", top)
 	RenderingServer.global_shader_parameter_set("rh_sky_horizon", horizon)
+	for k in ["mid", "haze", "cloud_lit", "cloud_shade", "aurora_color"]:
+		sky_mat.set_shader_parameter(k if k.begins_with("cloud") or k == "aurora_color" else k + "_color",
+			_c(_sky(a, "thaw", k)).lerp(_c(_sky(b, "rime", k)), t))
+	for k in ["cloud_cover", "sun_disc", "aurora", "stars"]:
+		sky_mat.set_shader_parameter(k, lerpf(float(_sky(a, "thaw", k)), float(_sky(b, "rime", k)), t))
 	# place the sky's sun disc where the directional light streams from
 	var sb := Basis.from_euler(Vector3(deg_to_rad(lerpf(ra[0], rb[0], t)),
 			deg_to_rad(lerpf(ra[1], rb[1], t)), 0.0))

@@ -82,3 +82,62 @@ Headless screenshots run on lavapipe, which `EnvRig.get_graphics_quality()` puts
   - alpha-card grass from a CC0 grass atlas;
   - Tripo gable-end variants once Studio texturing of imports works again (or image-to-model gable pieces at 95 credits each);
   - a taller single-course thorn section.
+
+---
+
+# Look pass 2 (branch `art/look-pass-2`)
+
+**Problem.** After pass 1 the tiling surfaces and the rocks sat with the Tripo heroes. What still gave the procedural world away, in the order a player meets it at eye height: the ground cover (flat untextured blades, pink blobs), the rest sites (a primitive ring, slab and white cone), a flat orange sky, the gable ends, the fences and peat stacks, and the Reach flocks (spheres on sticks).
+
+**What changed.**
+
+1. **Ground cover is painted alpha cards** (`shaders/veg_card.gdshader`, `Scatter.build_veg`, `tools/art/veg_atlas.py`).
+   - Three 2x2 atlases (`assets/textures/veg/T_veg_{grass,heather,sedge}.png`), each cut from one Tripo image-generator sprite sheet of four side-on clumps. The script keys the background, un-premultiplies, anchors each clump's root at its cell's bottom centre, bleeds colour into the transparent area (no dark mip halos) and grades.
+   - A clump is three crossed cards, each tipped outward and curling (so it has a top from above), three vertex rows each (so the wind bends it). Each card takes a different atlas cell; per-instance custom data picks the base cell, dryness, value and wind phase.
+   - Clumps gather in drifts: two octaves of value noise thicken a kind in patches a few metres across and thin it between them; thin ground is also drier.
+   - Colour: texture x a tint that drifts across the field, bleached toward straw by dryness, roots sunk into the terrain's own `turf_a` (`Terrain.palette_color`). Lighting: one dome normal per clump on both faces, backlight at the tips.
+   - RIME: 30-55% of clumps survive (per kind), half-buried, stiff, frosted pale from the tips down.
+   - MultiMesh chunking (24 m), visibility ranges and the rule format are unchanged.
+2. **Hearthstones** use `kit_hearthstone.glb` everywhere through `KitLib.HERO_PIECES["hearthstone"]`. `KitLib._hearth_bed` adds a mound of coals (`shaders/coals.gdshader`: Worley lumps with fire in the cracks, lit in THAW, banked to a few red cracks in RIME, following the wave), four low flame tongues and a small ember light. The collider, the interaction zone and the respawn point are untouched. The flame shader lost its blown-out white core; flame lights sit above the tips.
+3. **Sky** (`shaders/stylized_sky.gdshader`, `EnvRig.blend`, `data/state_profiles.json` `sky_*` keys). Three-stop gradient, a haze belt that glows toward the sun and goes to dusk away from it, a sun disc and corona, a warped cloud deck with high streaks, lit from below on the sun side. RIME closes the deck (relief from its own thickness), veils the disc, and lets a faint two-ribbon aurora glow through. Every colour and amount is profile data and lerps with the state blend; an area's `env` block can override any `sky_*` key.
+4. **Gables.** Two Tripo gable ends (`kit_gable_carved`, `kit_gable_shed`) replace the box-and-torus gable on every BuildingGen house. `BuildingGen._hero_gable` stretches the piece to the house (barge-board span, ridge height from `apex_frac`, tucked under the turf overhang). Sheds are picked by id prefix (`SHED_IDS`) or a `"gable"` key in the house spec.
+5. **Props.** Tripo dyke and wattle sections and a peat stack through `Scatter.HERO`; the Lowe's standing stones and the Kettle's fish kettles now use the Tripo landmarks that already existed for the lineups; a Tripo brazier; two Tripo ewes (`M_fleece`, a new off-white wool family) taken in turn for the Reach flocks. Frozen ewes keep their baked detail under `M_rime`.
+6. **Static landmarks (`lm_*`)** placed by area JSON are now shaded through `MaterialLib.hero_mat` (tint 0.2). They had been left on their import materials, so they took no RIME snow and no grade: the sheiling roofs were lime green.
+7. **Leftovers.** Kettle ice: two photo samples at unrelated scales, clamped, and the bright-fleck term removed (the blotches). Thorn hedge: upper courses are offset half a section and sunk by a random depth, so the join is a ragged bond instead of a level band. `M_drystone` uses the stacked-stone set and `M_stone` has its photo contrast halved: the fieldstone photo's white flecks read as veined black marble on boxes (the Lowe barrow kerbs, house footings).
+
+## Rules added
+
+- **Ground cover:** add a kind by adding an atlas (2x2 clumps on black through `veg_atlas.py`) and a row in `Scatter.VEG_KINDS`. Do not hand-place cards.
+- **Sky:** tune it in `state_profiles.json` (`sky_mid`, `sky_haze`, `sky_cloud_lit`, `sky_cloud_shade`, `sky_cloud_cover`, `sky_sun_disc`, `sky_aurora`, `sky_stars`, `sky_aurora_color`), never in the shader.
+- **Landmarks:** a `"family"` key on a landmark spec picks the hall-shader behaviour (snow amount, rim); the default is `M_stone`.
+
+## Before/after cameras (pass 2)
+
+`docs/screens/look2_before_*.png` (integration-1110) and `look2_after_*.png`, 1920x1080, `--shot-nohud`:
+
+| shot | area / state | camera |
+|---|---|---|
+| yard_thaw / yard_rime | saltfell_steading | -20,25,8,-45,-6,58 |
+| hearth_thaw / hearth_rime (from behind the slab) | saltfell_steading | -23.8,23.3,25.7,45,-15,55 |
+| hearth_front_thaw / _rime (after only) | saltfell_steading | -26.9,23.3,20.9,165,-15,55 |
+| grass_eye | saltfell_steading thaw | -14,23.75,2,-45,-4,62 |
+| lowe_road | lowe_barrows thaw | -53.5,34,-110.5,26.6,-7,62 |
+| kettle_shelf | kettle_fjord thaw | -64,4.2,-311,-50,-8,75 |
+| kettle_ice_rime | kettle_fjord rime | -90,6,-330,-60,-8,70 |
+| thornwold_clearing | thornwold thaw | 334,37.3,-298,-56,-10,75 |
+| thornwold_maze (after only; before = `look_after_thornwold_maze.png`) | thornwold rime | 452,39.9,-347.5,-90,0,75 |
+| reach_fold / reach_sheilings | shepherds_reach thaw | 628,76,-342,-40,-20,70 / 572,73,-298,-95,-6,70 |
+| coldwell_wellhead | coldwell thaw | 896,160,-478,-90,-20,70 |
+| sky_rime (after only) | saltfell_steading rime | -20,26,8,0,25,80 |
+
+---
+
+# Look pass 3 (same branch)
+
+1. **Fire is drawn, not modelled.** `KitLib._flame` builds three crossed cards and `shaders/flame.gdshader` draws the tongue on each: a teardrop whose axis is pushed about by rising noise and whose top tears off where the noise runs out, red at the edges through the tint to a pale core, additive. Every flame in the game (hearths, braziers, torches, hearth fires) goes through it; the instance uniforms and the `*flame*` naming that the lights and `Hearthstone` rely on are unchanged. `KitLib._embers` adds a dozen CPU-particle sparks to hearths and braziers (off in RIME at a hearth).
+2. **Furniture.** Tripo trestle table, bench, barrel, rope coil, creel stack and draw-well replace their box and cylinder primitives through `KitLib.HERO_PIECES` (same ids, footprints and colliders by the usual path).
+3. **Sheiling roofs.** `tools/art/regrade_glb.py` pulls one hue band of a GLB's embedded base colour to a target; run on `lm_sheiling.glb` it turns the lime roof to turf olive without touching the stone.
+4. **Aurora** is at 0.5 and drifts at half the speed.
+5. **Sward.** Every grass rule also lays a `sward` kind under itself: 0.4 m rosettes of the grass atlas laid almost flat, four times the rule's density, range 32 m, tinted near the ground colour with no root shadow. From above the clumps now stand in a pile instead of reading as dots on a photo. It is added after all authored rules, so no existing clump moved. `terrain.gdshader` is untouched.
+
+Pairs: `docs/screens/look3_after_*.png`; the before for a shared camera is the matching `look2_after_*.png`. New cameras (after only): hall `2.5,23.6,-22,30,-10,70`, well `9.5,23.3,1,50,-12,55`, sward_top `-14,30,2,-45,-50,62` (all saltfell_steading thaw).
