@@ -111,7 +111,48 @@
    "scene": "res://assets/models/characters/bearer_oilskins.glb",
    "yaw_deg": 180.0,
    "own_clips": true,
-   "_note": "Brede's oilskins on the Bearer (same rig); has only the preset clips, so its states come from the overlays and the shared library",
+   "_note": "Brede's oilskins on the Bearer (same rig): own idle/walk/run; combat from the shared library through clip_sets; the drink and the kneel are the traveller's own takes (borrow).",
+   "clip_sets": true,
+   "borrow": "bearer_traveller"
+  },
+  "bearer_barrow": {
+   "scene": "res://assets/models/characters/bearer_barrow.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "Orm's working cloak on the Bearer (same rig, an outfit: items.json armour.model names it). Own idle/walk/run; the rest as bearer_oilskins.",
+   "borrow": "bearer_traveller",
+   "clip_sets": true
+  },
+  "bearer_icefur": {
+   "scene": "res://assets/models/characters/bearer_icefur.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "the ice-fur coat on the Bearer (same rig, an outfit: items.json armour.model names it). Own idle/walk/run; the rest as bearer_oilskins.",
+   "borrow": "bearer_traveller",
+   "clip_sets": true
+  },
+  "bearer_hall": {
+   "scene": "res://assets/models/characters/bearer_hall.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "Tarnhall guest-garb (no item names it yet) on the Bearer (same rig, an outfit: items.json armour.model names it). Own idle/walk/run; the rest as bearer_oilskins.",
+   "borrow": "bearer_traveller",
+   "clip_sets": true
+  },
+  "bearer_collier": {
+   "scene": "res://assets/models/characters/bearer_collier.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "the collier's leathers on the Bearer (same rig, an outfit: items.json armour.model names it). Own idle/walk/run; the rest as bearer_oilskins.",
+   "borrow": "bearer_traveller",
+   "clip_sets": true
+  },
+  "bearer_fleece": {
+   "scene": "res://assets/models/characters/bearer_fleece.glb",
+   "yaw_deg": 180.0,
+   "own_clips": true,
+   "_note": "the shepherd's fleece on the Bearer (same rig, an outfit: items.json armour.model names it). Own idle/walk/run; the rest as bearer_oilskins.",
+   "borrow": "bearer_traveller",
    "clip_sets": true
   },
   "ingra": {
@@ -3560,7 +3601,9 @@
    "scene": "res://assets/models/characters/bearer_outsong.glb",
    "yaw_deg": 180.0,
    "own_clips": true,
-   "_note": "the Bearer in Outsong robes and a mourning mask (the Outsong ending, COLDWELL.md 10): own idle/walk/run; everything else from the shared library."
+   "_note": "the Bearer in Outsong robes and a mourning mask (the Outsong ending, COLDWELL.md 10): own idle/walk/run; everything else from the shared library; combat clip sets and the traveller's drink and kneel as the other outfits.",
+   "clip_sets": true,
+   "borrow": "bearer_traveller"
   },
   "fellcaller": {
    "scene": "res://assets/models/bosses/fellcaller.glb",
@@ -7261,5 +7304,6 @@
   "impact_dig_deg": 3.0,
   "impact_dig_ease": 0.22,
   "trail_lead": 0.09
- }
+ },
+ "_doc_borrow": "models.<id>.borrow names another model whose own sectioned clips (its `clips` rows: the Bearer's drink, rest, ...) this model plays as its own, with the same sections. The Bearer's outfits borrow bearer_traveller's, so every outfit drinks and kneels alike."
 }

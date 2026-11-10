@@ -122,7 +122,10 @@ func _rig_sheet(clip: String, kit: String) -> String:
 				tag = clip
 			if absf(_item_yaw - _yaw) > 1.0:
 				tag += "_side"
-			info = "%s  [%s]  ->  %s   start %.2f  contact %.2f  end %.2f" % [clip, kit, vis.rig.qualified(clip), sec.x, sec.y, sec.z]
+			if _rig_model != "bearer_traveller":   # an outfit's own sheet (POSE_RIG=bearer_fleece tools/anim/sheets.sh ...)
+				tag = "%s_%s" % [_rig_model.trim_prefix("bearer_"), tag]
+			info = "%s%s  [%s]  ->  %s   start %.2f  contact %.2f  end %.2f" % ["" if _rig_model == "bearer_traveller" else _rig_model + "  ",
+					clip, kit, vis.rig.qualified(clip), sec.x, sec.y, sec.z]
 		# the blade's sweep since the previous frame
 		var ext := vis._trail_extents()
 		if i > 0:
