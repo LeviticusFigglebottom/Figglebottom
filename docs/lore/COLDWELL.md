@@ -125,7 +125,7 @@ Any Song breaks one outright (`breaks_to`): a singer who has learned anything on
 
 | Attack | Telegraph | Behaviour |
 |---|---|---|
-| **Held note** (`held_note`) | Her mask comes up off the child and stays up, a thin breath, held (1.4 s); a 1.8 × 12 m strip glows from her toward the Bearer | The air along it freezes and stands, a wall of rime as high as a door, for 9 s. Two blows break it. The walls are what the fight is made of: she is putting things between them. |
+| **Held note** (`held_note`) | Her mask comes up off the child and stays up, a thin breath, held (1.4 s); a 1.8 × 12 m strip glows from her toward the Bearer | The air along it freezes and stands, a ridge of rime teeth to the hip, for 9 s. Two blows break it. The ridges are what the fight is made of: she is putting things between them. |
 | **Shelter** (`shelter`) | The Bearer within reach of the child: she folds herself down over it, both arms round (0.9 s); a 3.8 m circle glows | The cold comes off her back and puts the Bearer out to the edge of it. Hardly any damage. |
 | **Not yet** (`not_yet`) | She breathes in as if to begin, and holds it, and does not begin (1.8 s) | With fewer than two of the Unsung standing, two stand up out of the ice between her and the Bearer. |
 
@@ -154,7 +154,7 @@ From here a blade does nothing (`p3_blade`). Within 4.4 m of her the prompt is o
 
 So the last of the fight is this: get inside the long note, stay outside her arms, keep the Unsung off for the length of a breath, and sing. It is what the neighbours came to her door to do, and what she could not start.
 
-**Release.** After the third verse she sits down again, slowly, as she was. The walls of rime fall. The Unsung go. The veil falls as meltwater. Title card: **MAREN — RELEASED**. Nothing plays. On the ground in front of her, side by side: the **band** and the **mask** (§8). The prompts are *Take the band* and *Take the mask*.
+**Release.** After the third verse she sits down again, slowly, as she was. The ridges of rime fall. The Unsung go. The veil falls as meltwater. Title card: **MAREN — RELEASED**. Nothing plays. On the ground in front of her, side by side: the **band** and the **mask** (§8). The prompts are *Take the band* and *Take the mask*.
 
 She stays where she is sat. The choice (§4) opens beside the spring, a few steps from her.
 
@@ -253,7 +253,7 @@ Pieces 1, 3 and 4 were written in `WORLD.md` but not placed. They are placed now
 
 ## 9. The release beat and what she leaves
 
-- **In the arena:** the third verse; she sits; the rime walls fall; the Unsung go; the veil melts; **MAREN — RELEASED**; silence.
+- **In the arena:** the third verse; she sits; the rime ridges fall; the Unsung go; the veil melts; **MAREN — RELEASED**; silence.
 - **Flag:** `ks_leadvoice_released`.
 - **Drops:** `item_wren_band` (`release_drop`, raises `ks_wren_band_found`) and `item_maren_mask` (`release_drop2`), side by side in front of her.
 - **Warmth:** none.

@@ -1026,7 +1026,7 @@
   "model": "sigga_thaw",
   "height": 1.8,
   "mute": true,
-  "_scene": "REACH.md 9: after the release, THAW: in the High Fold beside her father, who is sat on the wall he has finished, his boots off beside him.",
+  "_scene": "REACH.md 9: after the release, THAW: in the High Fold beside her father, who is stood at the wall he has finished, his boots off beside him.",
   "overhear": [
    [
     "sigga",
@@ -1071,8 +1071,7 @@
   "height": 1.75,
   "mute": true,
   "frozen": true,
-  "pose": "sit_still",
-  "seat": "none",
-  "_scene": "REACH.md 4: RIME. Sat against the fold cairn where she found him, rimed over. Not a foe; nothing to say."
+  "pose": "lie",
+  "_scene": "REACH.md 4: RIME. Laid out at the foot of the fold cairn where she found him, on his back, rimed over. Not a foe; nothing to say."
  }
 }

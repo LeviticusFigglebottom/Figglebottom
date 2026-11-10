@@ -256,6 +256,15 @@ func _hearth_kept() -> void:
 	check(not player.input_enabled and player.state == Player.S.REST, "the Bearer has sat down and does not get up")
 	check(player.vis.current_clip() == String(DB.tuning("endings/hearth_kept/sit_clip", "")), "sat by the spring (%s)" % player.vis.current_clip())
 	check(player.global_position.distance_to(ec.kept_spot()) < 1.0, "where he chose")
+	var maren: NPC = _npcs_seen().filter(func(n): return (n as NPC).npc_id == "maren")[0]
+	var to_m := (maren.global_position - player.global_position)
+	to_m.y = 0
+	var facing := -player.vis.global_transform.basis.z
+	facing.y = 0
+	check(facing.normalized().dot(to_m.normalized()) > 0.9, "turned to the woman and the child at the water (%.2f)" % facing.normalized().dot(to_m.normalized()))
+	var cam_side := (d.cam.global_position - player.global_position)
+	cam_side.y = 0
+	check(cam_side.normalized().dot(to_m.normalized()) < -0.3, "and the camera is behind him, looking where he looks")
 	var rime = player.vis.get_meta("frost_over", null)
 	check(rime is StandardMaterial3D and (rime as StandardMaterial3D).albedo_color.a > 0.4, "the frost has come onto him")
 	check(not hud.visible and d.cam != null and d.cam.current, "no HUD; the camera has gone back")

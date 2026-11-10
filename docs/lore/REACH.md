@@ -80,7 +80,7 @@ Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
 ### RIME (boss arena)
 
 - A frost veil across the gap.
-- **Old Calder** sat against the cairn, rimed over, his feet bare (`calder_rime`: not a foe; nothing to say).
+- **Old Calder** laid out on his back at the foot of the cairn, rimed over, his feet bare (`calder_rime`: not a foe; nothing to say).
 - **The Fellcaller** stood beside him with her back to him, calling out over the wall at the slope.
 
 ---
@@ -115,7 +115,7 @@ A fell tup the frost took with its head down. The horns have gone on growing in 
 
 **Sigga Calder.** 3.4 m, broad, in a coat of whole fleeces rimed stiff. A ram's horns curl either side of her mask and frame it. A calling horn in her right fist.
 
-**Arena:** the fold, thirteen metres to the wall. The cairn off-centre, her father against it. Frost veil in the gap.
+**Arena:** the fold, thirteen metres to the wall. The cairn off-centre, her father at the foot of it. Frost veil in the gap.
 
 **Intro (no dialogue).** The player parts the veil. She is beside her father with her back to him, calling out over the wall: the long rising call, over and over, to a slope where nothing has moved for fifteen years. When the player is within 8 m or strikes her, the call stops in the middle. She lowers the horn and turns. The health bar appears: **THE FELLCALLER**.
 
@@ -264,7 +264,7 @@ Voice per `WRITING.md`: a plain fact, then one human detail. No morals.
 - **Drop:** `item_fold_tally` (`release_drop`, `at_point`) by her father's hand, which raises `ks_fold_tally_found`.
 - **The flock:** lying, on the slope, in every later RIME (`release_flock` now; the area's own flagged props on rebuild).
 - **Hearth:** `hs_high_fold` wakes inside the fold (`release_hearth`).
-- **After release, THAW:** Calder is sat on the fold wall, which is finished, his boots off beside him. Sigga stands by him (`sigga_fold`). Within earshot:
+- **After release, THAW:** Calder is stood at the fold wall, which is finished, his boots off beside him. Sigga stands by him (`sigga_fold`). Within earshot:
   > **Sigga:** "Forty-four."
   > **Calder:** "There. Who was it?"
   > **Sigga:** "Me. You've got me down as a ewe."

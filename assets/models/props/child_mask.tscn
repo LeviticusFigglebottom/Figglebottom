@@ -31,7 +31,7 @@ rings = 4
 material = SubResource("eye")
 
 [sub_resource type="BoxMesh" id="band"]
-size = Vector3(0.120224, 0.0153, 0.034)
+size = Vector3(0.112132, 0.0221, 0.0544)
 material = SubResource("woad")
 
 [sub_resource type="BoxMesh" id="brow"]
@@ -46,17 +46,17 @@ transform = Transform3D(0.1156, 0, 0, 0, 0.17, 0, 0, 0, 0.051, 0, 0.085, 0)
 mesh = SubResource("face")
 
 [node name="EyeL" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.02312, 0, 0, 0, 0.0153, 0, 0, 0, 0.017, -0.02312, 0.0952, 0.0204)
+transform = Transform3D(0.02312, 0, 0, 0, 0.0136, 0, 0, 0, 0.017, -0.02312, 0.0952, 0.02125)
 mesh = SubResource("eye")
 
 [node name="EyeR" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.02312, 0, 0, 0, 0.0153, 0, 0, 0, 0.017, 0.02312, 0.0952, 0.0204)
+transform = Transform3D(0.02312, 0, 0, 0, 0.0136, 0, 0, 0, 0.017, 0.02312, 0.0952, 0.02125)
 mesh = SubResource("eye")
 
 [node name="Brow" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1156, 0.0221)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.119, 0.02125)
 mesh = SubResource("brow")
 
 [node name="Band" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.136, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0952, 0)
 mesh = SubResource("band")

@@ -192,14 +192,13 @@ npcs = [
     # REACH.md 7: before the release, Calder at the gap with the wall; Sigga on the slope
     {"id": "old_calder", "at": at(GAP[0] + 3.5, GAP[1] + 2.0), "rot": 300, "tag": "thaw", "absent_flag": "ks_fellcaller_released"},
     {"id": "sigga", "at": at(TX, TZ), "rot": 200, "tag": "thaw", "absent_flag": "ks_fellcaller_released"},
-    # REACH.md 9: after, the two of them in the fold, he sat on the wall he has finished
-    {"id": "old_calder", "at": at(FX - 7.0, FZ + 4.0), "rot": 240, "tag": "thaw", "pose": "sit", "seat": "turf",
-     "require_flag": "ks_fellcaller_released"},
+    # REACH.md 9: after, the two of them in the fold, at the wall he has finished
+    {"id": "old_calder", "at": at(FX - 7.0, FZ + 4.0), "rot": 240, "tag": "thaw", "require_flag": "ks_fellcaller_released"},
     {"id": "sigga_fold", "at": at(FX - 5.4, FZ + 5.2), "rot": 300, "tag": "thaw", "require_flag": "ks_fellcaller_released"},
-    # REACH.md 4: RIME. He is sat against the cairn where she found him
-    {"id": "calder_rime", "at": at(FATHER[0], FATHER[1]), "rot": 105, "tag": "rime"},
+    # REACH.md 4: RIME. He is laid out at the foot of the cairn where she found him (head to the south)
+    {"id": "calder_rime", "at": at(FATHER[0], FATHER[1] - 0.9), "rot": 0, "tag": "rime"},
 ]
-# his boots, off, beside him on the wall (after the release, THAW)
+# his boots, off, beside him at the wall (after the release, THAW)
 LANDMARKS.append({"scene": "res://assets/models/props/calder_boots.tscn", "at": at(FX - 7.9, FZ + 4.9, 0.02), "rot": 240,
                   "tag": "thaw", "require_flag": "ks_fellcaller_released"})
 

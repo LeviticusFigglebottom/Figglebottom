@@ -166,17 +166,23 @@
    "sit_at": 10.0,
    "credits_at": 15.0,
    "cam_from": [
+    1.6,
+    1.5,
+    -2.6
+   ],
+   "cam_to": [
+    3.5,
+    3.6,
+    -5.5
+   ],
+   "cam_time": 40.0,
+   "sit_clip": "sit_still",
+   "cam_begin": [
     -2.4,
     1.6,
     -4.0
    ],
-   "cam_to": [
-    -7.5,
-    4.2,
-    -10.5
-   ],
-   "cam_time": 40.0,
-   "sit_clip": "sit_still"
+   "watch": "maren"
   },
   "credits": {
    "speed": 34.0,

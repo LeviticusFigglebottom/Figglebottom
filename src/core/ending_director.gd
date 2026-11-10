@@ -26,6 +26,9 @@ static var active: EndingDirector = null
 var ending := ""
 ## The spring: the wave's origin and what the camera frames.
 var spring := Vector3.ZERO
+## What the Bearer faces and the camera looks past him at (the spring,
+## unless an ending turns him to something else).
+var focus := Vector3.INF
 ## Where the Bearer stood to choose (the seat, if the coal is kept).
 var stand := Vector3.ZERO
 ## Tests: every wait is one frame, the wave is a snap, the credits are skipped.
@@ -100,7 +103,8 @@ func _area() -> Area:
 ## A camera of the ending's own. Offsets are [right, up, back] in the frame
 ## of the Bearer looking at the spring.
 func _take_camera(from: Array, to: Array, secs: float, p: Node3D) -> void:
-	var fwd := spring - p.global_position
+	var f := focus if focus != Vector3.INF else spring
+	var fwd := f - p.global_position
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.2 else Vector3.FORWARD
 	var right := fwd.cross(Vector3.UP)
@@ -110,7 +114,7 @@ func _take_camera(from: Array, to: Array, secs: float, p: Node3D) -> void:
 	_cam_to = at.call(to)
 	_cam_time = maxf(secs, 0.01)
 	_cam_t = 0.0
-	_look = p.global_position.lerp(spring, 0.45) + Vector3.UP * 1.1
+	_look = p.global_position.lerp(f, 0.45) + Vector3.UP * 1.1
 	if cam == null or not is_instance_valid(cam):
 		cam = Camera3D.new()
 		cam.name = "EndingCam"
@@ -128,7 +132,7 @@ func _give_camera_back(p) -> void:
 		(p.cam.cam as Camera3D).current = true
 
 func _face_spring(p) -> void:
-	var to: Vector3 = spring - (p as Node3D).global_position
+	var to: Vector3 = (focus if focus != Vector3.INF else spring) - (p as Node3D).global_position
 	if p.get("vis") != null and Vector2(to.x, to.z).length() > 0.1:
 		p.vis.rotation.y = atan2(-to.x, -to.z)
 
@@ -266,7 +270,7 @@ func _hearth_kept() -> void:
 	p.lock_control(true)
 	_hud(false)
 	_face_spring(p)
-	_take_camera(_cfg("cam_from", [-2.4, 1.6, -4.0]), _cfg("cam_to", [-7.5, 4.2, -10.5]), float(_cfg("cam_time", 40.0)), p)
+	_take_camera(_cfg("cam_begin", [-2.4, 1.6, -4.0]), _cfg("cam_begin", [-2.4, 1.6, -4.0]), 1.0, p)
 	_beat("begin")
 	await _until(float(_cfg("shut_at", 1.0)))
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -4.0, 0.55)   # the stopper, pressed home
@@ -277,7 +281,9 @@ func _hearth_kept() -> void:
 	AudioDirector.play_music("", 0.5)   # only the river
 	_beat("melt")
 	await _until(float(_cfg("sit_at", 10.0)))
+	_turn_to_the_water(p)
 	_sit(p)
+	_take_camera(_cfg("cam_from", [1.6, 1.5, -2.6]), _cfg("cam_to", [3.5, 3.6, -5.5]), float(_cfg("cam_time", 40.0)), p)
 	Game.snapshot_player()
 	World.save_game()
 	_beat("sit")
@@ -287,6 +293,17 @@ func _hearth_kept() -> void:
 	_beat("end")
 	finished.emit(ending)
 	# (it stays: the Bearer sat, the camera where it stopped)
+
+## The woman and the child at the water's edge are what he sits down to
+## watch (data "watch": the remembered one's npc id).
+func _turn_to_the_water(_p) -> void:
+	var a := _area()
+	if a == null:
+		return
+	var who := String(_cfg("watch", "maren"))
+	for n in a.find_children("*", "NPC", true, false):
+		if (n as NPC).npc_id == who:
+			focus = (n as NPC).global_position
 
 ## Sat down by the spring, facing the water, and the frost coming on.
 func _sit(p) -> void:
@@ -333,8 +350,9 @@ static func resume_kept(p, area: Node) -> EndingDirector:
 	d.stand = at
 	(p as Node3D).global_position = at
 	d._hud.call_deferred(false)
+	d._turn_to_the_water(p)
 	d._sit(p)
-	var to: Array = d._cfg("cam_to", [-7.5, 4.2, -10.5])
+	var to: Array = d._cfg("cam_to", [3.5, 3.6, -5.5])
 	d._take_camera(to, to, 0.01, p)
 	var rime = p.vis.get_meta("frost_over", null) if p.get("vis") != null else null
 	if rime is StandardMaterial3D:

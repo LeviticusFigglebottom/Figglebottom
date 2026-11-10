@@ -299,14 +299,15 @@ def mask_scene(name, h, root):
     res = [mat("birch", 0.82, 0.76, 0.64, 0.7), mat("eye", 0.06, 0.05, 0.05), mat("woad", *WOAD, 0.95), mat("brow", 0.4, 0.33, 0.26),
            ("face", "SphereMesh", {"radius": 0.5, "height": 1.0, "radial_segments": 14, "rings": 8, "material": 'SubResource("birch")'}),
            ("eye", "SphereMesh", {"radius": 0.5, "height": 1.0, "radial_segments": 8, "rings": 4, "material": 'SubResource("eye")'}),
-           ("band", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 1.04, h * 0.09, h * 0.2), "material": 'SubResource("woad")'}),
+           ("band", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 0.97, h * 0.13, h * 0.32), "material": 'SubResource("woad")'}),
            ("brow", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 0.7, h * 0.02, h * 0.04), "material": 'SubResource("brow")'})]
     nodes = [(root, "Node3D", None, {}),
              ("Face", "MeshInstance3D", ".", {"transform": xf(w, h, h * 0.3, y=h * 0.5), "mesh": 'SubResource("face")'}),
-             ("EyeL", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.09, h * 0.1, x=-w * 0.2, y=h * 0.56, z=h * 0.12), "mesh": 'SubResource("eye")'}),
-             ("EyeR", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.09, h * 0.1, x=w * 0.2, y=h * 0.56, z=h * 0.12), "mesh": 'SubResource("eye")'}),
-             ("Brow", "MeshInstance3D", ".", {"transform": xf(y=h * 0.68, z=h * 0.13), "mesh": 'SubResource("brow")'}),
-             ("Band", "MeshInstance3D", ".", {"transform": xf(y=h * 0.8), "mesh": 'SubResource("band")'})]
+             ("EyeL", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.08, h * 0.1, x=-w * 0.2, y=h * 0.56, z=h * 0.125), "mesh": 'SubResource("eye")'}),
+             ("EyeR", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.08, h * 0.1, x=w * 0.2, y=h * 0.56, z=h * 0.125), "mesh": 'SubResource("eye")'}),
+             ("Brow", "MeshInstance3D", ".", {"transform": xf(y=h * 0.7, z=h * 0.125), "mesh": 'SubResource("brow")'}),
+             # the band lies across the eyes, the holes showing through it
+             ("Band", "MeshInstance3D", ".", {"transform": xf(y=h * 0.56), "mesh": 'SubResource("band")'})]
     scene(name, res, nodes, upright=True)
 
 

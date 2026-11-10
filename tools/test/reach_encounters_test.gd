@@ -461,10 +461,10 @@ func _reach() -> void:
 	print("== the rime: the boots, the flock, her father")
 	await _build("shepherds_reach", RH.WState.RIME)
 	seen = _npcs()
-	check(seen.has("calder_rime") and not seen.has("old_calder"), "Old Calder is sat at the cairn")
+	check(seen.has("calder_rime") and not seen.has("old_calder"), "Old Calder is laid at the cairn")
 	if seen.has("calder_rime"):
 		var cr: NPC = seen["calder_rime"]
-		check(cr.seated and cr.find_children("*", "Interactable", true, false).is_empty(), "sat, and nothing to say")
+		check(cr.seated and cr._vis.rotation.x > 1.0 and cr.find_children("*", "Interactable", true, false).is_empty(), "on his back, and nothing to say")
 	check(_pickup("calder_boots") != null, "his boots are by the sheiling door")
 	_pickup("calder_boots")._on_take(player)
 	check(_lines_of("calder_boots") == _expected("calder_boots", 2), "toes to the wall")
@@ -483,7 +483,7 @@ func _reach() -> void:
 	if fc != null and seen.has("calder_rime"):
 		var dd := Vector2(fc.father_point().x - (seen["calder_rime"] as NPC).global_position.x,
 				fc.father_point().z - (seen["calder_rime"] as NPC).global_position.z).length()
-		check(dd < 0.5, "father_off points at where he sits (%.2f m)" % dd)
+		check(dd < 1.2, "father_off points at where he lies (%.2f m)" % dd)
 
 	print("== the release")
 	var cards := []
@@ -521,7 +521,7 @@ func _reach() -> void:
 	seen = _npcs()
 	check(seen.has("old_calder") and seen.has("sigga_fold") and not seen.has("sigga"), "the two of them in the fold")
 	if seen.has("old_calder"):
-		check((seen["old_calder"] as NPC).seated, "he is sat on the wall he has finished")
+		check((seen["old_calder"] as NPC).global_position.distance_to((seen["sigga_fold"] as NPC).global_position) < 3.0, "at the wall he has finished, side by side")
 	if seen.has("sigga_fold"):
 		var heard2 := []
 		var on2 := func(w, l): heard2.append(l)

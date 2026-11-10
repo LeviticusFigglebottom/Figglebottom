@@ -54,7 +54,7 @@ func repertoire() -> Array:
 			out.append(String(a["id"]))
 	return out
 
-## Where Old Calder sits: data "father_off" [dx, dz] from where she stands.
+## Where Old Calder lies: data "father_off" [dx, dz] from where she stands.
 func father_point() -> Vector3:
 	var o: Array = _d("father_off", [0.0, 0.0])
 	return home + Vector3(float(o[0]), 0.0, float(o[1]))

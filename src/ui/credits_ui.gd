@@ -7,8 +7,11 @@ extends CanvasLayer
 
 signal finished
 
-## Over the world: no ground, only a soft dark band behind the column.
+## Over the world: no ground, only a soft dark band behind the column, and
+## the column kept to the right so what is happening stays in view.
 var over_world := true
+const COL_X := 0.6
+const COL_W := 0.36
 var lines: Array = []
 var _col: VBoxContainer
 var _root: Control
@@ -32,17 +35,16 @@ func _ready() -> void:
 		# the column's ground: coal at the middle of the screen, nothing at the sides
 		var band := TextureRect.new()
 		var g := Gradient.new()
-		g.offsets = PackedFloat32Array([0.0, 0.3, 0.5, 0.7, 1.0])
-		g.colors = PackedColorArray([Color(UITheme.COAL, 0.0), Color(UITheme.COAL, 0.4), Color(UITheme.COAL, 0.62),
-				Color(UITheme.COAL, 0.4), Color(UITheme.COAL, 0.0)])
+		g.offsets = PackedFloat32Array([0.0, 0.35, 1.0])
+		g.colors = PackedColorArray([Color(UITheme.COAL, 0.0), Color(UITheme.COAL, 0.5), Color(UITheme.COAL, 0.72)])
 		var gt := GradientTexture2D.new()
 		gt.gradient = g
 		gt.width = 256
 		gt.height = 4
 		band.texture = gt
 		band.stretch_mode = TextureRect.STRETCH_SCALE
-		band.anchor_left = 0.18
-		band.anchor_right = 0.82
+		band.anchor_left = COL_X - 0.08
+		band.anchor_right = 1.0
 		band.anchor_bottom = 1.0
 		band.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_root.add_child(band)
@@ -101,10 +103,12 @@ func _process(dt: float) -> void:
 		return
 	var vp := get_viewport().get_visible_rect().size
 	_h = _col.get_combined_minimum_size().y
-	_col.size = Vector2(vp.x * 0.5, _h)
+	var x0 := COL_X if over_world else 0.25
+	var w := COL_W if over_world else 0.5
+	_col.size = Vector2(vp.x * w, _h)
 	_t += dt
 	var y := vp.y - _t * float(DB.tuning("endings/credits/speed", 34.0))
-	_col.position = Vector2(vp.x * 0.25, y)
+	_col.position = Vector2(vp.x * x0, y)
 	if not _leaving and y + _h < -float(DB.tuning("endings/credits/hold", 4.0)) * 4.0:
 		leave()
 

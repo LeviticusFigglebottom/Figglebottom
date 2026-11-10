@@ -1147,7 +1147,7 @@ func _st_fellcaller_p2(p: Player) -> void:
 	_high_stage(p, "fellcaller", FOLD, 2, "call_them_in", 0.0, 7.0, 0.42, Vector3(6.5, 5.0, 3.5))
 
 func _st_fellcaller_p3(p: Player) -> void:
-	var e := _high_stage(p, "fellcaller", FOLD, 3, "count_them", 1.0, 8.0, -1.0, Vector3(3.0, 2.6, 3.0), Vector2(0.9, 0.5))
+	var e := _high_stage(p, "fellcaller", FOLD, 3, "count_them", 1.0, 7.0, -1.0, Vector3(6.0, 3.0, 0.5), Vector2(0.9, 0.5))
 	if e != null and _f == 5:
 		e.global_position = (e as Fellcaller).stand_over_point()
 
@@ -1169,9 +1169,10 @@ func _st_reach_release(p: Player) -> void:
 		_t0 = _clock
 	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
 		(v as Node3D).visible = false
-	_cam.global_position = f.father_point() + Vector3(5.5, 3.2, -4.5)
-	_cam.look_at(f.father_point() + Vector3(-3.0, 0.3, 2.0), Vector3.UP)
-	_cam.fov = 60.0
+	# from the open floor: her knelt by him, the cairn behind them
+	_cam.global_position = f.father_point() + Vector3(-5.6, 2.4, 4.2)
+	_cam.look_at(f.father_point() + Vector3(-0.4, 0.8, 0.0), Vector3.UP)
+	_cam.fov = 56.0
 	if _clock - _t0 > 4.2:
 		_freeze()
 
@@ -1191,15 +1192,21 @@ func _st_reach_flock(p: Player) -> void:
 		_freeze()
 
 func _st_reach_calder(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
 	_npc_talk_stage(p, "old_calder", 3)
 
 func _st_reach_sigga(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
 	_npc_talk_stage(p, "sigga", 0)
 
 func _st_reach_after(p: Player) -> void:
 	_release_stage(p, "sigga_fold", Vector3(2.4, 1.7, 5.6), 0.9, 3)
 
-## Old Calder sat at the cairn, RIME, and her beside him calling.
+## Old Calder laid at the cairn, RIME, and her beside him calling.
 func _st_reach_cairn(p: Player) -> void:
 	if _f == 2:
 		_quiet_titles()
@@ -1215,9 +1222,9 @@ func _st_reach_cairn(p: Player) -> void:
 	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
 		(v as Node3D).visible = false
 	# from the open side of the fold: him against the cairn, her beside him
-	_cam.global_position = f.father_point() + Vector3(-1.0, 1.5, 6.4)
-	_cam.look_at(f.father_point() + Vector3(-1.4, 1.5, 0.4), Vector3.UP)
-	_cam.fov = 58.0
+	_cam.global_position = f.father_point() + Vector3(-6.4, 2.0, -2.4)
+	_cam.look_at(f.father_point() + Vector3(-0.6, 1.0, 0.3), Vector3.UP)
+	_cam.fov = 60.0
 	if _f > 70:
 		_freeze()
 
@@ -1250,12 +1257,13 @@ func _st_leadvoice_sat(p: Player) -> void:
 		return
 	l.set_physics_process(false)
 	if _f == 4:
-		_place_player(p, l.global_position + Vector3(-2.0, 0.3, 7.5), 0.0)
+		_place_player(p, l.global_position + Vector3(4.0, 0.3, 7.5), 0.0)   # (out of frame)
 	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
 		(v as Node3D).visible = false
-	_cam.global_position = l.global_position + Vector3(-3.4, 1.8, 6.4)
-	_cam.look_at(l.global_position + Vector3.UP * 1.5, Vector3.UP)
-	_cam.fov = 50.0
+	# from the south, outside the well's own stones: her side, the spring beyond her knees
+	_cam.global_position = l.global_position + Vector3(0.6, 1.5, 5.2)
+	_cam.look_at(l.global_position + Vector3(-0.8, 1.2, 0), Vector3.UP)
+	_cam.fov = 52.0
 	var d := l.global_position - p.global_position
 	p.vis.rotation.y = atan2(-d.x, -d.z)
 	if _f > 80:
@@ -1263,7 +1271,7 @@ func _st_leadvoice_sat(p: Player) -> void:
 
 func _st_leadvoice_p1(p: Player) -> void:
 	# the note gone by: the wall of rime standing between them
-	_lv(p, 1, "held_note", 0.0, 8.0, 0.5, Vector3(5.5, 3.2, 1.0))
+	_lv(p, 1, "held_note", 0.0, 6.5, 0.5, Vector3(7.0, 3.4, 0.0))
 
 func _st_leadvoice_p2(p: Player) -> void:
 	# the band lit all the way round, the Bearer stood inside it, close to her
@@ -1283,10 +1291,8 @@ func _st_leadvoice_p3(p: Player) -> void:
 		l.vis.idle(0.0)
 		l.sing_zone.enabled = true
 		_t1 = _clock
-	if _lv_sing and not l.singing and _clock - _t1 > 1.2 and l.verses_sung == 0:
-		l.begin_verse(p)
-		_t1 = _clock
-	if l.singing and _clock - _t1 > 1.3:
+	# on her feet; the Bearer within reach of her voice; one word on the plate
+	if _lv_sing and _clock - _t1 > 1.6:
 		_freeze()
 
 func _st_cold_release(p: Player) -> void:
@@ -1316,6 +1322,9 @@ func _st_cold_release(p: Player) -> void:
 		_freeze()
 
 func _st_cold_melt(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
 	_npc_talk_stage(p, "maren", 1, Vector3(-1.9, 0.6, 3.6))
 
 # ------------------------------------------------------------------ the endings
@@ -1348,7 +1357,15 @@ func _ending_begin(p: Player, which: String) -> EndingDirector:
 	if _f == 30 and which != "":
 		ec.choose(which)
 		_t0 = _clock
-	_cam.current = ec.director == null or not is_instance_valid(ec.director) or ec.director.cam == null
+	var own_cam: bool = ec.director == null or not is_instance_valid(ec.director) or ec.director.cam == null
+	_cam.current = own_cam
+	if not own_cam:
+		ec.director.cam.current = true   # (this harness takes the view every frame: hand it back)
+	if own_cam and _f > 30:
+		# the ending has given the camera back: the same view as ending_choice
+		_cam.global_position = ec.to_global(Vector3(-2.8, 2.1, 2.9))
+		_cam.look_at(ec.spring_point() + Vector3.UP * 0.9, Vector3.UP)
+		_cam.fov = 60.0
 	return ec.director if _f > 30 else null
 
 ## The two places to stand, and her sat across the spring.
@@ -1357,9 +1374,9 @@ func _st_ending_choice(p: Player) -> void:
 	var ec: Node = get_tree().get_first_node_in_group("ending_choice")
 	if ec == null or _f < 5:
 		return
-	_cam.global_position = ec.to_global(Vector3(-3.4, 2.3, 4.6))
-	_cam.look_at(ec.spring_point() + Vector3.UP * 1.0, Vector3.UP)
-	_cam.fov = 56.0
+	_cam.global_position = ec.to_global(Vector3(-2.8, 2.1, 2.9))   # (inside the ring of stones)
+	_cam.look_at(ec.spring_point() + Vector3.UP * 0.9, Vector3.UP)
+	_cam.fov = 60.0
 	if _f > 70:
 		_freeze()
 
@@ -1367,6 +1384,8 @@ func _ending_at(p: Player, which: String, beat: String, plus: float) -> void:
 	var d := _ending_begin(p, which)
 	if d == null:
 		return
+	if not (beat in d.beats) and not StateDirector.transitioning:
+		d._t += 0.35   # (the harness has not got all day: wind on to the beat)
 	if beat in d.beats:
 		if _t1 == 0.0:
 			_t1 = _clock
@@ -1390,11 +1409,14 @@ func _st_ending_kept(p: Player) -> void:
 
 func _st_ending_kept_credits(p: Player) -> void:
 	var d := _ending_begin(p, "hearth_kept")
+	if d != null and not ("credits" in d.beats) and not StateDirector.transitioning:
+		d._t += 0.35
 	if d != null and d.credits != null and is_instance_valid(d.credits):
 		if _t1 == 0.0:
 			_t1 = _clock
 			d.credits.show_at(13.0)
-		if _clock - _t1 > 9.0:
+			d._cam_t = d._cam_time * 0.8   # (and the camera most of the way back)
+		if _clock - _t1 > 1.5:
 			_freeze()
 
 ## The Strand at Saltfell in spring (saltfell_steading, --flag=ending_outsong).
@@ -1407,7 +1429,7 @@ func _st_ending_strand(p: Player) -> void:
 	if _f > 3:
 		for hud in get_tree().get_nodes_in_group("hud"):
 			(hud as CanvasLayer).visible = false
-		_frame(p.global_position, p.vis, Vector3(-2.2, 1.2, -5.4), 1.3, 58.0)
+		_frame(p.global_position, p.vis, Vector3(-2.4, 1.5, -6.4), 1.2, 56.0)
 	if _f > 70:
 		_freeze()
 
@@ -1437,3 +1459,4 @@ func _st_ending_credits(_p: Player) -> void:
 		(get_tree().root.get_node("ShotCredits") as CreditsUI).show_at(12.5)
 	if _f > 20:
 		_freeze()
+

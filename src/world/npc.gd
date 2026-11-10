@@ -40,6 +40,11 @@ func _ready() -> void:
 		set_physics_process(false)
 	elif pose.begins_with("sit"):
 		_sit(pose)
+	elif pose == "lie":
+		# laid out on the back, head toward local +Z (Old Calder at the cairn)
+		seated = true
+		_vis.rotation.x = deg_to_rad(88.0)
+		_vis.position.y = 0.2
 	if cfg.get("frozen", false):
 		_freeze_over()
 	_overhear = cfg.get("overhear", [])
@@ -57,6 +62,9 @@ func _ready() -> void:
 	bcs.position.y = 0.85
 	body.add_child(bcs)
 	add_child(body)
+	if pose == "lie":
+		body.rotation.x = deg_to_rad(88.0)
+		body.position.y = -0.5
 	# the mute keep their words to themselves: no prompt, no dialogue
 	if not cfg.get("mute", false):
 		var zone := Interactable.new()

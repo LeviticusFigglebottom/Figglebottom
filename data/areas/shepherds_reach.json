@@ -6079,8 +6079,6 @@
    ],
    "rot": 240,
    "tag": "thaw",
-   "pose": "sit",
-   "seat": "turf",
    "require_flag": "ks_fellcaller_released"
   },
   {
@@ -6099,9 +6097,9 @@
    "at": [
     661.0,
     76.75,
-    -375.2
+    -376.1
    ],
-   "rot": 105,
+   "rot": 0,
    "tag": "rime"
   }
  ],
