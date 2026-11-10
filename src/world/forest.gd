@@ -304,13 +304,23 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 				# section (stretching turns thorn into reeds)
 				var hy := maxf(hbb.size.y, 0.3)
 				var rows := maxi(1, int(ceil(h / (hy * 1.6))))
+				# the bond's jitter has its own stream: the layout stream (trees,
+				# stems) must not shift with a look change
+				var jit := RandomNumberGenerator.new()
+				jit.seed = hash(Vector2i(int(p.x * 10.0), int(p.y * 10.0)))
 				for r in rows:
 					var fl := 1.0 if rng.randf() < 0.5 else -1.0
-					var rb := Basis(Vector3.UP, yaw + (PI if fl < 0.0 else 0.0))
+					var rb := Basis(Vector3.UP, yaw + (PI if fl < 0.0 else 0.0) + (jit.randf_range(-0.14, 0.14) if r > 0 else 0.0))
 					# upper courses narrower and sunk into the one below, so
-					# their footing strip hides inside its mass
-					var sc := Vector3(step / hlen * (1.12 + 0.1 * r), h / rows / hy * rng.randf_range(1.3, 1.45), w / maxf(hbb.size.z, 0.3) * (1.0 - 0.32 * r))
-					heroes.append(Transform3D(rb.scaled_local(sc), Vector3(p.x, y - 0.08 + r * h / rows * 0.6, p.y)))
+					# their footing strip hides inside its mass. Each upper
+					# section sits half a section along and at its own depth,
+					# so the join is a ragged brick bond, not a level band.
+					var sc := Vector3(step / hlen * (1.12 + 0.1 * r), h / rows / hy * (rng.randf_range(1.3, 1.45) + jit.randf_range(0.0, 0.15)), w / maxf(hbb.size.z, 0.3) * (1.0 - 0.32 * r))
+					var along := dir * (step * 0.5 * float(r % 2))
+					var q := p + along
+					var qy := y if r == 0 else terrain.height_at(q.x, q.y)
+					var sink := 0.6 if r == 0 else jit.randf_range(0.42, 0.68)
+					heroes.append(Transform3D(rb.scaled_local(sc), Vector3(q.x, qy - 0.08 + r * h / rows * sink, q.y)))
 		# stems
 		var t := 0.0 if not hero_ok else L
 		while t < L:
