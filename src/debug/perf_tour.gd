@@ -155,7 +155,7 @@ func _apply_ablation(n: Node) -> void:
 		hit = true
 	elif "weather" in _ablate and (n is Weather):
 		hit = true
-	elif "particles" in _ablate and (n is CPUParticles3D):
+	elif "particles" in _ablate and (n is CPUParticles3D or n is GPUParticles3D):
 		hit = true
 	if hit:
 		n.process_mode = Node.PROCESS_MODE_DISABLED

@@ -323,6 +323,8 @@ D = {
     "start": {"pos": START, "yaw": 200},
     "env": {"thaw": {"sun_rot": [-12, -36], "sun_energy": 2.3, "fog_density": 0.0008, "vol_density": 0.0032},
             "rime": {"sun_rot": [-34, -30]}},
+    # the gully: mist lying in the cut below the cache (Job 4)
+    "fog_pockets": [{"id": "gully", "at": [25, 11.5, 30], "size": [18, 9, 32], "density": [0.02, 0.05], "height_falloff": 0.5}],
     "terrain": T.terrain_block(),
     "nav_bounds": [-102, -4, -90, 72, 64, 130],
     "water": water,

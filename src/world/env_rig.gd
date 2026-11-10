@@ -133,6 +133,7 @@ func apply_quality_tier() -> void:
 		e.sdfgi_cascades = 4
 		e.sdfgi_min_cell_size = 0.4
 		e.sdfgi_energy = 0.85
+	RenderingServer.global_shader_parameter_set("rh_water_sky_fill", 1.0 if e.sdfgi_enabled else 0.0)
 
 func _c(v: Array) -> Color:
 	return Color(v[0], v[1], v[2])
@@ -166,6 +167,8 @@ func blend(t: float) -> void:
 	e.fog_light_color = _c(a["fog_color"]).lerp(_c(b["fog_color"]), t)
 	e.fog_density = lerpf(a["fog_density"], b["fog_density"], t)
 	e.volumetric_fog_density = lerpf(a["vol_density"], b["vol_density"], t)
+	e.volumetric_fog_anisotropy = lerpf(a.get("vol_anisotropy", 0.66), b.get("vol_anisotropy", 0.66), t)
+	_blend_pockets(t)
 	e.volumetric_fog_albedo = _c(a["vol_albedo"]).lerp(_c(b["vol_albedo"]), t)
 	e.tonemap_exposure = lerpf(a["exposure"], b["exposure"], t)
 	e.adjustment_contrast = lerpf(a.get("contrast", 1.06), b.get("contrast", 1.08), t)
@@ -178,10 +181,42 @@ func blend(t: float) -> void:
 	sky_mat.set_shader_parameter("sun_color", sc)
 	sky_mat.set_shader_parameter("ground_color", horizon.darkened(0.65))
 	sky_mat.set_shader_parameter("rime", t)
+	RenderingServer.global_shader_parameter_set("rh_sky_top", top)
+	RenderingServer.global_shader_parameter_set("rh_sky_horizon", horizon)
 	# place the sky's sun disc where the directional light streams from
 	var sb := Basis.from_euler(Vector3(deg_to_rad(lerpf(ra[0], rb[0], t)),
 			deg_to_rad(lerpf(ra[1], rb[1], t)), 0.0))
 	sky_mat.set_shader_parameter("sun_dir", sb.z)
+
+## Local volumetric fog for deep gorges, from the area def's "fog_pockets":
+## [{"at": [x,y,z], "size": [x,y,z], "density": [thaw, rime], "albedo": [r,g,b]?}]
+var _pockets: Array = []
+
+func build_fog_pockets(list: Array) -> void:
+	for p in _pockets:
+		p["node"].queue_free()
+	_pockets.clear()
+	for d in list:
+		var fv := FogVolume.new()
+		fv.shape = RenderingServer.FOG_VOLUME_SHAPE_ELLIPSOID
+		var sz: Array = d["size"]
+		fv.size = Vector3(sz[0], sz[1], sz[2])
+		var at: Array = d["at"]
+		fv.position = Vector3(at[0], at[1], at[2])
+		var m := FogMaterial.new()
+		m.edge_fade = 0.6
+		m.height_falloff = float(d.get("height_falloff", 0.0))
+		if d.has("albedo"):
+			m.albedo = _c(d["albedo"])
+		fv.material = m
+		add_child(fv)
+		var dens: Array = d["density"]
+		m.density = float(dens[0])
+		_pockets.append({"node": fv, "mat": m, "a": float(dens[0]), "b": float(dens[1])})
+
+func _blend_pockets(t: float) -> void:
+	for p in _pockets:
+		p["mat"].density = lerpf(p["a"], p["b"], t)
 
 func snap(state: RH.WState) -> void:
 	blend(1.0 if state == RH.WState.RIME else 0.0)
