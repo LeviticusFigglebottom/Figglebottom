@@ -265,7 +265,7 @@ Pieces 1, 3 and 4 were written in `WORLD.md` but not placed. They are placed now
 
 ## 10. The endings
 
-Both run from the `ending_choice` hook through `EndingDirector` (ADR 0011). Every beat's time is data (`game.json` `endings`). **Nothing is said in either.** No narration, no title, no line of text until the credits.
+Both run from the `ending_choice` hook through `EndingDirector` (ADR 0013). Every beat's time is data (`game.json` `endings`). **Nothing is said in either.** No narration, no title, no line of text until the credits.
 
 ### The Outsong (`ending_outsong`)
 

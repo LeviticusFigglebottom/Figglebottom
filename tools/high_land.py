@@ -21,6 +21,10 @@ REACH_PATH = [(476.0, -331.0, 38.4), (494.0, -331.5, 41.2), (512.0, -329.0, 47.0
               (548.0, -322.0, 60.4), (566.0, -318.0, 64.6)]
 PASTURE = (556.0, -398.0, 704.0, -270.0)     # the walkable pasture (rounded)
 PASTURE_R = 26.0
+# the fells' flanks round the pasture: metres of rise per metre out. At 1.3 the
+# bedding eased the north-west flank to a walkable 41-45 degrees, and the fell
+# top it led to runs off the north of the grid (ADR 0003: no open edge)
+RIM_STEEP = 1.5
 SHEILINGS = [(600.0, -296.0, 12.0), (618.0, -287.0, -8.0), (586.0, -284.0, 20.0)]
 HIGH_FOLD = (660.0, -372.0)
 FOLD_R = 13.0
@@ -101,7 +105,7 @@ def reach_land(x, z, h):
         fl = pasture_y(x, z)
         # round green fells either side (the concept: a valley, not a gorge)
         fell = max(min(h, fl + 34.0), fl + 22.0 + 14.0 * fbm(x * 0.01, z * 0.01, 2, 183))
-        land = min(fell, fl + _rise(pasture_out(x, z) * 1.3, x, z, 184))
+        land = min(fell, fl + _rise(pasture_out(x, z) * RIM_STEEP, x, z, 184))
         # the beck from the ice: a deep cut across the pasture
         bd = abs(z - beck_z(x))
         if bd < BECK_HALF + 2.5 and pasture_out(x, z) < 6.0:

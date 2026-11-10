@@ -40,6 +40,26 @@
    "vol_density": 0.018
   }
  },
+ "fog_pockets": [
+  {
+   "id": "breathing_hole",
+   "at": [
+    16,
+    3,
+    -312
+   ],
+   "size": [
+    54,
+    9,
+    44
+   ],
+   "density": [
+    0.025,
+    0.06
+   ],
+   "height_falloff": 0.6
+  }
+ ],
  "terrain": {
   "source": "res://data/terrain/kettle_h.bin",
   "splat": "res://data/terrain/kettle_splat.bin",

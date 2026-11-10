@@ -17,8 +17,16 @@ timeout 300 godot --headless --path . --import >/dev/null 2>&1
 for scene in tools/test/*_test.tscn; do
   name="$(basename "$scene" _test.tscn)"
   if [ -n "$FILTER" ] && [ "$name" != "$FILTER" ]; then continue; fi
+  # the full-game region walks run about a quarter of an hour each: only
+  # when asked for by name (CI runs them as their own parallel jobs)
+  case "$name" in fullgame_*) [ -z "$FILTER" ] && continue ;; esac
   echo "=== test: $name"
-  timeout 300 godot --headless --path . -- "--test=$name" 2>&1 \
+  # the full-slice walk plays the whole 20-minute slice in real time
+  limit=300
+  [ "$name" = "fullslice" ] && limit=2700
+  # the full-game region walks (fullgame_<region>) each play a whole region
+  case "$name" in fullgame_*) limit=2700 ;; esac
+  timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \
     | grep -vE "ALSA|snd_|libpulse|Condition \"status|dummy driver|Godot Engine|^\s*$" \
     | grep -vE "at: (init_output_device|push_warning)"
   code=${PIPESTATUS[0]}

@@ -32,7 +32,7 @@ func get_area_state(id: String) -> RH.WState:
 		return RH.WState.THAW if id == KEPT_AREA else RH.WState.RIME
 	return _area(id)["state"] as RH.WState
 
-# ---------------- the endings (COLDWELL.md 10, ADR 0011) ----------------
+# ---------------- the endings (COLDWELL.md 10, ADR 0013) ----------------
 ## Where the Bearer sits if the coal is kept.
 const KEPT_AREA := "coldwell"
 

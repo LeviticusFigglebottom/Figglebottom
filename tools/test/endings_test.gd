@@ -1,5 +1,5 @@
 extends TestBase
-## The two endings (COLDWELL.md 10, ADR 0011), through the `ending_choice`
+## The two endings (COLDWELL.md 10, ADR 0013), through the `ending_choice`
 ## hook at the spring. Both are reachable once the Leadvoice is released,
 ## and only one of them, once. The Outsong: its beats in order, the flag, the
 ## robes and the mask, true spring in every area (open ground, the grey

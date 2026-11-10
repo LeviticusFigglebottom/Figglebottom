@@ -131,7 +131,17 @@ func _physics_process(dt: float) -> void:
 		var base: Color = Color(0.95, 0.8, 0.46) if open else Color(0.42, 0.47, 0.62)
 		_disc.material_override.albedo_color = base * breathe
 
+## A seam built on the frame the Bearer crosses its twin can report him
+## from where he stood before the move (both seams share the same ground),
+## which carried him straight back. Only a body really inside the box crosses.
+func _inside_zone(body: Node3D) -> bool:
+	var p := to_local(body.global_position)
+	return absf(p.x) <= zone_size.x * 0.5 + 0.6 and absf(p.z) <= zone_size.z * 0.5 + 0.6 \
+			and p.y >= -1.5 and p.y <= zone_size.y + 1.5
+
 func _on_use(player) -> void:
+	if auto and player is Node3D and not _inside_zone(player):
+		return
 	if Game.arena_locked:
 		Game.toast.emit("The frost veil holds. The duel is not done.")
 		return

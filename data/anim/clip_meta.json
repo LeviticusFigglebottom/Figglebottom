@@ -41,7 +41,8 @@
      "end": 2.45,
      "root_lock": true
     }
-   }
+   },
+   "clip_set": "foe_rimewalker"
   },
   "netmender": {
    "scene": "res://assets/models/bosses/netmender.glb",
@@ -69,13 +70,14 @@
       0.0
      ]
     }
-   }
+   },
+   "clip_set": "foe_netmender"
   },
   "bearer_traveller": {
    "scene": "res://assets/models/characters/bearer_traveller.glb",
    "yaw_deg": 180.0,
    "own_clips": true,
-   "_note": "the Bearer (SLICE.md 10). Text-prompt clips (tripo_features.md 5) judged on pose sheets: dodge_roll, drink, rest (kneel) and parry are real and replace the overlays; block, heavy_overhead and stagger read weakly and stay procedural (skip_clips), so stagger falls back to the real hit.",
+   "_note": "the Bearer (SLICE.md 10). His own Tripo text-prompt clips drink and rest (kneel) stay; combat comes from the shared combat library through clip_sets (ADR 0011), which outranks his own dodge_roll and parry. block, heavy_overhead and stagger are skipped (weak).",
    "skip_clips": [
     "block",
     "heavy_overhead",
@@ -102,13 +104,15 @@
      "end": 1.5,
      "root_lock": true
     }
-   }
+   },
+   "clip_sets": true
   },
   "bearer_oilskins": {
    "scene": "res://assets/models/characters/bearer_oilskins.glb",
    "yaw_deg": 180.0,
    "own_clips": true,
-   "_note": "Brede's oilskins on the Bearer (same rig); has only the preset clips, so its states come from the overlays and the shared library"
+   "_note": "Brede's oilskins on the Bearer (same rig); has only the preset clips, so its states come from the overlays and the shared library",
+   "clip_sets": true
   },
   "ingra": {
    "scene": "res://assets/models/npcs/ingra.glb",
@@ -150,7 +154,8 @@
    "own_clips": true,
    "bare_hands": true,
    "_note": "the ice oar is procedural (src/enemies/oarsman.gd): it runs from the left hand through the right, carries the hit volume, and the arms hold it through locomotion via the upper-body carry layer (carry: oar_carry). Strokes are overlays (oar_*).",
-   "carry": "oar_carry"
+   "carry": "oar_carry",
+   "clip_set": "foe_oarsman"
   },
   "hearthhound": {
    "scene": "res://assets/models/enemies/hearthhound.glb",
@@ -223,134 +228,144 @@
     },
     "crouch": {
      "_root": [
-      0,
-      -0.06,
-      0
+      0.0,
+      -0.132,
+      0.0
      ],
      "tripo__Spine_0": [
-      -6,
-      0,
-      0
+      -11.4,
+      0.0,
+      0.0
      ],
      "tripo__Head_1": [
-      -22,
-      0,
-      0
+      -11.0,
+      0.0,
+      0.0
      ],
      "tripo__Head_2": [
-      -8,
-      0,
-      0
+      -4.0,
+      0.0,
+      0.0
      ],
      "bone_25": [
-      -25,
-      0,
-      0
+      -47.5,
+      0.0,
+      0.0
      ],
      "tripo__0_Left_Limb_1": [
-      -8,
-      0,
-      0
+      -15.2,
+      0.0,
+      0.0
      ],
      "tripo__0_Right_Limb_1": [
-      -8,
-      0,
-      0
+      -15.2,
+      0.0,
+      0.0
      ],
      "tripo__1_Left_Limb_0": [
-      24,
-      0,
-      0
+      45.6,
+      0.0,
+      0.0
      ],
      "bone_17": [
-      24,
-      0,
-      0
+      45.6,
+      0.0,
+      0.0
      ],
      "tripo__1_Right_Limb_0": [
-      24,
-      0,
-      0
+      45.6,
+      0.0,
+      0.0
      ],
      "tripo__1_Left_Limb_1": [
-      -30,
-      0,
-      0
+      -57.0,
+      0.0,
+      0.0
      ],
      "bone_18": [
-      -30,
-      0,
-      0
+      -57.0,
+      0.0,
+      0.0
      ],
      "tripo__1_Right_Limb_1": [
-      -30,
+      -57.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Root": [
+      -5.0,
       0,
       0
      ]
     },
     "lunge": {
      "_root": [
-      0,
-      0.03,
-      0
+      0.0,
+      0.075,
+      0.0
      ],
      "tripo__Spine_0": [
-      5,
-      0,
-      0
+      6.75,
+      0.0,
+      0.0
      ],
      "tripo__Head_1": [
-      16,
-      0,
-      0
+      21.6,
+      0.0,
+      0.0
      ],
      "tripo__Head_3": [
-      12,
-      0,
-      0
+      16.2,
+      0.0,
+      0.0
      ],
      "bone_25": [
-      25,
-      0,
-      0
+      33.75,
+      0.0,
+      0.0
      ],
      "tripo__0_Left_Limb_1": [
-      48,
-      0,
-      0
+      64.8,
+      0.0,
+      0.0
      ],
      "tripo__0_Right_Limb_1": [
-      48,
-      0,
-      0
+      64.8,
+      0.0,
+      0.0
      ],
      "tripo__1_Left_Limb_0": [
-      -42,
-      0,
-      0
+      -56.7,
+      0.0,
+      0.0
      ],
      "bone_17": [
-      -42,
-      0,
-      0
+      -56.7,
+      0.0,
+      0.0
      ],
      "tripo__1_Right_Limb_0": [
-      -42,
-      0,
-      0
+      -56.7,
+      0.0,
+      0.0
      ],
      "tripo__1_Left_Limb_1": [
-      10,
-      0,
-      0
+      13.5,
+      0.0,
+      0.0
      ],
      "bone_18": [
-      10,
-      0,
-      0
+      13.5,
+      0.0,
+      0.0
      ],
      "tripo__1_Right_Limb_1": [
-      10,
+      13.5,
+      0.0,
+      0.0
+     ],
+     "tripo__Root": [
+      9.0,
       0,
       0
      ]
@@ -507,6 +522,78 @@
       0,
       0
      ]
+    },
+    "land": {
+     "_root": [
+      0,
+      -0.092,
+      0
+     ],
+     "tripo__Root": [
+      -12.0,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      26.4,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      26.4,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      -4.8,
+      0.0,
+      0.0
+     ],
+     "bone_25": [
+      -20.0,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_0": [
+      19.2,
+      0.0,
+      0.0
+     ],
+     "bone_17": [
+      19.2,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_0": [
+      19.2,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -24.0,
+      0.0,
+      0.0
+     ],
+     "bone_18": [
+      -24.0,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -24.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Head_1": [
+      -6,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      0,
+      0,
+      0
+     ]
     }
    },
    "pose_alias": {
@@ -517,7 +604,151 @@
     "atk_lunge": "crouch",
     "atk_bark": "bark"
    },
-   "scale": 0.72
+   "scale": 0.72,
+   "_src_poses": {
+    "crouch": {
+     "_root": [
+      0,
+      -0.06,
+      0
+     ],
+     "tripo__Spine_0": [
+      -6,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      -22,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      -8,
+      0,
+      0
+     ],
+     "bone_25": [
+      -25,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      -8,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      -8,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      24,
+      0,
+      0
+     ],
+     "bone_17": [
+      24,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      24,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -30,
+      0,
+      0
+     ],
+     "bone_18": [
+      -30,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -30,
+      0,
+      0
+     ]
+    },
+    "lunge": {
+     "_root": [
+      0,
+      0.03,
+      0
+     ],
+     "tripo__Spine_0": [
+      5,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      16,
+      0,
+      0
+     ],
+     "tripo__Head_3": [
+      12,
+      0,
+      0
+     ],
+     "bone_25": [
+      25,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_1": [
+      48,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_1": [
+      48,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      -42,
+      0,
+      0
+     ],
+     "bone_17": [
+      -42,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      -42,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      10,
+      0,
+      0
+     ],
+     "bone_18": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      10,
+      0,
+      0
+     ]
+    }
+   },
+   "pose_seq": {
+    "_doc": "pose -> [next pose, seconds held before it, blend]: an extension always lands",
+    "lunge": [
+     "land",
+     0.24,
+     0.07
+    ]
+   }
   },
   "barrow_sleeper": {
    "scene": "res://assets/models/enemies/barrow_sleeper.glb",
@@ -545,7 +776,8 @@
      ]
     }
    },
-   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)"
+   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)",
+   "clip_set": "foe_barrow_sleeper"
   },
   "keener": {
    "scene": "res://assets/models/enemies/keener.glb",
@@ -573,7 +805,8 @@
      ]
     }
    },
-   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)"
+   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)",
+   "clip_set": "foe_keener"
   },
   "cairn_carrier": {
    "scene": "res://assets/models/enemies/cairn_carrier.glb",
@@ -601,7 +834,8 @@
      ]
     }
    },
-   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)"
+   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)",
+   "clip_set": "foe_cairn_carrier"
   },
   "turfwright": {
    "scene": "res://assets/models/bosses/turfwright.glb",
@@ -651,7 +885,8 @@
      "contact": 1.1,
      "end": 2.6
     }
-   }
+   },
+   "clip_set": "foe_turfwright"
   },
   "hesk": {
    "scene": "res://assets/models/npcs/hesk.glb",
@@ -735,7 +970,8 @@
      "contact": 1.25,
      "end": 2.6
     }
-   }
+   },
+   "clip_set": "foe_ice_cutter"
   },
   "ice_fisher": {
    "scene": "res://assets/models/enemies/ice_fisher.glb",
@@ -763,7 +999,8 @@
       0.0
      ]
     }
-   }
+   },
+   "clip_set": "foe_ice_fisher"
   },
   "sealer": {
    "scene": "res://assets/models/enemies/sealer.glb",
@@ -791,7 +1028,8 @@
       0.0
      ]
     }
-   }
+   },
+   "clip_set": "foe_sealer"
   },
   "ivo": {
    "scene": "res://assets/models/npcs/ivo.glb",
@@ -822,6 +1060,297 @@
    "scale": 0.72,
    "_note": "Tripo quadruped (one real clip: walk), posed like the Hearthhound (QuadRig). Its rig differs: front upper legs are 0_*_Limb_0 (under a shoulder bone), hind thighs 1_*_Limb_0, knees 1_*_Limb_1, a real tail (Tail_0). Its glb faces the other way from the hound's: yaw_deg 0.",
    "poses": {
+    "crouch": {
+     "_root": [
+      0.0,
+      -0.14,
+      0.0
+     ],
+     "tripo__Spine_0": [
+      -12.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Head_1": [
+      -17.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Head_2": [
+      -6.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Tail_0": [
+      -48.0,
+      0.0,
+      0.0
+     ],
+     "tripo__0_Left_Limb_0": [
+      -31.2,
+      0.0,
+      0.0
+     ],
+     "tripo__0_Right_Limb_0": [
+      -31.2,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_0": [
+      52.8,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_0": [
+      52.8,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -72.0,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -72.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Root": [
+      -0.0,
+      0,
+      0
+     ]
+    },
+    "lunge": {
+     "_root": [
+      0.0,
+      0.045,
+      0.0
+     ],
+     "tripo__Spine_0": [
+      5.75,
+      0.0,
+      0.0
+     ],
+     "tripo__Head_1": [
+      18.4,
+      0.0,
+      0.0
+     ],
+     "tripo__Head_2": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Tail_0": [
+      28.75,
+      0.0,
+      0.0
+     ],
+     "tripo__0_Left_Limb_0": [
+      55.2,
+      0.0,
+      0.0
+     ],
+     "tripo__0_Right_Limb_0": [
+      55.2,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_0": [
+      -48.3,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_0": [
+      -48.3,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_1": [
+      11.5,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_1": [
+      11.5,
+      0.0,
+      0.0
+     ],
+     "tripo__Root": [
+      0.0,
+      0,
+      0
+     ]
+    },
+    "hold": {
+     "_root": [
+      0,
+      -0.03,
+      0
+     ],
+     "tripo__Head_1": [
+      -12,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      -4,
+      0,
+      0
+     ]
+    },
+    "dead": {
+     "_root": [
+      0,
+      -0.17,
+      0
+     ],
+     "tripo__Spine_0": [
+      0,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      0,
+      0,
+      0
+     ],
+     "tripo__Tail_0": [
+      0,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      20,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      20,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      10,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -20,
+      0,
+      0
+     ],
+     "tripo__Root": [
+      0,
+      0,
+      84
+     ]
+    },
+    "flinch": {
+     "_root": [
+      0,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      10,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      4,
+      0,
+      0
+     ]
+    },
+    "land": {
+     "_root": [
+      0,
+      -0.098,
+      0
+     ],
+     "tripo__Root": [
+      -0.0,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      26.4,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      26.4,
+      0,
+      0
+     ],
+     "tripo__Spine_0": [
+      -8.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Tail_0": [
+      -32.0,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_0": [
+      35.2,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_0": [
+      35.2,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Left_Limb_1": [
+      -48.0,
+      0.0,
+      0.0
+     ],
+     "tripo__1_Right_Limb_1": [
+      -48.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Head_1": [
+      -6,
+      0,
+      0
+     ],
+     "tripo__Head_2": [
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "pose_alias": {
+    "death": "dead",
+    "stagger": "flinch",
+    "hit": "flinch",
+    "bite": "lunge",
+    "atk_lunge": "crouch"
+   },
+   "_src_poses": {
     "crouch": {
      "_root": [
       0,
@@ -935,110 +1464,15 @@
       0,
       0
      ]
-    },
-    "hold": {
-     "_root": [
-      0,
-      -0.03,
-      0
-     ],
-     "tripo__Head_1": [
-      -12,
-      0,
-      0
-     ],
-     "tripo__Spine_0": [
-      -4,
-      0,
-      0
-     ]
-    },
-    "dead": {
-     "_root": [
-      0,
-      -0.17,
-      0
-     ],
-     "tripo__Spine_0": [
-      0,
-      0,
-      0
-     ],
-     "tripo__Head_1": [
-      -20,
-      0,
-      0
-     ],
-     "tripo__Head_2": [
-      0,
-      0,
-      0
-     ],
-     "tripo__Tail_0": [
-      0,
-      0,
-      0
-     ],
-     "tripo__0_Left_Limb_0": [
-      20,
-      0,
-      0
-     ],
-     "tripo__0_Right_Limb_0": [
-      20,
-      0,
-      0
-     ],
-     "tripo__1_Left_Limb_0": [
-      10,
-      0,
-      0
-     ],
-     "tripo__1_Right_Limb_0": [
-      10,
-      0,
-      0
-     ],
-     "tripo__1_Left_Limb_1": [
-      -20,
-      0,
-      0
-     ],
-     "tripo__1_Right_Limb_1": [
-      -20,
-      0,
-      0
-     ],
-     "tripo__Root": [
-      0,
-      0,
-      84
-     ]
-    },
-    "flinch": {
-     "_root": [
-      0,
-      0,
-      0
-     ],
-     "tripo__Head_1": [
-      10,
-      0,
-      0
-     ],
-     "tripo__Spine_0": [
-      4,
-      0,
-      0
-     ]
     }
    },
-   "pose_alias": {
-    "death": "dead",
-    "stagger": "flinch",
-    "hit": "flinch",
-    "bite": "lunge",
-    "atk_lunge": "crouch"
+   "pose_seq": {
+    "_doc": "pose -> [next pose, seconds held before it, blend]: an extension always lands",
+    "lunge": [
+     "land",
+     0.24,
+     0.07
+    ]
    }
   },
   "lusse": {
@@ -1237,7 +1671,8 @@
      "loop": false,
      "root_lock": true
     }
-   }
+   },
+   "clip_sets": true
   },
   "feast_guest": {
    "scene": "res://assets/models/enemies/feast_guest.glb",
@@ -1272,7 +1707,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_feast_guest"
   },
   "cupbearer": {
    "scene": "res://assets/models/enemies/cupbearer.glb",
@@ -1307,7 +1743,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_cupbearer"
   },
   "hall_champion": {
    "scene": "res://assets/models/enemies/hall_champion.glb",
@@ -1342,7 +1779,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_hall_champion"
   },
   "host": {
    "scene": "res://assets/models/bosses/host.glb",
@@ -1392,7 +1830,8 @@
      "contact": 1.75,
      "end": 3.0
     }
-   }
+   },
+   "clip_set": "foe_host"
   },
   "hedgelayer": {
    "scene": "res://assets/models/bosses/hedgelayer.glb",
@@ -1442,7 +1881,8 @@
      "contact": 1.5,
      "end": 2.6
     }
-   }
+   },
+   "clip_set": "foe_hedgelayer"
   },
   "collier": {
    "scene": "res://assets/models/enemies/collier.glb",
@@ -1477,7 +1917,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_collier"
   },
   "rime_stag": {
    "scene": "res://assets/models/enemies/rime_stag.glb",
@@ -1489,32 +1930,37 @@
    "poses": {
     "lower": {
      "_root": [
-      0,
-      -0.04,
-      0
+      0.0,
+      -0.158,
+      0.0
      ],
      "tripo__Spine_2": [
-      -6,
-      0,
-      0
+      -9.0,
+      0.0,
+      0.0
      ],
      "tripo__Head_0": [
-      -34,
-      0,
-      0
+      -51.0,
+      0.0,
+      0.0
      ],
      "tripo__Head_1": [
-      -10,
-      0,
-      0
+      -15.0,
+      0.0,
+      0.0
      ],
      "tripo__0_Left_Limb_0": [
-      -10,
-      0,
-      0
+      -15.0,
+      0.0,
+      0.0
      ],
      "tripo__0_Right_Limb_0": [
-      -10,
+      -15.0,
+      0.0,
+      0.0
+     ],
+     "tripo__Root": [
+      -5.0,
       0,
       0
      ]
@@ -1568,32 +2014,37 @@
     },
     "leap": {
      "_root": [
-      0,
-      0.2,
-      0
+      0.0,
+      0.24,
+      0.0
      ],
      "tripo__Head_0": [
-      10,
-      0,
-      0
+      13.5,
+      0.0,
+      0.0
      ],
      "tripo__0_Left_Limb_0": [
-      50,
-      0,
-      0
+      67.5,
+      0.0,
+      0.0
      ],
      "tripo__0_Right_Limb_0": [
-      50,
-      0,
-      0
+      67.5,
+      0.0,
+      0.0
      ],
      "tripo__1_Left_Limb_0": [
-      -50,
-      0,
-      0
+      -67.5,
+      0.0,
+      0.0
      ],
      "tripo__1_Right_Limb_0": [
-      -50,
+      -67.5,
+      0.0,
+      0.0
+     ],
+     "tripo__Root": [
+      9.0,
       0,
       0
      ]
@@ -1668,6 +2119,43 @@
       0,
       84
      ]
+    },
+    "land": {
+     "_root": [
+      0,
+      -0.111,
+      0
+     ],
+     "tripo__Root": [
+      -12.0,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      27.5,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      27.5,
+      0,
+      0
+     ],
+     "tripo__Spine_2": [
+      -4.8,
+      0.0,
+      0.0
+     ],
+     "tripo__Head_0": [
+      -6,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      0,
+      0,
+      0
+     ]
     }
    },
    "pose_alias": {
@@ -1678,6 +2166,80 @@
     "atk_lunge": "lower",
     "bound": "rear",
     "thorn_shake": "shake"
+   },
+   "_src_poses": {
+    "lower": {
+     "_root": [
+      0,
+      -0.04,
+      0
+     ],
+     "tripo__Spine_2": [
+      -6,
+      0,
+      0
+     ],
+     "tripo__Head_0": [
+      -34,
+      0,
+      0
+     ],
+     "tripo__Head_1": [
+      -10,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      -10,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      -10,
+      0,
+      0
+     ]
+    },
+    "leap": {
+     "_root": [
+      0,
+      0.2,
+      0
+     ],
+     "tripo__Head_0": [
+      10,
+      0,
+      0
+     ],
+     "tripo__0_Left_Limb_0": [
+      50,
+      0,
+      0
+     ],
+     "tripo__0_Right_Limb_0": [
+      50,
+      0,
+      0
+     ],
+     "tripo__1_Left_Limb_0": [
+      -50,
+      0,
+      0
+     ],
+     "tripo__1_Right_Limb_0": [
+      -50,
+      0,
+      0
+     ]
+    }
+   },
+   "pose_seq": {
+    "_doc": "pose -> [next pose, seconds held before it, blend]: an extension always lands",
+    "leap": [
+     "land",
+     0.24,
+     0.07
+    ]
    }
   },
   "linnet": {
@@ -1696,6 +2258,12 @@
      "root_lock": true
     }
    }
+  },
+  "combat_lib": {
+   "scene": "res://assets/anim/combat_lib.glb",
+   "yaw_deg": 180.0,
+   "own_clips": false,
+   "_note": "clip-only library (tools/anim/build_combat_lib.py): the Bearer's skeleton carrying the shared combat clips; merged into the shared library"
   },
   "old_calder": {
    "scene": "res://assets/models/npcs/old_calder.glb",
@@ -2247,6 +2815,76 @@
     90.0
    ],
    "_note": "the real drink clip lifts the RIGHT hand: the blade is put away while the gourd is held"
+  },
+  "weapon@onehand": {
+   "bone": "mixamorig_RightHand",
+   "pos": [
+    0.03,
+    0.085,
+    0.0
+   ],
+   "rot": [
+    -74.94,
+    -90.0,
+    0.0
+   ],
+   "_note": "generated by tools/anim/grip.py from tools/anim/grips.json"
+  },
+  "weapon@twohand": {
+   "bone": "mixamorig_RightHand",
+   "pos": [
+    0.03,
+    0.085,
+    0.0
+   ],
+   "rot": [
+    -74.94,
+    -90.0,
+    0.0
+   ],
+   "_note": "generated by tools/anim/grip.py from tools/anim/grips.json"
+  },
+  "weapon@polearm": {
+   "bone": "mixamorig_RightHand",
+   "pos": [
+    0.03,
+    0.085,
+    0.0
+   ],
+   "rot": [
+    -74.94,
+    -90.0,
+    0.0
+   ],
+   "_note": "generated by tools/anim/grip.py from tools/anim/grips.json"
+  },
+  "weapon@spear": {
+   "bone": "mixamorig_RightHand",
+   "pos": [
+    0.03,
+    0.085,
+    0.0
+   ],
+   "rot": [
+    -74.94,
+    -90.0,
+    0.0
+   ],
+   "_note": "generated by tools/anim/grip.py from tools/anim/grips.json"
+  },
+  "carry@onehand": {
+   "bone": "mixamorig_RightHand",
+   "pos": [
+    0.03,
+    0.085,
+    0.0
+   ],
+   "rot": [
+    -45.0,
+    0.0,
+    -0.0
+   ],
+   "_note": "generated by tools/anim/grip.py from tools/anim/grips.json"
   }
  },
  "bone_alias": {
@@ -2773,6 +3411,556 @@
     "start": 0.0,
     "end": 3.0
    }
+  },
+  "sw_light_a": {
+   "start": 0.0,
+   "end": 1.2,
+   "contact": 0.31
+  },
+  "sw_light_b": {
+   "start": 0.0,
+   "end": 1.3,
+   "contact": 0.25
+  },
+  "sw_heavy": {
+   "start": 0.0,
+   "contact": 0.55,
+   "end": 1.7
+  },
+  "sw_cleave": {
+   "start": 0.0,
+   "end": 1.53,
+   "contact": 0.42
+  },
+  "sw_dash": {
+   "start": 0.0,
+   "end": 1.6,
+   "contact": 0.38
+  },
+  "sw_stab": {
+   "start": 0.0,
+   "end": 0.93,
+   "contact": 0.34
+  },
+  "guard_hold": {
+   "loop": true
+  },
+  "guard_hit": {
+   "start": 0.0,
+   "contact": 0.06,
+   "end": 0.5
+  },
+  "guard_parry": {
+   "start": 0.0,
+   "end": 0.73,
+   "contact": 0.17
+  },
+  "guard_break": {
+   "start": 0.0,
+   "end": 1.07
+  },
+  "react_front": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "react_back": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "hop_back": {
+   "start": 0.0,
+   "end": 0.5
+  },
+  "fall_back": {
+   "start": 0.0,
+   "end": 2.4
+  },
+  "dive_roll": {
+   "start": 0.03,
+   "end": 1.2
+  },
+  "knockdown": {
+   "start": 0.0,
+   "end": 0.83
+  },
+  "gs_light_a": {
+   "start": 0.0,
+   "end": 1.67,
+   "contact": 0.6
+  },
+  "gs_light_b": {
+   "start": 0.0,
+   "contact": 0.52,
+   "end": 1.8
+  },
+  "gs_heavy": {
+   "start": 0.0,
+   "end": 2.23,
+   "contact": 0.8
+  },
+  "gs_dash": {
+   "start": 0.0,
+   "end": 1.73,
+   "contact": 0.52
+  },
+  "gs_stab": {
+   "start": 0.0,
+   "end": 0.93,
+   "contact": 0.34
+  },
+  "gs_guard": {
+   "loop": true
+  },
+  "gs_guard_hit": {
+   "start": 0.0,
+   "end": 0.43,
+   "contact": 0.06
+  },
+  "pa_light_a": {
+   "start": 0.0,
+   "end": 1.67,
+   "contact": 0.6
+  },
+  "pa_light_b": {
+   "start": 0.0,
+   "contact": 0.52,
+   "end": 1.8
+  },
+  "pa_heavy": {
+   "start": 0.0,
+   "end": 2.23,
+   "contact": 0.8
+  },
+  "pa_dash": {
+   "start": 0.0,
+   "end": 1.73,
+   "contact": 0.52
+  },
+  "pa_stab": {
+   "start": 0.0,
+   "end": 0.93,
+   "contact": 0.34
+  },
+  "pa_guard": {
+   "loop": true
+  },
+  "pa_guard_hit": {
+   "start": 0.0,
+   "end": 0.43,
+   "contact": 0.06
+  },
+  "sp_thrust_a": {
+   "start": 0.0,
+   "end": 0.8,
+   "contact": 0.29
+  },
+  "sp_thrust_b": {
+   "start": 0.0,
+   "end": 0.8,
+   "contact": 0.25
+  },
+  "sp_heavy": {
+   "start": 0.0,
+   "end": 1.4,
+   "contact": 0.53
+  },
+  "sp_dash": {
+   "start": 0.0,
+   "end": 1.13,
+   "contact": 0.36
+  },
+  "sp_stab": {
+   "start": 0.0,
+   "end": 0.93,
+   "contact": 0.34
+  },
+  "sp_guard": {
+   "loop": true
+  },
+  "sp_guard_hit": {
+   "start": 0.0,
+   "end": 0.43,
+   "contact": 0.06
+  },
+  "bow_pull": {
+   "start": 0.0,
+   "end": 0.8
+  },
+  "bow_aim": {
+   "loop": true
+  },
+  "sw_slam": {
+   "start": 0.0,
+   "contact": 0.58,
+   "end": 2.0
+  },
+  "gs_parry": {
+   "start": 0.0,
+   "contact": 0.17,
+   "end": 0.73
+  },
+  "pa_parry": {
+   "start": 0.0,
+   "contact": 0.17,
+   "end": 0.73
+  },
+  "sp_parry": {
+   "start": 0.0,
+   "contact": 0.17,
+   "end": 0.73
+  },
+  "gs_carry": {
+   "loop": true
+  },
+  "pa_carry": {
+   "loop": true
+  },
+  "sp_carry": {
+   "loop": true
+  },
+  "bow_loose": {
+   "start": 0.0,
+   "contact": 0.05,
+   "end": 0.6
+  },
+  "f_rimewalker_swipe": {
+   "start": 0.0,
+   "contact": 0.62,
+   "end": 1.5
+  },
+  "f_rimewalker_flail": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_rimewalker_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_oarsman_stroke": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_oarsman_back_stroke": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_oarsman_ship_oars": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.067
+  },
+  "f_oarsman_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_barrow_sleeper_hammer_fist": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_barrow_sleeper_back_fist": {
+   "start": 0.0,
+   "contact": 0.55,
+   "end": 1.433
+  },
+  "f_barrow_sleeper_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_keener_breath_note": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_keener_keen": {
+   "start": 0.0,
+   "contact": 1.5,
+   "end": 2.367
+  },
+  "f_keener_hush": {
+   "start": 0.0,
+   "contact": 0.7,
+   "end": 1.567
+  },
+  "f_keener_rouse": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_keener_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_cairn_carrier_yoke_swing": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_cairn_carrier_set_stone": {
+   "start": 0.0,
+   "contact": 1.6,
+   "end": 2.467
+  },
+  "f_cairn_carrier_stone_toss": {
+   "start": 0.0,
+   "contact": 1.3,
+   "end": 2.167
+  },
+  "f_cairn_carrier_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_ice_fisher_pick": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_ice_fisher_pick_left": {
+   "start": 0.0,
+   "contact": 0.4,
+   "end": 1.267
+  },
+  "f_ice_fisher_cut_hole": {
+   "start": 0.0,
+   "contact": 1.4,
+   "end": 2.267
+  },
+  "f_ice_fisher_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_sealer_club": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_sealer_backhand": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_sealer_hook": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_sealer_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_feast_guest_cuff": {
+   "start": 0.0,
+   "contact": 0.6,
+   "end": 1.467
+  },
+  "f_feast_guest_cuff_left": {
+   "start": 0.0,
+   "contact": 0.45,
+   "end": 1.333
+  },
+  "f_feast_guest_toast": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.067
+  },
+  "f_feast_guest_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_cupbearer_slice": {
+   "start": 0.0,
+   "contact": 0.35,
+   "end": 1.233
+  },
+  "f_cupbearer_lunge": {
+   "start": 0.0,
+   "contact": 0.6,
+   "end": 1.467
+  },
+  "f_cupbearer_going_round": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_cupbearer_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_hall_champion_mace": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_hall_champion_shield_bash": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_hall_champion_shield_rush": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_hall_champion_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_collier_rake": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_collier_smother": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.067
+  },
+  "f_collier_cinders": {
+   "start": 0.0,
+   "contact": 1.1,
+   "end": 1.967
+  },
+  "f_collier_stagger": {
+   "start": 0.0,
+   "end": 0.7
+  },
+  "f_netmender_needle_stitch": {
+   "start": 0.0,
+   "contact": 0.6,
+   "end": 1.467
+  },
+  "f_netmender_one_hand_stitch": {
+   "start": 0.0,
+   "contact": 0.7,
+   "end": 1.567
+  },
+  "f_netmender_cast": {
+   "start": 0.0,
+   "contact": 1.1,
+   "end": 1.967
+  },
+  "f_netmender_last_cast": {
+   "start": 0.0,
+   "contact": 1.3,
+   "end": 2.167
+  },
+  "f_netmender_sea_weight": {
+   "start": 0.0,
+   "contact": 1.6,
+   "end": 2.467
+  },
+  "f_netmender_knot": {
+   "start": 0.0,
+   "contact": 1.4,
+   "end": 2.267
+  },
+  "f_netmender_mend_floor": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_netmender_stagger": {
+   "start": 0.0,
+   "end": 1.3
+  },
+  "f_turfwright_spade_chop": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_turfwright_one_hand_chop": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_turfwright_drag_swing": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_turfwright_sod_throw": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_turfwright_ground_cut": {
+   "start": 0.0,
+   "contact": 1.3,
+   "end": 2.167
+  },
+  "f_turfwright_cross_cut": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_turfwright_stagger": {
+   "start": 0.0,
+   "end": 1.3
+  },
+  "f_ice_cutter_auger_thrust": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_ice_cutter_drill_down": {
+   "start": 0.0,
+   "contact": 1.4,
+   "end": 2.267
+  },
+  "f_ice_cutter_trace": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.067
+  },
+  "f_ice_cutter_dog_team": {
+   "start": 0.0,
+   "contact": 1.6,
+   "end": 2.467
+  },
+  "f_ice_cutter_stagger": {
+   "start": 0.0,
+   "end": 1.3
+  },
+  "f_host_horn_fist": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_host_table_sweep": {
+   "start": 0.0,
+   "contact": 1.4,
+   "end": 2.267
+  },
+  "f_host_bench_throw": {
+   "start": 0.0,
+   "contact": 1.6,
+   "end": 2.467
+  },
+  "f_host_stagger": {
+   "start": 0.0,
+   "end": 1.3
+  },
+  "f_hedgelayer_bill": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_hedgelayer_thorn_lash": {
+   "start": 0.0,
+   "contact": 1.1,
+   "end": 1.967
+  },
+  "f_hedgelayer_raise_wall": {
+   "start": 0.0,
+   "contact": 1.4,
+   "end": 2.267
+  },
+  "f_hedgelayer_stagger": {
+   "start": 0.0,
+   "end": 1.3
   }
  },
  "aliases": {
@@ -2867,6 +4055,10 @@
   ],
   "roll": [
    "dodge_roll"
+  ],
+  "stagger_back": [
+   "stagger",
+   "hit"
   ]
  },
  "mannequin_contact": {
@@ -2893,5 +4085,451 @@
    "slot": "gourd"
   }
  },
- "_doc_carry": "models.<id>.carry names a looping clip played on the arms only (HumanoidRig upper layer) whenever no action owns the rig, so a held two-handed weapon stays in the hands while the legs walk."
+ "_doc_carry": "models.<id>.carry names a looping clip played on the arms only (HumanoidRig upper layer) whenever no action owns the rig, so a held two-handed weapon stays in the hands while the legs walk.",
+ "libraries": [
+  "combat_lib"
+ ],
+ "weapon_class": {
+  "_doc": "weapon kit -> clip set (clip_sets) and grip (mounts weapon@<class>)",
+  "hewing_blade": "onehand",
+  "torch": "onehand",
+  "feast_cleaver": "onehand",
+  "maul": "twohand",
+  "greatblade": "twohand",
+  "turf_spade": "polearm",
+  "hedging_bill": "polearm",
+  "spear": "spear",
+  "ice_auger": "spear",
+  "sealer_harpoon": "spear",
+  "bow": "bow"
+ },
+ "clip_sets": {
+  "_doc": "weapon class -> game clip name -> library clips, best first (HumanoidLib.candidates). `_all` answers for every class. Only models with clip_sets: true use them. `_carry` names a looping arms-only clip that holds a two-handed weapon through locomotion (HumanoidRig carry layer).",
+  "_all": {
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ],
+   "roll": [
+    "dive_roll"
+   ],
+   "backstep": [
+    "hop_back"
+   ]
+  },
+  "onehand": {
+   "attack_l1": [
+    "sw_light_a"
+   ],
+   "attack_l2": [
+    "sw_light_b"
+   ],
+   "attack_h": [
+    "sw_heavy"
+   ],
+   "attack_sprint": [
+    "sw_dash"
+   ],
+   "riposte": [
+    "sw_stab"
+   ],
+   "block": [
+    "guard_hold"
+   ],
+   "block_hit": [
+    "guard_hit"
+   ],
+   "parry": [
+    "guard_parry"
+   ]
+  },
+  "twohand": {
+   "attack_l1": [
+    "gs_light_a"
+   ],
+   "attack_l2": [
+    "gs_light_b"
+   ],
+   "attack_h": [
+    "gs_heavy"
+   ],
+   "attack_sprint": [
+    "gs_dash"
+   ],
+   "riposte": [
+    "gs_stab"
+   ],
+   "block": [
+    "gs_guard"
+   ],
+   "block_hit": [
+    "gs_guard_hit"
+   ],
+   "parry": [
+    "gs_parry"
+   ],
+   "_carry": [
+    "gs_carry"
+   ]
+  },
+  "polearm": {
+   "attack_l1": [
+    "pa_light_a"
+   ],
+   "attack_l2": [
+    "pa_light_b"
+   ],
+   "attack_h": [
+    "pa_heavy"
+   ],
+   "attack_sprint": [
+    "pa_dash"
+   ],
+   "riposte": [
+    "pa_stab"
+   ],
+   "block": [
+    "pa_guard"
+   ],
+   "block_hit": [
+    "pa_guard_hit"
+   ],
+   "parry": [
+    "pa_parry"
+   ],
+   "_carry": [
+    "pa_carry"
+   ]
+  },
+  "spear": {
+   "attack_l1": [
+    "sp_thrust_a"
+   ],
+   "attack_l2": [
+    "sp_thrust_b"
+   ],
+   "attack_h": [
+    "sp_heavy"
+   ],
+   "attack_sprint": [
+    "sp_dash"
+   ],
+   "riposte": [
+    "sp_stab"
+   ],
+   "block": [
+    "sp_guard"
+   ],
+   "block_hit": [
+    "sp_guard_hit"
+   ],
+   "parry": [
+    "sp_parry"
+   ],
+   "_carry": [
+    "sp_carry"
+   ]
+  },
+  "bow": {
+   "bow_draw": [
+    "bow_pull"
+   ],
+   "bow_hold": [
+    "bow_aim"
+   ],
+   "bow_loose": [
+    "bow_loose"
+   ]
+  },
+  "foe_rimewalker": {
+   "@swipe": [
+    "f_rimewalker_swipe"
+   ],
+   "@flail": [
+    "f_rimewalker_flail"
+   ],
+   "stagger": [
+    "f_rimewalker_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_oarsman": {
+   "@stroke": [
+    "f_oarsman_stroke"
+   ],
+   "@back_stroke": [
+    "f_oarsman_back_stroke"
+   ],
+   "@ship_oars": [
+    "f_oarsman_ship_oars"
+   ],
+   "stagger": [
+    "f_oarsman_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_barrow_sleeper": {
+   "@hammer_fist": [
+    "f_barrow_sleeper_hammer_fist"
+   ],
+   "@back_fist": [
+    "f_barrow_sleeper_back_fist"
+   ],
+   "stagger": [
+    "f_barrow_sleeper_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_keener": {
+   "@breath_note": [
+    "f_keener_breath_note"
+   ],
+   "@keen": [
+    "f_keener_keen"
+   ],
+   "@hush": [
+    "f_keener_hush"
+   ],
+   "@rouse": [
+    "f_keener_rouse"
+   ],
+   "stagger": [
+    "f_keener_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_cairn_carrier": {
+   "@yoke_swing": [
+    "f_cairn_carrier_yoke_swing"
+   ],
+   "@set_stone": [
+    "f_cairn_carrier_set_stone"
+   ],
+   "@stone_toss": [
+    "f_cairn_carrier_stone_toss"
+   ],
+   "stagger": [
+    "f_cairn_carrier_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_ice_fisher": {
+   "@pick": [
+    "f_ice_fisher_pick"
+   ],
+   "@pick_left": [
+    "f_ice_fisher_pick_left"
+   ],
+   "@cut_hole": [
+    "f_ice_fisher_cut_hole"
+   ],
+   "stagger": [
+    "f_ice_fisher_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_sealer": {
+   "@club": [
+    "f_sealer_club"
+   ],
+   "@backhand": [
+    "f_sealer_backhand"
+   ],
+   "@hook": [
+    "f_sealer_hook"
+   ],
+   "stagger": [
+    "f_sealer_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_feast_guest": {
+   "@cuff": [
+    "f_feast_guest_cuff"
+   ],
+   "@cuff_left": [
+    "f_feast_guest_cuff_left"
+   ],
+   "@toast": [
+    "f_feast_guest_toast"
+   ],
+   "stagger": [
+    "f_feast_guest_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_cupbearer": {
+   "@slice": [
+    "f_cupbearer_slice"
+   ],
+   "@lunge": [
+    "f_cupbearer_lunge"
+   ],
+   "@going_round": [
+    "f_cupbearer_going_round"
+   ],
+   "stagger": [
+    "f_cupbearer_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_hall_champion": {
+   "@mace": [
+    "f_hall_champion_mace"
+   ],
+   "@shield_bash": [
+    "f_hall_champion_shield_bash"
+   ],
+   "@shield_rush": [
+    "f_hall_champion_shield_rush"
+   ],
+   "stagger": [
+    "f_hall_champion_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_collier": {
+   "@rake": [
+    "f_collier_rake"
+   ],
+   "@smother": [
+    "f_collier_smother"
+   ],
+   "@cinders": [
+    "f_collier_cinders"
+   ],
+   "stagger": [
+    "f_collier_stagger"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_netmender": {
+   "@needle_stitch": [
+    "f_netmender_needle_stitch"
+   ],
+   "@one_hand_stitch": [
+    "f_netmender_one_hand_stitch"
+   ],
+   "@cast": [
+    "f_netmender_cast"
+   ],
+   "@last_cast": [
+    "f_netmender_last_cast"
+   ],
+   "@sea_weight": [
+    "f_netmender_sea_weight"
+   ],
+   "@knot": [
+    "f_netmender_knot"
+   ],
+   "@mend_floor": [
+    "f_netmender_mend_floor"
+   ],
+   "stagger": [
+    "f_netmender_stagger"
+   ]
+  },
+  "foe_turfwright": {
+   "@spade_chop": [
+    "f_turfwright_spade_chop"
+   ],
+   "@one_hand_chop": [
+    "f_turfwright_one_hand_chop"
+   ],
+   "@drag_swing": [
+    "f_turfwright_drag_swing"
+   ],
+   "@sod_throw": [
+    "f_turfwright_sod_throw"
+   ],
+   "@ground_cut": [
+    "f_turfwright_ground_cut"
+   ],
+   "@cross_cut": [
+    "f_turfwright_cross_cut"
+   ],
+   "stagger": [
+    "f_turfwright_stagger"
+   ]
+  },
+  "foe_ice_cutter": {
+   "@auger_thrust": [
+    "f_ice_cutter_auger_thrust"
+   ],
+   "@drill_down": [
+    "f_ice_cutter_drill_down"
+   ],
+   "@trace": [
+    "f_ice_cutter_trace"
+   ],
+   "@dog_team": [
+    "f_ice_cutter_dog_team"
+   ],
+   "stagger": [
+    "f_ice_cutter_stagger"
+   ]
+  },
+  "foe_host": {
+   "@horn_fist": [
+    "f_host_horn_fist"
+   ],
+   "@table_sweep": [
+    "f_host_table_sweep"
+   ],
+   "@bench_throw": [
+    "f_host_bench_throw"
+   ],
+   "stagger": [
+    "f_host_stagger"
+   ]
+  },
+  "foe_hedgelayer": {
+   "@bill": [
+    "f_hedgelayer_bill"
+   ],
+   "@thorn_lash": [
+    "f_hedgelayer_thorn_lash"
+   ],
+   "@raise_wall": [
+    "f_hedgelayer_raise_wall"
+   ],
+   "stagger": [
+    "f_hedgelayer_stagger"
+   ]
+  }
+ },
+ "polish": {
+  "_doc": "strike polish layered over the clips by CharVisual (humanoids only): a lean away through the wind-up, spent by the contact frame, and a forward dig on a landed hit that Juice's hit-stop holds. Degrees and seconds. trail_lead: seconds before the hit window opens that the swing ribbon starts drawing.",
+  "antic_lean_deg": 3.5,
+  "impact_dig_deg": 3.0,
+  "impact_dig_ease": 0.22,
+  "trail_lead": 0.09
+ }
 }

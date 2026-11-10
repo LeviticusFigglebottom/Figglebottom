@@ -1,6 +1,6 @@
 class_name EndingDirector
 extends Node
-## The two endings (SPEC 2, WORLD.md 6, COLDWELL.md 10; ADR 0011). Started
+## The two endings (SPEC 2, WORLD.md 6, COLDWELL.md 10; ADR 0013). Started
 ## by the choice at the wellhead (src/world/ending_choice.gd) once its flag
 ## is set; every beat's time is data (game.json "endings"). Nothing is said.
 ##

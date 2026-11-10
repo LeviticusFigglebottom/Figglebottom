@@ -19,6 +19,12 @@ global uniform float rh_wave_r;
 global uniform vec3 rh_wave_origin;
 global uniform float rh_wave_dir;
 global uniform float rh_wave_band;
+// Sky colours from EnvRig. The fill weight is 1 only when SDFGI is on (q2):
+// SDFGI replaces the sky radiance in the specular term, so open water lost
+// its sheen. This puts a Schlick sky reflection back as emission.
+global uniform vec4 rh_sky_top : source_color;
+global uniform vec4 rh_sky_horizon : source_color;
+global uniform float rh_water_sky_fill;
 
 varying vec3 wpos;
 
@@ -85,6 +91,18 @@ void fragment() {
 	col += vec3(0.08, 0.09, 0.09) * sheen * (0.3 + fres);
 	ALBEDO = col;
 	EMISSION = mix(vec3(0.06, 0.05, 0.03), vec3(0.025, 0.04, 0.055), rime) * (sheen * 0.4 + fres * 0.45);
+	if (rh_water_sky_fill > 0.0) {
+		vec3 v_w = normalize((INV_VIEW_MATRIX * vec4(VERTEX, 0.0)).xyz);
+		vec3 n_w = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
+		vec3 r_w = reflect(v_w, n_w);
+		float up = clamp(r_w.y, 0.0, 1.0);
+		vec3 sky = mix(rh_sky_horizon.rgb, rh_sky_top.rgb, sqrt(up));
+		float f0 = 0.02;
+		float schlick = f0 + (1.0 - f0) * pow(1.0 - clamp(dot(-v_w, n_w), 0.0, 1.0), 5.0);
+		// 0.16: a sheen to match q1 and lavapipe, not a mirror (a full-strength
+		// term read as snow on the Lowe bog at grazing angles).
+		EMISSION += sky * min(schlick, 0.6) * 0.16 * rh_water_sky_fill * (1.0 - 0.35 * rime);
+	}
 	ROUGHNESS = clamp(0.025 + 0.12 * (1.0 - h0), 0.02, 0.25);
 	SPECULAR = 0.85;
 	METALLIC = 0.08;

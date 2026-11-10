@@ -129,6 +129,12 @@ func _ready() -> void:
 ## set wins (it may raise a flag of its own, a Keepsakes step), else the
 ## plain repeats.
 func _repeat_lines() -> Array:
+	# an errand closed in this very talk is answered first: arriving with the
+	# rye after the release must still hear about the dog (the release's own
+	# lines, and their Keepsakes step, wait for the next talk)
+	for w in npc_cfg.get("lines_when", []):
+		if _closed_now.has(String(w.get("flag", ""))):
+			return w.get("lines", [])
 	for w in npc_cfg.get("lines_when", []):
 		if World.flag(String(w.get("flag", ""))):
 			if String(w.get("set_flag", "")) != "":
@@ -138,6 +144,8 @@ func _repeat_lines() -> Array:
 
 ## Things handed over just by talking (SLICE.md: "talk to Ingra carrying the
 ## sack"): no menu entry, the errand closes when you arrive with it.
+var _closed_now: Array = []
+
 func _run_exchanges() -> void:
 	var p = Game.player
 	for ex in npc_cfg.get("on_talk", []):
@@ -160,6 +168,7 @@ func _run_exchanges() -> void:
 			p.inventory_changed.emit()
 		if String(ex.get("set_flag", "")) != "":
 			World.set_flag(String(ex["set_flag"]))
+			_closed_now.append(String(ex["set_flag"]))
 		if String(ex.get("toast", "")) != "":
 			Game.toast.emit(String(ex["toast"]))
 		World.save_game()
@@ -346,7 +355,7 @@ func _activate(o: Dictionary) -> void:
 				text_label.text = "I had only the one gourd to spare."
 				_flash_line()
 			elif Game.warmth < cost2:
-				text_label.text = "The gourd costs %d warmth. Gourds are cheap; what fills them isn't." % cost2
+				text_label.text = "That's %d warmth. Come back when you've got it." % cost2
 				_flash_line()
 			else:
 				World.set_flag(o.get("once_flag", "bought_deep_gourd"))
@@ -374,7 +383,7 @@ func _activate(o: Dictionary) -> void:
 				text_label.text = o.get("line_have", "You carry that already.")
 				_flash_line()
 			elif Game.warmth < price:
-				text_label.text = "Warmth first, Bearer. %d of it buys this." % price
+				text_label.text = "That's %d warmth. Come back when you've got it." % price
 				_flash_line()
 			else:
 				Game.add_warmth(-price)

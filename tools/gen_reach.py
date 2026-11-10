@@ -146,10 +146,10 @@ while placed < 70 and tries < 4000:
     # slope lies down at once: Fellcaller.lie_flock_down finds them by group);
     # lying, ever after
     PROPS.append({"kit": "sheep", "at": at(x, z), "rot": r2(face), "tag": "rime", "collide": True,
-                  "mat_remap": {"M_wool": "M_rime", "M_leather": "M_rime"},
+                  "mat_remap": {"M_fleece": "M_rime", "M_wool": "M_rime", "M_leather": "M_rime"},
                   "group": "flock_rime", "absent_flag": "ks_fellcaller_released"})
     PROPS.append({"kit": "sheep", "at": at(x, z), "rot": r2(face), "tag": "rime", "collide": True,
-                  "mat_remap": {"M_wool": "M_rime", "M_leather": "M_rime"},
+                  "mat_remap": {"M_fleece": "M_rime", "M_wool": "M_rime", "M_leather": "M_rime"},
                   "scale": [1.0, 0.58, 1.0], "require_flag": "ks_fellcaller_released"})
     placed += 1
 

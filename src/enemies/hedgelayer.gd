@@ -99,6 +99,8 @@ func take_hit(packet: DamagePacket) -> void:
 	if state == ES.HOLD and _hold_kind == "measure":
 		_hold_quiet = 0.0   # he keeps measuring while the Bearer keeps at it
 	var was_up := stood
+	if packet.source != null and packet.source.is_in_group("player"):
+		packet.amount *= Game.test_boss_dmg_mult   # 1.0 outside the full-game walk
 	super.take_hit(packet)
 	if not was_up and not dead and state != ES.TRANSITION:
 		if packet.source != null and packet.source.is_in_group("player"):
@@ -449,7 +451,11 @@ func _lay_gate_down() -> void:
 		return
 	laid_gate = (load(scene) as PackedScene).instantiate()
 	laid_gate.set_meta("laid", true)
-	get_parent().add_child(laid_gate)
+	# on the ground of both memories: under the RIME layer it went out of
+	# sight when the wood was warmed, with Linnet standing there saying it
+	# lay across the gap
+	var holder: Node = (area as Area).base if area is Area else get_parent()
+	holder.add_child(laid_gate)
 	var off: Array = gd.get("off", [0.0, 0.0])
 	var at := grave_point() + Vector3(float(off[0]), 0.0, float(off[1]))
 	var gy := global_position.y

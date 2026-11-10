@@ -340,6 +340,8 @@ D = {
                      "ambient_energy": 0.62, "exposure": 1.08,
                      "fill_color": [1.0, 0.7, 0.42], "fill_energy": 0.7, "fill_rot": [28, 84]},
             "rime": {"sun_rot": [-24, -60], "fog_density": 0.007, "vol_density": 0.018}},
+    # the Breathing Hole: mist held low in the gorge where the ice is cut (Job 4)
+    "fog_pockets": [{"id": "breathing_hole", "at": [16, 3, -312], "size": [54, 9, 44], "density": [0.025, 0.06], "height_falloff": 0.6}],
     "terrain": K.terrain_block(),
     "nav_bounds": [-150, -16, -368, 58, 70, -236],
     "weather": {"gulls": True, "gull_y": 30.0, "gull_dz": -20.0, "spindrift": 12},

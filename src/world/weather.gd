@@ -4,6 +4,9 @@ extends Node3D
 ## ground (with the area's gold motes). RIME: snow falling round the camera,
 ## ice glitter in the air, and spindrift smoking off the cliff lips.
 ## The camera-following emitters keep particle counts small on lavapipe.
+## Emitters are authored as CPUParticles3D settings, then converted to
+## GPUParticles3D (perf, Job 4: the CPU sim was ~1,500 particles of main-thread
+## time in RIME). visibility_aabb is set by hand: GPU particles cull by it.
 
 var follow := false
 
@@ -22,16 +25,16 @@ static func build(area: Area, terrain: Terrain, def: Dictionary) -> void:
 		gulls.initial_velocity_max = 5.0
 		gulls.angular_velocity_min = -20
 		gulls.angular_velocity_max = 20
-		area.thaw_layer.add_child(gulls)
+		area.thaw_layer.add_child(_gpu(gulls, Vector3(size.x * 0.6 + 70.0, 30.0, size.z * 0.6 + 70.0)))
 	var pollen := Weather.new()
 	pollen.follow = true
-	pollen.add_child(_falling(140, Vector3(18, 2.0, 18), Vector3(0.3, 0.05, 0.1), 0.06, Color(1.0, 0.9, 0.55, 0.5), true))
+	pollen.add_child(_gpu(_falling(140, Vector3(18, 2.0, 18), Vector3(0.3, 0.05, 0.1), 0.06, Color(1.0, 0.9, 0.55, 0.5), true), Vector3(24, 6, 24)))
 	area.thaw_layer.add_child(pollen)
 	# RIME: snow and glitter that travel with the camera
 	var snow := Weather.new()
 	snow.follow = true
-	snow.add_child(_falling(900, Vector3(26, 12, 26), Vector3(0.9, -1.6, 0.4), 0.11, Color(0.95, 0.97, 1.0, 0.85), false))
-	snow.add_child(_falling(160, Vector3(14, 3, 14), Vector3(0.1, -0.1, 0.05), 0.05, Color(0.8, 0.9, 1.0, 0.9), true))
+	snow.add_child(_gpu(_falling(900, Vector3(26, 12, 26), Vector3(0.9, -1.6, 0.4), 0.11, Color(0.95, 0.97, 1.0, 0.85), false), Vector3(40, 30, 40)))
+	snow.add_child(_gpu(_falling(160, Vector3(14, 3, 14), Vector3(0.1, -0.1, 0.05), 0.05, Color(0.8, 0.9, 1.0, 0.9), true), Vector3(18, 6, 18)))
 	area.rime_layer.add_child(snow)
 	# spindrift: snow smoke peeling off a few cliff lips into the wind
 	var rng := RandomNumberGenerator.new()
@@ -55,8 +58,9 @@ static func build(area: Area, terrain: Terrain, def: Dictionary) -> void:
 		sd.gravity = Vector3(0, -0.6, 0)
 		sd.scale_amount_min = 0.6
 		sd.scale_amount_max = 1.4
-		sd.visibility_range_end = 120.0
-		area.rime_layer.add_child(sd)
+		var gsd := _gpu(sd, Vector3(20, 8, 20))
+		gsd.visibility_range_end = 120.0
+		area.rime_layer.add_child(gsd)
 		made += 1
 
 func _process(_dt: float) -> void:
@@ -65,6 +69,20 @@ func _process(_dt: float) -> void:
 	var cam := get_viewport().get_camera_3d()
 	if cam != null:
 		global_position = cam.global_position
+
+## Convert an authored CPU emitter to a GPUParticles3D. half: the AABB's
+## half-extents around the emitter (or the camera, for world-space followers).
+static func _gpu(cpu: CPUParticles3D, half: Vector3) -> GPUParticles3D:
+	var g := GPUParticles3D.new()
+	g.convert_from_particles(cpu)
+	g.draw_pass_1 = cpu.mesh
+	g.position = cpu.position
+	g.visibility_aabb = AABB(-half, half * 2.0)
+	var mesh_mat := (cpu.mesh as PrimitiveMesh).material as BaseMaterial3D
+	if mesh_mat != null and mesh_mat.billboard_mode == BaseMaterial3D.BILLBOARD_ENABLED:
+		mesh_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	cpu.free()
+	return g
 
 static func _emitter(amount: int, lifetime: float, box: Vector3, mesh: Mesh) -> CPUParticles3D:
 	var p := CPUParticles3D.new()

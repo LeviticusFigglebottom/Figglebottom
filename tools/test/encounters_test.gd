@@ -59,12 +59,14 @@ func _bearer() -> void:
 	check(board != null and board.scene_file_path.ends_with("saltfell_shield.glb"), "the Saltfell board shield glb is mounted")
 	var hand := v.bone_xform("mixamorig_RightHand").origin
 	check(v.weapon_xform().origin.distance_to(hand) < 0.2, "the grip sits in the fist")
-	check(v.rig.qualified("roll") == "own/dodge_roll" and v.rig.qualified("gourd") == "own/drink"
-			and v.rig.qualified("kneel") == "own/rest" and v.rig.qualified("parry") == "own/parry",
+	# the Bearer's own Tripo drink and kneel stay; roll and parry come from the
+	# combat library's one-handed set (ADR 0011)
+	check(v.rig.qualified("roll") == "dive_roll" and v.rig.qualified("gourd") == "own/drink"
+			and v.rig.qualified("kneel") == "own/rest" and v.rig.qualified("parry") == "guard_parry",
 		"real clips: roll, drink, kneel and parry (%s, %s, %s, %s)" % [v.rig.qualified("roll"),
 			v.rig.qualified("gourd"), v.rig.qualified("kneel"), v.rig.qualified("parry")])
-	check(HumanoidLib.is_procedural(v.rig.clip_anim("block")) and v.rig.qualified("stagger") == "own/hit",
-		"weak clips stay procedural: block is the overlay, stagger falls back to hit")
+	check(not HumanoidLib.is_procedural(v.rig.clip_anim("block")) and v.rig.qualified("stagger") == "react_front",
+		"block and stagger are library clips, no longer overlays (%s, %s)" % [v.rig.qualified("block"), v.rig.qualified("stagger")])
 	print("== the gourd in hand while drinking")
 	player.hp = player.max_hp * 0.5
 	check(player.try_gourd(), "he drinks")

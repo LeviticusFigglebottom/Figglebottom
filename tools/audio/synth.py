@@ -439,6 +439,23 @@ def gen_creature():
     write("holdfast_roar", (dsp.lp(x, 900) * 0.7 + growl * 0.6) * env_ad(len(t), 0.06, 1.0), 0.8)
 
 
+def gen_hound():
+    # the hearthhound's guard bark: two short chesty barks, frost on the breath
+    # (a dog does not moan like the frost-taken villagers)
+    r = np.random.default_rng(7300)   # its own seed: the shared rng's order stays
+    x = np.zeros(samples(0.9))
+    for at, f0, g in [(0.0, 330.0, 1.0), (0.32, 300.0, 0.8)]:
+        t = t_axis(0.22)
+        n = len(t)
+        f = f0 * (1.0 + 0.35 * np.exp(-t / 0.03)) * np.exp(-t * 1.2)
+        v = np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.6 * np.sin(2 * np.pi * np.cumsum(f * 2.0) / SR) \
+            + 0.3 * np.sin(2 * np.pi * np.cumsum(f * 3.1) / SR)
+        v = dsp.lp(v + dsp.lp(noise(n, r), 1800) * 0.5, 2400)
+        place(x, v * env_ad(n, 0.006, 0.07), at, g)
+    x += dsp.crackle(0.9, r, rate=25, f_lo=3000, f_hi=8000) * 0.08
+    write("hound_bark", x, 0.6)
+
+
 def gen_misc():
     # frost veil: a muffled whump and a hush of ice closing behind
     t = t_axis(1.4)
@@ -469,7 +486,7 @@ ALL = {
     "coal_catch": gen_coal_catch, "death": gen_death, "wave": gen_wave,
     "horn_low": gen_horn_low, "rest_chime": gen_rest_chime, "hum": gen_hum, "warmth": gen_warmth_pickup,
     "levelup": gen_levelup, "whooshes": gen_whooshes, "impacts": gen_impacts,
-    "gourd": gen_gourd, "swells": gen_swells, "creature": gen_creature, "misc": gen_misc,
+    "gourd": gen_gourd, "swells": gen_swells, "creature": gen_creature, "hound": gen_hound, "misc": gen_misc,
 }
 
 if __name__ == "__main__":

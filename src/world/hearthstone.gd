@@ -9,7 +9,7 @@ extends Node3D
 
 var area: Area = null
 var zone: Interactable
-var _flame: GeometryInstance3D = null
+var _flames: Array[GeometryInstance3D] = []
 
 var _light: OmniLight3D = null
 
@@ -24,16 +24,18 @@ func _ready() -> void:
 	lbody.collision_mask = 0
 	var lcs := CollisionShape3D.new()
 	var lcyl := CapsuleShape3D.new()
+	# waist-high: enough to stop a body, low enough for the camera's swept
+	# sphere to pass over. A 2.4 m invisible post folded the arm into the
+	# Bearer's cloak whenever the hearth was behind him (every rest at the
+	# Long Hearth, every wake at a hearth)
 	lcyl.radius = 0.38
-	lcyl.height = 2.4
+	lcyl.height = 0.95
 	lcs.shape = lcyl
-	lcs.position.y = 1.2
+	lcs.position.y = 0.475
 	lbody.add_child(lcs)
 	vis.add_child(lbody)
-	_flame = _find_flame(vis)
-	if _flame != null:
-		_flame.set_instance_shader_parameter("keep_in_rime", 1.0)
-	var lights := KitLib.add_flame_lights(vis, 3.2, 8.8)
+	_flames = _find_flames(vis)
+	var lights := KitLib.add_flame_lights(vis, 2.2, 8.8)
 	if lights.size() > 0:
 		_light = lights[0]
 	zone = Interactable.new()
@@ -46,15 +48,16 @@ func _ready() -> void:
 func _area_id() -> String:
 	return area.area_id if area != null else Game.current_area_id
 
-func _find_flame(root: Node) -> GeometryInstance3D:
+func _find_flames(root: Node) -> Array[GeometryInstance3D]:
+	var out: Array[GeometryInstance3D] = []
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
 		var n: Node = stack.pop_back()
 		if n is GeometryInstance3D and String(n.name).contains("hearth_flame"):
-			return n
+			out.append(n)
 		for c in n.get_children():
 			stack.append(c)
-	return null
+	return out
 
 func _on_activated(player) -> void:
 	if player == null:
@@ -62,6 +65,7 @@ func _on_activated(player) -> void:
 		return
 	player.lock_control(true)
 	player.velocity = Vector3.ZERO
+	get_tree().call_group("hud", "clear_area_title")
 	var ui := RestUI.new(self, player)
 	get_tree().root.add_child(ui)
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
@@ -70,21 +74,20 @@ func on_world_state(area_id: String, s: RH.WState) -> void:
 	if area_id == _area_id():
 		_tint_for(s)
 
+## THAW: low warm tongues over lit coals. RIME: the flames are out (the flame
+## shader drops them as the front passes) and only the banked coals and their
+## ember light are left, so the tint only matters while the wave is crossing.
 func _tint_for(s: RH.WState) -> void:
-	if _flame == null:
-		return
-	if s == RH.WState.RIME:
-		_flame.set_instance_shader_parameter("flame_tint", Vector3(0.45, 0.68, 1.0))
-		_flame.set_instance_shader_parameter("flame_energy", 3.4)
-		if _light:
-			_light.light_color = Color(0.48, 0.68, 1.0)
-			_light.light_energy = 2.8
-	else:
-		_flame.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.72, 0.28))
-		_flame.set_instance_shader_parameter("flame_energy", 3.8)
-		if _light:
-			_light.light_color = Color(1.0, 0.68, 0.32)
-			_light.light_energy = 3.4
+	var rime := s == RH.WState.RIME
+	for f in _flames:
+		f.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.4, 0.1) if rime else Vector3(1.0, 0.5, 0.14))
+		f.set_instance_shader_parameter("flame_energy", 0.7 if rime else 0.9)
+	# sparks only while there is a flame to throw them
+	for e in find_children("embers", "CPUParticles3D", true, false):
+		(e as CPUParticles3D).emitting = not rime
+	if _light:
+		_light.light_color = Color(1.0, 0.68, 0.32)
+		_light.light_energy = 2.2
 
 func respawn_point() -> Vector3:
 	return global_position + global_transform.basis.z * 1.4

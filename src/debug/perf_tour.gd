@@ -21,9 +21,11 @@ var _out := ""
 var _shots := ""
 var _secs := 5.0
 var _settle := 2.0
+var _settle_extra := 0.0   # --perf-settle=N adds N s to every settle
 var _cap := 120
 var _area_id := ""
 var _state := ""
+var _census_on := false
 var _ablate: PackedStringArray = []   # freeze a class of nodes to price it by difference
 
 var _views: Array = []      # [{name, kind:"player"|"free", pos, yaw | look}]
@@ -50,6 +52,15 @@ func _ready() -> void:
 			_cap = int(arg.get_slice("=", 1))
 		elif arg.begins_with("--area="):
 			_area_id = arg.get_slice("=", 1)
+		elif arg.begins_with("--perf-settle="):
+			_settle_extra = float(arg.get_slice("=", 1))
+		elif arg == "--perf-census":
+			_census_on = true
+		elif arg.begins_with("--perf-census-at="):
+			var c := arg.get_slice("=", 1).split(",")
+			_census_at = Vector3(float(c[0]), float(c[1]), float(c[2]))
+			if c.size() > 3:
+				_census_r = float(c[3])
 		elif arg.begins_with("--perf-ablate="):
 			_ablate = arg.get_slice("=", 1).split(",")
 		elif arg.begins_with("--state="):
@@ -70,6 +81,8 @@ func _process(_d: float) -> void:
 			if Game.player != null and is_instance_valid(Game.player):
 				EnvRig.set_graphics_quality(_quality)   # a saved setting must not win
 				_apply_ablation(get_tree().root)
+				if _census_on:
+					_census(get_tree().root)
 				_build_views()
 				_next_view()
 		"settle":
@@ -155,13 +168,73 @@ func _apply_ablation(n: Node) -> void:
 		hit = true
 	elif "weather" in _ablate and (n is Weather):
 		hit = true
-	elif "particles" in _ablate and (n is CPUParticles3D):
+	elif "particles" in _ablate and (n is CPUParticles3D or n is GPUParticles3D):
 		hit = true
+	else:
+		var sc: Script = n.get_script()
+		if sc != null:
+			for a in _ablate:
+				if a.begins_with("script:") and sc.resource_path.contains(a.substr(7)):
+					hit = true
 	if hit:
 		n.process_mode = Node.PROCESS_MODE_DISABLED
 		return
 	for c in n.get_children():
 		_apply_ablation(c)
+
+## --perf-census: print how many nodes of each script process per frame, so
+## script time can be priced by script ("--perf-ablate=script:<path part>").
+func _census(root: Node) -> void:
+	var counts := {}
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var n: Node = stack.pop_back()
+		stack.append_array(n.get_children())
+		if not (n.is_processing() or n.is_physics_processing()):
+			continue
+		var sc: Script = n.get_script()
+		var key := sc.resource_path if sc != null else n.get_class()
+		counts[key] = int(counts.get(key, 0)) + 1
+	var keys := counts.keys()
+	keys.sort_custom(func(a, b): return counts[a] > counts[b])
+	for k in keys:
+		print("[census] %5d  %s" % [counts[k], k])
+	_mesh_census(root)
+
+## Triangles drawn per mesh resource within _census_r of _census_at (LOD 0,
+## before culling): finds the asset behind a primitive spike.
+var _census_at := Vector3.INF
+var _census_r := 80.0
+
+func _mesh_census(root: Node) -> void:
+	if _census_at == Vector3.INF:
+		return
+	var tris := {}
+	var inst := {}
+	var cache := {}
+	for n in root.find_children("*", "GeometryInstance3D", true, false):
+		var gi := n as GeometryInstance3D
+		if not gi.is_visible_in_tree() or gi.global_position.distance_to(_census_at) > _census_r:
+			continue
+		var mesh: Mesh = null
+		var count := 1
+		if gi is MeshInstance3D:
+			mesh = (gi as MeshInstance3D).mesh
+		elif gi is MultiMeshInstance3D and (gi as MultiMeshInstance3D).multimesh != null:
+			var mm := (gi as MultiMeshInstance3D).multimesh
+			mesh = mm.mesh
+			count = mm.visible_instance_count if mm.visible_instance_count >= 0 else mm.instance_count
+		if mesh == null:
+			continue
+		var key := mesh.resource_path if mesh.resource_path != "" else "%s:%s" % [gi.get_parent().name, gi.name]
+		if not cache.has(mesh):
+			cache[mesh] = mesh.get_faces().size() / 3
+		tris[key] = int(tris.get(key, 0)) + int(cache[mesh]) * count
+		inst[key] = int(inst.get(key, 0)) + count
+	var keys := tris.keys()
+	keys.sort_custom(func(a, b): return tris[a] > tris[b])
+	for k in keys.slice(0, 20):
+		print("[meshes] %8dk tris  %5d inst  %s" % [tris[k] / 1000, inst[k], k])
 
 func _ground(area: Node, p: Vector3) -> float:
 	var terr = area.get("terrain")
@@ -190,7 +263,7 @@ func _next_view() -> void:
 	_hold_player()
 	_phase = "settle"
 	# the first view also eats shader/pipeline compiles; give it longer
-	_settle = 4.0 if _vi == 0 else 2.0
+	_settle = (4.0 if _vi == 0 else 2.0) + _settle_extra
 	_t = 0.0
 
 ## Pin the Bearer to the viewpoint, unhurtable, so the gameplay camera frames it.

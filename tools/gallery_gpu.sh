@@ -9,6 +9,9 @@
 # Lossless PNGs go to $PNG (default build/gallery_gpu/), JPEG copies (q92) to
 # $JPG (default docs/gallery_gpu/).
 # Same-revision lavapipe pairs from the identical cameras (cloud sessions):
+# Other manifests: VIEWS_FILE=path (same line format), e.g. the v2 gallery:
+#   python3 tools/gallery_v2_views.py > build/v2.txt
+#   VIEWS_FILE=build/v2.txt JPG=docs/gallery_gpu/v2 EXTRA=--shot-nohud tools/gallery_gpu.sh
 #   WRAP='xvfb-run -a -s "-screen 0 1920x1080x24"' PNG=build/gallery_lvp \
 #     JPG=build/gallery_lvp tools/gallery_gpu.sh
 set -uo pipefail
@@ -41,6 +44,7 @@ kettle_fish_houses    kettle_fjord -64.0,4.2,-311.0,-50.0,-8.0,75
 kettle_fjord_ice      kettle_fjord -118.0,12.0,-300.0,-80.0,-12.0,75
 kettle_north_wall     kettle_fjord -70.0,8.0,-312.0,10.0,4.0,75
 "
+if [ -n "${VIEWS_FILE:-}" ]; then VIEWS="$(cat "$VIEWS_FILE")"; fi
 while read -r name area cam extra; do
   [ -z "$name" ] && continue
   if [ -n "$FILTER" ] && [[ "$name" != *"$FILTER"* ]]; then continue; fi
@@ -53,7 +57,7 @@ while read -r name area cam extra; do
     # and the fog history have settled.
     "${cmd[@]}" "$GODOT" --path . --rendering-driver vulkan --resolution 1920x1080 \
       --windowed -- "--shot=$out" "--area=$area" "--state=$state" "--shot-cam=$cam" \
-      --shot-frames=2400 --shot-settle=600 ${extra:-} </dev/null 2>&1 \
+      --shot-frames=2400 --shot-settle=600 ${extra:-} ${EXTRA:-} </dev/null 2>&1 \
       | grep -E "\[shot\]|SCRIPT ERROR|Parse Error" || true
   done
 done <<< "$VIEWS"

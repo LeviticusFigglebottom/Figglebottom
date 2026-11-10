@@ -1,0 +1,84 @@
+{
+	"areas": {
+		"saltfell_steading": {
+			"cleared": true,
+			"flags": {
+				"gate_boatshed_back": true,
+				"lit_hs_boat_shed": true,
+				"lit_hs_long_hearth": true,
+				"lit_hs_salt_house": true,
+				"slain_netmender": true,
+				"took_mending_needle": true,
+				"took_net_float": true,
+				"took_rye_sack": true
+			},
+			"state": 0
+		}
+	},
+	"breathmark": null,
+	"flags": {
+		"difficulty": "gentle",
+		"ks_brede_float": true,
+		"ks_brede_float_found": true,
+		"ks_brede_mending": true,
+		"ks_brede_met": true,
+		"ks_ingra_count": true,
+		"ks_ingra_met": true,
+		"ks_ingra_rye": true,
+		"ks_ingra_rye_found": true,
+		"ks_netmender_released": true,
+		"met_brede": true,
+		"met_steward_ingra": true
+	},
+	"last_hearth": {
+		"area": "saltfell_steading",
+		"hearth": "hs_boat_shed"
+	},
+	"meta": {
+		"area": "saltfell_steading",
+		"difficulty": "gentle",
+		"level": 2,
+		"play_s": 498.206231688581,
+		"saved_at": 1794336853.82847
+	},
+	"play_s": 498.206231688581,
+	"player": {
+		"armour": {
+			"body": "armour_traveller_coat",
+			"hands": "",
+			"head": "",
+			"legs": ""
+		},
+		"attributes": {
+			"craft": 8,
+			"heart": 9,
+			"kinship": 8,
+			"lungs": 8,
+			"might": 8,
+			"wind": 8
+		},
+		"attuned_song": "",
+		"gourd_max": 3,
+		"hotbar": [
+			"hewing_blade",
+			"torch",
+			"",
+			"",
+			"gourd"
+		],
+		"inventory": {
+			"bog_iron": 1.0,
+			"item_mending_needle": 1.0
+		},
+		"level": 2,
+		"pos": [
+			23.0,
+			3.17514967918396,
+			56.9000015258789
+		],
+		"warmth": 1435,
+		"weapon": "hewing_blade",
+		"weapon_level": 0
+	},
+	"save_version": 2
+}
