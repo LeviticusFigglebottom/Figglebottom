@@ -55,9 +55,11 @@ static func build(area_id: String) -> Area:
 		if not _flag_ok(spec):
 			continue    # (Thornwold's gate: leaning on the hedge, then laid down)
 		# a Tripo scene set as dressing (collision stripped; blockers do that)
-		var lm := BuildingGen._landmark(String(spec["scene"]))
+		var lm_tag := String(spec.get("tag", "base"))
+		var lm := BuildingGen._landmark(String(spec["scene"]), String(spec.get("family", "")),
+			1 if lm_tag == "thaw" else (2 if lm_tag == "rime" else 0))
 		if lm != null:
-			area.attach(lm, String(spec.get("tag", "base")))
+			area.attach(lm, lm_tag)
 			_place(lm, spec)
 			if spec.has("tilt"):
 				lm.rotation_degrees.x = float(spec["tilt"])

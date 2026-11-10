@@ -14,6 +14,66 @@ class_name BuildingGen
 const DOOR_W := 1.9
 const DOOR_H := 2.5
 
+## Tripo gable ends (docs/art/LOOK_PASS.md, pass 2). Each GLB is a gable front
+## 1 m wide with a stub of plank roof behind it, front facing +Z, base on the
+## eave line. It is stretched to the house: across to the barge-board span, up
+## so its roof line (apex_frac of its height; horns stand above) meets the turf
+## ridge, and back to tuck under the turf overhang. A missing file falls back
+## to the box-and-torus gable.
+##   "carved": dwellings and halls (crossed boards, curled horn finials, a knot roundel)
+##   "shed":   working sheds (plain crossed boards, loft hatch, net floats)
+const GABLES := {
+	"carved": {"glb": "res://assets/models/kit/kit_gable_carved.glb", "apex_frac": 0.84, "family": "M_wood"},
+	"shed": {"glb": "res://assets/models/kit/kit_gable_shed.glb", "apex_frac": 0.88, "family": "M_wood"},
+}
+## House ids that are working sheds unless the spec says "gable": "...".
+const SHED_IDS := ["fishhouse", "boatshed", "store", "byre", "wellhouse"]
+
+static func _gable_style(spec: Dictionary) -> String:
+	if spec.has("gable"):
+		return String(spec["gable"])
+	var id := String(spec.get("id", ""))
+	for k in SHED_IDS:
+		if id.begins_with(k):
+			return "shed"
+	return "carved"
+
+static var _gable_cache: Dictionary = {}
+
+static func _hero_gable(root: Node3D, style: String, w: float, h: float, zoff: float, s: float, mode: int) -> bool:
+	var g: Dictionary = GABLES.get(style, {})
+	if g.is_empty() or not ResourceLoader.exists(String(g["glb"])):
+		return false
+	var key := "%s|%d" % [style, mode]
+	if not _gable_cache.has(key):
+		var inst := (load(String(g["glb"])) as PackedScene).instantiate()
+		var found: Mesh = null
+		for c in inst.find_children("*", "MeshInstance3D", true, false):
+			var src := (c as MeshInstance3D).mesh
+			if src != null:
+				found = src.duplicate() as Mesh
+				for i in found.get_surface_count():
+					found.surface_set_material(i, MaterialLib.hero_mat(src.surface_get_material(i), String(g["family"]), mode))
+				break
+		inst.free()
+		_gable_cache[key] = found
+	var mesh: Mesh = _gable_cache[key]
+	if mesh == null:
+		return false
+	var bb := mesh.get_aabb()
+	var over := 0.75
+	var rise := w * 0.42
+	var depth := 1.05
+	var mi := MeshInstance3D.new()
+	mi.name = "gable_%s" % ("s" if s > 0.0 else "n")
+	mi.mesh = mesh
+	# the roof line of the piece meets the top of the turf at the ridge
+	var sc := Vector3((w + over * 2.0 + 0.5) / bb.size.x, (rise + 0.62) / (bb.size.y * float(g["apex_frac"])), depth / bb.size.z)
+	var basis := Basis(Vector3.UP, 0.0 if s > 0.0 else PI).scaled_local(sc)
+	mi.transform = Transform3D(basis, Vector3(0, h - 0.16, zoff + s * (over + 0.2 - depth * 0.5)))
+	root.add_child(mi)
+	return true
+
 static func build(area: Area, spec: Dictionary) -> Node3D:
 	if String(spec.get("kind", "house")) == "barrow":
 		return _barrow(area, spec)
@@ -105,7 +165,11 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 				Vector3(0, rng.randf_range(-6, 6), 0))
 
 	_roof(turf, plank, beam, w, l, h, rng)
+	_roof_grass(root, w, l, h, tag, rng.randi())
+	var gstyle := _gable_style(spec)
 	for sz in [-1.0, 1.0]:
+		if _hero_gable(root, gstyle, w, h, sz * l * 0.5, sz, mode):
+			continue
 		if (sz < 0 and "N" in opens) or (sz > 0 and "S" in opens):
 			_gable(plank, beam, w, h, sz * l * 0.5, sz, rng, true)
 		else:
@@ -204,6 +268,51 @@ static func _roof(turf: SurfaceTool, plank: SurfaceTool, beam: SurfaceTool, w: f
 	cm.height = length
 	cm.radial_segments = 8
 	ProcMesh.append(turf, cm, Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3(0, h + rise + 0.3, 0)), Vector2(TAU * 0.42, length))
+
+## A turf roof grows: the same card clumps as the ground (Scatter's grass),
+## small and close on both slopes, so the roof has a pile and a ragged skyline
+## at eye height instead of a clean green slab. Its own stream, so adding it
+## moved no board.
+static func _roof_grass(root: Node3D, w: float, l: float, h: float, tag: String, seed: int) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var over := 0.75
+	var half := w * 0.5 + over
+	var rise := w * 0.42
+	var slope := sqrt(half * half + rise * rise)
+	var ang := atan2(rise, half)
+	var length := l + over * 2.0
+	var xfs: Array = []
+	for s in [-1.0, 1.0]:
+		var basis := Basis(Vector3.BACK, -s * ang)
+		var mid := Vector3(s * half * 0.5, h + rise * 0.5 - 0.05, 0)
+		var n := int(slope * length * 2.2)
+		for i in n:
+			var u := rng.randf_range(-slope * 0.5 + 0.1, slope * 0.5 - 0.05)
+			var v := rng.randf_range(-length * 0.5 + 0.1, length * 0.5 - 0.1)
+			var p := mid + basis * Vector3(u, 0.58, v)
+			# clumps grow up, leaning a little with the slope
+			var up := Vector3.UP.lerp(basis * Vector3.UP, 0.35).normalized()
+			var b := Basis(Quaternion(Vector3.UP, up)) * Basis(Vector3.UP, rng.randf() * TAU)
+			var sc := rng.randf_range(0.45, 0.8)
+			xfs.append([Transform3D(b.scaled_local(Vector3(sc, sc * rng.randf_range(0.7, 1.0), sc)), p),
+				Color(rng.randf(), rng.randf() * 0.8, rng.randf(), rng.randf())])
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_custom_data = true
+	mm.mesh = Scatter._veg_mesh("grass", tag, MaterialLib.family_albedo("M_turf"))
+	mm.instance_count = xfs.size()
+	for i in xfs.size():
+		mm.set_instance_transform(i, xfs[i][0])
+		mm.set_instance_custom_data(i, xfs[i][1])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "roof_grass"
+	mmi.multimesh = mm
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mmi.visibility_range_end = 55.0
+	mmi.visibility_range_end_margin = 6.0
+	mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+	root.add_child(mmi)
 
 ## A gable end: vertical boards filling the triangle (or left open on an open
 ## side), crossed barge-boards that run past the ridge into curled horns, and
@@ -398,10 +507,15 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 	return root
 
 ## A landmark scene with its collision stripped (we place our own).
-static func _landmark(path: String) -> Node3D:
+static func _landmark(path: String, family := "", mode := 0) -> Node3D:
 	if not ResourceLoader.exists(path):
 		return null
 	var n := (load(path) as PackedScene).instantiate() as Node3D
+	# set pieces (lm_*) are world meshes: shade them through the hall shader so
+	# they take the RIME snow crust, the wavefront and the same grade as the
+	# ground they stand on. Their baked colour is kept (a light pull only).
+	# Figures used as dressing (frozen walkers, the stag) keep their own skins.
+	var world_mesh := path.get_file().begins_with("lm_")
 	var stack: Array[Node] = [n]
 	while not stack.is_empty():
 		var c: Node = stack.pop_back()
@@ -409,6 +523,11 @@ static func _landmark(path: String) -> Node3D:
 			c.get_parent().remove_child(c)
 			c.free()
 			continue
+		if world_mesh and c is MeshInstance3D and (c as MeshInstance3D).mesh != null:
+			var mi := c as MeshInstance3D
+			for i in mi.mesh.get_surface_count():
+				mi.set_surface_override_material(i, MaterialLib.hero_mat(mi.mesh.surface_get_material(i),
+					family if family != "" else "M_stone", mode, 0.2))
 		for ch in c.get_children():
 			stack.append(ch)
 	return n
