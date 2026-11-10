@@ -60,9 +60,16 @@ func is_open() -> bool:
 func _can_open() -> bool:
 	if visible or StateDirector.transitioning:
 		return false
-	if Game.player != null and Game.player.busy_in_menu():
+	# (the Hearth Kept leaves the Bearer sat for good, in the rest state: the
+	# sheet must still open there, or a kept save has no way out but the
+	# window's own)
+	if Game.player != null and Game.player.busy_in_menu() and not _sat_for_good():
 		return false
 	return Game.player != null
+
+func _sat_for_good() -> bool:
+	return World.kept() and EndingDirector.active != null and get_tree().get_nodes_in_group("inventory_ui").is_empty() \
+			and get_tree().get_nodes_in_group("lore_open").is_empty()
 
 func _input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
