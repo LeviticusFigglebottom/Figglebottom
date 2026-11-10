@@ -79,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        region: [lowe, kettle, tarnhall, thornwold]
+        region: [lowe, kettle, tarnhall, thornwold, coldwell, ending_outsong, ending_kept]
     steps:
       - uses: actions/checkout@v4
 
