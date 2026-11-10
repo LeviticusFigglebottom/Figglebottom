@@ -245,6 +245,18 @@ rh_wave_band={
 "type": "float",
 "value": 4.0
 }
+rh_sky_top={
+"type": "color",
+"value": Color(0.35, 0.45, 0.6, 1)
+}
+rh_sky_horizon={
+"type": "color",
+"value": Color(0.7, 0.72, 0.74, 1)
+}
+rh_water_sky_fill={
+"type": "float",
+"value": 0.0
+}
 rh_wave_color={
 "type": "vec3",
 "value": Vector3(1, 0.78, 0.42)
