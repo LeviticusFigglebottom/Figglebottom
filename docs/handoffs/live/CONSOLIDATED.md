@@ -1,77 +1,51 @@
 # Live handoff: Rimeholt
 
-_Last updated: 2026-11-07 (founding session)_
+_Last updated: 2026-11-10 (lead session, after the all-in merge)_
 
-## State (on main fd6bf02: 850 checks, all green)
-| Region | World | Encounters and writing |
+Read `docs/handoffs/live/TEAM.md` next: it has the roster, file ownership and how the sessions talk.
+
+## State (on main fd881f6)
+The whole game is on main, in structure:
+- **Seven regions.** Each has its landscape, encounters, a three-phase Holdfast, NPCs with Keepsakes threads, and a release.
+- **Both endings** (the Outsong, the Hearth Kept) and credits. See ADR 0013.
+- **The Bearer's combat clip library** (ADR 0011). Foe and boss attack clips are cut to their data windups (ADR 0012, pass 3).
+- **Look passes 1–4:**
+  - CC0 PBR texture library
+  - Tripo rocks, trees, hedges, props and gables
+  - textured grass
+  - a painted sky per state
+  - the Tripo hearthstone everywhere
+  - card flames
+- **Real-GPU work:**
+  - VRAM compression
+  - the water's sky term under SDFGI
+  - fog pockets
+  - nav re-path throttle
+  - weather on GPU particles
+
+**Tests.** About 1,400 checks across some 27 suites; CI runs them on every push. One known flake: `tarnhall_encounters`, "the second goes where he is running to". The QA env owns it.
+
+**Windows build.** The GPU worker exports it on the owner's PC, to `C:\Users\Aaron\Documents\Rimeholt_Windows_<date>_<sha>\Rimeholt.exe`. CI artifacts upload for main only (the storage quota was hit).
+
+## In flight
+| Who | Branch | Work |
 |---|---|---|
-| Saltfell (vertical slice) | ✅ | ✅ |
-| The Lowe | ✅ | ✅ |
-| Kettle Fjord | ✅ | ✅ |
-| Tarnhall | ✅ | ✅ (the Host, seated guests, Lusse, Ottar) |
-| Thornwold | ✅ (THAW/RIME hedge maze) | ✅ |
-| Shepherd's Reach | ✅ | ✅ on `feat/reach-coldwell-endings` |
-| The Coldwell | ✅ | ✅ and both endings, on `feat/reach-coldwell-endings` |
+| GPU worker (owner's PC) | `gpu/npc-wiring`, `gpu/perf-3` | Rebuild the exe from main; wire the maren, wren and old_calder models; foe-foe crowding |
+| QA env (cloud) | `fix/qa-regions` | End-to-end walks for regions 2–5 (extend to Reach, Coldwell and the endings next); the bench flake |
+| World-fidelity env (cloud) | `art/world-fidelity` | Exposure per state, cliffs, snow, the Coldwell horizon, building construction detail, interiors |
+| Lead's agents (this box) | `feat/anims-4`, `art/look-pass-5` | See the task board |
 
-- **Tripo balance:** about 14,280, before the look pass.
-- **Owner feedback:** procedural assets clash with the Tripo art. The look pass fixes this: CC0 PBR textures, UVs, Tripo-textured buildings, Tripo rocks and trees.
-- **Test flake:** `kettle_encounters` ring-cut flaked under load. The test is now isolated: it closes old ice, puts other moves on cooldown, and waits for the ring to open.
+## Open questions for the owner
+- **Tripo calls:** paid generation was blocked by this session's permission system on 2026-11-10. Eight prop references and the ewe rigs are waiting on it.
+- **Music:** nobody has listened to it yet.
+- **Player hitbox:** it stays a data box and does not follow the blade. That was a feel decision; change it only if the owner asks.
 
-## feat/reach-coldwell-endings (2026-11-10): the story is finished
-Worktree `/home/user/fb-end`, branched from `feat/integration-1110`, with `feat/integration-all` merged in (both audits clean). Not merged to main; CI runs the full suite on push.
-
-- **Shepherd's Reach** (`docs/lore/REACH.md`): Drover, Frost-ram, the Fellcaller (three phases, the flock down a strip), Old Calder and Sigga, the boots, the fold-tally, the slope lying down, the scene after.
-- **The Coldwell** (`docs/lore/COLDWELL.md`): Upwalker, the Unsung, the Leadvoice. She has no strike and is sung out in three verses.
-- **The endings** (ADR 0013): The Outsong and The Hearth Kept from the choice at the spring; `CreditsUI`; `World.spring()` / `World.kept()`; save_version 3.
-- **The seven pieces** of WORLD.md §4 are all placed (COLDWELL.md §8). Three were missing and went in through their generators: the child's mask (Saltfell), the tracks in the ice (Kettle), the wool on the latch (Tarnhall).
-- **Suites:** `reach_encounters` (90), `coldwell_encounters` (82), `endings` (85). Also run green here: smoke, reach, coldwell, keepsakes, steading, kettle, tarnhall, audio, release_scenes, anim, encounters, thornwold_encounters.
-- **Screens:** `docs/screens/reach_enc_*.png`, `coldwell_enc_*.png`, `ending_*.png`.
-
-**Next exact step:** merge into integration once CI is green, then a full-game QA pass from a fresh save to each ending:
-```
-tools/test.sh reach_encounters && tools/test.sh coldwell_encounters && tools/test.sh endings
-tools/shot.sh docs/screens/ending_strand.png --area=saltfell_steading --state=thaw --flag=ending_outsong --enc-shot=ending_strand
-```
-
-**Open questions for the owner**
-- A Hearth Kept save cannot be played on: it opens on the Bearer sat at the spring and stays there (SPEC §2 as written). Say if you would rather it offered a way back to the title's "begin anew" from that view.
-- After the Outsong the world shows its THAW dressing with nobody in it, under a grey light (ADR 0013, option 3). A true spring dressing would be an art pass.
-- Not wired: the Shepherd's Crook weapon (`shepherd_crook.glb`) and the `bearer_fleece` body. The fleece is an armour item only.
-
-**Known breakages**
-- The two masks on the Longhouse pegs after the Outsong show their woad bands but not their eye holes (`ending_pegs.png`).
-- The dead standing in the Coldwell's river are the art pass's static models in their bind pose, arms out.
-
-## In flight (worktree → branch)
-| Worktree | Branch | Work |
-|---|---|---|
-| `/home/user/fb-qa` | `fix/slice-qa` | Merge main in, then body collision, enemy draw calls, title hitch, the tide wall |
-| `/home/user/fb-look` | `art/unified-look` | The whole-world material/texture pass, plus trees and hedges |
-| `/home/user/figglebottom` | `feat/reach-coldwell` | Shepherd's Reach and the Coldwell worlds, the ending hook, the THAW sky |
-| `/home/user/fb-enc5` | `feat/release-scenes` | NPC sit support; the Lowe, Kettle and Tarnhall post-release THAW scenes |
-| `/home/user/fb-anim` | `feat/combat-anims` | Player combat animation: the shared combat clip library (ADR 0011). Ready to merge; see "Combat animation" below |
-| Owner's PC | `gpu/*` | `LOCAL_GPU_TASKS.md`. Nothing has been received yet |
-
-## Combat animation (feat/combat-anims, ADR 0011)
-- **State:** `assets/anim/combat_lib.glb` holds 47 clips (CC0 Quaternius mocap retargeted, two-handed re-poses, hand-keyed thrusts/riposte/parries/guards/reacts/bow). The Bearer picks clips by weapon class (`clip_meta.json` → `weapon_class`, `clip_sets`, `mounts."weapon@<class>"`). No Tripo credits spent, no feel numbers changed. `anim` (143), `combat`, `deltas`, `encounters`, `smoke` pass.
-- **Rebuild:** `tools/anim/fetch_ual.sh`, then `$BPY tools/anim/build_combat_lib.py`, then `godot --headless --path . --import`. Look with `tools/anim/sheets.sh attack_l1@hewing_blade attack_h@greatblade ...` (sheets in `docs/screens/anim_<kit>_<clip>_sheet.png`); in-game with `tools/shot.sh OUT.png --area=saltfell_steading --state=rime --shot-stage=bearer_light1|bearer_light2|bearer_heavy|bearer_sprint [--shot-weapon=greatblade]`.
-- **Swing trail:** it was invisible on every humanoid: the shader wrote its glow to EMISSION, which an unshaded material drops, and it blended additively (lost over snow). It now writes ALBEDO, alpha-blends, samples the pose on the physics tick and starts `polish.trail_lead` before the hit window.
-- **Player hitbox:** left as the data box in front of him (moveset `hitbox` reach/width/height). A blade-following volume would hit different foes at the same data timings (the box covers the whole reach for the whole active window; a blade covers a moving slice), so it is a feel change for the owner, not an animation fix.
-- **Foes not opted in:** the Oarsman, hall champion, cupbearer and collier are all bare-handed with their own overlays and windups of 0.8–1.2 s (the library clips would play at under half speed); there is no drover row. An armed humanoid foe opts in with `"clip_sets": true` plus a set mapping its `atk_*` names.
-- **Known weak spots:** the two-handed sets are one-handed mocap re-posed; the bow loose is small.
-
-## Foe animation (feat/foe-anims, ADR 0012)
-- **State:** 36 foe attacks (11 ordinary humanoid foes, plus the plain melee of the Turfwright, Ice-Cutter, Host and Hedgelayer) have their own hand-keyed clip cut to the attack's data windup, in the same `combat_lib.glb`. Ordinary foes also take the library stagger and death fall. Quadruped wind-up poses are held, not eased over the windup.
-- **Rebuild after any windup change:** `$BPY tools/anim/build_combat_lib.py && godot --headless --path . --import` (the build rewrites the `f_*` rows and `foe_*` sets in `clip_meta.json`). Look: `tools/anim/foe_sheets.sh --all`.
-- **Pass 2:** the retarget import now covers every rigged character (it had only ever been run on seven, so the rest played shared clips a quarter turn off); foes are keyed on their own idle stance (`godot --headless --path . -s tools/anim/dump_idles.gd` before a rebuild if a model changes); 55 attacks covered including the Netmender; per-foe staggers; quadruped load/extension/landing poses (`tools/anim/quad_poses.py`). NPCs went through the same import change and were not looked at one by one.
-- **Pass 3:** weak clips rekeyed (back stroke, going-round, shield bash, stitches, spade chop, yoke swing, the Keener's sung shapes); the Holdfasts' signature moves and `door_fall` are hand-keyed; intro, hold and release beats are library clips answered by their game clip names (`beats` in `tools/anim/foe_clips.py`, keys in `tools/anim/foe_beats.py`); quadruped strikes are keyed per joint and chained off the data windup (`python3 tools/anim/quad_poses.py`, `models.<id>.strikes`). 113 sheets. In-game shots: `docs/screens/anim_foe_ingame_*.png` (`--enc-shot=hound_lunge`, `lowe_sleeper`, `tarnhall_cupbearer`, `kettle_dogs`, `thorn_stag`, `turfwright_p2`, at 1280x720).
-- **Not done:** `frost_ram`, `drover`, `upwalker`, `unsung`, `fellcaller` and `leadvoice` exist only on `feat/reach-coldwell-endings`. After it lands, add them to `FOES` (the ram to `quad_poses.py`), rebuild and sheet them. Still weak by eye: see the end of ADR 0012. After re-processing the stag model, rerun `python3 tools/art/fix_stag_hoof_weights.py`.
-
-## Next exact step
-1. Merge each branch above once its tests pass.
-2. Thornwold encounters (the Hedgelayer, Linnet, Eyvind), then Reach and Coldwell encounters.
-3. The endings.
-4. A full-game QA pass.
+## Known gaps
+- Real-GPU look: THAW exposure blow-out and faceted cliffs (world-fidelity env).
+- RIME constructs: frozen thorn, frost veils as flat cards.
+- Armour does not change the Bearer's model yet. Six `bearer_*.glb` outfits are unused.
+- New-region foes (drover, frost_ram, upwalker, unsung, fellcaller, leadvoice) lack their own attack clips.
+- Ottar has no model.
 
 ## Tripo access (for future sessions)
 - **Tool:** the unofficial `Neko-Yukari/tripo-studio-mcp`. Clone it into the scratchpad and run it with `TRIPO_GATEWAY=0` and `TRIPO_STUDIO_STATE=<scratchpad>/tripo/studio-state.json`.
