@@ -154,6 +154,7 @@ ca = door_front("kin_a", -0.6)       # just inside the door, where the sleeper s
 sa = door_front("kin_d", 0.4)        # the spade propping the door
 wa = door_front("kin_c", 0.5)        # on the turf before the closed door
 ta = door_front("twin", 5.6)         # the threshold stone, below the twins' door
+ts = door_front("twin", 8.0)         # out on the turf before the threshold
 # after the release, THAW (LOWE.md 8): Arne sits outside the twins' barrow
 # with Liv and Asta on a summer evening, facing out from the door (clear of
 # the sods stacked at its mouth), the girls
@@ -181,6 +182,13 @@ pickups = [
      "label": "Untie the thread"},
     {"id": "twin_spindles", "at": at(ta[0], ta[1]), "item": "item_twin_spindles", "tag": "rime",
      "label": "Take the spindles", "require_flag": "ks_turfwright_released"},
+    # Arne's tally-stick (LOWE.md 8). The release sets one down at once, in
+    # front of where he knelt (Game._release_leavings, same id); this entry
+    # keeps it on the Lowe if the Bearer leaves, or the journey is saved and
+    # resumed, before it is taken.
+    {"id": "tally_stick", "at": at(ts[0], ts[1]), "item": "item_tally_stick", "tag": "base",
+     "scene": M + "props/tally_stick.tscn", "label": "Take the tally-stick",
+     "require_flag": "ks_turfwright_released"},
 ]
 
 portals, bridge = seams("lowe_barrows")

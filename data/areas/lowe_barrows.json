@@ -641,6 +641,19 @@
    "tag": "rime",
    "label": "Take the spindles",
    "require_flag": "ks_turfwright_released"
+  },
+  {
+   "id": "tally_stick",
+   "at": [
+    46.0,
+    45.64,
+    -206.0
+   ],
+   "item": "item_tally_stick",
+   "tag": "base",
+   "scene": "res://assets/models/props/tally_stick.tscn",
+   "label": "Take the tally-stick",
+   "require_flag": "ks_turfwright_released"
   }
  ],
  "portals": [
