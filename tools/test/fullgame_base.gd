@@ -227,6 +227,12 @@ func _fight(radius := 14.0, max_s := 90.0, boss := false) -> bool:
 				player.sim_move = Vector3(1 if randf() < 0.5 else -1, 0, 0.4)
 				player.try_roll()
 			elif player.stamina > 18.0:
+				# a swing goes where the stick points, else where the body
+				# already faces: backing off (or standing as the foe circles)
+				# it cut the air beside him. Turn to the foe to strike.
+				if player.sim_move.z > 0.0:
+					player.sim_move = Vector3.ZERO
+				player.vis.rotation.y = player.cam.yaw
 				player.try_attack(false)
 		await ticks(3)
 		n += 3
