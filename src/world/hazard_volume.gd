@@ -32,8 +32,18 @@ func _ready() -> void:
 func _on_enter(b: Node3D) -> void:
 	if not (b is Player) or (b as Player).dead:
 		return
-	if kind == "drown" or kind == "kill":
+	if (kind == "drown" or kind == "kill") and _inside(b):
 		_take(b as Player, 99999.0)
+
+## A volume built on the frame the Bearer is carried away (waking at a hearth
+## in another region, crossing a seam) can report him from where he lay
+## before the move: fallen in Saltfell's ravine, he woke at the Barrow Road
+## and the Lowe's ravine took him again at once. Only a body really in the
+## box is taken.
+func _inside(b: Node3D) -> bool:
+	var p := to_local(b.global_position)
+	return absf(p.x) <= size.x * 0.5 + 0.8 and absf(p.z) <= size.z * 0.5 + 0.8 \
+			and p.y >= -size.y * 0.5 - 2.5 and p.y <= size.y * 0.5 + 0.8
 
 func _physics_process(_dt: float) -> void:
 	if kind == "bog" or kind == "thin":
