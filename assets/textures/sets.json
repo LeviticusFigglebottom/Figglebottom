@@ -1,4 +1,15 @@
 {
+ "bark": {
+  "id": "bark_brown_02",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.099,
+   0.0806,
+   0.0614
+  ],
+  "rough_mean": 0.902
+ },
  "drystone": {
   "id": "stacked_stone_wall",
   "src": "polyhaven",

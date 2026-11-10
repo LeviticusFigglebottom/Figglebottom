@@ -16,6 +16,7 @@ const STYLES := {
 	"laid": {"fam": "M_thorn", "stems": 7, "lean": 0.62, "core": 0.55},
 	"thorn": {"fam": "M_rime", "stems": 9, "lean": 0.35, "core": 0.6},
 	"thicket": {"fam": "M_thorn", "stems": 11, "lean": 0.2, "core": 0.75},
+	"thorn_heap": {"fam": "M_rime", "stems": 12, "lean": 0.5, "core": 0.7},
 }
 
 ## Tripo hero meshes (docs/art/LOOK_PASS.md, tools/art/manifest.json): each
@@ -30,12 +31,20 @@ const HERO_TREES := {
 	"grave_pine": [["tr_grave_pine", "M_needles", 0.2, 10.0]],
 	"snag": [["tr_snag", "M_bark_pine", 0.05, 9.0]],
 }
-## style -> [glb name, family]: one ~2 m hedge section, repeated along the line
+## style -> [glb name, family(, more glb names)]: one ~2 m hedge section,
+## repeated along the line; extra names are variants taken in turn.
+## The frozen thorn is modelled (tools/art/procedural/thorn_rime.py): grown
+## branch by branch at its full height, so it is set in ONE course ("single"
+## in HERO_SINGLE) and never stretched: stretching a section is what turned
+## the old one into flat shards.
 const HERO_HEDGES := {
 	"laid": ["hd_laid2", "M_thorn"],
 	"thicket": ["hd_laid2", "M_thorn"],
-	"thorn": ["hd_thorn2", "M_rime"],
+	"thorn": ["hd_thorn3a", "M_thorn_rime", "hd_thorn3b"],
+	"thorn_heap": ["hd_thorn_heap", "M_thorn_rime"],
 }
+## style -> overlap of neighbouring sections (fraction of a section's length)
+const HERO_SINGLE := {"thorn": 0.34, "thorn_heap": 0.3}
 const HERO_DIR := "res://assets/models/forest/"
 ## Draw budget (a real GPU counted 9.5 M primitives looking down the hedge
 ## maze: full-detail sections and trees out to 45-70 m, each drawn again in
@@ -46,6 +55,9 @@ const NEAR := 42.0
 const TREE_MID := 95.0
 const TREE_FAR := 170.0
 const HEDGE_NEAR := 26.0
+## the modelled thorn is ~20k triangles a section close up (every twig and
+## thorn is geometry), so its full mesh is kept to the few sections in reach
+const THORN_NEAR := 13.0
 const HEDGE_MID := 60.0
 const HEDGE_FAR := 110.0
 const RANGE_MARGIN := 4.0
@@ -380,14 +392,26 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			body.transform = Transform3D(cb, Vector3(p0.x, y0 + h * 0.5, p0.y))
 			area.attach(body, tag)
 	if hero_ok:
-		var hk := "hero|%s|%s|0.04|1.5" % [hh[0], hh[1]]
-		if ResourceLoader.exists(HERO_DIR + String(hh[0]) + "_far.glb"):
-			_emit(area, hk, tag, heroes, HEDGE_NEAR)
-			var hfar := hk.replace("hero|%s|" % hh[0], "hero|%s_far|" % hh[0])
-			_emit(area, hfar, tag, heroes, HEDGE_MID, HEDGE_NEAR)
-			_emit(area, hfar, tag, heroes, HEDGE_FAR, HEDGE_MID, false)
-		else:
-			_emit(area, hk, tag, heroes, 140.0)
+		var names: Array = [hh[0]]
+		for vi in range(2, hh.size()):
+			if ResourceLoader.exists(HERO_DIR + String(hh[vi]) + ".glb"):
+				names.append(hh[vi])
+		var near := THORN_NEAR if HERO_SINGLE.has(style) else HEDGE_NEAR
+		# frozen wood does not sway
+		var sway := "0|1.5" if HERO_SINGLE.has(style) else "0.04|1.5"
+		for vi in names.size():
+			var pick: Array = []
+			for i in heroes.size():
+				if i % names.size() == vi:
+					pick.append(heroes[i])
+			var hk := "hero|%s|%s|%s" % [names[vi], hh[1], sway]
+			if ResourceLoader.exists(HERO_DIR + String(names[vi]) + "_far.glb"):
+				_emit(area, hk, tag, pick, near)
+				var hfar := hk.replace("hero|%s|" % names[vi], "hero|%s_far|" % names[vi])
+				_emit(area, hfar, tag, pick, HEDGE_MID, near)
+				_emit(area, hfar, tag, pick, HEDGE_FAR, HEDGE_MID, false)
+			else:
+				_emit(area, hk, tag, pick, 140.0)
 		return
 	_emit(area, "stem|" + style, tag, stems, 120.0)
 	_emit(area, "core|" + style, tag, cores, 140.0)

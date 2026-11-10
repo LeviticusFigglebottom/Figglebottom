@@ -2833,7 +2833,7 @@
       -310.9
      ]
     ],
-    "style": "thorn",
+    "style": "thorn_heap",
     "h": 3.0,
     "w": 1.3,
     "tag": "rime"
@@ -2849,7 +2849,7 @@
       -315.9
      ]
     ],
-    "style": "thorn",
+    "style": "thorn_heap",
     "h": 3.0,
     "w": 1.3,
     "tag": "rime"

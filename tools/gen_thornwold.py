@@ -148,7 +148,7 @@ for off in (-3.8, 3.8):
 for px in (CLEAR_X[1] + 10.0, CLEAR_X[1] + 32.0):
     best = min(T.DROVE, key=lambda p: abs(p[0] - px))
     pz = best[1] + (px - best[0]) * 0.1
-    hedge([[px, pz - 4.3], [px, pz + 4.3]], "thorn", 3.0, 1.3, "rime")
+    hedge([[px, pz - 4.3], [px, pz + 4.3]], "thorn_heap", 3.0, 1.3, "rime")
 
 # --- the wood's edge: thicket all round, open only where the road comes in ---
 x0, z0, x1, z1 = T.WOOD
