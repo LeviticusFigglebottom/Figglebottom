@@ -136,7 +136,9 @@ func _run() -> void:
 
 	print("== one continuous seam back to Tarnhall")
 	var seams := area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto)
-	check(seams.size() == 1 and seams[0].to_area == "tarnhall", "a single seam, back down the drove-road")
+	check(seams.filter(func(p): return p.to_area == "shepherds_reach").size() == 1, "one seam up the fell path to Shepherd's Reach")
+	seams = seams.filter(func(p): return p.to_area == "tarnhall")
+	check(seams.size() == 1, "one seam back down the drove-road")
 	var tarn: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/areas/tarnhall.json"))
 	var back: Array = tarn["portals"].filter(func(p): return p.get("to", "") == "thornwold")
 	check(back.size() == 1, "Tarnhall has the other side of it")
