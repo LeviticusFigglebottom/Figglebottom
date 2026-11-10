@@ -31,6 +31,7 @@ sys.path.insert(0, HERE)
 import anim_rig as R          # noqa: E402
 import anim_pose as A         # noqa: E402
 import combat_clips as C      # noqa: E402
+import foe_clips as F         # noqa: E402
 
 FPS = 30
 BASE = "assets/models/characters/bearer_traveller.glb"
@@ -134,6 +135,32 @@ def retarget(skel, src, frames):
     return out
 
 
+_IDLES = None
+
+
+def own_idle(skel, model_id):
+    """A model's idle stance as the game shows it (tools/anim/foe_idles.json,
+    written by dump_idles.gd from Godot's retargeted skeletons): its hunch,
+    lean and arm carriage, so a foe's clips start from and return to the way
+    that body stands. Godot skeleton space is x left, y up, z forward."""
+    global _IDLES
+    if _IDLES is None:
+        with open(os.path.join(HERE, "foe_idles.json")) as fh:
+            _IDLES = json.load(fh)
+    pose = skel.rest()
+    row = _IDLES.get(model_id)
+    if not row:
+        return pose
+    pose.hips = Vector((skel.hips0.x, skel.hips0.y, skel.hips0.z * row["hips"]))
+    for n in skel.names:   # parents first
+        q = row["bones"].get(n.replace(R.P, ""))
+        if q is None:
+            continue
+        w, x, y, z = q
+        pose.set_world(n, Quaternion((w, x, -z, y)) @ skel.w0[n])
+    return pose
+
+
 def write_action(arm, skel, name, poses):
     act = bpy.data.actions.new(name)
     act.use_fake_user = True
@@ -162,6 +189,33 @@ def write_action(arm, skel, name, poses):
     if hasattr(st, "action_slot") and getattr(act, "slots", None):
         st.action_slot = act.slots[0]
     arm.animation_data.action = None
+
+
+COMMON_FOE = {"death": ["fall_back"]}
+BOSSES_KEEP_OWN = ("turfwright", "ice_cutter", "host", "hedgelayer", "netmender")
+
+
+def write_foe_meta(rows, sets):
+    """Foe clips are cut to data windups, so their section rows and clip sets
+    are generated: clips f_<foe>_<attack>, clip_sets foe_<foe> ("@<attack>"
+    answers that attack; enemy.gd asks for it), models.<foe>.clip_set."""
+    path = rp("data/anim/clip_meta.json")
+    with open(path) as fh:
+        meta = json.load(fh)
+    for k in [k for k in meta["clips"] if k.startswith("f_")]:
+        del meta["clips"][k]
+    for k in [k for k in meta["clip_sets"] if k.startswith("foe_")]:
+        del meta["clip_sets"][k]
+    meta["clips"].update(rows)
+    for foe, cs in sets.items():
+        cs = dict(cs)
+        if foe not in BOSSES_KEEP_OWN:   # Holdfasts keep their own endings
+            cs.update(COMMON_FOE)
+        meta["clip_sets"]["foe_" + foe] = cs
+        if foe in meta["models"]:
+            meta["models"][foe]["clip_set"] = "foe_" + foe
+    with open(path, "w") as fh:
+        fh.write(json.dumps(meta, indent=1, ensure_ascii=False) + "\n")
 
 
 def add_dummy_mesh(arm):
@@ -218,6 +272,14 @@ def main():
                 g, a, _e = grips["onehand"].weapon_of(p)
                 tip = A.rfu(g + a * 0.9)
                 print(f"    f{i:3d} t={i / FPS:.2f} tip r{tip[0]:+.2f} f{tip[1]:+.2f} u{tip[2]:+.2f} v={sp[i]:5.1f} hips u{p.hips.z:.2f}")
+    ctx.own_idle = lambda model_id: own_idle(skel, model_id)
+    foe_clips, foe_rows, foe_sets = F.build(ctx, ROOT)
+    for name, poses in foe_clips.items():
+        if only and name not in only:
+            continue
+        built[name] = poses
+    print(f"  foe clips: {len(foe_clips)}")
+    write_foe_meta(foe_rows, foe_sets)
     for s in srcs.values():
         s.free()
     for name, poses in built.items():

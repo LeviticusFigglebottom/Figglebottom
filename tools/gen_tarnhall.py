@@ -299,6 +299,9 @@ pickups = [
     {"id": "guest_tally", "at": [r2(HALL_X0 + 1.7), FY, r2(DOOR_Z + 2.4)], "item": "item_guest_tally", "tag": "rime",
      "scene": "res://assets/models/props/guest_tally.tscn", "label": "Untie the guest-tally",
      "appear_flag": "ks_host_released", "set_flag": "ks_guest_tally_found"},
+    # WORLD.md 4.4: a scrap of woad wool on the latch, outside the barred door
+    {"id": "latch_wool", "at": [r2(HALL_X0 - 0.75), PORCH_Y, r2(DOOR_Z + 0.7)], "lift": 1.05, "item": "item_latch_wool", "tag": "rime",
+     "scene": "res://assets/models/props/latch_wool.tscn", "label": "Take the wool off the latch"},
 ]
 npcs = [{"id": "lusse", "at": [r2(HALL_C[0] + 1.0), FY, r2(HALL_C[1] + 4.6)], "rot": 200, "tag": "thaw"},
         # just inside the front door with his boots on (TARNHALL.md 7)

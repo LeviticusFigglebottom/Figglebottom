@@ -447,6 +447,13 @@ func _wood() -> void:
 	check(Game.find_hearth("hs_the_pine") != null, "the hearth wakes at the pine")
 	var cord := _pickup("song_cord")
 	check(cord != null and cord.global_position.distance_to(hl.grave_point()) < 2.5, "the song-cord is on the grave")
+	# left lying (the Bearer walks out, or the game is put down): it must
+	# still be at the grave in a rebuilt wood, or the thread can never close
+	var grave := hl.grave_point()
+	await _build("thornwold", RH.WState.RIME)
+	cord = _pickup("song_cord")
+	check(cord != null and cord.global_position.distance_to(grave) < 2.5 and area.find_children("*", "Pickup", true, false).filter(
+		func(p): return (p as Pickup).pickup_id == "song_cord").size() == 1, "and waits there, once, in a rebuilt wood")
 	if cord != null:
 		cord._on_take(player)
 	check(World.flag("ks_song_cord_found") and _lines_of("song_cord") == _expected("song_cord", 3), "nobody here could read it")

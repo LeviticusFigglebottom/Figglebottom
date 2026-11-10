@@ -99,6 +99,18 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | Old Calder | NPC (Shepherd's Reach) | shepherd, the Fellcaller's father |
 | the Sheilings / the High Fold | areas (Shepherd's Reach) | |
 | Frost-ram / Drover | enemies (Shepherd's Reach) | |
+| Sigga Calder | NPC (Shepherd's Reach) | the Fellcaller in THAW, calling the flock in |
+| the Fell Path / the Sheilings / the High Fold | Hearthstones (Shepherd's Reach) | the path's head; between the sheilings; in the fold, woken on release |
+| Brokenhorn / Smudge | ewes (Shepherd's Reach) | two of Calder's forty-three |
+| Fold-Tally / Calder's Boots / Shepherd's Whistle | keepsake items (Shepherd's Reach) | `item_fold_tally`, `item_calder_boots`, `item_shepherd_whistle` |
+| Shepherd's Fleece | armour (body) | Sigga's gift, `armour_fleece` |
 | the Upwater / the Wellhead | areas (the Coldwell) | |
+| the Upwater / the Ice-Falls / the Wellhead Steps | Hearthstones (the Coldwell) | none at the spring |
+| Maren / Wren | NPCs (the Coldwell) | at the remembered Melt; the Leadvoice and her youngest |
+| Wren's Band / Maren's Mask | keepsake items (the Coldwell) | `item_wren_band`, `item_maren_mask` |
+| Scrap of Woad Wool | keepsake item (Tarnhall) | `item_latch_wool`, on the latch of the barred door |
+| the hum | sound | three notes (A, D, F) the Bearer hums resting at a Hearthstone; `assets/audio/hum.wav` |
+| a verse | system (the Coldwell) | the Bearer singing to the Leadvoice in her last phase; three release her |
+| spring | world state after The Outsong | `World.spring()`: unfrozen ground, grey light, nobody remembered; hearths rest but do not warm |
 | Upwalker / the Unsung | enemies (the Coldwell) | |
 | The Outsong / The Hearth Kept | endings | |

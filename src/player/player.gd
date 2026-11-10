@@ -148,7 +148,7 @@ func _ready() -> void:
 	vis.name = "Vis"
 	add_child(vis)
 	# "model" (optional) selects a humanoid body; absent, the mannequin stands in
-	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), String(T.get("model", "")))
+	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), body_model())
 
 	cam = CameraRig.new()
 	cam.name = "CamRig"
@@ -1893,6 +1893,32 @@ func _die() -> void:
 	died.emit()
 
 ## External control (rest ceremony, dialogue, respawn)
+## The body the Bearer wears: game.json player.model, or after the Outsong
+## the robes and the mask it was sung in (player.model_outsong).
+func body_model() -> String:
+	var m := String(T.get("model", ""))
+	var o := String(T.get("model_outsong", ""))
+	if World.spring() and o != "" and HumanoidLib.has_model(o):
+		return o
+	return m
+
+## Change bodies in place (the Outsong: the Bearer puts the mask on). The
+## swing volume rides the visual, so it moves across.
+func set_model(model: String) -> void:
+	if vis == null or model == "" or not HumanoidLib.has_model(model) or vis.model_id == model:
+		return
+	var old := vis
+	if hitbox != null and hitbox.get_parent() == old:
+		old.remove_child(hitbox)
+	vis = PlayerVisual.new()
+	vis.name = "VisOutsong"
+	add_child(vis)
+	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), model)
+	vis.rotation = old.rotation
+	if hitbox != null:
+		vis.add_child(hitbox)
+	old.queue_free()
+
 func lock_control(on: bool) -> void:
 	input_enabled = not on
 	if on:

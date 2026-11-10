@@ -100,7 +100,44 @@ func _ready() -> void:
 		_frames_left = 30
 	_frames_total = _frames_left
 
+## Quit once the renderer has stopped compiling pipelines. Leaving while a
+## background compile is still queued deadlocks the engine's shutdown under a
+## software driver (lavapipe takes seconds per pipeline), and the wrapper then
+## sits out its whole timeout. A few quiet seconds cost nothing.
+const QUIET_SECONDS := 4.0
+var _leaving := false
+var _quiet_t := 0.0
+var _pipelines := -1
+
+## What the frame just captured cost (for before/after tables).
+func _print_stats(path: String) -> void:
+	print("[shot] stats %s draw_calls=%d primitives=%d objects=%d" % [path.get_file(),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME)])
+
+func _leave() -> void:
+	_leaving = true
+	if DisplayServer.get_name() == "headless":
+		get_tree().quit()
+
+func _wait_quiet(dt: float) -> void:
+	var n := 0
+	for k in [RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_CANVAS, RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_MESH,
+			RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SURFACE, RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_DRAW,
+			RenderingServer.RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION]:
+		n += RenderingServer.get_rendering_info(k)
+	if n != _pipelines:
+		_pipelines = n
+		_quiet_t = 0.0
+	_quiet_t += dt
+	if _quiet_t >= QUIET_SECONDS:
+		get_tree().quit()
+
 func _process(_d: float) -> void:
+	if _leaving:
+		_wait_quiet(_d)
+		return
 	if _quit_after > 0:
 		if _quit_after == 2:
 			AudioDirector.shutdown()
@@ -121,7 +158,7 @@ func _process(_d: float) -> void:
 			print("[shot] saved ", p)
 			_seq_i += 1
 			if _seq_i >= _seq.size():
-				get_tree().quit()
+				_leave()
 	if _shot_path == "" or _frames_left < 0 or not _seq.is_empty():
 		return
 	if _no_hud:
@@ -173,11 +210,12 @@ func _process(_d: float) -> void:
 				DirAccess.make_dir_recursive_absolute(mdir)
 			mimg.save_png(mpath)
 			print("[shot] saved ", mpath)
+			_print_stats(mpath)
 			_multi_i += 1
 			_multi_step = 0
 			if _multi_i >= _multi.size():
 				AudioDirector.shutdown()
-				get_tree().quit()
+				_leave()
 			return
 	if _frames_left == 2:
 		AudioDirector.shutdown()
@@ -189,7 +227,8 @@ func _process(_d: float) -> void:
 			DirAccess.make_dir_recursive_absolute(dir)
 		img.save_png(_shot_path)
 		print("[shot] saved ", _shot_path)
-		get_tree().quit()
+		_print_stats(_shot_path)
+		_leave()
 
 func _spawn_cam() -> void:
 	var parts := _cam_spec.split(",")

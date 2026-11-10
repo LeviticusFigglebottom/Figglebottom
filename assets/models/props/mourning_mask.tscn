@@ -1,0 +1,62 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="birch"]
+albedo_color = Color(0.820, 0.760, 0.640, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="eye"]
+albedo_color = Color(0.060, 0.050, 0.050, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="woad"]
+albedo_color = Color(0.270, 0.410, 0.590, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="brow"]
+albedo_color = Color(0.400, 0.330, 0.260, 1)
+roughness = 0.85
+
+[sub_resource type="SphereMesh" id="face"]
+radius = 0.5
+height = 1.0
+radial_segments = 14
+rings = 8
+material = SubResource("birch")
+
+[sub_resource type="SphereMesh" id="eye"]
+radius = 0.5
+height = 1.0
+radial_segments = 8
+rings = 4
+material = SubResource("eye")
+
+[sub_resource type="BoxMesh" id="band"]
+size = Vector3(0.171496, 0.0338, 0.0832)
+material = SubResource("woad")
+
+[sub_resource type="BoxMesh" id="brow"]
+size = Vector3(0.12376, 0.0052, 0.0104)
+material = SubResource("brow")
+
+[node name="MourningMask" type="Node3D"]
+metadata/upright = true
+
+[node name="Face" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.1768, 0, 0, 0, 0.26, 0, 0, 0, 0.078, 0, 0.13, 0)
+mesh = SubResource("face")
+
+[node name="EyeL" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.038896, 0, 0, 0, 0.0221, 0, 0, 0, 0.026, -0.03536, 0.1456, 0.0403)
+mesh = SubResource("eye")
+
+[node name="EyeR" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.038896, 0, 0, 0, 0.0221, 0, 0, 0, 0.026, 0.03536, 0.1456, 0.0403)
+mesh = SubResource("eye")
+
+[node name="Brow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.182, 0.0325)
+mesh = SubResource("brow")
+
+[node name="Band" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1456, 0)
+mesh = SubResource("band")

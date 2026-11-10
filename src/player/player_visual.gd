@@ -26,6 +26,18 @@ func build(weapon_kit := "hewing_blade", model := "") -> void:
 		shield_mount.rotation_degrees = Vector3(0, 90, 0)   # face out from the forearm
 	shield_mount.add_child(board if board != null else KitLib.instance("shield_kite"))
 
+## After the Outsong there is nothing left to carry arms against: the blade
+## and the board stay off the body, whatever the belt says (COLDWELL.md 10).
+func _process(dt: float) -> void:
+	super._process(dt)
+	if World.spring():
+		if weapon_mount != null:
+			weapon_mount.visible = false
+		if shield_mount != null:
+			shield_mount.visible = false
+		if trail != null:
+			trail.visible = false
+
 ## The gourd in hand while drinking: its Tripo mesh on the humanoid's gourd
 ## slot, the greybox vessel on the mannequin. Returns the mount (the caller
 ## frees its BoneAttachment3D parent when the drink ends).

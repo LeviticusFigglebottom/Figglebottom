@@ -125,6 +125,7 @@ func build_model(id: String) -> bool:
 	rig.name = "Rig"
 	add_child(rig)
 	rig.setup(id, skel)
+	rig.clip_set = String(cfg.get("clip_set", ""))   # a foe's own attack clips (ADR 0012)
 	return true
 
 ## A Tripo quadruped from clip_meta.json: its glb's walk plays by ground
@@ -150,6 +151,7 @@ func build_quadruped(id: String) -> bool:
 	add_child(quad)
 	quad.setup(skel, inst.find_child("AnimationPlayer", true, false) as AnimationPlayer, cfg.get("poses", {}))
 	quad.stride = float(cfg.get("stride", 1.4))
+	quad.pose_seq = cfg.get("pose_seq", {})
 	return true
 
 func is_humanoid() -> bool:
@@ -410,11 +412,16 @@ func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 ## Play an action so its contact frame lands `contact_at` seconds from now
 ## (an attack's data windup). Contact points are data: clip_meta.json.
 ## lo/hi bound the rate (the player keeps the source's 0.55-1.85 clamp).
-func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi := INF) -> float:
+## `alt` is tried first where it resolves (a foe's "@<attack id>" clip, cut to
+## that attack's windup); the clip keeps its game name either way.
+func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi := INF, alt := "") -> float:
 	if rig != null:
+		rig.remap = {clip: alt} if alt != "" and rig.has_clip(alt) else {}
 		return rig.play_timed(clip, contact_at, blend, lo, hi)
 	if quad != null:
-		_quad_play(clip, contact_at)   # a pose eases in over the windup
+		# the wind-up pose is struck quickly and HELD for the rest of the
+		# telegraph (it used to sink in slowly over the whole windup)
+		_quad_play(clip, minf(contact_at, 0.18))
 		return 1.0
 	var rate := clampf(HumanoidLib.mannequin_contact(clip) / maxf(contact_at, 0.02), lo, hi)
 	play(clip, blend, rate)

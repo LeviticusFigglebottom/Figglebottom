@@ -89,7 +89,23 @@ const HERO_PIECES := {
 	"boat": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 6.0, "yaw": 90.0, "lift": 0.0},
 	"drying_rack": {"glb": "res://assets/models/kit/kit_drying_rack_hero.glb", "family": "M_wood", "length": 4.0, "yaw": 90.0, "lift": 0.0},
 	"boat_upturned": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 5.8, "yaw": 90.0, "lift": 1.32, "flip": true},
+	# every rest site: the carved hearthstone, its slab at the back (-z)
+	"hearthstone": {"glb": "res://assets/models/kit/kit_hearthstone.glb", "family": "M_stone", "length": 1.6, "yaw": 0.0, "lift": 0.0},
+	"fish_kettle": {"glb": "res://assets/models/landmarks/lm_fish_kettle.glb", "family": "M_iron", "length": 1.75, "yaw": 0.0, "lift": 0.0},
+	# longhouse and yard furniture (look pass 3)
+	"table_3m": {"glb": "res://assets/models/kit/kit_table_hero.glb", "family": "M_wood", "length": 3.0, "yaw": 0.0, "lift": 0.0},
+	"bench_3m": {"glb": "res://assets/models/kit/kit_bench_hero.glb", "family": "M_wood", "length": 2.7, "yaw": 0.0, "lift": 0.0},
+	"barrel": {"glb": "res://assets/models/kit/kit_barrel_hero.glb", "family": "M_wood", "length": 0.74, "yaw": 0.0, "lift": 0.0},
+	"rope_coil": {"glb": "res://assets/models/kit/kit_rope_coil_hero.glb", "family": "M_rope", "length": 0.7, "yaw": 0.0, "lift": 0.0},
+	"creel_stack": {"glb": "res://assets/models/kit/kit_creel_stack_hero.glb", "family": "M_drift", "length": 1.4, "yaw": 0.0, "lift": 0.0},
+	"well": {"glb": "res://assets/models/kit/kit_well_hero.glb", "family": "M_stone", "length": 1.7, "yaw": 0.0, "lift": 0.0},
+	# a wrought fire basket on three legs; the flame is added over its logs
+	"brazier": {"glb": "res://assets/models/kit/kit_brazier_hero.glb", "family": "M_iron", "length": 0.71, "yaw": 0.0, "lift": 0.0},
+	# the Reach flocks: a ewe with her head up and one grazing, taken in turn
+	"sheep": {"glb": "res://assets/models/kit/kit_ewe_a.glb", "alt": ["res://assets/models/kit/kit_ewe_b.glb"],
+		"family": "M_fleece", "length": 1.15, "yaw": 90.0, "lift": 0.0},
 }
+static var _hero_turn := 0
 
 static func instance(id: String, state_mode := 0, mat_remap: Dictionary = {}) -> Node3D:
 	if not PIECES.has(id):
@@ -110,7 +126,14 @@ static func instance(id: String, state_mode := 0, mat_remap: Dictionary = {}) ->
 
 static func _build_hero(n: Node3D, id: String) -> void:
 	var h: Dictionary = HERO_PIECES[id]
-	var inst := (load(String(h["glb"])) as PackedScene).instantiate() as Node3D
+	var glb := String(h["glb"])
+	if h.has("alt"):
+		var all: Array = [glb] + (h["alt"] as Array)
+		_hero_turn += 1
+		var pick := String(all[_hero_turn % all.size()])
+		if ResourceLoader.exists(pick):
+			glb = pick
+	var inst := (load(glb) as PackedScene).instantiate() as Node3D
 	# colliders come from the generator's own shapes, not the landmark's
 	for c in inst.find_children("*", "CollisionObject3D", true, false):
 		c.get_parent().remove_child(c)
@@ -129,6 +152,12 @@ static func _build_hero(n: Node3D, id: String) -> void:
 	inst.rotation_degrees = Vector3(0, float(h.get("yaw", 0.0)), 180.0 if h.get("flip", false) else 0.0)
 	inst.position.y = float(h.get("lift", 0.0))
 	n.add_child(inst)
+	if id == "hearthstone":
+		_hearth_bed(n, 0.42, 0.05)
+	if id == "brazier":
+		_flame(n, Vector3(0, 0.9, 0), 0.42, 0.16, "flame")
+		_flame(n, Vector3(0.07, 0.9, -0.05), 0.28, 0.11, "flame_b")
+		_embers(n, Vector3(0, 1.0, 0), 0.1, 8)
 	if id == "boat_upturned":
 		# keep the trestles it rests on
 		for z in [-1.6, 1.6]:
@@ -221,7 +250,118 @@ static func _torus(parent: Node3D, r: float, thick: float, pos: Vector3, fam: St
 	return mi
 
 static func _flame(parent: Node3D, pos: Vector3, h: float, r: float, nm := "flame") -> MeshInstance3D:
-	return _cyl(parent, 0.0, r, h, pos + Vector3(0, h * 0.5, 0), "M_flame", nm, Vector3.ZERO, 8)
+	var mi := MeshInstance3D.new()
+	mi.name = nm
+	mi.mesh = _flame_cards(h, r)
+	mi.position = pos
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(mi)
+	return mi
+
+static var _flame_meshes: Dictionary = {}
+
+## Three cards crossed on the flame's axis (flame.gdshader draws the tongue
+## on each; additive, so they build a volume from any side).
+static func _flame_cards(h: float, r: float) -> ArrayMesh:
+	var key := "%.2f|%.2f" % [h, r]
+	if _flame_meshes.has(key):
+		return _flame_meshes[key]
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var w := r * 2.6
+	var hh := h * 1.25
+	for i in 3:
+		var a := PI * float(i) / 3.0
+		var right := Vector3(cos(a), 0, sin(a)) * w * 0.5
+		var quad: Array = [[-right, Vector2(0, 1)], [right, Vector2(1, 1)], [right + Vector3.UP * hh, Vector2(1, 0)],
+			[-right, Vector2(0, 1)], [right + Vector3.UP * hh, Vector2(1, 0)], [-right + Vector3.UP * hh, Vector2(0, 0)]]
+		for v in quad:
+			st.set_normal(Vector3.UP)
+			st.set_uv(v[1])
+			st.set_uv2(Vector2.ZERO)
+			st.add_vertex(v[0])
+	# a level disc low in the flame: from above the cards are edge-on, and
+	# this is the bright heart you look down into (UV2.x = 1 marks it)
+	var dr := w * 0.42
+	var dy := hh * 0.14
+	var disc: Array = [[Vector3(-dr, dy, -dr), Vector2(0, 0)], [Vector3(dr, dy, -dr), Vector2(1, 0)], [Vector3(dr, dy, dr), Vector2(1, 1)],
+		[Vector3(-dr, dy, -dr), Vector2(0, 0)], [Vector3(dr, dy, dr), Vector2(1, 1)], [Vector3(-dr, dy, dr), Vector2(0, 1)]]
+	for v in disc:
+		st.set_normal(Vector3.UP)
+		st.set_uv(v[1])
+		st.set_uv2(Vector2(1, 0))
+		st.add_vertex(v[0])
+	var mesh := st.commit()
+	mesh.surface_set_material(0, _ph("M_flame"))
+	mesh.custom_aabb = AABB(Vector3(-w, 0, -w), Vector3(w * 2.0, hh * 1.1, w * 2.0))
+	_flame_meshes[key] = mesh
+	return mesh
+
+static var _ember_mat: StandardMaterial3D = null
+
+## Sparks lifting off a fire: a handful of bright points that rise, drift and
+## go out. CPU particles: a dozen per fire is cheaper than a GPU system each.
+static func _embers(parent: Node3D, pos: Vector3, spread: float, amount := 10) -> CPUParticles3D:
+	if _ember_mat == null:
+		_ember_mat = StandardMaterial3D.new()
+		_ember_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_ember_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		_ember_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+		_ember_mat.vertex_color_use_as_albedo = true
+		_ember_mat.albedo_color = Color(1.0, 0.55, 0.2)
+	var p := CPUParticles3D.new()
+	p.name = "embers"
+	p.amount = amount
+	p.lifetime = 1.8
+	p.randomness = 0.6
+	p.lifetime_randomness = 0.5
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = spread
+	p.direction = Vector3.UP
+	p.spread = 22.0
+	p.gravity = Vector3(0.12, 0.35, -0.08)
+	p.initial_velocity_min = 0.35
+	p.initial_velocity_max = 0.9
+	p.scale_amount_min = 0.5
+	p.scale_amount_max = 1.2
+	var fade := Gradient.new()
+	fade.set_color(0, Color(1.6, 1.0, 0.45, 1.0))
+	fade.set_color(1, Color(0.9, 0.15, 0.02, 0.0))
+	p.color_ramp = fade
+	var q := QuadMesh.new()
+	q.size = Vector2(0.011, 0.011)
+	q.material = _ember_mat
+	p.mesh = q
+	p.position = pos
+	p.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(p)
+	return p
+
+## The fire in a hearthstone's ring: a mound of coals (coals.gdshader: lit in
+## THAW, banked to a faint ember in RIME) with a few low tongues of flame over
+## it and a small steady ember light that outlasts the flames.
+static func _hearth_bed(n: Node3D, r: float, y: float) -> void:
+	var coals := _sphere(n, r, Vector3(0, y, 0), "M_coals", "coals", Vector3(1.0, 0.24, 1.0))
+	coals.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var tongues: Array = [[Vector3(0.0, 0.1, 0.02), 0.5, 0.14], [Vector3(-0.15, 0.08, 0.1), 0.34, 0.11],
+		[Vector3(0.14, 0.08, -0.08), 0.4, 0.12], [Vector3(0.04, 0.07, 0.18), 0.26, 0.09]]
+	for i in tongues.size():
+		var t: Array = tongues[i]
+		var f := _flame(n, Vector3(0, y, 0) + t[0], t[1], t[2], "hearth_flame" if i == 0 else "hearth_flame_%d" % i)
+		f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_embers(n, Vector3(0, y + 0.15, 0), 0.18)
+	var ember := OmniLight3D.new()
+	ember.name = "ember_glow"
+	ember.light_color = Color(1.0, 0.36, 0.12)
+	ember.light_energy = 0.06
+	ember.omni_range = 1.1
+	ember.omni_attenuation = 1.6
+	ember.shadow_enabled = false
+	ember.distance_fade_enabled = true
+	ember.distance_fade_begin = 24.0
+	ember.distance_fade_length = 8.0
+	ember.position = Vector3(0, y + 0.22, 0)
+	n.add_child(ember)
 
 ## A wall panel with a rectangular opening (w x h) centred on x.
 static func _wall_with_opening(n: Node3D, w: float, h: float, ow: float, oh: float, t: float, fam: String) -> void:
@@ -309,7 +449,7 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_flame(n, Vector3(0, 0.12, 0), 0.45, 0.28, "fire_flame")
 		"sheep":
 			# a fell ewe: a round fleece on four thin legs, a dark face
-			_sphere(n, 0.5, Vector3(0, 0.72, 0), "M_wool", "fleece", Vector3(0.62, 0.62, 1.05))
+			_sphere(n, 0.5, Vector3(0, 0.72, 0), "M_fleece", "fleece", Vector3(0.62, 0.62, 1.05))
 			_box(n, Vector3(0.2, 0.26, 0.34), Vector3(0, 0.86, -0.62), "M_leather", "face", Vector3(-28, 0, 0))
 			_box(n, Vector3(0.3, 0.1, 0.08), Vector3(0, 0.98, -0.52), "M_leather", "ears")
 			for lx in [-0.16, 0.16]:
@@ -412,7 +552,7 @@ static func _build_piece(n: Node3D, id: String) -> void:
 				var a := TAU * i / 5.0
 				_box(n, Vector3(0.16, 0.12, 0.7), Vector3(cos(a) * 0.18, 0.6, sin(a) * 0.18), "M_wood", "log%d" % i, Vector3(0, -rad_to_deg(a), 14))
 			_box(n, Vector3(0.4, 1.4, 0.4), Vector3(0, 0.7, -0.95), "M_stone", "standing_stone")
-			_flame(n, Vector3(0, 0.55, 0), 0.9, 0.3, "hearth_flame")
+			_hearth_bed(n, 0.4, 0.5)
 		"brazier", "candelabra":
 			_cyl(n, 0.08, 0.12, 0.8, Vector3(0, 0.4, 0), "M_iron", "stem")
 			_cyl(n, 0.3, 0.18, 0.2, Vector3(0, 0.9, 0), "M_iron", "bowl")
@@ -432,7 +572,20 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_cyl(n, 0.35, 0.35, 0.06, Vector3(0, 0.2, 0), "M_iron", "hoop_lo")
 			_cyl(n, 0.35, 0.35, 0.06, Vector3(0, 0.7, 0), "M_iron", "hoop_hi")
 		"crate":
-			_box(n, Vector3(1, 1, 1), Vector3(0, 0.5, 0), "M_wood", "crate")
+			# a boarded chest, not a cube: four courses of boards a side with
+			# gaps, corner battens standing proud, a lid of four boards
+			_box(n, Vector3(0.9, 0.9, 0.9), Vector3(0, 0.47, 0), "M_wood_dark", "core")
+			for k in 4:
+				var by := 0.14 + k * 0.245
+				for side in 4:
+					var ang := side * 90.0
+					var off := Vector3(0, by, 0.47).rotated(Vector3.UP, deg_to_rad(ang))
+					_box(n, Vector3(0.96 - 0.01 * (k % 2), 0.225, 0.05), off, "M_drift" if (k + side) % 3 == 0 else "M_wood", "board", Vector3(0, ang, 0))
+			for cx in [-1.0, 1.0]:
+				for cz in [-1.0, 1.0]:
+					_box(n, Vector3(0.1, 0.99, 0.1), Vector3(cx * 0.47, 0.495, cz * 0.47), "M_wood_dark", "batten")
+			for k in 4:
+				_box(n, Vector3(0.245, 0.05, 1.02), Vector3(-0.375 + k * 0.25, 1.0, 0), "M_wood", "lid", Vector3(0, (k % 2) * 1.2 - 0.6, 0))
 		"table_3m":
 			_box(n, Vector3(3.0, 0.1, 1.0), Vector3(0, 0.78, 0), "M_wood", "top")
 			for sx in [-1.3, 1.3]:
@@ -596,9 +749,13 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 		if mesh == null:
 			continue
 		if mi.has_meta("hero_family"):
+			# a remap of the hero's family re-skins it (a ewe frozen to rime)
+			# but keeps its baked detail
+			var hfam := String(mi.get_meta("hero_family"))
+			if mat_remap.has(hfam):
+				hfam = String(mat_remap[hfam])
 			for s in mesh.get_surface_count():
-				mi.set_surface_override_material(s, MaterialLib.hero_mat(mesh.surface_get_material(s),
-					String(mi.get_meta("hero_family")), state_mode))
+				mi.set_surface_override_material(s, MaterialLib.hero_mat(mesh.surface_get_material(s), hfam, state_mode))
 			continue
 		for s in mesh.get_surface_count():
 			var src := mesh.surface_get_material(s)
@@ -613,8 +770,8 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 				var aabb := mesh.get_aabb()
 				mi.set_instance_shader_parameter("flame_base_y", aabb.position.y)
 				mi.set_instance_shader_parameter("flame_height", maxf(aabb.size.y, 0.05))
-				mi.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.76, 0.32))
-				mi.set_instance_shader_parameter("flame_energy", 3.6)
+				mi.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.6, 0.2))
+				mi.set_instance_shader_parameter("flame_energy", 1.0)
 
 static func _mesh_instances(node: Node) -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []
@@ -653,7 +810,8 @@ static func add_flame_lights(piece: Node3D, energy := 2.15, range_m := 7.6,
 	l.distance_fade_enabled = true
 	l.distance_fade_begin = 28.0
 	l.distance_fade_length = 10.0
-	l.position = avg_pos + Vector3(0, 0.08, 0)
+	# above the flame tips, so the stones around a fire are lit, not burnt out
+	l.position = avg_pos + Vector3(0, 0.45, 0)
 	piece.add_child(l)
 	lights.append(l)
 	return lights

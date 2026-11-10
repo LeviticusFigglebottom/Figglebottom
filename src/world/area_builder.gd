@@ -56,9 +56,11 @@ static func build(area_id: String) -> Area:
 		if not _flag_ok(spec):
 			continue    # (Thornwold's gate: leaning on the hedge, then laid down)
 		# a Tripo scene set as dressing (collision stripped; blockers do that)
-		var lm := BuildingGen._landmark(String(spec["scene"]))
+		var lm_tag := String(spec.get("tag", "base"))
+		var lm := BuildingGen._landmark(String(spec["scene"]), String(spec.get("family", "")),
+			1 if lm_tag == "thaw" else (2 if lm_tag == "rime" else 0))
 		if lm != null:
-			area.attach(lm, String(spec.get("tag", "base")))
+			area.attach(lm, lm_tag)
 			_place(lm, spec)
 			if spec.has("tilt"):
 				lm.rotation_degrees.x = float(spec["tilt"])
@@ -171,15 +173,7 @@ static func build(area_id: String) -> Area:
 				and f.boss_spawner.dead_once
 				and World.area_flag(area_id, f.boss_spawner.spawn_flag)):
 			f.snap_cleared()
-	for spec in def.get("npcs", []):
-		if not _flag_ok(spec):
-			continue      # a soul may stand only before/after a turn of the story
-		var n := NPC.new()
-		n.npc_id = spec.get("id", "")
-		n.spec = spec
-		n.set_meta("state_tag", spec.get("tag", "thaw"))
-		area.attach(n, spec.get("tag", "thaw"))
-		_place(n, spec)
+	sync_npcs(area)
 	for spec in def.get("plaques", []):
 		if not _flag_ok(spec):
 			continue
@@ -212,6 +206,7 @@ static func build(area_id: String) -> Area:
 		k.display_kit = spec.get("kit", "")
 		k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
 		k.set_flag = spec.get("set_flag", "")
+		k.look_text = spec.get("look", "")
 		k.display_lift = float(spec.get("lift", 0.0))
 		k.chip_heavy = bool(spec.get("chip_heavy", false))
 		area.attach(k, spec.get("tag", "base"))
@@ -505,6 +500,35 @@ const STRUCTURAL_KITS := ["wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "fl
 static func _is_structural(kit) -> bool:
 	return String(kit) in STRUCTURAL_KITS
 
+## The souls of an area follow the story's flags: one may stand only before
+## or after a turn of the story ("absent_flag" / "require_flag"). Run at
+## build, and again each time the memory turns (Area.pre_transition and
+## apply_state): a Holdfast released in RIME must not leave the old THAW
+## scene standing when the Bearer warms the place from inside it.
+static func sync_npcs(area: Area) -> void:
+	var specs: Array = (area.get_meta("def", {}) as Dictionary).get("npcs", [])
+	var standing := {}
+	for c in area.find_children("*", "NPC", true, false):
+		if c.has_meta("spec_i") and not c.is_queued_for_deletion():
+			standing[int(c.get_meta("spec_i"))] = c
+	for i in specs.size():
+		var spec: Dictionary = specs[i]
+		var want := _flag_ok(spec)
+		if World.spring() and String(spec.get("tag", "thaw")) == "thaw":
+			want = false      # after the Outsong nobody is remembered here (COLDWELL.md 10)
+		if want and not standing.has(i):
+			var n := NPC.new()
+			n.npc_id = spec.get("id", "")
+			n.spec = spec
+			n.set_meta("state_tag", spec.get("tag", "thaw"))
+			n.set_meta("spec_i", i)
+			area.attach(n, spec.get("tag", "thaw"))
+			_place(n, spec)
+		elif not want and standing.has(i):
+			var gone: Node3D = standing[i]
+			gone.visible = false
+			gone.queue_free()
+
 ## World-flag conditions on any spec: "require_flag" builds only once the
 ## flag is set; "absent_flag" builds only until it is. Evaluated at area
 ## build, so the highland changes shape between visits, not mid-room.
@@ -573,6 +597,8 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 		gl.omni_range = float(g[2]) if g.size() > 2 else 8.0
 		gl.shadow_enabled = false
 		piece.add_child(gl)
+	if spec.has("group"):
+		piece.add_to_group(String(spec["group"]))   # (the Reach's frozen flock, which lies down)
 	area.attach(piece, tag)
 	return piece
 
@@ -826,15 +852,21 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 	var center := (mn + mx) * 0.5
 	var size := mx - mn
 	var fam := String(spec.get("mat", "M_stone"))
-	# a wide, thin timber box is a deck, a jetty or a bridge: lay it in planks
-	if fam == "M_wood" and size.y < 0.5 and maxf(size.x, size.z) > 1.5 and minf(size.x, size.z) > 0.8:
-		fam = "M_planks"
-	var mat := MaterialLib.get_mat(fam, _state_mode(tag))
+	var mode := _state_mode(tag)
 	var mi := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = size
-	mi.mesh = bm
-	mi.material_override = mat
+	var timber := fam == "M_wood" or fam == "M_wood_dark" or fam == "M_drift"
+	if timber and size.y < 0.5 and maxf(size.x, size.z) > 1.5 and minf(size.x, size.z) > 0.8:
+		# a wide, thin timber box is a deck, a jetty or a bridge: lay it in
+		# real planks across its width, on two stringers
+		mi.mesh = _deck_mesh(size, fam, mode, hash(Vector3i(center * 10.0)))
+	elif timber and size.y > 1.5 and maxf(size.x, size.z) < 0.6:
+		# a tall, thin timber box is a pile or a stilt: a round adzed post
+		mi.mesh = _pile_mesh(size, fam, mode, hash(Vector3i(center * 10.0)))
+	else:
+		var bm := BoxMesh.new()
+		bm.size = size
+		mi.mesh = bm
+		mi.material_override = MaterialLib.get_mat(fam, mode)
 	mi.position = center
 	area.attach(mi, tag)
 	if spec.get("collide", true):
@@ -848,6 +880,59 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 		body.add_child(cs)
 		body.position = center
 		area.attach(body, tag)
+
+## A deck in place of a box of the same size: boards of uneven width laid
+## across the short span with gaps, ends ragged by a few centimetres, two
+## stringers and a kerb board under the long edges. The collider stays the box.
+static func _deck_mesh(size: Vector3, fam: String, mode: int, seed: int) -> ArrayMesh:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var along_x := size.x >= size.z
+	var run := size.x if along_x else size.z       # the long way
+	var span := size.z if along_x else size.x      # boards lie across this
+	var th := minf(size.y, 0.09)
+	var top := size.y * 0.5 - th * 0.5
+	var t := -run * 0.5
+	while t < run * 0.5 - 0.03:
+		var bw := minf(rng.randf_range(0.2, 0.32), run * 0.5 - t)
+		var bl := span + rng.randf_range(-0.03, 0.1)
+		var c := t + bw * 0.5
+		var pos := Vector3(c, top + rng.randf_range(-0.012, 0.0), rng.randf_range(-0.03, 0.03)) if along_x \
+				else Vector3(rng.randf_range(-0.03, 0.03), top + rng.randf_range(-0.012, 0.0), c)
+		var sz := Vector3(bw - 0.014, th, bl) if along_x else Vector3(bl, th, bw - 0.014)
+		ProcMesh.box(st, sz, Transform3D(Basis(Vector3.UP, deg_to_rad(rng.randf_range(-0.8, 0.8))), pos))
+		t += bw
+	# stringers under the long edges carry the boards (and fill the box depth)
+	var sh := maxf(size.y - th, 0.12)
+	for e in [-1.0, 1.0]:
+		var off: float = e * (span * 0.5 - 0.14)
+		var spos := Vector3(0, top - th * 0.5 - sh * 0.5, off) if along_x else Vector3(off, top - th * 0.5 - sh * 0.5, 0)
+		ProcMesh.box(st, Vector3(run, sh, 0.16) if along_x else Vector3(0.16, sh, run), Transform3D(Basis.IDENTITY, spos))
+	var mesh := ProcMesh.finish(st)
+	mesh.surface_set_material(0, MaterialLib.get_mat("M_planks" if fam == "M_wood" else fam, mode, true))
+	return mesh
+
+## A pile in place of a box: a round post, a little out of true, thicker at
+## the foot, with metre UVs so the grain runs up it.
+static func _pile_mesh(size: Vector3, fam: String, mode: int, seed: int) -> ArrayMesh:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var r := maxf(size.x, size.z) * 0.56
+	var cm := CylinderMesh.new()
+	cm.top_radius = r * rng.randf_range(0.82, 0.95)
+	cm.bottom_radius = r * rng.randf_range(1.05, 1.2)
+	cm.height = size.y
+	cm.radial_segments = 9
+	cm.rings = 2
+	var lean := Basis(Vector3.RIGHT, deg_to_rad(rng.randf_range(-1.5, 1.5))) * Basis(Vector3.BACK, deg_to_rad(rng.randf_range(-1.5, 1.5)))
+	ProcMesh.append(st, cm, Transform3D(lean * Basis(Vector3.UP, rng.randf() * TAU), Vector3.ZERO), Vector2(TAU * r, size.y))
+	var mesh := ProcMesh.finish(st)
+	mesh.surface_set_material(0, MaterialLib.get_mat(fam, mode, true))
+	return mesh
 
 ## Invisible impassable volume (collapsed debris etc.) — dress it with props.
 static func _blocker(area: Area, spec: Dictionary) -> void:

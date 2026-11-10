@@ -32,10 +32,12 @@ func snap(area: Area, to_state: RH.WState) -> void:
 	AudioDirector.play_state(area.env, to_state, 0.35)
 
 ## The spectacle: the world remembers (warm) or forgets (still).
-func transition(area: Area, to_state: RH.WState, origin: Vector3) -> void:
+## `force` runs the wave even when World already answers `to_state` (the
+## endings: the flag has turned the answer before the world has turned).
+func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false) -> void:
 	if transitioning or area == null:
 		return
-	if World.get_area_state(area.area_id) == to_state:
+	if not force and World.get_area_state(area.area_id) == to_state:
 		return
 	transitioning = true
 	transition_started.emit(area.area_id, to_state)

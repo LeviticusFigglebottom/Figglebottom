@@ -49,7 +49,8 @@ static func candidates(clip: String, clip_set := "") -> Array:
 	var out := []
 	if clip_set != "":
 		var sets: Dictionary = meta().get("clip_sets", {})
-		for sid in [clip_set, "_all"]:
+		# "_all" is the weapon classes' common set; a foe's set stands alone
+		for sid in ([clip_set] if clip_set.begins_with("foe_") else [clip_set, "_all"]):
 			var cs = (sets.get(sid, {}) as Dictionary).get(clip, [])
 			for a in (cs if cs is Array else [cs]):
 				if not String(a) in out:

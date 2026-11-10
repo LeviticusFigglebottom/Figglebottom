@@ -60,10 +60,23 @@ func set_pose(name: String, weight := 1.0, blend := 0.2) -> void:
 	_w_to[name] = weight
 	_w_speed[name] = 1.0 / maxf(blend, 0.01)
 
+## pose -> [next pose, seconds before it, blend] (clip_meta pose_seq): an
+## extension pose hands over to its landing on a timer.
+var pose_seq: Dictionary = {}
+var _seq_next := ""
+var _seq_t := 0.0
+var _seq_blend := 0.1
+
 ## Release every pose except `keep`.
 func only(keep: String, blend := 0.2) -> void:
 	for n in poses:
 		set_pose(n, 1.0 if n == keep else 0.0, blend)
+	_seq_next = ""
+	var sq = pose_seq.get(keep)
+	if sq is Array and (sq as Array).size() >= 3 and poses.has(String(sq[0])):
+		_seq_next = String(sq[0])
+		_seq_t = float(sq[1])
+		_seq_blend = float(sq[2])
 
 func weight(name: String) -> float:
 	return float(_w.get(name, 0.0))
@@ -77,6 +90,11 @@ func gait(dt: float, ground_speed: float) -> void:
 func _physics_process(dt: float) -> void:
 	if skel == null:
 		return
+	if _seq_next != "":
+		_seq_t -= dt
+		if _seq_t <= 0.0:
+			var nx := _seq_next
+			only(nx, _seq_blend)
 	for n in _w:
 		_w[n] = move_toward(_w[n], _w_to[n], dt * _w_speed[n])
 	_shake_t += dt

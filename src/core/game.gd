@@ -103,7 +103,11 @@ func on_boss_slain(area_id: String, boss: Node = null) -> void:
 	var after := ""
 	if current_area != null and current_area.area_id == area_id:
 		after = current_area.env.music_for(World.get_area_state(area_id))
-	AudioDirector.play_outsong(after, 4.0)
+	if bool(bcfg.get("release_outsong", true)):
+		AudioDirector.play_outsong(after, 4.0)
+	else:
+		# (the Leadvoice: nobody sings yet; that one is the Bearer's)
+		AudioDirector.end_boss_theme("", 4.0)
 
 ## What a released holdfast leaves (SLICE.md 6), from its data:
 ##   release_drop: {item, scene, label, pickup_id, ahead, set_flag, at_seal} ->
@@ -302,6 +306,8 @@ func dmg_in_mult() -> float:
 	return DIFF[difficulty]["in"]
 
 func toggle_free(aid: String) -> bool:
+	if World.ended() != "":
+		return false   # the coal is in the spring, or kept shut: no hearth turns
 	return World.is_cleared(aid) or bool(DB.area_def(aid).get("free_warm", false))
 
 ## The rest ceremony: kneel, heal, respawn the dead, and turn the world.
@@ -314,6 +320,8 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 	var aid: String = area.area_id if area != null else current_area_id
 	var cur := World.get_area_state(aid)
 	var target := cur
+	if World.ended() != "":
+		choice = "rest_only"
 	match choice:
 		"toggle":
 			target = RH.WState.THAW if cur == RH.WState.RIME else RH.WState.RIME
@@ -333,6 +341,9 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 		p.enter_rest()
 		p.heal_full()
 	AudioDirector.sfx(AudioDirector.foley("coal_catch"), -3.0)   # the coal takes in the stone
+	# and the Bearer hums, as always, three notes (WORLD.md 4.6; MUSIC.md)
+	if p != null and AudioDirector.cfg("hum", "") != "":
+		get_tree().create_timer(1.1).timeout.connect(func(): AudioDirector.sfx(String(AudioDirector.cfg("hum", "")), -11.0))
 
 	if target != cur and area != null:
 		await get_tree().create_timer(1.3).timeout   # kneel beat first

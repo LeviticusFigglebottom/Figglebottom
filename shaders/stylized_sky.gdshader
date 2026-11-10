@@ -1,19 +1,30 @@
 shader_type sky;
 // ---------------------------------------------------------------------------
-// Atmospheric sky shader for Rimeholt.
-//   * Thaw: long midsummer sunset — Rayleigh/Mie optical
-//     depth horizon scattering, blazing solar corona, crepuscular rays, and
-//     back-lit multi-octave stratocumulus clouds.
-//   * Rime: frozen polar night — pale silver-indigo
-//     corona around a drowned/eclipsed disc, cold drifting ash clouds, and
-//     twinkling stars.
+// Rimeholt's sky. Every colour and amount comes from data/state_profiles.json
+// through EnvRig.blend(), so the two states (and the wave between them) are
+// one continuous sky, and an area's "env" block can retune it.
+//   THAW: a low evening sun. Three-stop gradient (zenith, mid band, horizon),
+//         a haze belt that glows toward the sun and cools away from it, a sun
+//         disc in its corona, and two cloud layers (high streaks, a broken
+//         deck) lit from below on the sun side.
+//   RIME: deep blue overcast. The same deck, closed over and unlit; a veiled
+//         pale disc; a few stars in the gaps; a faint aurora ribbon behind it.
 // ---------------------------------------------------------------------------
 
-uniform vec3 top_color : source_color = vec3(0.32, 0.18, 0.14);
-uniform vec3 horizon_color : source_color = vec3(1.0, 0.62, 0.28);
+uniform vec3 top_color : source_color = vec3(0.17, 0.22, 0.33);
+uniform vec3 mid_color : source_color = vec3(0.62, 0.5, 0.45);
+uniform vec3 horizon_color : source_color = vec3(0.93, 0.66, 0.38);
+uniform vec3 haze_color : source_color = vec3(1.0, 0.76, 0.46);
 uniform vec3 sun_color : source_color = vec3(1.0, 0.84, 0.50);
 uniform vec3 ground_color : source_color = vec3(0.10, 0.08, 0.07);
+uniform vec3 cloud_lit : source_color = vec3(1.0, 0.72, 0.5);
+uniform vec3 cloud_shade : source_color = vec3(0.3, 0.27, 0.34);
+uniform vec3 aurora_color : source_color = vec3(0.3, 0.9, 0.62);
 uniform vec3 sun_dir = vec3(0.35, 0.16, -0.92);
+uniform float cloud_cover : hint_range(0.0, 1.0) = 0.45;
+uniform float sun_disc : hint_range(0.0, 2.0) = 1.0;
+uniform float aurora : hint_range(0.0, 1.0) = 0.0;
+uniform float stars : hint_range(0.0, 1.0) = 0.0;
 uniform float rime : hint_range(0.0, 1.0) = 0.0;
 
 float hash(vec2 p) {
@@ -50,77 +61,88 @@ float fbm(vec2 p) {
 	return v;
 }
 
+float fbm3(vec2 p) {
+	float v = 0.0, a = 0.55;
+	mat2 rot = mat2(vec2(0.8, 0.6), vec2(-0.6, 0.8));
+	for (int i = 0; i < 3; i++) {
+		v += a * vnoise(p);
+		p = rot * p * 2.13;
+		a *= 0.5;
+	}
+	return v;
+}
+
 void sky() {
 	vec3 dir = normalize(EYEDIR);
 	float up = dir.y;
 	vec3 sd = normalize(sun_dir);
-	float cos_theta = dot(dir, sd);
-	float sun_prox = max(cos_theta, 0.0);
+	float sun_prox = max(dot(dir, sd), 0.0);
+	// how far round the horizon from the sun this direction is (1 = at it)
+	float az = dot(normalize(dir.xz + vec2(1e-5)), normalize(sd.xz + vec2(1e-5))) * 0.5 + 0.5;
+	float az3 = az * az * az;
 
-	// Smooth Rayleigh / Mie optical-depth vertical gradient (no cartoon steps)
 	vec3 col;
+	float t = pow(clamp(up, 0.0, 1.0), 0.6);
 	if (up < 0.0) {
 		float gt = clamp(-up * 2.8, 0.0, 1.0);
-		col = mix(horizon_color * 0.45, ground_color, smoothstep(0.0, 1.0, gt));
+		vec3 hz = mix(horizon_color, haze_color, 0.35 + 0.5 * az3);
+		col = mix(hz * 0.5, ground_color, smoothstep(0.0, 1.0, gt));
 	} else {
-		float opt_depth = exp(-up * 3.2);
-		vec3 zenith = top_color * mix(0.85, 0.55, rime);
-		col = mix(zenith, horizon_color, pow(opt_depth, 0.78));
-		// Forward Mie scattering warm belt along the horizon toward the sun
-		float mie_belt = exp(-abs(up) * 5.5) * (0.45 + 0.55 * pow(sun_prox, 2.0));
-		col += horizon_color * mie_belt * 0.52 * (1.0 - 0.72 * rime);
+		// three stops: the horizon band, the pale mid sky, the zenith
+		col = mix(horizon_color, mid_color, smoothstep(0.0, 0.42, t));
+		col = mix(col, top_color, smoothstep(0.2, 0.85, t));
+		// the far side of the sky is dusk already: cooler and dimmer low down
+		vec3 dusk = mix(mid_color, top_color, 0.7);
+		col = mix(col, dusk, (1.0 - az) * (1.0 - az) * (1.0 - smoothstep(0.0, 0.7, t)) * 0.7);
+		// horizon haze: a thick belt that glows toward the sun
+		float belt = exp(-up * 7.5);
+		col = mix(col, haze_color * (0.55 + 0.6 * az3), belt * (0.3 + 0.6 * az3));
 	}
 
-	// Thaw solar disc vs rime pale-moon corona
-	float disc_thaw = smoothstep(0.9945, 0.9982, sun_prox);
-	float corona_inner = pow(sun_prox, 36.0);
-	float corona_outer = pow(sun_prox, 5.5);
-	float crepuscular = pow(sun_prox, 8.0) * (0.65 + 0.35 * sin(atan(dir.x - sd.x, dir.y - sd.y) * 18.0));
+	// the sun: disc, tight corona, wide forward-scatter bloom
+	float disc = smoothstep(0.99905, 0.99945, sun_prox);
+	float corona = pow(sun_prox, 48.0) * 0.9 + pow(sun_prox, 7.0) * 0.3;
+	vec3 sun_add = sun_color * (disc * 3.0 + corona) * sun_disc;
 
-	// In rime, the core of the sun is eclipsed dark while its rim burns cold silver-gold
-	float eclipse_core = smoothstep(0.9962, 0.9985, sun_prox);
-	float eclipse_ring = smoothstep(0.9920, 0.9965, sun_prox) * (1.0 - eclipse_core * 0.92);
-
-	vec3 thaw_sun = sun_color * (disc_thaw * 2.4 + corona_inner * 1.45 + corona_outer * 0.36 + crepuscular * 0.16);
-	vec3 rime_sun = mix(sun_color, vec3(0.58, 0.72, 0.98), 0.7) * (eclipse_ring * 1.65 + corona_inner * 0.75 + corona_outer * 0.18);
-	col += mix(thaw_sun, rime_sun, rime);
-	col = mix(col, vec3(0.01, 0.015, 0.03), eclipse_core * rime * 0.88);
-
-	// Multi-layered volumetric stratocumulus cloud deck with silver-lining rim
-	if (up > -0.04) {
-		float skyband = smoothstep(-0.03, 0.12, up) * smoothstep(0.92, 0.18, up);
-		if (skyband > 0.001) {
-			vec2 cuv = dir.xz / (max(up, 0.0) + 0.24);
-			cuv += vec2(TIME * 0.008, TIME * 0.003);
-			float m1 = fbm(cuv * 0.65 + 1.7);
-			float m2 = fbm(cuv * 1.85 - 3.4);
-			float cloud_density = smoothstep(0.42, 0.78, m1 * 0.72 + m2 * 0.28) * skyband;
-			if (cloud_density > 0.001) {
-				// Directional thickness derivative toward the sun for realistic self-shadowing
-				vec2 sun_uv_step = sd.xz * 0.08;
-				float m_toward = fbm((cuv + sun_uv_step) * 0.65 + 1.7);
-				float self_shadow = clamp(1.0 - max(m_toward - m1, 0.0) * 3.8, 0.18, 1.0);
-				float phase_hg = 0.35 + 0.65 * pow(sun_prox, 3.2);
-
-				vec3 cloud_dark = mix(top_color * 0.38, vec3(0.035, 0.045, 0.075), rime);
-				vec3 cloud_lit = mix(sun_color * 1.35, vec3(0.38, 0.48, 0.68), rime);
-				vec3 c_col = mix(cloud_dark, cloud_lit, self_shadow * phase_hg);
-				// Silver lining along thin cloud edges near the sun
-				float edge_lining = smoothstep(0.2, 0.55, cloud_density) * (1.0 - smoothstep(0.55, 0.88, cloud_density));
-				c_col += cloud_lit * edge_lining * pow(sun_prox, 4.0) * 1.4;
-
-				col = mix(col, c_col, cloud_density * (0.90 - 0.18 * rime));
-			}
-		}
+	float cloud_a = 0.0;
+	vec3 cloud_c = vec3(0.0);
+	if (up > -0.02) {
+		// flatten the dome onto a plane overhead; clouds sink into the haze
+		// at the horizon instead of ending on a line
+		vec2 cuv = dir.xz / (max(up, 0.0) + 0.16);
+		float band = smoothstep(0.0, 0.14, up);
+		vec2 drift = vec2(TIME * 0.006, TIME * 0.0025);
+		// domain warp: brushed, torn edges instead of round puffs
+		vec2 warp = vec2(fbm3(cuv * 0.8 + 11.0), fbm3(cuv * 0.8 - 5.0)) - 0.5;
+		vec2 p = cuv * vec2(0.42, 0.62) + drift + warp * 0.55;
+		float m = fbm(p + 1.7);
+		float lo = 0.78 - cloud_cover * 0.62;
+		float dens = smoothstep(lo, lo + 0.26, m);
+		// high streaks, drawn out along the wind
+		float streak = fbm3(cuv * vec2(0.16, 1.1) + drift * 2.0 + warp * 0.3 + 23.0);
+		float hi = smoothstep(0.62 - cloud_cover * 0.2, 0.9, streak) * 0.55;
+		// lit from below-sunward: sample the deck a step toward the sun
+		float m_sun = fbm(p + sd.xz * 0.11 + 1.7);
+		float shade = clamp(0.5 + (m - m_sun) * 4.5, 0.0, 1.0);
+		float toward = 0.25 + 0.75 * pow(az, 2.0);
+		// a closed deck has no sunward side to speak of: its relief comes from
+		// its own thickness (thin places glow, heavy bellies go dark)
+		float mott = fbm3(p * 2.7 + 4.0);
+		float relief = clamp((1.0 - dens) * 0.6 + (mott - 0.42) * 1.5, 0.0, 1.0);
+		float light = max(shade * toward * (1.0 - dens * 0.45), relief * (0.3 + 0.5 * cloud_cover));
+		vec3 c_deck = mix(cloud_shade, cloud_lit, light);
+		// thin edges burn near the sun
+		float edge = dens * (1.0 - dens) * 4.0;
+		c_deck += sun_color * edge * pow(sun_prox, 5.0) * 0.9 * sun_disc;
+		vec3 c_hi = mix(mid_color, cloud_lit, 0.35 + 0.65 * az3);
+		cloud_a = max(dens * 0.94, hi * (1.0 - dens)) * band;
+		cloud_c = mix(c_hi, c_deck, clamp(dens * 1.4, 0.0, 1.0));
+		// distant cloud takes the haze
+		cloud_c = mix(cloud_c, col, exp(-up * 9.0) * 0.75);
 	}
 
-	// Rime high-altitude starfield (occluded by clouds and horizon haze).
-	// A 3D lattice sampled ON the unit sphere: uniform density with no
-	// horizon stretch (the old dir.xz/up plane smeared cells into dashes),
-	// a sin-free integer hash (sin() on large cell ids lost precision and
-	// lined the stars up in rows), and a round jittered point per cell
-	// instead of a whole-cell fill.
-	if (rime > 0.001 && up > 0.02) {
+	// behind the cloud: stars (RIME only)
+	if (stars > 0.001 && up > 0.02) {
 		float sky_mask = smoothstep(0.04, 0.42, up);
 		vec3 sp = dir * 150.0;
 		vec3 cell = floor(sp);
@@ -133,8 +155,26 @@ void sky() {
 			star = smoothstep(size, 0.0, d);
 		}
 		float tw = 0.6 + 0.4 * sin(TIME * (1.4 + 2.2 * h.y) + h.x * 37.0);
-		col += vec3(0.76, 0.84, 1.0) * star * tw * sky_mask * rime * 1.2;
+		col += vec3(0.76, 0.84, 1.0) * star * tw * sky_mask * stars;
 	}
+	col += sun_add * (1.0 - cloud_a * 0.8);
+	col = mix(col, cloud_c, cloud_a);
+	if (aurora > 0.001 && up > 0.03) {
+		// two slow ribbons on the overhead plane, combed into vertical rays
+		vec2 q = dir.xz / (up + 0.3);
+		float wob = vnoise(vec2(q.x * 0.7 + TIME * 0.006, 3.1 + TIME * 0.004));
+		float c1 = 1.1 + 0.55 * sin(q.x * 0.9 + wob * 3.0);
+		float c2 = -0.9 + 0.4 * sin(q.x * 0.6 - wob * 2.2 + 1.3);
+		float r1 = exp(-pow((q.y - c1) / 0.22, 2.0));
+		float r2 = exp(-pow((q.y - c2) / 0.3, 2.0)) * 0.6;
+		float rays = 0.45 + 0.55 * vnoise(vec2(q.x * 9.0 + wob * 2.0, TIME * 0.02));
+		float glow = (r1 + r2) * rays * smoothstep(0.03, 0.3, up) * smoothstep(1.0, 0.55, up);
+		vec3 ac = mix(aurora_color, aurora_color.brg * vec3(0.5, 0.6, 1.0), clamp(q.y * 0.3 + 0.3, 0.0, 1.0));
+		// the overcast veils it but does not hide it: it glows through the deck
+		col += ac * glow * aurora * (1.0 - cloud_a * 0.55);
+	}
+	// the sun still glows through thin cloud
+	col += sun_color * pow(sun_prox, 14.0) * 0.25 * sun_disc * cloud_a;
 
 	COLOR = col;
 }

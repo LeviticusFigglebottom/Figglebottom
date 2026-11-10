@@ -25,9 +25,42 @@ func _area(id: String) -> Dictionary:
 	return areas[id]
 
 func get_area_state(id: String) -> RH.WState:
+	var e := ended()
+	if e == "outsong":
+		return RH.WState.THAW    # open water, bare ground; nobody in it (see spring())
+	if e == "hearth_kept":
+		return RH.WState.THAW if id == KEPT_AREA else RH.WState.RIME
 	return _area(id)["state"] as RH.WState
 
+# ---------------- the endings (COLDWELL.md 10, ADR 0013) ----------------
+## Where the Bearer sits if the coal is kept.
+const KEPT_AREA := "coldwell"
+
+## "" while the winter lasts, else "outsong" or "hearth_kept". One flag each
+## (set by the choice at the wellhead), so a save carries it as it carries
+## every other flag.
+func ended() -> String:
+	if flag("ending_outsong"):
+		return "outsong"
+	if flag("ending_hearth_kept"):
+		return "hearth_kept"
+	return ""
+
+## After the Outsong: true spring. Every area is its unfrozen ground under a
+## grey sky (the "spring" light profile), with nobody remembered in it, no
+## frost-taken, and hearths that cannot be warmed. The remembered evening is
+## closed for good: there is no state left to turn to.
+func spring() -> bool:
+	return flag("ending_outsong")
+
+## The coal kept: the Bearer sits at the spring in the remembered Melt, and
+## everywhere else stays frozen.
+func kept() -> bool:
+	return flag("ending_hearth_kept")
+
 func set_area_state(id: String, s: RH.WState) -> void:
+	if ended() != "":
+		return   # nothing turns any more
 	var a := _area(id)
 	if a["state"] == s:
 		return
@@ -82,7 +115,9 @@ var play_s := 0.0   # real seconds walked this playthrough (Game accumulates)
 ## save's shape changes; old slots are upgraded as they load.
 ##   1: the first format (written as "version": 1, before save_version)
 ##   2: save_version; the player wears armour (player.armour, slot -> id)
-const SAVE_VERSION := 2
+##   3: meta.ending ("" | "outsong" | "hearth_kept") for the title's slot
+##      ledger; the endings themselves are flags, so nothing else moved
+const SAVE_VERSION := 3
 
 ## Upgrade a parsed save of any older version to SAVE_VERSION, one step at a
 ## time. Returns the same Dictionary, upgraded in place; a newer save than
@@ -98,6 +133,11 @@ func migrate(data: Dictionary) -> Dictionary:
 		data["player"] = pd
 		data.erase("version")
 		v = 2
+	if v < 3:
+		var m: Dictionary = data.get("meta", {})
+		m["ending"] = ""
+		data["meta"] = m
+		v = 3
 	data["save_version"] = maxi(v, int(data.get("save_version", 0)))
 	return data
 
@@ -132,6 +172,7 @@ func slot_summary(i: int):
 		"area": String(m.get("area", parsed.get("last_hearth", {}).get("area", ""))),
 		"difficulty": String(m.get("difficulty", parsed.get("flags", {}).get("difficulty", "long"))),
 		"play_s": float(m.get("play_s", 0.0)),
+		"ending": String(m.get("ending", "")),
 	}
 
 func delete_slot(i: int) -> void:
@@ -161,6 +202,7 @@ func save_game() -> void:
 			"difficulty": str(flag_val("difficulty", "long")),
 			"saved_at": Time.get_unix_time_from_system(),
 			"play_s": play_s,
+			"ending": ended(),
 		},
 	}
 	var f := FileAccess.open(save_path(), FileAccess.WRITE)

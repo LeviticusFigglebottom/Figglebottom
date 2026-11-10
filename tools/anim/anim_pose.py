@@ -95,6 +95,12 @@ def copy_fist(pose, src_pose):
 def _lerp(a, b, t):
     if a is None or b is None:
         return b if t >= 0.5 else a
+    if isinstance(a, Quaternion) or isinstance(b, Quaternion):
+        if not (isinstance(a, Quaternion) and isinstance(b, Quaternion)):
+            return b if t >= 0.5 else a
+        return a.slerp(b, t)
+    if isinstance(a, bool):
+        return b if t >= 0.5 else a
     if isinstance(a, dict):
         return {k: _lerp(a.get(k, [0, 0, 0]), b.get(k, [0, 0, 0]), t) for k in set(a) | set(b)}
     if isinstance(a, (int, float)):
@@ -167,16 +173,42 @@ class Rig:
                 copy_fist(p, self.fist_from)
         elif c.get("lhand") is not None:
             p.arm_ik("Left", V(*c["lhand"]), V(*lp) if lp else V(-0.5, -0.3, -0.8))
-            if c.get("lrot") is not None:
-                p.set_world(P + "LeftHand", ypr(*c["lrot"]) @ s.w0[P + "LeftHand"])
+            self._hand_rot(p, "Left", c.get("lrot"))
             if c.get("lfist") and self.fist_from is not None:
                 copy_fist(p, self.fist_from)
         if w is None and c.get("rhand") is not None:
             rp = c.get("rpole")
             p.arm_ik("Right", V(*c["rhand"]), V(*rp) if rp else V(0.5, -0.3, -0.8))
-            if c.get("rrot") is not None:
-                p.set_world(P + "RightHand", ypr(*c["rrot"]) @ s.w0[P + "RightHand"])
+            self._hand_rot(p, "Right", c.get("rrot"))
+        if c.get("fists") and self.fist_from is not None:
+            # both hands closed as the reference's weapon hand (left mirrored)
+            mir = lambda q: Quaternion((q.w, q.x, -q.y, -q.z))
+            for f in FINGERS:
+                for i in (1, 2, 3):
+                    br, bl = f"{P}RightHand{f}{i}", f"{P}LeftHand{f}{i}"
+                    if br in p.l and bl in p.l:
+                        p.l[br] = self.fist_from.l[br].copy()
+                        p.l[bl] = mir(self.fist_from.l[br])
+            p.dirty()
         return p
+
+    def _hand_rot(self, p, side, rot):
+        """A free hand: world rotation if given (Quaternion, or ypr from the
+        T rest), else a straight wrist in line with the forearm."""
+        h = P + side + "Hand"
+        if isinstance(rot, Quaternion):
+            p.set_world(h, rot)
+        elif rot is not None:
+            p.set_world(h, ypr(*rot) @ self.s.w0[h])
+        else:
+            p.l[h] = self.s.l0[h].copy()
+            p.dirty()
+
+    def hands_ctl(self, pose=None):
+        """Controls that hold both wrists where a pose has them."""
+        q = pose or self.base
+        return {"rhand": list(rfu(q.pos(P + "RightHand"))), "rrot": q.W(P + "RightHand").copy(),
+                "lhand": list(rfu(q.pos(P + "LeftHand"))), "lrot": q.W(P + "LeftHand").copy()}
 
     def wctl(self, pose=None):
         """The weapon control that reproduces a pose's right hand."""

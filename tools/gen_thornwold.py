@@ -252,6 +252,13 @@ pickups = [
      "item": "item_birch_ring", "tag": "rime", "label": "Take the ring from the ash", "scene": "res://assets/models/props/birch_ring.tscn"},
     {"id": "clamp_cache", "at": at(CLAMPS[1][0] - 2.8, CLAMPS[1][1], 0.05), "item": "bog_iron", "count": 2, "tag": "rime",
      "label": "Rake out what the clamp kept"},
+    # Linnet's song-cord, on the grave once he is released (THORNWOLD.md 9). The
+    # Hedgelayer sets it down himself in the fight (release_drop, the same
+    # pickup id, on the turf's edge); this keeps it for a Bearer who walks out
+    # or puts the game down before taking it: at the grave's foot, on the
+    # ground (audit_areas.py counts the land as floor, not the turf box).
+    {"id": "song_cord", "at": at(GX + 1.0, GZ, 0.02), "item": "item_song_cord", "tag": "base", "label": "Take the song-cord",
+     "scene": "res://assets/models/props/song_cord.glb", "set_flag": "ks_song_cord_found", "require_flag": "ks_hedgelayer_released"},
 ]
 npcs = [
     # before the release: Linnet and Eyvind at the clearing, arguing about the gate (THORNWOLD.md 3, 7)
