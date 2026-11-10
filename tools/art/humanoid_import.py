@@ -63,7 +63,7 @@ def subresources(name: str, loops: list) -> str:
         '"retarget/rest_fixer/normalize_position_tracks": true',
         '"retarget/rest_fixer/overwrite_axis": true',
         '"retarget/rest_fixer/reset_all_bone_poses_after_import": true',
-        '"retarget/rest_fixer/fix_silhouette/enable": false',
+        '"retarget/rest_fixer/fix_silhouette/enable": true',   # A-posed rests (the bulky bodies) are straightened to the profile's T
     ]
     anims = ",\n".join(f'"{a}": {{\n"settings/loop_mode": 1\n}}' for a in loops)
     return ('_subresources={\n"animations": {\n' + anims + '\n},\n"nodes": {\n"' + skel + '": {\n'
