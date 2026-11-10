@@ -885,9 +885,12 @@ func clear_area_title() -> void:
 		if box != null:
 			var tw := box.create_tween()
 			tw.tween_property(box, "modulate:a", 0.0, 0.25)
-		var layer_ref := _title_layer
+		# (by id: the card's own fade may free it first, and a freed capture
+		# logs an engine error every time)
+		var layer_id := _title_layer.get_instance_id()
 		get_tree().create_timer(0.3).timeout.connect(func():
-			if is_instance_valid(layer_ref):
+			var layer_ref := instance_from_id(layer_id) as Node
+			if layer_ref != null and is_instance_valid(layer_ref):
 				layer_ref.queue_free())
 		_title_layer = null
 
