@@ -127,6 +127,13 @@ func _rig_sheet(clip: String, kit: String) -> String:
 			mi.material_override = mat
 			_stage.add_child(mi)
 		vis.rig.freeze_at(clip, float(times[i]))
+		if clip in ["idle", "walk", "run"] and vis.rig._carry != "":
+			vis.rig._carry_always = true   # locomotion: the arms-only carry layer shows
+			vis.rig._push()
+			vis.rig.advance(0.0)
+		if clip in ["idle", "walk", "run"] and vis._has_carry:
+			vis.set_process(false)   # locomotion: show the carry grip, not the fighting one
+			vis.weapon_mount.transform = vis._grip_carry
 		var disc := MeshInstance3D.new()
 		var cm := CylinderMesh.new()
 		cm.top_radius = 0.95

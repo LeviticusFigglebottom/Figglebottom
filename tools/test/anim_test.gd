@@ -265,8 +265,12 @@ func _run() -> void:
 		var ccls := HumanoidLib.weapon_class(String(cw.get("kit", wid)))
 		check(prig.clip_set == ccls and ccls != "", "%s fights with the '%s' clip set" % [wid, ccls])
 		var cmc := HumanoidLib.class_mount_cfg("weapon", ccls)
-		check(player.vis.weapon_mount.rotation_degrees.is_equal_approx(
-				Vector3(cmc["rot"][0], cmc["rot"][1], cmc["rot"][2])), "%s sits in the %s grip" % [wid, ccls])
+		player.vis.play("block", 0.01)
+		await ticks(30)
+		check(player.vis.weapon_mount.rotation_degrees.distance_to(
+				Vector3(cmc["rot"][0], cmc["rot"][1], cmc["rot"][2])) < 0.5, "%s turns into the %s grip for an action" % [wid, ccls])
+		player.vis.back_to_idle(0.01)
+		await ticks(3)
 		var cms: Dictionary = DB.moveset(String(cw.get("moveset", "longsword")))
 		var cmoves: Array = (cms["lights"] as Array).duplicate()
 		cmoves.append(cms["heavy"])

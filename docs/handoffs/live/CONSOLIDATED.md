@@ -24,7 +24,14 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/fb-look` | `art/unified-look` | The whole-world material/texture pass, plus trees and hedges |
 | `/home/user/figglebottom` | `feat/reach-coldwell` | Shepherd's Reach and the Coldwell worlds, the ending hook, the THAW sky |
 | `/home/user/fb-enc5` | `feat/release-scenes` | NPC sit support; the Lowe, Kettle and Tarnhall post-release THAW scenes |
+| `/home/user/fb-anim` | `feat/combat-anims` | Player combat animation: the shared combat clip library (ADR 0011). Ready to merge; see "Combat animation" below |
 | Owner's PC | `gpu/*` | `LOCAL_GPU_TASKS.md`. Nothing has been received yet |
+
+## Combat animation (feat/combat-anims, ADR 0011)
+- **State:** `assets/anim/combat_lib.glb` holds 46 clips (CC0 Quaternius mocap retargeted, two-handed re-poses, hand-keyed thrusts/riposte/parries/guards/reacts/bow). The Bearer picks clips by weapon class (`clip_meta.json` → `weapon_class`, `clip_sets`, `mounts."weapon@<class>"`). No Tripo credits spent, no feel numbers changed. `anim` (143), `combat`, `deltas`, `encounters`, `smoke` pass.
+- **Rebuild:** `tools/anim/fetch_ual.sh`, then `$BPY tools/anim/build_combat_lib.py`, then `godot --headless --path . --import`. Look with `tools/anim/sheets.sh attack_l1@hewing_blade attack_h@greatblade ...` (sheets in `docs/screens/anim_<class>_<clip>_sheet.png`); in-game with `tools/shot.sh OUT.png --area=saltfell_steading --state=rime --shot-stage=bearer_light1|bearer_light2|bearer_heavy|bearer_sprint [--shot-weapon=greatblade]`.
+- **Next:** opt armed humanoid foes in (`"clip_sets": true` on the model row, then map their `atk_*` names in a set); a true two-handed capture would beat the re-posed `gs_*` set; the swing trail is hard to see in the in-game shots and wants a look.
+- **Known weak spots:** block-hit reacts are small; the bow draw's left hand is open; blades dip through the floor at the bottom of the heavy smash and the dive roll.
 
 ## Next exact step
 1. Merge each branch above once its tests pass.

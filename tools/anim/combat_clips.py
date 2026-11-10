@@ -136,8 +136,8 @@ def _hit_on(rig, fps, arm="LeftArm"):
     back over bent knees, rebounds past the pose and settles."""
     return rig.clip([
         (0.00, "inout", {"hips": [0] * 6, "chest": [0, 0, 0], "head": [0, 0], "bones": {arm: [0, 0, 0]}}),
-        (0.06, "out", {"hips": [0, -0.09, -0.07, -4, -5, 0], "chest": [-6, -9, 0], "head": [0, 9],
-                       "bones": {arm: [-14, -10, 0]}}),
+        (0.06, "out", {"hips": [0, -0.12, -0.09, -5, -6, 0], "chest": [-8, -11, 0], "head": [0, 10],
+                       "bones": {arm: [-22, -14, 0]}}),
         (0.20, "inout", {"hips": [0, 0.02, -0.02, 1, 2, 0], "chest": [2, 3, 0], "head": [0, -2],
                          "bones": {arm: [4, 3, 0]}}),
         (0.42, "inout", {"hips": [0] * 6, "chest": [0, 0, 0], "head": [0, 0], "bones": {arm: [0, 0, 0]}}),
@@ -208,7 +208,7 @@ def react_back(c, base=None, grip="onehand"):
         (0.07, "out", {"hips": [0, 0.18, 0.04, 8, -6, 0], "chest": [10, -14, 0], "head": [0, -26],
                        "footL": [0, 0.16, 0.07, 0, -8],
                        "bones": {"RightArm": [-34, -24, 0], "LeftArm": [40, -24, 0]}}),
-        (0.20, "out", {"hips": [0, 0.30, -0.12, 10, 24, 0], "chest": [10, 30, 0], "head": [0, 18],
+        (0.20, "out", {"hips": [0, 0.30, -0.12, 10, 18, 0], "chest": [10, 22, 0], "head": [0, 12],
                        "footL": [0, 0.44, 0, 0, 0],
                        "bones": {"RightArm": [-44, 14, 0], "LeftArm": [50, 14, 0]}}),
         (0.42, "inout", {"hips": [0, 0.22, -0.12, 4, 14, 0], "chest": [2, 12, 0], "head": [0, 6],
@@ -259,7 +259,7 @@ def knockdown(c):
 
 # --------------------------------------------- two hands (greatblade, maul)
 HAFT_READY = {"hips": [0, 0, -0.02, -14, 2, 0], "chest": [-8, 3, 0], "head": [20, 0],
-              "weapon": [0.20, 0.24, 1.02, -0.22, 0.42, 0.88, 0.2, 1, 0], "left": -0.2,
+              "weapon": [0.30, 0.20, 1.00, 0.10, 0.30, 0.95, 0.2, 1, 0], "left": -0.2,
               "rpole": [0.7, -0.4, -0.6], "lpole": [-0.6, -0.1, -0.8]}
 
 
@@ -485,6 +485,12 @@ def bow_aim(c):
     return rig.clip([(0.0, "inout", BOW_DRAWN), (1.0, "inout", b), (2.0, "inout", BOW_DRAWN)], c.fps)
 
 
+def _carry(stance):
+    """The ready pose held: an arms-only layer keeps both hands on the haft
+    while the legs walk and run (clip_sets _carry)."""
+    return lambda c: A.hold(stance(c), 31)
+
+
 def _pa(fn):
     return lambda c: fn(c, "polearm")
 
@@ -508,6 +514,8 @@ def clips():
         # spear
         "sp_thrust_a": sp_thrust_a, "sp_thrust_b": sp_thrust_b, "sp_heavy": sp_heavy, "sp_dash": sp_dash,
         "sp_stab": sp_stab, "sp_guard": sp_guard, "sp_guard_hit": sp_guard_hit, "sp_parry": sp_parry,
+        "gs_carry": _carry(lambda c: c.haft_stance("twohand")), "pa_carry": _carry(lambda c: c.haft_stance("polearm")),
+        "sp_carry": _carry(lambda c: c.spear_stance()),
         # bow
         "bow_pull": bow_pull, "bow_aim": bow_aim,
     }

@@ -62,6 +62,10 @@ var _lean := Vector2.ZERO
 var _flinch_amp := 0.0
 var _flinch_phase := 0.0
 var _flinch_axis := Vector3(1, 0, 0)
+var _grip_act := Transform3D.IDENTITY
+var _grip_carry := Transform3D.IDENTITY
+var _grip_w := 0.0
+var _has_carry := false
 var _antic_t := 0.0
 var _antic_dur := 0.0
 var _antic_deg := 0.0
@@ -194,6 +198,10 @@ func _process(dt: float) -> void:
 		body.rotation = _flinch_axis * wave
 	elif body.rotation != Vector3.ZERO:
 		body.rotation = Vector3.ZERO
+	if _has_carry and weapon_mount != null:
+		# the hand turns the weapon into its fighting grip as an action takes the rig
+		_grip_w = move_toward(_grip_w, 1.0 if rig.action_active() else 0.0, dt * 9.0)
+		weapon_mount.transform = _grip_carry.interpolate_with(_grip_act, smoothstep(0.0, 1.0, _grip_w))
 	# strike polish, added on top of the clip: a lean away through the
 	# wind-up that is spent by the contact frame, and a short dig forward on
 	# a landed hit. Both run on scaled time, so Juice's hit-stop freezes the
@@ -315,6 +323,12 @@ func set_weapon(kit_id: String) -> void:
 	if rig != null and bool(HumanoidLib.model_cfg(model_id).get("clip_sets", false)):
 		# the weapon's class picks the clips that answer attack_l1, block, ...
 		rig.clip_set = HumanoidLib.weapon_class(kit_id)
+		# a two-handed class keeps both hands on the haft through locomotion
+		var cc := HumanoidLib.candidates("_carry", rig.clip_set)
+		if cc.size() > 1 and rig.has_clip(String(cc[0])):
+			rig.set_carry(String(cc[0]), _carry_bones())
+		else:
+			rig.set_carry("")
 	if kit_id != "":
 		var w: Node3D = HumanoidLib.weapon_instance(kit_id) if rig != null else null
 		weapon_mount.add_child(w if w != null else KitLib.instance(kit_id))
@@ -329,6 +343,18 @@ func apply_carry_pose(clip := "") -> void:
 		return
 	if rig != null:
 		_apply_slot(weapon_mount)   # the grip is data; humanoid clips carry the blade
+		_grip_act = weapon_mount.transform
+		# between actions the weapon is carried, not presented (carry@<class>)
+		var cc := HumanoidLib.class_mount_cfg("carry", rig.clip_set)
+		_grip_carry = _grip_act
+		_has_carry = rig.clip_set != "" and not cc.is_empty()
+		if _has_carry:
+			var cp: Array = cc.get("pos", [0, 0, 0])
+			var cr: Array = cc.get("rot", [0, 0, 0])
+			_grip_carry = Transform3D(Basis.from_euler(Vector3(deg_to_rad(cr[0]), deg_to_rad(cr[1]), deg_to_rad(cr[2]))),
+					Vector3(cp[0], cp[1], cp[2]))
+			_grip_w = 1.0 if rig.action_active() else 0.0
+			weapon_mount.transform = _grip_carry.interpolate_with(_grip_act, _grip_w)
 		return
 	var c: String = clip
 	if c == "" and anim != null:
@@ -337,6 +363,16 @@ func apply_carry_pose(clip := "") -> void:
 		weapon_mount.rotation_degrees = Vector3.ZERO
 	else:
 		weapon_mount.rotation_degrees = Vector3(CARRY_POSE.get(weapon_kit, Vector3.ZERO))
+
+func _carry_bones() -> Array:
+	var out := []
+	for side in ["Left", "Right"]:
+		for b in ["Shoulder", "Arm", "ForeArm", "Hand"]:
+			out.append("mixamorig_%s%s" % [side, b])
+		for f in ["Thumb", "Index", "Middle", "Ring", "Pinky"]:
+			for i in [1, 2, 3]:
+				out.append("mixamorig_%sHand%s%d" % [side, f, i])
+	return out
 
 const _SWING_TRAIL := preload("res://src/chars/swing_trail.gd")
 
