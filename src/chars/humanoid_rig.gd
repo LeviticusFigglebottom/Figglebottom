@@ -20,6 +20,9 @@ const LOCO_CLIPS := ["idle", "walk", "run"]
 
 var model_id := ""
 var own: AnimationLibrary = null
+## Weapon-class clip set ("onehand", "twohand", "spear", ...): its clips
+## answer the game's clip names first (clip_meta.json clip_sets).
+var clip_set := ""
 
 var _slot := 0                     # slot the current action plays in
 var _clip := ["", ""]              # game clip name per slot
@@ -106,7 +109,7 @@ func setup(id: String, skel: Skeleton3D) -> void:
 func qualified(clip: String) -> String:
 	var shared := HumanoidLib.shared_library()
 	var fallback := ""
-	for c in HumanoidLib.candidates(clip):
+	for c in HumanoidLib.candidates(clip, clip_set):
 		var hits := []
 		if own != null and own.has_animation(c):
 			hits.append("own/" + c)
@@ -216,6 +219,14 @@ func _start_action(clip: String, blend: float, rate: float, start: float, end: f
 	_w_act_speed = 1.0 / b
 	_active = true
 
+## Hold `clip` at clip time `t`, fully blended in (pose sheets, tests).
+func freeze_at(clip: String, t: float) -> void:
+	_start_action(clip, 0.001, 0.0, t, t + 1.0)
+	_w_act = 1.0
+	_w_slot = float(_slot)
+	_push()
+	advance(0.0)
+
 ## Hand the rig back to locomotion.
 func stop_action(blend := 0.2) -> void:
 	_active = false
@@ -291,7 +302,9 @@ func _push() -> void:
 	set("parameters/act0_seek/seek_request", _t[0])
 	set("parameters/act1_seek/seek_request", _t[1])
 	set("parameters/slot/blend_amount", _w_slot)
-	set("parameters/mix/blend_amount", _w_act)
+	# into an action the weight ramps straight (snappy); handing back to
+	# locomotion it eases, so a recovery settles instead of snapping upright
+	set("parameters/mix/blend_amount", _w_act if _w_act_to > 0.5 else smoothstep(0.0, 1.0, _w_act))
 	# the carry pose holds the arms whenever no action owns them
 	var cw := 0.0
 	if _carry != "":

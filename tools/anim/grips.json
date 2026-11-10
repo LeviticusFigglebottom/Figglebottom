@@ -1,0 +1,84 @@
+{
+ "_doc": "How each weapon class sits in the right hand, in REST (T-pose) character terms [right, forward, up]: `blade` is where the weapon's +Y points, `edge` where its +Z (cutting edge) faces, `pos` the grip point in hand-bone space (Godot: x forward, y toward the fingers, z into the palm). `left_at` is where the left hand closes on the haft, metres along the blade from the grip (negative = toward the pommel). tools/anim/grip.py turns this into clip_meta.json mounts (weapon@<class>); build_combat_lib.py poses hands with the same numbers. `carry_blade`/`carry_edge` are the same for the grip a class is CARRIED in while no action owns the rig (arms hanging: rest-right is down, rest-up is out to the right), written as mounts carry@<class>; a class without them carries in the plain weapon mount.",
+ "onehand": {
+  "blade": [
+   0.26,
+   0.966,
+   0.0
+  ],
+  "edge": [
+   1.0,
+   0.0,
+   0.0
+  ],
+  "pos": [
+   0.03,
+   0.085,
+   0.0
+  ],
+  "carry_blade": [
+   0.707,
+   0.0,
+   0.707
+  ],
+  "carry_edge": [
+   0.707,
+   0.0,
+   -0.707
+  ]
+ },
+ "twohand": {
+  "blade": [
+   0.26,
+   0.966,
+   0.0
+  ],
+  "edge": [
+   1.0,
+   0.0,
+   0.0
+  ],
+  "pos": [
+   0.03,
+   0.085,
+   0.0
+  ],
+  "left_at": -0.2
+ },
+ "polearm": {
+  "blade": [
+   0.26,
+   0.966,
+   0.0
+  ],
+  "edge": [
+   1.0,
+   0.0,
+   0.0
+  ],
+  "pos": [
+   0.03,
+   0.085,
+   0.0
+  ],
+  "left_at": -0.45
+ },
+ "spear": {
+  "blade": [
+   0.26,
+   0.966,
+   0.0
+  ],
+  "edge": [
+   1.0,
+   0.0,
+   0.0
+  ],
+  "pos": [
+   0.03,
+   0.085,
+   0.0
+  ],
+  "left_at": 0.55
+ }
+}
