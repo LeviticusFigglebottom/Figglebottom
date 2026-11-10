@@ -162,6 +162,10 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 			hd.yaw, y, 2 if not opens.is_empty() else 0, dws)
 	hd.attach(root)
 	_hd = null
+	# the yard: woodpiles, barrels, a bench by the door (HouseYard)
+	var yard_n := HouseYard.build(area, hd, tag)
+	if "--house-stats" in OS.get_cmdline_user_args():
+		print("[yard] %s %s: %d props" % [hd.id, hd.style, yard_n])
 	if tag == "base":
 		# RIME: snow banked against the walls (rime-only, melts with the wave)
 		var dm := hd.build_drifts(area.terrain)

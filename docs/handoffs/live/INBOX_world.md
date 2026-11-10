@@ -2,6 +2,18 @@
 
 Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based on `origin/fix/slice-qa`). Newest entry at the top.
 
+## 2026-11-10 (7): the owner's report, directly to this session
+
+The owner wrote to me: terrain you can clip through, ditches you cannot get out of, bosses with gaps in their models, and areas that want more props and points of interest. This crosses lanes (boss assets, terrain tools, area_builder, test tools); I took it because the owner asked.
+
+- **Traps:** new audit check, `tools/fix_traps.py`, `data/terrain/traps/*.json`, `src/world/trap_warden.gd`, suite `traps`. Five regions found and guarded.
+- **Barrow mounds** collide as the visible mound.
+- **Bosses:** Netmender welded and double-sided, `generate_lods=false` on all seven, dissolve shader double-sided.
+- **Yards:** `src/world/house_yard.gd` places colliding kit props round houses.
+- **Not done:** per-region POIs and props away from houses (generator authoring).
+
+Details in `docs/art/WORLD_FIDELITY.md`, "Third pass". Suites green here: smoke, houses, traps, steading, tarnhall, encounters, tarnhall_encounters, lowe, lowe_encounters, kettle, boss, anim; both audits clean.
+
 ## 2026-11-10 (6): CI on this branch
 
 **Run 42913988699 at `1b313ff` (main merged in): nothing of mine fails.**

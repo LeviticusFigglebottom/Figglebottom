@@ -162,6 +162,36 @@ The GPU gallery (`docs/gallery_gpu/v2/`) showed four things in this lane. None o
 - The horizon sheets still end in straight edges where the far grid steps.
 - The stretched texture on near-vertical faces is the 1 m grid: a cliff face spans few vertices. Tessellation near the camera was not attempted.
 
+## Third pass: traps, boss models, yards (owner's report)
+
+**Traps.** `tools/audit_edges.py` now also finds ground the Bearer can drop or slide onto and cannot walk back out of (a step up is limited to the walk slope, a step down is free). It found five regions:
+
+| Area | Where | Size |
+|---|---|---|
+| Kettle Fjord | x -200..-151, z -298..-289 (the shore at the fjord mouth) | 266 m² |
+| Lowe Barrows | x -128..-19, z -320..-251 (the north slope down to the sea) | 2,419 m² |
+| Lowe Barrows | x 71..85, z -85..-80 (a chute) | 53 m² |
+| Saltfell | x -111..-67, z -171..115 (the shore under the west cliffs) | 1,842 m² |
+| Saltfell | x -83..70, z -83..-59 (ledges in the gully north of the longhouse) | 732 m² |
+
+`tools/fix_traps.py` writes them per state to `data/terrain/traps/<area>.json`. In game a `TrapWarden` remembers the last safe ground the Bearer stood on; if he stands in a trap for `hazard/strand_seconds` (2.2 s) he is set back there at a cost of `hazard/strand_damage` (12 % of health, never the last of it). Falling through or crossing a trap does nothing. The audit counts marked cells as guarded and fails on any trap that is not marked, so a new ditch cannot land unnoticed. Suite: `traps` (22 checks).
+
+A ramp of fill was tried first (`fix_traps.py` still has it, with `terrain_patch.py` applied by every terrain generator). The Kettle ramp did not close its trap and the other four need 11 to 25 m of fill, so none is in use.
+
+**Clipping.** Barrow mounds now collide as the mound's own triangles (they were boxes that stopped short of the turf at the shoulders and stood proud of it at the ends). I could not play the game, so other spots where the ground can be walked through were not found by this pass.
+
+**Boss models.**
+
+- The Netmender was the one boss stored as loose triangles with a one-sided material. `tools/art/weld_glb.py` snapped corners within 1.5 mm to one position and one set of skin weights (6,739 corners) and made her double-sided, like the other six.
+- All seven bosses import with `generate_lods=false`: importer-made LODs crack a skinned, seam-split mesh at fighting distance.
+- `frost_dissolve.gdshader` is `cull_disabled`: it used to cull the backs of the double-sided bodies from the moment of death.
+
+Checked in a still only (`boss` and `anim` suites pass). Whether gaps remain in motion needs a look in game.
+
+**Yards.** `HouseYard` dresses the ground round every house with KitLib's modelled props through `AreaBuilder._piece` (so they collide): woodpiles, barrels, a bench, crates and sacks at halls, stores and byres; creels and rope at sheds. It skips doors, corners, anything the area already placed, and ground that is not level with the floor. That is 27 props at Saltfell and 15 at Tarnhall; the Kettle fish-houses and the Coldwell well-houses get none because they stand on decks and ledges.
+
+**Not done:** new points of interest and denser props away from houses. That is authoring per region in the area generators (`tools/gen_*.py`), and I did not start it.
+
 ## What is still synthetic
 
 - **Shadow sides at dusk are very dark**, on houses and on barrow facades alike. That is the sun and ambient balance, not the buildings; it was the same before. It wants SDFGI bounce (tier 2) or a lift in the THAW fill.
