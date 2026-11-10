@@ -1,8 +1,92 @@
-# Real-GPU visual diff (Job 2)
+# Real-GPU visual review
+
+## Job 5 (2026-11-10): the new look at player-eye height, all seven areas
+
+_Branch `gpu/gallery-2`, on `main` `77721c1` (includes `gpu/perf-2`). RX 9070 XT, q2 (SDFGI, SSIL, SSR, volumetric fog), 1920×1080, HUD hidden._
+
+### What was rendered
+
+- **84 shots in `docs/gallery_gpu/v2/`:** 42 viewpoints × THAW/RIME. JPEG q85; the lossless PNGs stay in `build/gallery_v2/`.
+- **Cameras** come from `tools/gallery_v2_views.py`, generated from each area's JSON so new areas need no edits:
+  - `<area>_eye_<point>`: 1.7 m over the ground (eye height) at the start, every hearth and every frost veil, looking towards the middle of the area's nav box.
+  - `<area>_vista`: 26 m up and 30 m behind the start.
+  - Three views where that rule hits rock or a wall are hand-set (`OVERRIDES` in the script).
+- **Reproduce:**
+  ```
+  python3 tools/gallery_v2_views.py > build/gallery_v2_views.txt
+  VIEWS_FILE=build/gallery_v2_views.txt PNG=build/gallery_v2 JPG=docs/gallery_gpu/v2 EXTRA=--shot-nohud tools/gallery_gpu.sh
+  ```
+
+### What still looks synthetic, ranked per region (worst first)
+
+The owner's complaint is procedural assets that clash with the Tripo models. Each entry names the shot to look at. "Primitive" means a box, cone, sphere or flat card that is visibly one.
+
+**Saltfell Steading**
+1. **Primitive props: boxes for stone and slabs.** The slab in the boat shed (`saltfell_steading_eye_hs_boat_shed_*`) and the salt-cutting blocks in the yard are plain cuboids with a stretched rock texture, sitting next to the Tripo hound.
+2. **The flame is a white cone** on the iron stand (`…_eye_hs_long_hearth_*`), the same in both states. It reads as a placeholder beside the textured hall.
+3. **The RIME frost floor is a diamond lattice** (`…_eye_hs_long_hearth_rime`): a regular tiled pattern over the planks, and the same lattice on the door veil. Nothing natural repeats like that.
+4. **The snow is featureless.** RIME ground is flat white, broken only by small dark pebbles that look pasted on (`…_eye_hs_salt_house_rime`, `…_eye_start_rime`). The drift by the start is one smooth cone.
+5. **The cliffs are banded.** The terrain's cliff texture repeats in even horizontal strata (`…_eye_start_thaw`).
+
+**Lowe Barrows**
+1. **The peat drying stacks are black untextured boxes** (`lowe_barrows_eye_hs_open_barrow_*`, `…_open_barrow_veil_*`): dozens of near-black cuboids in rows. **The worst thing in the region.**
+2. **Polygon cloud shards in the sky.** Pale flat triangles hang in the sky (`…_eye_hs_drying_stacks_thaw`, `…_eye_hs_open_barrow_thaw`). The same shards show in Shepherd's Reach and Coldwell; see the cross-cutting list.
+3. **The boulders look glassy.** The big rock in `…_eye_hs_drying_stacks_*` is so specular it reads as glass or ice in THAW.
+4. **The RIME ground** is flat white with scattered pebbles, as in Saltfell.
+
+**Kettle Fjord**
+1. **The fjord walls are huge flat facets** with a vertically stretched texture (`kettle_fjord_vista_*`, `…_eye_hs_fish_houses_*`). The spires read as extruded polygons. **The worst thing in the region.**
+2. **A white triangular shard** sticks out of the wall at the start (`…_eye_start_rime`) and at the landing. It is a single flat-shaded wedge.
+3. **The frost veil is a flat opaque card** when seen edge-on (`…_eye_breathing_hole_veil_rime`): a cream plane filling a third of the frame.
+4. **Light: THAW blows out facing the sun at the Breathing Hole**, and the gorge shadow at the start is crushed to black (`…_eye_start_thaw`). This is exposure and bloom, not an asset.
+
+**Tarnhall**
+1. **The perfect cube** on the causeway (`tarnhall_eye_hs_tarn_causeway_*`), granite-textured, at eye level in the middle of the road.
+2. **The fire on the long hearth is a white cone** (`…_eye_hs_long_table_*`), as at Saltfell. In the same shot the benches are boxes and the candles are white cubes.
+3. **The gorge walls are striated** with a stretched texture (`tarnhall_vista_*`).
+4. **The Tarn Steps fog pocket (Job 4) reads as brown smog in THAW** (`…_eye_hs_tarn_steps_thaw`). It is fine in RIME. Fixed on this branch: THAW density 0.02 → 0.006 (see below).
+
+**Thornwold**
+1. **The RIME frozen thorn is a heap of flat glassy shards** (`thornwold_eye_hs_drove_road_rime`): dozens of untextured gradient planes that clip through each other at eye level. **The worst single thing in the game today.**
+2. **The RIME hedges are stacked card strips** (`…_eye_hedge_veil_rime`, `…_eye_hs_outer_ring_rime`): the frosted hedge walls read as repeated horizontal bands.
+3. **The THAW fence posts are bright orange boxes** with stretched wood (`…_eye_hs_drove_road_thaw`), clashing with the Tripo trees behind them.
+4. **The charcoal clamp is a dome with green dots** (`…_eye_hs_colliers_clearing_rime`).
+5. **A Tripo birch, close up** (`…_eye_hs_outer_ring_*`): the trunk texture is low-res and the base has a hard dark band. This one is a Tripo asset, noted for honesty.
+6. **Light:** the THAW forest floor goes black under the canopy (`…_eye_hedge_veil_thaw`, `…_eye_hs_the_pine_thaw`).
+
+**Shepherd's Reach**
+1. **The sheep are eggs on sticks** (`shepherds_reach_eye_hs_shielings_thaw`): a smooth beige ellipsoid on four box legs, in flocks of dozens (`…_eye_fold_veil_rime`). **The worst thing in the region**, and the most visible procedural model in the game.
+2. **The fell flanks smear.** The steep slopes stretch the grass and rock textures into a feather or wing pattern (`shepherds_reach_vista_*`).
+3. **Polygon cloud shards in the sky** (`…_eye_hs_shielings_thaw`).
+4. **Cut rock ledges are faceted boxes** (`…_eye_fold_veil_*`).
+
+**Coldwell**
+1. **Hard flat horizon planes.** Big untextured grey and green sheets cut the skyline with straight edges (`coldwell_eye_hs_wellhead_steps_*`, `…_eye_wellhead_veil_thaw`, and the right side of `coldwell_vista_*`). **The worst thing in the region.**
+2. **The Upwater is a flat ribbon with white streaks**, with no blend into its banks (`…_eye_wellhead_veil_thaw`, `…_eye_start_thaw`).
+3. **The peak is a smooth extruded pyramid** with tiled stone (`…_eye_hs_ice_falls_*`, `…_eye_start_*`).
+4. **The RIME sun disc has a dark ring round it** (`…_eye_hs_wellhead_steps_rime`, `…_eye_wellhead_veil_rime`), a sky-shader artefact.
+5. **A box rock at the frame edge** (`…_eye_hs_upwater_*`).
+
+### Cross-cutting, for art/look-pass-2 (most impact first)
+
+1. **Primitive stand-ins:** boxes (peat stacks, slabs, causeway cube, benches, candles), cone flames, and the egg sheep. They are the clearest clash with the Tripo models, and each is a small, well-bounded asset swap.
+2. **Rime constructs:** Thornwold's shard heap and card hedges, Saltfell's diamond-lattice frost and door veil, frost veils seen edge-on. RIME is half the game, and these look the most generated.
+3. **Terrain cliffs:** stretched triplanar striping on steep faces, Kettle's faceted spires, Coldwell's flat horizon planes, the Reach's smeared flanks.
+4. **Sky:** flat polygon cloud shards (Lowe, the Reach, Coldwell, Saltfell), and the dark-ringed RIME sun in Coldwell.
+5. **RIME ground:** flat white snow with pasted pebbles. A snow normal/detail map and drift breakup would lift every RIME shot.
+6. **Light** (not assets): eye-height shots towards a low sun blow out (bloom and the sun disc), and THAW shadow under the canopy or in deep gorges crushes to black. Worth a look at exposure, SSIL and fill once the assets are in.
+
+### What holds up
+
+The Tripo characters, hound and trees at mid distance; the pebble beaches; the plank halls' textures; the q2 water sheen (restored in Job 4); the volumetric fog in Kettle and Thornwold RIME.
+
+---
+
+## Job 2 (2026-11-08): real-GPU visual diff
 
 _Rendered 2026-11-07/08 on the owner's PC: AMD RX 9070 XT, i9-12900K, Windows 10, Godot 4.7.2 stable, Forward+, 1920×1080. Branch `gpu/gallery`, based on main `adab65a`, with the textures VRAM-compressed as on `gpu/perf`._
 
-## What was rendered
+### What was rendered
 
 - **Shots:** `docs/gallery_gpu/<view>_<state>.jpg`. That is 18 viewpoints × THAW and RIME = 36 shots, at quality 2, which is what a real GPU gets by default.
 - **Cameras:** these are the exact cameras of the area shots in `docs/screens`. No script recorded those cameras, so I read them back from the pose line each lavapipe shot prints in the corner (`src/ui/hud.gd`).
@@ -14,7 +98,7 @@ _Rendered 2026-11-07/08 on the owner's PC: AMD RX 9070 XT, i9-12900K, Windows 10
 - **Same-revision lavapipe pairs:** the reference shots in `docs/screens` come from older revisions, mostly the evening of 11-07. To get lavapipe shots from the same revision and cameras, run this in a cloud session:
   `WRAP='xvfb-run -a -s "-screen 0 1920x1080x24"' PNG=build/gallery_lvp JPG=build/gallery_lvp tools/gallery_gpu.sh`
 
-## How to read the comparison
+### How to read the comparison
 
 The lavapipe shots differ from these in two ways, and only the second is about hardware.
 
@@ -26,7 +110,7 @@ The lavapipe shots differ from these in two ways, and only the second is about h
    - The Lowe bridge is raised unless `lowe_bridge_down` is set. The manifest now sets it for the bridge view.
 2. **Renderer and tier.** The lavapipe shots ran at quality 1, because headless auto-detect gives 1. A real GPU auto-selects **quality 2**, which adds SSIL, SSR and SDFGI.
 
-## Findings
+### Findings
 
 ### 1. SDFGI makes open water dark and flat at quality 2 (look bug, affects players by default)
 
@@ -65,7 +149,7 @@ The lavapipe shots differ from these in two ways, and only the second is about h
 - **Shader compile hitches:** none are visible in the stills. The perf tour (`PERF_GPU.md`) saw no hitches over 33 ms except one or two at q2 at the Saltfell hall, probably an SDFGI cascade update after the camera jump.
 - **Texture compression:** with all model textures VRAM-compressed (`gpu/perf`), I see no BC block artefacts at gallery distance.
 
-## Per-view notes (GPU q2 against lavapipe)
+### Per-view notes (GPU q2 against lavapipe)
 
 | View | Notes |
 |---|---|
