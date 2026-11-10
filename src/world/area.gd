@@ -65,6 +65,16 @@ func apply_state(s: RH.WState) -> void:
 	# state-aware entities (hearth flames, doors, spawners) react themselves
 	get_tree().call_group(RH.GROUP_STATE_LISTENERS, "on_world_state", area_id, s)
 
+## A node attached after a state was applied (AreaBuilder.sync_flagged): if
+## its layer is the one put away, its bodies are put away with it. Sight and
+## processing it takes from the layer.
+func settle_new(node: Node3D, state_tag: String) -> void:
+	if _applied < 0:
+		return
+	var rime_on := _applied == RH.WState.RIME
+	if (state_tag == "thaw" and rime_on) or (state_tag == "rime" and not rime_on):
+		_set_layer_collision(node, false)
+
 ## During the wave both layers are visible (shader dissolve owns pixel
 ## presence); collision swaps immediately to the target so routes change.
 func pre_transition(target: RH.WState) -> void:

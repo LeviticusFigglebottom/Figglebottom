@@ -333,6 +333,8 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 		p.enter_rest()
 		p.heal_full()
 	AudioDirector.sfx(AudioDirector.foley("coal_catch"), -3.0)   # the coal takes in the stone
+	if area != null:
+		AreaBuilder.sync_flagged(area)   # what the story has changed since the area was built
 
 	if target != cur and area != null:
 		await get_tree().create_timer(1.3).timeout   # kneel beat first
