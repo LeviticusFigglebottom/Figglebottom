@@ -4281,7 +4281,7 @@
   "f_oarsman_back_stroke": {
    "start": 0.0,
    "contact": 0.5,
-   "end": 1.367
+   "end": 1.433
   },
   "f_oarsman_ship_oars": {
    "start": 0.0,
@@ -4302,6 +4302,11 @@
    "contact": 0.55,
    "end": 1.433
   },
+  "f_barrow_sleeper_door_fall": {
+   "start": 0.0,
+   "contact": 1.3,
+   "end": 3.5
+  },
   "f_barrow_sleeper_stagger": {
    "start": 0.0,
    "end": 0.7
@@ -4309,17 +4314,17 @@
   "f_keener_breath_note": {
    "start": 0.0,
    "contact": 0.9,
-   "end": 1.767
+   "end": 1.9
   },
   "f_keener_keen": {
    "start": 0.0,
    "contact": 1.5,
-   "end": 2.367
+   "end": 2.533
   },
   "f_keener_hush": {
    "start": 0.0,
    "contact": 0.7,
-   "end": 1.567
+   "end": 1.7
   },
   "f_keener_rouse": {
    "start": 0.0,
@@ -4333,7 +4338,7 @@
   "f_cairn_carrier_yoke_swing": {
    "start": 0.0,
    "contact": 1.0,
-   "end": 1.867
+   "end": 2.067
   },
   "f_cairn_carrier_set_stone": {
    "start": 0.0,
@@ -4419,7 +4424,7 @@
   "f_cupbearer_going_round": {
    "start": 0.0,
    "contact": 0.8,
-   "end": 1.667
+   "end": 2.467
   },
   "f_cupbearer_stagger": {
    "start": 0.0,
@@ -4466,12 +4471,27 @@
   "f_netmender_needle_stitch": {
    "start": 0.0,
    "contact": 0.6,
-   "end": 1.467
+   "end": 2.133
   },
   "f_netmender_one_hand_stitch": {
    "start": 0.0,
    "contact": 0.7,
-   "end": 1.567
+   "end": 1.9
+  },
+  "f_netmender_haul": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 2.433
+  },
+  "f_netmender_turn_away": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.967
+  },
+  "f_netmender_hold": {
+   "start": 0.0,
+   "contact": 2.0,
+   "end": 6.4
   },
   "f_netmender_cast": {
    "start": 0.0,
@@ -4498,6 +4518,15 @@
    "contact": 0.8,
    "end": 1.667
   },
+  "f_netmender_sit_mend": {
+   "start": 0.0,
+   "end": 6.0,
+   "loop": true
+  },
+  "f_netmender_sit_still": {
+   "start": 0.0,
+   "end": 4.2
+  },
   "f_netmender_stagger": {
    "start": 0.0,
    "end": 1.3
@@ -4505,17 +4534,32 @@
   "f_turfwright_spade_chop": {
    "start": 0.0,
    "contact": 0.8,
-   "end": 1.667
+   "end": 1.767
   },
   "f_turfwright_one_hand_chop": {
    "start": 0.0,
    "contact": 0.9,
-   "end": 1.767
+   "end": 1.867
   },
   "f_turfwright_drag_swing": {
    "start": 0.0,
    "contact": 0.9,
    "end": 1.767
+  },
+  "f_turfwright_back_drop": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 2.233
+  },
+  "f_turfwright_stack_sod": {
+   "start": 0.0,
+   "contact": 1.4,
+   "end": 2.4
+  },
+  "f_turfwright_last_turf": {
+   "start": 0.0,
+   "contact": 2.0,
+   "end": 3.0
   },
   "f_turfwright_sod_throw": {
    "start": 0.0,
@@ -4531,6 +4575,20 @@
    "start": 0.0,
    "contact": 0.9,
    "end": 1.767
+  },
+  "f_turfwright_turf_raise": {
+   "start": 0.0,
+   "end": 6.2,
+   "loop": true
+  },
+  "f_turfwright_lay_turf": {
+   "start": 0.0,
+   "end": 4.4
+  },
+  "f_turfwright_last_turf_hold": {
+   "start": 0.0,
+   "end": 4.0,
+   "loop": true
   },
   "f_turfwright_stagger": {
    "start": 0.0,
@@ -4551,10 +4609,29 @@
    "contact": 1.2,
    "end": 2.067
   },
+  "f_ice_cutter_ring_cut": {
+   "start": 0.0,
+   "contact": 1.3,
+   "end": 2.2
+  },
+  "f_ice_cutter_cut_fresh": {
+   "start": 0.0,
+   "contact": 2.0,
+   "end": 3.0
+  },
   "f_ice_cutter_dog_team": {
    "start": 0.0,
    "contact": 1.6,
    "end": 2.467
+  },
+  "f_ice_cutter_kneel_drill": {
+   "start": 0.0,
+   "end": 2.0,
+   "loop": true
+  },
+  "f_ice_cutter_rest_auger": {
+   "start": 0.0,
+   "end": 4.2
   },
   "f_ice_cutter_stagger": {
    "start": 0.0,
@@ -4575,6 +4652,30 @@
    "contact": 1.6,
    "end": 2.467
   },
+  "f_host_raise_guests": {
+   "start": 0.0,
+   "contact": 1.6,
+   "end": 3.367
+  },
+  "f_host_tip_horn": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.567
+  },
+  "f_host_pour": {
+   "start": 0.0,
+   "contact": 1.6,
+   "end": 2.8
+  },
+  "f_host_pour_horn": {
+   "start": 0.0,
+   "end": 7.4,
+   "loop": true
+  },
+  "f_host_host_sit": {
+   "start": 0.0,
+   "end": 5.0
+  },
   "f_host_stagger": {
    "start": 0.0,
    "end": 1.3
@@ -4593,6 +4694,30 @@
    "start": 0.0,
    "contact": 1.4,
    "end": 2.267
+  },
+  "f_hedgelayer_step_into": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.5
+  },
+  "f_hedgelayer_where_it_goes": {
+   "start": 0.0,
+   "contact": 1.6,
+   "end": 2.4
+  },
+  "f_hedgelayer_lay_stem": {
+   "start": 0.0,
+   "end": 4.8,
+   "loop": true
+  },
+  "f_hedgelayer_kneel_hands": {
+   "start": 0.0,
+   "end": 4.2
+  },
+  "f_hedgelayer_measure_gap": {
+   "start": 0.0,
+   "end": 7.6,
+   "loop": true
   },
   "f_hedgelayer_stagger": {
    "start": 0.0,
@@ -4920,6 +5045,9 @@
    "@back_fist": [
     "f_barrow_sleeper_back_fist"
    ],
+   "@door_fall": [
+    "f_barrow_sleeper_door_fall"
+   ],
    "stagger": [
     "f_barrow_sleeper_stagger"
    ],
@@ -5073,6 +5201,15 @@
    "@one_hand_stitch": [
     "f_netmender_one_hand_stitch"
    ],
+   "@haul": [
+    "f_netmender_haul"
+   ],
+   "@turn_away": [
+    "f_netmender_turn_away"
+   ],
+   "@hold": [
+    "f_netmender_hold"
+   ],
    "@cast": [
     "f_netmender_cast"
    ],
@@ -5088,6 +5225,12 @@
    "@mend_floor": [
     "f_netmender_mend_floor"
    ],
+   "sit_mend": [
+    "f_netmender_sit_mend"
+   ],
+   "sit_still": [
+    "f_netmender_sit_still"
+   ],
    "stagger": [
     "f_netmender_stagger"
    ]
@@ -5102,6 +5245,15 @@
    "@drag_swing": [
     "f_turfwright_drag_swing"
    ],
+   "@back_drop": [
+    "f_turfwright_back_drop"
+   ],
+   "@stack_sod": [
+    "f_turfwright_stack_sod"
+   ],
+   "@last_turf": [
+    "f_turfwright_last_turf"
+   ],
    "@sod_throw": [
     "f_turfwright_sod_throw"
    ],
@@ -5110,6 +5262,15 @@
    ],
    "@cross_cut": [
     "f_turfwright_cross_cut"
+   ],
+   "turf_raise": [
+    "f_turfwright_turf_raise"
+   ],
+   "lay_turf": [
+    "f_turfwright_lay_turf"
+   ],
+   "last_turf_hold": [
+    "f_turfwright_last_turf_hold"
    ],
    "stagger": [
     "f_turfwright_stagger"
@@ -5125,8 +5286,23 @@
    "@trace": [
     "f_ice_cutter_trace"
    ],
+   "@ring_cut": [
+    "f_ice_cutter_ring_cut"
+   ],
+   "@cut_fresh": [
+    "f_ice_cutter_cut_fresh"
+   ],
    "@dog_team": [
     "f_ice_cutter_dog_team"
+   ],
+   "ring_cut": [
+    "f_ice_cutter_ring_cut"
+   ],
+   "kneel_drill": [
+    "f_ice_cutter_kneel_drill"
+   ],
+   "rest_auger": [
+    "f_ice_cutter_rest_auger"
    ],
    "stagger": [
     "f_ice_cutter_stagger"
@@ -5142,6 +5318,30 @@
    "@bench_throw": [
     "f_host_bench_throw"
    ],
+   "@raise_guests": [
+    "f_host_raise_guests"
+   ],
+   "@tip_horn": [
+    "f_host_tip_horn"
+   ],
+   "@pour": [
+    "f_host_pour"
+   ],
+   "raise_guests": [
+    "f_host_raise_guests"
+   ],
+   "host_set_horn": [
+    "f_host_pour"
+   ],
+   "pour_horn": [
+    "f_host_pour_horn"
+   ],
+   "host_sit": [
+    "f_host_host_sit"
+   ],
+   "defeat": [
+    "f_host_host_sit"
+   ],
    "stagger": [
     "f_host_stagger"
    ]
@@ -5155,6 +5355,21 @@
    ],
    "@raise_wall": [
     "f_hedgelayer_raise_wall"
+   ],
+   "@step_into": [
+    "f_hedgelayer_step_into"
+   ],
+   "@where_it_goes": [
+    "f_hedgelayer_where_it_goes"
+   ],
+   "lay_stem": [
+    "f_hedgelayer_lay_stem"
+   ],
+   "kneel_hands": [
+    "f_hedgelayer_kneel_hands"
+   ],
+   "measure_gap": [
+    "f_hedgelayer_measure_gap"
    ],
    "stagger": [
     "f_hedgelayer_stagger"
