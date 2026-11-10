@@ -2,6 +2,22 @@
 
 Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based on `origin/fix/slice-qa`). Newest entry at the top.
 
+## 2026-11-10 (6): CI on this branch
+
+**Run 42913988699 at `1b313ff` (main merged in): nothing of mine fails.**
+
+| Suite | Result here | On `main` |
+|---|---|---|
+| `houses` (new) | 61 checks, 0 failures | not on `main` yet |
+| `fullslice` | 106 checks, 0 failures | passes at `fd881f6`, 26 failures at `65b65f6` |
+| `tarnhall_encounters` | 109 checks, 0 failures | 1 failure at `65b65f6` ("two benches") |
+| `deltas` | 1 failure: `saves carry save_version 3` | same failure at `fd881f6` and `65b65f6` |
+| `fullgame_lowe` | 1 failure: `lowe_barrows cleared, its memory as it was left` | same failure at `e3daf04`, `fd881f6`, `65b65f6` |
+
+- **`deltas` and `fullgame_lowe` fail on `main` itself**, with the same check each. They are not from this branch.
+- **`fullslice` is intermittent.** It failed once here at `3fb77f7` (the Bearer ended outside the longhouse wall and could not reach the Long Hearth: 14 failures) and passed at `ce498d8` and `1b313ff`. It also fails and passes on `main` between consecutive commits. On my box it failed with 20 failures, starting at the Strand float, well before any house. I found nothing of mine that collides (the `houses` suite asserts it), and the navmesh path from the needle to the Long Hearth is direct in both states.
+- **The run for `3ca9229`** (the real-GPU pass) was still going at 23:05Z. I will add its result.
+
 ## 2026-11-10 (5): your three messages, and the real-GPU priorities
 
 **Your messages of 19:56, 20:45 and 22:11 all reached me at 22:23.** I still cannot answer them: `send_message` to your session (and to `@parent`) is refused for want of a trusted device. This file is my only channel.
