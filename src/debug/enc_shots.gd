@@ -1063,3 +1063,376 @@ func _st_thorn_after(p: Player) -> void:
 		_hold_clock += get_process_delta_time()
 		if _hold_clock > 1.0:
 			_freeze()
+
+# ------------------------------------------------------------------ Shepherd's Reach
+## (shepherds_reach; docs/screens/reach_enc_*.png): reach_drover, reach_ram,
+## fellcaller_p1, fellcaller_p2, fellcaller_p3, reach_release (RIME);
+## reach_calder, reach_sigga (THAW), reach_after (THAW,
+## --flag=ks_fellcaller_released).
+func _st_reach_drover(p: Player) -> void:
+	_lowe_foe_stage(p, "drover", Vector3(626, 0, -292), "leg_hook", 0.92, 4.2, 5.4, 1.2, 1.0)
+
+func _st_reach_ram(p: Player) -> void:
+	_lowe_foe_stage(p, "frost_ram", Vector3(660, 0, -300), "charge", 0.9, 7.0, 6.4, 1.6, 0.8)
+
+## A Holdfast of the high country, woken and set in a phase; the Bearer `gap`
+## metres off in `dir` (x across, z out from the boss toward the arena's
+## middle); `atk` started and frozen `frac` of the way through its windup, or
+## `after` seconds past it. cam: metres to the side, up, and back along the axis.
+var _hc_set := false
+
+func _high_stage(p: Player, id: String, centre: Vector3, ph: int, atk: String, frac: float, gap: float,
+		after := -1.0, cam := Vector3(5.0, 3.2, 2.0), dir := Vector2(0.4, 1.0), fov := 58.0) -> Enemy:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_foe = _foe_near(id, centre)
+	var e := _foe as Enemy
+	if e == null:
+		return null
+	if not _hc_set:
+		_hc_set = true
+		_t0 = _clock
+		e.target = p
+		e.call("_stand_done")
+		e.phase = ph
+		for a in e.cfg.get("attacks", []):
+			e._cooldowns[String(a["id"])] = 99.0
+		var to_c := centre - e.global_position
+		to_c.y = 0
+		var out := to_c.normalized() if to_c.length() > 0.5 else Vector3(-1, 0, 0)
+		var at := e.global_position + (out.cross(Vector3.UP) * dir.x + out * dir.y).normalized() * gap
+		_place_player(p, Vector3(at.x, e.global_position.y + 0.3, at.z), 0.0)
+		e._set_state(Enemy.ES.COMBAT)
+	var mid := e.global_position.lerp(p.global_position, 0.5)
+	var axis := p.global_position - e.global_position
+	axis.y = 0
+	var side := axis.normalized().cross(Vector3.UP)
+	_cam.global_position = mid + side * cam.x + Vector3.UP * cam.y + axis.normalized() * cam.z
+	_cam.look_at(mid + Vector3.UP * 1.3, Vector3.UP)
+	_cam.fov = fov
+	var d := e.global_position - p.global_position
+	p.vis.rotation.y = atan2(-d.x, -d.z)
+	if _clock - _t0 < 0.8:
+		return e
+	if atk == "":
+		return e
+	if not _started:
+		_started = true
+		_t1 = _clock
+		e._cooldowns.clear()
+		e.target = p
+		e.vis.rotation.y = atan2(d.x, d.z)
+		e._begin_attack(e.attack_by_id(atk))
+		return e
+	if e.state == Enemy.ES.HOLD and e.state_t >= 1.2:
+		_freeze()
+	elif after >= 0.0:
+		var w := float(e.attack_by_id(atk)["windup"]) / e._speed_mult()
+		if _clock - _t1 >= w + after:
+			_freeze()
+	elif e.state == Enemy.ES.ATTACK and String(e._atk.get("id", "")) == atk \
+			and e.state_t >= float(e._atk["windup"]) / e._speed_mult() * frac:
+		_freeze()
+	return e
+
+const FOLD := Vector3(660.0, 0, -372.0)
+
+func _st_fellcaller_p1(p: Player) -> void:
+	_high_stage(p, "fellcaller", FOLD, 1, "rising_cry", 0.9, 5.0, -1.0, Vector3(6.0, 3.4, 1.5))
+
+func _st_fellcaller_p2(p: Player) -> void:
+	# the flock half-way down the strip
+	_high_stage(p, "fellcaller", FOLD, 2, "call_them_in", 0.0, 7.0, 0.42, Vector3(6.5, 5.0, 3.5))
+
+func _st_fellcaller_p3(p: Player) -> void:
+	var e := _high_stage(p, "fellcaller", FOLD, 3, "count_them", 1.0, 8.0, -1.0, Vector3(3.0, 2.6, 3.0), Vector2(0.9, 0.5))
+	if e != null and _f == 5:
+		e.global_position = (e as Fellcaller).stand_over_point()
+
+## Release: one soft call; the slope lies down. From above the fold wall,
+## looking down the trod at the flock.
+func _st_reach_release(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("fellcaller", FOLD)
+	var f := _foe as Fellcaller
+	if f == null:
+		return
+	if not f.released:
+		f.target = p
+		f._stand_done()
+		_place_player(p, f.global_position + Vector3(-3.0, 0.3, 3.0), 0.0)
+		f._die()
+		_t0 = _clock
+	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
+		(v as Node3D).visible = false
+	_cam.global_position = f.father_point() + Vector3(5.5, 3.2, -4.5)
+	_cam.look_at(f.father_point() + Vector3(-3.0, 0.3, 2.0), Vector3.UP)
+	_cam.fov = 60.0
+	if _clock - _t0 > 4.2:
+		_freeze()
+
+## The slope after: seventy sheep lying down (RIME, --flag=ks_fellcaller_released).
+func _st_reach_flock(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_place_player(p, _ground(636.0, -356.0) + Vector3.UP * 0.3, deg_to_rad(250))
+		_t0 = _clock
+	if _f > 3:
+		_cam.global_position = p.global_position + Vector3(-5.0, 3.4, 4.0)
+		_cam.look_at(Vector3(656, p.global_position.y + 1.0, -374), Vector3.UP)
+		_cam.fov = 62.0
+	if _f > 60:
+		_freeze()
+
+func _st_reach_calder(p: Player) -> void:
+	_npc_talk_stage(p, "old_calder", 3)
+
+func _st_reach_sigga(p: Player) -> void:
+	_npc_talk_stage(p, "sigga", 0)
+
+func _st_reach_after(p: Player) -> void:
+	_release_stage(p, "sigga_fold", Vector3(2.4, 1.7, 5.6), 0.9, 3)
+
+## Old Calder sat at the cairn, RIME, and her beside him calling.
+func _st_reach_cairn(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_foe = _foe_near("fellcaller", FOLD)
+	var f := _foe as Fellcaller
+	if f == null:
+		return
+	f.set_physics_process(false)   # (she goes on calling: the Bearer has not come near)
+	if _f == 4:
+		_place_player(p, f.father_point() + Vector3(-9.0, 0.3, 6.0), 0.0)
+	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
+		(v as Node3D).visible = false
+	_cam.global_position = f.father_point() + Vector3(-5.2, 1.7, 2.6)
+	_cam.look_at(f.father_point() + Vector3(-0.8, 1.3, 0.3), Vector3.UP)
+	_cam.fov = 52.0
+	if _f > 70:
+		_freeze()
+
+# ------------------------------------------------------------------ the Coldwell
+## (coldwell; docs/screens/coldwell_enc_*.png): cold_upwalker, cold_unsung,
+## leadvoice_sat, leadvoice_p1, leadvoice_p2, leadvoice_p3, cold_release
+## (RIME); cold_melt (THAW).
+const WELL := Vector3(922.0, 0, -478.0)
+
+func _st_cold_upwalker(p: Player) -> void:
+	_lowe_foe_stage(p, "upwalker", Vector3(790, 0, -430), "fall_forward", 0.9, 2.8, 5.0, 1.2, 1.0)
+
+func _st_cold_unsung(p: Player) -> void:
+	_lowe_foe_stage(p, "unsung", Vector3(906, 0, -484), "breath_in", 0.9, 2.0, 4.6, 1.0, 1.0)
+
+## Where the Bearer stands for her shots: south of her, clear of the well-housing.
+func _lv(p: Player, ph: int, atk: String, frac: float, gap: float, after := -1.0,
+		cam := Vector3(5.0, 3.0, 2.0), dir := Vector2(1.0, 0.25)) -> Leadvoice:
+	var l := _high_stage(p, "leadvoice", WELL, ph, atk, frac, gap, after, cam, dir, 56.0) as Leadvoice
+	return l
+
+func _st_leadvoice_sat(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_foe = _foe_near("leadvoice", WELL)
+	var l := _foe as Leadvoice
+	if l == null:
+		return
+	l.set_physics_process(false)
+	if _f == 4:
+		_place_player(p, l.global_position + Vector3(-2.0, 0.3, 7.5), 0.0)
+	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
+		(v as Node3D).visible = false
+	_cam.global_position = l.global_position + Vector3(-3.4, 1.8, 6.4)
+	_cam.look_at(l.global_position + Vector3.UP * 1.5, Vector3.UP)
+	_cam.fov = 50.0
+	var d := l.global_position - p.global_position
+	p.vis.rotation.y = atan2(-d.x, -d.z)
+	if _f > 80:
+		_freeze()
+
+func _st_leadvoice_p1(p: Player) -> void:
+	# the note gone by: the wall of rime standing between them
+	_lv(p, 1, "held_note", 0.0, 8.0, 0.5, Vector3(5.5, 3.2, 1.0))
+
+func _st_leadvoice_p2(p: Player) -> void:
+	# the band lit all the way round, the Bearer stood inside it, close to her
+	_lv(p, 2, "long_note", 0.92, 3.8, -1.0, Vector3(7.0, 7.5, 3.0))
+
+var _lv_sing := false
+
+func _st_leadvoice_p3(p: Player) -> void:
+	var l := _lv(p, 3, "", 0.0, 3.9, -1.0, Vector3(4.2, 1.9, 2.4))
+	if l == null:
+		return
+	if not _lv_sing and _clock - _t0 > 0.3:
+		_lv_sing = true
+		l.hp = l.max_hp * 0.25
+		l._p3_hp = l.hp
+		l.standing = true
+		l.vis.idle(0.0)
+		l.sing_zone.enabled = true
+		_t1 = _clock
+	if _lv_sing and not l.singing and _clock - _t1 > 1.2 and l.verses_sung == 0:
+		l.begin_verse(p)
+		_t1 = _clock
+	if l.singing and _clock - _t1 > 1.3:
+		_freeze()
+
+func _st_cold_release(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("leadvoice", WELL)
+	var l := _foe as Leadvoice
+	if l == null:
+		return
+	if not l.released:
+		l.target = p
+		l._stand_done()
+		_place_player(p, l.global_position + Vector3(-1.5, 0.3, 5.0), 0.0)
+		l.phase = 3
+		l.verses_sung = 3
+		l._release()
+		_t0 = _clock
+	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
+		(v as Node3D).visible = false
+	var d := l.global_position - p.global_position
+	p.vis.rotation.y = atan2(-d.x, -d.z)
+	_cam.global_position = p.global_position + Vector3(-2.6, 1.9, 2.6)
+	_cam.look_at(l.global_position.lerp(p.global_position, 0.45) + Vector3.UP * 0.9, Vector3.UP)
+	_cam.fov = 54.0
+	if _clock - _t0 > 4.0:
+		_freeze()
+
+func _st_cold_melt(p: Player) -> void:
+	_npc_talk_stage(p, "maren", 1, Vector3(-1.9, 0.6, 3.6))
+
+# ------------------------------------------------------------------ the endings
+## (coldwell, RIME, --flag=ks_leadvoice_released; docs/screens/ending_*.png):
+## ending_choice, ending_outsong_sing, ending_outsong_coal, ending_outsong_spring,
+## ending_kept, ending_kept_credits. And ending_credits (any area).
+func _ending_begin(p: Player, which: String) -> EndingDirector:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	var ec: Node = null
+	for c in get_tree().get_nodes_in_group("ending_choice"):
+		ec = c
+	if ec == null:
+		return null
+	if _f == 4:
+		for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+			if e is Leadvoice:
+				# as she is after the third verse
+				(e as Leadvoice).released = true
+				(e as Leadvoice).dead = true
+				(e as Leadvoice).set_physics_process(false)
+			elif e is Enemy and (e as Enemy).global_position.distance_to(ec.global_position) < 40.0:
+				(e as Enemy).queue_free()
+		for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
+			(v as Node3D).visible = false
+		var spot: Vector3 = ec.to_global(Vector3(-ec.spread * 0.5 if which != "hearth_kept" else ec.spread * 0.5, 0.3, 0))
+		var to: Vector3 = ec.spring_point() - spot
+		_place_player(p, spot, atan2(-to.x, -to.z))
+	if _f == 30 and which != "":
+		ec.choose(which)
+		_t0 = _clock
+	_cam.current = ec.director == null or not is_instance_valid(ec.director) or ec.director.cam == null
+	return ec.director if _f > 30 else null
+
+## The two places to stand, and her sat across the spring.
+func _st_ending_choice(p: Player) -> void:
+	_ending_begin(p, "")
+	var ec: Node = get_tree().get_first_node_in_group("ending_choice")
+	if ec == null or _f < 5:
+		return
+	_cam.global_position = ec.to_global(Vector3(-3.4, 2.3, 4.6))
+	_cam.look_at(ec.spring_point() + Vector3.UP * 1.0, Vector3.UP)
+	_cam.fov = 56.0
+	if _f > 70:
+		_freeze()
+
+func _ending_at(p: Player, which: String, beat: String, plus: float) -> void:
+	var d := _ending_begin(p, which)
+	if d == null:
+		return
+	if beat in d.beats:
+		if _t1 == 0.0:
+			_t1 = _clock
+		if _clock - _t1 >= plus:
+			_freeze()
+
+func _st_ending_outsong_sing(p: Player) -> void:
+	_ending_at(p, "outsong", "sing", 6.0)
+
+func _st_ending_outsong_coal(p: Player) -> void:
+	_ending_at(p, "outsong", "coal", 0.9)
+
+func _st_ending_outsong_wave(p: Player) -> void:
+	_ending_at(p, "outsong", "coal", 4.6)
+
+func _st_ending_outsong_spring(p: Player) -> void:
+	_ending_at(p, "outsong", "walk", 1.5)
+
+func _st_ending_kept(p: Player) -> void:
+	_ending_at(p, "hearth_kept", "sit", 3.5)
+
+func _st_ending_kept_credits(p: Player) -> void:
+	var d := _ending_begin(p, "hearth_kept")
+	if d != null and d.credits != null and is_instance_valid(d.credits):
+		if _t1 == 0.0:
+			_t1 = _clock
+			d.credits.show_at(13.0)
+		if _clock - _t1 > 9.0:
+			_freeze()
+
+## The Strand at Saltfell in spring (saltfell_steading, --flag=ending_outsong).
+func _st_ending_strand(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_place_player(p, _ground(-6.0, 57.0) + Vector3.UP * 0.1, deg_to_rad(200))
+	if _f > 3:
+		for hud in get_tree().get_nodes_in_group("hud"):
+			(hud as CanvasLayer).visible = false
+		_frame(p.global_position, p.vis, Vector3(-2.2, 1.2, -5.4), 1.3, 58.0)
+	if _f > 70:
+		_freeze()
+
+## Two masks on the low pegs (saltfell_steading, --flag=ending_outsong).
+func _st_ending_pegs(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_place_player(p, Vector3(1.6, _ground(1.6, -23.6, 30.0).y + 0.2, -23.6), PI)
+	if _f > 3:
+		for hud in get_tree().get_nodes_in_group("hud"):
+			(hud as CanvasLayer).visible = false
+		_cam.global_position = Vector3(2.4, p.global_position.y + 1.25, -22.6)
+		_cam.look_at(Vector3(2.9, p.global_position.y + 1.05, -20.75), Vector3.UP)
+		_cam.fov = 50.0
+	if _f > 70:
+		_freeze()
+
+func _st_ending_credits(_p: Player) -> void:
+	if _f == 3:
+		var c := CreditsUI.new()
+		c.over_world = false
+		c.name = "ShotCredits"
+		get_tree().root.add_child(c)
+	if _f == 8:
+		(get_tree().root.get_node("ShotCredits") as CreditsUI).show_at(12.5)
+	if _f > 20:
+		_freeze()

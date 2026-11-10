@@ -228,7 +228,6 @@ func _outsong() -> void:
 	done = true
 	_beat("end")
 	finished.emit(ending)
-	queue_free()
 
 ## The coal out of the horn and into the water: a small warm light that
 ## goes down and out.

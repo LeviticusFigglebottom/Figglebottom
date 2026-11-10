@@ -240,3 +240,13 @@ Every generated asset has one row here. Raw Tripo downloads are never committed:
 | assets/models/props/knucklebone.tscn | procedural: Godot primitives (capsule, ends) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/birch_ring.tscn | procedural: Godot primitives (tori) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/hedge_gate.tscn | procedural: Godot primitives (five-bar gate: stiles, rails, brace) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/fold_tally.tscn | procedural: Godot primitives (a hazel stick, forty-three notches and one cut small) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/calder_boots.tscn | procedural: Godot primitives (a pair of boots: shafts, feet, soles) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/bone_whistle.tscn | procedural: Godot primitives (a shin-bone tube, two holes, a lanyard loop) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/ice_tracks.tscn | procedural: Godot primitives (six footprints, the left stride longer) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/latch_wool.tscn | procedural: Godot primitives (a tuft and two strands) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/woad_band.tscn | procedural: Godot primitives (a strip of cloth with a knot in it) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/mourning_mask.tscn | procedural: Godot primitives (a smooth mask: face, eye holes, brow, band) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/child_mask.tscn | procedural: Godot primitives (the same mask, small) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/audio/hum.wav | synthesized: three closed-mouth notes, A-D-F (docs/audio/MUSIC.md, the hum) | — | — | — | none | tools/audio/synth.py (gen_hum) |
+| assets/ui/icons/{fold_tally,boots,whistle,armour_fleece,latch_wool,woad_band,bare_mask}.png | procedural: PIL silhouettes in the UI palette | — | — | — | none | tools/gen_icons.py |

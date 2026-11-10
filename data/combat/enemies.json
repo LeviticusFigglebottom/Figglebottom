@@ -3880,7 +3880,7 @@
    },
    {
     "id": "breath_in",
-    "_tell": "the mask tips back and it draws a long breath, as before a first note (1.0 s); a 2.4 m circle glows; no note comes: the cold does. Frost; it takes Wind as well.",
+    "_tell": "the mask tips back and it draws a long breath, as before a first note (1.0 s); a 2.4 m circle glows; no note comes: the cold does.",
     "type": "nova",
     "nova_kind": "frost",
     "nova_radius": 2.4,

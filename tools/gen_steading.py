@@ -192,7 +192,7 @@ pickups = [
      "scene": "res://assets/models/props/knucklebone.tscn", "set_flag": "ks_knucklebones_found",
      "label": "Pick up the knucklebones"},
     # WORLD.md 4.1 (SLICE.md 3): the small mask on the low peg inside the Longhouse door
-    {"id": "child_mask", "at": [2.6, SH, -20.75], "rot": 180, "lift": 0.95, "item": "ks_child_mask", "tag": "base",
+    {"id": "child_mask", "at": [2.6, SH, -20.75], "rot": 180, "lift": 0.95, "absent_flag": "ending_outsong", "item": "ks_child_mask", "tag": "base",
      "scene": "res://assets/models/props/child_mask.tscn", "label": "Take the small mask down"},
 ]
 # the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
@@ -347,6 +347,11 @@ D = {
     "npcs": npcs,
     "plaques": plaques,
     "pickups": pickups,
+    # WORLD.md 6, after the Outsong: two masks on the low pegs inside the Longhouse door
+    "landmarks": [
+        {"scene": "res://assets/models/props/child_mask.tscn", "at": [2.6, r2(SH + 1.0), -20.75], "rot": 180, "require_flag": "ending_outsong"},
+        {"scene": "res://assets/models/props/mourning_mask.tscn", "at": [3.15, r2(SH + 1.12), -20.75], "rot": 180, "require_flag": "ending_outsong"},
+    ],
     # the Longhouse net floor and the drawbridge seam: ONE list (a second
     # "scripted" key here silently replaced the first, and the net floor was lost)
     "scripted": scripted + [seams("saltfell_steading")[1]],
