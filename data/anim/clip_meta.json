@@ -41,7 +41,8 @@
      "end": 2.45,
      "root_lock": true
     }
-   }
+   },
+   "clip_set": "foe_rimewalker"
   },
   "netmender": {
    "scene": "res://assets/models/bosses/netmender.glb",
@@ -152,7 +153,8 @@
    "own_clips": true,
    "bare_hands": true,
    "_note": "the ice oar is procedural (src/enemies/oarsman.gd): it runs from the left hand through the right, carries the hit volume, and the arms hold it through locomotion via the upper-body carry layer (carry: oar_carry). Strokes are overlays (oar_*).",
-   "carry": "oar_carry"
+   "carry": "oar_carry",
+   "clip_set": "foe_oarsman"
   },
   "hearthhound": {
    "scene": "res://assets/models/enemies/hearthhound.glb",
@@ -547,7 +549,8 @@
      ]
     }
    },
-   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)"
+   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)",
+   "clip_set": "foe_barrow_sleeper"
   },
   "keener": {
    "scene": "res://assets/models/enemies/keener.glb",
@@ -575,7 +578,8 @@
      ]
     }
    },
-   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)"
+   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)",
+   "clip_set": "foe_keener"
   },
   "cairn_carrier": {
    "scene": "res://assets/models/enemies/cairn_carrier.glb",
@@ -603,7 +607,8 @@
      ]
     }
    },
-   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)"
+   "_note": "Lowe frost-taken (LOWE.md 5): rides the shared clip library; its own moves are overlays (sit_up, door_fall, keen_*, hush, rouse, yoke_twist, lift_stone)",
+   "clip_set": "foe_cairn_carrier"
   },
   "turfwright": {
    "scene": "res://assets/models/bosses/turfwright.glb",
@@ -653,7 +658,8 @@
      "contact": 1.1,
      "end": 2.6
     }
-   }
+   },
+   "clip_set": "foe_turfwright"
   },
   "hesk": {
    "scene": "res://assets/models/npcs/hesk.glb",
@@ -737,7 +743,8 @@
      "contact": 1.25,
      "end": 2.6
     }
-   }
+   },
+   "clip_set": "foe_ice_cutter"
   },
   "ice_fisher": {
    "scene": "res://assets/models/enemies/ice_fisher.glb",
@@ -765,7 +772,8 @@
       0.0
      ]
     }
-   }
+   },
+   "clip_set": "foe_ice_fisher"
   },
   "sealer": {
    "scene": "res://assets/models/enemies/sealer.glb",
@@ -793,7 +801,8 @@
       0.0
      ]
     }
-   }
+   },
+   "clip_set": "foe_sealer"
   },
   "ivo": {
    "scene": "res://assets/models/npcs/ivo.glb",
@@ -1275,7 +1284,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_feast_guest"
   },
   "cupbearer": {
    "scene": "res://assets/models/enemies/cupbearer.glb",
@@ -1310,7 +1320,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_cupbearer"
   },
   "hall_champion": {
    "scene": "res://assets/models/enemies/hall_champion.glb",
@@ -1345,7 +1356,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_hall_champion"
   },
   "host": {
    "scene": "res://assets/models/bosses/host.glb",
@@ -1395,7 +1407,8 @@
      "contact": 1.75,
      "end": 3.0
     }
-   }
+   },
+   "clip_set": "foe_host"
   },
   "hedgelayer": {
    "scene": "res://assets/models/bosses/hedgelayer.glb",
@@ -1445,7 +1458,8 @@
      "contact": 1.5,
      "end": 2.6
     }
-   }
+   },
+   "clip_set": "foe_hedgelayer"
   },
   "collier": {
    "scene": "res://assets/models/enemies/collier.glb",
@@ -1480,7 +1494,8 @@
      "contact": 2.1,
      "end": 3.4
     }
-   }
+   },
+   "clip_set": "foe_collier"
   },
   "rime_stag": {
    "scene": "res://assets/models/enemies/rime_stag.glb",
@@ -2567,6 +2582,186 @@
    "start": 0.0,
    "contact": 0.05,
    "end": 0.6
+  },
+  "f_rimewalker_swipe": {
+   "start": 0.0,
+   "contact": 0.62,
+   "end": 1.5
+  },
+  "f_rimewalker_flail": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_oarsman_stroke": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_oarsman_back_stroke": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_oarsman_ship_oars": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.067
+  },
+  "f_barrow_sleeper_hammer_fist": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_barrow_sleeper_back_fist": {
+   "start": 0.0,
+   "contact": 0.55,
+   "end": 1.433
+  },
+  "f_keener_breath_note": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_keener_keen": {
+   "start": 0.0,
+   "contact": 1.5,
+   "end": 2.367
+  },
+  "f_keener_hush": {
+   "start": 0.0,
+   "contact": 0.7,
+   "end": 1.567
+  },
+  "f_keener_rouse": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_cairn_carrier_yoke_swing": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_ice_fisher_pick": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_ice_fisher_pick_left": {
+   "start": 0.0,
+   "contact": 0.4,
+   "end": 1.267
+  },
+  "f_ice_fisher_cut_hole": {
+   "start": 0.0,
+   "contact": 1.4,
+   "end": 2.267
+  },
+  "f_sealer_club": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_sealer_backhand": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_sealer_hook": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_feast_guest_cuff": {
+   "start": 0.0,
+   "contact": 0.6,
+   "end": 1.467
+  },
+  "f_feast_guest_cuff_left": {
+   "start": 0.0,
+   "contact": 0.45,
+   "end": 1.333
+  },
+  "f_feast_guest_toast": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.067
+  },
+  "f_cupbearer_slice": {
+   "start": 0.0,
+   "contact": 0.35,
+   "end": 1.233
+  },
+  "f_cupbearer_lunge": {
+   "start": 0.0,
+   "contact": 0.6,
+   "end": 1.467
+  },
+  "f_hall_champion_mace": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_hall_champion_shield_bash": {
+   "start": 0.0,
+   "contact": 0.5,
+   "end": 1.367
+  },
+  "f_hall_champion_shield_rush": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_collier_rake": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_collier_smother": {
+   "start": 0.0,
+   "contact": 1.2,
+   "end": 2.067
+  },
+  "f_collier_cinders": {
+   "start": 0.0,
+   "contact": 1.1,
+   "end": 1.967
+  },
+  "f_turfwright_spade_chop": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_turfwright_one_hand_chop": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_turfwright_drag_swing": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_turfwright_sod_throw": {
+   "start": 0.0,
+   "contact": 1.0,
+   "end": 1.867
+  },
+  "f_ice_cutter_auger_thrust": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
+  },
+  "f_host_horn_fist": {
+   "start": 0.0,
+   "contact": 0.9,
+   "end": 1.767
+  },
+  "f_hedgelayer_bill": {
+   "start": 0.0,
+   "contact": 0.8,
+   "end": 1.667
   }
  },
  "aliases": {
@@ -2850,6 +3045,243 @@
    ],
    "bow_loose": [
     "bow_loose"
+   ]
+  },
+  "foe_rimewalker": {
+   "@swipe": [
+    "f_rimewalker_swipe"
+   ],
+   "@flail": [
+    "f_rimewalker_flail"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_oarsman": {
+   "@stroke": [
+    "f_oarsman_stroke"
+   ],
+   "@back_stroke": [
+    "f_oarsman_back_stroke"
+   ],
+   "@ship_oars": [
+    "f_oarsman_ship_oars"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_barrow_sleeper": {
+   "@hammer_fist": [
+    "f_barrow_sleeper_hammer_fist"
+   ],
+   "@back_fist": [
+    "f_barrow_sleeper_back_fist"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_keener": {
+   "@breath_note": [
+    "f_keener_breath_note"
+   ],
+   "@keen": [
+    "f_keener_keen"
+   ],
+   "@hush": [
+    "f_keener_hush"
+   ],
+   "@rouse": [
+    "f_keener_rouse"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_cairn_carrier": {
+   "@yoke_swing": [
+    "f_cairn_carrier_yoke_swing"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_ice_fisher": {
+   "@pick": [
+    "f_ice_fisher_pick"
+   ],
+   "@pick_left": [
+    "f_ice_fisher_pick_left"
+   ],
+   "@cut_hole": [
+    "f_ice_fisher_cut_hole"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_sealer": {
+   "@club": [
+    "f_sealer_club"
+   ],
+   "@backhand": [
+    "f_sealer_backhand"
+   ],
+   "@hook": [
+    "f_sealer_hook"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_feast_guest": {
+   "@cuff": [
+    "f_feast_guest_cuff"
+   ],
+   "@cuff_left": [
+    "f_feast_guest_cuff_left"
+   ],
+   "@toast": [
+    "f_feast_guest_toast"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_cupbearer": {
+   "@slice": [
+    "f_cupbearer_slice"
+   ],
+   "@lunge": [
+    "f_cupbearer_lunge"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_hall_champion": {
+   "@mace": [
+    "f_hall_champion_mace"
+   ],
+   "@shield_bash": [
+    "f_hall_champion_shield_bash"
+   ],
+   "@shield_rush": [
+    "f_hall_champion_shield_rush"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_collier": {
+   "@rake": [
+    "f_collier_rake"
+   ],
+   "@smother": [
+    "f_collier_smother"
+   ],
+   "@cinders": [
+    "f_collier_cinders"
+   ],
+   "stagger": [
+    "react_front"
+   ],
+   "stagger_back": [
+    "react_back"
+   ],
+   "death": [
+    "fall_back"
+   ]
+  },
+  "foe_turfwright": {
+   "@spade_chop": [
+    "f_turfwright_spade_chop"
+   ],
+   "@one_hand_chop": [
+    "f_turfwright_one_hand_chop"
+   ],
+   "@drag_swing": [
+    "f_turfwright_drag_swing"
+   ],
+   "@sod_throw": [
+    "f_turfwright_sod_throw"
+   ]
+  },
+  "foe_ice_cutter": {
+   "@auger_thrust": [
+    "f_ice_cutter_auger_thrust"
+   ]
+  },
+  "foe_host": {
+   "@horn_fist": [
+    "f_host_horn_fist"
+   ]
+  },
+  "foe_hedgelayer": {
+   "@bill": [
+    "f_hedgelayer_bill"
    ]
   }
  },

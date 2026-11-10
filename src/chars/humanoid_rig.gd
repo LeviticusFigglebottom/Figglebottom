@@ -23,6 +23,8 @@ var own: AnimationLibrary = null
 ## Weapon-class clip set ("onehand", "twohand", "spear", ...): its clips
 ## answer the game's clip names first (clip_meta.json clip_sets).
 var clip_set := ""
+## game clip -> the clip to resolve instead, for the action now playing
+var remap := {}
 
 var _slot := 0                     # slot the current action plays in
 var _clip := ["", ""]              # game clip name per slot
@@ -107,6 +109,8 @@ func setup(id: String, skel: Skeleton3D) -> void:
 ## found play. So a real "dodge_roll" aliased under "roll" replaces the roll
 ## overlay, while the game name still wins among real clips.
 func qualified(clip: String) -> String:
+	if remap.has(clip):
+		clip = String(remap[clip])
 	var shared := HumanoidLib.shared_library()
 	var fallback := ""
 	for c in HumanoidLib.candidates(clip, clip_set):

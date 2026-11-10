@@ -35,6 +35,11 @@ _Last updated: 2026-11-07 (founding session)_
 - **Foes not opted in:** the Oarsman, hall champion, cupbearer and collier are all bare-handed with their own overlays and windups of 0.8–1.2 s (the library clips would play at under half speed); there is no drover row. An armed humanoid foe opts in with `"clip_sets": true` plus a set mapping its `atk_*` names.
 - **Known weak spots:** the two-handed sets are one-handed mocap re-posed; the bow loose is small.
 
+## Foe animation (feat/foe-anims, ADR 0012)
+- **State:** 36 foe attacks (11 ordinary humanoid foes, plus the plain melee of the Turfwright, Ice-Cutter, Host and Hedgelayer) have their own hand-keyed clip cut to the attack's data windup, in the same `combat_lib.glb`. Ordinary foes also take the library stagger and death fall. Quadruped wind-up poses are held, not eased over the windup.
+- **Rebuild after any windup change:** `$BPY tools/anim/build_combat_lib.py && godot --headless --path . --import` (the build rewrites the `f_*` rows and `foe_*` sets in `clip_meta.json`). Look: `tools/anim/foe_sheets.sh --all`.
+- **Not done:** the Netmender; signature overlays (`door_fall`, `lift_stone`, `tray_spin`, boss prompt clips); foes that only exist on `feat/reach-coldwell-endings`; new quadruped poses (only their timing changed).
+
 ## Next exact step
 1. Merge each branch above once its tests pass.
 2. Thornwold encounters (the Hedgelayer, Linnet, Eyvind), then Reach and Coldwell encounters.

@@ -31,6 +31,7 @@ sys.path.insert(0, HERE)
 import anim_rig as R          # noqa: E402
 import anim_pose as A         # noqa: E402
 import combat_clips as C      # noqa: E402
+import foe_clips as F         # noqa: E402
 
 FPS = 30
 BASE = "assets/models/characters/bearer_traveller.glb"
@@ -164,6 +165,33 @@ def write_action(arm, skel, name, poses):
     arm.animation_data.action = None
 
 
+COMMON_FOE = {"stagger": ["react_front"], "stagger_back": ["react_back"], "death": ["fall_back"]}
+BOSSES_KEEP_OWN = ("turfwright", "ice_cutter", "host", "hedgelayer", "netmender")
+
+
+def write_foe_meta(rows, sets):
+    """Foe clips are cut to data windups, so their section rows and clip sets
+    are generated: clips f_<foe>_<attack>, clip_sets foe_<foe> ("@<attack>"
+    answers that attack; enemy.gd asks for it), models.<foe>.clip_set."""
+    path = rp("data/anim/clip_meta.json")
+    with open(path) as fh:
+        meta = json.load(fh)
+    for k in [k for k in meta["clips"] if k.startswith("f_")]:
+        del meta["clips"][k]
+    for k in [k for k in meta["clip_sets"] if k.startswith("foe_")]:
+        del meta["clip_sets"][k]
+    meta["clips"].update(rows)
+    for foe, cs in sets.items():
+        cs = dict(cs)
+        if foe not in BOSSES_KEEP_OWN:   # Holdfasts keep their own staggers and endings
+            cs.update(COMMON_FOE)
+        meta["clip_sets"]["foe_" + foe] = cs
+        if foe in meta["models"]:
+            meta["models"][foe]["clip_set"] = "foe_" + foe
+    with open(path, "w") as fh:
+        fh.write(json.dumps(meta, indent=1, ensure_ascii=False) + "\n")
+
+
 def add_dummy_mesh(arm):
     """glTF only exports a skin (and Godot only builds a Skeleton3D) when a
     mesh is bound, so a degenerate triangle rides the hips."""
@@ -218,6 +246,13 @@ def main():
                 g, a, _e = grips["onehand"].weapon_of(p)
                 tip = A.rfu(g + a * 0.9)
                 print(f"    f{i:3d} t={i / FPS:.2f} tip r{tip[0]:+.2f} f{tip[1]:+.2f} u{tip[2]:+.2f} v={sp[i]:5.1f} hips u{p.hips.z:.2f}")
+    foe_clips, foe_rows, foe_sets = F.build(ctx, ROOT)
+    for name, poses in foe_clips.items():
+        if only and name not in only:
+            continue
+        built[name] = poses
+    print(f"  foe clips: {len(foe_clips)}")
+    write_foe_meta(foe_rows, foe_sets)
     for s in srcs.values():
         s.free()
     for name, poses in built.items():

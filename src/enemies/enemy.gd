@@ -469,7 +469,7 @@ func _begin_attack(a: Dictionary) -> void:
 	_set_state(ES.ATTACK)
 	var anim_name: String = a.get("anim", "atk_r")
 	var w := float(a.get("windup", 0.5)) / _speed_mult()
-	vis.play_timed(anim_name, maxf(w, 0.05), 0.08)
+	vis.play_timed(anim_name, maxf(w, 0.05), 0.08, 0.0, INF, "@" + String(a.get("id", "")))
 	_atk_dir = _aim_dir()
 	_atk_off = _line_offset()
 	_tele = null
