@@ -4,8 +4,8 @@
 Each region's walk (tools/test/fullgame_<region>_test.gd) starts from the
 save the previous region's walk ends on (fullgame_after_<previous>.json).
 Until those exist, this writes a stand-in: the save the slice walk ends on
-(fullgame_after_saltfell.json) with the regions between played forward on
-paper, straight from the data files (hearths lit, Holdfasts released, the
+(fullgame_after_saltfell.json; for the Coldwell, the save the Thornwold
+walk ends on) with the regions between played forward on paper, straight from the data files (hearths lit, Holdfasts released, the
 Keepsakes threads closed, what was picked up taken, a few levels bought).
 
     python3 tools/test/fixtures/make_provisional.py thornwold
@@ -33,12 +33,14 @@ THREADS = {
     "lowe_barrows": ["hesk_tongs", "aud_cord"],
     "kettle_fjord": ["ivo_mitten", "halla_cord"],
     "tarnhall": ["guest_tally", "ottar_stick"],
+    "shepherds_reach": ["calder_boots"],
 }
 # The souls a player speaks with on the way through (met_<id>).
 MET = {
     "lowe_barrows": ["aud", "hesk"],
     "kettle_fjord": ["ivo", "halla", "sten"],
     "tarnhall": ["lusse", "ottar"],
+    "shepherds_reach": ["old_calder", "sigga"],
 }
 # What stays in the Pack once the threads are closed: the Holdfast's drop
 # (unless a thread hands it on) and the gifts the threads give.
@@ -46,6 +48,9 @@ KEPT = {
     "lowe_barrows": {"item_tally_stick": 1},
     "kettle_fjord": {},                      # Ivo takes the mitten back
     "tarnhall": {"item_host_cup": 1, "goat_song": 1},
+    # Calder is shown his boots and does not take them; the fold-tally is the
+    # Fellcaller's drop; the whistle hangs on its nail in either memory
+    "shepherds_reach": {"item_calder_boots": 1, "item_fold_tally": 1, "item_shepherd_whistle": 1},
 }
 
 
@@ -141,7 +146,26 @@ def thornwold():
     return s
 
 
-REGIONS = {"lowe": lowe, "kettle": kettle, "tarnhall": tarnhall, "thornwold": thornwold}
+def coldwell():
+    """After Shepherd's Reach, from the save the Thornwold walk really ends
+    on (fullgame_after_thornwold.json): the Reach played forward on paper.
+    At the High Fold, the hearth the Fellcaller's release wakes and the
+    nearest to the Coldwell seam. Nothing is added that a walk of regions
+    1-6 would not carry: the four knucklebones and the small mask at
+    Saltfell are NOT here, because the slice walk does not pick them up."""
+    s = json.load(open(os.path.join(HERE, "fullgame_after_thornwold.json")))
+    play_region(s, "shepherds_reach")
+    # Old Calder's second audience (REACH.md 7: he hums three notes), and
+    # the whistle taken off its nail at the lower sheiling
+    s["flags"]["ks_calder_hum"] = True
+    s["flags"]["chapter_old_calder"] = 2
+    s["areas"]["shepherds_reach"]["flags"]["took_shepherds_whistle"] = True
+    grow(s, 2)
+    rest_at(s, "shepherds_reach", "hs_high_fold")
+    return s
+
+
+REGIONS = {"lowe": lowe, "kettle": kettle, "tarnhall": tarnhall, "thornwold": thornwold, "coldwell": coldwell}
 
 if __name__ == "__main__":
     if len(sys.argv) != 2 or sys.argv[1] not in REGIONS:

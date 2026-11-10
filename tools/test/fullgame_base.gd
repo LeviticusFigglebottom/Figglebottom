@@ -20,6 +20,9 @@ var region := ""
 var aid := ""
 ## Fixture name (no extension) under tools/test/fixtures/ to start from.
 var start_fixture := ""
+## False for a walk that does not end on a live Bearer at a kept hearth in a
+## cleared `aid` (the endings): it checks its own way to the title and back.
+var round_trip := true
 
 var world: Node3D
 var area: Area
@@ -702,7 +705,13 @@ func _save_title_load() -> bool:
 	check(Keepsakes.journal() == journal_before, "the Keepsakes kept, in order")
 	var lost := []
 	for k in flags_before:
-		if str(World.flags.get(k)) != str(flags_before[k]):
+		var was = flags_before[k]
+		var now = World.flags.get(k)
+		# (a counted flag, chapter_<npc>, is an int until the save is read
+		# back and a float after: the same number)
+		var same: bool = is_equal_approx(float(was), float(now)) if (was is int or was is float) and (now is int or now is float) \
+				else str(now) == str(was)
+		if not same:
 			lost.append(k)
 	check(lost.is_empty(), "story flags kept (%s)" % str(lost))
 	var lost_a := []
@@ -760,7 +769,7 @@ func _run() -> void:
 
 	await _region()
 
-	if not player.dead and is_instance_valid(player):
+	if round_trip and is_instance_valid(player) and not player.dead:
 		if await _save_title_load():
 			await _after_load()
 	if write_fixture and fails == 0:

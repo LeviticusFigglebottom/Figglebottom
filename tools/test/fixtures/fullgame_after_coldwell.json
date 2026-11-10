@@ -1,0 +1,236 @@
+{
+	"areas": {
+		"coldwell": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_ice_falls": true,
+				"lit_hs_upwater": true,
+				"lit_hs_wellhead_steps": true,
+				"slain_leadvoice": true,
+				"took_maren_mask": true,
+				"took_upwater_cache": true,
+				"took_wren_band": true
+			},
+			"state": 1
+		},
+		"kettle_fjord": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_fish_houses": true,
+				"lit_hs_landing_ice": true,
+				"slain_ice_cutter": true,
+				"took_halla_cord": true,
+				"took_ivo_mitten": true,
+				"took_kettle_ladle": true
+			},
+			"state": 0
+		},
+		"lowe_barrows": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_barrow_road": true,
+				"lit_hs_drying_stacks": true,
+				"lit_hs_open_barrow": true,
+				"slain_turfwright": true,
+				"took_hesk_tongs": true,
+				"took_orm_cord": true,
+				"took_tally_stick": true
+			},
+			"state": 0
+		},
+		"saltfell_steading": {
+			"cleared": true,
+			"flags": {
+				"gate_boatshed_back": true,
+				"lit_hs_boat_shed": true,
+				"lit_hs_long_hearth": true,
+				"lit_hs_salt_house": true,
+				"slain_netmender": true,
+				"took_mending_needle": true,
+				"took_net_float": true,
+				"took_rye_sack": true
+			},
+			"state": 0
+		},
+		"shepherds_reach": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_fell_path": true,
+				"lit_hs_high_fold": true,
+				"lit_hs_sheilings": true,
+				"slain_fellcaller": true,
+				"took_calder_boots": true,
+				"took_fold_tally": true,
+				"took_shepherds_whistle": true
+			},
+			"state": 0
+		},
+		"tarnhall": {
+			"cleared": true,
+			"flags": {
+				"gate_hall_doors": true,
+				"lit_hs_byres": true,
+				"lit_hs_long_table": true,
+				"lit_hs_tarn_causeway": true,
+				"lit_hs_tarn_steps": true,
+				"slain_host": true,
+				"took_guest_tally": true,
+				"took_host_cup": true,
+				"took_ottar_staff": true
+			},
+			"state": 0
+		},
+		"thornwold": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_colliers_clearing": true,
+				"lit_hs_drove_road": true,
+				"lit_hs_outer_ring": true,
+				"lit_hs_the_pine": true,
+				"slain_hedgelayer": true,
+				"took_birch_ring": true,
+				"took_clamp_cache": true,
+				"took_hedging_bill": true,
+				"took_knucklebone": true,
+				"took_song_cord": true
+			},
+			"state": 0
+		}
+	},
+	"breathmark": null,
+	"flags": {
+		"chapter_maren": 2.0,
+		"chapter_old_calder": 2.0,
+		"difficulty": "gentle",
+		"got_collier_leathers": true,
+		"ks_aud_cord": true,
+		"ks_aud_cord_found": true,
+		"ks_aud_heather": true,
+		"ks_aud_met": true,
+		"ks_birch_ring": true,
+		"ks_brede_float": true,
+		"ks_brede_float_found": true,
+		"ks_brede_mending": true,
+		"ks_brede_met": true,
+		"ks_calder_boots_found": true,
+		"ks_calder_boots_shown": true,
+		"ks_calder_hum": true,
+		"ks_calder_met": true,
+		"ks_fellcaller_released": true,
+		"ks_fold_tally_found": true,
+		"ks_goat_song": true,
+		"ks_guest_tally": true,
+		"ks_guest_tally_found": true,
+		"ks_halla_bed": true,
+		"ks_halla_cord": true,
+		"ks_halla_cord_found": true,
+		"ks_halla_met": true,
+		"ks_hedgelayer_released": true,
+		"ks_hesk_met": true,
+		"ks_hesk_tongs": true,
+		"ks_hesk_tongs_found": true,
+		"ks_hesk_wind": true,
+		"ks_horn_wellhead": true,
+		"ks_host_released": true,
+		"ks_ice_cutter_released": true,
+		"ks_ingra_count": true,
+		"ks_ingra_met": true,
+		"ks_ingra_rye": true,
+		"ks_ingra_rye_found": true,
+		"ks_ivo_met": true,
+		"ks_ivo_mitten": true,
+		"ks_ivo_mitten_found": true,
+		"ks_ivo_supper": true,
+		"ks_knucklebone_found": true,
+		"ks_leadvoice_released": true,
+		"ks_linnet_met": true,
+		"ks_lusse_met": true,
+		"ks_netmender_released": true,
+		"ks_ottar_air": true,
+		"ks_ottar_met": true,
+		"ks_ottar_staff": true,
+		"ks_ottar_staff_found": true,
+		"ks_song_cord_found": true,
+		"ks_song_cord_read": true,
+		"ks_turfwright_released": true,
+		"ks_wren_band_found": true,
+		"met_aud": true,
+		"met_brede": true,
+		"met_halla": true,
+		"met_hesk": true,
+		"met_ivo": true,
+		"met_linnet": true,
+		"met_lusse": true,
+		"met_maren": true,
+		"met_old_calder": true,
+		"met_ottar": true,
+		"met_sigga": true,
+		"met_sten": true,
+		"met_steward_ingra": true,
+		"met_wren": true
+	},
+	"last_hearth": {
+		"area": "coldwell",
+		"hearth": "hs_wellhead_steps"
+	},
+	"meta": {
+		"area": "coldwell",
+		"difficulty": "gentle",
+		"ending": "",
+		"level": 16,
+		"play_s": 1345.05160782464,
+		"saved_at": 1794351057.62603
+	},
+	"play_s": 1345.05160782464,
+	"player": {
+		"armour": {
+			"body": "armour_traveller_coat",
+			"hands": "",
+			"head": "",
+			"legs": ""
+		},
+		"attributes": {
+			"craft": 8,
+			"heart": 17,
+			"kinship": 8,
+			"lungs": 8,
+			"might": 12,
+			"wind": 10
+		},
+		"attuned_song": "goat_song",
+		"gourd_max": 3,
+		"hotbar": [
+			"hewing_blade",
+			"torch",
+			"hedging_bill",
+			"",
+			"gourd"
+		],
+		"inventory": {
+			"armour_collier": 1.0,
+			"bog_iron": 5.0,
+			"goat_song": 1.0,
+			"hedging_bill": 1.0,
+			"item_calder_boots": 1.0,
+			"item_fold_tally": 1.0,
+			"item_host_cup": 1.0,
+			"item_knucklebone": 1.0,
+			"item_maren_mask": 1.0,
+			"item_mending_needle": 1.0,
+			"item_shepherd_whistle": 1.0,
+			"item_song_cord": 1.0,
+			"item_tally_stick": 1.0,
+			"item_wren_band": 1.0
+		},
+		"level": 16,
+		"pos": [
+			887.880004882812,
+			152.119338989258,
+			-478.5
+		],
+		"warmth": 188,
+		"weapon": "hewing_blade",
+		"weapon_level": 0
+	},
+	"save_version": 3
+}
