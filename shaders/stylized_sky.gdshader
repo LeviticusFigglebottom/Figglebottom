@@ -162,12 +162,12 @@ void sky() {
 	if (aurora > 0.001 && up > 0.03) {
 		// two slow ribbons on the overhead plane, combed into vertical rays
 		vec2 q = dir.xz / (up + 0.3);
-		float wob = vnoise(vec2(q.x * 0.7 + TIME * 0.012, 3.1));
+		float wob = vnoise(vec2(q.x * 0.7 + TIME * 0.006, 3.1 + TIME * 0.004));
 		float c1 = 1.1 + 0.55 * sin(q.x * 0.9 + wob * 3.0);
 		float c2 = -0.9 + 0.4 * sin(q.x * 0.6 - wob * 2.2 + 1.3);
 		float r1 = exp(-pow((q.y - c1) / 0.22, 2.0));
 		float r2 = exp(-pow((q.y - c2) / 0.3, 2.0)) * 0.6;
-		float rays = 0.45 + 0.55 * vnoise(vec2(q.x * 9.0 + wob * 2.0, TIME * 0.04));
+		float rays = 0.45 + 0.55 * vnoise(vec2(q.x * 9.0 + wob * 2.0, TIME * 0.02));
 		float glow = (r1 + r2) * rays * smoothstep(0.03, 0.3, up) * smoothstep(1.0, 0.55, up);
 		vec3 ac = mix(aurora_color, aurora_color.brg * vec3(0.5, 0.6, 1.0), clamp(q.y * 0.3 + 0.3, 0.0, 1.0));
 		// the overcast veils it but does not hide it: it glows through the deck

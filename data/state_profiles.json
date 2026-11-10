@@ -149,7 +149,7 @@
 		],
 		"sky_cloud_cover": 0.7,
 		"sky_sun_disc": 0.12,
-		"sky_aurora": 1.0,
+		"sky_aurora": 0.5,
 		"sky_stars": 0.6
 	}
 }
