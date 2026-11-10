@@ -272,6 +272,7 @@ func _build_far() -> void:
 			st.set_normal(Vector3(-hx, 2.0 * fc, -hz).normalized())
 			var shore := 1.0 if hh < 4.0 else 0.0
 			st.set_color(Color(shore, 0, 0, 0.5))
+			st.set_uv(Vector2(0.0, 1.0))    # v = 1: the shader breaks the horizon's flat sheets up
 			st.add_vertex(Vector3(float(fo[0]) + i * fc, hh, float(fo[1]) + j * fc))
 	for j in n - 1:
 		for i in n - 1:

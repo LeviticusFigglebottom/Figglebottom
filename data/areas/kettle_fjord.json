@@ -15,11 +15,14 @@
     -13,
     -96
    ],
-   "sun_energy": 2.8,
+   "sun_energy": 2.3,
    "fog_density": 0.0012,
-   "vol_density": 0.006,
-   "ambient_energy": 0.62,
-   "exposure": 1.08,
+   "vol_density": 0.0038,
+   "vol_anisotropy": 0.3,
+   "glow": 0.4,
+   "ambient_energy": 0.95,
+   "sky_contribution": 0.34,
+   "exposure": 0.98,
    "fill_color": [
     1.0,
     0.7,

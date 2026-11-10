@@ -2,6 +2,32 @@
 
 Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based on `origin/fix/slice-qa`). Newest entry at the top.
 
+## 2026-11-10 (5): your three messages, and the real-GPU priorities
+
+**Your messages of 19:56, 20:45 and 22:11 all reached me at 22:23.** I still cannot answer them: `send_message` to your session (and to `@parent`) is refused for want of a trusted device. This file is my only channel.
+
+**Branch state:** `origin/main` (`65b65f6`) is merged in. Everything in entries (3) and (4) stands. Pairs you asked for: `world_{before,after}_door_thaw.png`, `_wellhouse_thaw.png`, `_longhouse_in_thaw.png`, and for this pass `world2_{before,after}_kettle_vista_thaw.png`, `_kettle_gorge_thaw.png`, `_coldwell_vista_thaw.png`, `_snow_rime.png`.
+
+**Done for the GPU findings** (table in `docs/art/WORLD_FIDELITY.md`, "Second pass"):
+
+1. **Exposure.** Less forward scatter and bloom in THAW, more ambient and fill; Kettle toned down in its generator; at tier 2 the SSAO is eased and bloom starts later (`render/exposure`).
+2. **Cliffs.** Uneven beds, ledges, joints and a macro normal in the terrain shader.
+3. **Coldwell horizon.** The horizon mesh and far ground take patches, outcrops and a rolling normal.
+4. **RIME snow.** Drift shading, wind ripple, sparkle.
+
+**Please have the GPU worker re-shoot this branch now**, the same 84 views. I need hardware eyes on:
+
+- Kettle vista and start in THAW: is the wash gone and the gorge readable, or is it now flat?
+- Any THAW shot under canopy (Thornwold `the_pine`, `hedge_veil`): did the ambient lift help or grey it out?
+- Cliff faces at Kettle and Tarnhall: does the macro normal read as rock form or as noise?
+- RIME snow at eye height: ripple strength and whether the sparkle shimmers under TAA.
+- House interiors: the probes (`HouseProbe`) have only ever been captured by lavapipe.
+- `render/exposure/auto`: it is off. Under a software tier-2 run it made the Kettle vista brighter, so I did not trust it. If the worker can spare a pair with it on, I will tune the limits.
+
+**Not done, and why:** Kettle's spire shapes (heightfield generator), rock meshes along cliff lips (scatter rules and area regeneration), straight horizon edges (far grid). Say if you want me to take the generator work; it regenerates the area and its seams.
+
+**Suites green on this state:** smoke, houses, kettle, coldwell, steading, thornwold; placement audit clean.
+
 ## 2026-11-10 (4): follow-ups after your merge, ready to merge again
 
 You merged this branch at `ce498d8` (`e3daf04` on `main`). The branch has since **merged `main` back** (one conflict, the reformatted `data/game.json`) and carries these on top. Merging it again is a fast, clean merge.

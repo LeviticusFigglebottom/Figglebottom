@@ -76,6 +76,8 @@ uniform float has_tex = 0.0;           // 0 until Terrain binds the sets
 // close-up detail
 uniform float parallax_depth = 0.055;  // metres of relief on path and shingle
 uniform float detail_near = 7.0;       // the finer second sample fades out by here
+uniform float rock_relief = 0.55;       // strength of the cliffs' macro normal
+uniform float snow_ripple = 1.0;       // wind ripple and drift relief on RIME snow
 uniform float puddle_amount = 0.5;     // 0 = none; raises the puddle / ice-patch cover
 // buildings standing on this land (Terrain.add_footprint)
 uniform int house_count = 0;
@@ -91,6 +93,7 @@ varying vec3 v_wp;
 varying vec3 v_wn;
 varying vec4 v_col;
 varying float v_lip;
+varying float v_horizon;   // 1 on the coarse horizon mesh (Terrain._build_far)
 
 float hash13(vec3 p3) {
 	p3 = fract(p3 * 0.1031);
@@ -179,6 +182,7 @@ void vertex() {
 	v_wn = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	v_col = COLOR;
 	v_lip = UV.x;
+	v_horizon = UV.y;
 }
 
 vec3 retint(vec3 c, vec3 mean, vec3 target) {
@@ -283,7 +287,29 @@ void fragment() {
 	rock_a *= mix(vec3(1.0), texture(rock_alb, uvr_f).rgb / max(rock_mean, vec3(0.002)), 0.35 * (1.0 - far));
 	vec3 rock = retint(rock_a, rock_mean, rock_col);
 	// beds: each bed its own tone, an iron-stained one, seep streaks
-	float bed_tone = hash13(vec3(floor(bed_v / 1.7), 7.0, 3.0));
+	// beds of uneven thickness (even strata read as a tiled band on a cliff)
+	float bed_c = (bed_v + 2.2 * vnoise(vec3(bed_v * 0.19, blk * 5.0, 3.0)) + 0.5 * n1) / 1.7;
+	float bed_f = fract(bed_c);
+	float bed_tone = hash13(vec3(floor(bed_c), 7.0, 3.0));
+	// each bed stands a little proud of the one above: a lit ledge at its
+	// top, a line of shade under it, and joints that crack it into blocks
+	float ledge = smoothstep(0.84, 0.98, bed_f);
+	float undercut = 1.0 - smoothstep(0.0, 0.14, bed_f);
+	float jn = vnoise(vec3(v_wp.x * 0.38, floor(bed_c) * 3.1, v_wp.z * 0.38));
+	float joint = smoothstep(0.47, 0.5, jn) * (1.0 - smoothstep(0.5, 0.53, jn));
+	// macro relief: buttresses and hollows metres across, so a flat facet of
+	// the heightfield does not shade as one plane
+	float m0 = vnoise(v_wp * 0.11);
+	float m1 = vnoise(v_wp * 0.37 + 4.0);
+	vec3 mgrad = vec3(0.0);
+	if (n.y < rock_slope + 0.2) {
+		mgrad = (vec3(vnoise(v_wp * 0.11 + vec3(0.04, 0.0, 0.0)), vnoise(v_wp * 0.11 + vec3(0.0, 0.04, 0.0)),
+				vnoise(v_wp * 0.11 + vec3(0.0, 0.0, 0.04))) - m0) / 0.04
+			+ (vec3(vnoise(v_wp * 0.37 + vec3(4.05, 4.0, 4.0)), vnoise(v_wp * 0.37 + vec3(4.0, 4.05, 4.0)),
+				vnoise(v_wp * 0.37 + vec3(4.0, 4.0, 4.05))) - m1) / 0.05 * 0.45;
+	}
+	rock *= 0.78 + 0.22 * m0 + 0.14 * m1;
+	rock *= 1.0 - 0.3 * undercut - 0.38 * joint * (1.0 - far * 0.6);
 	rock *= 0.82 + 0.3 * bed_tone;
 	rock *= mix(vec3(1.0), vec3(1.06, 1.0, 0.92), step(0.6, bed_tone));
 	float streak = vnoise(vec3(v_wp.x * 1.6, v_wp.y * 0.08, v_wp.z * 1.6));
@@ -323,6 +349,19 @@ void fragment() {
 	vec3 col = mix(ground, rock, rk);
 	if (has_tex < 0.5) {
 		col = mix(mix(turf_a, turf_b, w_heath), rock_col, rock_w);
+	}
+	// far ground: fields of heather and turf, outcrops and a rolling relief, so
+	// the horizon's coarse sheets are not one flat colour
+	float vfar = max(smoothstep(120.0, 420.0, cam_d), v_horizon * smoothstep(30.0, 90.0, cam_d)) * (1.0 - rk);
+	vec2 far_tilt = vec2(0.0);
+	if (vfar > 0.002) {
+		float f1 = vnoise(v_wp * 0.0065 + 2.0);
+		float f2 = vnoise(v_wp * 0.023 + 9.0);
+		float f3 = vnoise(v_wp * 0.06 + 5.0);
+		vec3 far_tint = mix(turf_a * 0.85, turf_b * 1.1, smoothstep(0.3, 0.7, f1 * 0.6 + f2 * 0.4));
+		far_tint = mix(far_tint, rock_col * 0.9, smoothstep(0.6, 0.72, f2 * 0.55 + f3 * 0.45) * 0.55);
+		col = mix(col, mix(col, far_tint, 0.65) * (0.82 + 0.36 * f3), vfar);
+		far_tilt = (vec2(vnoise(v_wp * 0.023 + vec3(9.03, 9.0, 9.0)), vnoise(v_wp * 0.023 + vec3(9.0, 9.0, 9.03))) - f2) / 0.03 * 0.5 * vfar;
 	}
 	// the finer second sample: grit, blades and pebble faces at foot distance
 	vec2 g_fine = vec2(0.0);
@@ -376,7 +415,13 @@ void fragment() {
 	}
 	// hoarfrost on the rock: broad pale sheets in the hollows, not glitter
 	vec3 frost = mix(rime_col, snow_col * 0.8, 0.10 + 0.12 * n_macro + (1.0 - relief) * 0.12);
-	rime_col = mix(frost, snow_col * snow_tex, snow);
+	// drifts: paler crests, blue in the hollows; ripples cut by the wind
+	float dr0 = vnoise(vec3(v_wp.xz * 0.16, 2.0));
+	float sn_across = dot(v_wp.xz, vec2(0.6, 0.8));
+	float sn_phase = sn_across * 6.5 + 7.0 * vnoise(vec3(v_wp.xz * 0.33, 1.0)) + dot(v_wp.xz, vec2(0.8, -0.6)) * 0.5;
+	float sn_amp = smoothstep(0.3, 0.7, vnoise(vec3(v_wp.xz * 0.06, 4.0))) * (1.0 - far) * snow_ripple;
+	vec3 snow_shade = mix(vec3(0.8, 0.87, 1.0), vec3(1.03, 1.02, 1.0), smoothstep(0.25, 0.75, dr0)) * (0.97 + 0.03 * sin(sn_phase) * sn_amp);
+	rime_col = mix(frost, snow_col * snow_tex * snow_shade, snow);
 	// ice patches: grey-blue glaze with pale wind-scoured veins
 	float vein = smoothstep(0.86, 0.97, 1.0 - abs(vnoise(v_wp * 3.1 + 5.0) * 2.0 - 1.0));
 	vec3 ice_c = mix(vec3(0.34, 0.42, 0.5), vec3(0.72, 0.8, 0.88), vein * 0.7 + 0.15 * n2);
@@ -398,6 +443,13 @@ void fragment() {
 		vec2 snn = texture(snow_nrm, uvg * snow_scale).rg * 2.0 - 1.0;
 		g_n = mix(g_n, snn * 0.6, snow * rime);
 	}
+	if (snow * rime > 0.01) {
+		// the wind ripple's slope, and the roll of the drifts under it
+		vec2 rip = vec2(0.6, 0.8) * cos(sn_phase) * 0.22 * sn_amp;
+		vec2 dgr = (vec2(vnoise(vec3(v_wp.xz * 0.16 + vec2(0.05, 0.0), 2.0)), vnoise(vec3(v_wp.xz * 0.16 + vec2(0.0, 0.05), 2.0))) - dr0) / 0.05;
+		g_n += (vec2(rip.x, -rip.y) - vec2(dgr.x, -dgr.y) * 0.22 * snow_ripple) * snow * rime;
+	}
+	g_n += vec2(-far_tilt.x, far_tilt.y);
 	g_n *= 1.0 - far * 0.7;
 	g_n += g_fine;
 	// standing water and ice lie flat
@@ -407,6 +459,8 @@ void fragment() {
 	// per-plane tangent offsets (u along the plane's horizontal axis, v down the beds)
 	vec3 rpert = vec3(0.0, -rnx.y, rnx.x) * rw.x + vec3(rnz.x, -rnz.y, 0.0) * rw.z + vec3(rny.x, 0.0, rny.y) * rw.y;
 	vec3 n_rock = normalize(n + rpert * 1.2 * (1.0 - far * 0.5));
+	// macro relief and the ledges (kept at distance: this is the cliff's form)
+	n_rock = normalize(n_rock - (mgrad - n * dot(mgrad, n)) * rock_relief + vec3(0.0, 0.55, 0.0) * ledge - vec3(0.0, 0.3, 0.0) * undercut);
 	vec3 nn = normalize(mix(n_ground, n_rock, rk * has_tex));
 	if (has_tex < 0.5) {
 		nn = normalize(n + vec3(n2 - 0.5, 0.0, n3 - 0.5) * (0.18 + rock_w * 0.25));
@@ -433,5 +487,9 @@ void fragment() {
 	emis += wf_emission(wf);
 	// a faint cold glint on the snow in rime
 	emis += vec3(0.04, 0.05, 0.07) * snow * rime * smoothstep(0.92, 0.99, n3);
+	// sparkle: single crystals that flash as the eye moves, near the camera
+	float sp_h = hash13(floor(v_wp * 70.0));
+	float sp = step(0.992, fract(sp_h * 17.3 + dot(view_w, vec3(3.1, 5.3, 7.7)) * 3.0)) * step(0.4, sp_h);
+	emis += vec3(0.55, 0.62, 0.75) * sp * snow * rime * (1.0 - smoothstep(6.0, 28.0, cam_d));
 	EMISSION = emis;
 }

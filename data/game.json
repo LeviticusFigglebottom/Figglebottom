@@ -152,6 +152,18 @@
    4.5,
    120.0
   ],
+  "exposure": {
+   "_doc": "Real-GPU exposure (EnvRig._apply_exposure), tier 2 only: auto-exposure on/off (off: under a software tier-2 run it brightened the Kettle vista further; try it on hardware before turning it on) and its limits in ISO around 100 (80..140 is about -0.3 to +0.5 stop), its speed and target scale; the factor on SSAO intensity where SSIL and SDFGI also occlude; where bloom starts and how much; SDFGI energy.",
+   "auto": false,
+   "min_sensitivity": 80.0,
+   "max_sensitivity": 140.0,
+   "speed": 0.6,
+   "scale": 0.4,
+   "gi_ssao_scale": 0.72,
+   "glow_threshold_gpu": 1.15,
+   "glow_bloom_gpu": 0.08,
+   "sdfgi_energy": 1.0
+  },
   "interior": {
    "_doc": "The ambient a house interior takes in place of the sky's (HouseProbe): colour and energy per world state, how far inside the walls it fades in (metres), and the strength of the room's own reflections.",
    "thaw_color": [

@@ -7,6 +7,7 @@ var world_env: WorldEnvironment
 var sun: DirectionalLight3D
 var sky_fill: DirectionalLight3D
 var sky_mat: ShaderMaterial
+var _ssao_scale := 1.0     # eased at tier 2, where SSIL and SDFGI occlude as well
 
 var profiles: Dictionary = {}
 ## Per-area profile overrides from the area def's "env" block: only the keys
@@ -147,6 +148,33 @@ func apply_quality_tier() -> void:
 		e.sdfgi_min_cell_size = 0.4
 		e.sdfgi_energy = 0.85
 	RenderingServer.global_shader_parameter_set("rh_water_sky_fill", 1.0 if e.sdfgi_enabled else 0.0)
+	_apply_exposure(e, q)
+
+## Exposure on real GPUs (data/game.json "render/exposure"). Tier 2 adds SSIL
+## and SDFGI occlusion on top of SSAO, full-strength volumetric in-scatter and
+## bloom, none of which the software renderer shows: shade crushed to black
+## under canopy and in gorges while views toward the low sun washed out.
+## So at tier 2 the SSAO is eased and bloom starts later. A narrow
+## auto-exposure is wired but off by default ("auto"): untested on hardware.
+func _apply_exposure(e: Environment, q: int) -> void:
+	var x = DB.tuning("render/exposure", {})
+	if not (x is Dictionary):
+		x = {}
+	_ssao_scale = float(x.get("gi_ssao_scale", 0.72)) if q >= 2 else 1.0
+	e.glow_hdr_threshold = float(x.get("glow_threshold_gpu", 1.15)) if q >= 2 else 0.95
+	e.glow_bloom = float(x.get("glow_bloom_gpu", 0.08)) if q >= 2 else 0.14
+	if e.sdfgi_enabled:
+		e.sdfgi_energy = float(x.get("sdfgi_energy", 1.0))
+	if q >= 2 and bool(x.get("auto", false)):
+		var ca := CameraAttributesPractical.new()
+		ca.auto_exposure_enabled = true
+		ca.auto_exposure_scale = float(x.get("scale", 0.4))
+		ca.auto_exposure_speed = float(x.get("speed", 0.6))
+		ca.auto_exposure_min_sensitivity = float(x.get("min_sensitivity", 80.0))
+		ca.auto_exposure_max_sensitivity = float(x.get("max_sensitivity", 140.0))
+		world_env.camera_attributes = ca
+	else:
+		world_env.camera_attributes = null
 
 ## Sky keys an older or partial profile may not carry ("sky_<key>").
 const SKY_DEFAULTS := {
@@ -189,7 +217,7 @@ func blend(t: float) -> void:
 	e.ambient_light_energy = lerpf(float(a["ambient_energy"]), float(b["ambient_energy"]), t)
 	e.ambient_light_sky_contribution = lerpf(a.get("sky_contribution", 0.20), b.get("sky_contribution", 0.14), t)
 	if e.ssao_enabled:
-		e.ssao_intensity = lerpf(a.get("ssao_intensity", 1.75), b.get("ssao_intensity", 1.85), t)
+		e.ssao_intensity = lerpf(a.get("ssao_intensity", 1.75), b.get("ssao_intensity", 1.85), t) * _ssao_scale
 	e.fog_light_color = _c(a["fog_color"]).lerp(_c(b["fog_color"]), t)
 	e.fog_density = lerpf(a["fog_density"], b["fog_density"], t)
 	e.volumetric_fog_density = lerpf(a["vol_density"], b["vol_density"], t)

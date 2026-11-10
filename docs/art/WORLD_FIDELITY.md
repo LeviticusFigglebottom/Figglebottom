@@ -142,6 +142,26 @@ Whole-frame counts from the harness (`[shot] stats`, lavapipe, tier 1, shadows i
 
 The pairs above were shot before that merge, on the same base as their "before", so they show this pass alone.
 
+## Second pass: the real-GPU findings (`docs/qa/GPU_VISUAL_DIFF.md`)
+
+The GPU gallery (`docs/gallery_gpu/v2/`) showed four things in this lane. None of the fixes below has been seen on hardware: they were reasoned from the gallery and checked for sanity under lavapipe. Pairs: `docs/screens/world2_before_*.png` and `world2_after_*.png` (lavapipe, tier 1).
+
+| Finding | Change | Where |
+|---|---|---|
+| THAW washes out toward the low sun | Forward scatter 0.66 to 0.42 (`vol_anisotropy`), bloom 0.65 to 0.5, and at tier 2 bloom starts at 1.15 with less spread. Kettle: sun 2.8 to 2.3, volumetric density 0.006 to 0.0038, anisotropy 0.3, exposure 1.08 to 0.98. | `data/state_profiles.json`, `tools/gen_kettle.py`, `EnvRig._apply_exposure` |
+| Shade crushes to black in gorges and under canopy | THAW ambient 0.58 to 0.66 and fill 0.22 to 0.3. Kettle ambient 0.62 to 0.95. At tier 2 the SSAO is scaled by 0.72 (SSIL and SDFGI occlude as well) and SDFGI energy is 1.0. | same, `data/game.json` → `render/exposure` |
+| Cliffs: flat facets, even strata | Beds of uneven thickness, a lit ledge and a line of shade at each bed, joints that crack beds into blocks, and a macro normal (9 m and 3 m) so a facet of the heightfield no longer shades as one plane. | `shaders/terrain.gdshader` (`rock_relief`) |
+| Coldwell: flat horizon sheets | The horizon mesh is flagged (`UV.y = 1`); it and all ground past 120 m take patches of turf and heather, outcrops and a rolling normal. | `terrain.gdshader`, `Terrain._build_far` |
+| RIME snow is featureless | Drift shading (pale crests, blue hollows), wind ripple and drift roll in the normal, and view-dependent sparkle inside 28 m. | `terrain.gdshader` (`snow_ripple`) |
+
+**Auto-exposure is wired but off** (`render/exposure/auto`). Forced to tier 2 under lavapipe it brightened the Kettle vista further, so it should be tried on hardware before it is turned on.
+
+**Not done in this pass:**
+
+- Kettle's spires are the heightfield's own shape. The shader hides the facets' flat shading; it does not change the silhouette. That needs `tools/terrain_kettle.py` or rock meshes along the lips, which is generator and scatter work.
+- The horizon sheets still end in straight edges where the far grid steps.
+- The stretched texture on near-vertical faces is the 1 m grid: a cliff face spans few vertices. Tessellation near the camera was not attempted.
+
 ## What is still synthetic
 
 - **Shadow sides at dusk are very dark**, on houses and on barrow facades alike. That is the sun and ambient balance, not the buildings; it was the same before. It wants SDFGI bounce (tier 2) or a lift in the THAW fill.
