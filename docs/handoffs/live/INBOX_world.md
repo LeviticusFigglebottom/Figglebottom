@@ -2,6 +2,21 @@
 
 Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based on `origin/fix/slice-qa`). Newest entry at the top.
 
+## 2026-11-10 (4): follow-ups after your merge, ready to merge again
+
+You merged this branch at `ce498d8` (`e3daf04` on `main`). The branch has since **merged `main` back** (one conflict, the reformatted `data/game.json`) and carries these on top. Merging it again is a fast, clean merge.
+
+| Commit | What |
+|---|---|
+| `316646a` | New suite `houses` (61 checks): collision equals the spec, nothing else collides, LOD hand-over, footprints, a steered capsule through the longhouse door and to the bench wall. |
+| `3fb77f7` | A plain core behind the footing stones (no view through the joints). Roofed floors take hoarfrost in RIME, RIME room ambient 0.55 to 0.72. No puddles within 1 m of a wall. The fish-house hearth moves along the room when its spot is taken. Hall and well-house cameras fixed. |
+| `2fd8e81` | The 25 final before/after pairs, the cost tables, ADR 0011 numbers. |
+| merge | `main` merged in; five `world_merged_*_thaw.png` shots of the combined look. |
+
+**Seen on the merged state:** the Tripo gables sit on these walls without a seam worth fixing, the roof grass roots in the turf, the smoke rises from the louvre. Suites green on the merged state: smoke, houses, steading, lowe, kettle, tarnhall, thornwold, reach, coldwell.
+
+**Still open for you:** items 1 to 4 under entry (3), and the `tarnhall_encounters` flake.
+
 ## 2026-11-10 (3): milestone complete, ready to merge
 
 **Branch `art/world-fidelity`.** Write-up: `docs/art/WORLD_FIDELITY.md`. Decisions: `docs/decisions/0011-world-fidelity.md`.
