@@ -277,6 +277,35 @@ func _raise_walls() -> void:
 	Juice.shake(0.6, 0.6)
 	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, 0.0, 0.7)
 
+## The middle of the cross, where every bay opens (the mean of the walls'
+## inner ends, in the same frame as _raise_walls).
+func _cross_mid() -> Vector3:
+	var f := -(door_point() - home)
+	f.y = 0
+	f = f.normalized()
+	var r := f.cross(Vector3.UP) * -1.0
+	var specs: Array = cfg.get("arena_walls", [])
+	var m := Vector2.ZERO
+	for spec in specs:
+		m += Vector2(float(spec["from"][0]), float(spec["from"][1])) / maxf(specs.size(), 1.0)
+	return home + r * m.x + f * m.y
+
+## His bay walls are not on the navmesh: with one between him and the Bearer
+## the path ran straight into it, and he stood at the wall for as long as
+## the Bearer stood behind it. He goes round by the middle of the cross.
+func _st_approach(dt: float) -> void:
+	if phase == 2 and live_walls() > 0 and target != null and is_instance_valid(target) and not _los_clear():
+		var to := _cross_mid() - global_position
+		to.y = 0
+		if to.length() > 1.0:
+			var sp := float(cfg.get("speed", 2.5))
+			var dir := to.normalized()
+			velocity.x = move_toward(velocity.x, dir.x * sp, 10 * dt * sp)
+			velocity.z = move_toward(velocity.z, dir.z * sp, 10 * dt * sp)
+			_face(dir, dt)
+			return
+	super._st_approach(dt)
+
 func live_walls() -> int:
 	walls = walls.filter(func(w): return is_instance_valid(w) and not w.is_queued_for_deletion())
 	return walls.size()
