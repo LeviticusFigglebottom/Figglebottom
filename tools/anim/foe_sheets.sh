@@ -18,8 +18,9 @@ for k, cs in m["clip_sets"].items():
             item = f"{foe}@{a[1:] if a.startswith('@') else a}"
             if item not in out:
                 out.append(item)
-for q in ("hearthhound", "sledge_dog", "rime_stag"):
+for q in ("hearthhound", "sledge_dog", "rime_stag", "frost_ram"):
     out.append(f"{q}@poses")
+out.append("frost_ram@more")   # its charge and kick poses
 print(" ".join(out))
 PY
 )

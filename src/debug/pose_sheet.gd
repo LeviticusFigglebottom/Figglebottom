@@ -11,6 +11,7 @@ extends Node3D
 ## ribbon behind each blade is the sweep since the previous frame.
 ##   --pose-rig=bearer_traveller --pose-batch=attack_l1@hewing_blade,attack_h@greatblade
 ##   [--pose-yaw=150] [--pose-out=docs/screens] [--pose-whole]  (whole clip, evenly)
+##   [--pose-zoom=5]  (that one beat, full frame)   clip@bare: empty hands
 var _rig_model := ""
 var _batch: Array = []
 var _out_dir := "docs/screens"
@@ -18,6 +19,7 @@ var _whole := false
 var _yaw := 150.0
 var _stage: Node3D = null
 var _item_yaw := 150.0
+var _zoom := -1                # --pose-zoom=<cell 1..8>: that one beat, full frame
 
 func _rig_args() -> bool:
 	for a in OS.get_cmdline_user_args():
@@ -31,6 +33,8 @@ func _rig_args() -> bool:
 			_whole = true
 		elif a.begins_with("--pose-yaw="):
 			_yaw = float(a.get_slice("=", 1))
+		elif a.begins_with("--pose-zoom="):
+			_zoom = int(a.get_slice("=", 1)) - 1
 	return _rig_model != ""
 
 func _rig_sheets() -> void:
@@ -53,6 +57,9 @@ func _rig_sheets() -> void:
 	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
 	cam.size = 5.3
 	cam.position = Vector3(0, 0.0, 12.0)
+	if _zoom >= 0:   # the cell grid is 4 x 2, 2.35 m apart, rows at 0.25 and -2.45
+		cam.size = 2.6
+		cam.position = Vector3((_zoom % 4 - 1.5) * 2.35, (0.25 if _zoom < 4 else -2.45) + 1.05, 12.0)
 	for item in _batch:
 		# clip[@kit[@yaw]]
 		var clip := String(item).get_slice("@", 0)
@@ -66,7 +73,7 @@ func _rig_sheets() -> void:
 		for i in 4:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		var path := "%s/anim_%s_sheet.png" % [_out_dir, tag]
+		var path := "%s/anim_%s_%s.png" % [_out_dir, tag, "sheet" if _zoom < 0 else "beat%d" % (_zoom + 1)]
 		get_viewport().get_texture().get_image().save_png(path)
 		print("[shot] ", path)
 	get_tree().quit()
@@ -79,6 +86,9 @@ func _rig_sheet(clip: String, kit: String) -> String:
 	for i in 8:
 		var vis := PlayerVisual.new()
 		_stage.add_child(vis)
+		var bare := kit == "bare"
+		if bare:
+			kit = "hewing_blade"
 		vis.build(kit, _rig_model)
 		var w := {}
 		for wid in DB.table("weapons"):
@@ -87,6 +97,11 @@ func _rig_sheet(clip: String, kit: String) -> String:
 				w = row
 				break
 		vis.apply_loadout(kit, not bool(w.get("two_handed", false)))
+		if bare:   # clip@bare: empty hands (the ending beats)
+			for m in [vis.weapon_mount, vis.shield_mount, vis.trail]:
+				if m != null:
+					(m as Node3D).visible = false
+			kit = "bare"
 		vis.set_physics_process(false)
 		vis.rig.set_physics_process(false)
 		vis.position = Vector3((i % cols - (cols - 1) * 0.5) * 2.35, 0.25 if i < cols else -2.45, 0)
@@ -177,8 +192,13 @@ func _foe_sheet(foe: String, attack: String) -> String:
 		if vis.quad != null:
 			# quadrupeds: one cell per pose (the attack id is ignored)
 			var names: Array = [""]
-			for pn0 in (["lower", "drive", "gore", "rear", "launch", "leap", "land", "recover"] if vis.quad.poses.has("gore") \
-					else ["crouch", "launch", "lunge", "bite", "land", "recover", "bark", "hold", "flinch", "dead"]):
+			var listed: Array = ["crouch", "launch", "lunge", "bite", "land", "recover", "bark", "hold", "flinch", "dead"]
+			if vis.quad.poses.has("gore"):
+				listed = ["lower", "drive", "gore", "rear", "launch", "leap", "land", "recover"]
+			elif vis.quad.poses.has("paw_up"):   # the ram: butt, then (frost_ram@more) charge and kick
+				listed = ["tuck", "drive", "butt", "land", "lower", "paw_up", "paw_back",
+						"run", "skid", "shake_l", "kick_load", "kick", "flinch", "dead"]
+			for pn0 in listed:
 				if vis.quad.poses.has(pn0):
 					names.append(pn0)
 			vis.quad.pose_seq = {}
@@ -200,7 +220,8 @@ func _foe_sheet(foe: String, attack: String) -> String:
 		if vis.rig == null:
 			continue
 		vis.rig.set_physics_process(false)
-		var sc: float = 1.8 / maxf(float(cfg.get("hurt_h", 1.8)), 1.8)   # big bodies fit their cell
+		# big bodies fit their cell (clip_meta models.<id>.sheet_h where the body is taller than its hurtbox)
+		var sc: float = 1.8 / maxf(float(HumanoidLib.model_cfg(String(cfg.get("model", ""))).get("sheet_h", cfg.get("hurt_h", 1.8))), 1.8)
 		vis.scale = Vector3.ONE * sc
 		vis.position = Vector3((i % 4 - 1.5) * 2.35, 0.25 if i < 4 else -2.45, 0)
 		vis.rotation_degrees.y = _item_yaw

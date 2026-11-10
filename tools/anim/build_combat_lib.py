@@ -192,7 +192,7 @@ def write_action(arm, skel, name, poses):
 
 
 COMMON_FOE = {"death": ["fall_back"]}
-BOSSES_KEEP_OWN = ("turfwright", "ice_cutter", "host", "hedgelayer", "netmender")
+BOSSES_KEEP_OWN = ("turfwright", "ice_cutter", "host", "hedgelayer", "netmender", "fellcaller", "leadvoice")
 
 
 def write_foe_meta(rows, sets):
@@ -210,7 +210,8 @@ def write_foe_meta(rows, sets):
     for foe, cs in sets.items():
         cs = dict(cs)
         if foe not in BOSSES_KEEP_OWN:   # Holdfasts keep their own endings
-            cs.update(COMMON_FOE)
+            for k, v in COMMON_FOE.items():
+                cs.setdefault(k, v)      # (a foe's own keyed death wins)
         meta["clip_sets"]["foe_" + foe] = cs
         if foe in meta["models"]:
             meta["models"][foe]["clip_set"] = "foe_" + foe
@@ -257,6 +258,7 @@ def main():
     with open(os.path.join(HERE, "grips.json")) as f:
         grips = {k: A.Grip(v) for k, v in json.load(f).items() if not k.startswith("_")}
     ctx = C.Ctx(skel, FPS, mocap, grips)
+    ctx.own_idle = lambda model_id: own_idle(skel, model_id)
     built = {}
     for name, make in C.clips().items():
         if only and name not in only:

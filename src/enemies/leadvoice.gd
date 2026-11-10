@@ -72,10 +72,15 @@ func repertoire() -> Array:
 
 ## Sat: her own rising clip held at its first frame.
 func _sit(blend := 0.6) -> void:
+	_sat_note = ""
 	vis.play(String(_d("seat_clip", "rise")), blend, 0.0)
 
 func is_seated_pose() -> bool:
-	return vis.current_clip() == String(_d("seat_clip", "rise")) and not standing
+	return not standing and (vis.current_clip() == String(_d("seat_clip", "rise")) or _sat_note != "" and vis.current_clip() == _sat_note)
+
+## The clip of the note she is holding sat down ("" between notes): her
+## seated beats (clip set "@sit_<attack>", keyed on her seated stance).
+var _sat_note := ""
 
 ## A voice does not need to see who it is for.
 func _los_clear() -> bool:
@@ -300,9 +305,17 @@ func _attack_usable(a: Dictionary) -> bool:
 
 func _begin_attack(a: Dictionary) -> void:
 	super._begin_attack(a)
+	_sat_note = ""
 	if not standing:
-		# sat: only her head and shoulders come up for it
-		vis.play(String(_d("seat_clip", "rise")), 0.4, float(_d("seat_lift", 0.1)))
+		# sat: only her head and shoulders come up for it. Her own seated
+		# beat for this note where the library has one, landing on the
+		# windup; else the seat clip, lifted a little.
+		var beat := "@sit_" + String(a.get("id", ""))
+		if vis.rig != null and vis.rig.has_clip(beat):
+			_sat_note = String(a.get("anim", "hold_note"))
+			vis.play_timed(_sat_note, maxf(float(a.get("windup", 0.5)) / _speed_mult(), 0.05), 0.4, 0.0, INF, beat)
+		else:
+			vis.play(String(_d("seat_clip", "rise")), 0.4, float(_d("seat_lift", 0.1)))
 
 func _strike() -> void:
 	match String(_atk.get("type", "melee")):
