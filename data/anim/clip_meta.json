@@ -1753,7 +1753,7 @@
    "yaw_deg": 180.0,
    "own_clips": true,
    "bare_hands": true,
-   "_note": "Reach frost-taken (REACH.md 5): own idle/walk/run/slash/hit/defeat (the slash is the Crook sweep, sectioned off the hand tracks); the leg hook and the whistle are overlays (hook_throw, whistle). The crook of ice grown from both hands is part of the mesh: a long hit volume rides the right hand.",
+   "_note": "Reach frost-taken (REACH.md 5): own idle/walk/run/slash/hit/defeat (the slash is the Crook sweep, sectioned off the hand tracks); the leg hook and the whistle are overlays (rake_sweep, whistle). The crook of ice grown from both hands is part of the mesh: a long hit volume rides the right hand.",
    "unarmed": {
     "_note": "the crook, one piece from both hands",
     "right": {

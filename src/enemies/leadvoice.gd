@@ -242,6 +242,7 @@ func raise_dead(enemy_id: String, n: int, cap: int, from_gap: bool) -> int:
 		else:
 			var mid := clampf(d * 0.5, 3.0, float(_d("summon_ring", 6.5)))
 			at = global_position + dir * mid + side * (float(i) - float(n - 1) * 0.5) * 2.2
+		at = _open_ground(at, side)
 		e.global_position = Vector3(at.x, global_position.y + 0.3, at.z)
 		e.home = e.global_position
 		e.vis.rotation.y = atan2(-dir.x, -dir.z)
@@ -251,6 +252,22 @@ func raise_dead(enemy_id: String, n: int, cap: int, from_gap: bool) -> int:
 		placed += 1
 		FrostDissolve.shards(get_parent(), e.global_position, 1.2)
 	return placed
+
+## Nobody stands up inside the well-housing or a stone: try the place, then
+## either side of it, wider each time.
+func _open_ground(at: Vector3, side: Vector3) -> Vector3:
+	var space := get_world_3d().direct_space_state
+	var probe := SphereShape3D.new()
+	probe.radius = 0.6
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = probe
+	q.collision_mask = RH.M_WORLD_ALL
+	for off in [0.0, 2.6, -2.6, 4.4, -4.4, 6.0, -6.0]:
+		var c: Vector3 = at + side * float(off)
+		q.transform = Transform3D(Basis(), Vector3(c.x, global_position.y + 1.1, c.z))
+		if space.intersect_shape(q, 1).is_empty():
+			return c
+	return at
 
 # ---------------------------------------------------------------- combat
 func _st_extra(dt: float) -> void:

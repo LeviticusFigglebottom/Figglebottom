@@ -274,7 +274,7 @@ Both run from the `ending_choice` hook through `EndingDirector` (ADR 0011). Ever
 3. He sings. This is the audio director's Outsong, the whole rite, and for once it has a Leadvoice: the voice that starts alone is his.
 4. Under the first phrase the camera comes in, slowly, from behind his shoulder.
 5. He kneels and opens the horn. A small warm light goes down into the water and out.
-6. The melt goes out from the spring and does not stop at the stones. Maren and the child go with the frost. The dead in the river are gone. The light that comes up is not amber: it is the grey of a real spring morning.
+6. The melt goes out from the spring and does not stop at the stones. Maren and the child go with the frost. The dead in the river are gone. The light that comes up is the grey of a real spring morning.
 7. Control comes back, with no HUD. The song is still going. The way out is the way he came in.
 8. When he has walked out past the stones, the credits roll over the walk, and he can keep walking.
 9. After the credits: the Strand at Saltfell, in spring. Grey and green and empty.

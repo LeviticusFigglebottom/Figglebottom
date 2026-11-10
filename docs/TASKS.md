@@ -19,6 +19,10 @@ Format: worktree → branch.
   - Frost/melt wavefront in `hall`, `hall_ds` and `terrain` (`shaders/wavefront.gdshaderinc`), snow-crystal and pollen/steam/drip wave particles
   - The score (THAW, RIME, the Outsong, the Netmender, title), ambiences and the foley pass: `docs/audio/MUSIC.md`
 
+- `/home/user/fb-end` → `feat/reach-coldwell-endings` (ready for review)
+  - Reach and Coldwell encounters and writing (`REACH.md`, `COLDWELL.md`)
+  - Both endings, the credits, the world after each (ADR 0011)
+
 ## todo
 1. Wire Brede's `give_oilskins` gift once his NPC data lands.
 2. Region tier: the Turfwright fight, the Lowe NPCs, the Keepsakes questline.

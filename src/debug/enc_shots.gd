@@ -1214,9 +1214,10 @@ func _st_reach_cairn(p: Player) -> void:
 		_place_player(p, f.father_point() + Vector3(-9.0, 0.3, 6.0), 0.0)
 	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
 		(v as Node3D).visible = false
-	_cam.global_position = f.father_point() + Vector3(-5.2, 1.7, 2.6)
-	_cam.look_at(f.father_point() + Vector3(-0.8, 1.3, 0.3), Vector3.UP)
-	_cam.fov = 52.0
+	# from the open side of the fold: him against the cairn, her beside him
+	_cam.global_position = f.father_point() + Vector3(-1.0, 1.5, 6.4)
+	_cam.look_at(f.father_point() + Vector3(-1.4, 1.5, 0.4), Vector3.UP)
+	_cam.fov = 58.0
 	if _f > 70:
 		_freeze()
 

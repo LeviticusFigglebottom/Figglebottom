@@ -3281,7 +3281,7 @@
     "dmg": 8,
     "poise_dmg": 30,
     "cooldown": 7.0,
-    "anim": "hook_throw",
+    "anim": "rake_sweep",
     "breath": "held",
     "track": 0.9,
     "telegraph": {
