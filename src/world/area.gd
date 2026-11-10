@@ -65,6 +65,14 @@ func apply_state(s: RH.WState) -> void:
 	# state-aware entities (hearth flames, doors, spawners) react themselves
 	get_tree().call_group(RH.GROUP_STATE_LISTENERS, "on_world_state", area_id, s)
 
+## Nodes attached after a state was applied (a soul who arrives with a
+## release) take their layer's standing: an idle layer's bodies do not collide.
+func settle_layers() -> void:
+	if _applied < 0:
+		return
+	_set_layer_collision(thaw_layer, _applied != RH.WState.RIME)
+	_set_layer_collision(rime_layer, _applied == RH.WState.RIME)
+
 ## During the wave both layers are visible (shader dissolve owns pixel
 ## presence); collision swaps immediately to the target so routes change.
 func pre_transition(target: RH.WState) -> void:

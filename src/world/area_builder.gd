@@ -173,12 +173,7 @@ static func build(area_id: String) -> Area:
 	for spec in def.get("npcs", []):
 		if not _flag_ok(spec):
 			continue      # a soul may stand only before/after a turn of the story
-		var n := NPC.new()
-		n.npc_id = spec.get("id", "")
-		n.spec = spec
-		n.set_meta("state_tag", spec.get("tag", "thaw"))
-		area.attach(n, spec.get("tag", "thaw"))
-		_place(n, spec)
+		_add_npc(area, spec)
 	for spec in def.get("plaques", []):
 		if not _flag_ok(spec):
 			continue
@@ -200,21 +195,7 @@ static func build(area_id: String) -> Area:
 	for spec in def.get("pickups", []):
 		if not _flag_ok(spec):
 			continue    # quest relics stay unseen until their word is given
-		var k := Pickup.new()
-		k.pickup_id = spec.get("id", "pickup")
-		k.area_id = area_id
-		k.warmth = int(spec.get("warmth", 0))
-		k.item_id = spec.get("item", "")
-		k.item_count = int(spec.get("count", 1))
-		k.label = spec.get("label", "Take")
-		k.appear_flag = spec.get("appear_flag", "")
-		k.display_kit = spec.get("kit", "")
-		k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
-		k.set_flag = spec.get("set_flag", "")
-		k.display_lift = float(spec.get("lift", 0.0))
-		k.chip_heavy = bool(spec.get("chip_heavy", false))
-		area.attach(k, spec.get("tag", "base"))
-		_place(k, spec)
+		_add_pickup(area, spec)
 	for spec in def.get("flag_gates", []):
 		var fgate := FlagGate.new()
 		var gtag: String = spec.get("tag", "base")
@@ -476,6 +457,64 @@ static func _extent(def: Dictionary) -> Array:
 
 static func _v3(a) -> Vector3:
 	return Vector3(a[0], a[1], a[2]) if a is Array and a.size() >= 3 else Vector3.ZERO
+
+static func _add_npc(area: Area, spec: Dictionary) -> NPC:
+	var n := NPC.new()
+	n.npc_id = spec.get("id", "")
+	n.spec = spec
+	n.set_meta("state_tag", spec.get("tag", "thaw"))
+	area.attach(n, spec.get("tag", "thaw"))
+	_place(n, spec)
+	return n
+
+static func _add_pickup(area: Area, spec: Dictionary) -> Pickup:
+	var k := Pickup.new()
+	k.pickup_id = spec.get("id", "pickup")
+	k.area_id = area.area_id
+	k.warmth = int(spec.get("warmth", 0))
+	k.item_id = spec.get("item", "")
+	k.item_count = int(spec.get("count", 1))
+	k.label = spec.get("label", "Take")
+	k.appear_flag = spec.get("appear_flag", "")
+	k.display_kit = spec.get("kit", "")
+	k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
+	k.set_flag = spec.get("set_flag", "")
+	k.display_lift = float(spec.get("lift", 0.0))
+	k.chip_heavy = bool(spec.get("chip_heavy", false))
+	area.attach(k, spec.get("tag", "base"))
+	_place(k, spec)
+	return k
+
+## A story flag turned while the Bearer stands in the area (a release). The
+## souls and relics gated on it ("require_flag" / "absent_flag") were placed
+## when the area was built, so without this the scene a release earns (Old
+## Pell and Ivo at the kettle, KETTLE.md 9) waited for the next load: the
+## first warming after the duel still showed the evening before it.
+static func refresh_flagged(area: Area) -> void:
+	if area == null or not is_instance_valid(area):
+		return
+	var def: Dictionary = area.get_meta("def", {})
+	var standing: Array = area.find_children("*", "NPC", true, false).filter(
+			func(n): return not n.is_queued_for_deletion())
+	for n in standing:
+		var sp: Dictionary = (n as NPC).spec
+		if (sp.has("require_flag") or sp.has("absent_flag")) and not _flag_ok(sp):
+			n.get_parent().remove_child(n)
+			n.queue_free()
+	for spec in def.get("npcs", []):
+		if not (spec.has("require_flag") or spec.has("absent_flag")) or not _flag_ok(spec):
+			continue
+		if not standing.any(func(n): return (n as NPC).spec == spec):
+			_add_npc(area, spec)
+	var lying := {}
+	for k in area.find_children("*", "Pickup", true, false):
+		lying[(k as Pickup).pickup_id] = true
+	for spec in def.get("pickups", []):
+		var pid := String(spec.get("id", "pickup"))
+		if spec.has("require_flag") and _flag_ok(spec) and not lying.has(pid) \
+				and not World.area_flag(area.area_id, "took_" + pid):
+			_add_pickup(area, spec)
+	area.settle_layers()
 
 static func _place(n: Node3D, spec: Dictionary) -> void:
 	n.position = _v3(spec.get("at", [0, 0, 0]))

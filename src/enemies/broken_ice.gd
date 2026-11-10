@@ -157,6 +157,8 @@ static func seal_at(area: Node, at: Vector3, r: float) -> void:
 	m.roughness = 0.2
 	m.metallic_specular = 0.8
 	skin.material_override = m
-	area.add_child(skin)
+	# (new ice is RIME's: warmed, the place is open water again)
+	var holder: Node = (area as Area).rime_layer if area is Area else area
+	holder.add_child(skin)
 	skin.global_position = Vector3(at.x, at.y + 0.1, at.z)
 	skin.add_to_group("sealed_ice")
