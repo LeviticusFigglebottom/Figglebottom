@@ -12,7 +12,7 @@
 
 | Part | Construction |
 |---|---|
-| Footing | Rounded field stones, some stacked two high, proud of the wall on both faces. A house on a deck (fish-houses) stands on two sole logs instead. |
+| Footing | Rounded field stones, some stacked two high, proud of the wall on both faces, on a plain core carried below the floor line so nothing shows through the joints. A house on a deck (fish-houses) stands on two sole logs instead. |
 | Walls | A sill beam on the footing. Staves are six-sided sections that bite into their neighbours, so every joint is a real V that catches light. Each is swept through four rings that bow, lean and twist by millimetres. Bay posts every 4 m, a chamfered wall plate, an eave board up to the roof. |
 | Doors | A worn threshold stone, chamfered jambs, an eared lintel, short staves over it. A pair of plank leaves stands open: ledges and a brace on the back, tapering iron straps with nail heads, pintles, a ring handle on its plate. |
 | Windows | Real holes in the stave wall with a sill, head and jambs, and one ledged shutter on strap hinges, shut, ajar or pinned back. Byres get barred vent slots. Sheds get none. |
@@ -32,7 +32,7 @@
 | 0 to 36 m | everything |
 | 36 to 70 m | iron, bark, hooks, slats, carving and hung goods drop out |
 | 49 m | the interior fittings drop out |
-| past 70 m | three plain meshes: plank slabs on a stone band, turf slabs with the ridge roll (as before the pass) |
+| past 70 m | five plain meshes: plank slabs on a stone band, turf slabs with the ridge roll, the corner posts and the gable ends (as before the pass) |
 
 ### 2. Interiors (`src/world/house_interior.gd`)
 
@@ -60,14 +60,14 @@ Nothing here collides.
 | Wall foot | A ragged strip of bare trodden earth where grass does not grow. |
 | Drip line | Washed gravel pokes through the turf 0.8 m out, under the eaves. |
 | Doorways | A worn way runs out of every door and fades over 4 m. |
-| Under a roof | An earth floor in closed houses. No snow in RIME. |
+| Under a roof | An earth floor in closed houses. In RIME it takes hoarfrost, not snow. |
 | RIME | Snow lies unbroken against the walls. The bank itself is geometry (`HouseDetail.build_drifts`): deeper on the lee side and in corners, dug out at doors, following the terrain. On a deck it is a thin sill. |
 
 Close-up, on all terrain:
 
 - **Parallax** on the path and the shingle (two steps, 5.5 cm, fades by 18 m).
 - **A finer second sample** of albedo and normal inside 7 m.
-- **Puddles** in the low places of worn ground in THAW: dark, flat, glossy, with a damp rim. In RIME the same places are **ice patches** with pale veins.
+- **Puddles** in the low places of worn ground in THAW: dark, flat, glossy, with a damp rim. In RIME the same places are **ice patches** with pale veins. None lie within a metre of a wall, where they would mirror a fire through it; the worn way out of a door keeps its own.
 - **Wet shore:** glosses toward the waterline, with a ragged wrack line where the last tide stopped.
 
 ## Verification
@@ -93,24 +93,48 @@ Close-up, on all terrain:
 
 ## Cost
 
-Triangles per house inside 70 m (`godot --headless --path . -- --area=<id> --quit-after=4 --house-stats`):
+Triangles and mesh instances per house, all LODs together. "Near detail" is `--house-stats` (`godot --headless --path . -- --area=<id> --quit-after=4 --house-stats`): what `HouseDetail` adds inside 70 m.
 
-| House | Size | Triangles | of which small parts (to 36 m) | of which interior (to 49 m) |
-|---|---|---|---|---|
-| Tarnhall hall | 14 x 36 | 70,704 | 11,028 | 7,768 |
-| Saltfell longhouse | 12 x 32 | 61,466 | 9,756 | 7,300 |
-| Tarnhall byres | 10 x 14 | 29,432 | 6,444 | 1,384 |
-| Saltfell boat-shed | 12 x 12 | 25,400 | 6,120 | 1,392 |
-| Saltfell byre | 8 x 12 | 25,076 | 4,968 | 1,352 |
-| Saltfell store | 8 x 8 | 20,202 | 4,788 | 870 |
-| Kettle fish-houses | 8 x 8 | 18,300 to 19,600 | 4,900 | 3,100 to 4,100 |
-| Coldwell well-houses | 6 x 8 | 16,800 to 17,800 | 4,000 | 790 |
+| House | Size | Before: triangles / meshes | After: triangles / meshes | Near detail | of which small parts (to 36 m) | of which interior (to 49 m) |
+|---|---|---|---|---|---|---|
+| Tarnhall hall | 14 x 36 | 12,696 / 5 | 73,932 / 18 | 70,704 | 11,028 | 7,768 |
+| Saltfell longhouse | 12 x 32 | 11,292 / 5 | 64,456 / 18 | 61,466 | 9,756 | 7,300 |
+| Tarnhall byres | 10 x 14 | 7,212 / 5 | 32,300 / 16 | 29,432 | 6,444 | 1,384 |
+| Saltfell byre | 8 x 12 | 6,252 / 5 | 27,706 / 16 | 25,076 | 4,968 | 1,352 |
+| Saltfell boat-shed | 12 x 12 | 5,256 / 5 | 27,300 / 15 | 25,400 | 6,120 | 1,392 |
+| Saltfell store | 8 x 8 | 5,436 / 5 | 22,832 / 17 | 20,202 | 4,788 | 870 |
+| Kettle fish-houses | 8 x 8 | 5,400 / 5 | 22,400 to 22,700 / 19 | 18,300 to 19,600 | 4,900 | 3,100 to 4,100 |
+| Coldwell well-houses | 6 x 8 | 4,950 / 5 | 19,200 to 20,200 / 17 | 16,800 to 17,800 | 4,000 | 790 |
 
-A house is 13 draw calls near (it was 4), 3 far, plus one probe.
+Three of each house's meshes are the far LOD, so a near house is 12 to 16 draw calls per pass (it was 4), plus one probe. A far house is 5 (it was 4). The rows were measured before two late additions (a plain core behind the footing stones, the fish-house hearths), which add a few hundred triangles each.
+
+Building an area headless takes 0.2 to 0.8 s longer on this box (Saltfell 4.9 s to 5.1 s, Tarnhall 3.4 s to 4.1 s, Kettle 3.3 s to 3.5 s).
 
 Whole-frame counts from the harness (`[shot] stats`, lavapipe, tier 1, shadows included):
 
-FRAME_TABLE
+| Shot | Draw calls before | after | Triangles before | after | Change |
+|---|---|---|---|---|---|
+| yard_thaw | 613 | 657 | 1,113,784 | 1,385,352 | +7% calls, +24% triangles |
+| door_thaw | 622 | 665 | 1,088,313 | 1,359,593 | +7% calls, +25% triangles |
+| wall_thaw | 720 | 774 | 1,551,159 | 1,849,825 | +7% calls, +19% triangles |
+| foot_thaw | 990 | 1044 | 1,984,413 | 2,289,219 | +5% calls, +15% triangles |
+| longhouse_in_thaw | 847 | 898 | 1,598,671 | 1,893,591 | +6% calls, +18% triangles |
+| longhouse_in2_thaw | 779 | 840 | 1,587,787 | 1,905,005 | +8% calls, +20% triangles |
+| byre_thaw | 355 | 376 | 1,120,396 | 1,187,204 | +6% calls, +6% triangles |
+| boatshed_thaw | 766 | 796 | 2,042,902 | 2,112,754 | +4% calls, +3% triangles |
+| ingra_store_thaw | 768 | 818 | 1,922,787 | 2,163,083 | +7% calls, +12% triangles |
+| yard_rime | 558 | 603 | 1,190,725 | 1,464,141 | +8% calls, +23% triangles |
+| wall_rime | 537 | 581 | 1,318,862 | 1,565,610 | +8% calls, +19% triangles |
+| foot_rime | 858 | 912 | 1,943,383 | 2,244,317 | +6% calls, +15% triangles |
+| longhouse_in_rime | 621 | 676 | 1,256,585 | 1,556,113 | +9% calls, +24% triangles |
+| longhouse_in2_rime | 809 | 870 | 1,881,812 | 2,208,822 | +8% calls, +17% triangles |
+| fishhouse_thaw | 233 | 278 | 520,160 | 600,880 | +19% calls, +16% triangles |
+| fishhouse_in_thaw | 145 | 176 | 451,336 | 510,744 | +21% calls, +13% triangles |
+| hall_in_thaw | 1559 | 1600 | 1,275,977 | 1,573,457 | +3% calls, +23% triangles |
+| hall_out_thaw | 1129 | 1167 | 881,664 | 1,193,980 | +3% calls, +35% triangles |
+| hall_lusse_thaw | 1063 | 1112 | 1,142,995 | 1,480,823 | +5% calls, +30% triangles |
+| barrow_thaw | 234 | 235 | 1,329,129 | 1,369,401 | +0% calls, +3% triangles |
+| wellhouse_thaw | 101 | 123 | 387,825 | 433,905 | +22% calls, +12% triangles |
 
 ## What is still synthetic
 

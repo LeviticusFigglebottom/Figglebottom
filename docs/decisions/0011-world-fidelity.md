@@ -27,7 +27,7 @@ The look pass gave every generated surface a photo material. The owner still rea
 
 ## Consequences
 
-- A house costs 17k to 71k triangles and about 13 draw calls inside 70 m (it was 2k to 9k and 4). Past 70 m it is three plain meshes. Small parts drop at 36 m, interiors at 49 m.
+- A house is 19k to 74k triangles in 15 to 19 meshes (it was 5k to 13k in 5). Past 70 m five plain meshes draw: wall slabs, a stone band, roof slabs, the corner posts and the gable ends. Small parts drop at 36 m, interiors at 49 m.
 - The terrain shader loops over the footprints for every fragment near a house. Areas without houses pay one integer compare.
 - Probes capture once at load and once after each state change.
 - The shot harness now waits for pipeline compiles to go quiet before quitting. Leaving earlier deadlocks the engine's shutdown under lavapipe.

@@ -2,6 +2,38 @@
 
 Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based on `origin/fix/slice-qa`). Newest entry at the top.
 
+## 2026-11-10 (3): milestone complete, ready to merge
+
+**Branch `art/world-fidelity`.** Write-up: `docs/art/WORLD_FIDELITY.md`. Decisions: `docs/decisions/0011-world-fidelity.md`.
+
+**Since entry (2)**
+
+- **RIME drifts are geometry now** (`HouseDetail.build_drifts`, a rime-only mesh per house). Raising terrain vertices let the bank come up through the longhouse floor: a 1 m grid cannot hug a wall.
+- **New suite `houses`** (61 checks): collision boxes equal what each spec implies, nothing else under a house collides, near and far LODs hand over at 70 m, the land knows every footprint, and a steered capsule walks in through the longhouse door and up to the bench wall.
+- **Suites green here:** smoke, houses, steading, lowe, kettle, tarnhall, thornwold, reach, coldwell.
+- **Before/after pairs** are in `docs/screens/world_before_*.png` and `world_after_*.png`, 25 cameras, all at eye height. I looked at every pair.
+- **Cost:** 0 % to +22 % draw calls and +3 % to +35 % triangles per frame at those cameras (table in the write-up). Building an area takes 0.2 to 0.8 s longer. A house is 19k to 74k triangles in 15 to 19 meshes (it was 5k to 13k in 5); past 70 m five plain meshes draw.
+- **Trial merge with `origin/art/look-pass-2`: `building_gen.gd` merges clean.** The only conflict is `src/world/scatter.gd`, which I did not touch (it is between `fix/slice-qa` and the look pass).
+- **The shot harness prints frame cost** per capture: `[shot] stats <file> draw_calls= primitives= objects=`.
+
+**CI on this branch**
+
+- **`tarnhall_encounters` → "two benches" is a timing flake, and it is on the base too.** CI run 96 failed on `the second goes where he is running to (1 in the air)`. Here it passed once and failed once on my branch, and failed 2 of 4 runs on untouched `origin/fix/slice-qa` (eaa3f09) under the same load. It is the QA env's suite; I left it alone.
+- **The edge audit failed on the base as well** (160 unclassed edges in `shepherds_reach`, CI run 71 on eaa3f09). `a8f5c3b` on `fix/slice-qa` addresses it.
+- Every other suite was green in CI run 96 (24 suites).
+
+**For you to decide**
+
+1. **Shadow sides at dusk are near black** on houses and barrow facades, before and after. It is the THAW sun and ambient balance outdoors, which I did not change (the sky and the grade are the look pass's). A small lift of the THAW `fill_energy` would help every procedural wall.
+2. **Unshadowed fire lights reach through walls.** The Tarnhall hearths (`glow` range 16 m) light the ground outside the hall's long wall. Puddles at the wall foot mirrored them as bright patches, so the terrain now keeps puddles 1 m off any wall. The lights still reach; shortening their range to the hall's half width is area data, not mine.
+3. **Door-leaf colliders:** see entry (2), item 3.
+4. **The Coldwell well-houses overhang their rock ledges** (`wellhouse_thaw`): the terrain under them is not level. Generator data, not mine.
+
+**Not done**
+
+- Nothing was seen on a real GPU. Ask the GPU worker to shoot `tools/art/world_shots.sh after` at tier 2 and check the probes, the parallax depth and the puddle gloss.
+- Decal nodes: not used. Marks are vertex colour and terrain-shader terms (ADR 0011).
+
 ## 2026-11-10 (2): first milestone pushed
 
 **Direct messages do not reach you.** `send_message` to `session_01F3vrUNPtFufos1qRX6SLeD` is refused ("needs proof of a trusted device"). I am reporting here only. Answer in `LOCAL_OUTBOX.md` on `main`, addressed to "world".
