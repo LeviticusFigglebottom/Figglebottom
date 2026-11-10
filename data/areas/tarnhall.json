@@ -1467,1026 +1467,6 @@
   },
   {
    "min": [
-    185.74,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    185.86,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    185.73,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    185.87,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    185.74,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    185.86,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    185.73,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    185.87,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    186.1,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    186.55,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
-    187.34,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    187.46,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    187.33,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    187.47,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    187.34,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    187.46,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    187.33,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    187.47,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    188.94,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    189.06,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    188.93,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    189.07,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    188.94,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    189.06,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    188.93,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    189.07,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    189.3,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    189.75,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
-    190.54,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    190.66,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    190.53,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    190.67,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    190.54,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    190.66,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    190.53,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    190.67,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    192.14,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    192.26,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    192.13,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    192.27,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    192.14,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    192.26,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    192.13,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    192.27,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    192.5,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    192.95,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
-    193.74,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    193.86,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    193.73,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    193.87,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    193.74,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    193.86,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    193.73,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    193.87,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    195.34,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    195.46,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    195.33,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    195.47,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    195.34,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    195.46,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    195.33,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    195.47,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    195.7,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    196.15,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
-    196.94,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    197.06,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    196.93,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    197.07,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    196.94,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    197.06,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    196.93,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    197.07,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    198.54,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    198.66,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    198.53,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    198.67,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    198.54,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    198.66,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    198.53,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    198.67,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    198.9,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    199.35,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
-    200.14,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    200.26,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    200.13,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    200.27,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    200.14,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    200.26,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    200.13,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    200.27,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    201.74,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    201.86,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    201.73,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    201.87,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    201.74,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    201.86,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    201.73,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    201.87,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    202.1,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    202.55,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
-    203.34,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    203.46,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    203.33,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    203.47,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    203.34,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    203.46,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    203.33,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    203.47,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    204.94,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    205.06,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    204.93,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    205.07,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    204.94,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    205.06,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    204.93,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    205.07,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    205.3,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    205.75,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
-    206.54,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    206.66,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    206.53,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    206.67,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    206.54,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    206.66,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    206.53,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    206.67,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    208.14,
-    25.12,
-    -334.08
-   ],
-   "max": [
-    208.26,
-    25.42,
-    -333.96
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    208.13,
-    25.12,
-    -334.09
-   ],
-   "max": [
-    208.27,
-    25.46,
-    -333.95
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    208.14,
-    25.12,
-    -333.24
-   ],
-   "max": [
-    208.26,
-    25.42,
-    -333.12
-   ],
-   "mat": "M_bone",
-   "tag": "thaw",
-   "collide": false
-  },
-  {
-   "min": [
-    208.13,
-    25.12,
-    -333.25
-   ],
-   "max": [
-    208.27,
-    25.46,
-    -333.11
-   ],
-   "mat": "M_ice",
-   "tag": "rime",
-   "collide": false
-  },
-  {
-   "min": [
-    208.5,
-    25.12,
-    -333.78
-   ],
-   "max": [
-    208.95,
-    25.25,
-    -333.42
-   ],
-   "mat": "M_drift",
-   "tag": "base",
-   "collide": false
-  },
-  {
-   "min": [
     186.0,
     24.3,
     -329.15
@@ -4745,6 +3725,856 @@
    ],
    "rot": 0,
    "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    185.8,
+    25.12,
+    -334.02
+   ],
+   "rot": 340,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    185.8,
+    25.12,
+    -334.02
+   ],
+   "rot": 340,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    185.8,
+    25.12,
+    -333.18
+   ],
+   "rot": 20,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    185.8,
+    25.12,
+    -333.18
+   ],
+   "rot": 20,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    186.32,
+    25.12,
+    -333.6
+   ],
+   "rot": -20,
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    187.4,
+    25.12,
+    -334.02
+   ],
+   "rot": 47,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    187.4,
+    25.12,
+    -334.02
+   ],
+   "rot": 47,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    187.4,
+    25.12,
+    -333.18
+   ],
+   "rot": 87,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    187.4,
+    25.12,
+    -333.18
+   ],
+   "rot": 87,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp",
+   "at": [
+    187.9,
+    25.12,
+    -333.55
+   ],
+   "rot": 50,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp_cold",
+   "at": [
+    187.9,
+    25.12,
+    -333.55
+   ],
+   "rot": 50,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    189.0,
+    25.12,
+    -334.02
+   ],
+   "rot": 114,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    189.0,
+    25.12,
+    -334.02
+   ],
+   "rot": 114,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    189.0,
+    25.12,
+    -333.18
+   ],
+   "rot": 154,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    189.0,
+    25.12,
+    -333.18
+   ],
+   "rot": 154,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    189.52,
+    25.12,
+    -333.6
+   ],
+   "rot": -14,
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    190.6,
+    25.12,
+    -334.02
+   ],
+   "rot": 181,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    190.6,
+    25.12,
+    -334.02
+   ],
+   "rot": 181,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    190.6,
+    25.12,
+    -333.18
+   ],
+   "rot": 221,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    190.6,
+    25.12,
+    -333.18
+   ],
+   "rot": 221,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    192.2,
+    25.12,
+    -334.02
+   ],
+   "rot": 248,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    192.2,
+    25.12,
+    -334.02
+   ],
+   "rot": 248,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    192.2,
+    25.12,
+    -333.18
+   ],
+   "rot": 288,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    192.2,
+    25.12,
+    -333.18
+   ],
+   "rot": 288,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    192.72,
+    25.12,
+    -333.6
+   ],
+   "rot": -8,
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp",
+   "at": [
+    192.7,
+    25.12,
+    -333.55
+   ],
+   "rot": 200,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp_cold",
+   "at": [
+    192.7,
+    25.12,
+    -333.55
+   ],
+   "rot": 200,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    193.8,
+    25.12,
+    -334.02
+   ],
+   "rot": 315,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    193.8,
+    25.12,
+    -334.02
+   ],
+   "rot": 315,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    193.8,
+    25.12,
+    -333.18
+   ],
+   "rot": 355,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    193.8,
+    25.12,
+    -333.18
+   ],
+   "rot": 355,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    195.4,
+    25.12,
+    -334.02
+   ],
+   "rot": 22,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    195.4,
+    25.12,
+    -334.02
+   ],
+   "rot": 22,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    195.4,
+    25.12,
+    -333.18
+   ],
+   "rot": 62,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    195.4,
+    25.12,
+    -333.18
+   ],
+   "rot": 62,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    195.92,
+    25.12,
+    -333.6
+   ],
+   "rot": -2,
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    197.0,
+    25.12,
+    -334.02
+   ],
+   "rot": 89,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    197.0,
+    25.12,
+    -334.02
+   ],
+   "rot": 89,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    197.0,
+    25.12,
+    -333.18
+   ],
+   "rot": 129,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    197.0,
+    25.12,
+    -333.18
+   ],
+   "rot": 129,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp",
+   "at": [
+    197.5,
+    25.12,
+    -333.55
+   ],
+   "rot": 350,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp_cold",
+   "at": [
+    197.5,
+    25.12,
+    -333.55
+   ],
+   "rot": 350,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    198.6,
+    25.12,
+    -334.02
+   ],
+   "rot": 156,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    198.6,
+    25.12,
+    -334.02
+   ],
+   "rot": 156,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    198.6,
+    25.12,
+    -333.18
+   ],
+   "rot": 196,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    198.6,
+    25.12,
+    -333.18
+   ],
+   "rot": 196,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    199.12,
+    25.12,
+    -333.6
+   ],
+   "rot": 4,
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    200.2,
+    25.12,
+    -334.02
+   ],
+   "rot": 223,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    200.2,
+    25.12,
+    -334.02
+   ],
+   "rot": 223,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    200.2,
+    25.12,
+    -333.18
+   ],
+   "rot": 263,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    200.2,
+    25.12,
+    -333.18
+   ],
+   "rot": 263,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    201.8,
+    25.12,
+    -334.02
+   ],
+   "rot": 290,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    201.8,
+    25.12,
+    -334.02
+   ],
+   "rot": 290,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    201.8,
+    25.12,
+    -333.18
+   ],
+   "rot": 330,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    201.8,
+    25.12,
+    -333.18
+   ],
+   "rot": 330,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    202.32,
+    25.12,
+    -333.6
+   ],
+   "rot": 10,
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp",
+   "at": [
+    202.3,
+    25.12,
+    -333.55
+   ],
+   "rot": 500,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp_cold",
+   "at": [
+    202.3,
+    25.12,
+    -333.55
+   ],
+   "rot": 500,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    203.4,
+    25.12,
+    -334.02
+   ],
+   "rot": 357,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    203.4,
+    25.12,
+    -334.02
+   ],
+   "rot": 357,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    203.4,
+    25.12,
+    -333.18
+   ],
+   "rot": 37,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    203.4,
+    25.12,
+    -333.18
+   ],
+   "rot": 37,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    205.0,
+    25.12,
+    -334.02
+   ],
+   "rot": 64,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    205.0,
+    25.12,
+    -334.02
+   ],
+   "rot": 64,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    205.0,
+    25.12,
+    -333.18
+   ],
+   "rot": 104,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    205.0,
+    25.12,
+    -333.18
+   ],
+   "rot": 104,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    205.52,
+    25.12,
+    -333.6
+   ],
+   "rot": 16,
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    206.6,
+    25.12,
+    -334.02
+   ],
+   "rot": 131,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    206.6,
+    25.12,
+    -334.02
+   ],
+   "rot": 131,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    206.6,
+    25.12,
+    -333.18
+   ],
+   "rot": 171,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    206.6,
+    25.12,
+    -333.18
+   ],
+   "rot": 171,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp",
+   "at": [
+    207.1,
+    25.12,
+    -333.55
+   ],
+   "rot": 650,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "fat_lamp_cold",
+   "at": [
+    207.1,
+    25.12,
+    -333.55
+   ],
+   "rot": 650,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    208.2,
+    25.12,
+    -334.02
+   ],
+   "rot": 198,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    208.2,
+    25.12,
+    -334.02
+   ],
+   "rot": 198,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn",
+   "at": [
+    208.2,
+    25.12,
+    -333.18
+   ],
+   "rot": 238,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "feast_horn_frozen",
+   "at": [
+    208.2,
+    25.12,
+    -333.18
+   ],
+   "rot": 238,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "trencher",
+   "at": [
+    208.72,
+    25.12,
+    -333.6
+   ],
+   "rot": -18,
    "collide": false
   },
   {

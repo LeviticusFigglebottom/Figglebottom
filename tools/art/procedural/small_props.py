@@ -294,21 +294,16 @@ scene("woad_band", res, nodes)
 
 
 def mask_scene(name, h, root):
-    """A smooth mourning mask: two eye holes, a brow line, a woad band; face to +Z."""
-    w = h * 0.68
-    res = [mat("birch", 0.82, 0.76, 0.64, 0.7), mat("eye", 0.06, 0.05, 0.05), mat("woad", *WOAD, 0.95), mat("brow", 0.4, 0.33, 0.26),
-           ("face", "SphereMesh", {"radius": 0.5, "height": 1.0, "radial_segments": 14, "rings": 8, "material": 'SubResource("birch")'}),
-           ("eye", "SphereMesh", {"radius": 0.5, "height": 1.0, "radial_segments": 8, "rings": 4, "material": 'SubResource("eye")'}),
-           ("band", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 0.97, h * 0.13, h * 0.32), "material": 'SubResource("woad")'}),
-           ("brow", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 0.7, h * 0.02, h * 0.04), "material": 'SubResource("brow")'})]
-    nodes = [(root, "Node3D", None, {}),
-             ("Face", "MeshInstance3D", ".", {"transform": xf(w, h, h * 0.3, y=h * 0.5), "mesh": 'SubResource("face")'}),
-             ("EyeL", "MeshInstance3D", ".", {"transform": xf(w * 0.22, h * 0.085, h * 0.1, x=-w * 0.2, y=h * 0.56, z=h * 0.155), "mesh": 'SubResource("eye")'}),
-             ("EyeR", "MeshInstance3D", ".", {"transform": xf(w * 0.22, h * 0.085, h * 0.1, x=w * 0.2, y=h * 0.56, z=h * 0.155), "mesh": 'SubResource("eye")'}),
-             ("Brow", "MeshInstance3D", ".", {"transform": xf(y=h * 0.7, z=h * 0.125), "mesh": 'SubResource("brow")'}),
-             # the band lies across the eyes, the holes showing through it
-             ("Band", "MeshInstance3D", ".", {"transform": xf(y=h * 0.56), "mesh": 'SubResource("band")'})]
-    scene(name, res, nodes, upright=True)
+    """A mourning mask: the carved board is modelled (tools/art/procedural/
+    masks.py: real eye holes, a cut brow line, a painted woad band); this
+    wraps it in the scene the pickups and the pegs load. Face to +Z."""
+    path = os.path.join(OUT, name + ".tscn")
+    open(path, "w").write("\n".join([
+        "[gd_scene load_steps=2 format=3]", "",
+        '[ext_resource type="PackedScene" path="res://assets/models/props/%s.glb" id="1"]' % name, "",
+        '[node name="%s" type="Node3D"]' % root, "metadata/upright = true", "",
+        '[node name="Mask" parent="." instance=ExtResource("1")]', ""]))
+    print("wrote", path)
 
 
 mask_scene("mourning_mask", 0.26, "MourningMask")
