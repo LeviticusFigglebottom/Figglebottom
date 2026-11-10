@@ -83,11 +83,16 @@ func _ready() -> void:
 	add_to_group("targetable")
 	add_to_group(RH.GROUP_ENEMIES)
 	collision_layer = 1 << (RH.L_ENEMY - 1)
-	collision_mask = RH.M_WORLD_ALL | (1 << (RH.L_PLAYER - 1)) | (1 << (RH.L_ENEMY - 1))
+	# Foes don't collide with each other: foe-on-foe contacts in move_and_slide
+	# were the physics spikes when a pack crowded the Bearer (PERF_GPU.md, Job 4).
+	# A light separation push keeps them apart instead (_separation()).
+	# Foe-vs-Bearer collision is unchanged.
+	collision_mask = RH.M_WORLD_ALL | (1 << (RH.L_PLAYER - 1))
 	max_hp = float(cfg.get("hp", 50))
 	hp = max_hp
 	poise = float(cfg.get("poise", 30))
 	stagger_resist = float(cfg.get("stagger_resist", 1.0))
+	avoid_priority = float(cfg.get("avoid_priority", 1.0 if cfg.get("is_boss", false) else 0.5))
 	home = global_position
 
 	var cs := CollisionShape3D.new()
@@ -160,11 +165,47 @@ func _physics_process(dt: float) -> void:
 		ES.ATTACK: _st_attack(dt)
 		ES.STAGGER: _st_stagger(dt)
 		_: _st_extra(dt)
+	var sep := _separation()
+	velocity += sep
 	move_and_slide()
+	velocity -= sep
 	_tick_pull(dt)
 	_track_progress(dt)
 	# stride cycles while moving; action clips own the rig during ATTACK/STAGGER
 	vis.locomotion(dt, Vector2(velocity.x, velocity.z).length(), Vector2.ZERO, is_on_floor())
+
+## Crowd spacing. Overlapping foes push apart, in walking states only, so a
+## pack spreads round the Bearer instead of stacking. A foe yields only to
+## foes of equal or higher "avoid_priority" (data; bosses 1.0, others 0.5), so
+## the pack steps round a boss and a boss keeps its line. The push is added
+## for the slide and taken off after, so a state's own velocity, and any
+## lunge or knockback, is exactly as authored; alone, the push is zero.
+static var _crowd: Array = []
+static var _crowd_frame := -1
+var avoid_priority := 0.5
+
+func _separation() -> Vector3:
+	if not (state == ES.IDLE or state == ES.ALERT or state == ES.APPROACH or state == ES.COMBAT):
+		return Vector3.ZERO
+	var f := Engine.get_physics_frames()
+	if f != _crowd_frame:
+		_crowd_frame = f
+		_crowd = get_tree().get_nodes_in_group(RH.GROUP_ENEMIES)
+	var push := Vector3.ZERO
+	var r := float(cfg.get("col_r", 0.4))
+	for o in _crowd:
+		if o == self or not is_instance_valid(o) or not (o is Enemy):
+			continue
+		var e := o as Enemy
+		if e.dead or e.avoid_priority < avoid_priority or not e.can_process():
+			continue
+		var d := global_position - e.global_position
+		d.y = 0.0
+		var min_d := r + float(e.cfg.get("col_r", 0.4)) + 0.25
+		var l := d.length()
+		if l < min_d and l > 0.001:
+			push += d / l * ((min_d - l) / min_d)
+	return push * float(cfg.get("speed", 2.5)) * 1.5
 
 ## Wedge detection: wanting speed but gaining no ground for ~a second means a
 ## corner or prop has us. Probe eight directions and commit to the most open
