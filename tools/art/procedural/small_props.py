@@ -303,8 +303,8 @@ def mask_scene(name, h, root):
            ("brow", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 0.7, h * 0.02, h * 0.04), "material": 'SubResource("brow")'})]
     nodes = [(root, "Node3D", None, {}),
              ("Face", "MeshInstance3D", ".", {"transform": xf(w, h, h * 0.3, y=h * 0.5), "mesh": 'SubResource("face")'}),
-             ("EyeL", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.08, h * 0.1, x=-w * 0.2, y=h * 0.56, z=h * 0.125), "mesh": 'SubResource("eye")'}),
-             ("EyeR", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.08, h * 0.1, x=w * 0.2, y=h * 0.56, z=h * 0.125), "mesh": 'SubResource("eye")'}),
+             ("EyeL", "MeshInstance3D", ".", {"transform": xf(w * 0.22, h * 0.085, h * 0.1, x=-w * 0.2, y=h * 0.56, z=h * 0.155), "mesh": 'SubResource("eye")'}),
+             ("EyeR", "MeshInstance3D", ".", {"transform": xf(w * 0.22, h * 0.085, h * 0.1, x=w * 0.2, y=h * 0.56, z=h * 0.155), "mesh": 'SubResource("eye")'}),
              ("Brow", "MeshInstance3D", ".", {"transform": xf(y=h * 0.7, z=h * 0.125), "mesh": 'SubResource("brow")'}),
              # the band lies across the eyes, the holes showing through it
              ("Band", "MeshInstance3D", ".", {"transform": xf(y=h * 0.56), "mesh": 'SubResource("band")'})]

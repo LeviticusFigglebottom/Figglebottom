@@ -1170,9 +1170,9 @@ func _st_reach_release(p: Player) -> void:
 	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
 		(v as Node3D).visible = false
 	# from the open floor: her knelt by him, the cairn behind them
-	_cam.global_position = f.father_point() + Vector3(-5.6, 2.4, 4.2)
-	_cam.look_at(f.father_point() + Vector3(-0.4, 0.8, 0.0), Vector3.UP)
-	_cam.fov = 56.0
+	_cam.global_position = f.father_point() + Vector3(-7.0, 7.0, 0.8)   # (over her shoulder, down at him)
+	_cam.look_at(f.father_point() + Vector3(-1.2, 0.2, 0.3), Vector3.UP)
+	_cam.fov = 50.0
 	if _clock - _t0 > 4.2:
 		_freeze()
 

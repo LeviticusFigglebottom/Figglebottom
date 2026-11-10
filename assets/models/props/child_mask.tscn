@@ -46,11 +46,11 @@ transform = Transform3D(0.1156, 0, 0, 0, 0.17, 0, 0, 0, 0.051, 0, 0.085, 0)
 mesh = SubResource("face")
 
 [node name="EyeL" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.02312, 0, 0, 0, 0.0136, 0, 0, 0, 0.017, -0.02312, 0.0952, 0.02125)
+transform = Transform3D(0.025432, 0, 0, 0, 0.01445, 0, 0, 0, 0.017, -0.02312, 0.0952, 0.02635)
 mesh = SubResource("eye")
 
 [node name="EyeR" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.02312, 0, 0, 0, 0.0136, 0, 0, 0, 0.017, 0.02312, 0.0952, 0.02125)
+transform = Transform3D(0.025432, 0, 0, 0, 0.01445, 0, 0, 0, 0.017, 0.02312, 0.0952, 0.02635)
 mesh = SubResource("eye")
 
 [node name="Brow" type="MeshInstance3D" parent="."]

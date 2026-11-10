@@ -186,7 +186,7 @@ func _outsong() -> void:
 	p.lock_control(true)
 	_hud(false)
 	_face_spring(p)
-	_take_camera(_cfg("cam_from", [-3.2, 1.9, -5.6]), _cfg("cam_to", [-1.6, 1.5, -3.4]), float(_cfg("kneel_at", 16.0)), p)
+	_take_camera(_cfg("cam_from", [1.1, 2.0, -4.5]), _cfg("cam_to", [0.9, 1.6, -2.6]), float(_cfg("kneel_at", 16.0)), p)
 	_beat("begin")
 	await _until(float(_cfg("mask_at", 1.2)))
 	# the mask goes on; the hands are empty

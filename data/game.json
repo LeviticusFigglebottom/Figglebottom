@@ -149,16 +149,17 @@
    "walk_out_r": 16.0,
    "walk_out_max": 75.0,
    "cam_from": [
-    -3.2,
-    1.9,
-    -5.6
+    1.1,
+    2.0,
+    -4.5
    ],
    "cam_to": [
-    -1.6,
-    1.5,
-    -3.4
+    0.9,
+    1.6,
+    -2.6
    ],
-   "last_area": "saltfell_steading"
+   "last_area": "saltfell_steading",
+   "_cam": "[right, up, back] from the Bearer as he faces the spring. Both ends stand in the gap of the ring: anywhere else that far back is inside a standing stone."
   },
   "hearth_kept": {
    "shut_at": 1.0,
