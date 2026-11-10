@@ -502,6 +502,13 @@
   ],
   "on_talk": [
    {
+    "needs_item": "item_song_cord",
+    "absent_flag": "ks_song_cord_read",
+    "take_item": false,
+    "set_flag": "ks_song_cord_read",
+    "toast": "Lusse reads the cord."
+   },
+   {
     "needs_item": "item_guest_tally",
     "absent_flag": "ks_guest_tally",
     "take_item": true,
@@ -510,6 +517,13 @@
    }
   ],
   "lines_when": [
+   {
+    "flag": "ks_song_cord_read",
+    "lines": [
+     "This is an Outsong. Somebody's tied their own. You don't see that.",
+     "She starts with the clamps. Then a man with a bill. Then she doesn't know how it ends, so she's left it loose. Here."
+    ]
+   },
    {
     "flag": "ks_guest_tally",
     "lines": [
@@ -687,5 +701,142 @@
    ]
   ],
   "overhear_r": 8.0
+ },
+ "linnet": {
+  "name": "Linnet, collier",
+  "short_name": "Linnet",
+  "body": "mannequin_thaw",
+  "model": "linnet",
+  "height": 1.65,
+  "first_flags": [
+   "ks_linnet_met"
+  ],
+  "lines_first": [
+   "Mind the clamp, it's breathing. If it stops breathing, come and get me, I'll be wherever he is.",
+   "Linnet. That's Eyvind. He's laying a hedge round a field we haven't got yet.",
+   "He wants the gate east for the sun on the latch. The sun's got nothing to do with it. He just doesn't want the west.",
+   "We're to be married after the Melt. If he decides about the gate."
+  ],
+  "lines_repeat": [
+   "If the smoke goes blue, it's burning. If it goes white, it's cooking. If it goes black, run.",
+   "He'll come round. He comes round to everything if you leave him long enough with a bill in his hand."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_birch_ring",
+    "absent_flag": "ks_birch_ring",
+    "take_item": true,
+    "set_flag": "ks_birch_ring",
+    "toast": "Linnet takes the ring."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_hedgelayer_released",
+    "lines": [
+     "He's laid it down. The gate. Across the gap, flat. I said that's not a gate. He said it is, it's just lying down."
+    ]
+   },
+   {
+    "flag": "ks_birch_ring",
+    "lines": [
+     "That's mine. I had it on this morning. He made it. Don't tell him I took it off to work."
+    ]
+   }
+  ],
+  "services": [
+   {
+    "id": "give_collier_leathers",
+    "type": "gift",
+    "item": "armour_collier",
+    "once_flag": "got_collier_leathers",
+    "label": "Take the spare leathers",
+    "line_done": "They were my brother's. He grew. Don't stand downwind of the clamps in them."
+   }
+  ]
+ },
+ "eyvind": {
+  "name": "Eyvind",
+  "short_name": "Eyvind",
+  "body": "mannequin_thaw",
+  "model": "eyvind_thaw",
+  "height": 1.85,
+  "mute": true,
+  "_scene": "THORNWOLD.md 7: before the release, at the clearing, arguing with Linnet about where the gate goes. Nobody can join in; the Bearer overhears.",
+  "overhear": [
+   [
+    "eyvind",
+    "East side. Morning sun on the latch, it won't freeze shut."
+   ],
+   [
+    "linnet",
+    "East side and the cows come out straight into the bog."
+   ],
+   [
+    "eyvind",
+    "Cows can learn."
+   ],
+   [
+    "linnet",
+    "Your cows can. My father's cows are cleverer than that."
+   ],
+   [
+    "eyvind",
+    "West, then."
+   ],
+   [
+    "linnet",
+    "West's where the wind comes from. You want the wind in your gate?"
+   ],
+   [
+    "eyvind",
+    "There's no side you'll have."
+   ],
+   [
+    "linnet",
+    "There is. I'm just not telling you yet."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "eyvind_gate": {
+  "name": "Eyvind",
+  "short_name": "Eyvind",
+  "body": "mannequin_thaw",
+  "model": "eyvind_thaw",
+  "height": 1.85,
+  "mute": true,
+  "_scene": "THORNWOLD.md 9: after the release, THAW: at the gap of the innermost ring with Linnet, the gate lying flat across it.",
+  "overhear": [
+   [
+    "linnet",
+    "Well?"
+   ],
+   [
+    "eyvind",
+    "I've thought about it."
+   ],
+   [
+    "linnet",
+    "And?"
+   ],
+   [
+    "eyvind",
+    "I'm laying it flat. Across the gap. You come in whichever side you like."
+   ],
+   [
+    "linnet",
+    "That's not a gate."
+   ],
+   [
+    "eyvind",
+    "It's a gate lying down."
+   ],
+   [
+    "linnet",
+    "All right."
+   ]
+  ],
+  "overhear_r": 9.0
  }
 }

@@ -2704,5 +2704,516 @@
    }
   ],
   "seated": true
+ },
+ "collier": {
+  "poise_regen": 7,
+  "turn": 5.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 4.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.16,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 1.9,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Collier",
+  "desc": "A charcoal-burner the frost took at the clamps. Both hands have frozen black, with an ember's dark core in each.",
+  "model": "collier",
+  "hp": 95,
+  "poise": 50,
+  "speed": 1.5,
+  "aggro_sight": 10.0,
+  "hurt_r": 0.48,
+  "hurt_h": 1.7,
+  "col_r": 0.42,
+  "stagger_time": 1.0,
+  "warmth": 36,
+  "_ai": "THORNWOLD.md 5. Slow. Rakes along the ground, brings both black hands down, and throws frozen coals onto circles round the Bearer.",
+  "attacks": [
+   {
+    "id": "rake",
+    "_tell": "both hands drawn back low to one side (0.8 s); a slow sweep along the ground at shin height.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 2.6,
+     "arc": 140.0
+    },
+    "range": 2.4,
+    "windup": 0.8,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 18,
+    "poise_dmg": 22,
+    "cooldown": 2.4,
+    "anim": "rake_sweep",
+    "track": 1.0,
+    "telegraph": {
+     "shape": "fan",
+     "size": [
+      2.6,
+      140.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "smother",
+    "_tell": "both black hands raised over the head, breath twice (1.2 s); brought down together. Heavy. Not parryable.",
+    "range": 2.3,
+    "windup": 1.2,
+    "active": 0.22,
+    "recover": 1.3,
+    "dmg": 32,
+    "poise_dmg": 50,
+    "cooldown": 3.5,
+    "anim": "slash",
+    "hands": [
+     "right",
+     "left"
+    ],
+    "lunge": 1.0,
+    "breath": "twice"
+   },
+   {
+    "id": "cinders",
+    "_tell": "crouches and scoops at the ground, the cores in its hands brighten (1.1 s); three small circles glow round the Bearer; the frozen coals land on them.",
+    "type": "lob",
+    "at_target": true,
+    "length": 0.0,
+    "lob": {
+     "radius": 1.3,
+     "flight": 0.55,
+     "arc": 2.0,
+     "size": [
+      0.3,
+      0.3,
+      0.3
+     ],
+     "spread": 3,
+     "spread_r": 2.0,
+     "color": [
+      0.12,
+      0.1,
+      0.1
+     ]
+    },
+    "range": 10.0,
+    "min_range": 3.0,
+    "windup": 1.1,
+    "active": 0.1,
+    "recover": 1.1,
+    "dmg": 14,
+    "poise_dmg": 16,
+    "cooldown": 7.0,
+    "anim": "cinder_scoop",
+    "track": 1.0,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      1.3
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "rime_stag": {
+  "poise_regen": 7,
+  "turn": 6.0,
+  "aggro_fov": 130.0,
+  "aggro_hear": 6.0,
+  "leash": 26.0,
+  "body": "mannequin_rime",
+  "arm_h": 1.2,
+  "arm_dx": 0.27,
+  "anim_amp": 1.15,
+  "anim_sway": 1.6,
+  "stride": 2.2,
+  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "name": "Rime-stag",
+  "desc": "A red deer the frost took mid-bound. Thorn has grown through its antlers.",
+  "model": "rime_stag",
+  "hp": 80,
+  "poise": 40,
+  "speed": 4.2,
+  "aggro_sight": 14.0,
+  "hurt_r": 0.6,
+  "hurt_h": 1.6,
+  "col_r": 0.55,
+  "stagger_time": 0.8,
+  "warmth": 34,
+  "keep_range": 4.0,
+  "head_offset": [
+   0.0,
+   1.6,
+   -1.0
+  ],
+  "_ai": "THORNWOLD.md 5. Fast. Gores, bounds the length of a strip and comes down at the end, and shakes thorn off its antlers round itself.",
+  "attacks": [
+   {
+    "id": "gore",
+    "_tell": "head down, antlers forward, a stamp (0.6 s); a short lunge, 3 m.",
+    "type": "line",
+    "kind": "physical",
+    "length": 3.2,
+    "width": 1.4,
+    "range": 3.2,
+    "min_range": 0.5,
+    "windup": 0.6,
+    "active": 0.25,
+    "recover": 0.8,
+    "dmg": 16,
+    "poise_dmg": 24,
+    "cooldown": 1.8,
+    "anim": "gore",
+    "lunge": 6.0,
+    "track": 1.2,
+    "shake": 0.1
+   },
+   {
+    "id": "bound",
+    "_tell": "rears, forefeet off the ground (0.9 s); a 1.6 x 10 m strip glows; it leaps the length of the strip and comes down at the end. Knocks down.",
+    "type": "line",
+    "kind": "physical",
+    "length": 10.0,
+    "width": 1.6,
+    "blockable": false,
+    "range": 10.0,
+    "min_range": 4.0,
+    "windup": 0.9,
+    "active": 0.7,
+    "recover": 0.9,
+    "dmg": 24,
+    "poise_dmg": 70,
+    "cooldown": 6.0,
+    "anim": "bound",
+    "lunge": 13.0,
+    "track": 1.0,
+    "shake": 0.3,
+    "breath": "forward",
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.6,
+      10.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "thorn_shake",
+    "_tell": "lowers its head and shakes it, frost spraying off the antlers (0.9 s); a 2.6 m circle glows; thorn rakes everything round it.",
+    "type": "sweep",
+    "sweep": {
+     "radius": 2.6,
+     "arc": 360.0
+    },
+    "range": 2.4,
+    "windup": 0.9,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 14,
+    "poise_dmg": 20,
+    "cooldown": 6.0,
+    "anim": "thorn_shake",
+    "track": 0.3,
+    "telegraph": {
+     "shape": "ring",
+     "size": [
+      2.6
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   }
+  ]
+ },
+ "hedgelayer": {
+  "name": "The Hedgelayer",
+  "bar_name": "THE HEDGELAYER",
+  "desc": "Eyvind Brask, hedge-layer, betrothed to Linnet the collier. He hedged in her grave so nobody could come and sing her out, and never decided where the gate went.",
+  "class": "res://src/enemies/hedgelayer.gd",
+  "model": "hedgelayer",
+  "body": "mannequin_holdfast",
+  "is_boss": true,
+  "hp": 1450,
+  "poise": 140,
+  "poise_regen": 30,
+  "speed": 2.2,
+  "turn": 3.8,
+  "aggro_sight": 40.0,
+  "aggro_fov": 360.0,
+  "aggro_hear": 40.0,
+  "leash": 999.0,
+  "arm_h": 2.4,
+  "arm_dx": 0.6,
+  "hurt_r": 0.9,
+  "hurt_h": 3.4,
+  "col_r": 0.7,
+  "stagger_time": 1.6,
+  "stride": 2.2,
+  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "warmth": 2200,
+  "_fight": "THORNWOLD.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: laying a stem until the Bearer is within wake_dist or strikes him. grave_off: [dx, dz] from where he stands to the grave (the rings' centre). ring2/ring3: the phase rings round the grave.",
+  "phase_at": [
+   0.6,
+   0.25
+  ],
+  "phase_speed": [
+   1.0,
+   1.05,
+   0.95
+  ],
+  "wake_dist": 7.0,
+  "parry_stagger_mult": 1.5,
+  "grave_off": [
+   4.0,
+   -4.0
+  ],
+  "ring2": {
+   "radius": 8.0,
+   "height": 3.0
+  },
+  "ring3": {
+   "radius": 6.0,
+   "height": 3.0
+  },
+  "transitions": {
+   "wake": {
+    "_tell": "lets the stem go and turns; the briar on his mask moves; the bar appears",
+    "time": 2.2,
+    "anim": "idle",
+    "events": [
+     [
+      0.8,
+      "turn"
+     ]
+    ]
+   },
+   "p2": {
+    "_tell": "drives both hands into the ground: a ring of thorn rises round the grave, 8 m out, its gap where he stands",
+    "time": 2.8,
+    "anim": "raise_wall",
+    "events": [
+     [
+      1.4,
+      "ring"
+     ]
+    ]
+   },
+   "p3": {
+    "_tell": "the ring closes in to 6 m; he stands in its gap",
+    "time": 2.8,
+    "anim": "raise_wall",
+    "events": [
+     [
+      1.4,
+      "ring_close"
+     ]
+    ]
+   }
+  },
+  "release_flag": "ks_hedgelayer_released",
+  "release_card": "THE HEDGELAYER — RELEASED",
+  "release_hearth": "hs_the_pine",
+  "release_anim": "kneel_hands",
+  "release_drop": {
+   "item": "item_song_cord",
+   "label": "Take the song-cord",
+   "pickup_id": "song_cord",
+   "at_point": true,
+   "set_flag": "ks_song_cord_found",
+   "scene": "res://assets/models/props/song_cord.glb"
+  },
+  "release_gate_laid": {
+   "scene": "res://assets/models/props/hedge_gate.tscn",
+   "off": [
+    -12.0,
+    0.0
+   ],
+   "rot": 90.0,
+   "tilt": -90.0,
+   "scale": 1.0
+  },
+  "attacks": [
+   {
+    "id": "bill",
+    "_tell": "the bill-arm drawn back across the body (0.8 s); a long cut, 3.2 m. Parryable.",
+    "range": 3.2,
+    "windup": 0.8,
+    "active": 0.22,
+    "recover": 1.1,
+    "dmg": 30,
+    "poise_dmg": 48,
+    "cooldown": 2.0,
+    "anim": "slash",
+    "hands": [
+     "right"
+    ],
+    "lunge": 2.2,
+    "parry_stagger": true
+   },
+   {
+    "id": "thorn_lash",
+    "_tell": "the stems on his right arm unwind and trail on the ground (1.1 s); a 1.2 x 9 m strip glows; the lash catches and drags the Bearer in to 2 m (mash to break), then a Bill. Phase 3: twice.",
+    "type": "hook",
+    "range": 9.0,
+    "min_range": 3.0,
+    "length": 9.0,
+    "width": 1.2,
+    "offset": 0.4,
+    "snare": 0.9,
+    "mash": 5,
+    "haul_to": 2.0,
+    "pull_time": 0.5,
+    "then": "bill",
+    "windup": 1.1,
+    "active": 0.15,
+    "recover": 0.9,
+    "dmg": 10,
+    "poise_dmg": 14,
+    "cooldown": 7.0,
+    "anim": "thorn_lash",
+    "breath": "held",
+    "track": 0.9,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.2,
+      9.0
+     ],
+     "offset": 0.4,
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "by_phase": {
+     "3": {
+      "hits": [
+       0.0,
+       0.6
+      ],
+      "cooldown": 6.0
+     }
+    }
+   },
+   {
+    "id": "raise_wall",
+    "phases": [
+     1,
+     2
+    ],
+    "_tell": "both hands driven into the ground, the stems on his back stand up (1.4 s); a 1.4 x 9 m strip glows across the floor behind the Bearer; a wall of frozen thorn 3 m high rises along it and stays 14 s. Phase 2: two, a lane either side of him.",
+    "type": "wall",
+    "wall": {
+     "length": 9.0,
+     "width": 1.4,
+     "height": 3.0,
+     "life": 14.0,
+     "behind": 2.6,
+     "count": 1
+    },
+    "range": 11.0,
+    "min_range": 2.5,
+    "windup": 1.4,
+    "active": 0.2,
+    "recover": 1.0,
+    "dmg": 18,
+    "poise_dmg": 30,
+    "cooldown": 9.0,
+    "anim": "raise_wall",
+    "track": 1.0,
+    "telegraph": {
+     "shape": "rect",
+     "size": [
+      1.4,
+      9.0
+     ],
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    },
+    "by_phase": {
+     "2": {
+      "wall": {
+       "length": 9.0,
+       "width": 1.4,
+       "height": 3.0,
+       "life": 12.0,
+       "count": 2,
+       "lane": 2.4
+      }
+     }
+    }
+   },
+   {
+    "id": "step_into",
+    "phases": [
+     2,
+     3
+    ],
+    "_tell": "walks backward into the nearest thorn, which closes over him (0.9 s); gone; 1.2 s later the stems at another place on the hedge shiver and a 3 m circle glows in front of them (0.8 s); he steps out there with a Bill across the circle.",
+    "type": "step",
+    "range": 99.0,
+    "windup": 0.9,
+    "active": 0.1,
+    "recover": 0.9,
+    "gone": 1.2,
+    "out_tell": 0.8,
+    "sweep": {
+     "radius": 3.0,
+     "arc": 360.0
+    },
+    "dmg": 26,
+    "poise_dmg": 44,
+    "blockable": true,
+    "cooldown": 8.0,
+    "anim": "step_into",
+    "exit_tele": {
+     "color": [
+      0.3,
+      0.58,
+      1.0
+     ]
+    }
+   },
+   {
+    "id": "where_it_goes",
+    "phases": [
+     3
+    ],
+    "_tell": "the Bearer more than 5 m off: he turns to the gap in the ring and holds his hands up either side of it (1.6 s). No attack. He measures the gap, steps to the other side of it, measures it again, his back to the Bearer: open. Hits do not stop him. Left alone 5 s, he turns back.",
+    "type": "hold",
+    "range": 99.0,
+    "min_range": 5.0,
+    "quiet": 5.0,
+    "windup": 1.6,
+    "active": 0.1,
+    "recover": 0.0,
+    "cooldown": 12.0,
+    "anim": "measure_gap"
+   }
+  ]
  }
 }

@@ -1204,6 +1204,19 @@
    "tag": "rime",
    "set_flag": "ks_brede_float_found",
    "label": "Chip the float out of the ice"
+  },
+  {
+   "id": "knucklebones",
+   "at": [
+    42.0,
+    21.84,
+    15.5
+   ],
+   "item": "ks_knucklebones",
+   "tag": "rime",
+   "scene": "res://assets/models/props/knucklebone.tscn",
+   "set_flag": "ks_knucklebones_found",
+   "label": "Pick up the knucklebones"
   }
  ],
  "scripted": [
@@ -1220,6 +1233,21 @@
      11.6,
      31.6
     ]
+   }
+  },
+  {
+   "script": "res://src/world/drawbridge.gd",
+   "at": [
+    -8.0,
+    22.11,
+    -82.5
+   ],
+   "rot": 180,
+   "params": {
+    "flag": "lowe_bridge_down",
+    "length": 13.6,
+    "width": 2.4,
+    "operable": false
    }
   }
  ],
@@ -3321,23 +3349,6 @@
     -79.7
    ],
    "spawn_yaw": 0
-  }
- ],
- "scripted": [
-  {
-   "script": "res://src/world/drawbridge.gd",
-   "at": [
-    -8.0,
-    22.11,
-    -82.5
-   ],
-   "rot": 180,
-   "params": {
-    "flag": "lowe_bridge_down",
-    "length": 13.6,
-    "width": 2.4,
-    "operable": false
-   }
   }
  ]
 }

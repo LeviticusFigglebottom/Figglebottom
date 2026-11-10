@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+
+[sub_resource type="StandardMaterial3D" id="birch"]
+albedo_color = Color(0.900, 0.860, 0.760, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="bark"]
+albedo_color = Color(0.300, 0.260, 0.220, 1)
+roughness = 0.9
+
+[sub_resource type="TorusMesh" id="band"]
+inner_radius = 0.009
+outer_radius = 0.013
+rings = 18
+ring_segments = 6
+material = SubResource("birch")
+
+[sub_resource type="TorusMesh" id="plait"]
+inner_radius = 0.0105
+outer_radius = 0.0125
+rings = 9
+ring_segments = 4
+material = SubResource("bark")
+
+[node name="BirchRing" type="Node3D"]
+
+[node name="Band" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("band")
+
+[node name="Plait" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.002, 0, 0)
+mesh = SubResource("plait")

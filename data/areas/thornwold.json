@@ -224,14 +224,26 @@
  ],
  "landmarks": [
   {
-   "scene": "res://assets/models/landmarks/lm_hedge_gate.glb",
+   "scene": "res://assets/models/props/hedge_gate.tscn",
    "at": [
-    442.2,
-    37.63,
-    -320.4
+    441.6,
+    37.66,
+    -320.6
    ],
    "rot": 75,
-   "scale": 0.8
+   "tilt": -14,
+   "absent_flag": "ks_hedgelayer_released"
+  },
+  {
+   "scene": "res://assets/models/props/hedge_gate.tscn",
+   "at": [
+    440.0,
+    37.72,
+    -325.0
+   ],
+   "rot": 90,
+   "tilt": -90,
+   "require_flag": "ks_hedgelayer_released"
   },
   {
    "scene": "res://assets/models/landmarks/lm_charcoal_clamp.glb",
@@ -334,6 +346,27 @@
     -303.0
    ],
    "rot": 140
+  },
+  {
+   "id": "hs_outer_ring",
+   "name": "the Outer Ring",
+   "at": [
+    462.09,
+    37.63,
+    -297.28
+   ],
+   "rot": 250
+  },
+  {
+   "id": "hs_the_pine",
+   "name": "the Pine",
+   "at": [
+    450.0,
+    37.68,
+    -322.0
+   ],
+   "rot": 90,
+   "require_flag": "ks_hedgelayer_released"
   }
  ],
  "spawners": [
@@ -426,8 +459,42 @@
     34.72,
     -302.0
    ],
-   "rot": 220,
-   "tag": "thaw"
+   "rot": 312,
+   "tag": "thaw",
+   "absent_flag": "ks_hedgelayer_released"
+  },
+  {
+   "id": "eyvind",
+   "at": [
+    351.0,
+    34.78,
+    -303.8
+   ],
+   "rot": 132,
+   "tag": "thaw",
+   "absent_flag": "ks_hedgelayer_released"
+  },
+  {
+   "id": "linnet",
+   "at": [
+    438.4,
+    37.68,
+    -322.6
+   ],
+   "rot": 341,
+   "tag": "thaw",
+   "require_flag": "ks_hedgelayer_released"
+  },
+  {
+   "id": "eyvind_gate",
+   "at": [
+    438.4,
+    37.68,
+    -327.4
+   ],
+   "rot": 199,
+   "tag": "thaw",
+   "require_flag": "ks_hedgelayer_released"
   }
  ],
  "plaques": [
@@ -449,9 +516,35 @@
     37.74,
     -320.0
    ],
-   "warmth": 45,
-   "tag": "base",
-   "label": "Take the hedging bill"
+   "item": "hedging_bill",
+   "tag": "rime",
+   "label": "Take the hedging bill",
+   "scene": "res://assets/models/weapons/hedging_bill.glb"
+  },
+  {
+   "id": "knucklebone",
+   "at": [
+    338.0,
+    34.47,
+    -315.2
+   ],
+   "item": "item_knucklebone",
+   "tag": "rime",
+   "label": "Pick up the knucklebone",
+   "scene": "res://assets/models/props/knucklebone.tscn",
+   "set_flag": "ks_knucklebone_found"
+  },
+  {
+   "id": "birch_ring",
+   "at": [
+    351.67,
+    35.06,
+    -301.24
+   ],
+   "item": "item_birch_ring",
+   "tag": "rime",
+   "label": "Take the ring from the ash",
+   "scene": "res://assets/models/props/birch_ring.tscn"
   },
   {
    "id": "clamp_cache",

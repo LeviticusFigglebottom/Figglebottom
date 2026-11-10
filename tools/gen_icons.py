@@ -487,6 +487,60 @@ def icon_barrel_head():
     return im
 
 
+# --- Thornwold (THORNWOLD.md 8)
+def icon_bill():
+    """A hedging bill: a long haft, a hooked blade with a back spike."""
+    im, d = canvas()
+    d.polygon(rot([(62, 30), (66, 30), (66, 124), (62, 124)], 35), fill=DARK)
+    d.polygon(rot([(58, 6), (70, 6), (78, 14), (76, 34), (66, 36), (62, 36), (62, 26), (70, 22), (66, 14), (58, 14)], 35), fill=INK)
+    d.polygon(rot([(56, 22), (62, 24), (62, 28), (52, 26)], 35), fill=INK)    # the back spike
+    return im
+
+
+def icon_song_cord():
+    """A coiled cord knotted all along, the knots of every size; a bone toggle."""
+    im, d = canvas()
+    pts = [(64 + (40 - k * 0.55) * math.cos(k * 0.21), 64 + (40 - k * 0.55) * math.sin(k * 0.21)) for k in range(60)]
+    d.line(pts, fill=(196, 170, 110, 255), width=4)
+    for k in range(4, 58, 5):
+        x, y = pts[k]
+        r = 3 + (k * 7) % 5
+        d.ellipse((x - r, y - r, x + r, y + r), fill=INK)
+    x, y = pts[0]
+    d.rounded_rectangle((x - 4, y - 12, x + 4, y + 12), radius=3, fill=HORN)
+    return im
+
+
+def icon_birch_ring():
+    """A ring of birch bark plaited round on itself."""
+    im, d = canvas()
+    d.ellipse((30, 30, 98, 98), outline=(232, 226, 210, 255), width=14)
+    for k in range(10):
+        a = k * math.pi * 2 / 10
+        x, y = 64 + 34 * math.cos(a), 64 + 34 * math.sin(a)
+        d.line([(x - 5 * math.sin(a + 0.8), y + 5 * math.cos(a + 0.8)), (x + 5 * math.sin(a + 0.8), y - 5 * math.cos(a + 0.8))],
+               fill=DARK, width=2)
+    return im
+
+
+def icon_knucklebone():
+    """A sheep's knucklebone, worn smooth, a tooth-mark in it."""
+    im, d = canvas()
+    d.rounded_rectangle((38, 46, 90, 82), radius=16, fill=INK)
+    d.ellipse((30, 40, 54, 64), fill=INK)
+    d.ellipse((74, 64, 98, 88), fill=INK)
+    d.arc((52, 50, 72, 64), 200, 340, fill=DARK, width=3)                     # the tooth-mark
+    return im
+
+
+def icon_armour_collier():
+    im, d = canvas()
+    _coat(d, (58, 52, 48, 255), (180, 168, 140, 255))
+    d.polygon([(46, 44), (82, 44), (86, 112), (42, 112)], fill=(36, 32, 30, 255))   # the leather apron
+    d.line((30, 108, 98, 108), fill=EMBER, width=3)                                  # scorched at the hem
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in list(globals().items()):

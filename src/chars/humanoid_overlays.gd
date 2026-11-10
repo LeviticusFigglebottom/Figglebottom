@@ -733,6 +733,68 @@ static func tarnhall_tables() -> Dictionary:
 		}), "pos": {"Hips": [[0.0, 0, 0, 0], [1.4, 0, -0.5, 0.08], [3.0, 0, -0.52, 0.08]]}},
 	}
 
+## Thornwold (THORNWOLD.md 5, 6): the Colliers at the clamps, and the
+## Hedgelayer laying, measuring, kneeling.
+static func thornwold_tables() -> Dictionary:
+	var kneel := {
+		"LeftUpLeg": [[0.0, -84, 0, 6]], "LeftLeg": [[0.0, 88, 0, 0]],
+		"RightUpLeg": [[0.0, -8, 0, -6]], "RightLeg": [[0.0, 104, 0, 0]],
+	}
+	return {
+		# Rake: both black hands drawn back low to one side, swept along the ground
+		"rake_sweep": {"len": 1.6, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.8, 34, 40, 0], [1.05, 40, -36, 0], [1.6, 0, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.8, 30, 0, -30], [1.05, -50, 0, -20], [1.6, 0, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [0.8, 20, 0, 20], [1.05, -60, 0, 30], [1.6, 0, 0, 0]],
+			"RightForeArm": [[0.0, 0, 0, 0], [0.8, -30, 0, 0], [1.6, 0, 0, 0]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [0.8, -30, 0, 0], [1.6, 0, 0, 0]],
+			"LeftUpLeg": [[0.0, 0, 0, 0], [0.8, -30, 0, 4], [1.6, 0, 0, 0]],
+			"LeftLeg": [[0.0, 0, 0, 0], [0.8, 40, 0, 0], [1.6, 0, 0, 0]],
+		}, "pos": {"Hips": [[0.0, 0, 0, 0], [0.8, 0, -0.14, 0.04], [1.6, 0, 0, 0]]}},
+		# Cinders: crouches, scoops at the ground, and throws underarm
+		"cinder_scoop": {"len": 1.8, "rot": {
+			"Spine": [[0.0, 0, 0, 0], [0.7, 44, 0, 0], [1.1, -6, 0, 0], [1.8, 0, 0, 0]],
+			"RightArm": [[0.0, 0, 0, 0], [0.7, -40, 0, 10], [0.95, 30, 0, 10], [1.1, -110, 0, 10], [1.8, 0, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [0.7, -40, 0, -10], [1.1, -40, 0, -20], [1.8, 0, 0, 0]],
+			"LeftUpLeg": [[0.0, 0, 0, 0], [0.7, -60, 0, 6], [1.1, -20, 0, 6], [1.8, 0, 0, 0]],
+			"RightUpLeg": [[0.0, 0, 0, 0], [0.7, -60, 0, -6], [1.1, -10, 0, -6], [1.8, 0, 0, 0]],
+			"LeftLeg": [[0.0, 0, 0, 0], [0.7, 80, 0, 0], [1.1, 20, 0, 0], [1.8, 0, 0, 0]],
+			"RightLeg": [[0.0, 0, 0, 0], [0.7, 80, 0, 0], [1.1, 20, 0, 0], [1.8, 0, 0, 0]],
+		}, "pos": {"Hips": [[0.0, 0, 0, 0], [0.7, 0, -0.3, 0.04], [1.1, 0, -0.06, 0], [1.8, 0, 0, 0]]}},
+
+		# --- the Hedgelayer
+		# at the hedge, laying a stem that is already laid: bend, press, again
+		"lay_stem": {"len": 2.8, "loop": true, "rot": {
+			"Spine": [[0.0, 26, 0, 0], [1.4, 34, -8, 0], [2.8, 26, 0, 0]],
+			"Head": [[0.0, 16, 0, 0], [2.8, 16, 0, 0]],
+			"RightArm": [[0.0, -70, 0, 10], [0.7, -84, 0, 6], [1.4, -60, 0, 14], [2.1, -84, 0, 6], [2.8, -70, 0, 10]],
+			"RightForeArm": [[0.0, -40, 0, 0], [1.4, -20, 0, 0], [2.8, -40, 0, 0]],
+			"LeftArm": [[0.0, -66, 0, -10], [1.4, -76, 0, -6], [2.8, -66, 0, -10]],
+			"LeftForeArm": [[0.0, -50, 0, 0], [2.8, -50, 0, 0]],
+		}},
+		# Where it goes: both hands up either side of the gap, then a step, again
+		"measure_gap": {"len": 3.2, "loop": true, "rot": {
+			"LeftArm": [[0.0, -80, 0, -40], [1.2, -84, 0, -46], [1.6, -60, 0, -20], [2.4, -80, 0, -40], [3.2, -80, 0, -40]],
+			"RightArm": [[0.0, -80, 0, 40], [1.2, -84, 0, 46], [1.6, -60, 0, 20], [2.4, -80, 0, 40], [3.2, -80, 0, 40]],
+			"LeftForeArm": [[0.0, -20, 0, 0], [3.2, -20, 0, 0]],
+			"RightForeArm": [[0.0, -20, 0, 0], [3.2, -20, 0, 0]],
+			"Head": [[0.0, 8, -20, 0], [1.2, 8, 20, 0], [1.6, 10, 0, 0], [2.4, 8, -20, 0], [3.2, 8, -20, 0]],
+			"LeftUpLeg": [[0.0, 0, 0, 0], [1.6, -26, 0, 0], [2.0, 0, 0, 0], [3.2, 0, 0, 0]],
+			"LeftLeg": [[0.0, 0, 0, 0], [1.6, 30, 0, 0], [2.0, 0, 0, 0], [3.2, 0, 0, 0]],
+		}},
+		# Release: he kneels at the gap and puts both hands flat on the ground
+		"kneel_hands": {"len": 3.0, "rot": _merge(kneel, {
+			"LeftUpLeg": [[0.0, 0, 0, 0], [1.0, -84, 0, 6]], "LeftLeg": [[0.0, 0, 0, 0], [1.0, 88, 0, 0]],
+			"RightUpLeg": [[0.0, 0, 0, 0], [1.0, -8, 0, -6]], "RightLeg": [[0.0, 0, 0, 0], [1.0, 104, 0, 0]],
+			"Spine": [[0.0, 0, 0, 0], [1.0, 24, 0, 0], [3.0, 50, 0, 0]],
+			"Head": [[0.0, 0, 0, 0], [3.0, 20, 0, 0]],
+			"LeftArm": [[0.0, 0, 0, 0], [1.6, -70, 0, -10], [3.0, -84, 0, -8]],
+			"RightArm": [[0.0, 0, 0, 0], [1.6, -70, 0, 10], [3.0, -84, 0, 8]],
+			"LeftForeArm": [[0.0, 0, 0, 0], [3.0, -6, 0, 0]],
+			"RightForeArm": [[0.0, 0, 0, 0], [3.0, -6, 0, 0]],
+		}), "pos": {"Hips": [[0.0, 0, 0, 0], [1.0, 0, -0.36, 0.06], [3.0, 0, -0.4, 0.1]]}},
+	}
+
 static func _merge(a: Dictionary, b: Dictionary) -> Dictionary:
 	var out := a.duplicate()
 	out.merge(b, true)
@@ -763,6 +825,7 @@ static func build(skel: Skeleton3D, idle: Animation) -> Dictionary:
 	tabs.merge(lowe_tables())
 	tabs.merge(kettle_tables())
 	tabs.merge(tarnhall_tables())
+	tabs.merge(thornwold_tables())
 	for clip in tabs:
 		var c: Dictionary = tabs[clip]
 		var a := Animation.new()
