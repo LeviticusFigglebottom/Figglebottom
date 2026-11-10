@@ -5,8 +5,43 @@ extends Node3D
 const TITLE := preload("res://src/ui/title_screen.gd")
 const START_AREA := "saltfell_steading"
 
+## The Bearer, the HUD and the area the front door last raised; the
+## title return tears exactly these down.
+var _player: Node = null
+var _hud: Node = null
+var _area: Node = null
+
 func _ready() -> void:
 	Game.world_root = self
+	_front_door(false)
+
+## Back to the title from the pause sheet: the hearth is kept first (saved
+## where the Bearer stands), the world is torn down, and the front door runs
+## again without the house card. Resume finds the save just written.
+func return_to_title() -> void:
+	if Game.player != null and is_instance_valid(Game.player):
+		Game.snapshot_player()
+		World.save_game()
+	Game.arena_locked = false
+	get_tree().paused = false
+	for n in [_hud, _player, _area]:
+		if n != null and is_instance_valid(n):
+			remove_child(n)
+			n.queue_free()
+	_hud = null
+	_player = null
+	_area = null
+	for b in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		if is_instance_valid(b) and is_ancestor_of(b):
+			b.queue_free()
+	Game.player = null
+	Game.current_area = null
+	Game.current_area_id = ""
+	AudioDirector.end_boss_theme("", 0.5)
+	await get_tree().process_frame
+	_front_door(true)
+
+func _front_door(returning: bool) -> void:
 	var fresh := true
 	var area_id := START_AREA
 	var harnessed := false
@@ -15,8 +50,9 @@ func _ready() -> void:
 			area_id = arg.get_slice("=", 1)
 			harnessed = true
 
-	var interactive := not harnessed and Shot.forced_state == "" \
-			and not DisplayServer.get_name().contains("headless")
+	# Game.front_door lets a headless test walk the real boot path
+	var interactive := Game.front_door or (not harnessed and Shot.forced_state == "" \
+			and not DisplayServer.get_name().contains("headless"))
 
 	# harness/headless runs keep the single-load behaviour (slot 1)
 	if not interactive:
@@ -26,15 +62,13 @@ func _ready() -> void:
 				area_id = World.last_hearth["area"]
 		Game.set_difficulty(str(World.flag_val("difficulty", "long")))
 
-	if interactive:
+	if interactive and not returning:
 		var card := HouseCard.new()
 		add_child(card)
 		await card.finished
-		var preweighed := not World.any_slot()
-		if preweighed:
-			var sel := DifficultyUI.new()
-			add_child(sel)
-			Game.set_difficulty(await sel.chosen)
+	if interactive:
+		# the winter is weighed after New journey is chosen (title -> new ->
+		# difficulty), never before the title: Esc there returns to it
 		var picked := false
 		while not picked:
 			var title := TITLE.new()
@@ -53,14 +87,12 @@ func _ready() -> void:
 					Game.set_difficulty(str(World.flag_val("difficulty", "long")))
 				picked = true
 			else:
-				var diff := str(World.flag_val("difficulty", "long"))
-				if not preweighed:
-					var sel2 := DifficultyUI.new()
-					sel2.cancellable = true
-					add_child(sel2)
-					diff = await sel2.chosen
-					if diff == "":
-						continue   # Esc: back to the title, nothing lost
+				var sel2 := DifficultyUI.new()
+				sel2.cancellable = true
+				add_child(sel2)
+				var diff: String = await sel2.chosen
+				if diff == "":
+					continue   # Esc: back to the title, nothing lost
 				World.active_slot = slot
 				World.reset()
 				World.delete_slot(slot)
@@ -74,6 +106,7 @@ func _ready() -> void:
 		World.set_flag(String(f))   # shot harness: flag-conditional geometry
 	var area := AreaBuilder.build(area_id)
 	add_child(area)
+	_area = area
 	Game.register_area(area, area_id)
 
 	# state: saved state, or forced by the shot harness
@@ -84,6 +117,7 @@ func _ready() -> void:
 	var player := Player.new()
 	player.name = "Player"
 	add_child(player)
+	_player = player
 	if not fresh:
 		player.from_save(World.player_data)
 		Game.set_warmth(int(World.player_data.get("warmth", 0)))
@@ -94,7 +128,14 @@ func _ready() -> void:
 		spawn = hearth.respawn_point()
 	player.global_position = spawn
 	player.cam.yaw = deg_to_rad(float(def.get("start", {}).get("yaw", 0)))
+	if hearth != null and not fresh:
+		player.cam.yaw = hearth.global_rotation.y + PI   # wake facing out from the hearth
+	# the Bearer faces where the camera looks: a new journey opened on him
+	# staring back into the lens
+	if player.get("vis") != null:
+		player.vis.rotation.y = player.cam.yaw
 
-	add_child(HUD.new())
+	_hud = HUD.new()
+	add_child(_hud)
 	Game.refresh_breathmark()
-	Game.area_title.emit(area.display_name)
+	Game.area_title.emit(area.arrival_title(spawn))

@@ -19,6 +19,13 @@ var display_kit := ""
 var display_scene := ""
 ## a story flag raised on taking it (a Keepsakes step, say)
 var set_flag := ""
+## the shown thing sits this high (the float frozen into the tide wall's
+## face at chest height, SLICE.md 2); the prompt zone stays on the ground
+var display_lift := 0.0
+## frozen in: only a heavy blow from close in front frees it (the Bearer's
+## heavy swing calls chip()); using it only says so
+var chip_heavy := false
+var chip_hint := "The ice holds it fast. A heavy blow might chip it free."
 
 var _zone: Interactable
 var _shown := true
@@ -30,7 +37,11 @@ func _ready() -> void:
 	_zone = Interactable.new()
 	_zone.prompt = label
 	_zone.setup_zone(1.2, 1.4)
-	_zone.activated.connect(_on_take)
+	if chip_heavy:
+		add_to_group("chip_heavy")
+		_zone.activated.connect(func(_p): Game.toast.emit(chip_hint))
+	else:
+		_zone.activated.connect(_on_take)
 	add_child(_zone)
 	if display_scene != "" and ResourceLoader.exists(display_scene):
 		var mesh := (load(display_scene) as PackedScene).instantiate() as Node3D
@@ -50,13 +61,14 @@ func _ready() -> void:
 		# a relic shows ITSELF — its own shape on the stones, kept in a
 		# small gold shimmer instead of the brazier
 		var relic := KitLib.instance(display_kit)
+		relic.position.y = display_lift
 		add_child(relic)
 		var l := OmniLight3D.new()
 		l.light_color = Color(1.0, 0.88, 0.58)
 		l.light_energy = 1.3
 		l.omni_range = 3.2
 		l.shadow_enabled = false
-		l.position.y = 0.7
+		l.position.y = 0.7 + display_lift * 0.8
 		add_child(l)
 		var tw := l.create_tween()
 		tw.set_loops(0)
@@ -81,6 +93,12 @@ func _ready() -> void:
 				t.queue_free())
 		add_child(t)
 		t.start()
+
+## A heavy blow landed on it (player.gd, the heavy swing's contact).
+func chip(player) -> void:
+	if chip_heavy and is_inside_tree() and _shown:
+		AudioDirector.sfx(AudioDirector.foley("frost_hit"), -2.0)
+		_on_take(player)
 
 func _on_take(player) -> void:
 	World.set_area_flag(area_id, "took_" + pickup_id)

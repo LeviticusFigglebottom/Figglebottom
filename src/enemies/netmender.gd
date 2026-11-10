@@ -97,6 +97,8 @@ func take_hit(packet: DamagePacket) -> void:
 	if state == ES.HOLD:
 		_hold_quiet = 0.0   # she stays curled while the Bearer keeps at it
 	var was_up := stood
+	if packet.source != null and packet.source.is_in_group("player"):
+		packet.amount *= Game.test_boss_dmg_mult   # 1.0 outside the slice test
 	super.take_hit(packet)
 	if not was_up and not dead and state != ES.TRANSITION:
 		if packet.source != null and packet.source.is_in_group("player"):

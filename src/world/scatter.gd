@@ -179,25 +179,42 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 			variants.append([String(hv[0]), hm, float(hv[2])])
 	if variants.is_empty():
 		variants.append([kind, _mesh(kind, mode), 1.0])
-	for vi in variants.size():
-		var pick: Array = []
-		for i in xfs.size():
-			if i % variants.size() == vi:
-				var t: Transform3D = xfs[i]
-				t.basis = t.basis.scaled_local(Vector3.ONE * float(variants[vi][2]))
-				pick.append(t)
-		if pick.is_empty():
-			continue
+	# chunked like the ground cover: one area-wide MultiMesh was never
+	# frustum-culled, and its 70 m range was measured to the middle of the
+	# whole area, so the Strand's pebbles blinked out as you walked the beach.
+	# Each chunk holds one MultiMesh per hero variant.
+	var chunks: Dictionary = {}
+	for i in xfs.size():
+		var vi := i % variants.size()
+		var t: Transform3D = xfs[i]
+		var key := Vector3i(int(floor(t.origin.x / SCATTER_CHUNK)), vi, int(floor(t.origin.z / SCATTER_CHUNK)))
+		t.basis = t.basis.scaled_local(Vector3.ONE * float(variants[vi][2]))
+		if not chunks.has(key):
+			chunks[key] = []
+		chunks[key].append(t)
+	var small: bool = kind in ["rock", "hummock", "driftwood"]
+	for key in chunks:
+		var cx: Array = chunks[key]
+		var c := Vector3.ZERO
+		for xf in cx:
+			c += (xf as Transform3D).origin
+		c /= float(cx.size())
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
-		mm.mesh = variants[vi][1]
-		mm.instance_count = pick.size()
-		for i in pick.size():
-			mm.set_instance_transform(i, pick[i])
+		mm.mesh = variants[key.y][1]
+		mm.instance_count = cx.size()
+		for i in cx.size():
+			var t: Transform3D = cx[i]
+			t.origin -= c
+			mm.set_instance_transform(i, t)
 		var mmi := MultiMeshInstance3D.new()
-		mmi.name = "Scatter_%s_%s" % [kind, tag] + ("" if variants.size() == 1 else "_%d" % vi)
+		mmi.name = "Scatter_%s_%s_%d_%d" % [kind, tag, key.x, key.z] + ("" if variants.size() == 1 else "_%d" % key.y)
 		mmi.multimesh = mm
-		mmi.visibility_range_end = 70.0 if kind in ["rock", "hummock", "driftwood"] else 0.0
+		mmi.position = c
+		if small:
+			mmi.visibility_range_end = 70.0
+			mmi.visibility_range_end_margin = 8.0
+			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 		area.attach(mmi, tag)
 	var bit := AreaBuilder._tag_bit(tag)
 	for xf in xfs:
@@ -452,6 +469,7 @@ static func _patch(x: float, z: float, cell: float, seed: int) -> float:
 	var h := func(a: int, b: int) -> float:
 		return float(hash(Vector3i(a, b, seed)) % 10007) / 10007.0
 	return lerpf(lerpf(h.call(ix, iz), h.call(ix + 1, iz), tx), lerpf(h.call(ix, iz + 1), h.call(ix + 1, iz + 1), tx), tz)
+const SCATTER_CHUNK := 32.0
 
 ## "veg": [{"kind": "grass"|"heather"|"sedge", "region": [x0, z0, x1, z1],
 ##          "density": per m2, "h": [min, max], "tag", "range": m}]

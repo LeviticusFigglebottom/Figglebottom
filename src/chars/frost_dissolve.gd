@@ -7,6 +7,32 @@ class_name FrostDissolve
 
 const SHADER := preload("res://shaders/frost_dissolve.gdshader")
 
+## One frost material per source material, shared by every body of that
+## kind (all the Rimewalkers shatter from the same one); RH.set_dissolve
+## clones it per body only when that body starts to go.
+static var _cache: Dictionary = {}
+
+static func _shared(src: Material) -> ShaderMaterial:
+	var key = src if src != null else "none"
+	if _cache.has(key):
+		return _cache[key]
+	var m := ShaderMaterial.new()
+	m.shader = SHADER
+	var std := src as BaseMaterial3D
+	if std != null:
+		m.set_shader_parameter("albedo_tex", std.albedo_texture)
+		m.set_shader_parameter("albedo_color", std.albedo_color)
+		m.set_shader_parameter("roughness", std.roughness)
+		if std.normal_enabled and std.normal_texture != null:
+			m.set_shader_parameter("normal_tex", std.normal_texture)
+			m.set_shader_parameter("normal_scale", std.normal_scale)
+			m.set_shader_parameter("has_normal", true)
+	_cache[key] = m
+	return m
+
+static func clear_cache() -> void:
+	_cache.clear()
+
 static func apply(root: Node) -> int:
 	var n := 0
 	for node in root.find_children("*", "MeshInstance3D", true, false):
@@ -19,18 +45,7 @@ static func apply(root: Node) -> int:
 				src = mi.mesh.surface_get_material(s)
 			if src is ShaderMaterial:
 				continue   # already dissolvable (hall.gdshader greybox)
-			var m := ShaderMaterial.new()
-			m.shader = SHADER
-			var std := src as BaseMaterial3D
-			if std != null:
-				m.set_shader_parameter("albedo_tex", std.albedo_texture)
-				m.set_shader_parameter("albedo_color", std.albedo_color)
-				m.set_shader_parameter("roughness", std.roughness)
-				if std.normal_enabled and std.normal_texture != null:
-					m.set_shader_parameter("normal_tex", std.normal_texture)
-					m.set_shader_parameter("normal_scale", std.normal_scale)
-					m.set_shader_parameter("has_normal", true)
-			mi.set_surface_override_material(s, m)
+			mi.set_surface_override_material(s, _shared(src))
 			n += 1
 		mi.set_meta("_frost_diss", true)
 	return n

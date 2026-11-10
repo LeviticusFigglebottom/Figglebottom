@@ -104,6 +104,8 @@
   "fov": 62,
   "sensitivity": 0.0035,
   "lock_distance_bias": 1.15,
+  "talk_yaw_off": 34.0,
+  "hide_body_within": 0.75,
   "lock": {
    "_doc": "Lock-on. Acquire within range/cone with line of sight; a horizontal flick (mouse px accumulated inside flick_window s) or the right stick past stick_threshold switches to the nearest target on that side, scored on screen by angle_weight*|angle from the horizontal| + distance_weight*(screen distance / viewport width). Breaks on the lock button, beyond break_range, or after los_grace s without line of sight.",
    "range": 16.0,
@@ -135,5 +137,17 @@
   "bog_drag": 0.55,
   "bog_seconds": 3.0,
   "thin_ice_seconds": 0.7
+ },
+ "render": {
+  "_doc": "shadow_distance: the sun's shadow reach in metres per graphics-quality tier (Low, High, Ultra). prop_ranges: [small_max_m, small_range_m, mid_max_m, mid_range_m]; kit props whose largest side is at most small_max_m stop drawing past small_range_m, up to mid_max_m past mid_range_m; larger kit always draws.",
+  "shadow_distance": [70.0, 100.0, 135.0],
+  "prop_ranges": [1.6, 60.0, 4.5, 120.0]
+ },
+ "combat": {
+  "body_push": {
+   "_doc": "Soft separation between the Bearer and the frost-taken (player._part_from_foes). Outside a roll or backstep the Bearer is eased out of each foe's push radius (enemies.json push_r, else max(col_r, 0.9*hurt_r)) by at most max_step metres a physics tick. Rolls still pass through.",
+   "bearer_r": 0.34,
+   "max_step": 0.25
+  }
  }
 }

@@ -33,4 +33,5 @@ func _exit_tree() -> void:
 	MaterialLib._tex_cache.clear()
 	AmbientLife._mote_tex = null
 	FrostFX.clear_cache()
+	FrostDissolve.clear_cache()
 	EnvRig.active_instance = null
