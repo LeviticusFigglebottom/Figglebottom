@@ -26,6 +26,26 @@
    ]
   }
  },
+ "fog_pockets": [
+  {
+   "id": "gully",
+   "at": [
+    25,
+    11.5,
+    30
+   ],
+   "size": [
+    18,
+    9,
+    32
+   ],
+   "density": [
+    0.02,
+    0.05
+   ],
+   "height_falloff": 0.5
+  }
+ ],
  "terrain": {
   "source": "res://data/terrain/saltfell_h.bin",
   "splat": "res://data/terrain/saltfell_splat.bin",
