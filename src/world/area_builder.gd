@@ -470,33 +470,6 @@ static func _extent(def: Dictionary) -> Array:
 static func _v3(a) -> Vector3:
 	return Vector3(a[0], a[1], a[2]) if a is Array and a.size() >= 3 else Vector3.ZERO
 
-static func _add_npc(area: Area, spec: Dictionary) -> NPC:
-	var n := NPC.new()
-	n.npc_id = spec.get("id", "")
-	n.spec = spec
-	n.set_meta("state_tag", spec.get("tag", "thaw"))
-	area.attach(n, spec.get("tag", "thaw"))
-	_place(n, spec)
-	return n
-
-static func _add_pickup(area: Area, spec: Dictionary) -> Pickup:
-	var k := Pickup.new()
-	k.pickup_id = spec.get("id", "pickup")
-	k.area_id = area.area_id
-	k.warmth = int(spec.get("warmth", 0))
-	k.item_id = spec.get("item", "")
-	k.item_count = int(spec.get("count", 1))
-	k.label = spec.get("label", "Take")
-	k.appear_flag = spec.get("appear_flag", "")
-	k.display_kit = spec.get("kit", "")
-	k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
-	k.set_flag = spec.get("set_flag", "")
-	k.display_lift = float(spec.get("lift", 0.0))
-	k.chip_heavy = bool(spec.get("chip_heavy", false))
-	area.attach(k, spec.get("tag", "base"))
-	_place(k, spec)
-	return k
-
 ## A story flag turned while the Bearer stands in the area (a release). The
 ## souls and relics gated on it ("require_flag" / "absent_flag") were placed
 ## when the area was built, so without this the scene a release earns (Old
