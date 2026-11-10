@@ -24,7 +24,15 @@ _Last updated: 2026-11-07 (founding session)_
 | `/home/user/fb-look` | `art/unified-look` | The whole-world material/texture pass, plus trees and hedges |
 | `/home/user/figglebottom` | `feat/reach-coldwell` | Shepherd's Reach and the Coldwell worlds, the ending hook, the THAW sky |
 | `/home/user/fb-enc5` | `feat/release-scenes` | NPC sit support; the Lowe, Kettle and Tarnhall post-release THAW scenes |
+| `/home/user/fb-look2` | `art/look-pass-2` | Look pass 2 (see below): card grass, Tripo hearthstones, sky, gables, fences, ewes. Pushed, not merged |
 | Owner's PC | `gpu/*` | `LOCAL_GPU_TASKS.md`. Nothing has been received yet |
+
+## Look pass 2 (`art/look-pass-2`, 2026-11-10)
+- **Done:** see `docs/art/LOOK_PASS.md` ("Look pass 2") for the method, rules and camera table; pairs are `docs/screens/look2_{before,after}_*.png`.
+- **Tripo:** 760 credits (8 x 95), balance 11,160 afterwards. Rows are in `docs/art/TRIPO_LEDGER.md`.
+- **Resume:** `git checkout art/look-pass-2 && python3 tools/art/texture_imports.py && godot --headless --path . --import`, then `tools/test.sh steading`. To rebuild the veg atlases: put the three sprite sheets in `raw/veg/` and run `python3 tools/art/veg_atlas.py`.
+- **Not done (next):** Tripo trestle table and bench, rope coil, creels and barrels (still boxes); terrain close-up (detail normals, wet shore); shore foam; decals; indoor reflection probes; real flame cards (the tongues are still cones).
+- **Known breakages:** `thornwold` "the Bearer walks the maze to the innermost gap" fails on `feat/integration-1110` without this branch too (checked by running the suite with the branch's changes reverted). `tools/audit_edges.py` reports 160 problems, also unrelated to this branch (only `mat_remap` changed in area JSON).
 
 ## Next exact step
 1. Merge each branch above once its tests pass.
