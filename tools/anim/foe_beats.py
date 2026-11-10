@@ -92,9 +92,12 @@ def whirl(rig, fps, n, w, atk, **_):
             "rhand": [0.20, 0.66, 1.04], "lhand": [-0.16, -0.62, 1.10],
             "rpole": [0.9, 0.2, -0.5], "lpole": [-0.9, -0.2, -0.5],
             "footL": [-0.04, 0.10, 0, 0, 0], "footR": [0.06, -0.12, 0, 0, 0], "fists": True}
-    cut = {"hips": [0, 0, -0.20, 0, 8, 0], "chest": [20, 6, -8], "head": [20, 0],
-           "rhand": [0.74, 0.16, 1.24], "lhand": [-0.58, -0.30, 0.98],
-           "rpole": [0.6, -0.6, -0.5], "lpole": [-0.8, -0.2, -0.5],
+    # mid-spin the arms are not a T: the leading blade is carried high on a
+    # bent arm ahead of the turn, the trailing one low and behind, and the
+    # trunk leans into the circle
+    cut = {"hips": [0, 0, -0.22, 0, 12, -6], "chest": [26, 10, -14], "head": [24, 4],
+           "rhand": [0.56, 0.36, 1.40], "lhand": [-0.40, -0.40, 0.84],
+           "rpole": [0.9, -0.2, 0.2], "lpole": [-0.5, -0.8, 0.1],
            "footL": [-0.03, 0.05, 0, 0, 0], "footR": [0.05, -0.05, 0, 0, 0], "fists": True}
     a0, lead = -72.0, 0.15
     rise = min(0.24, (w - lead) * 0.5)
@@ -466,26 +469,33 @@ def hl_measure(rig, fps, n, **_):
 
 
 def hl_step_into(rig, fps, n, w, atk, **_):
-    """He walks backward into the thorn, arms folding over his chest, head
-    going down: three steps, the last on the windup, and it closes over him."""
-    def back(df, du=0.0, yaw=0.0):
-        return [0.01, df, du, yaw, 0]
+    """He walks backward into the thorn, upright, three long deliberate
+    steps, the last on the windup; his arms cross over his chest as he goes
+    (they travel back with him) and only his head goes down. It closes over
+    him."""
+    def back(df, du=0.0, pitch=0.0):
+        return [0.01, df, du, 0, pitch]
     k = [(0.0, "inout", n)]
     t3 = w / 3.0
-    arms = [([0.14, 0.24, 1.14], [-0.14, 0.22, 1.08]), ([-0.06, 0.18, 1.26], [0.06, 0.16, 1.18]),
-            ([-0.14, 0.14, 1.30], [0.14, 0.12, 1.22])]
+    stride = 0.26
+    # [right, forward of the chest, up]: open, half folded, crossed on the breastbone
+    arms = [([0.20, 0.20, 1.10], [-0.20, 0.18, 1.06]), ([0.02, 0.21, 1.24], [-0.04, 0.19, 1.16]),
+            ([-0.12, 0.17, 1.32], [0.12, 0.15, 1.24])]
     for i in range(3):
-        d0, d1 = -0.22 * i, -0.22 * (i + 1)
+        d0, d1 = -stride * i, -stride * (i + 1)
         r, l = arms[i]
-        mover, other = ("footR", "footL") if i % 2 == 0 else ("footL", "footR")
-        mid = {"hips": [0, (d0 + d1) / 2 - 0.02, -0.03, 0, -4 + 4 * i, 0], "chest": [0, 4 + 6 * i, 0],
-               "head": [0, 8 + 10 * i], mover: back(d1 - 0.06, 0.09), "fists": False}
-        down = {"hips": [0, d1, -0.05 - 0.02 * i, 0, -2 + 5 * i, 0], "chest": [0, 6 + 6 * i, 0],
-                "head": [0, 12 + 10 * i], mover: back(d1 - 0.12), "rhand": r, "lhand": l,
-                "rpole": [0.7, -0.4, -0.6], "lpole": [-0.7, -0.4, -0.6], "fists": False}
+        mover = "footR" if i % 2 == 0 else "footL"
+        # the foot is lifted clear and reached back; the trunk stays over the standing leg
+        mid = {"hips": [0, d0 - 0.05, 0.0, 0, -3, 0], "chest": [0, -2, 0],
+               "head": [0, 4 + 8 * i], mover: back(d1 - 0.10, 0.14, 24), "fists": False}
+        down = {"hips": [0, d1, -0.02, 0, -2, 0], "chest": [0, 0, 0],
+                "head": [0, 8 + 9 * i], mover: back(d1 - 0.10), "rhand": [r[0], r[1] + d1, r[2]],
+                "lhand": [l[0], l[1] + d1, l[2]],
+                "rpole": [0.8, -0.3, -0.5], "lpole": [-0.8, -0.3, -0.5], "fists": False}
         k += [(t3 * (i + 0.5), "inout", mid), (t3 * (i + 1), "inout", down)]
     last = dict(k[-1][2])
-    last["footL"] = back(-0.78)
+    last["footL"] = back(-stride * 3 - 0.02)
+    last["head"] = [0, 34]
     k += [(w + 0.3, "inout", last), (w + 0.6, "inout", last)]
     return k
 
