@@ -116,6 +116,9 @@ func _ready() -> void:
 	World.flag_raised.connect(_on_flag_raised)
 	Juice.post_flash_requested.connect(_on_post_flash)
 	StateDirector.transition_started.connect(_on_transition)
+	visibility_changed.connect(func():
+		if _title_layer != null and is_instance_valid(_title_layer):
+			_title_layer.visible = visible)
 	if Game.player != null:
 		_bind_player(Game.player)
 	else:
@@ -903,6 +906,9 @@ func show_area_title(text: String, hold := 2.2) -> void:
 		_title_layer.queue_free()
 	_title_layer = CanvasLayer.new()
 	_title_layer.layer = 11
+	# (a layer inside a layer does not follow its parent's visibility: an
+	# ending that has put the HUD away wants no card over it either)
+	_title_layer.visible = visible
 	add_child(_title_layer)
 	var box := Control.new()
 	box.set_anchors_preset(Control.PRESET_FULL_RECT)
