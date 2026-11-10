@@ -383,16 +383,27 @@ func _host() -> void:
 	h._set_state(Enemy.ES.COMBAT)
 
 	print("== two benches")
-	await _ready_player(h.global_position + Vector3(0, 0, 8.0))
+	# By now the Host has walked some metres after the Bearer (how far turns
+	# on what his AI chose between the sections), and a run laid out from
+	# where he stands ended in the arena's wall or its hearth: the Bearer
+	# stopped dead, was no longer "running to" anywhere, and one bench flew.
+	# Seat him back in the middle and run a lane that is clear floor.
+	h._end_all_swings()
+	h.global_position = Vector3(0, 0.1, 0)
+	h.velocity = Vector3.ZERO
+	await _ready_player(Vector3(-4.0, 0.1, 7.0))
 	_combat(h)
 	await ticks(2)
 	h._begin_attack(bt)
 	var wt := float(bt["windup"]) / h._speed_mult()
 	var t0 := 0.0
-	while t0 < wt + 0.05:   # he runs across the hall through the windup
+	# he runs across the hall through the windup, until the benches leave
+	# the Host's hands (the throw itself, not a count of ticks)
+	while h.lobbed.is_empty() and h.state == Enemy.ES.ATTACK and t0 < wt + 0.5:
 		player.global_position += Vector3(5.0 / 60.0, 0, 0)
 		await ticks(1)
 		t0 += 1.0 / 60.0
+	check(absf(t0 - wt) < 0.1, "the throw comes at the end of the windup (%.2f s of %.2f)" % [t0, wt])
 	check(h.lobbed.size() == 2, "the second goes where he is running to (%d in the air)" % h.lobbed.size())
 	await _secs(1.5)
 
