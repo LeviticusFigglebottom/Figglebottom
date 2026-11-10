@@ -328,3 +328,10 @@ Budget for the batch: about 2,500 credits, stop below 11,000. Balance at start: 
 | 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 5k | kit_brazier_hero | 69f46317-b3d2-4640-bb09-bef9c5dd337d | 95 | — | ops ad604e12, 57784e36 (look pass 2) |
 | 2026-11-10 | tripo_image ×5 (grass ×3 tries, heather, sedge sprite sheets for the ground-cover atlases) | T_veg_grass / heather / sedge | — | 0 | — | free on the plan; two grass sheets came back on white and were re-rolled |
 | 2026-11-10 | **Look pass 2 total** (8 × image_to_model at 55, 8 × remesh at 40) | | | **760** | **11,160** | reconciled with `tripo_status`: 11,920 before, 11,160 after; nothing wasted or refunded |
+| 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 5k | kit_table_hero | 31676177-118b-4ff1-b62a-20463251fb0d | 95 | — | ops ec2e22b0, 5e3a6a93 (look pass 3) |
+| 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 4k | kit_bench_hero | 36c78cc6-1bb1-4ee5-be46-bdae98140076 | 95 | — | ops b5054307, 3caf29d3 (look pass 3) |
+| 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 4k | kit_barrel_hero | 65137946-3ab6-4457-a95e-7f594e6f3785 | 95 | — | ops a42ac921, b2979c44 (look pass 3) |
+| 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 4k | kit_rope_coil_hero | 8fcd4d8d-e439-4e16-b5f0-fa4fe5c02696 | 95 | — | ops 6f2dde97, 8473109e (look pass 3) |
+| 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 6k | kit_creel_stack_hero | f6186aee-1bdf-44b0-a357-15ddd2d858bf | 95 | — | ops 095be500, d5707f84 (look pass 3) |
+| 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 6k | kit_well_hero | fb1bac98-2f78-4920-be22-cf40879861d2 | 95 | — | ops d3274eef, e291ea6d (look pass 3) |
+| 2026-11-10 | **Look pass 3 total** (6 × image_to_model at 55, 6 × remesh at 40) | | | **570** | **10,590** | reconciled with `tripo_status`: 11,160 before, 10,590 after. Passes 2 + 3 together: 1,330 |

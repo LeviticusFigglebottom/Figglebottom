@@ -3424,6 +3424,144 @@
    "texture_max": 1024,
    "collision": null,
    "output": "assets/models/kit/kit_brazier_hero.glb"
+  },
+  {
+   "name": "kit_table_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "31676177-118b-4ff1-b62a-20463251fb0d",
+    "task_id": "ec2e22b0-71f1-4a8e-be36-2be7920ad394",
+    "remesh_operator": "5e3a6a93-a920-4b8c-9b2b-057bc007d3b5",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kit_table_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 3.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_table_hero.glb"
+  },
+  {
+   "name": "kit_bench_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "36c78cc6-1bb1-4ee5-be46-bdae98140076",
+    "task_id": "b5054307-47ce-474d-8b74-571b46117f39",
+    "remesh_operator": "3caf29d3-30cd-4c19-9a39-f11250519cfe",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_bench_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 3.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_bench_hero.glb"
+  },
+  {
+   "name": "kit_barrel_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "65137946-3ab6-4457-a95e-7f594e6f3785",
+    "task_id": "a42ac921-1d39-4ab4-9f88-1bba8c236596",
+    "remesh_operator": "b2979c44-4796-4656-a79c-d2803792aa9a",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_barrel_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_barrel_hero.glb"
+  },
+  {
+   "name": "kit_rope_coil_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "8fcd4d8d-e439-4e16-b5f0-fa4fe5c02696",
+    "task_id": "6f2dde97-a404-458d-8fc9-586b23d2dc0f",
+    "remesh_operator": "8473109e-7ce9-4918-a411-7ca211fde020",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/kit_rope_coil_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 0.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_rope_coil_hero.glb"
+  },
+  {
+   "name": "kit_creel_stack_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "f6186aee-1bdf-44b0-a357-15ddd2d858bf",
+    "task_id": "095be500-ab17-4c85-abac-5cec71c9902c",
+    "remesh_operator": "d5707f84-94bb-4fc3-903d-75014acdeeb6",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kit_creel_stack_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_creel_stack_hero.glb"
+  },
+  {
+   "name": "kit_well_hero",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "fb1bac98-2f78-4920-be22-cf40879861d2",
+    "task_id": "d3274eef-b9d9-4f4b-ac75-b87d42eb6166",
+    "remesh_operator": "e291ea6d-45e0-4db9-a673-a460eb6dbb0e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kit_well_hero/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_well_hero.glb"
   }
  ]
 }
