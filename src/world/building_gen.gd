@@ -31,8 +31,13 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 	root.rotation.y = deg_to_rad(float(spec.get("yaw", 0.0)))
 	var opens: Array = spec.get("open", [])
 	var doors := {}
+	# [side, bay] or [side, bay, shift]: a door stands mid-bay unless it is
+	# shifted along its wall (metres) to meet the next building's door
+	var door_shift := {}
 	for d in spec.get("doors", []) + spec.get("gate_doors", []):
 		doors["%s%d" % [String(d[0]), int(d[1])]] = true
+		if (d as Array).size() > 2:
+			door_shift["%s%d" % [String(d[0]), int(d[1])]] = float(d[2])
 
 	var plank := SurfaceTool.new(); plank.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var stone := SurfaceTool.new(); stone.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -50,7 +55,7 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 		var gaps: Array = []
 		for i in int(span / 4.0):
 			if doors.has("%s%d" % [side, i]):
-				gaps.append(-span * 0.5 + 2.0 + 4.0 * i)
+				gaps.append(-span * 0.5 + 2.0 + 4.0 * i + float(door_shift.get("%s%d" % [side, i], 0.0)))
 		var segs := _segments(-span * 0.5, span * 0.5, gaps)
 		for sg in segs:
 			var a: float = sg[0]

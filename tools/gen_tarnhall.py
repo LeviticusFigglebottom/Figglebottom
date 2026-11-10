@@ -60,8 +60,11 @@ BUILDINGS.append({"id": "hall", "center": list(HALL_C), "size": [HALL_W, HALL_L]
 BYRE_C, BYRE_W, BYRE_L = (HALL_X1 + 7.6, -330.0), 10.0, 14.0
 BYRE_X0 = BYRE_C[0] - BYRE_L / 2
 BYRE_DOOR = (BYRE_C[0] - 1.0, BYRE_C[1] + BYRE_W / 2)                  # the cattle door, south wall
+# (the byre's gable is 10 m, its bays stand 2 m off the hall's: the door
+# through to the hall is shifted along the gable to meet the hall's own,
+# or each door opens on the other building's wall)
 HOUSES.append({"id": "byres", "center": list(BYRE_C), "size": [BYRE_W, BYRE_L], "yaw": 90, "y": FY,
-               "doors": [["N", 1], ["W", 1]], "gate_doors": [], "open": [], "wall_h": 3.4})
+               "doors": [["N", 1, -2.0], ["W", 1]], "gate_doors": [], "open": [], "wall_h": 3.4})
 BUILDINGS.append({"id": "byres", "center": list(BYRE_C), "size": [BYRE_W, BYRE_L], "yaw": 90, "y": FY,
                   "doors": [[BYRE_X0, DOOR_Z], list(BYRE_DOOR)], "open": []})
 
@@ -284,7 +287,9 @@ spawners = [
     {"enemy": "host", "stand_in": "netmender", "id": "host", "at": [r2(HALL_C[0] + 2.0), FY + 0.1, r2(TABLE_Z + 3.0)], "face": 0,
      "dead_once": True, "frost_veil_id": "long_table_veil"},
 ] + SEATS
-VEIL = [r2(BYRE_X0 + 1.4), FY, DOOR_Z]
+# in the doorway itself, between the hall's gable and the byre's: a veil
+# standing free inside the byre could be walked round once the door is a door
+VEIL = [r2(HALL_X1 + 0.3), FY, DOOR_Z]
 pickups = [
     {"id": "byre_cache", "at": [r2(BYRE_C[0] + 4.6), FY, r2(BYRE_C[1] - 3.2)], "item": "bog_iron", "count": 2, "tag": "rime",
      "label": "Pry up what the byre floor holds"},
