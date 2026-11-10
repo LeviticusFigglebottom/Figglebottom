@@ -143,7 +143,7 @@ while placed < 70 and tries < 4000:
         continue
     face = math.degrees(math.atan2(-(FX - x), -(FZ - z)))     # their faces (local -Z) to the fold
     PROPS.append({"kit": "sheep", "at": at(x, z), "rot": r2(face), "tag": "rime", "collide": True,
-                  "mat_remap": {"M_wool": "M_rime", "M_leather": "M_rime"}})
+                  "mat_remap": {"M_fleece": "M_rime", "M_leather": "M_rime"}})
     placed += 1
 
 place = []

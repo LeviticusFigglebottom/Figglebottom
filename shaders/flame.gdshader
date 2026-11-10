@@ -73,14 +73,14 @@ void fragment() {
 	// Blackbody temperature palette:
 	// Blue-indigo gas root -> brilliant white-yellow core -> luminous gold-orange mantle
 	vec3 blue_root = mix(vec3(0.20, 0.38, 0.95), flame_tint * 0.7, 0.35);
-	vec3 white_core = vec3(1.0, 0.99, 0.92);
+	vec3 white_core = vec3(1.0, 0.86, 0.5);
 	vec3 outer_fire = mix(flame_tint, flame_tint * vec3(1.05, 0.68, 0.28), smoothstep(0.35, 0.92, h_norm));
 
 	vec3 col = mix(blue_root, outer_fire, smoothstep(0.02, 0.24, h_norm));
-	col = mix(col, white_core, core_mask * 0.88);
+	col = mix(col, mix(white_core, flame_tint, 0.45), core_mask * 0.6);
 
 	float alpha = clamp(edge_fade * tip_fade * base_fade * (0.68 + 0.32 * core_mask), 0.0, 0.96);
 	ALBEDO = col;
-	EMISSION = col * flame_energy * (1.15 + 1.45 * core_mask) * flicker;
-	ALPHA = alpha;
+	EMISSION = col * flame_energy * (0.9 + 0.7 * core_mask) * flicker;
+	ALPHA = alpha * 0.85;
 }
