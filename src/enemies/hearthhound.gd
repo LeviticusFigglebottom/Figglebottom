@@ -96,7 +96,8 @@ func _st_return(dt: float) -> void:
 
 # ---------------------------------------------------------------- the bite
 func _strike() -> void:
-	if String(_atk.get("id", "")) == "lunge_bite" and vis.quad != null:
+	# a keyed strike (clip_meta strikes) already carries its own extension
+	if String(_atk.get("id", "")) == "lunge_bite" and vis.quad != null and not vis.quad.striking():
 		vis.quad.only("lunge", 0.06)
 	super._strike()
 
