@@ -37,8 +37,17 @@ const HERO_HEDGES := {
 	"thorn": ["hd_thorn2", "M_rime"],
 }
 const HERO_DIR := "res://assets/models/forest/"
-const NEAR := 70.0
-const HEDGE_NEAR := 45.0
+## Draw budget (a real GPU counted 9.5 M primitives looking down the hedge
+## maze: full-detail sections and trees out to 45-70 m, each drawn again in
+## all four shadow splits). Three bands per hero now: the full mesh close by,
+## the decimated mesh with shadows through the middle distance, and the
+## decimated mesh without shadows beyond it, fading out at the far end.
+const NEAR := 42.0
+const TREE_MID := 95.0
+const TREE_FAR := 170.0
+const HEDGE_NEAR := 26.0
+const HEDGE_MID := 60.0
+const HEDGE_FAR := 110.0
 
 static var _cache: Dictionary = {}
 
@@ -91,7 +100,9 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 				var key := "hero|%s|%s|%s|%s" % [vs[vi][0], vs[vi][1], vs[vi][2], vs[vi][3]]
 				if ResourceLoader.exists(HERO_DIR + String(vs[vi][0]) + "_far.glb"):
 					_emit(area, key, "base", pick, NEAR, 0.0)
-					_emit(area, key.replace("hero|%s|" % vs[vi][0], "hero|%s_far|" % vs[vi][0]), "base", pick, 220.0, NEAR)
+					var far_key := key.replace("hero|%s|" % vs[vi][0], "hero|%s_far|" % vs[vi][0])
+					_emit(area, far_key, "base", pick, TREE_MID, NEAR)
+					_emit(area, far_key, "base", pick, TREE_FAR, TREE_MID, false)
 				else:
 					_emit(area, key, "base", pick, 180.0)
 		_tree_bodies(area, kind, trees[kind])
@@ -123,7 +134,7 @@ static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
 		area.attach(body, "base")
 
 ## Chunked MultiMeshes of one mesh.
-static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float, range_begin := 0.0) -> void:
+static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float, range_begin := 0.0, shadows := true) -> void:
 	var mode := 1 if tag == "thaw" else (2 if tag == "rime" else 0)
 	var mesh := _mesh(key, mode)
 	var chunks: Dictionary = {}
@@ -157,6 +168,11 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 		mmi.position = c
 		mmi.visibility_range_end = range_end
 		mmi.visibility_range_end_margin = 10.0
+		if not shadows:
+			# the last band: no shadow passes, and it thins out instead of popping
+			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+			mmi.name = "Forest_%s_%s_%d_%d_far" % [label, tag, k.x, k.y]
 		if range_begin > 0.0:
 			mmi.visibility_range_begin = range_begin
 			mmi.visibility_range_begin_margin = 10.0
@@ -360,7 +376,9 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 		var hk := "hero|%s|%s|0.04|1.5" % [hh[0], hh[1]]
 		if ResourceLoader.exists(HERO_DIR + String(hh[0]) + "_far.glb"):
 			_emit(area, hk, tag, heroes, HEDGE_NEAR)
-			_emit(area, hk.replace("hero|%s|" % hh[0], "hero|%s_far|" % hh[0]), tag, heroes, 150.0, HEDGE_NEAR)
+			var hfar := hk.replace("hero|%s|" % hh[0], "hero|%s_far|" % hh[0])
+			_emit(area, hfar, tag, heroes, HEDGE_MID, HEDGE_NEAR)
+			_emit(area, hfar, tag, heroes, HEDGE_FAR, HEDGE_MID, false)
 		else:
 			_emit(area, hk, tag, heroes, 140.0)
 		return
