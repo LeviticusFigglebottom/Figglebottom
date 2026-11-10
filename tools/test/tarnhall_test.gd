@@ -154,6 +154,12 @@ func _run() -> void:
 	check(_reaches(p_in, HALL_IN), "the causeway and the open doors lead to the Long Table")
 	check(_near_path(p_in, BRIDGE, 3.0), "over the plank bridge (the tarn is deep)")
 	check(_near_path(p_in, PORCH, 4.0), "and in off the porch")
+	# the hall's east door and the byre's west door are one doorway (they
+	# stood 2 m apart once, each opening on the other building's wall)
+	var byre_in := Vector3(221.0, 24.3, -329.0)
+	var p_by := _path(HALL_IN, byre_in)
+	check(_reaches(p_by, byre_in, 1.5) and _near_path(p_by, Vector3(216.3, 24.3, -329.0), 1.0) and p_by.size() > 1
+		and absf(_ray_y(216.3, -329.0, 26.0) - 24.3) < 0.3, "the door at the high seat's end opens into the byre")
 	check(absf(_ray_y(BRIDGE.x, BRIDGE.z, 40) - BRIDGE.y) < 0.2, "the bridge deck spans the channel")
 	player.global_position = shore + Vector3(0, 0.3, 0)
 	await ticks(6)
