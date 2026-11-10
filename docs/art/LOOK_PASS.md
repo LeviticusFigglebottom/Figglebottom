@@ -129,3 +129,15 @@ Headless screenshots run on lavapipe, which `EnvRig.get_graphics_quality()` puts
 | reach_fold / reach_sheilings | shepherds_reach thaw | 628,76,-342,-40,-20,70 / 572,73,-298,-95,-6,70 |
 | coldwell_wellhead | coldwell thaw | 896,160,-478,-90,-20,70 |
 | sky_rime (after only) | saltfell_steading rime | -20,26,8,0,25,80 |
+
+---
+
+# Look pass 3 (same branch)
+
+1. **Fire is drawn, not modelled.** `KitLib._flame` builds three crossed cards and `shaders/flame.gdshader` draws the tongue on each: a teardrop whose axis is pushed about by rising noise and whose top tears off where the noise runs out, red at the edges through the tint to a pale core, additive. Every flame in the game (hearths, braziers, torches, hearth fires) goes through it; the instance uniforms and the `*flame*` naming that the lights and `Hearthstone` rely on are unchanged. `KitLib._embers` adds a dozen CPU-particle sparks to hearths and braziers (off in RIME at a hearth).
+2. **Furniture.** Tripo trestle table, bench, barrel, rope coil, creel stack and draw-well replace their box and cylinder primitives through `KitLib.HERO_PIECES` (same ids, footprints and colliders by the usual path).
+3. **Sheiling roofs.** `tools/art/regrade_glb.py` pulls one hue band of a GLB's embedded base colour to a target; run on `lm_sheiling.glb` it turns the lime roof to turf olive without touching the stone.
+4. **Aurora** is at 0.5 and drifts at half the speed.
+5. **Sward.** Every grass rule also lays a `sward` kind under itself: 0.4 m rosettes of the grass atlas laid almost flat, four times the rule's density, range 32 m, tinted near the ground colour with no root shadow. From above the clumps now stand in a pile instead of reading as dots on a photo. It is added after all authored rules, so no existing clump moved. `terrain.gdshader` is untouched.
+
+Pairs: `docs/screens/look3_after_*.png`; the before for a shared camera is the matching `look2_after_*.png`. New cameras (after only): hall `2.5,23.6,-22,30,-10,70`, well `9.5,23.3,1,50,-12,55`, sward_top `-14,30,2,-45,-50,62` (all saltfell_steading thaw).

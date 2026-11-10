@@ -29,10 +29,10 @@ _Last updated: 2026-11-07 (founding session)_
 
 ## Look pass 2 (`art/look-pass-2`, 2026-11-10)
 - **Done:** see `docs/art/LOOK_PASS.md` ("Look pass 2") for the method, rules and camera table; pairs are `docs/screens/look2_{before,after}_*.png`.
-- **Tripo:** 760 credits (8 x 95), balance 11,160 afterwards. Rows are in `docs/art/TRIPO_LEDGER.md`.
-- **Resume:** `git checkout art/look-pass-2 && python3 tools/art/texture_imports.py && godot --headless --path . --import`, then `tools/test.sh steading`. To rebuild the veg atlases: put the three sprite sheets in `raw/veg/` and run `python3 tools/art/veg_atlas.py`.
-- **Not done (next):** Tripo trestle table and bench, rope coil, creels and barrels (still boxes); terrain close-up (detail normals, wet shore); shore foam; decals; indoor reflection probes; real flame cards (the tongues are still cones).
-- **Known breakages:** `thornwold` "the Bearer walks the maze to the innermost gap" fails on `feat/integration-1110` without this branch too (checked by running the suite with the branch's changes reverted). `tools/audit_edges.py` reports 160 problems, also unrelated to this branch (only `mat_remap` changed in area JSON).
+- **Pass 3 (same branch):** card flames with embers, six Tripo furniture pieces (table, bench, barrel, rope coil, creels, well), the sheiling roof regrade, aurora at 0.5, a sward layer under every grass rule.
+- **Tripo:** 760 (pass 2) + 570 (pass 3) = 1,330 credits; balance 10,590 afterwards. Rows are in `docs/art/TRIPO_LEDGER.md`.
+- **Resume:** `git checkout art/look-pass-2 && python3 tools/art/texture_imports.py && godot --headless --path . --import`, then `tools/test.sh steading`. To rebuild the veg atlases: put the three sprite sheets in `raw/veg/` and run `python3 tools/art/veg_atlas.py`. After re-running `blender_process.py --only lm_sheiling`, re-run `tools/art/regrade_glb.py` (command in PROVENANCE).
+- **Not done (next):** crates, salt pans, ladders, woodpile, net frames, plaques, grave markers, jetty piles and deck edges, the Lowe barrow doorway (all still primitives); ewe idle motion (the models are unrigged); shore foam.
 
 ## Next exact step
 1. Merge each branch above once its tests pass.
