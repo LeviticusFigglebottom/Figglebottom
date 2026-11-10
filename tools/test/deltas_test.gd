@@ -1,8 +1,9 @@
 extends TestBase
 ## The planned deltas (SURVEY §3, §6, §8, §12): lock-on target switching,
 ## data-read weapon upgrades, (stat - base) scaling, the sprint attack,
-## armour slots (poise, absorption, weight tiers, the Pack leaf, saves), and
-## save_version with its migration hook.
+## armour slots (poise, absorption, weight tiers, the Pack leaf, saves),
+## save_version with its migration hook, and the worn body armour as the
+## Bearer's body (items.json armour.model).
 
 ## Base damage BEFORE the (stat - base) delta. A fresh Bearer (every stat at
 ## 8) must still deal exactly what these did under the old formula.
@@ -28,6 +29,7 @@ func _run() -> void:
 	await _armour()
 	await _armour_leaf()
 	await _saves()
+	await _outfits()
 	finish()
 
 func _near(a: float, b: float, eps := 0.001) -> bool:
@@ -379,3 +381,102 @@ func _saves() -> void:
 	check(player.armour["body"] == "armour_traveller_coat" and player.level == 4 and player.attributes["might"] == 10,
 		"and the Bearer comes back whole, in the coat")
 	World.delete_slot(1)
+
+# ------------------------------------------------------------------ 7. outfits
+## The body armour worn is the body seen: item id -> model is data
+## (items.json armour.model), every outfit is a registered, retargeted rig
+## that fights with the shared combat library, and the arms stay in his hands.
+func _outfits() -> void:
+	print("== outfits: the worn body armour is the Bearer's body")
+	var items: Dictionary = DB.table("items")
+	var base := String(DB.tuning("player/model", ""))
+	var outfits := {}
+	for id in items:
+		var a: Dictionary = (items[id] as Dictionary).get("armour", {}) if items[id] is Dictionary else {}
+		if String(a.get("slot", "")) == "body" and a.has("model"):
+			outfits[id] = String(a["model"])
+	check(outfits.size() >= 6 and outfits.get("armour_traveller_coat", "") == base,
+		"every body piece names its model in items.json (%d); the coat is %s" % [outfits.size(), base])
+	for id in outfits:
+		var cfg := HumanoidLib.model_cfg(String(outfits[id]))
+		var imp := FileAccess.get_file_as_string(String(cfg.get("scene", "")) + ".import")
+		check(HumanoidLib.has_model(String(outfits[id])) and bool(cfg.get("clip_sets", false))
+			and imp.contains("retarget/bone_map") and imp.contains("mixamo_bone_map"),
+			"%s -> %s: registered, retargeted, on the combat clip sets" % [id, outfits[id]])
+	player.equip_armour("body", "armour_traveller_coat")
+	await ticks(3)
+	check(player.vis.model_id == base, "in the coat he is %s" % player.vis.model_id)
+	for id in outfits:
+		if id == "armour_traveller_coat":
+			continue
+		player.give_item(id)
+		check(player.equip_armour("body", id), "wear %s" % id)
+		await ticks(3)
+		var v := player.vis
+		check(v.model_id == String(outfits[id]) and v.is_humanoid(), "%s: the body is %s" % [id, v.model_id])
+		check(v.weapon_mount != null and v.weapon_mount.get_child_count() > 0 and v.weapon_mount.visible
+			and v.shield_mount != null and v.shield_mount.get_child_count() > 0
+			and (v.weapon_mount.get_parent() as BoneAttachment3D).bone_name == "mixamorig_RightHand",
+			"%s: blade in the right hand, board on the arm" % outfits[id])
+		check(player.hitbox.get_parent() == v and v.trail != null, "%s: the swing volume and the ribbon ride it" % outfits[id])
+		check(v.rig.clip_set == "onehand" and v.rig.qualified("attack_l1") == "sw_light_a"
+			and v.rig.qualified("riposte") == "sw_stab" and v.rig.qualified("roll") == "dive_roll",
+			"%s: fights with the shared library (%s)" % [outfits[id], v.rig.qualified("attack_l1")])
+		check(v.rig.qualified("kneel") == "own/rest" and v.rig.qualified("gourd") == "own/drink",
+			"%s: kneels and drinks as the traveller does (%s, %s)" % [outfits[id], v.rig.qualified("kneel"), v.rig.qualified("gourd")])
+		var gm := v.mount_gourd()
+		check(gm != null and gm.get_child_count() > 0, "%s: the gourd has a hand to go in" % outfits[id])
+		v.unmount_gourd(gm)
+	check(get_tree().get_nodes_in_group("player").size() <= 1 and player.find_children("Vis*", "PlayerVisual", false, false).size() <= 2,
+		"old bodies are not left behind")
+	# a two-handed arm keeps the board off the new body
+	player.give_item("greatblade")
+	player.equip_weapon("greatblade")
+	player.equip_armour("body", "armour_saltfell_oilskins")
+	await ticks(3)
+	check(player.vis.model_id == "bearer_oilskins" and player.vis.rig.clip_set == "twohand"
+		and not player.vis.shield_mount.visible, "a greatblade crosses over: two hands, no board")
+	player.equip_weapon("hewing_blade")
+	await ticks(2)
+	# bare, and a piece with no model of its own: the traveller
+	player.equip_armour("body", "")
+	await ticks(40)
+	check(player.vis.model_id == base, "bare, he is the traveller he arrived as (%s)" % player.vis.model_id)
+	items["test_sark"] = {"name": "Test Sark", "armour": {"slot": "body", "model": "bearer_nobody", "poise": 1, "absorb": {}, "weight": 1.0}}
+	player.give_item("test_sark")
+	player.equip_armour("body", "test_sark")
+	await ticks(3)
+	check(player.vis.model_id == base, "a model that does not exist falls back to %s" % base)
+	# the Pack: tried on with it open, changed when it closes
+	InventoryUI.open_for(player, "armour")
+	await ticks(3)
+	var ui := get_tree().get_first_node_in_group("inventory_ui") as InventoryUI
+	check(ui != null, "the Pack opens")
+	player.equip_armour("body", "armour_collier")
+	await ticks(4)
+	check(player.armour["body"] == "armour_collier" and player.vis.model_id == base,
+		"worn in the Pack: the stats change at once, the body waits (%s)" % player.vis.model_id)
+	ui.close()
+	await ticks(3)
+	check(player.vis.model_id == "bearer_collier", "the Pack closes and he is in the leathers (%s)" % player.vis.model_id)
+	# a save puts the outfit back on
+	World._save_dir = "user://test_deltas_saves"
+	World.active_slot = 1
+	DirAccess.make_dir_recursive_absolute(World._save_dir)
+	World.delete_slot(1)
+	player.equip_armour("body", "armour_fleece")
+	await ticks(3)
+	World.save_game()
+	player.equip_armour("body", "armour_traveller_coat")
+	await ticks(3)
+	check(player.vis.model_id == base, "back in the coat")
+	check(World.load_game(), "the slot loads")
+	player.from_save(World.player_data)
+	await ticks(3)
+	check(player.armour["body"] == "armour_fleece" and player.vis.model_id == "bearer_fleece",
+		"loading stands him up in the fleece (%s)" % player.vis.model_id)
+	check(player.vis.weapon_mount != null and player.vis.weapon_mount.get_child_count() > 0, "with his blade")
+	World.delete_slot(1)
+	items.erase("test_sark")
+	player.equip_armour("body", "armour_traveller_coat")
+	await ticks(3)

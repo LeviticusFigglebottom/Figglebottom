@@ -40,6 +40,7 @@
   "desc": "A long coat of grey southern wool, wrong for the north, warm enough on a boat. The toggles are horn. One is a replacement and does not match.",
   "armour": {
    "slot": "body",
+   "model": "bearer_traveller",
    "poise": 2,
    "absorb": {
     "phys": 0.03,
@@ -53,6 +54,7 @@
   "desc": "Brede's spare oilskin smock, dressed with fish oil and smelling of it. It turns sea-spray and some of the cold. The left cuff has been let down and re-hemmed by someone who did it properly.",
   "armour": {
    "slot": "body",
+   "model": "bearer_oilskins",
    "poise": 4,
    "absorb": {
     "phys": 0.06,
@@ -129,6 +131,7 @@
   "desc": "A cloak of fulled brown wool pinned at the right shoulder, worn for cutting turf in the rain. Orm was long in the arm, and Aud never took the sleeves up. The hem is still stiff with Lowe mud.",
   "armour": {
    "slot": "body",
+   "model": "bearer_barrow",
    "poise": 6,
    "absorb": {
     "phys": 0.09,
@@ -154,6 +157,7 @@
   "desc": "A coat of grey sheepskin worn fleece-in, with a felt hood, made in the south for the crossing. It is too warm for a summer evening. Sten gave it away in one.",
   "armour": {
    "slot": "body",
+   "model": "bearer_icefur",
    "poise": 5,
    "absorb": {
     "phys": 0.07,
@@ -199,6 +203,7 @@
   "desc": "A soot-black leather apron and jerkin over oat wool, scorched at the hems, for working the clamps. The leather is cracked at the elbows. It smells of smoke whatever you do to it.",
   "armour": {
    "slot": "body",
+   "model": "bearer_collier",
    "poise": 7,
    "absorb": {
     "phys": 0.1,
@@ -225,6 +230,7 @@
   "desc": "A coat of two fleeces sewn skin-side in, the wool left long, belted with rope. It turns sleet, and mostly it turns a tup's horn. One pocket is full of crumbled oatcake, kept for a ewe called Smudge.",
   "armour": {
    "slot": "body",
+   "model": "bearer_fleece",
    "poise": 8,
    "absorb": {
     "phys": 0.12,

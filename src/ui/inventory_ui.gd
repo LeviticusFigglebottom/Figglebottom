@@ -652,4 +652,7 @@ func close() -> void:
 		player.suppress_interact(10)
 		Input.mouse_mode = Input.MOUSE_MODE_CONFINED_HIDDEN if player.look_compat else Input.MOUSE_MODE_CAPTURED
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -10.0)
+	remove_from_group("inventory_ui")
+	if player != null and is_instance_valid(player) and player.has_method("refresh_outfit"):
+		player.refresh_outfit()   # the Pack is shut: he is wearing what was chosen
 	queue_free()
