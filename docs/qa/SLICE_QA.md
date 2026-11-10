@@ -58,6 +58,13 @@ Before and after: `slice_fix_sign_before.png` and `slice_fix_strand_before/after
 | 23 | **Title hitch.** Each stop swap rebuilt the whole steading. | The stage is built once and only the camera moves. `ShaderWarm` draws one speck of each costly in-play material under the first fade (frost dissolve and its shatter branch, veil, net floor, flame, ice, the rime families). | 416bd6f |
 | 24 | **Per-enemy cost.** | **Measured, and my first-pass figure was wrong.** Each frost-taken is one skinned mesh (two for the Oarsman, with his oar) and has no lights. Its HP bar quads and hit-flash meshes stay hidden until used. The frost-shatter material is now shared per source material and cloned per body only as it dies. The ~260 small meshes in Saltfell are kit props built from primitives; see PERF.md. | 416bd6f |
 
+## Third pass (after merging `feat/integration-1110`, 2026-11-10)
+
+- **Scatter:** the 32 m chunks and the look pass's hero variants live together: one MultiMesh per chunk and variant, each with its own origin and 70 m range (`Scatter._emit`).
+- **Terrain:** the shingle is the look pass's photo layer; the cell-noise pebbles of #15 are no longer drawn.
+- **Steading data:** `gen_steading.py` keeps the tide wall, the chipped float and the needle next to the knucklebones. The JSON was regenerated with `--keep-terrain`; the other six generators reproduce their committed JSON unchanged.
+- **Checked:** smoke 11, body 8, steading 47, combat 22, deltas 84, encounters 66, boss 27, deathloop 26, keepsakes 64, anim 45, fullslice 106; no failures. The Strand in RIME was looked at through `tools/shot.sh` (tide wall, float glint, hero rocks and driftwood).
+
 ## Remaining issues (ranked)
 
 1. **SLICE beats not yet built:**
