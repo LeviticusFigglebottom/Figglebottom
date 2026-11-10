@@ -1,6 +1,7 @@
 {
  "player": {
   "model": "bearer_traveller",
+  "model_outsong": "bearer_outsong",
   "base": {
    "hp": 100,
    "stamina": 80,
@@ -135,5 +136,150 @@
   "bog_drag": 0.55,
   "bog_seconds": 3.0,
   "thin_ice_seconds": 0.7
- }
+ },
+ "endings": {
+  "_doc": "COLDWELL.md 10. Seconds into each ending at which its beats fall; the credits' pace. Nothing here is spoken.",
+  "outsong": {
+   "mask_at": 1.2,
+   "sing_at": 3.0,
+   "kneel_at": 16.0,
+   "coal_at": 18.5,
+   "wave_at": 20.0,
+   "release_at": 28.5,
+   "walk_out_r": 16.0,
+   "walk_out_max": 75.0,
+   "cam_from": [
+    -3.2,
+    1.9,
+    -5.6
+   ],
+   "cam_to": [
+    -1.6,
+    1.5,
+    -3.4
+   ],
+   "last_area": "saltfell_steading"
+  },
+  "hearth_kept": {
+   "shut_at": 1.0,
+   "wave_at": 2.6,
+   "sit_at": 10.0,
+   "credits_at": 15.0,
+   "cam_from": [
+    -2.4,
+    1.6,
+    -4.0
+   ],
+   "cam_to": [
+    -7.5,
+    4.2,
+    -10.5
+   ],
+   "cam_time": 40.0,
+   "sit_clip": "sit_still"
+  },
+  "credits": {
+   "speed": 34.0,
+   "hold": 4.0,
+   "fade": 2.5
+  }
+ },
+ "credits": [
+  [
+   "title",
+   "RIMEHOLT"
+  ],
+  [
+   "sub",
+   "The Winter That Would Not End"
+  ],
+  [
+   "gap",
+   ""
+  ],
+  [
+   "role",
+   "A game by"
+  ],
+  [
+   "name",
+   "Figglebottom Productions"
+  ],
+  [
+   "gap",
+   ""
+  ],
+  [
+   "role",
+   "Design, writing and code"
+  ],
+  [
+   "name",
+   "Figglebottom Productions, with Claude"
+  ],
+  [
+   "gap",
+   ""
+  ],
+  [
+   "role",
+   "Made in"
+  ],
+  [
+   "name",
+   "Godot Engine"
+  ],
+  [
+   "gap",
+   ""
+  ],
+  [
+   "role",
+   "People, beasts and landmarks modelled with"
+  ],
+  [
+   "name",
+   "Tripo"
+  ],
+  [
+   "gap",
+   ""
+  ],
+  [
+   "role",
+   "Music and sound"
+  ],
+  [
+   "name",
+   "Figglebottom Productions"
+  ],
+  [
+   "role",
+   "Bowed, blown and sung voices"
+  ],
+  [
+   "name",
+   "FluidR3 GM soundfont (MIT licence)"
+  ],
+  [
+   "gap",
+   ""
+  ],
+  [
+   "role",
+   "Type"
+  ],
+  [
+   "name",
+   "Alegreya, by Juan Pablo del Peral, Huerta Tipogr\u00e1fica (SIL Open Font License)"
+  ],
+  [
+   "gap",
+   ""
+  ],
+  [
+   "knot",
+   ""
+  ]
+ ]
 }

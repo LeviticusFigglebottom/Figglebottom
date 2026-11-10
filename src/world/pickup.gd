@@ -20,6 +20,9 @@ var display_scene := ""
 ## a story flag raised on taking it (a Keepsakes step, say)
 var set_flag := ""
 
+## how high its shape hangs above where it is set (the small mask on its
+## peg, wool on a latch): the pickup itself stays on the floor
+var display_lift := 0.0
 ## a thing that is looked at, not taken (one set of footprints in the ice):
 ## the words go up on the reading panel, the flag is raised, and it stays
 var look_text := ""
@@ -41,7 +44,7 @@ func _ready() -> void:
 		if not mesh.get_meta("upright", false):
 			mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
 		# (a thing that stands, like the Host's cup, says so: metadata/upright)
-		mesh.position.y = 0.05
+		mesh.position.y = 0.05 + display_lift
 		add_child(mesh)
 		var gl := OmniLight3D.new()
 		gl.light_color = Color(0.95, 0.93, 0.86)

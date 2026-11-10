@@ -6022,6 +6022,20 @@
    "tag": "rime",
    "label": "Work the harpoon free",
    "scene": "res://assets/models/weapons/sealer_harpoon.glb"
+  },
+  {
+   "id": "ice_tracks",
+   "at": [
+    -18.0,
+    0.06,
+    -315.9
+   ],
+   "rot": -90,
+   "tag": "rime",
+   "scene": "res://assets/models/props/ice_tracks.tscn",
+   "label": "Look at the tracks",
+   "set_flag": "ks_ice_tracks_seen",
+   "look": "One set of footprints, frozen in, going up the fjord by the thin ice in the middle where nobody walks.\n\nThe left stride is longer than the right. They do not go round anything."
   }
  ],
  "portals": [

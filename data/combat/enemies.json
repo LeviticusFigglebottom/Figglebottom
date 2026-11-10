@@ -3849,7 +3849,12 @@
     ],
     "lunge": 1.8,
     "chain": "reach_left",
-    "chain_chance": 0.6
+    "chain_chance": 0.6,
+    "body_hitbox": true,
+    "reach": 1.5,
+    "width": 1.0,
+    "height": 1.2,
+    "arc": 90.0
    },
    {
     "id": "reach_left",
@@ -3866,7 +3871,12 @@
      "left"
     ],
     "lunge": 1.4,
-    "chain_only": true
+    "chain_only": true,
+    "body_hitbox": true,
+    "reach": 1.5,
+    "width": 1.0,
+    "height": 1.2,
+    "arc": 90.0
    },
    {
     "id": "breath_in",

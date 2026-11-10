@@ -70,6 +70,9 @@ func _ready() -> void:
 				area_id = START_AREA
 				picked = true
 
+	# a kept save opens where the Bearer sat down (COLDWELL.md 10)
+	if World.kept() and not harnessed:
+		area_id = World.KEPT_AREA
 	for f in Shot.forced_flags:
 		World.set_flag(String(f))   # shot harness: flag-conditional geometry
 	var area := AreaBuilder.build(area_id)
@@ -96,5 +99,7 @@ func _ready() -> void:
 	player.cam.yaw = deg_to_rad(float(def.get("start", {}).get("yaw", 0)))
 
 	add_child(HUD.new())
+	if World.kept() and area_id == World.KEPT_AREA:
+		EndingDirector.resume_kept(player, area)
 	Game.refresh_breathmark()
 	Game.area_title.emit(area.display_name)

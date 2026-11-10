@@ -191,6 +191,9 @@ pickups = [
     {"id": "knucklebones", "at": at(42.0, 15.5), "item": "ks_knucklebones", "tag": "rime",
      "scene": "res://assets/models/props/knucklebone.tscn", "set_flag": "ks_knucklebones_found",
      "label": "Pick up the knucklebones"},
+    # WORLD.md 4.1 (SLICE.md 3): the small mask on the low peg inside the Longhouse door
+    {"id": "child_mask", "at": [2.6, SH, -20.75], "rot": 180, "lift": 0.95, "item": "ks_child_mask", "tag": "base",
+     "scene": "res://assets/models/props/child_mask.tscn", "label": "Take the small mask down"},
 ]
 # the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
 # arena; she hauls it and lights it (src/world/net_floor.gd)

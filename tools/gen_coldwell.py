@@ -120,12 +120,14 @@ hearths = [
 ]
 spawners = [
     # the climb is long and quiet: few of them, and slow
-    {"enemy": "upwalker", "stand_in": "rimewalker", "id": "upwalker_low", "at": on_path(2, 0.6, 0.0, 0.1), "face": 240},
-    {"enemy": "upwalker", "stand_in": "rimewalker", "id": "upwalker_falls", "at": on_path(5, 0.4, 0.0, 0.1), "face": 230},
-    {"enemy": "upwalker", "stand_in": "rimewalker", "id": "upwalker_high", "at": on_path(7, 0.5, 0.0, 0.1), "face": 250},
-    {"enemy": "unsung", "stand_in": "keener", "id": "unsung_level_a", "at": at(WX - 16.0, WZ - 6.0, 0.1), "face": 270},
-    {"enemy": "unsung", "stand_in": "keener", "id": "unsung_level_b", "at": at(WX - 16.0, WZ + 6.0, 0.1), "face": 270},
-    {"enemy": "leadvoice", "stand_in": "netmender", "id": "leadvoice", "at": at(WX + 4.5, WZ, 0.1), "face": 270, "pose": "sit",
+    {"enemy": "upwalker", "id": "upwalker_low", "at": on_path(2, 0.6, 0.0, 0.1), "face": 240},
+    {"enemy": "upwalker", "id": "upwalker_falls", "at": on_path(5, 0.4, 0.0, 0.1), "face": 230},
+    {"enemy": "upwalker", "id": "upwalker_high", "at": on_path(7, 0.5, 0.0, 0.1), "face": 250},
+    {"enemy": "unsung", "id": "unsung_level_a", "at": at(WX - 16.0, WZ - 6.0, 0.1), "face": 270},
+    {"enemy": "unsung", "id": "unsung_level_b", "at": at(WX - 16.0, WZ + 6.0, 0.1), "face": 270},
+    # COLDWELL.md 6: sat beyond the spring, facing the gap, Wren against her chest
+    # (her own script holds her sat: no idle pose from the spawner)
+    {"enemy": "leadvoice", "id": "leadvoice", "at": at(WX + 4.5, WZ, 0.1), "face": 270,
      "dead_once": True, "frost_veil_id": "wellhead_veil"},
 ]
 VEIL = at(GAP[0], GAP[1])
@@ -165,7 +167,8 @@ D = {
     "hazards": [{"kind": "fall", "min": [676, -2, -556], "max": [964, 400, -364]}],
     "zones": [
         {"name": "THE UPWATER", "min": [676, -556], "max": [r2(WX - 30.0), -364]},
-        {"name": "THE WELLHEAD", "min": [r2(WX - 30.0), -556], "max": [964, -364]},
+        # (arriving here the horn is worth another look: WORLD.md 4.7)
+        {"name": "THE WELLHEAD", "min": [r2(WX - 30.0), -556], "max": [964, -364], "set_flag": "ks_horn_wellhead"},
     ],
     "houses": HOUSES,
     "boxes": BOXES,

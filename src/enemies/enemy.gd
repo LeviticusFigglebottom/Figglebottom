@@ -270,6 +270,9 @@ func _st_idle(dt: float) -> void:
 			AudioDirector.sfx_at(cfg["sfx_alert"], global_position, -2.0, randf_range(0.9, 1.1))
 
 func _st_alert(dt: float) -> void:
+	if target == null or not is_instance_valid(target):
+		_set_state(ES.IDLE)   # (roused with nobody to turn to)
+		return
 	if not _risen:
 		# a sitter gets up first: slowly, the chore set down
 		_risen = true
