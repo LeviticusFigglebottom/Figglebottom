@@ -402,6 +402,7 @@ func _physics_process(dt: float) -> void:
 	elif _floor_y - global_position.y >= -0.05 and _floor_y - global_position.y < float(T["move"].get("snap_down", 0.0)):
 		_snap_down()
 	_unwedge(dt)
+	_unpin()
 
 	var gs := Vector2(velocity.x, velocity.z).length()
 	var lean := Vector2.ZERO
@@ -583,6 +584,26 @@ func _unwedge(dt: float) -> void:
 		global_position += n.normalized() * maxf(c.get_depth(), 0.15)
 	velocity = Vector3.ZERO
 	_wedge_t = 0.0
+
+## Second safety net: a capsule resting on the ground with its side exactly
+## on a box collider's upright edge (the end of a hedge section) can be held
+## by the solver: every motion test, even straight away from the box, travels
+## nothing, with only the floor reported and no wall. Found by the Thornwold
+## maze walk at a thorn hedge's end. A hair of lift breaks the contact; the
+## floor snap sets him down again a step further on.
+var _pin_ticks := 0
+const _PIN_TICKS := 3
+const _PIN_LIFT := 0.02
+func _unpin() -> void:
+	var want := Vector2(velocity.x, velocity.z).length()
+	var real := get_real_velocity()
+	if dead or want < 1.0 or is_on_wall() or not is_on_floor() or Vector2(real.x, real.z).length() > 0.02:
+		_pin_ticks = 0
+		return
+	_pin_ticks += 1
+	if _pin_ticks >= _PIN_TICKS:
+		global_position.y += _PIN_LIFT
+		_pin_ticks = 0
 
 func _face(dir: Vector3, dt: float, speed := 11.0) -> void:
 	if dir.length_squared() < 0.0001:
