@@ -147,7 +147,8 @@ static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
 		area.attach(body, "base")
 
 ## Chunked MultiMeshes of one mesh.
-static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float, range_begin := 0.0, shadows := true) -> void:
+static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float, range_begin := 0.0, shadows := true,
+		fade := true, shadow_only := false) -> void:
 	var mode := 1 if tag == "thaw" else (2 if tag == "rime" else 0)
 	var mesh := _mesh(key, mode)
 	var chunks: Dictionary = {}
@@ -184,8 +185,12 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 		if not shadows:
 			# the last band: no shadow passes, and it thins out instead of popping
 			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
-			mmi.name = "Forest_%s_%s_%d_%d_far" % [label, tag, k.x, k.y]
+			if fade:
+				mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+				mmi.name = "Forest_%s_%s_%d_%d_far" % [label, tag, k.x, k.y]
+		if shadow_only:
+			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+			mmi.name = "Forest_%s_%s_%d_%d_shadow" % [label, tag, k.x, k.y]
 		if range_begin > 0.0:
 			# A range only changes state a margin past its threshold, and a
 			# camera that spawns inside the margin starts with it hidden: a
@@ -406,8 +411,15 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 					pick.append(heroes[i])
 			var hk := "hero|%s|%s|%s" % [names[vi], hh[1], sway]
 			if ResourceLoader.exists(HERO_DIR + String(names[vi]) + "_far.glb"):
-				_emit(area, hk, tag, pick, near)
 				var hfar := hk.replace("hero|%s|" % names[vi], "hero|%s_far|" % names[vi])
+				if HERO_SINGLE.has(style):
+					# the full thorn mesh would be drawn again in every shadow
+					# split: close up it only receives, and the far mesh casts
+					# for it (a shadow cannot show a twig anyway)
+					_emit(area, hk, tag, pick, near, 0.0, false, false)
+					_emit(area, hfar, tag, pick, near, 0.0, true, false, true)
+				else:
+					_emit(area, hk, tag, pick, near)
 				_emit(area, hfar, tag, pick, HEDGE_MID, near)
 				_emit(area, hfar, tag, pick, HEDGE_FAR, HEDGE_MID, false)
 			else:

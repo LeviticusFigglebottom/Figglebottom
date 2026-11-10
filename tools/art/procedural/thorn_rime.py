@@ -231,14 +231,18 @@ def snow_clump(buf, rng, centre, size, sides=7):
     u0, u1 = U_SNOW
     uc = ((u0 + u1) * 0.5, rng.random())
     ur = (u1 - u0) * 0.45
-    top = buf.vert(centre + np.array([rng.normal(0, size * 0.15), rng.normal(0, size * 0.15), size * 0.55]), uc)
+    top = buf.vert(centre + np.array([rng.normal(0, size * 0.15), rng.normal(0, size * 0.15), size * 0.62]), uc)
     rings = []
-    for fr, fz, fu in ((0.6, 0.42, 0.5), (0.88, 0.1, 0.85), (0.55, -0.12, 1.0)):
+    # snow lies along a branch: longer one way than the other, at any heading
+    lie = rng.random() * TAU
+    long_f = rng.uniform(1.1, 2.0)
+    for fr, fz, fu in ((0.5, 0.5, 0.5), (0.8, 0.26, 0.85), (0.62, 0.02, 1.0)):
         ring = []
         for k in range(sides + 1):
             a = TAU * (k % sides) / sides
             wob = 1.0 + 0.28 * math.sin(a * 2 + centre[0] * 9) + 0.15 * math.sin(a * 3 + centre[1] * 7)
-            p = centre + np.array([math.cos(a) * size * fr * wob, math.sin(a) * size * fr * wob, size * fz])
+            ex, ey = math.cos(a) * size * fr * wob * long_f, math.sin(a) * size * fr * wob / long_f ** 0.5
+            p = centre + np.array([ex * math.cos(lie) - ey * math.sin(lie), ex * math.sin(lie) + ey * math.cos(lie), size * fz])
             ring.append(buf.vert(p, (uc[0] + ur * fu * math.cos(a), uc[1] + ur * fu * math.sin(a) * 0.25)))
         rings.append(ring)
     for k in range(sides):
@@ -417,9 +421,9 @@ def wall(seed):
 
 
 PIECES = {
-    "hd_thorn3a": (hedge, 11, 20),
-    "hd_thorn3b": (hedge, 29, 20),
-    "hd_thorn_heap": (heap, 7, 36),
+    "hd_thorn3a": (hedge, 11, 12),
+    "hd_thorn3b": (hedge, 29, 12),
+    "hd_thorn_heap": (heap, 7, 24),
     "hd_thornwall": (wall, 3, 10),
 }
 

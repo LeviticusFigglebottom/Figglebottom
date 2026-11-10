@@ -22,4 +22,21 @@ shot tarnhall_causeway_thaw tarnhall thaw 124.0,25.4,-331.0,-96.1,-4.0,70
 shot tarnhall_long_table_thaw tarnhall thaw 197.0,26.0,-327.4,89.2,-4.0,70
 shot saltfell_boat_shed_thaw saltfell_steading thaw 23.0,4.9,55.5,46.9,-4.0,70
 shot reach_sheilings_thaw shepherds_reach thaw 604.0,69.5,-306.0,18.4,-4.0,70
-shot coldwell_upwater_thaw coldwell thaw 724.2,87.7,-399.1,-57.5,-4.0,70
+shot coldwell_upwater_rime coldwell rime 724.2,87.7,-399.1,-57.5,-4.0,70
+# the veils from where the Bearer meets them (7 m out, 22 deg off the axis)
+# and three from nearly edge-on; the gallery cameras stand inside the veil
+shot veil_saltfell_front saltfell_steading rime 2.6,23.70,-13.5,22.0,4.0,65
+shot veil_lowe_front lowe_barrows rime 48.6,47.30,-171.0,22.0,4.0,65
+shot veil_kettle_front kettle_fjord rime 24.6,1.75,-295.7,22.0,4.0,65
+shot veil_kettle_side kettle_fjord rime 27.9,1.75,-300.9,78.0,4.0,65
+shot veil_tarnhall_front tarnhall rime 224.5,26.00,-331.6,112.0,4.0,65
+shot veil_thornwold_front thornwold rime 433.5,39.38,-322.4,-68.0,4.0,65
+shot veil_thornwold_side thornwold rime 438.8,39.38,-319.1,-12.0,4.0,65
+shot veil_reach_front shepherds_reach rime 648.1,78.45,-356.4,-23.0,4.0,65
+shot veil_reach_side shepherds_reach rime 654.1,78.45,-357.8,33.0,4.0,65
+shot veil_coldwell_front coldwell rime 905.5,158.76,-475.4,-68.0,4.0,65
+# look pass 5 subjects the gallery cameras miss
+shot coldwell_spring_thaw coldwell thaw 915.5,160.4,-474.5,-61.7,-24.0,60
+shot coldwell_spring_rime coldwell rime 915.5,160.4,-474.5,-61.7,-24.0,60
+shot saltfell_salt_house_thaw saltfell_steading thaw -26.0,23.8,23.5,-72.3,-4.0,70
+shot kettle_fish_houses_thaw kettle_fjord thaw -64,4.2,-311,-50,-8,75
