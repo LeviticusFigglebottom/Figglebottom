@@ -24,10 +24,14 @@ func _ready() -> void:
 	lbody.collision_mask = 0
 	var lcs := CollisionShape3D.new()
 	var lcyl := CapsuleShape3D.new()
+	# waist-high: enough to stop a body, low enough for the camera's swept
+	# sphere to pass over. A 2.4 m invisible post folded the arm into the
+	# Bearer's cloak whenever the hearth was behind him (every rest at the
+	# Long Hearth, every wake at a hearth)
 	lcyl.radius = 0.38
-	lcyl.height = 2.4
+	lcyl.height = 0.95
 	lcs.shape = lcyl
-	lcs.position.y = 1.2
+	lcs.position.y = 0.475
 	lbody.add_child(lcs)
 	vis.add_child(lbody)
 	_flame = _find_flame(vis)
@@ -62,6 +66,7 @@ func _on_activated(player) -> void:
 		return
 	player.lock_control(true)
 	player.velocity = Vector3.ZERO
+	get_tree().call_group("hud", "clear_area_title")
 	var ui := RestUI.new(self, player)
 	get_tree().root.add_child(ui)
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)

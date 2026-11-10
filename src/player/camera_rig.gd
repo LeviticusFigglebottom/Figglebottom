@@ -279,6 +279,7 @@ func _physics_process(dt: float) -> void:
 
 	rotation.y = yaw
 	pitch_node.rotation.x = pitch
+	_hide_when_inside()
 	_fov_punch = move_toward(_fov_punch, 0.0, dt * 16.0)
 	# 3-axis rotational trauma + positional micro-shake
 	if _shake_t > 0.0:
@@ -298,6 +299,24 @@ func _physics_process(dt: float) -> void:
 			cam.v_offset = 0.0
 			cam.rotation = Vector3.ZERO
 			_shake_strength = 0.0
+
+## Pressed against a wall the arm folds to almost nothing and the lens sat
+## inside the Bearer's own cloak (a screen of wool at the Long Hearth). Hide
+## the body while the camera is that close; show it again as the arm opens.
+var _hid_body := false
+func _hide_when_inside() -> void:
+	var host := get_parent()
+	if host == null or host.get("vis") == null or spring == null:
+		return
+	var near := float(DB.tuning("camera/hide_body_within", 0.75))
+	var v: Node3D = host.vis
+	var inside := spring.get_hit_length() < near
+	if inside and not _hid_body and v.visible:
+		v.visible = false
+		_hid_body = true
+	elif not inside and _hid_body:
+		v.visible = true
+		_hid_body = false
 
 ## Bow sight: RMB narrows the eye while the bow is in hand.
 var zoomed := false

@@ -94,6 +94,12 @@ func _run() -> void:
 	add_child(HUD.new())
 	StateDirector.snap(area, World.get_area_state("saltfell_steading"))
 	await ticks(20)
+	# under a loaded machine the navigation map can take a while to sync the
+	# freshly baked regions; wait for it (a real break still fails below)
+	var nwait := 0
+	while _path(_ground(-4, 62), _ground(-10, 10)).size() < 2 and nwait < 900:
+		await ticks(10)
+		nwait += 10
 	print("  (build + bake %d ms)" % (Time.get_ticks_msec() - t0))
 
 	print("== one landscape")

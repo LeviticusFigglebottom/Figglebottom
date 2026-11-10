@@ -19,6 +19,12 @@ var current_area_id := ""
 
 var warmth := 0
 var _death_flow_running := false
+## Test seam: run the real front door (house card, title, difficulty) even
+## headless. Only tools/test/fullslice_test.gd sets it.
+var front_door := false
+## Test seam: scales the Bearer's damage against holdfasts only, so a
+## headless run can finish a boss whose AI still fights. 1.0 in play.
+var test_boss_dmg_mult := 1.0
 ## A duel is live behind a sealed frost veil: the arena's doors refuse until the
 ## holdfast rests or the Bearer does. Set/cleared by the frost veils.
 var arena_locked := false
@@ -42,7 +48,7 @@ func _on_player_died() -> void:
 	# the drop: all carried warmth stay at the death site (replacing any
 	# previous breathmark — that one is lost forever)
 	if warmth > 0:
-		World.set_breathmark(current_area_id, player.global_position, warmth)
+		World.set_breathmark(current_area_id, player.breathmark_spot() if player.has_method("breathmark_spot") else player.global_position, warmth)
 	set_warmth(0)
 	World.save_game()
 	await get_tree().create_timer(float(DB.tuning("death/respawn_delay", 2.8)), false).timeout
@@ -102,12 +108,14 @@ func on_boss_slain(area_id: String, boss: Node = null) -> void:
 ## What a released holdfast leaves (SLICE.md 6), from its data:
 ##   release_drop: {item, scene, label, pickup_id, ahead, set_flag, at_seal} ->
 ##     a pickup set down in front of where it sat, toward the Bearer, so it
-##     is seen at once (or, with at_seal, in the middle of the sealed hole)
+##     is seen at once (or, with at_seal, in the middle of the sealed hole;
+##     with at_point, at the boss's drop_point())
 ##   release_seal: {radius} -> the boss's seal_point() hole closes for good
 ##   release_hearth: a hearths entry id (gated on release_flag in the area
 ##     data) that wakes now, so a rebuilt area keeps it
 ##   release_gates: [gate ids] -> their bars lift now and stay lifted
 func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
+	_clear_of_hearth(boss, bcfg)
 	# release_seal: the Holdfast's own hole closes (KETTLE.md 9)
 	var seal_at := Vector3.INF
 	if bcfg.has("release_seal") and boss != null and boss.has_method("seal_point"):
@@ -135,6 +143,8 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 		k.global_position = b.global_position + toward.normalized() * float(drop.get("ahead", 2.2)) + Vector3.UP * 0.02
 		if bool(drop.get("at_seal", false)) and seal_at != Vector3.INF:
 			k.global_position = seal_at + Vector3.UP * 0.12   # frozen into the new ice
+		elif bool(drop.get("at_point", false)) and b.has_method("drop_point"):
+			k.global_position = b.drop_point()   # where the Holdfast says (the Hedgelayer: on the grave)
 	# release_gates: the bars he kept lift by themselves (TARNHALL.md 9); the
 	# area flag keeps them open when the area is rebuilt
 	for gid in bcfg.get("release_gates", []):
@@ -157,6 +167,38 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 			h.position = Vector3(spec["at"][0], spec["at"][1], spec["at"][2])
 			h.rotation.y = deg_to_rad(float(spec.get("rot", 0)))
 			AudioDirector.sfx_at("res://assets/audio/swell_warm.wav", h.global_position, -2.0)
+
+## release_clear (metres, opt-in): she sits back down where the fight
+## ended; if that is on the hearth her release wakes, the hearth caught
+## inside her body. Ease her clear of it first, away from the hearth (toward
+## her own end of the hall if she fell right on it), so the hearth, the
+## needle and she each have their own floor.
+func _clear_of_hearth(boss: Node, bcfg: Dictionary) -> void:
+	var hid := String(bcfg.get("release_hearth", ""))
+	var clear := float(bcfg.get("release_clear", 0.0))
+	if hid == "" or clear <= 0.0 or not (boss is Node3D) or not boss.is_inside_tree() or current_area == null:
+		return
+	var b := boss as Node3D
+	var def: Dictionary = current_area.get_meta("def", {})
+	for spec in def.get("hearths", []):
+		if String(spec.get("id", "")) != hid:
+			continue
+		var hp := Vector3(spec["at"][0], spec["at"][1], spec["at"][2])
+		var off := b.global_position - hp
+		off.y = 0.0
+		if off.length() >= clear:
+			return
+		var away := off.normalized() if off.length() > 0.2 else Vector3(0, 0, -1)
+		var home = b.get("home")
+		if off.length() <= 0.2 and home is Vector3:
+			var to_home: Vector3 = home - hp
+			to_home.y = 0.0
+			if to_home.length() > 0.5:
+				away = to_home.normalized()
+		var target := hp + away * clear
+		target.y = b.global_position.y
+		b.global_position = target   # the leavings are placed from here
+		return
 
 func snapshot_player() -> void:
 	if player == null:
@@ -231,7 +273,7 @@ func travel_to(area_id: String, spawn_pos: Vector3, spawn_yaw := 1e9) -> void:
 	refresh_breathmark()
 	snapshot_player()
 	World.save_game()
-	area_title.emit(next.display_name)
+	area_title.emit(next.arrival_title(spawn_pos))
 	player.lock_control(false)
 
 signal hearth_kept(hearth)
@@ -319,4 +361,5 @@ func _exit_tree() -> void:
 	MaterialLib._tex_cache.clear()
 	AmbientLife._mote_tex = null
 	FrostFX.clear_cache()
+	FrostDissolve.clear_cache()
 	EnvRig.active_instance = null

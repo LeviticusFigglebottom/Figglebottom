@@ -47,6 +47,7 @@ const PIECES := {
 	"torch": {"size": [0.14, 0.14, 1.0], "origin": "grip-center"},
 	"shield_kite": {"size": [0.5, 0.1, 0.6], "origin": "strap"},
 	"fish_kettle": {"size": [1.6, 1.6, 2.2], "origin": "bottom-center"},
+	"sheep": {"size": [0.6, 1.3, 1.0], "origin": "bottom-center"},
 	"hearth_fire": {"size": [1.4, 1.4, 0.9], "origin": "bottom-center"},
 	"hearth_logs": {"size": [1.4, 1.4, 0.4], "origin": "bottom-center"},
 	"net_frame": {"size": [3.6, 0.4, 2.5], "origin": "bottom-center"},
@@ -306,6 +307,14 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			for k in 5:
 				_box(n, Vector3(0.6, 0.12, 0.12), Vector3(0, 0.08, 0), "M_wood", "fire_log%d" % k, Vector3(0, k * 36, 0))
 			_flame(n, Vector3(0, 0.12, 0), 0.45, 0.28, "fire_flame")
+		"sheep":
+			# a fell ewe: a round fleece on four thin legs, a dark face
+			_sphere(n, 0.5, Vector3(0, 0.72, 0), "M_wool", "fleece", Vector3(0.62, 0.62, 1.05))
+			_box(n, Vector3(0.2, 0.26, 0.34), Vector3(0, 0.86, -0.62), "M_leather", "face", Vector3(-28, 0, 0))
+			_box(n, Vector3(0.3, 0.1, 0.08), Vector3(0, 0.98, -0.52), "M_leather", "ears")
+			for lx in [-0.16, 0.16]:
+				for lz in [-0.32, 0.32]:
+					_box(n, Vector3(0.07, 0.5, 0.07), Vector3(lx, 0.25, lz), "M_wood_dark", "leg")
 		"hearth_fire", "hearth_logs":
 			# a fire on the long hearth: split logs crossed on the embers
 			# (hearth_logs: the same fire, out; RIME)
@@ -409,7 +418,10 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_cyl(n, 0.3, 0.18, 0.2, Vector3(0, 0.9, 0), "M_iron", "bowl")
 			_flame(n, Vector3(0, 0.95, 0), 0.4, 0.17, "flame")
 		"plaque":
-			_box(n, Vector3(0.74, 1.2, 0.3), Vector3(0, 0.6, 0), "M_stone_trim", "rune_stone", Vector3(-6, 0, 0))
+			# a weathered board nailed to a driftwood stake, words cut with a
+			# knife (no carved stone: runes are off the table, ORIGINALITY.md)
+			_box(n, Vector3(0.12, 1.25, 0.12), Vector3(0, 0.62, 0.02), "M_wood_dark", "stake", Vector3(-4, 0, 0))
+			_box(n, Vector3(0.72, 0.46, 0.05), Vector3(0, 1.02, -0.06), "M_wood", "board", Vector3(-8, 0, 2))
 		"pell":
 			_cyl(n, 0.12, 0.12, 1.9, Vector3(0, 0.95, 0), "M_wood", "pole")
 			_box(n, Vector3(1.0, 0.12, 0.12), Vector3(0, 1.45, 0), "M_wood", "arms")

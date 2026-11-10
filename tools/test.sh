@@ -18,7 +18,10 @@ for scene in tools/test/*_test.tscn; do
   name="$(basename "$scene" _test.tscn)"
   if [ -n "$FILTER" ] && [ "$name" != "$FILTER" ]; then continue; fi
   echo "=== test: $name"
-  timeout 300 godot --headless --path . -- "--test=$name" 2>&1 \
+  # the full-slice walk plays the whole 20-minute slice in real time
+  limit=300
+  [ "$name" = "fullslice" ] && limit=2700
+  timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \
     | grep -vE "ALSA|snd_|libpulse|Condition \"status|dummy driver|Godot Engine|^\s*$" \
     | grep -vE "at: (init_output_device|push_warning)"
   code=${PIPESTATUS[0]}

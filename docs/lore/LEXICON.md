@@ -91,6 +91,10 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | Linnet | NPC (Thornwold) | collier, the Hedgelayer's betrothed |
 | the Collier's Clearing / the Hedge | areas (Thornwold) | |
 | Collier / Rime-stag | enemies (Thornwold) | |
+| Eyvind | NPC (Thornwold) | the Hedgelayer in THAW, arguing with Linnet about the gate |
+| the Outer Ring / the Pine | Hearthstones (Thornwold) | outside the maze; at the grave, woken on release |
+| Linnet's Song-cord / Ring of Plaited Birch / Knucklebone | keepsake items (Thornwold) | `item_song_cord`, `item_birch_ring`, `item_knucklebone` |
+| Hedging Bill / Collier's Leathers | weapon / armour (Thornwold) | `hedging_bill`, `armour_collier` |
 | the Fellcaller (Sigga Calder) | Holdfast (Shepherd's Reach) | would not leave her father at the high fold |
 | Old Calder | NPC (Shepherd's Reach) | shepherd, the Fellcaller's father |
 | the Sheilings / the High Fold | areas (Shepherd's Reach) | |

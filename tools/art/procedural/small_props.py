@@ -10,6 +10,9 @@ and its flat side faces +X, because Pickup lays a display scene on its side
     assets/models/props/guest_tally.tscn   the guest-tally, a coiled knotted cord
     assets/models/props/ottar_stick.tscn   Ottar's rowan stick with a horn cap
     assets/models/props/barrel_head.tscn   a fish-barrel head, branded
+    assets/models/props/knucklebone.tscn   a sheep's knucklebone (THORNWOLD.md 8)
+    assets/models/props/birch_ring.tscn    a ring of plaited birch
+    assets/models/props/hedge_gate.tscn    the five-bar gate Eyvind never hung
 
 Run: python3 tools/art/procedural/small_props.py"""
 import os
@@ -162,3 +165,41 @@ nodes = [("BarrelHead", "Node3D", None, {}),
          ("Nail0", "MeshInstance3D", ".", {"transform": rotz % (0.03, 0.15, 0.05), "mesh": 'SubResource("nail")'}),
          ("Nail1", "MeshInstance3D", ".", {"transform": rotz % (0.03, -0.12, -0.11), "mesh": 'SubResource("nail")'})]
 scene("barrel_head", res, nodes)
+
+# Thornwold (THORNWOLD.md 8): a sheep's knucklebone, and a ring of plaited birch
+res = [mat("bone", 0.86, 0.82, 0.72, 0.6),
+       ("knuckle", "CapsuleMesh", {"radius": 0.018, "height": 0.06, "material": 'SubResource("bone")'}),
+       ("end", "SphereMesh", {"radius": 0.016, "height": 0.032, "radial_segments": 8, "rings": 4, "material": 'SubResource("bone")'})]
+nodes = [("Knucklebone", "Node3D", None, {}),
+         ("Body", "MeshInstance3D", ".", {"transform": xf(y=0.03), "mesh": 'SubResource("knuckle")'}),
+         ("EndA", "MeshInstance3D", ".", {"transform": xf(x=0.006, y=0.005), "mesh": 'SubResource("end")'}),
+         ("EndB", "MeshInstance3D", ".", {"transform": xf(x=-0.006, y=0.056), "mesh": 'SubResource("end")'})]
+scene("knucklebone", res, nodes)
+
+res = [mat("birch", 0.9, 0.86, 0.76, 0.8), mat("bark", 0.3, 0.26, 0.22, 0.9),
+       ("band", "TorusMesh", {"inner_radius": 0.009, "outer_radius": 0.013, "rings": 18, "ring_segments": 6,
+                              "material": 'SubResource("birch")'}),
+       ("plait", "TorusMesh", {"inner_radius": 0.0105, "outer_radius": 0.0125, "rings": 9, "ring_segments": 4,
+                               "material": 'SubResource("bark")'})]
+nodes = [("BirchRing", "Node3D", None, {}),
+         ("Band", "MeshInstance3D", ".", {"transform": rotz % (0, 0.0, 0), "mesh": 'SubResource("band")'}),
+         ("Plait", "MeshInstance3D", ".", {"transform": rotz % (0.002, 0.0, 0), "mesh": 'SubResource("plait")'})]
+scene("birch_ring", res, nodes)
+
+# the gate Eyvind made and never hung (THORNWOLD.md 4, 9): a five-bar field gate
+# of riven ash, 3 m wide, standing in the XY plane (hinge stile at -X). The
+# landmark leans it on the hedge, then lays it flat across the gap (tilt -90).
+res = [mat("ash", 0.62, 0.55, 0.44, 0.9), mat("ashdark", 0.45, 0.39, 0.3, 0.9),
+       ("rail", "BoxMesh", {"size": "Vector3(3.0, 0.09, 0.06)", "material": 'SubResource("ash")'}),
+       ("stile", "BoxMesh", {"size": "Vector3(0.12, 1.3, 0.1)", "material": 'SubResource("ashdark")'}),
+       ("brace", "BoxMesh", {"size": "Vector3(3.15, 0.08, 0.05)", "material": 'SubResource("ash")'})]
+nodes = [("HedgeGate", "Node3D", None, {}),
+         ("StileHinge", "MeshInstance3D", ".", {"transform": xf(x=-1.5, y=0.65), "mesh": 'SubResource("stile")'}),
+         ("StileLatch", "MeshInstance3D", ".", {"transform": xf(x=1.5, y=0.65), "mesh": 'SubResource("stile")'})]
+for i in range(5):
+    nodes.append(("Rail%d" % i, "MeshInstance3D", ".", {"transform": xf(y=0.12 + i * 0.27, z=0.02), "mesh": 'SubResource("rail")'}))
+a = math.atan2(1.08, 3.0)
+c, s_ = math.cos(a), math.sin(a)
+nodes.append(("Brace", "MeshInstance3D", ".",
+              {"transform": "Transform3D(%g, %g, 0, %g, %g, 0, 0, 0, 1, 0, 0.66, -0.04)" % (c, -s_, s_, c), "mesh": 'SubResource("brace")'}))
+scene("hedge_gate", res, nodes, upright=True)

@@ -125,9 +125,9 @@ func _enter_main() -> void:
 	elif Game.toggle_free(aid):
 		_options.append({"id": "rest", "label": "Keep hearth  (rest)"})
 		_options.append({"id": "toggle", "label": "Turn the memory — " +
-			("warm the thaw" if cur == RH.WState.RIME else "let it still")})
+			("warm it" if cur == RH.WState.RIME else "let it still")})
 	elif cur == RH.WState.THAW:
-		_options.append({"id": "rest", "label": "Keep hearth  — the seeing will end"})
+		_options.append({"id": "rest", "label": "Keep hearth  (the memory will still)"})
 	else:
 		_options.append({"id": "rest", "label": "Keep hearth  (rest)"})
 	_options.append({"id": "level", "label": "Grow by warmth  (%d warmth held)" % Game.warmth})
@@ -235,7 +235,7 @@ func choose(idx: int) -> void:
 func _buy_stat(stat: String) -> void:
 	var cost := _level_cost()
 	if Game.warmth < cost:
-		info_label.text = "Not enough warmth. The dead are patient; gather more."
+		info_label.text = "Not enough warmth. %d more is needed." % (cost - Game.warmth)
 		return
 	Game.add_warmth(-cost)
 	player.attributes[stat] += 1

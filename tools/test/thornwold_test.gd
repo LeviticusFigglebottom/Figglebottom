@@ -130,13 +130,15 @@ func _run() -> void:
 	check(World.get_area_state("thornwold") == RH.WState.THAW, "first visit finds the wood in thaw")
 	check(Game.find_hearth("hs_drove_road") != null and Game.find_hearth("hs_colliers_clearing") != null,
 		"the Drove-Road and Collier's Clearing hearths stand")
-	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 1, "Linnet keeps the thaw")
+	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 2, "Linnet and Eyvind keep the thaw")
 	check(area.find_children("Forest_tree_*", "MultiMeshInstance3D", true, false).size() > 4, "a wood of pine and birch")
 	check(player.is_on_floor(), "the Bearer stands on the drove-road")
 
 	print("== one continuous seam back to Tarnhall")
 	var seams := area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto)
-	check(seams.size() == 1 and seams[0].to_area == "tarnhall", "a single seam, back down the drove-road")
+	check(seams.filter(func(p): return p.to_area == "shepherds_reach").size() == 1, "one seam up the fell path to Shepherd's Reach")
+	seams = seams.filter(func(p): return p.to_area == "tarnhall")
+	check(seams.size() == 1, "one seam back down the drove-road")
 	var tarn: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/areas/tarnhall.json"))
 	var back: Array = tarn["portals"].filter(func(p): return p.get("to", "") == "thornwold")
 	check(back.size() == 1, "Tarnhall has the other side of it")
@@ -172,7 +174,7 @@ func _run() -> void:
 	check(World.get_area_state("thornwold") == RH.WState.RIME, "Thornwold is rime")
 	await ticks(30)
 	var foes := get_tree().get_nodes_in_group(RH.GROUP_ENEMIES).filter(func(e): return e.can_process() and not e.dead)
-	check(foes.size() >= 5, "%d foes in the wood (stand-ins until the art lands)" % foes.size())
+	check(foes.size() >= 5, "%d foes in the wood" % foes.size())
 	var ids := {}
 	for sp in def["spawners"]:
 		ids[sp["enemy"]] = true
@@ -183,8 +185,9 @@ func _run() -> void:
 	if veils.size() == 1:
 		var veil: FrostVeil = veils[0]
 		var boss: Node = veil.boss_spawner.current if veil.boss_spawner != null else null
-		check(boss != null and boss.cfg.get("is_boss", false), "the Hedgelayer (stand-in) waits behind the veil")
-		check(boss != null and String(boss.cfg.get("release_flag", "")) == "", "a stand-in never carries the borrowed holdfast's release")
+		check(boss != null and boss.cfg.get("is_boss", false), "the Hedgelayer waits behind the veil")
+		check(boss != null and boss is Hedgelayer and String(boss.cfg.get("release_flag", "")) == "ks_hedgelayer_released",
+			"the Hedgelayer himself, no stand-in, with his own release")
 		mouth = _ground(veil.global_position.x - 3.0, veil.global_position.z)
 
 	print("== RIME: frozen thorn, the road plugged, a maze to the veil")

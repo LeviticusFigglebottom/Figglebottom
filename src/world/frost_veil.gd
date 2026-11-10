@@ -10,6 +10,9 @@ var area_id := ""
 var boss_spawner: Spawner = null
 var has_frame := true
 var plane_size := Vector2(3.4, 5.1)
+## Per-veil look from the area data ("shader": {param: value}); the
+## Netmender's veil is frozen net mesh in rime blue (SLICE.md 3).
+var shader_params: Dictionary = {}
 
 var _plane: MeshInstance3D
 var _zone: Interactable
@@ -36,6 +39,11 @@ func _ready() -> void:
 	_plane.mesh = quad
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/frost_veil.gdshader")
+	for k in shader_params:
+		var v = shader_params[k]
+		if v is Array and (v as Array).size() == 3:
+			v = Color(float(v[0]), float(v[1]), float(v[2]))
+		m.set_shader_parameter(String(k), v)
 	_plane.set_surface_override_material(0, m)
 	_plane.position = Vector3(0, plane_size.y * 0.5, 0)
 	add_child(_plane)

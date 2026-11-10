@@ -142,8 +142,10 @@ PROPS.append({"kit": "bench_3m", "at": [0, SH, -50.6], "scale": [1.2, 1.4, 1.4]}
 hearths = [
     {"id": "hs_boat_shed", "name": "the Boat-Shed", "at": at(23.0, 55.5), "rot": 0},
     {"id": "hs_salt_house", "name": "the Salt House", "at": at(-26.0, 23.5), "rot": 200},
-    # cold and inert until the Netmender is released; then it catches (SLICE.md 1, 6)
-    {"id": "hs_long_hearth", "name": "the Long Hearth", "at": [0.0, SH, -26.4], "rot": 180,
+    # cold and inert until the Netmender is released; then it catches (SLICE.md 1, 6).
+    # Faces the door: the Bearer kneels (and wakes) on the open boards south of
+    # it; at 180 the respawn point sat on the hearth kerb.
+    {"id": "hs_long_hearth", "name": "the Long Hearth", "at": [0.0, SH, -26.4], "rot": 0,
      "require_flag": "ks_netmender_released"},
 ]
 sd = store_doors[("W", 0)]
@@ -185,11 +187,33 @@ pickups = [
     {"id": "rye_sack", "at": at(-27.4, -11.9), "item": "item_rye_sack", "kit": "rye_sack", "tag": "rime",
      "set_flag": "ks_ingra_rye_found", "label": "Take the rye sack"},
     # and Brede's float, frozen into the face of the tide wall
-    {"id": "net_float", "at": at(-8.0, 78.8), "item": "item_net_float", "kit": "net_float", "tag": "rime",
-     "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice"},
+    # frozen into the land face of the tide wall at chest height; a heavy blow
+    # chips it free (SLICE.md 2). The prompt zone stays on the shingle.
+    {"id": "net_float", "at": at(-8.0, 78.4), "item": "item_net_float", "kit": "net_float", "tag": "rime",
+     "set_flag": "ks_brede_float_found", "label": "Chip the float out of the ice",
+     "lift": 1.25, "chip_heavy": True},
+    # the Mending Needle where she sat (SLICE.md 6). The release sets one down
+    # at once (Game._release_leavings, same id); this entry keeps it there if
+    # the journey is saved and resumed before it is taken.
+    {"id": "mending_needle", "at": [0.0, SH + 0.02, -43.8], "item": "item_mending_needle",
+     "scene": "res://assets/models/weapons/mending_needle.glb", "tag": "base",
+     "require_flag": "ks_netmender_released", "label": "Take the mending needle"},
+    # Wren's knucklebones, four of five, in the turf by the small grave (SLICE.md 8; THORNWOLD.md 7)
+    {"id": "knucklebones", "at": at(42.0, 15.5), "item": "ks_knucklebones", "tag": "rime",
+     "scene": "res://assets/models/props/knucklebone.tscn", "set_flag": "ks_knucklebones_found",
+     "label": "Pick up the knucklebones"},
 ]
 # the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
 # arena; she hauls it and lights it (src/world/net_floor.gd)
+# RIME: the tide froze mid-surge (SLICE.md 2). A glass wall ~3 m high along
+# the old waterline, a metre or two seaward of it, open where the frozen
+# channel runs out to the sea stack.
+TIDE_LINE = [(-64, 76.6), (-54, 76.3), (-46, 76.0), (-38, 76.4), (-30, 76.6), (-22, 76.6),
+             (-14, 77.8), (-6, 79.5), (2, 80.3), (10, 79.6), (18, 78.6), (26, 76.8),
+             (34, 76.0), (44, 76.4)]
+TIDE_WALL = {"script": "res://src/world/tide_wall.gd", "at": [0.0, 0.0, 0.0], "tag": "rime",
+             "params": {"points": [[x, z] for x, z in TIDE_LINE], "height": 3.9, "gaps": [[-36.0, -23.0]], "base_y": -0.6}}
+
 scripted = [
     {"script": "res://src/world/net_floor.gd", "at": [0.0, SH, -36.0], "tag": "rime",
      "params": {"size": [11.6, 31.6]}},
@@ -199,7 +223,7 @@ npcs = [
     {"id": "brede", "at": at(-6.2, 73.4), "rot": 160, "tag": "thaw"},
 ]
 plaques = [
-    {"at": at(-1.0, 60.5), "rot": 200, "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\n\nKeep hearth in the boat-shed, and it will remember for you."},
+    {"at": at(-1.0, 60.5), "rot": 200, "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\nThe hearth is in the boat-shed."},
     {"at": at(3.4, -17.6), "rot": 180, "tag": "rime", "text": "THE LONGHOUSE\n\nThe door is iced shut from the inside.\nSomeone is still mending in there."},
 ]
 
@@ -336,16 +360,20 @@ D = {
     "hearths": hearths,
     "gates": [{"id": "boatshed_back", "at": GATE_AT, "rot": 0, "width": 1.9, "locked_prompt": "Barred from the other side"}],
     "spawners": spawners,
-    "frost_veils": [{"id": "hall_veil", "at": [0.0, SH, LH_DOOR_Z], "rot": 0, "tag": "rime"}],
+    "frost_veils": [{"id": "hall_veil", "at": [0.0, SH, LH_DOOR_Z], "rot": 0, "tag": "rime",
+                     # frozen net mesh, rime-cold (the parchment tint glowed beige
+                     # against the blue yard)
+                     "shader": {"tint": [0.74, 0.84, 0.96], "mesh_strength": 0.7}}],
     "npcs": npcs,
     "plaques": plaques,
     "pickups": pickups,
-    "scripted": scripted,
+    # one list: a second "scripted" key below used to overwrite this one,
+    # and the Longhouse lost its net floor (the drawbridge seam joins it)
+    "scripted": scripted + [TIDE_WALL, seams("saltfell_steading")[1]],
     "scatter": scatter,
     "edges": edges,
     # the seams to the Lowe: the cliff-top pass and the drawbridge
     "portals": seams("saltfell_steading")[0],
-    "scripted": [seams("saltfell_steading")[1]],
 }
 
 if __name__ == "__main__":

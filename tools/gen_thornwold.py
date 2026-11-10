@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_thornwold as K  # noqa: E402
 import thorn_land as T  # noqa: E402
 from seams_thornwold import seam  # noqa: E402
+from seams_high import seam as high_seam  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if __name__ == "__main__" and "--keep-terrain" not in sys.argv:
@@ -100,8 +101,16 @@ for a, r0, r1 in ((150.0, R2 + 0.8, R3 - 0.8), (230.0, R1 + 0.8, R2 - 0.8)):
 # the gap with no gate in it (Tripo), at the innermost ring
 # the gate he never hung: made, and left leaning on the inside of the ring
 # beside the gap where it should go (Tripo)
-LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_hedge_gate.glb",
-                  "at": at(GX - R1 + 2.2, GZ + 4.6, -0.05), "rot": 75, "scale": 0.8})
+# (the five-bar gate itself, a small procedural prop: lm_hedge_gate is the Tripo
+# hedge gap with the grave, not a gate)
+LANDMARKS.append({"scene": "res://assets/models/props/hedge_gate.tscn",
+                  "at": at(GX - R1 + 1.6, GZ + 4.4, -0.02), "rot": 75, "tilt": -14,
+                  "absent_flag": "ks_hedgelayer_released"})
+# on release it lies down flat across the gap (THORNWOLD.md 9; the Hedgelayer's
+# release_gate_laid lays the same one in the fight)
+LANDMARKS.append({"scene": "res://assets/models/props/hedge_gate.tscn",
+                  "at": at(GX - R1, GZ, 0.04), "rot": 90, "tilt": -90,
+                  "require_flag": "ks_hedgelayer_released"})
 # the grave under the oldest pine
 _gy = g(GX + 2.5, GZ)
 BOXES.append({"min": [r2(GX + 1.4), r2(_gy - 0.3), r2(GZ - 1.0)], "max": [r2(GX + 3.6), r2(_gy + 0.4), r2(GZ + 1.0)], "mat": "M_turf", "tag": "base"})
@@ -154,6 +163,7 @@ for (cx, cz, a0) in ((x1 - T.WOOD_R, z0 + T.WOOD_R, -90.0), (x1 - T.WOOD_R, z1 -
 edge.append(edge[0])
 # densify, then split into runs, open where the drove-road enters (west side)
 ROAD_IN_Z = T.DROVE[0][1]
+FELL_OUT_Z = -331.0            # the fell path up to Shepherd's Reach leaves the wood's east side
 dense = [edge[0]]
 for (ax, az), (bx, bz) in zip(edge, edge[1:]):
     n = max(1, int(math.hypot(bx - ax, bz - az) / 3.0))
@@ -161,7 +171,7 @@ for (ax, az), (bx, bz) in zip(edge, edge[1:]):
         dense.append([ax + (bx - ax) * k / n, az + (bz - az) * k / n])
 runs, cur = [], []
 for p in dense:
-    if p[0] < x0 + inset + 3.0 and abs(p[1] - ROAD_IN_Z) < 5.5:
+    if (p[0] < x0 + inset + 3.0 and abs(p[1] - ROAD_IN_Z) < 5.5) or (p[0] > x1 - inset - 3.0 and abs(p[1] - FELL_OUT_Z) < 5.5):
         if len(cur) > 1:
             runs.append(cur)
         cur = []
@@ -192,7 +202,7 @@ PROPS.append({"kit": "creel_stack", "at": at(CX - 3.0, CZ + 8.0), "rot": 30, "co
 PROPS.append({"kit": "rope_coil", "at": at(CX + 2.0, CZ - 6.0), "rot": 10, "collide": False})
 
 # --- forest -------------------------------------------------------------------
-FOREST_CLEAR = [[CX, CZ, CR], [GX, GZ, R3 + 3.0]]
+FOREST_CLEAR = [[CX, CZ, CR], [GX, GZ, R3 + 3.0], [481.0, -331.0, 6.0]]
 forest = {
     "seed": 5150,
     "clear": FOREST_CLEAR,
@@ -213,6 +223,11 @@ forest = {
 hearths = [
     {"id": "hs_drove_road", "name": "the Drove-Road", "at": at(T.DROVE[0][0] + 6.0, T.DROVE[0][1] + 5.0), "rot": 200},
     {"id": "hs_colliers_clearing", "name": "the Collier's Clearing", "at": at(CX - 6.0, CZ + 3.0), "rot": 140},
+    # outside the outermost ring's RIME gap: nearest the Holdfast (THORNWOLD.md 1)
+    {"id": "hs_outer_ring", "name": "the Outer Ring", "at": at(GX + (R3 + 3.5) * math.cos(math.radians(70.0)),
+                                                             GZ + (R3 + 3.5) * math.sin(math.radians(70.0))), "rot": 250},
+    # at the grave, woken when he is released (release_hearth)
+    {"id": "hs_the_pine", "name": "the Pine", "at": at(GX - 2.0, GZ + 3.0), "rot": 90, "require_flag": "ks_hedgelayer_released"},
 ]
 spawners = [
     {"enemy": "collier", "stand_in": "rimewalker", "id": "collier_clamp_a", "at": at(CLAMPS[0][0] - 2.5, CLAMPS[0][1] + 2.5, 0.1), "face": 200},
@@ -228,11 +243,24 @@ VEIL = at(GX + R1 * math.cos(math.radians(INNER_GAP)), GZ + R1 * math.sin(math.r
 for (sx, sz, rot) in ((372.0, -292.0, 120), (418.0, -350.0, 30)):
     LANDMARKS.append({"scene": "res://assets/models/enemies/rime_stag.glb", "at": at(sx, sz), "rot": rot, "tag": "rime"})
 pickups = [
-    {"id": "hedging_bill", "at": at(GX - R3 - 3.0, GZ + 5.0, 0.05), "warmth": 45, "tag": "base", "label": "Take the hedging bill"},
+    {"id": "hedging_bill", "at": at(GX - R3 - 3.0, GZ + 5.0, 0.05), "item": "hedging_bill", "tag": "rime", "label": "Take the hedging bill",
+     "scene": "res://assets/models/weapons/hedging_bill.glb"},
+    # THORNWOLD.md 2, 3: the knucklebone on the road going east; the ring in the clamp's ash
+    {"id": "knucklebone", "at": at(338.0, -315.2, 0.02), "item": "item_knucklebone", "tag": "rime", "label": "Pick up the knucklebone",
+     "scene": "res://assets/models/props/knucklebone.tscn", "set_flag": "ks_knucklebone_found"},
+    {"id": "birch_ring", "at": at(CLAMPS[0][0] - 2.6 * math.cos(math.radians(40.0)), CLAMPS[0][1] - 2.6 * math.sin(math.radians(40.0)), 0.02),
+     "item": "item_birch_ring", "tag": "rime", "label": "Take the ring from the ash", "scene": "res://assets/models/props/birch_ring.tscn"},
     {"id": "clamp_cache", "at": at(CLAMPS[1][0] - 2.8, CLAMPS[1][1], 0.05), "item": "bog_iron", "count": 2, "tag": "rime",
      "label": "Rake out what the clamp kept"},
 ]
-npcs = [{"id": "linnet", "at": at(CX + 3.0, CZ + 4.0), "rot": 220, "tag": "thaw"}]
+npcs = [
+    # before the release: Linnet and Eyvind at the clearing, arguing about the gate (THORNWOLD.md 3, 7)
+    {"id": "linnet", "at": at(CX + 3.0, CZ + 4.0), "rot": 312, "tag": "thaw", "absent_flag": "ks_hedgelayer_released"},
+    {"id": "eyvind", "at": at(CX + 5.0, CZ + 2.2), "rot": 132, "tag": "thaw", "absent_flag": "ks_hedgelayer_released"},
+    # after: at the gap of the innermost ring, the gate lying flat across it (THORNWOLD.md 9)
+    {"id": "linnet", "at": at(GX - R1 - 1.6, GZ + 2.4), "rot": 341, "tag": "thaw", "require_flag": "ks_hedgelayer_released"},
+    {"id": "eyvind_gate", "at": at(GX - R1 - 1.6, GZ - 2.4), "rot": 199, "tag": "thaw", "require_flag": "ks_hedgelayer_released"},
+]
 
 portal = seam("thornwold")
 arrive = seam("tarnhall")
@@ -276,7 +304,7 @@ D = {
     "plaques": [{"at": at(T.DROVE[0][0] + 3.0, T.DROVE[0][1] - 5.5, 0.0), "rot": 250,
                  "text": "THORNWOLD\n\nThe drove-roads run between laid hedges. Charcoal clearings on the slopes."}],
     "pickups": pickups,
-    "portals": [portal],
+    "portals": [portal, high_seam("reach", "thornwold")],
     "forest": forest,
     "scatter": {
         "seed": 5151,

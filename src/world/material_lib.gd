@@ -22,7 +22,7 @@ const HALL_DS := preload("res://shaders/hall_ds.gdshader")
 const DOUBLE_SIDED := {}
 ## Families that take a snow crust on their top faces in RIME.
 const SNOW := {"M_timber": 0.75, "M_planks": 0.8, "M_drystone_wall": 0.85, "M_schist": 0.9, "M_shingle": 0.9, "M_snow": 1.0, "M_stone": 0.85, "M_stone_trim": 0.85, "M_stone_dark": 0.8, "M_wood": 0.75, "M_wood_dark": 0.75, "M_drystone": 0.85,
-	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_needles": 0.8, "M_leaves": 0.7, "M_thorn": 0.6, "M_bark_pine": 0.4, "M_drift": 0.85, "M_terrain": 0.9}
+	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_needles": 0.8, "M_leaves": 0.7, "M_thorn": 0.6, "M_wool": 0.5, "M_bark_pine": 0.4, "M_drift": 0.85, "M_terrain": 0.9}
 
 ## family -> [set, repeats per metre, strength(, tint, contrast)]. Sets live in
 ## assets/textures/<set>/T_<set>_{albedo,normal,orh}.jpg; their linear means
