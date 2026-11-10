@@ -141,7 +141,16 @@
  "render": {
   "_doc": "shadow_distance: the sun's shadow reach in metres per graphics-quality tier (Low, High, Ultra). prop_ranges: [small_max_m, small_range_m, mid_max_m, mid_range_m]; kit props whose largest side is at most small_max_m stop drawing past small_range_m, up to mid_max_m past mid_range_m; larger kit always draws.",
   "shadow_distance": [70.0, 100.0, 135.0],
-  "prop_ranges": [1.6, 60.0, 4.5, 120.0]
+  "prop_ranges": [1.6, 60.0, 4.5, 120.0],
+  "interior": {
+   "_doc": "The ambient a house interior takes in place of the sky's (HouseProbe): colour and energy per world state, how far inside the walls it fades in (metres), and the strength of the room's own reflections.",
+   "thaw_color": [0.52, 0.36, 0.2],
+   "thaw_energy": 0.62,
+   "rime_color": [0.2, 0.29, 0.46],
+   "rime_energy": 0.55,
+   "blend_distance": 0.25,
+   "intensity": 0.8
+  }
  },
  "combat": {
   "body_push": {
