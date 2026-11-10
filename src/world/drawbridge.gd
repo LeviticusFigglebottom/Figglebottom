@@ -10,6 +10,10 @@ var flag := "bridge_down"
 var length := 16.0
 var width := 2.4
 var operable := true            # the windlass is on this side
+## The far lip lies this much lower than the hinge: lowered, the deck slopes
+## down to rest on it. (Laid level, the Lowe's bridge ended half a metre
+## above the Saltfell yard: too high a step, so it could only be walked one way.)
+var far_drop := 0.0
 var prompt := "Lower the bridge"
 
 var _deck: Node3D
@@ -96,7 +100,7 @@ func _apply(down: bool, instant: bool) -> void:
 	if _zone != null:
 		_zone.enabled = not down
 	# raised: stood on end over the hinge, a dark shape against the sky
-	var target := 0.0 if down else deg_to_rad(88.0)
+	var target := -asin(clampf(far_drop / maxf(length, 0.1), -0.5, 0.5)) if down else deg_to_rad(88.0)
 	if instant:
 		_deck.rotation.x = target
 	else:
