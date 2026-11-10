@@ -81,7 +81,10 @@ func _tint_for(s: RH.WState) -> void:
 	var rime := s == RH.WState.RIME
 	for f in _flames:
 		f.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.4, 0.1) if rime else Vector3(1.0, 0.5, 0.14))
-		f.set_instance_shader_parameter("flame_energy", 0.45 if rime else 0.55)
+		f.set_instance_shader_parameter("flame_energy", 0.7 if rime else 0.9)
+	# sparks only while there is a flame to throw them
+	for e in find_children("embers", "CPUParticles3D", true, false):
+		(e as CPUParticles3D).emitting = not rime
 	if _light:
 		_light.light_color = Color(1.0, 0.68, 0.32)
 		_light.light_energy = 2.2

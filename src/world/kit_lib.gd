@@ -92,6 +92,13 @@ const HERO_PIECES := {
 	# every rest site: the carved hearthstone, its slab at the back (-z)
 	"hearthstone": {"glb": "res://assets/models/kit/kit_hearthstone.glb", "family": "M_stone", "length": 1.6, "yaw": 0.0, "lift": 0.0},
 	"fish_kettle": {"glb": "res://assets/models/landmarks/lm_fish_kettle.glb", "family": "M_iron", "length": 1.75, "yaw": 0.0, "lift": 0.0},
+	# longhouse and yard furniture (look pass 3)
+	"table_3m": {"glb": "res://assets/models/kit/kit_table_hero.glb", "family": "M_wood", "length": 3.0, "yaw": 0.0, "lift": 0.0},
+	"bench_3m": {"glb": "res://assets/models/kit/kit_bench_hero.glb", "family": "M_wood", "length": 2.7, "yaw": 0.0, "lift": 0.0},
+	"barrel": {"glb": "res://assets/models/kit/kit_barrel_hero.glb", "family": "M_wood", "length": 0.74, "yaw": 0.0, "lift": 0.0},
+	"rope_coil": {"glb": "res://assets/models/kit/kit_rope_coil_hero.glb", "family": "M_rope", "length": 0.7, "yaw": 0.0, "lift": 0.0},
+	"creel_stack": {"glb": "res://assets/models/kit/kit_creel_stack_hero.glb", "family": "M_drift", "length": 1.4, "yaw": 0.0, "lift": 0.0},
+	"well": {"glb": "res://assets/models/kit/kit_well_hero.glb", "family": "M_stone", "length": 1.7, "yaw": 0.0, "lift": 0.0},
 	# a wrought fire basket on three legs; the flame is added over its logs
 	"brazier": {"glb": "res://assets/models/kit/kit_brazier_hero.glb", "family": "M_iron", "length": 0.71, "yaw": 0.0, "lift": 0.0},
 	# the Reach flocks: a ewe with her head up and one grazing, taken in turn
@@ -148,7 +155,9 @@ static func _build_hero(n: Node3D, id: String) -> void:
 	if id == "hearthstone":
 		_hearth_bed(n, 0.42, 0.05)
 	if id == "brazier":
-		_flame(n, Vector3(0, 0.92, 0), 0.38, 0.15, "flame")
+		_flame(n, Vector3(0, 0.9, 0), 0.42, 0.16, "flame")
+		_flame(n, Vector3(0.07, 0.9, -0.05), 0.28, 0.11, "flame_b")
+		_embers(n, Vector3(0, 1.0, 0), 0.1, 8)
 	if id == "boat_upturned":
 		# keep the trestles it rests on
 		for z in [-1.6, 1.6]:
@@ -241,7 +250,80 @@ static func _torus(parent: Node3D, r: float, thick: float, pos: Vector3, fam: St
 	return mi
 
 static func _flame(parent: Node3D, pos: Vector3, h: float, r: float, nm := "flame") -> MeshInstance3D:
-	return _cyl(parent, 0.0, r, h, pos + Vector3(0, h * 0.5, 0), "M_flame", nm, Vector3.ZERO, 8)
+	var mi := MeshInstance3D.new()
+	mi.name = nm
+	mi.mesh = _flame_cards(h, r)
+	mi.position = pos
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(mi)
+	return mi
+
+static var _flame_meshes: Dictionary = {}
+
+## Three cards crossed on the flame's axis (flame.gdshader draws the tongue
+## on each; additive, so they build a volume from any side).
+static func _flame_cards(h: float, r: float) -> ArrayMesh:
+	var key := "%.2f|%.2f" % [h, r]
+	if _flame_meshes.has(key):
+		return _flame_meshes[key]
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var w := r * 2.6
+	var hh := h * 1.25
+	for i in 3:
+		var a := PI * float(i) / 3.0
+		var right := Vector3(cos(a), 0, sin(a)) * w * 0.5
+		var quad: Array = [[-right, Vector2(0, 1)], [right, Vector2(1, 1)], [right + Vector3.UP * hh, Vector2(1, 0)],
+			[-right, Vector2(0, 1)], [right + Vector3.UP * hh, Vector2(1, 0)], [-right + Vector3.UP * hh, Vector2(0, 0)]]
+		for v in quad:
+			st.set_normal(Vector3.UP)
+			st.set_uv(v[1])
+			st.add_vertex(v[0])
+	var mesh := st.commit()
+	mesh.surface_set_material(0, _ph("M_flame"))
+	mesh.custom_aabb = AABB(Vector3(-w, 0, -w), Vector3(w * 2.0, hh * 1.1, w * 2.0))
+	_flame_meshes[key] = mesh
+	return mesh
+
+static var _ember_mat: StandardMaterial3D = null
+
+## Sparks lifting off a fire: a handful of bright points that rise, drift and
+## go out. CPU particles: a dozen per fire is cheaper than a GPU system each.
+static func _embers(parent: Node3D, pos: Vector3, spread: float, amount := 10) -> CPUParticles3D:
+	if _ember_mat == null:
+		_ember_mat = StandardMaterial3D.new()
+		_ember_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_ember_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		_ember_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+		_ember_mat.vertex_color_use_as_albedo = true
+		_ember_mat.albedo_color = Color(1.0, 0.55, 0.2)
+	var p := CPUParticles3D.new()
+	p.name = "embers"
+	p.amount = amount
+	p.lifetime = 1.8
+	p.randomness = 0.6
+	p.lifetime_randomness = 0.5
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = spread
+	p.direction = Vector3.UP
+	p.spread = 22.0
+	p.gravity = Vector3(0.12, 0.35, -0.08)
+	p.initial_velocity_min = 0.35
+	p.initial_velocity_max = 0.9
+	p.scale_amount_min = 0.5
+	p.scale_amount_max = 1.2
+	var fade := Gradient.new()
+	fade.set_color(0, Color(1.6, 1.0, 0.45, 1.0))
+	fade.set_color(1, Color(0.9, 0.15, 0.02, 0.0))
+	p.color_ramp = fade
+	var q := QuadMesh.new()
+	q.size = Vector2(0.011, 0.011)
+	q.material = _ember_mat
+	p.mesh = q
+	p.position = pos
+	p.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(p)
+	return p
 
 ## The fire in a hearthstone's ring: a mound of coals (coals.gdshader: lit in
 ## THAW, banked to a faint ember in RIME) with a few low tongues of flame over
@@ -249,12 +331,13 @@ static func _flame(parent: Node3D, pos: Vector3, h: float, r: float, nm := "flam
 static func _hearth_bed(n: Node3D, r: float, y: float) -> void:
 	var coals := _sphere(n, r, Vector3(0, y, 0), "M_coals", "coals", Vector3(1.0, 0.36, 1.0))
 	coals.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var tongues: Array = [[Vector3(0.0, 0.1, 0.02), 0.42, 0.1], [Vector3(-0.14, 0.08, 0.1), 0.28, 0.075],
-		[Vector3(0.13, 0.08, -0.08), 0.33, 0.08], [Vector3(0.04, 0.07, 0.17), 0.2, 0.06]]
+	var tongues: Array = [[Vector3(0.0, 0.1, 0.02), 0.5, 0.14], [Vector3(-0.15, 0.08, 0.1), 0.34, 0.11],
+		[Vector3(0.14, 0.08, -0.08), 0.4, 0.12], [Vector3(0.04, 0.07, 0.18), 0.26, 0.09]]
 	for i in tongues.size():
 		var t: Array = tongues[i]
 		var f := _flame(n, Vector3(0, y, 0) + t[0], t[1], t[2], "hearth_flame" if i == 0 else "hearth_flame_%d" % i)
 		f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_embers(n, Vector3(0, y + 0.15, 0), 0.18)
 	var ember := OmniLight3D.new()
 	ember.name = "ember_glow"
 	ember.light_color = Color(1.0, 0.36, 0.12)
@@ -662,8 +745,8 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 				var aabb := mesh.get_aabb()
 				mi.set_instance_shader_parameter("flame_base_y", aabb.position.y)
 				mi.set_instance_shader_parameter("flame_height", maxf(aabb.size.y, 0.05))
-				mi.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.76, 0.32))
-				mi.set_instance_shader_parameter("flame_energy", 1.8)
+				mi.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.6, 0.2))
+				mi.set_instance_shader_parameter("flame_energy", 1.0)
 
 static func _mesh_instances(node: Node) -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []

@@ -1,16 +1,19 @@
 shader_type spatial;
-render_mode cull_disabled, unshaded, blend_mix, depth_draw_never;
+render_mode cull_disabled, unshaded, blend_add, depth_draw_never;
 
 // ---------------------------------------------------------------------------
-// Blackbody brazier / hearth flame shader:
-// Translucent cobalt-indigo gas base -> incandescent white-gold core ->
-// soft alpha-feathered fiery amber tongue with animated flame licks.
+// flame.gdshader: a tongue of fire on crossed cards (KitLib._flame).
+// UV: u across the card, v = 1 at the base, 0 at the tip.
+// The flame is drawn, not modelled: a teardrop that narrows upward, its axis
+// pushed about by rising noise, its top torn off where the noise runs out.
+// Colour runs deep red at the edges and tips through the tint to a pale core
+// low in the body. Additive, so crossed cards build a volume, not a shape.
 // ---------------------------------------------------------------------------
 
-instance uniform vec3 flame_tint = vec3(1.0, 0.76, 0.32);
-instance uniform float flame_energy = 3.8;
-instance uniform float flame_base_y = 0.0;
-instance uniform float flame_height = 0.16;
+instance uniform vec3 flame_tint = vec3(1.0, 0.62, 0.22);
+instance uniform float flame_energy = 1.0;
+instance uniform float flame_base_y = 0.0;    // kept for KitLib (unused on cards)
+instance uniform float flame_height = 0.16;   // kept for KitLib (unused on cards)
 instance uniform float keep_in_rime = 0.0;
 uniform int state_mode = 0;
 
@@ -20,7 +23,6 @@ global uniform float rh_wave_dir;
 global uniform float rh_state_blend;
 global uniform float rh_wave_band;
 
-varying float v_h;
 varying vec3 v_world_pos;
 varying float v_phase;
 
@@ -33,17 +35,25 @@ float local_rime(vec3 wp) {
 	return mix(rh_state_blend, rh_wave_dir, w);
 }
 
+float hash(vec2 p) {
+	return fract(sin(dot(p, vec2(41.31, 289.17))) * 43758.5453);
+}
+
+float vnoise(vec2 p) {
+	vec2 i = floor(p), f = fract(p);
+	f = f * f * (3.0 - 2.0 * f);
+	return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
+		mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+
 void vertex() {
-	float h_local = clamp((VERTEX.y - flame_base_y) / max(flame_height, 0.04), 0.0, 1.0);
-	v_h = h_local;
-	vec3 wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	float phase = wp.x * 3.7 + wp.z * 6.1;
-	v_phase = phase;
-	// Organic wind flicker around the flame's own vertical axis
-	float sway = sin(TIME * 7.2 + phase) * 0.048 + sin(TIME * 15.1 + phase * 2.3) * 0.022;
-	VERTEX.x += sway * pow(h_local, 1.35) * flame_height * 2.0;
-	VERTEX.z += cos(TIME * 9.4 + phase) * 0.032 * pow(h_local, 1.35) * flame_height * 2.0;
-	VERTEX.y = flame_base_y + (VERTEX.y - flame_base_y) * (1.0 + sin(TIME * 12.2 + phase) * 0.08);
+	vec3 org = MODEL_MATRIX[3].xyz;
+	v_phase = fract(org.x * 3.7 + org.z * 6.1 + org.y * 1.3) * 20.0;
+	float h = 1.0 - UV.y;
+	// the whole tongue leans and recovers; the base stays on its fuel
+	float sway = sin(TIME * 5.1 + v_phase) * 0.06 + sin(TIME * 11.3 + v_phase * 2.3) * 0.03;
+	VERTEX.x += sway * h * h;
+	VERTEX.z += cos(TIME * 6.7 + v_phase) * 0.04 * h * h;
 	v_world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
@@ -58,29 +68,28 @@ void fragment() {
 	if (presence < 0.5) {
 		discard;
 	}
-	float flicker = 0.88 + 0.12 * sin(TIME * 19.0 + v_phase * 2.5);
-	float h_norm = clamp(v_h, 0.0, 1.0);
-	// Radial core vs outer mantle from view-space normal
-	float ndv = abs(dot(normalize(NORMAL), VIEW));
-	float core_mask = smoothstep(0.22, 0.78, ndv) * smoothstep(0.04, 0.22, h_norm) * smoothstep(0.86, 0.32, h_norm);
-
-	// Animated flame lick modulation near upper tip
-	float lick = 0.5 + 0.5 * sin(TIME * 16.0 - h_norm * 9.0 + v_world_pos.x * 35.0 + v_world_pos.z * 29.0);
-	float tip_fade = smoothstep(1.0, 0.56 + lick * 0.18, h_norm);
-	float edge_fade = smoothstep(0.05, 0.52, ndv);
-	float base_fade = smoothstep(0.0, 0.09, h_norm);
-
-	// Blackbody temperature palette:
-	// Blue-indigo gas root -> brilliant white-yellow core -> luminous gold-orange mantle
-	vec3 blue_root = mix(vec3(0.20, 0.38, 0.95), flame_tint * 0.7, 0.35);
-	vec3 white_core = vec3(1.0, 0.86, 0.5);
-	vec3 outer_fire = mix(flame_tint, flame_tint * vec3(1.05, 0.68, 0.28), smoothstep(0.35, 0.92, h_norm));
-
-	vec3 col = mix(blue_root, outer_fire, smoothstep(0.02, 0.24, h_norm));
-	col = mix(col, mix(white_core, flame_tint, 0.45), core_mask * 0.6);
-
-	float alpha = clamp(edge_fade * tip_fade * base_fade * (0.68 + 0.32 * core_mask), 0.0, 0.96);
-	ALBEDO = col;
-	EMISSION = col * flame_energy * (0.9 + 0.7 * core_mask) * flicker;
-	ALPHA = alpha * 0.85;
+	float h = 1.0 - UV.y;
+	float x = UV.x * 2.0 - 1.0;
+	float t = TIME * 1.9;
+	// rising noise: a slow body and a fast lick
+	float n1 = vnoise(vec2(x * 1.6 + v_phase, h * 2.4 - t));
+	float n2 = vnoise(vec2(x * 3.7 - v_phase, h * 5.5 - t * 2.1));
+	float n = n1 * 0.65 + n2 * 0.35;
+	// the axis wanders more the higher it gets
+	float axis = (n1 - 0.5) * 0.7 * h;
+	// teardrop: widest a little above the base, drawn to a point
+	float width = 0.72 * pow(1.0 - h, 0.7) * smoothstep(-0.05, 0.22, h) + 0.04;
+	float d = abs(x - axis) / width;
+	float body = 1.0 - smoothstep(0.35, 1.0, d);
+	// the top tears off where the noise runs out
+	float tear = smoothstep(h * 1.25 - 0.42, h * 1.25 - 0.08, n);
+	float a = body * tear * smoothstep(0.0, 0.07, h);
+	float heat = a * (1.0 - h * 0.75) * (0.75 + 0.5 * n2);
+	vec3 edge_c = flame_tint * vec3(0.85, 0.28, 0.08);
+	vec3 core_c = mix(flame_tint, vec3(1.0, 0.9, 0.62), 0.6);
+	vec3 col = mix(edge_c, flame_tint, smoothstep(0.1, 0.5, heat));
+	col = mix(col, core_c, smoothstep(0.5, 0.95, heat));
+	float flicker = 0.9 + 0.1 * sin(TIME * 17.0 + v_phase * 2.5);
+	ALBEDO = col * flame_energy * flicker * (0.55 + heat);
+	ALPHA = clamp(a, 0.0, 1.0);
 }
