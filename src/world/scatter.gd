@@ -457,6 +457,11 @@ const VEG_KINDS := {
 	"sward": {"atlas": "res://assets/textures/veg/T_veg_grass.png", "cell": 0.4, "cards": 3, "lean": 0.95, "root_shade": 0.92,
 		"wind": 0.02, "keep": 0.0, "bury": 0.5, "dry": Color(0.3, 0.29, 0.15), "dryness": 0.35,
 		"tint_a": Color(0.46, 0.6, 0.33), "tint_b": Color(0.62, 0.68, 0.4)},
+	# the near layer: small upright tufts between the rosettes, drawn only
+	# around the camera, so the turf still has blades at arm's length
+	"blades": {"atlas": "res://assets/textures/veg/T_veg_grass.png", "cell": 0.24, "cards": 2, "lean": 0.22, "root_shade": 0.85,
+		"wind": 0.035, "keep": 0.0, "bury": 0.5, "dry": Color(0.32, 0.3, 0.15), "dryness": 0.4,
+		"tint_a": Color(0.5, 0.64, 0.35), "tint_b": Color(0.7, 0.74, 0.44)},
 	"sedge": {"atlas": "res://assets/textures/veg/T_veg_sedge.png", "cell": 0.9, "cards": 3, "lean": 0.2,
 		"wind": 0.15, "keep": 0.55, "bury": 0.6, "dry": Color(0.45, 0.38, 0.2), "dryness": 0.8,
 		"tint_a": Color(0.72, 0.8, 0.6), "tint_b": Color(0.95, 0.92, 0.75)},
@@ -498,6 +503,11 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			sw["density"] = float(rule.get("density", 1.0)) * 4.0
 			sw["range"] = minf(float(rule.get("range", 55.0)), 32.0)
 			all_rules.append(sw)
+			var bl: Dictionary = (rule as Dictionary).duplicate()
+			bl["kind"] = "blades"
+			bl["density"] = float(rule.get("density", 1.0)) * 6.0
+			bl["range"] = 11.0
+			all_rules.append(bl)
 	for rule in all_rules:
 		var kind := String(rule.get("kind", "grass"))
 		var tag := String(rule.get("tag", "base"))
@@ -535,14 +545,14 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 				p *= 0.55 + 0.45 * terrain.splat_at(px, pz, 3)
 				# drifts: thick patches a few metres across, thin ground between
 				var drift := _patch(px, pz, 7.0, kseed) * 0.65 + _patch(px, pz, 2.6, kseed + 1) * 0.35
-				if kind == "sward":
+				if kind == "sward" or kind == "blades":
 					p *= lerpf(0.55, 1.5, smoothstep(0.25, 0.75, drift))
 				else:
 					p *= lerpf(0.08, 1.7, smoothstep(0.38, 0.74, drift))
 				if rng.randf() > p * 0.6 or _blocked(keep_clear, px, pz):
 					continue
 				# a clump and sometimes a smaller one grown out of its side
-				var n := 1 + (1 if kind != "sward" and rng.randf() < 0.3 else 0)
+				var n := 1 + (1 if kind != "sward" and kind != "blades" and rng.randf() < 0.3 else 0)
 				for j in n:
 					var qx := px
 					var qz := pz
