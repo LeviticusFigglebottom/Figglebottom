@@ -1,5 +1,6 @@
 shader_type spatial;
-render_mode cull_disabled, unshaded, blend_add, depth_draw_never;
+// blend_mix, not add: an additive ribbon vanishes over lit snow (RIME)
+render_mode cull_disabled, unshaded, blend_mix, depth_draw_never;
 
 // ---------------------------------------------------------------------------
 // Weapon swing ribbon shader:
@@ -10,7 +11,7 @@ render_mode cull_disabled, unshaded, blend_add, depth_draw_never;
 // ---------------------------------------------------------------------------
 
 uniform vec3 tint : source_color = vec3(0.96, 0.91, 0.80);
-uniform float energy = 2.15;
+uniform float energy = 0.6;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -33,11 +34,12 @@ void fragment() {
 	float tip_weight = smoothstep(0.0, 0.20, UV.y) * (0.40 + 0.60 * smoothstep(0.32, 0.88, UV.y)) * smoothstep(1.0, 0.92, UV.y);
 	float lead_edge = pow(along, 4.2) * 1.85;
 	float tip_trace = smoothstep(0.82, 0.95, UV.y) * smoothstep(1.0, 0.93, UV.y) * pow(along, 1.15) * 0.9;
-	float ribbon = (pow(along, 1.45) * streak + tip_trace) * tip_weight;
 
-	vec3 wake_col = mix(tint * vec3(1.0, 0.78, 0.52), tint, along);
+	vec3 wake_col = mix(tint * vec3(1.0, 0.72, 0.42), tint, along);
 	vec3 col = mix(wake_col, vec3(1.0, 0.99, 0.95), clamp(lead_edge, 0.0, 1.0));
-	ALBEDO = vec3(0.0);
-	EMISSION = col * energy * (ribbon + lead_edge * tip_weight * 0.85);
-	ALPHA = clamp((ribbon + lead_edge * 0.55) * 0.94, 0.0, 1.0);
+	// unshaded materials output ALBEDO only (EMISSION is dropped): the glow
+	// rides the albedo, a little over 1 at the leading edge so it blooms
+	ALBEDO = col * (1.0 + energy * lead_edge * tip_weight);
+	float body = pow(along, 0.9) * streak * tip_weight;
+	ALPHA = clamp((body + tip_trace * tip_weight) * 0.62 + lead_edge * tip_weight * 0.5, 0.0, 0.9);
 }

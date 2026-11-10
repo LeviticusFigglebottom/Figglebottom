@@ -42,8 +42,20 @@ static func has_model(id: String) -> bool:
 ## Names to try for a game clip, best first: the clip itself, then its
 ## aliases (atk_over -> heavy -> slash). A clip that turns up later under any
 ## of these names takes over with no code change.
-static func candidates(clip: String) -> Array:
-	var out := [clip]
+## With a weapon-class clip set (clip_sets, e.g. "onehand"), that set's
+## clips for the game name come before everything else, so the same
+## "attack_l1" is a cut with a blade and a thrust with a spear.
+static func candidates(clip: String, clip_set := "") -> Array:
+	var out := []
+	if clip_set != "":
+		var sets: Dictionary = meta().get("clip_sets", {})
+		for sid in [clip_set, "_all"]:
+			var cs = (sets.get(sid, {}) as Dictionary).get(clip, [])
+			for a in (cs if cs is Array else [cs]):
+				if not String(a) in out:
+					out.append(String(a))
+	if not clip in out:
+		out.append(clip)
 	var al = (meta().get("aliases", {}) as Dictionary).get(clip, [])
 	for a in (al if al is Array else [al]):
 		if not String(a) in out:
@@ -85,6 +97,15 @@ static func bone(name: String) -> String:
 static func mount_cfg(slot: String) -> Dictionary:
 	return (meta().get("mounts", {}) as Dictionary).get(slot, {})
 
+## The clip set a weapon kit fights with ("" = the plain aliases).
+static func weapon_class(kit: String) -> String:
+	return String((meta().get("weapon_class", {}) as Dictionary).get(kit, ""))
+
+## A weapon class's own grip (mounts.<slot>@<class>), else the slot's.
+static func class_mount_cfg(slot: String, clip_set: String) -> Dictionary:
+	var m: Dictionary = meta().get("mounts", {})
+	return m.get("%s@%s" % [slot, clip_set], m.get(slot, {}))
+
 static func weapon_cfg(kit: String) -> Dictionary:
 	return (meta().get("weapons", {}) as Dictionary).get(kit, {})
 
@@ -117,6 +138,18 @@ static func shared_library() -> AnimationLibrary:
 	if _shared == null:
 		var donor := String(meta().get("donor", "rimewalker"))
 		_shared = _build(donor)
+		# clip-only libraries (the combat library, tools/anim): real clips on
+		# the same standard frame, under their own names, for every humanoid
+		for id in meta().get("libraries", []):
+			if not has_model(String(id)):
+				continue
+			var src := _extract(String(id))
+			for n in src["anims"]:
+				if not _shared.has_animation(n) or is_procedural(_shared.get_animation(n)):
+					if _shared.has_animation(n):
+						_shared.remove_animation(n)
+					_shared.add_animation(n, src["anims"][n])
+			(src["inst"] as Node).free()
 	return _shared
 
 ## A model's own clips (and overlays riding its own idle), or null if it

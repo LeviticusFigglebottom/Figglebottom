@@ -55,6 +55,8 @@ var bow_mount: Node3D = null
 func apply_loadout(weapon_kit: String, with_shield: bool) -> void:
 	var ranged := weapon_kit == "bow"
 	set_weapon("" if ranged else weapon_kit)
+	if ranged and rig != null and bool(HumanoidLib.model_cfg(model_id).get("clip_sets", false)):
+		rig.clip_set = HumanoidLib.weapon_class(weapon_kit)   # the bow rides the left hand, not the weapon mount
 	if bow_mount == null and ranged:
 		bow_mount = mount("hand_l")
 		bow_mount.position = Vector3(0, 0.06, 0)
