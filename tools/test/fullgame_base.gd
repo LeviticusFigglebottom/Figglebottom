@@ -702,7 +702,12 @@ func _save_title_load() -> bool:
 	check(Keepsakes.journal() == journal_before, "the Keepsakes kept, in order")
 	var lost := []
 	for k in flags_before:
-		if str(World.flags.get(k)) != str(flags_before[k]):
+		var was = flags_before[k]
+		var now = World.flags.get(k)
+		# (a counted flag, a speaker's chapter, is an int until the save's
+		# JSON hands it back a float: 2 and 2.0 are the same chapter)
+		var numbers: bool = (was is int or was is float) and (now is int or now is float)
+		if (numbers and float(was) != float(now)) or (not numbers and str(now) != str(was)):
 			lost.append(k)
 	check(lost.is_empty(), "story flags kept (%s)" % str(lost))
 	var lost_a := []
