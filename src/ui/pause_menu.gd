@@ -112,6 +112,14 @@ func begin_anew(reload := true) -> void:
 		await get_tree().process_frame
 		get_tree().reload_current_scene()
 
+## Keep the hearth and go back to the title (saved first; Resume finds it).
+func return_to_title() -> void:
+	visible = false
+	_solo = false
+	get_tree().paused = false
+	if Game.world_root != null and Game.world_root.has_method("return_to_title"):
+		Game.world_root.return_to_title()
+
 # ------------------------------------------------------------------ UI build
 
 func _ls(size: int, color: Color, weight := "regular") -> LabelSettings:
@@ -210,6 +218,7 @@ func _build() -> void:
 	var main := _page_box()
 	main.add_child(_button("Return to the World", close))
 	main.add_child(_button("Settings", func(): _show_page("settings")))
+	main.add_child(_button("Return to the Title", return_to_title))
 	main.add_child(_button("Begin the Journey Anew", func(): _show_page("confirm")))
 	main.add_child(_button("Leave the Highland", func(): get_tree().quit()))
 	_pages["main"] = main

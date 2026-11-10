@@ -104,7 +104,7 @@ func _render() -> void:
 		var l: Label = _rows[i]
 		l.label_settings = _ls(28, UITheme.EMBER_HOT if sel else UITheme.BONE_DIM)
 		l.text = ("◆   " if sel else "     ") + _options[i]["label"] \
-				+ ("      (default)" if _options[i]["id"] == "hearth" else "")
+				+ ("      (default)" if _options[i]["id"] == "long" else "")
 	_desc.text = _options[_opt_i]["desc"]
 
 func _unhandled_input(event: InputEvent) -> void:

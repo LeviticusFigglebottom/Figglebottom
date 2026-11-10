@@ -149,6 +149,7 @@ static func build(area_id: String) -> Area:
 		f.gate_id = spec.get("id", "fog")
 		f.area_id = area_id
 		f.aux_seal_specs = spec.get("seals", [])
+		f.shader_params = spec.get("shader", {})
 		var fg_pos := _v3(spec.get("at", [0, 0, 0]))
 		for pc in def.get("pieces", []):
 			var pk := String(pc.get("kit", ""))
@@ -211,6 +212,8 @@ static func build(area_id: String) -> Area:
 		k.display_kit = spec.get("kit", "")
 		k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
 		k.set_flag = spec.get("set_flag", "")
+		k.display_lift = float(spec.get("lift", 0.0))
+		k.chip_heavy = bool(spec.get("chip_heavy", false))
 		area.attach(k, spec.get("tag", "base"))
 		_place(k, spec)
 	for spec in def.get("flag_gates", []):
@@ -512,6 +515,31 @@ static func _flag_ok(spec: Dictionary) -> bool:
 		return false
 	return true
 
+## Props drop out with distance by their footprint (render/prop_ranges:
+## [small_max_m, small_range_m, mid_max_m, mid_range_m]); the route's worst
+## frames were the yard and the hall, full of barrels, benches and racks
+## drawn from across the shelf. Big kit (walls, boats) keeps no range.
+static func _range_by_size(piece: Node3D, kit: String, spec: Dictionary) -> void:
+	var r: Array = DB.tuning("render/prop_ranges", [1.6, 60.0, 4.5, 120.0])
+	var sz: Array = KitLib.manifest().get(kit, {}).get("size", [])
+	if sz.size() < 3:
+		return
+	var sc := 1.0
+	if spec.has("scale"):
+		var v = spec["scale"]
+		sc = maxf(maxf(float(v[0]), float(v[1])), float(v[2])) if v is Array else float(v)
+	var big := maxf(maxf(float(sz[0]), float(sz[1])), float(sz[2])) * sc
+	var end := float(r[1]) if big <= float(r[0]) else (float(r[3]) if big <= float(r[2]) else 0.0)
+	if end <= 0.0:
+		return
+	for gi in piece.find_children("*", "GeometryInstance3D", true, false):
+		var g := gi as GeometryInstance3D
+		if g.visibility_range_end > 0.0:
+			continue
+		g.visibility_range_end = end
+		g.visibility_range_end_margin = end * 0.1
+		g.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+
 static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 	if not _flag_ok(spec):
 		return null
@@ -530,6 +558,7 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 			# hollow shell so you can pass through openings; everything else
 			# is a solid convex blocker so the capsule never wedges inside it
 			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]))
+	_range_by_size(piece, String(spec["kit"]), spec)
 	if spec.get("flames", true) and (tag != "rime"):
 		KitLib.add_flame_lights(piece)
 	# "glow": [dy, energy, range] — a warm interior light the piece carries

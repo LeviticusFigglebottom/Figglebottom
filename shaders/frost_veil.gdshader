@@ -8,6 +8,10 @@ render_mode cull_disabled, unshaded, blend_mix, depth_draw_never;
 // ---------------------------------------------------------------------------
 
 uniform vec3 tint : source_color = vec3(0.84, 0.81, 0.73);
+// a veil may be a curtain of frozen net (the Netmender's, SLICE.md 3):
+// diamond mesh in metres; 0 strength is plain mist
+uniform float mesh_size = 0.34;
+uniform float mesh_strength : hint_range(0.0, 1.0) = 0.0;
 uniform float density : hint_range(0.0, 1.0) = 0.68;
 
 varying vec3 v_lp;
@@ -78,7 +82,17 @@ void fragment() {
 	vec3 crest_col = tint * vec3(1.22, 1.15, 0.96);
 	vec3 col = mix(deep_col, crest_col, clamp(body * 0.65 + crest * 0.55, 0.0, 1.0));
 
+	// the frozen net: diamond mesh with rimed knots, sagging a little
+	vec2 m = v_lp.xy / mesh_size;
+	m.y += sin(m.x * 0.7) * 0.12;
+	vec2 dg = vec2(m.x + m.y, m.x - m.y) * 0.7071;
+	vec2 cell = abs(fract(dg) - 0.5);
+	float twine = 1.0 - smoothstep(0.035, 0.085, min(cell.x, cell.y));
+	float knot = 1.0 - smoothstep(0.06, 0.16, length(0.5 - cell));
+	float net = clamp(twine + knot * 0.8, 0.0, 1.0) * mesh_strength;
+	col = mix(col, vec3(0.93, 0.97, 1.0), net * 0.75);
+
 	ALBEDO = col;
-	EMISSION = col * (0.38 + body * 0.52 + crest * 0.65);
-	ALPHA = clamp((body * density + floor_pool + 0.18 + crest * 0.20) * frame, 0.0, 0.92);
+	EMISSION = col * (0.30 + body * 0.42 + crest * 0.55 + net * 0.35);
+	ALPHA = clamp((body * density * 0.8 + floor_pool + 0.12 + crest * 0.20 + net * 0.6) * frame, 0.0, 0.94);
 }

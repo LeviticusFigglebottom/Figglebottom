@@ -88,6 +88,22 @@ float vnoise(vec3 p) {
 	               mix(hash13(i + vec3(0, 1, 1)), hash13(i + vec3(1, 1, 1)), f.x), f.y), f.z);
 }
 
+// rounded pebbles (cell distance): the value-noise speckle read as a
+// blocky pixel mosaic on the Strand's shingle at walking distance
+float pebbles(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	float d = 1.0;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			vec2 g = vec2(float(x), float(y));
+			vec2 o = vec2(hash13(vec3(i + g, 1.7)), hash13(vec3(i + g, 9.1))) * 0.8 + 0.1;
+			d = min(d, length(g + o - f));
+		}
+	}
+	return d;
+}
+
 void vertex() {
 	v_wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	v_wn = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);

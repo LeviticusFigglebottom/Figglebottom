@@ -106,6 +106,11 @@ func _on_talk(player) -> void:
 			_vis.rotation.y = ty
 		if player.get("vis") != null:
 			player.vis.rotation.y = atan2(to.x, to.z)
+		# frame the speaker over the Bearer's right shoulder: from behind,
+		# the Bearer's own hood hid whoever was talking
+		if player.get("cam") != null and player.cam.locked_target == null:
+			player.cam.yaw = atan2(to.x, to.z) + deg_to_rad(float(DB.tuning("camera/talk_yaw_off", 28.0)))
+	get_tree().call_group("hud", "clear_area_title")
 	player.enter_dialogue()
 	if not seated:   # (a seated soul talks from where it sits)
 		_vis.play("greet" if _vis.is_humanoid() and _vis.rig.has_clip("greet") else "talk", 0.4)
