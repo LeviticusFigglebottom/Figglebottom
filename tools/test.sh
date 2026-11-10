@@ -17,6 +17,9 @@ timeout 300 godot --headless --path . --import >/dev/null 2>&1
 for scene in tools/test/*_test.tscn; do
   name="$(basename "$scene" _test.tscn)"
   if [ -n "$FILTER" ] && [ "$name" != "$FILTER" ]; then continue; fi
+  # the full-game region walks run about a quarter of an hour each: only
+  # when asked for by name (CI runs them as their own parallel jobs)
+  case "$name" in fullgame_*) [ -z "$FILTER" ] && continue ;; esac
   echo "=== test: $name"
   # the full-slice walk plays the whole 20-minute slice in real time
   limit=300
