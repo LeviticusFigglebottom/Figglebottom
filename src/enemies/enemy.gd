@@ -591,7 +591,8 @@ func _st_attack(dt: float) -> void:
 			# the next strike re-arms the same volumes (begin_swing clears who
 			# was struck); ending them first would land a deferred disable
 			# after the re-arm and swallow the strike
-			if _atk.has("hit_anim"):
+			# a foe's own attack clip (ADR 0012) already carries its strike
+			if _atk.has("hit_anim") and not vis.has_clip("@" + String(_atk.get("id", ""))):
 				vis.play_timed(String(_atk["hit_anim"]), maxf(float(_atk.get("hit_lead", 0.12)), 0.05), 0.05)
 		_strike()
 		_hit_i += 1

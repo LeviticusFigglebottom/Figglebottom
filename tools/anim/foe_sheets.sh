@@ -13,8 +13,10 @@ for k, cs in m["clip_sets"].items():
     if k.startswith("foe_"):
         foe = k[4:]
         out += [f"{foe}@{a[1:]}" for a in cs if a.startswith("@")]
+        if "stagger" in cs:
+            out.append(f"{foe}@stagger")
         if "death" in cs:
-            out += [f"{foe}@stagger", f"{foe}@death"]
+            out.append(f"{foe}@death")
 print(" ".join(out))
 PY
 )

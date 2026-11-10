@@ -151,6 +151,7 @@ func build_quadruped(id: String) -> bool:
 	add_child(quad)
 	quad.setup(skel, inst.find_child("AnimationPlayer", true, false) as AnimationPlayer, cfg.get("poses", {}))
 	quad.stride = float(cfg.get("stride", 1.4))
+	quad.pose_seq = cfg.get("pose_seq", {})
 	return true
 
 func is_humanoid() -> bool:

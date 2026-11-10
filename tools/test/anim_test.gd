@@ -213,12 +213,16 @@ func _run() -> void:
 	shared.add_animation("roll", fake_roll)            # replaces the shared overlay
 	shared.add_animation("stagger", fake_stagger)      # outranks the "hit" alias
 	check(nm.vis.rig.qualified("roll") == "roll", "a real shared roll outranks her own overlay (%s)" % nm.vis.rig.qualified("roll"))
+	check(nm.vis.rig.qualified("stagger") == "f_netmender_stagger", "her own stagger clip (clip set) answers first (%s)" % nm.vis.rig.qualified("stagger"))
+	var nm_set: String = nm.vis.rig.clip_set
+	nm.vis.rig.clip_set = ""   # the plain alias chain, as a model without a clip set resolves it
 	check(nm.vis.rig.qualified("stagger") == "stagger", "a real stagger outranks the hit fallback")
 	check(absf(nm.vis.rig.clip_length("roll") - 1.5) < 0.01, "with no metadata it plays whole (%.2f s), not the overlay's 1.0 s"
 		% nm.vis.rig.clip_length("roll"))
 	shared.remove_animation("stagger")
 	shared.add_animation("roll", HumanoidOverlays.build(rw.vis.skel, shared.get_animation("idle"))["roll"])
 	check(nm.vis.rig.qualified("stagger") == "own/hit", "and without it stagger falls back to hit")
+	nm.vis.rig.clip_set = nm_set
 	var nm_head := _bone_pos(nm.vis, "mixamorig_HeadTop_End").y - nm.global_position.y
 	check(nm_head > 2.4, "she stands tall (head top %.2f m)" % nm_head)
 	check(nm.vis.weapon_mount == null, "bare-handed: the data maul is not mounted on her")

@@ -38,7 +38,8 @@ _Last updated: 2026-11-07 (founding session)_
 ## Foe animation (feat/foe-anims, ADR 0012)
 - **State:** 36 foe attacks (11 ordinary humanoid foes, plus the plain melee of the Turfwright, Ice-Cutter, Host and Hedgelayer) have their own hand-keyed clip cut to the attack's data windup, in the same `combat_lib.glb`. Ordinary foes also take the library stagger and death fall. Quadruped wind-up poses are held, not eased over the windup.
 - **Rebuild after any windup change:** `$BPY tools/anim/build_combat_lib.py && godot --headless --path . --import` (the build rewrites the `f_*` rows and `foe_*` sets in `clip_meta.json`). Look: `tools/anim/foe_sheets.sh --all`.
-- **Not done:** the Netmender; signature overlays (`door_fall`, `lift_stone`, `tray_spin`, boss prompt clips); foes that only exist on `feat/reach-coldwell-endings`; new quadruped poses (only their timing changed).
+- **Pass 2:** the retarget import now covers every rigged character (it had only ever been run on seven, so the rest played shared clips a quarter turn off); foes are keyed on their own idle stance (`godot --headless --path . -s tools/anim/dump_idles.gd` before a rebuild if a model changes); 55 attacks covered including the Netmender; per-foe staggers; quadruped load/extension/landing poses (`tools/anim/quad_poses.py`). NPCs went through the same import change and were not looked at one by one.
+- **Not done (pass 1 list, see ADR 0012 update for what remains):** signature overlays (`door_fall`, `lift_stone`, `tray_spin`, boss prompt clips); foes that only exist on `feat/reach-coldwell-endings`; new quadruped poses (only their timing changed).
 
 ## Next exact step
 1. Merge each branch above once its tests pass.

@@ -174,6 +174,26 @@ func _foe_sheet(foe: String, attack: String) -> String:
 		_stage.add_child(vis)
 		vis.build(cfg)
 		vis.set_physics_process(false)
+		if vis.quad != null:
+			# quadrupeds: one cell per pose (the attack id is ignored)
+			var names: Array = [""]
+			for pn0 in ["crouch", "lower", "lunge", "leap", "land", "rear", "bark", "shake", "flinch", "dead"]:
+				if vis.quad.poses.has(pn0):
+					names.append(pn0)
+			vis.quad.pose_seq = {}
+			vis.quad.set_physics_process(false)
+			vis.position = Vector3((i % 4 - 1.5) * 2.35, 0.25 if i < 4 else -2.45, 0)
+			vis.rotation_degrees.y = 100.0
+			vis.scale = Vector3.ONE * minf(1.0, 1.1 / maxf(float(cfg.get("hurt_h", 1.0)), 0.5))
+			var pn := String(names[i]) if i < names.size() else ""
+			vis.quad.only(pn, 0.0)
+			vis.quad._physics_process(1.0)
+			var ql := Label3D.new()
+			ql.text = pn if pn != "" else "stand"
+			ql.pixel_size = 0.0035
+			ql.position = vis.position + Vector3(-0.75, 2.2, 0.5)
+			_stage.add_child(ql)
+			continue
 		if vis.rig == null:
 			continue
 		vis.rig.set_physics_process(false)

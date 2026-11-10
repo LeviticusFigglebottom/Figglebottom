@@ -33,3 +33,12 @@ Runtime:
 - Not covered, left on their existing clips: the Netmender (her clips ride her own hunched idle), signature overlays (`door_fall`, `lift_stone`, `tray_spin`, the Holdfasts' prompt clips), and any foe rows that only exist on `feat/reach-coldwell-endings`.
 - The clips are authored on the Bearer's proportions and retargeted by the standard frame; very differently built bodies (the Turfwright's back load) can clip a raised arm into their own mesh.
 - Sheets: `tools/anim/foe_sheets.sh --all` writes `docs/screens/anim_foe_<id>_<attack>_sheet.png`.
+
+## Update: pass 2
+
+- **Root cause of foes striking sideways:** only seven models had ever been through `tools/art/humanoid_import.py`. Every other Mixamo foe and NPC still had an un-retargeted skeleton (rotated a quarter turn under its rig node, rest axes not the profile's), so shared clips and overlays played 90 degrees off their facing. The retarget options are now applied to every rigged character, with `fix_silhouette` on (the bulky bodies are rigged in an A-pose).
+- **Each foe is keyed on its own stance:** `tools/anim/dump_idles.gd` writes every model's idle pose from Godot's retargeted skeleton to `tools/anim/foe_idles.json`; the build uses it as the base pose, so the Netmender keeps her hunch and the carrier his stoop.
+- **Coverage is now 55 attacks**, including the Netmender (stitches, casts, sea weight, knot, mend), the Holdfasts' ground, throw and sweep moves, the carrier's stone set and toss, and the Cupbearer's whirl. A foe's hand raised above the shoulders is pushed wide and forward where the model carries a load (`clear`).
+- **Staggers** are per foe, on its own stance; Holdfasts' are slowed to fill their longer stagger. A foe's own attack clip suppresses the old `hit_anim` follow-up.
+- **Quadrupeds:** `tools/anim/quad_poses.py` derives a deeper load, a fuller extension and a new landing pose; `pose_seq` chains extension to landing.
+- Still on their old clips: Holdfast transitions, holds and release beats; `door_fall`; `back_drop`, `stack_sod`, `step_into`, `raise_guests`, `tip_horn`, `haul`, `turn_away`, `ring_cut`.

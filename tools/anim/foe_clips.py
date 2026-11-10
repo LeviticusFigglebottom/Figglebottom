@@ -17,6 +17,7 @@ import os
 
 import anim_pose as A
 import anim_rig as R
+import combat_clips as C
 
 P = R.P
 Z5 = [0, 0, 0, 0, 0]
@@ -278,6 +279,54 @@ def rouse(amp=1.0):
     return a, h, f
 
 
+def double_slice(amp=1.0):
+    """Two blades: both drawn across to the left hip, the body coiled over
+    them (the held shape); the right cuts out level, the left follows through
+    high."""
+    a = {"hips": [-0.03, -0.08, -0.10, 30 * amp, 8, 0], "chest": [34 * amp, 10, 4], "head": [-40, -4],
+         "rhand": [-0.40, 0.14, 1.02], "lhand": [-0.46, -0.10, 1.30],
+         "rpole": [0.3, 0.6, -0.7], "lpole": [-0.9, -0.3, 0.0], "footL": [-0.05, -0.10, 0, 12, 0]}
+    h = {"hips": [0.03, 0.22, -0.12, -24 * amp, 8, 0], "chest": [-34 * amp, 6, -4], "head": [30, -2],
+         "rhand": [0.62, 0.46, 1.16], "lhand": [-0.10, 0.58, 1.38],
+         "rpole": [0.7, -0.3, -0.6], "lpole": [-0.8, -0.2, -0.4],
+         "footR": [0.06, 0.26, 0, -8, 0], "footL": [-0.05, -0.10, 0.05, 12, 24]}
+    f = {"hips": [0.05, 0.24, -0.14, -36 * amp, 9, 0], "chest": [-50 * amp, 8, -6], "head": [42, -2],
+         "rhand": [0.74, -0.06, 1.02], "lhand": [0.44, 0.44, 1.10],
+         "footR": [0.06, 0.26, 0, -8, 0], "footL": [-0.05, -0.10, 0.05, 12, 24]}
+    return a, h, f
+
+
+def whirl(amp=1.0):
+    """Arms flung wide and level, the body wound right back; then spun
+    through more than a half turn on the lead foot, arms scything."""
+    a = {"hips": [0.03, -0.06, -0.10, -50 * amp, 6, 0], "chest": [-40 * amp, 6, 0], "head": [70, 0],
+         "rhand": [0.20, -0.66, 1.26], "lhand": [-0.50, 0.50, 1.26],
+         "rpole": [0.6, -0.3, -0.7], "lpole": [-0.6, 0.2, -0.7], "footR": [0.06, -0.14, 0, -30, 0]}
+    h = {"hips": [-0.02, 0.10, -0.12, 60 * amp, 6, 0], "chest": [46 * amp, 6, 0], "head": [-60, 0],
+         "rhand": [-0.30, 0.66, 1.22], "lhand": [-0.30, -0.62, 1.30],
+         "footL": [-0.03, 0.10, 0, 40, 0], "footR": [0.10, 0.06, 0.05, 30, 20]}
+    f = {"hips": [-0.03, 0.10, -0.13, 100 * amp, 6, 0], "chest": [60 * amp, 6, 0], "head": [-70, 0],
+         "rhand": [-0.70, 0.10, 1.16], "lhand": [0.30, -0.62, 1.30],
+         "footL": [-0.03, 0.10, 0, 70, 0], "footR": [0.14, 0.10, 0, 60, 0]}
+    return a, h, f
+
+
+def heave(amp=1.0):
+    """A heavy thing lifted in both hands over the head, the back arched
+    under it; hurled forward off the back foot, arms following right through."""
+    a = {"hips": [0, -0.12, 0.03, 0, -14 * amp, 0], "chest": [0, -20 * amp, 0], "head": [0, 6],
+         "rhand": [0.24, -0.16, 2.06], "lhand": [-0.24, -0.16, 2.06],
+         "rpole": [1.0, 0.0, 0.2], "lpole": [-1.0, 0.0, 0.2], "footR": [0.04, -0.16, 0, -10, 0], "fists": False}
+    h = {"hips": [0, 0.24, -0.10, 0, 16 * amp, 0], "chest": [0, 22 * amp, 0], "head": [0, -14],
+         "rhand": [0.22, 0.74, 1.70], "lhand": [-0.22, 0.74, 1.70],
+         "rpole": [0.9, -0.2, -0.4], "lpole": [-0.9, -0.2, -0.4],
+         "footL": [-0.02, 0.30, 0, 0, 0], "footR": [0.04, -0.16, 0.06, -10, 30], "fists": False}
+    f = {"hips": [0, 0.28, -0.20, 0, 26 * amp, 0], "chest": [0, 32 * amp, 0], "head": [0, -10],
+         "rhand": [0.26, 0.66, 0.92], "lhand": [-0.26, 0.66, 0.92],
+         "footL": [-0.02, 0.30, 0, 0, 0], "footR": [0.04, -0.16, 0.06, -10, 30], "fists": False}
+    return a, h, f
+
+
 def twist(amp=1.0):
     """A load across the shoulders, hands up on it: the whole frame wound
     back, then spun through so the ends of the load sweep round."""
@@ -285,7 +334,8 @@ def twist(amp=1.0):
         import math
         c, s_ = math.cos(math.radians(yaw)), math.sin(math.radians(yaw))
         rot = lambda r, f, u: [r * c + f * s_, -r * s_ + f * c, u]
-        return rot(0.46, 0.06, 1.50), rot(-0.46, 0.06, 1.50)
+        # hands out on the ends of the yoke, ahead of the load on the back
+        return rot(0.62, 0.22, 1.42), rot(-0.62, 0.22, 1.42)
     ra, la = hands(-58 * amp)
     rh, lh = hands(40 * amp)
     rf, lf = hands(70 * amp)
@@ -332,46 +382,71 @@ def oar_ship(amp=1.0):
 
 ARCH = {"hook": hook, "backhand": backhand, "overhead": overhead, "double_slam": double_slam, "thrust": thrust,
         "throw": throw, "plant": plant, "sweep_low": sweep_low, "cross_cut": cross_cut, "rush": rush,
-        "scoop": scoop, "keen": keen, "hush": hush, "rouse": rouse, "twist": twist,
+        "scoop": scoop, "double_slice": double_slice, "whirl": whirl, "heave": heave, "keen": keen, "hush": hush, "rouse": rouse, "twist": twist,
         "oar_stroke": oar_stroke, "oar_back": oar_back, "oar_ship": oar_ship}
 
-# foe id -> {"post": [lean deg, crouch m], attacks: {attack id: (archetype, opts)}}
+# foe id -> {"post": [0, 0.0], attacks: {attack id: (archetype, opts)}}
 FOES = {
-    "rimewalker": {"post": [12, 0.04], "attacks": {
+    "rimewalker": {"attacks": {
         "swipe": ("hook", {"amp": 1.1}), "flail": ("double_slam", {"amp": 1.1})}},
-    "oarsman": {"post": [6, 0.03], "attacks": {
+    "oarsman": {"attacks": {
         "stroke": ("oar_stroke", {}), "back_stroke": ("oar_back", {"strike": 0.14}), "ship_oars": ("oar_ship", {})}},
-    "barrow_sleeper": {"post": [0, 0.0], "attacks": {
+    "barrow_sleeper": {"attacks": {
         "hammer_fist": ("overhead", {"amp": 1.1}), "back_fist": ("backhand", {"side": "L"})}},
-    "keener": {"post": [4, 0.0], "attacks": {
+    "keener": {"attacks": {
         "breath_note": ("keen", {"amp": 0.8}), "keen": ("keen", {"amp": 1.25, "creep": 0.22}),
         "hush": ("hush", {}), "rouse": ("rouse", {})}},
-    "cairn_carrier": {"post": [14, 0.05], "attacks": {"yoke_swing": ("twist", {})}},
-    "ice_fisher": {"post": [8, 0.03], "attacks": {
+    # the yoke and its stones ride the back: every raised hand stays wide and ahead of it
+    "cairn_carrier": {"clear": [0.16, 0.14], "attacks": {
+        "yoke_swing": ("twist", {}), "set_stone": ("plant", {}), "stone_toss": ("heave", {})}},
+    "ice_fisher": {"attacks": {
         "pick": ("overhead", {"amp": 0.7, "reach": 0.74, "low": 1.0}), "pick_left": ("hook", {"side": "L"}),
         "cut_hole": ("plant", {})}},
-    "sealer": {"post": [8, 0.03], "attacks": {
+    "sealer": {"attacks": {
         "club": ("overhead", {"amp": 1.15}), "backhand": ("backhand", {}), "hook": ("throw", {})}},
-    "feast_guest": {"post": [6, 0.02], "attacks": {
+    "feast_guest": {"attacks": {
         "cuff": ("hook", {}), "cuff_left": ("hook", {"side": "L", "amp": 0.85}), "toast": ("overhead", {"amp": 0.9})}},
-    "cupbearer": {"post": [4, 0.02], "attacks": {
-        "slice": ("cross_cut", {"rise": 0.16, "strike": 0.09}), "lunge": ("thrust", {"amp": 1.1, "reach": 0.92})}},
-    "hall_champion": {"post": [6, 0.04], "attacks": {
+    "cupbearer": {"attacks": {
+        "slice": ("double_slice", {"rise": 0.13, "strike": 0.09}), "lunge": ("thrust", {"amp": 1.1, "reach": 0.92}),
+        "going_round": ("whirl", {"strike": 0.16})}},
+    "hall_champion": {"attacks": {
         "mace": ("overhead", {"amp": 1.15}), "shield_bash": ("thrust", {"side": "L", "amp": 0.9, "height": 1.2}),
         "shield_rush": ("rush", {})}},
-    "collier": {"post": [14, 0.05], "attacks": {
+    "collier": {"attacks": {
         "rake": ("sweep_low", {}), "smother": ("double_slam", {}), "cinders": ("scoop", {})}},
-    # Holdfasts: only the plain melee that leaned on the one slowed-down chop
-    "turfwright": {"post": [10, 0.04], "attacks": {
+    # Holdfasts. Kept on their own clips: transitions, holds, and the prompt
+    # clips that read (back_drop, stack_sod, step_into, raise_guests, tip_horn,
+    # the Netmender's haul and turn_away).
+    "netmender": {"boss": True, "attacks": {
+        "needle_stitch": ("thrust", {"amp": 0.9, "height": 1.12}), "one_hand_stitch": ("thrust", {"amp": 0.9, "height": 1.12}),
+        "cast": ("throw", {}), "last_cast": ("throw", {"amp": 1.1}),
+        "sea_weight": ("double_slam", {"amp": 0.9}), "knot": ("plant", {}), "mend_floor": ("plant", {"amp": 0.8})}},
+    "turfwright": {"boss": True, "clear": [0.20, 0.22], "attacks": {
         "spade_chop": ("overhead", {}), "one_hand_chop": ("overhead", {"amp": 1.1}), "drag_swing": ("sweep_low", {}),
-        "sod_throw": ("throw", {})}},
-    "ice_cutter": {"post": [8, 0.03], "attacks": {"auger_thrust": ("thrust", {"amp": 1.1})}},
-    "host": {"post": [6, 0.02], "attacks": {"horn_fist": ("overhead", {"amp": 1.1})}},
-    "hedgelayer": {"post": [10, 0.04], "attacks": {"bill": ("hook", {"amp": 1.05})}},
+        "sod_throw": ("throw", {}), "ground_cut": ("plant", {}), "cross_cut": ("plant", {"amp": 0.9})}},
+    "ice_cutter": {"boss": True, "attacks": {
+        "auger_thrust": ("thrust", {"amp": 1.1}), "drill_down": ("plant", {}), "trace": ("throw", {}),
+        "dog_team": ("rouse", {})}},
+    "host": {"boss": True, "attacks": {
+        "horn_fist": ("overhead", {"amp": 1.1}), "table_sweep": ("sweep_low", {"amp": 1.15}),
+        "bench_throw": ("heave", {})}},
+    "hedgelayer": {"boss": True, "attacks": {
+        "bill": ("hook", {"amp": 1.05}), "thorn_lash": ("throw", {}), "raise_wall": ("plant", {})}},
 }
 
 
-def telegraph(rig, fps, windup, arch, opts, post):
+def _clear(c, clear):
+    """Keep raised hands off a load carried on the back: any hand above the
+    shoulders is pushed out to its own side and forward."""
+    c = dict(c)
+    for k, sgn in (("rhand", 1.0), ("lhand", -1.0)):
+        v = c.get(k)
+        if isinstance(v, list) and v[2] > 1.35:
+            c[k] = [v[0] + sgn * clear[0], max(v[1], 0.0) + clear[1], v[2]]
+    return c
+
+
+def telegraph(rig, fps, windup, arch, opts, post, clear=None):
     """Rise, HOLD, strike on `windup`, overshoot, held follow-through, recover."""
     o = dict(opts)
     side = o.pop("side", "R")
@@ -383,6 +458,8 @@ def telegraph(rig, fps, windup, arch, opts, post):
         a, h, f = mirror(a), mirror(h), mirror(f)
     n = neutral(rig)
     a, h, f = _posture(a, post), _posture(h, post), _posture(f, post)
+    if clear:
+        a, h, f = _clear(a, clear), _clear(h, clear), _clear(f, clear)
     rise = min(rise, max(windup - strike - 0.02, 0.06) * 0.6)
     hold_end = windup - strike
     keys = [(0.0, "inout", n), (rise, "out", a)]
@@ -405,13 +482,17 @@ def build(ctx, root):
     """{clip name: poses}, and the meta the game needs (sections, clip sets)."""
     with open(os.path.join(root, "data/combat/enemies.json")) as fh:
         enemies = json.load(fh)
-    base = ctx.mocap("ual1", "Idle_Loop", 0, 1)[0]
-    rig = A.Rig(ctx.skel, base, ctx.grips["onehand"], fist_from=ctx.stance())
+    with open(os.path.join(root, "data/anim/clip_meta.json")) as fh:
+        models = json.load(fh)["models"]
     clips, rows, sets = {}, {}, {}
     for foe, spec in FOES.items():
         cfg = enemies.get(foe)
         if not cfg:
             continue
+        # each foe is keyed on the way its own body stands (its idle's first
+        # frame): the Netmender's hunch, the carrier's stoop under the yoke
+        base = ctx.own_idle(str(cfg.get("model", "")))
+        rig = A.Rig(ctx.skel, base, ctx.grips["onehand"], fist_from=ctx.stance())
         by_id = {a["id"]: a for a in cfg.get("attacks", [])}
         cs = {}
         for aid, (arch, opts) in spec["attacks"].items():
@@ -419,9 +500,17 @@ def build(ctx, root):
                 continue
             w = float(by_id[aid]["windup"])
             name = f"f_{foe}_{aid}"
-            poses = telegraph(rig, ctx.fps, w, arch, opts, spec["post"])
+            poses = telegraph(rig, ctx.fps, w, arch, opts, spec.get("post", [0, 0.0]), spec.get("clear"))
             clips[name] = poses
             rows[name] = {"start": 0.0, "contact": round(w, 3), "end": round((len(poses) - 1) / ctx.fps, 3)}
             cs["@" + aid] = [name]
+        # hit react on the foe's own stance (the Bearer's is a sword stance);
+        # a Holdfast's is slowed to fill its longer stagger
+        st = C.react_front(ctx, base=base)
+        if spec.get("boss"):
+            st = A.warp(st, [(0, len(st), 1.9)])
+        clips[f"f_{foe}_stagger"] = st
+        rows[f"f_{foe}_stagger"] = {"start": 0.0, "end": round((len(st) - 1) / ctx.fps, 3)}
+        cs["stagger"] = [f"f_{foe}_stagger"]
         sets[foe] = cs
     return clips, rows, sets

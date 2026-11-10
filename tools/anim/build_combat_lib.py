@@ -135,6 +135,32 @@ def retarget(skel, src, frames):
     return out
 
 
+_IDLES = None
+
+
+def own_idle(skel, model_id):
+    """A model's idle stance as the game shows it (tools/anim/foe_idles.json,
+    written by dump_idles.gd from Godot's retargeted skeletons): its hunch,
+    lean and arm carriage, so a foe's clips start from and return to the way
+    that body stands. Godot skeleton space is x left, y up, z forward."""
+    global _IDLES
+    if _IDLES is None:
+        with open(os.path.join(HERE, "foe_idles.json")) as fh:
+            _IDLES = json.load(fh)
+    pose = skel.rest()
+    row = _IDLES.get(model_id)
+    if not row:
+        return pose
+    pose.hips = Vector((skel.hips0.x, skel.hips0.y, skel.hips0.z * row["hips"]))
+    for n in skel.names:   # parents first
+        q = row["bones"].get(n.replace(R.P, ""))
+        if q is None:
+            continue
+        w, x, y, z = q
+        pose.set_world(n, Quaternion((w, x, -z, y)) @ skel.w0[n])
+    return pose
+
+
 def write_action(arm, skel, name, poses):
     act = bpy.data.actions.new(name)
     act.use_fake_user = True
@@ -165,7 +191,7 @@ def write_action(arm, skel, name, poses):
     arm.animation_data.action = None
 
 
-COMMON_FOE = {"stagger": ["react_front"], "stagger_back": ["react_back"], "death": ["fall_back"]}
+COMMON_FOE = {"death": ["fall_back"]}
 BOSSES_KEEP_OWN = ("turfwright", "ice_cutter", "host", "hedgelayer", "netmender")
 
 
@@ -183,7 +209,7 @@ def write_foe_meta(rows, sets):
     meta["clips"].update(rows)
     for foe, cs in sets.items():
         cs = dict(cs)
-        if foe not in BOSSES_KEEP_OWN:   # Holdfasts keep their own staggers and endings
+        if foe not in BOSSES_KEEP_OWN:   # Holdfasts keep their own endings
             cs.update(COMMON_FOE)
         meta["clip_sets"]["foe_" + foe] = cs
         if foe in meta["models"]:
@@ -246,6 +272,7 @@ def main():
                 g, a, _e = grips["onehand"].weapon_of(p)
                 tip = A.rfu(g + a * 0.9)
                 print(f"    f{i:3d} t={i / FPS:.2f} tip r{tip[0]:+.2f} f{tip[1]:+.2f} u{tip[2]:+.2f} v={sp[i]:5.1f} hips u{p.hips.z:.2f}")
+    ctx.own_idle = lambda model_id: own_idle(skel, model_id)
     foe_clips, foe_rows, foe_sets = F.build(ctx, ROOT)
     for name, poses in foe_clips.items():
         if only and name not in only:
