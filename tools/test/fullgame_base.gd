@@ -126,12 +126,19 @@ func _sidestep() -> void:
 	await ticks(36)
 	_stuck_n = 0
 
+## A walk gives up as soon as this holds (crossing a seam: the ground under
+## the Bearer has changed areas, and the old waypoint lies back over it).
+var _halt := Callable()
+
 ## Steered capsule: face the point and walk; stop for foes that come at us.
 func _walk_to(to: Vector3, max_ticks := 900, tol := 1.0, fight := true) -> bool:
 	var waited := 0
 	while waited < max_ticks:
 		if player.dead:
 			break
+		if _halt.is_valid() and _halt.call():
+			player.sim_move = Vector3.ZERO
+			return false
 		if fight:
 			var f := _foe_near(7.0, true)
 			if f != null:
@@ -365,13 +372,17 @@ func _hearth_lit(hearth_id: String) -> bool:
 ## (prompted portal). `via` is a point on this side, at or just past the
 ## portal. Re-binds `area` once the new one stands. Returns true on arrival.
 func _cross(to_area: String, via: Vector3, max_ticks := 9000, fight := false) -> bool:
+	_halt = func(): return Game.current_area_id == to_area
 	await _walk_path(via, max_ticks, fight)
 	if Game.current_area_id != to_area:
 		# a seam sits at the navmesh edge: push on over it; a door wants a hand
 		await _walk_to(via, 240, 0.4, fight)
+	_halt = Callable()
+	player.sim_move = Vector3.ZERO
+	if Game.current_area_id != to_area:
 		await _settle()
 		var it := player.nearest_interactable()
-		if Game.current_area_id != to_area and it != null and it.get_parent() is AreaPortal:
+		if it != null and it.get_parent() is AreaPortal:
 			player.try_interact()
 	var ok := await _until(func(): return Game.current_area_id == to_area and player.input_enabled, 12.0)
 	if ok:
