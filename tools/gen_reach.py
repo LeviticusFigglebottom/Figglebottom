@@ -142,34 +142,65 @@ while placed < 70 and tries < 4000:
     if H.pasture_out(x, z) > -3 or z > H.beck_z(x) - 6 or math.hypot(x - FX, z - FZ) < H.FOLD_R + 3.5 or near_trod(x, z, 2.2):
         continue
     face = math.degrees(math.atan2(-(FX - x), -(FZ - z)))     # their faces (local -Z) to the fold
+    # standing, until she is released (REACH.md 9: one soft call, and the whole
+    # slope lies down at once: Fellcaller.lie_flock_down finds them by group);
+    # lying, ever after
     PROPS.append({"kit": "sheep", "at": at(x, z), "rot": r2(face), "tag": "rime", "collide": True,
-                  "mat_remap": {"M_wool": "M_rime", "M_leather": "M_rime"}})
+                  "mat_remap": {"M_fleece": "M_rime", "M_wool": "M_rime", "M_leather": "M_rime"},
+                  "group": "flock_rime", "absent_flag": "ks_fellcaller_released"})
+    PROPS.append({"kit": "sheep", "at": at(x, z), "rot": r2(face), "tag": "rime", "collide": True,
+                  "mat_remap": {"M_fleece": "M_rime", "M_wool": "M_rime", "M_leather": "M_rime"},
+                  "scale": [1.0, 0.58, 1.0], "require_flag": "ks_fellcaller_released"})
     placed += 1
 
 place = []
 
 # --- people and the frost-taken -------------------------------------------------------
+CAIRN = (FX + 3.0, FZ - 3.0)
+FELLCALLER = (FX - 2.0, FZ - 2.0)
+FATHER = (FELLCALLER[0] + 3.0, FELLCALLER[1] - 1.2)     # enemies.json fellcaller.father_off
 hearths = [
     {"id": "hs_fell_path", "name": "the Fell Path", "at": at(538.0, -320.0), "rot": 200},
     {"id": "hs_sheilings", "name": "the Sheilings", "at": at(604.0, -306.0), "rot": 160},
+    # wakes on release (REACH.md 1, 9)
+    {"id": "hs_high_fold", "name": "the High Fold", "at": at(FX - 6.5, FZ - 5.5), "rot": 60, "require_flag": "ks_fellcaller_released"},
 ]
 spawners = [
-    {"enemy": "drover", "stand_in": "rimewalker", "id": "drover_path", "at": at(556.0, -323.0, 0.1), "face": 270},
-    {"enemy": "drover", "stand_in": "rimewalker", "id": "drover_sheilings", "at": at(626.0, -292.0, 0.1), "face": 200},
-    {"enemy": "drover", "stand_in": "rimewalker", "id": "drover_bridge", "at": at(H.BRIDGE_X + 6.0, BZ - 9.0, 0.1), "face": 160},
-    {"enemy": "frost_ram", "stand_in": "hearthhound", "id": "ram_slope_a", "at": at(642.0, -360.0, 0.1), "face": 200},
-    {"enemy": "frost_ram", "stand_in": "hearthhound", "id": "ram_slope_b", "at": at(680.0, -386.0, 0.1), "face": 240},
-    {"enemy": "frost_ram", "stand_in": "hearthhound", "id": "ram_grass", "at": at(660.0, -300.0, 0.1), "face": 90},
-    {"enemy": "fellcaller", "stand_in": "netmender", "id": "fellcaller", "at": at(FX - 2.0, FZ - 2.0, 0.1), "face": 315,
+    {"enemy": "drover", "id": "drover_path", "at": at(556.0, -323.0, 0.1), "face": 270},
+    {"enemy": "drover", "id": "drover_sheilings", "at": at(626.0, -292.0, 0.1), "face": 200},
+    {"enemy": "drover", "id": "drover_bridge", "at": at(H.BRIDGE_X + 6.0, BZ - 9.0, 0.1), "face": 160},
+    {"enemy": "frost_ram", "id": "ram_slope_a", "at": at(642.0, -360.0, 0.1), "face": 200},
+    {"enemy": "frost_ram", "id": "ram_slope_b", "at": at(680.0, -386.0, 0.1), "face": 240},
+    {"enemy": "frost_ram", "id": "ram_grass", "at": at(660.0, -300.0, 0.1), "face": 90},
+    # REACH.md 6: beside her father at the cairn, calling out over the wall
+    {"enemy": "fellcaller", "id": "fellcaller", "at": at(FELLCALLER[0], FELLCALLER[1], 0.1), "face": 315,
      "dead_once": True, "frost_veil_id": "fold_veil"},
 ]
 VEIL = at(GAP[0], GAP[1])
+S0 = H.SHEILINGS[0]
 pickups = [
-    {"id": "shepherds_whistle", "at": at(H.SHEILINGS[0][0] - 3.5, H.SHEILINGS[0][1] + 3.8, 0.05), "warmth": 45, "tag": "base",
-     "label": "Take the shepherd's whistle"},
+    # REACH.md 2, 8: the whistle on its nail at the lower sheiling; his boots by the door
+    {"id": "shepherds_whistle", "at": at(S0[0] - 3.5, S0[1] + 3.8, 0.05), "item": "item_shepherd_whistle", "tag": "base",
+     "scene": "res://assets/models/props/bone_whistle.tscn", "label": "Take the shepherd's whistle"},
+    {"id": "calder_boots", "at": at(S0[0] + 2.2, S0[1] + 4.3, 0.02), "rot": 12, "item": "item_calder_boots", "tag": "rime",
+     "scene": "res://assets/models/props/calder_boots.tscn", "set_flag": "ks_calder_boots_found", "label": "Take the boots"},
     {"id": "fold_cache", "at": at(FX - 9.0, FZ + 18.0, 0.05), "item": "bog_iron", "count": 2, "tag": "rime", "label": "Pry up what the frost holds"},
 ]
-npcs = [{"id": "old_calder", "at": at(GAP[0] + 3.5, GAP[1] + 2.0), "rot": 300, "tag": "thaw"}]
+# the trod from the bridge up to the fold's gap: Sigga calls from the slope beside it
+TX, TZ = H.BRIDGE_X + (GAP[0] - H.BRIDGE_X) * 0.6 + 3.0, (BZ - 6.0) + (GAP[1] - (BZ - 6.0)) * 0.6
+npcs = [
+    # REACH.md 7: before the release, Calder at the gap with the wall; Sigga on the slope
+    {"id": "old_calder", "at": at(GAP[0] + 3.5, GAP[1] + 2.0), "rot": 300, "tag": "thaw", "absent_flag": "ks_fellcaller_released"},
+    {"id": "sigga", "at": at(TX, TZ), "rot": 200, "tag": "thaw", "absent_flag": "ks_fellcaller_released"},
+    # REACH.md 9: after, the two of them in the fold, at the wall he has finished
+    {"id": "old_calder", "at": at(FX - 7.0, FZ + 4.0), "rot": 240, "tag": "thaw", "require_flag": "ks_fellcaller_released"},
+    {"id": "sigga_fold", "at": at(FX - 5.4, FZ + 5.2), "rot": 300, "tag": "thaw", "require_flag": "ks_fellcaller_released"},
+    # REACH.md 4: RIME. He is laid out at the foot of the cairn where she found him (head to the south)
+    {"id": "calder_rime", "at": at(FATHER[0], FATHER[1] - 0.9), "rot": 0, "tag": "rime"},
+]
+# his boots, off, beside him at the wall (after the release, THAW)
+LANDMARKS.append({"scene": "res://assets/models/props/calder_boots.tscn", "at": at(FX - 7.9, FZ + 4.9, 0.02), "rot": 240,
+                  "tag": "thaw", "require_flag": "ks_fellcaller_released"})
 
 portals = [seam("reach", "shepherds_reach"), seam("coldwell", "shepherds_reach")]
 arrive = seam("reach", "thornwold")

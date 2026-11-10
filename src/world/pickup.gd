@@ -27,6 +27,10 @@ var display_lift := 0.0
 var chip_heavy := false
 var chip_hint := "The ice holds it fast. A heavy blow might chip it free."
 
+## a thing that is looked at, not taken (one set of footprints in the ice):
+## the words go up on the reading panel, the flag is raised, and it stays
+var look_text := ""
+
 var _zone: Interactable
 var _shown := true
 
@@ -48,7 +52,7 @@ func _ready() -> void:
 		if not mesh.get_meta("upright", false):
 			mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
 		# (a thing that stands, like the Host's cup, says so: metadata/upright)
-		mesh.position.y = 0.05
+		mesh.position.y = 0.05 + display_lift
 		add_child(mesh)
 		var gl := OmniLight3D.new()
 		gl.light_color = Color(0.95, 0.93, 0.86)
@@ -101,6 +105,12 @@ func chip(player) -> void:
 		_on_take(player)
 
 func _on_take(player) -> void:
+	if look_text != "":
+		if set_flag != "":
+			World.set_flag(set_flag)
+		Game.lore_panel.emit(look_text)
+		World.save_game()
+		return
 	World.set_area_flag(area_id, "took_" + pickup_id)
 	if set_flag != "":
 		World.set_flag(set_flag)

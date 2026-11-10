@@ -51,6 +51,26 @@
    "vol_density": 0.016
   }
  },
+ "fog_pockets": [
+  {
+   "id": "tarn_steps",
+   "at": [
+    82,
+    15,
+    -316
+   ],
+   "size": [
+    32,
+    12,
+    32
+   ],
+   "density": [
+    0.006,
+    0.05
+   ],
+   "height_falloff": 0.5
+  }
+ ],
  "terrain": {
   "source": "res://data/terrain/tarnhall_h.bin",
   "splat": "res://data/terrain/tarnhall_splat.bin",
@@ -5284,6 +5304,19 @@
    "label": "Untie the guest-tally",
    "appear_flag": "ks_host_released",
    "set_flag": "ks_guest_tally_found"
+  },
+  {
+   "id": "latch_wool",
+   "at": [
+    179.25,
+    24.5,
+    -328.3
+   ],
+   "lift": 1.05,
+   "item": "item_latch_wool",
+   "tag": "rime",
+   "scene": "res://assets/models/props/latch_wool.tscn",
+   "label": "Take the wool off the latch"
   }
  ],
  "portals": [

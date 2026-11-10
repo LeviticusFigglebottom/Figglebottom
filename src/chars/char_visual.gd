@@ -62,6 +62,15 @@ var _lean := Vector2.ZERO
 var _flinch_amp := 0.0
 var _flinch_phase := 0.0
 var _flinch_axis := Vector3(1, 0, 0)
+var _grip_act := Transform3D.IDENTITY
+var _grip_carry := Transform3D.IDENTITY
+var _grip_w := 0.0
+var _has_carry := false
+var _antic_t := 0.0
+var _antic_dur := 0.0
+var _antic_deg := 0.0
+var _dig := 0.0
+var _dig_rate := 1.0
 
 ## Locomotion clip substitutions (e.g. a two-handed carry:
 ## {"idle": "twohand_idle", "walk": "twohand_walk", "run": "twohand_walk"}).
@@ -116,6 +125,7 @@ func build_model(id: String) -> bool:
 	rig.name = "Rig"
 	add_child(rig)
 	rig.setup(id, skel)
+	rig.clip_set = String(cfg.get("clip_set", ""))   # a foe's own attack clips (ADR 0012)
 	return true
 
 ## A Tripo quadruped from clip_meta.json: its glb's walk plays by ground
@@ -141,6 +151,7 @@ func build_quadruped(id: String) -> bool:
 	add_child(quad)
 	quad.setup(skel, inst.find_child("AnimationPlayer", true, false) as AnimationPlayer, cfg.get("poses", {}))
 	quad.stride = float(cfg.get("stride", 1.4))
+	quad.pose_seq = cfg.get("pose_seq", {})
 	return true
 
 func is_humanoid() -> bool:
@@ -189,6 +200,58 @@ func _process(dt: float) -> void:
 		body.rotation = _flinch_axis * wave
 	elif body.rotation != Vector3.ZERO:
 		body.rotation = Vector3.ZERO
+	if _has_carry and weapon_mount != null:
+		# the hand turns the weapon into its fighting grip as an action takes the rig
+		_grip_w = move_toward(_grip_w, 1.0 if rig.action_active() else 0.0, dt * 9.0)
+		weapon_mount.transform = _grip_carry.interpolate_with(_grip_act, smoothstep(0.0, 1.0, _grip_w))
+	# strike polish, added on top of the clip: a lean away through the
+	# wind-up that is spent by the contact frame, and a short dig forward on
+	# a landed hit. Both run on scaled time, so Juice's hit-stop freezes the
+	# dig (and the clip) on the impact pose.
+	if _antic_dur > 0.0:
+		_antic_t += dt
+		var u := _antic_t / _antic_dur
+		if u >= 1.0:
+			_antic_dur = 0.0
+		else:
+			body.rotation.x += deg_to_rad(_antic_deg) * sin(PI * u) * (1.0 - u)
+	if _dig > 0.0005:
+		body.rotation.x -= deg_to_rad(_dig)
+		_dig = move_toward(_dig, 0.0, dt * _dig_rate)
+
+## Lean away from the strike while it winds up (`windup` seconds to contact).
+func anticipate(windup: float) -> void:
+	var pol: Dictionary = HumanoidLib.meta().get("polish", {})
+	_antic_deg = float(pol.get("antic_lean_deg", 0.0))
+	_antic_dur = maxf(windup, 0.0) if rig != null and _antic_deg != 0.0 else 0.0
+	_antic_t = 0.0
+
+func cancel_anticipation() -> void:
+	_antic_dur = 0.0
+
+## A landed blow: the body digs in behind the weapon and eases back out.
+func impact_dig(might := 1.0) -> void:
+	if rig == null:
+		return
+	var pol: Dictionary = HumanoidLib.meta().get("polish", {})
+	_dig = float(pol.get("impact_dig_deg", 0.0)) * might
+	_dig_rate = _dig / maxf(float(pol.get("impact_dig_ease", 0.2)), 0.01)
+
+## Seconds before the hit window that the swing ribbon starts (clip_meta polish).
+func trail_lead() -> float:
+	return float((HumanoidLib.meta().get("polish", {}) as Dictionary).get("trail_lead", 0.0))
+
+## Whether a clip resolves on this rig (humanoid: through sets and aliases).
+func has_clip(clip: String) -> bool:
+	if rig != null:
+		return rig.has_clip(clip)
+	return anim != null and anim.has_animation(clip)
+
+## A one-shot action has played out (a humanoid holds its last frame).
+func action_done() -> bool:
+	if rig != null:
+		return not rig.action_active()
+	return anim == null or not anim.is_playing()
 
 ## A gear mount that rides a bone. Returned node is a child of the
 ## BoneAttachment3D; offset/orient it freely, then parent kit pieces to it.
@@ -224,7 +287,8 @@ func mount_slot(slot: String) -> Node3D:
 	return m
 
 func _apply_slot(m: Node3D) -> void:
-	var c := HumanoidLib.mount_cfg(String(m.get_meta("slot", "weapon")))
+	# a weapon class may grip differently (mounts "weapon@twohand")
+	var c := HumanoidLib.class_mount_cfg(String(m.get_meta("slot", "weapon")), rig.clip_set if rig != null else "")
 	var p: Array = c.get("pos", [0, 0, 0])
 	var r: Array = c.get("rot", [0, 0, 0])
 	m.position = Vector3(p[0], p[1], p[2])
@@ -262,6 +326,15 @@ func set_weapon(kit_id: String) -> void:
 	for c in weapon_mount.get_children():
 		c.queue_free()
 	weapon_kit = kit_id
+	if rig != null and bool(HumanoidLib.model_cfg(model_id).get("clip_sets", false)):
+		# the weapon's class picks the clips that answer attack_l1, block, ...
+		rig.clip_set = HumanoidLib.weapon_class(kit_id)
+		# a two-handed class keeps both hands on the haft through locomotion
+		var cc := HumanoidLib.candidates("_carry", rig.clip_set)
+		if cc.size() > 1 and rig.has_clip(String(cc[0])):
+			rig.set_carry(String(cc[0]), _carry_bones())
+		else:
+			rig.set_carry("")
 	if kit_id != "":
 		var w: Node3D = HumanoidLib.weapon_instance(kit_id) if rig != null else null
 		weapon_mount.add_child(w if w != null else KitLib.instance(kit_id))
@@ -276,6 +349,18 @@ func apply_carry_pose(clip := "") -> void:
 		return
 	if rig != null:
 		_apply_slot(weapon_mount)   # the grip is data; humanoid clips carry the blade
+		_grip_act = weapon_mount.transform
+		# between actions the weapon is carried, not presented (carry@<class>)
+		var cc := HumanoidLib.class_mount_cfg("carry", rig.clip_set)
+		_grip_carry = _grip_act
+		_has_carry = rig.clip_set != "" and not cc.is_empty()
+		if _has_carry:
+			var cp: Array = cc.get("pos", [0, 0, 0])
+			var cr: Array = cc.get("rot", [0, 0, 0])
+			_grip_carry = Transform3D(Basis.from_euler(Vector3(deg_to_rad(cr[0]), deg_to_rad(cr[1]), deg_to_rad(cr[2]))),
+					Vector3(cp[0], cp[1], cp[2]))
+			_grip_w = 1.0 if rig.action_active() else 0.0
+			weapon_mount.transform = _grip_carry.interpolate_with(_grip_act, _grip_w)
 		return
 	var c: String = clip
 	if c == "" and anim != null:
@@ -284,6 +369,16 @@ func apply_carry_pose(clip := "") -> void:
 		weapon_mount.rotation_degrees = Vector3.ZERO
 	else:
 		weapon_mount.rotation_degrees = Vector3(CARRY_POSE.get(weapon_kit, Vector3.ZERO))
+
+func _carry_bones() -> Array:
+	var out := []
+	for side in ["Left", "Right"]:
+		for b in ["Shoulder", "Arm", "ForeArm", "Hand"]:
+			out.append("mixamorig_%s%s" % [side, b])
+		for f in ["Thumb", "Index", "Middle", "Ring", "Pinky"]:
+			for i in [1, 2, 3]:
+				out.append("mixamorig_%sHand%s%d" % [side, f, i])
+	return out
 
 const _SWING_TRAIL := preload("res://src/chars/swing_trail.gd")
 
@@ -295,6 +390,8 @@ func add_trail() -> void:
 	st.set("base_up", ext.x)
 	st.set("tip_up", ext.y)
 	trail = st
+	if rig != null:
+		st.set("sampler", Callable(self, "weapon_xform"))
 	# sibling of the weapon so set_weapon() never frees it
 	weapon_mount.get_parent().add_child(trail)
 
@@ -315,11 +412,16 @@ func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 ## Play an action so its contact frame lands `contact_at` seconds from now
 ## (an attack's data windup). Contact points are data: clip_meta.json.
 ## lo/hi bound the rate (the player keeps the source's 0.55-1.85 clamp).
-func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi := INF) -> float:
+## `alt` is tried first where it resolves (a foe's "@<attack id>" clip, cut to
+## that attack's windup); the clip keeps its game name either way.
+func play_timed(clip: String, contact_at: float, blend := 0.08, lo := 0.0, hi := INF, alt := "") -> float:
 	if rig != null:
+		rig.remap = {clip: alt} if alt != "" and rig.has_clip(alt) else {}
 		return rig.play_timed(clip, contact_at, blend, lo, hi)
 	if quad != null:
-		_quad_play(clip, contact_at)   # a pose eases in over the windup
+		# the wind-up pose is struck quickly and HELD for the rest of the
+		# telegraph (it used to sink in slowly over the whole windup)
+		_quad_play(clip, minf(contact_at, 0.18))
 		return 1.0
 	var rate := clampf(HumanoidLib.mannequin_contact(clip) / maxf(contact_at, 0.02), lo, hi)
 	play(clip, blend, rate)

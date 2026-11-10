@@ -274,6 +274,7 @@ spawners = [
 ]
 FH = [(hx, edge_z(hx) - 6.5) for hx, _y in FISH]      # the fish-house platforms' centres
 B0 = (-88 + 3, edge_z(-88) - 10 - 6)                  # a boat that was leaving, frozen in
+TRACKS = (-18.0, r2(fz(-18.0) + 9.0))     # out on the open ice, clear of the jetties and the cut holes
 pickups = [
     # Ivo's supper: the pot on its hook in the westmost house, the ladle standing up in it
     {"id": "kettle_ladle", "at": [FH[0][0] + 0.6, DECK, r2(FH[0][1] - 1.0)], "item": "item_kettle_ladle", "tag": "rime",
@@ -289,6 +290,10 @@ pickups = [
     # a sealer's harpoon frozen into the ice beside a boat that was leaving
     {"id": "sealer_harpoon", "at": [r2(B0[0] + 2.5), 0.06, r2(B0[1] + 1.5)], "item": "sealer_harpoon", "tag": "rime",
      "label": "Work the harpoon free", "scene": "res://assets/models/weapons/sealer_harpoon.glb"},
+    # WORLD.md 4.3: one set of footprints frozen into the ice out in the middle, going up the fjord
+    {"id": "ice_tracks", "at": [TRACKS[0], 0.06, TRACKS[1]], "rot": -90, "tag": "rime",
+     "scene": "res://assets/models/props/ice_tracks.tscn", "label": "Look at the tracks", "set_flag": "ks_ice_tracks_seen",
+     "look": "One set of footprints, frozen in, going up the fjord by the thin ice in the middle where nobody walks.\n\nThe left stride is longer than the right. They do not go round anything."},
 ]
 KX = -54.0
 KZ = edge_z(KX) + 6.0                  # the westmost fish-kettle (see PROPS)
@@ -335,6 +340,8 @@ D = {
                      "ambient_energy": 0.62, "exposure": 1.08,
                      "fill_color": [1.0, 0.7, 0.42], "fill_energy": 0.7, "fill_rot": [28, 84]},
             "rime": {"sun_rot": [-24, -60], "fog_density": 0.007, "vol_density": 0.018}},
+    # the Breathing Hole: mist held low in the gorge where the ice is cut (Job 4)
+    "fog_pockets": [{"id": "breathing_hole", "at": [16, 3, -312], "size": [54, 9, 44], "density": [0.025, 0.06], "height_falloff": 0.6}],
     "terrain": K.terrain_block(),
     "nav_bounds": [-150, -16, -368, 58, 70, -236],
     "weather": {"gulls": True, "gull_y": 30.0, "gull_dz": -20.0, "spindrift": 12},

@@ -180,7 +180,7 @@ func _run() -> void:
 	check(World.get_area_state("coldwell") == RH.WState.RIME, "the Coldwell is rime")
 	await ticks(30)
 	var foes := get_tree().get_nodes_in_group(RH.GROUP_ENEMIES).filter(func(e): return e.can_process() and not e.dead)
-	check(foes.size() >= 5, "%d frost-taken (stand-ins until the art lands)" % foes.size())
+	check(foes.size() >= 5, "%d frost-taken" % foes.size())
 	var ids := {}
 	for sp in def["spawners"]:
 		ids[sp["enemy"]] = true
@@ -195,8 +195,8 @@ func _run() -> void:
 	if veils.size() == 1:
 		var veil: FrostVeil = veils[0]
 		var boss: Node = veil.boss_spawner.current if veil.boss_spawner != null else null
-		check(boss != null and boss.cfg.get("is_boss", false), "the Leadvoice (stand-in) waits behind the veil")
-		check(boss != null and String(boss.cfg.get("release_flag", "")) == "", "a stand-in never carries the borrowed holdfast's release")
+		check(boss is Leadvoice and boss.cfg.get("is_boss", false), "the Leadvoice waits behind the veil")
+		check(boss != null and String(boss.cfg.get("release_flag", "")) == "ks_leadvoice_released", "on her own row now, with her own release")
 		var mouth := _ground(veil.global_position.x - 3.0, veil.global_position.z)
 		check(_reaches(_path(start, mouth), mouth, 3.0), "the rime Upwater still climbs to the veil")
 
@@ -205,6 +205,7 @@ func _run() -> void:
 		var ec: Node = ec_list[0]
 		check(not ec.is_open(), "dormant until she is released")
 		var got := []
+		ec.run_endings = false   # (the hook only: the endings have their own suite)
 		ec.chosen.connect(func(e): got.append(e))
 		ec.enable()
 		check(ec.is_open() and World.flag("ks_leadvoice_released"), "open once she is released")

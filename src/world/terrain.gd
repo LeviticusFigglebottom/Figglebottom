@@ -32,6 +32,20 @@ func material() -> ShaderMaterial:
 		_bind_sets(_mat)
 	return _mat
 
+## A palette layer's colour (the area's override, else the shader default),
+## so ground cover can root itself in the turf it stands on.
+func palette_color(layer: String) -> Color:
+	var pal: Dictionary = spec.get("palette", {})
+	if pal.has(layer):
+		var c: Array = pal[layer]
+		return Color(c[0], c[1], c[2])
+	var d: Variant = RenderingServer.shader_get_parameter_default(SHADER.get_rid(), layer)
+	if d is Color:
+		return d
+	if d is Vector3:
+		return Color(d.x, d.y, d.z)
+	return Color(0.17, 0.25, 0.08)
+
 ## The CC0 photo sets each splat layer samples (MaterialLib.tex_set). A
 ## landform can swap a layer's set in its terrain block: "sets": {"rock": "rock"}.
 const LAYER_SETS := {"turf": "turf", "heath": "heather", "shingle": "shingle", "path": "path",

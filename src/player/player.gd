@@ -148,7 +148,7 @@ func _ready() -> void:
 	vis.name = "Vis"
 	add_child(vis)
 	# "model" (optional) selects a humanoid body; absent, the mannequin stands in
-	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), String(T.get("model", "")))
+	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), body_model())
 
 	cam = CameraRig.new()
 	cam.name = "CamRig"
@@ -1016,6 +1016,8 @@ func _bow_release() -> void:
 	vis.back_to_idle(0.2)
 	if _bow_t < 0.45:
 		return          # string never came to the cheek — no loose, no arrow
+	if vis.has_clip("bow_loose"):
+		vis.play("bow_loose", 0.03)   # the release; locomotion takes over when it has played
 	if int(inventory.get("arrows", 0)) < 1 or stamina < 1.0 or _winded > 0.0 or dead:
 		return
 	var w := weapon_data()
@@ -1132,8 +1134,8 @@ func _begin_attack(m: Dictionary, heavy: bool, kind := "") -> void:
 	_atk_hit_open = false
 	_queued = ""
 	_blocking = false
-	if vis.weapon_mount != null:
-		vis.weapon_mount.rotation_degrees = Vector3.ZERO
+	if vis.weapon_mount != null and not vis.is_humanoid():
+		vis.weapon_mount.rotation_degrees = Vector3.ZERO   # mannequin clips lead with a bare mount; a humanoid's grip is data
 	_set_state(S.ATTACK)
 	# face lock target or input dir instantly-ish
 	var dir := _desired_dir()
@@ -1145,7 +1147,8 @@ func _begin_attack(m: Dictionary, heavy: bool, kind := "") -> void:
 	var anim_name: String = m.get("anim", "attack_l1")
 	# contact frames are data (clip_meta.json); the clip is timed to the strike
 	var strike_t := maxf(float(m.get("windup", 0.30)) + float(m.get("active", 0.14)) * 0.45, 0.12)
-	vis.play_timed(anim_name, strike_t, 0.05, 0.55, 1.85)
+	vis.play_timed(anim_name, strike_t, 0.07 if vis.is_humanoid() else 0.05, 0.55, 1.85)
+	vis.anticipate(strike_t)
 
 func _st_attack(dt: float) -> void:
 	var wind := float(_atk["windup"])
@@ -1161,6 +1164,10 @@ func _st_attack(dt: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, 26 * dt)
 		velocity.z = move_toward(velocity.z, 0, 26 * dt)
 
+	# the ribbon starts a beat before the hitbox opens, so the whole arc into
+	# the contact is drawn (anim polish; the hit window itself is untouched)
+	if vis.is_humanoid() and not vis.trail.visible and not _atk_hit_open and t >= wind - vis.trail_lead():
+		vis.trail.visible = true
 	if not _atk_hit_open and t >= wind:
 		_atk_hit_open = true
 		_open_hitbox(_atk)
@@ -1204,7 +1211,7 @@ func _st_attack(dt: float) -> void:
 		hitbox.end_swing()
 		vis.trail.visible = false
 		_set_state(S.MOVE)
-		vis.back_to_idle()
+		vis.back_to_idle(0.28 if vis.is_humanoid() else 0.2)   # the recovery eases out
 
 func _open_hitbox(m: Dictionary) -> void:
 	var hb: Dictionary = m.get("hitbox", {})
@@ -1241,6 +1248,7 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 	match result:
 		"hit":
 			Juice.hitstop(0.09 if _atk_is_heavy else 0.06)
+			vis.impact_dig(1.5 if _atk_is_heavy else 1.0)   # held on the impact pose by the hit-stop
 			Juice.shake(0.35 if _atk_is_heavy else 0.2, 0.18)
 			Juice.spawn_hit_fx(fx_pos, fx_dir, "heavy" if _atk_is_heavy else "blood")
 			# every foe is frost-taken: the edge meets rime and frozen wool
@@ -1257,10 +1265,13 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 			pass  # on_parried() handles our stagger
 
 # --- block / parry ----------------------------------------------------------
+var _block_react := false   # a block_hit react is playing over the guard hold
+
 func _enter_block() -> void:
 	if stamina <= 0.0 or not weapon_data().has("block"):
 		return   # the bow gives no guard — RMB sights instead
 	_blocking = true
+	_block_react = false
 	_set_state(S.BLOCK)
 	vis.play("block", 0.08)
 
@@ -1270,6 +1281,9 @@ func _st_block(dt: float) -> void:
 		_set_state(S.MOVE)
 		vis.back_to_idle()
 		return
+	if _block_react and vis.action_done():
+		_block_react = false
+		vis.play("block", 0.12)
 	var dir := _desired_dir()
 	var mv: Dictionary = T["move"]
 	velocity.x = move_toward(velocity.x, dir.x * float(mv["strafe"]), 10 * dt * float(mv["strafe"]))
@@ -1305,6 +1319,9 @@ func on_blocked_hit(packet: DamagePacket) -> void:
 	Juice.shake(0.18, 0.12)
 	var bdir := (global_position - packet.origin).normalized() if packet.origin != Vector3.ZERO else vis.global_transform.basis.z
 	vis.flinch(bdir, 0.75)
+	if state == S.BLOCK and vis.has_clip("block_hit"):
+		vis.play("block_hit", 0.02)   # the guard soaks it; _st_block returns to the hold
+		_block_react = true
 	Juice.spawn_hit_fx(global_position + Vector3(0, 1.15, 0) - bdir * 0.35, -bdir, "spark")
 	if stamina <= 0.0:
 		_guard_break()
@@ -1825,6 +1842,8 @@ func take_hit(packet: DamagePacket) -> void:
 	poise -= packet.poise_damage
 	_poise_delay = 2.0
 	var hdir := (global_position - packet.origin).normalized() if packet.origin != Vector3.ZERO else vis.global_transform.basis.z
+	# struck from behind: the blow travels the way the Bearer faces
+	_hit_from_back = hdir.dot(-vis.global_transform.basis.z) > 0.3
 	vis.flinch(hdir, 1.15)
 	Juice.spawn_hit_fx(global_position + Vector3(0, 1.1, 0), -hdir, "blood")
 	Juice.shake(0.3, 0.2)
@@ -1836,6 +1855,7 @@ func take_hit(packet: DamagePacket) -> void:
 		poise = max_poise
 		_stagger(float(T["stagger_time"]))
 
+var _hit_from_back := false
 ## Where the Breathmark hangs. Taken by the sea or a ravine, the death spot
 ## is under water or out of reach; the warmth waits on the last ground stood
 ## on instead, so the one chance to take it back is a real one.
@@ -1850,7 +1870,10 @@ func _stagger(dur: float) -> void:
 	_set_state(S.STAGGER)
 	_blocking = false
 	hitbox.end_swing()
-	vis.play("stagger", 0.03, 0.7 / _stagger_dur)
+	vis.cancel_anticipation()
+	var clip := "stagger_back" if _hit_from_back and vis.has_clip("stagger_back") else "stagger"
+	_hit_from_back = false
+	vis.play(clip, 0.03, 0.7 / _stagger_dur)
 
 func _st_stagger(dt: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 8 * dt)
@@ -1870,6 +1893,32 @@ func _die() -> void:
 	died.emit()
 
 ## External control (rest ceremony, dialogue, respawn)
+## The body the Bearer wears: game.json player.model, or after the Outsong
+## the robes and the mask it was sung in (player.model_outsong).
+func body_model() -> String:
+	var m := String(T.get("model", ""))
+	var o := String(T.get("model_outsong", ""))
+	if World.spring() and o != "" and HumanoidLib.has_model(o):
+		return o
+	return m
+
+## Change bodies in place (the Outsong: the Bearer puts the mask on). The
+## swing volume rides the visual, so it moves across.
+func set_model(model: String) -> void:
+	if vis == null or model == "" or not HumanoidLib.has_model(model) or vis.model_id == model:
+		return
+	var old := vis
+	if hitbox != null and hitbox.get_parent() == old:
+		old.remove_child(hitbox)
+	vis = PlayerVisual.new()
+	vis.name = "VisOutsong"
+	add_child(vis)
+	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), model)
+	vis.rotation = old.rotation
+	if hitbox != null:
+		vis.add_child(hitbox)
+	old.queue_free()
+
 func lock_control(on: bool) -> void:
 	input_enabled = not on
 	if on:

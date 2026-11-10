@@ -22,8 +22,32 @@ func _init() -> void:
 	material_override = m
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	visible = false
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
+## Samples are taken on the physics tick, straight from the pose (`sampler`,
+## CharVisual.weapon_xform): a humanoid's rig advances there, so the ribbon
+## keeps its full arc however slowly frames are drawn. Without a sampler the
+## mount's transform is read once per drawn frame, as the mannequin always did.
+var sampler := Callable()
+
+var _dirty := false
+
+func _physics_process(dt: float) -> void:
+	if sampler.is_valid() and not get_tree().paused:
+		_sample(dt, sampler.call())
+
+## The mesh is rebuilt once per drawn frame from whatever has been sampled
+## (an ImmediateMesh rebuilt several times inside one frame draws its first
+## build). It also runs while the tree is paused, so the last ticks before
+## a pause still reach the ribbon.
 func _process(dt: float) -> void:
+	if not sampler.is_valid() and target != null and is_instance_valid(target) and not get_tree().paused:
+		_sample(dt, target.global_transform)
+	if _dirty and visible:
+		_dirty = false
+		_rebuild()
+
+func _sample(dt: float, xf: Transform3D) -> void:
 	_clock += dt
 	if visible and not _was_visible:
 		_pts.clear()        # a fresh swing sweeps a fresh arc
@@ -31,13 +55,11 @@ func _process(dt: float) -> void:
 	if not visible:
 		return
 	global_transform = Transform3D.IDENTITY
-	if target != null and is_instance_valid(target):
-		var xf := target.global_transform
-		_pts.push_front({"b": xf * Vector3(0, base_up, 0),
-				"t": xf * Vector3(0, tip_up, 0), "at": _clock})
+	_pts.push_front({"b": xf * Vector3(0, base_up, 0),
+			"t": xf * Vector3(0, tip_up, 0), "at": _clock})
 	while _pts.size() > 2 and _clock - float(_pts[_pts.size() - 1]["at"]) > LIFE:
 		_pts.pop_back()
-	_rebuild()
+	_dirty = true
 
 static func _catmull_rom(p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, t: float) -> Vector3:
 	var t2 := t * t

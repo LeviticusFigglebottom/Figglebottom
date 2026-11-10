@@ -26,6 +26,26 @@
    ]
   }
  },
+ "fog_pockets": [
+  {
+   "id": "gully",
+   "at": [
+    25,
+    11.5,
+    30
+   ],
+   "size": [
+    18,
+    9,
+    32
+   ],
+   "density": [
+    0.02,
+    0.05
+   ],
+   "height_falloff": 0.5
+  }
+ ],
  "terrain": {
   "source": "res://data/terrain/saltfell_h.bin",
   "splat": "res://data/terrain/saltfell_splat.bin",
@@ -1240,6 +1260,43 @@
    "scene": "res://assets/models/props/knucklebone.tscn",
    "set_flag": "ks_knucklebones_found",
    "label": "Pick up the knucklebones"
+  },
+  {
+   "id": "child_mask",
+   "at": [
+    2.6,
+    22.0,
+    -20.75
+   ],
+   "rot": 180,
+   "lift": 0.95,
+   "absent_flag": "ending_outsong",
+   "item": "ks_child_mask",
+   "tag": "base",
+   "scene": "res://assets/models/props/child_mask.tscn",
+   "label": "Take the small mask down"
+  }
+ ],
+ "landmarks": [
+  {
+   "scene": "res://assets/models/props/child_mask.tscn",
+   "at": [
+    2.6,
+    23.0,
+    -20.75
+   ],
+   "rot": 180,
+   "require_flag": "ending_outsong"
+  },
+  {
+   "scene": "res://assets/models/props/mourning_mask.tscn",
+   "at": [
+    3.15,
+    23.12,
+    -20.75
+   ],
+   "rot": 180,
+   "require_flag": "ending_outsong"
   }
  ],
  "scripted": [

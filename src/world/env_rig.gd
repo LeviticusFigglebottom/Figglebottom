@@ -39,6 +39,10 @@ func set_overrides(ov: Dictionary) -> void:
 	overrides = ov
 
 func _profile(state_name: String) -> Dictionary:
+	# after the Outsong the unfrozen ground is lit by a real spring: grey and
+	# green, no amber (the "spring" profile; an area may override it by name)
+	if state_name == "thaw" and World.spring() and profiles.has("spring"):
+		state_name = "spring"
 	var p: Dictionary = profiles[state_name].duplicate()
 	for k in overrides.get(state_name, {}):
 		p[k] = overrides[state_name][k]
@@ -142,6 +146,20 @@ func apply_quality_tier() -> void:
 		e.sdfgi_cascades = 4
 		e.sdfgi_min_cell_size = 0.4
 		e.sdfgi_energy = 0.85
+	RenderingServer.global_shader_parameter_set("rh_water_sky_fill", 1.0 if e.sdfgi_enabled else 0.0)
+
+## Sky keys an older or partial profile may not carry ("sky_<key>").
+const SKY_DEFAULTS := {
+	"thaw": {"mid": [0.62, 0.5, 0.45], "haze": [1.0, 0.76, 0.46], "cloud_lit": [1.0, 0.72, 0.5],
+		"cloud_shade": [0.3, 0.27, 0.34], "aurora_color": [0.3, 0.9, 0.62],
+		"cloud_cover": 0.45, "sun_disc": 1.0, "aurora": 0.0, "stars": 0.0},
+	"rime": {"mid": [0.08, 0.11, 0.18], "haze": [0.2, 0.26, 0.38], "cloud_lit": [0.2, 0.25, 0.36],
+		"cloud_shade": [0.035, 0.045, 0.075], "aurora_color": [0.3, 0.9, 0.62],
+		"cloud_cover": 0.85, "sun_disc": 0.2, "aurora": 0.35, "stars": 0.6},
+}
+
+func _sky(profile: Dictionary, state_name: String, key: String) -> Variant:
+	return profile.get("sky_" + key, SKY_DEFAULTS[state_name][key])
 
 func _c(v: Array) -> Color:
 	return Color(v[0], v[1], v[2])
@@ -175,11 +193,14 @@ func blend(t: float) -> void:
 	e.fog_light_color = _c(a["fog_color"]).lerp(_c(b["fog_color"]), t)
 	e.fog_density = lerpf(a["fog_density"], b["fog_density"], t)
 	e.volumetric_fog_density = lerpf(a["vol_density"], b["vol_density"], t)
+	e.volumetric_fog_anisotropy = lerpf(a.get("vol_anisotropy", 0.66), b.get("vol_anisotropy", 0.66), t)
+	_blend_pockets(t)
 	e.volumetric_fog_albedo = _c(a["vol_albedo"]).lerp(_c(b["vol_albedo"]), t)
 	e.tonemap_exposure = lerpf(a["exposure"], b["exposure"], t)
 	e.adjustment_contrast = lerpf(a.get("contrast", 1.06), b.get("contrast", 1.08), t)
 	e.adjustment_saturation = lerpf(a.get("saturation", 1.06), b.get("saturation", 0.96), t)
 	e.glow_intensity = lerpf(a["glow"], b["glow"], t)
+	# the sky: every stop and amount is profile data (defaults in SKY_DEFAULTS)
 	var top := _c(a["bg_top"]).lerp(_c(b["bg_top"]), t)
 	var horizon := _c(a["bg_horizon"]).lerp(_c(b["bg_horizon"]), t)
 	sky_mat.set_shader_parameter("top_color", top)
@@ -187,10 +208,47 @@ func blend(t: float) -> void:
 	sky_mat.set_shader_parameter("sun_color", sc)
 	sky_mat.set_shader_parameter("ground_color", horizon.darkened(0.65))
 	sky_mat.set_shader_parameter("rime", t)
+	RenderingServer.global_shader_parameter_set("rh_sky_top", top)
+	RenderingServer.global_shader_parameter_set("rh_sky_horizon", horizon)
+	for k in ["mid", "haze", "cloud_lit", "cloud_shade", "aurora_color"]:
+		sky_mat.set_shader_parameter(k if k.begins_with("cloud") or k == "aurora_color" else k + "_color",
+			_c(_sky(a, "thaw", k)).lerp(_c(_sky(b, "rime", k)), t))
+	for k in ["cloud_cover", "sun_disc", "aurora", "stars"]:
+		sky_mat.set_shader_parameter(k, lerpf(float(_sky(a, "thaw", k)), float(_sky(b, "rime", k)), t))
 	# place the sky's sun disc where the directional light streams from
 	var sb := Basis.from_euler(Vector3(deg_to_rad(lerpf(ra[0], rb[0], t)),
 			deg_to_rad(lerpf(ra[1], rb[1], t)), 0.0))
 	sky_mat.set_shader_parameter("sun_dir", sb.z)
+
+## Local volumetric fog for deep gorges, from the area def's "fog_pockets":
+## [{"at": [x,y,z], "size": [x,y,z], "density": [thaw, rime], "albedo": [r,g,b]?}]
+var _pockets: Array = []
+
+func build_fog_pockets(list: Array) -> void:
+	for p in _pockets:
+		p["node"].queue_free()
+	_pockets.clear()
+	for d in list:
+		var fv := FogVolume.new()
+		fv.shape = RenderingServer.FOG_VOLUME_SHAPE_ELLIPSOID
+		var sz: Array = d["size"]
+		fv.size = Vector3(sz[0], sz[1], sz[2])
+		var at: Array = d["at"]
+		fv.position = Vector3(at[0], at[1], at[2])
+		var m := FogMaterial.new()
+		m.edge_fade = 0.6
+		m.height_falloff = float(d.get("height_falloff", 0.0))
+		if d.has("albedo"):
+			m.albedo = _c(d["albedo"])
+		fv.material = m
+		add_child(fv)
+		var dens: Array = d["density"]
+		m.density = float(dens[0])
+		_pockets.append({"node": fv, "mat": m, "a": float(dens[0]), "b": float(dens[1])})
+
+func _blend_pockets(t: float) -> void:
+	for p in _pockets:
+		p["mat"].density = lerpf(p["a"], p["b"], t)
 
 func snap(state: RH.WState) -> void:
 	blend(1.0 if state == RH.WState.RIME else 0.0)

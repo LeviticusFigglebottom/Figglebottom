@@ -37,8 +37,18 @@ const HERO_HEDGES := {
 	"thorn": ["hd_thorn2", "M_rime"],
 }
 const HERO_DIR := "res://assets/models/forest/"
-const NEAR := 70.0
-const HEDGE_NEAR := 45.0
+## Draw budget (a real GPU counted 9.5 M primitives looking down the hedge
+## maze: full-detail sections and trees out to 45-70 m, each drawn again in
+## all four shadow splits). Three bands per hero now: the full mesh close by,
+## the decimated mesh with shadows through the middle distance, and the
+## decimated mesh without shadows beyond it, fading out at the far end.
+const NEAR := 42.0
+const TREE_MID := 95.0
+const TREE_FAR := 170.0
+const HEDGE_NEAR := 26.0
+const HEDGE_MID := 60.0
+const HEDGE_FAR := 110.0
+const RANGE_MARGIN := 4.0
 
 static var _cache: Dictionary = {}
 
@@ -91,7 +101,9 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 				var key := "hero|%s|%s|%s|%s" % [vs[vi][0], vs[vi][1], vs[vi][2], vs[vi][3]]
 				if ResourceLoader.exists(HERO_DIR + String(vs[vi][0]) + "_far.glb"):
 					_emit(area, key, "base", pick, NEAR, 0.0)
-					_emit(area, key.replace("hero|%s|" % vs[vi][0], "hero|%s_far|" % vs[vi][0]), "base", pick, 220.0, NEAR)
+					var far_key := key.replace("hero|%s|" % vs[vi][0], "hero|%s_far|" % vs[vi][0])
+					_emit(area, far_key, "base", pick, TREE_MID, NEAR)
+					_emit(area, far_key, "base", pick, TREE_FAR, TREE_MID, false)
 				else:
 					_emit(area, key, "base", pick, 180.0)
 		_tree_bodies(area, kind, trees[kind])
@@ -123,7 +135,7 @@ static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
 		area.attach(body, "base")
 
 ## Chunked MultiMeshes of one mesh.
-static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float, range_begin := 0.0) -> void:
+static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: float, range_begin := 0.0, shadows := true) -> void:
 	var mode := 1 if tag == "thaw" else (2 if tag == "rime" else 0)
 	var mesh := _mesh(key, mode)
 	var chunks: Dictionary = {}
@@ -156,10 +168,21 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 		mmi.multimesh = mm
 		mmi.position = c
 		mmi.visibility_range_end = range_end
-		mmi.visibility_range_end_margin = 10.0
+		mmi.visibility_range_end_margin = RANGE_MARGIN
+		if not shadows:
+			# the last band: no shadow passes, and it thins out instead of popping
+			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+			mmi.name = "Forest_%s_%s_%d_%d_far" % [label, tag, k.x, k.y]
 		if range_begin > 0.0:
-			mmi.visibility_range_begin = range_begin
-			mmi.visibility_range_begin_margin = 10.0
+			# A range only changes state a margin past its threshold, and a
+			# camera that spawns inside the margin starts with it hidden: a
+			# band is certain only below end - margin and above begin + margin.
+			# So each band starts two margins before the one inside it ends
+			# (the old single-threshold handoff left a ring 20 m deep where a
+			# fresh camera saw neither).
+			mmi.visibility_range_begin = maxf(range_begin - RANGE_MARGIN * 2.0, 0.1)
+			mmi.visibility_range_begin_margin = RANGE_MARGIN
 		area.attach(mmi, tag)
 
 # ------------------------------------------------------------ meshes
@@ -304,13 +327,23 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 				# section (stretching turns thorn into reeds)
 				var hy := maxf(hbb.size.y, 0.3)
 				var rows := maxi(1, int(ceil(h / (hy * 1.6))))
+				# the bond's jitter has its own stream: the layout stream (trees,
+				# stems) must not shift with a look change
+				var jit := RandomNumberGenerator.new()
+				jit.seed = hash(Vector2i(int(p.x * 10.0), int(p.y * 10.0)))
 				for r in rows:
 					var fl := 1.0 if rng.randf() < 0.5 else -1.0
-					var rb := Basis(Vector3.UP, yaw + (PI if fl < 0.0 else 0.0))
+					var rb := Basis(Vector3.UP, yaw + (PI if fl < 0.0 else 0.0) + (jit.randf_range(-0.14, 0.14) if r > 0 else 0.0))
 					# upper courses narrower and sunk into the one below, so
-					# their footing strip hides inside its mass
-					var sc := Vector3(step / hlen * (1.12 + 0.1 * r), h / rows / hy * rng.randf_range(1.3, 1.45), w / maxf(hbb.size.z, 0.3) * (1.0 - 0.32 * r))
-					heroes.append(Transform3D(rb.scaled_local(sc), Vector3(p.x, y - 0.08 + r * h / rows * 0.6, p.y)))
+					# their footing strip hides inside its mass. Each upper
+					# section sits half a section along and at its own depth,
+					# so the join is a ragged brick bond, not a level band.
+					var sc := Vector3(step / hlen * (1.12 + 0.1 * r), h / rows / hy * (rng.randf_range(1.3, 1.45) + jit.randf_range(0.0, 0.15)), w / maxf(hbb.size.z, 0.3) * (1.0 - 0.32 * r))
+					var along := dir * (step * 0.5 * float(r % 2))
+					var q := p + along
+					var qy := y if r == 0 else terrain.height_at(q.x, q.y)
+					var sink := 0.6 if r == 0 else jit.randf_range(0.42, 0.68)
+					heroes.append(Transform3D(rb.scaled_local(sc), Vector3(q.x, qy - 0.08 + r * h / rows * sink, q.y)))
 		# stems
 		var t := 0.0 if not hero_ok else L
 		while t < L:
@@ -350,7 +383,9 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 		var hk := "hero|%s|%s|0.04|1.5" % [hh[0], hh[1]]
 		if ResourceLoader.exists(HERO_DIR + String(hh[0]) + "_far.glb"):
 			_emit(area, hk, tag, heroes, HEDGE_NEAR)
-			_emit(area, hk.replace("hero|%s|" % hh[0], "hero|%s_far|" % hh[0]), tag, heroes, 150.0, HEDGE_NEAR)
+			var hfar := hk.replace("hero|%s|" % hh[0], "hero|%s_far|" % hh[0])
+			_emit(area, hfar, tag, heroes, HEDGE_MID, HEDGE_NEAR)
+			_emit(area, hfar, tag, heroes, HEDGE_FAR, HEDGE_MID, false)
 		else:
 			_emit(area, hk, tag, heroes, 140.0)
 		return

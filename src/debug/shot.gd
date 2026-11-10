@@ -271,7 +271,7 @@ func _first_hearth() -> Hearthstone:
 func _stage_tick() -> void:
 	_stage_frame += 1
 	var p: Player = Game.player
-	if _stage in ["swing", "foe_death", "boss"]:
+	if _stage in ["swing", "foe_death", "boss"] or _stage.begins_with("bearer_"):
 		_char_stage(p)
 		return
 	match _stage:
@@ -390,6 +390,9 @@ func _char_stage(p: Player) -> void:
 		p.vis.rotation.y = atan2(-d.x, -d.z)
 		foe.vis.rotation.y = atan2(d.x, d.z)
 		foe.target = p
+	if _stage.begins_with("bearer_"):
+		_bearer_stage(p, foe)
+		return
 	if _stage_frame == 30:
 		match _stage:
 			"swing":
@@ -411,6 +414,46 @@ func _char_stage(p: Player) -> void:
 		if ready and not get_tree().paused:
 			# freeze on the beat: headless frames render slower than physics
 			# ticks, so grab only once the paused pose has been drawn
+			get_tree().paused = true
+			_frames_left = mini(_frames_left, 4)
+
+## The Bearer's own strikes on a foe (the combat clips, ADR 0011), frozen a
+## few ticks into the active window so the trail and the hit both show:
+##   bearer_light1 / bearer_light2 / bearer_heavy / bearer_sprint
+## --shot-weapon=<id> arms him first; --shot-beat=<s> moves the capture
+## (seconds after the windup ends; negative looks at the wind-up).
+func _bearer_stage(p: Player, foe: Enemy) -> void:
+	foe.set_physics_process(false)   # the foe stands and takes it
+	if _stage_frame == 8:
+		for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+			if e != foe and e is Node3D:
+				(e as Node3D).visible = false   # its packmates would crowd the lens
+	var beat := 0.04
+	var wpn := ""
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--shot-beat="):
+			beat = float(a.get_slice("=", 1))
+		elif a.begins_with("--shot-weapon="):
+			wpn = a.get_slice("=", 1)
+	if _stage_frame == 12 and wpn != "":
+		p.inventory[wpn] = 1
+		p.equip_weapon(wpn)
+	if _stage_frame == 30:
+		p.sim_active = true
+		match _stage:
+			"bearer_light1":
+				p._combo_i = 0
+				p._chain_attack(false)
+			"bearer_light2":
+				p._combo_i = 1
+				p._chain_attack(false)
+			"bearer_heavy":
+				p._chain_attack(true)
+			"bearer_sprint":
+				p._sprint_attack()
+	if _stage_frame >= 30:
+		_frame_char_cam(p, foe)
+		if p.state == Player.S.ATTACK and p.state_t >= float(p._atk["windup"]) + beat and not get_tree().paused:
 			get_tree().paused = true
 			_frames_left = mini(_frames_left, 4)
 
@@ -437,6 +480,8 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 	var side := axis.normalized().cross(Vector3.UP)
 	var tgt := mid + Vector3.UP * 0.95
 	cam.global_position = tgt + side * 3.6 + Vector3.UP * 0.35
+	if _stage.begins_with("bearer_"):   # three-quarter, from behind the Bearer's sword arm
+		cam.global_position = tgt + side * 3.3 - axis.normalized() * 1.3 + Vector3.UP * 0.45
 	cam.look_at(tgt, Vector3.UP)
 	cam.fov = 48.0
 

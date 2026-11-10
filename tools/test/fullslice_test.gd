@@ -20,6 +20,9 @@ var area: Area
 var player: Player
 var shots_dir := ""
 var perf_path := ""
+## --keep-save=PATH copies the finished slot out: the full-game suites
+## (fullgame_*_test.gd) start from it (fixtures/fullgame_after_saltfell.json)
+var keep_save := ""
 var _perf_rows: Array = []
 var _leg := "boot"
 var _leg_frames: Array = []
@@ -34,6 +37,8 @@ func _ready() -> void:
 			shots_dir = a.get_slice("=", 1)
 		elif a.begins_with("--perf="):
 			perf_path = a.get_slice("=", 1)
+		elif a.begins_with("--keep-save="):
+			keep_save = a.get_slice("=", 1)
 	if shots_dir != "":
 		# software rendering runs a few frames a second; let physics keep
 		# game time near real time instead of crawling at 8 steps a frame
@@ -887,6 +892,9 @@ func _run() -> void:
 		var f := FileAccess.open(perf_path, FileAccess.WRITE)
 		f.store_string(JSON.stringify(_perf_rows, "\t"))
 	Game.front_door = false
+	if keep_save != "":
+		World.save_game()
+		DirAccess.copy_absolute(World.save_path(), keep_save)
 	for i in range(1, World.SLOTS + 1):
 		World.delete_slot(i)
 	finish()

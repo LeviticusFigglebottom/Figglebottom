@@ -19,6 +19,8 @@ var options_box: VBoxContainer
 var panel: Panel
 var _next_glyph: Label = null
 
+signal line_sounded(path: String)
+
 func _init(cfg: Dictionary, node: Node3D) -> void:
 	npc_cfg = cfg
 	npc_node = node
@@ -110,6 +112,11 @@ func _ready() -> void:
 		if ci < chapters.size():
 			_lines = chapters[ci]
 			World.set_flag("chapter_" + nid, ci + 1)
+			# a chapter may be a Keepsakes step ("chapter_flags": [[..], [..]])
+			var cf: Array = npc_cfg.get("chapter_flags", [])
+			if ci < cf.size():
+				for f in cf[ci]:
+					World.set_flag(String(f))
 			if ci == chapters.size() - 1:
 				_grant_gift(npc_cfg.get("gift", {}))
 		else:
@@ -190,6 +197,13 @@ func _show_line() -> void:
 	if _line_i < _lines.size():
 		text_label.text = String(_lines[_line_i])
 		_speak(String(_lines[_line_i]))
+		# a line may carry a sound of its own ("line_sfx": {line: [path, db,
+		# pitch]}): Old Calder humming three notes (REACH.md 7)
+		var ls: Dictionary = npc_cfg.get("line_sfx", {})
+		if ls.has(text_label.text):
+			var e: Array = ls[text_label.text]
+			AudioDirector.sfx(String(e[0]), float(e[1]) if e.size() > 1 else 0.0, float(e[2]) if e.size() > 2 else 1.0)
+			line_sounded.emit(String(e[0]))
 	else:
 		_stop_voice()
 		_enter_options()

@@ -136,11 +136,16 @@ Whole-frame counts from the harness (`[shot] stats`, lavapipe, tier 1, shadows i
 | barrow_thaw | 234 | 235 | 1,329,129 | 1,369,401 | +0% calls, +3% triangles |
 | wellhouse_thaw | 101 | 123 | 387,825 | 433,905 | +22% calls, +12% triangles |
 
+## With the look passes (merged state)
+
+`main` took this branch at `ce498d8` together with look passes 2 to 4. The branch has since merged `main` back, so it shows the two together: the Tripo gable ends over these walls, card grass rooted in this turf and round these wall feet, the painterly sky. `docs/screens/world_merged_*_thaw.png` are five of the cameras above on that state (yard, gable, ingra, in, roof). `building_gen.gd` merged without conflict; the one conflict was a reformatted `data/game.json`.
+
+The pairs above were shot before that merge, on the same base as their "before", so they show this pass alone.
+
 ## What is still synthetic
 
 - **Shadow sides at dusk are very dark**, on houses and on barrow facades alike. That is the sun and ambient balance, not the buildings; it was the same before. It wants SDFGI bounce (tier 2) or a lift in the THAW fill.
-- **The turf has no pile** on this branch. `art/look-pass-2` grows card grass on the roofs; my turf top never drops below the height its clumps root at.
-- **Gables.** Until the Tripo gable pieces merge, the gable is the old boards and torus horns with carving added to the barge-boards.
+- **Carved barge-boards only show where a Tripo gable is missing.** The Tripo piece replaces the old gable whole, so the interlace carved here is a fallback. The gable triangle is still boarded from inside, because the Tripo piece has no inner face.
 - **Door leaves and benches do not collide**, by the brief. A body hugging the wall beside a door can clip a leaf.
 - **Hung goods are simple shapes.** They read at ceiling height; they would not survive a close look.
 - **The Kettle fish-house floors are dim** where no fire is lit. The probe ambient is the only light there.

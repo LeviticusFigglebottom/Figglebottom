@@ -201,6 +201,28 @@
    ]
   },
   {
+   "id": "calder_boots",
+   "title": "Calder's boots",
+   "steps": [
+    {
+     "flag": "ks_calder_met",
+     "line": "Old Calder makes the flock forty-four. Sigga makes it forty-three."
+    },
+    {
+     "flag": "ks_calder_boots_found",
+     "line": "A pair of boots stood by the sheiling door, toes to the wall. The door was on the latch."
+    },
+    {
+     "flag": "ks_fold_tally_found",
+     "line": "The fold-tally was by his hand at the cairn. Forty-three notches, and one cut small."
+    },
+    {
+     "flag": "ks_calder_boots_shown",
+     "line": "Calder says the boots are his. He says he has his on."
+    }
+   ]
+  },
+  {
    "id": "knucklebones",
    "title": "Knucklebones",
    "steps": [
@@ -211,6 +233,20 @@
     {
      "flag": "ks_knucklebone_found",
      "line": "There was a knucklebone in the middle of the drove-road, on the side going east."
+    },
+    {
+     "flag": "ks_knucklebones_shown",
+     "line": "Wren has a set like it. One of hers has a bite in it. She says she did it."
+    }
+   ]
+  },
+  {
+   "id": "fostering_horn",
+   "title": "The fostering horn",
+   "steps": [
+    {
+     "flag": "ks_horn_wellhead",
+     "line": "The coal is still alight."
     }
    ]
   }

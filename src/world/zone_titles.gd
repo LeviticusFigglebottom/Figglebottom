@@ -30,6 +30,11 @@ func _process(dt: float) -> void:
 			here = String(z["name"])
 	if here != _current:
 		_current = here
+		# a place may mark the story on first arrival (zone "set_flag": the
+		# Wellhead, where the horn is worth another look)
+		for z in zones:
+			if String(z["name"]) == here and String(z.get("set_flag", "")) != "" and World.ended() == "":
+				World.set_flag(String(z["set_flag"]))
 		if here != "" and not _seen.has(here):
 			_seen[here] = true
 			if _seen.size() > 1:

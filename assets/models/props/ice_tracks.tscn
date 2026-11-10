@@ -1,0 +1,64 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="StandardMaterial3D" id="print"]
+albedo_color = Color(0.160, 0.200, 0.260, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="sole"]
+size = Vector3(0.1, 0.012, 0.24)
+material = SubResource("print")
+
+[sub_resource type="BoxMesh" id="heel"]
+size = Vector3(0.085, 0.012, 0.08)
+material = SubResource("print")
+
+[node name="IceTracks" type="Node3D"]
+metadata/upright = true
+
+[node name="P0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.006, -0.18)
+mesh = SubResource("sole")
+
+[node name="H0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.006, 0.01)
+mesh = SubResource("heel")
+
+[node name="P1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.006, -0.78)
+mesh = SubResource("sole")
+
+[node name="H1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.006, -0.59)
+mesh = SubResource("heel")
+
+[node name="P2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.006, -1.56)
+mesh = SubResource("sole")
+
+[node name="H2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.006, -1.37)
+mesh = SubResource("heel")
+
+[node name="P3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.006, -2.16)
+mesh = SubResource("sole")
+
+[node name="H3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.006, -1.97)
+mesh = SubResource("heel")
+
+[node name="P4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.006, -2.94)
+mesh = SubResource("sole")
+
+[node name="H4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.006, -2.75)
+mesh = SubResource("heel")
+
+[node name="P5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.006, -3.54)
+mesh = SubResource("sole")
+
+[node name="H5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.006, -3.35)
+mesh = SubResource("heel")

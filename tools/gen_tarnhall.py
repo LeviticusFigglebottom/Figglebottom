@@ -299,6 +299,9 @@ pickups = [
     {"id": "guest_tally", "at": [r2(HALL_X0 + 1.7), FY, r2(DOOR_Z + 2.4)], "item": "item_guest_tally", "tag": "rime",
      "scene": "res://assets/models/props/guest_tally.tscn", "label": "Untie the guest-tally",
      "appear_flag": "ks_host_released", "set_flag": "ks_guest_tally_found"},
+    # WORLD.md 4.4: a scrap of woad wool on the latch, outside the barred door
+    {"id": "latch_wool", "at": [r2(HALL_X0 - 0.75), PORCH_Y, r2(DOOR_Z + 0.7)], "lift": 1.05, "item": "item_latch_wool", "tag": "rime",
+     "scene": "res://assets/models/props/latch_wool.tscn", "label": "Take the wool off the latch"},
 ]
 npcs = [{"id": "lusse", "at": [r2(HALL_C[0] + 1.0), FY, r2(HALL_C[1] + 4.6)], "rot": 200, "tag": "thaw"},
         # just inside the front door with his boots on (TARNHALL.md 7)
@@ -337,6 +340,9 @@ D = {
                      "ambient": [0.36, 0.35, 0.34], "ambient_energy": 0.78, "exposure": 1.12, "saturation": 0.98,
                      "fill_color": [0.92, 0.84, 0.72], "fill_energy": 0.45, "fill_rot": [24, 70]},
             "rime": {"sun_rot": [-26, -70], "fog_density": 0.006, "vol_density": 0.016}},
+    # the Tarn Steps: mist pooled in the cleft of the stair (Job 4); thin in
+    # THAW, where a denser pocket read as brown smog (Job 5)
+    "fog_pockets": [{"id": "tarn_steps", "at": [82, 15, -316], "size": [32, 12, 32], "density": [0.006, 0.05], "height_falloff": 0.5}],
     "terrain": K.terrain_block(),
     "nav_bounds": [24, -16, -400, 280, 90, -256],
     "weather": {"gulls": False, "spindrift": 10},
