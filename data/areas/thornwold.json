@@ -557,6 +557,20 @@
    "count": 2,
    "tag": "rime",
    "label": "Rake out what the clamp kept"
+  },
+  {
+   "id": "song_cord",
+   "at": [
+    453.0,
+    37.7,
+    -325.0
+   ],
+   "item": "item_song_cord",
+   "tag": "base",
+   "label": "Take the song-cord",
+   "scene": "res://assets/models/props/song_cord.glb",
+   "set_flag": "ks_song_cord_found",
+   "require_flag": "ks_hedgelayer_released"
   }
  ],
  "portals": [

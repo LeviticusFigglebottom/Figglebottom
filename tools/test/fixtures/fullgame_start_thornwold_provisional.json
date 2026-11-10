@@ -1,0 +1,161 @@
+{
+	"areas": {
+		"kettle_fjord": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_fish_houses": true,
+				"lit_hs_landing_ice": true,
+				"slain_ice_cutter": true,
+				"took_halla_cord": true,
+				"took_ivo_mitten": true,
+				"took_kettle_ladle": true
+			},
+			"state": 0
+		},
+		"lowe_barrows": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_barrow_road": true,
+				"lit_hs_drying_stacks": true,
+				"lit_hs_open_barrow": true,
+				"slain_turfwright": true,
+				"took_hesk_tongs": true,
+				"took_orm_cord": true,
+				"took_tally_stick": true
+			},
+			"state": 0
+		},
+		"saltfell_steading": {
+			"cleared": true,
+			"flags": {
+				"gate_boatshed_back": true,
+				"lit_hs_boat_shed": true,
+				"lit_hs_long_hearth": true,
+				"lit_hs_salt_house": true,
+				"slain_netmender": true,
+				"took_mending_needle": true,
+				"took_net_float": true,
+				"took_rye_sack": true
+			},
+			"state": 0
+		},
+		"tarnhall": {
+			"cleared": true,
+			"flags": {
+				"gate_hall_doors": true,
+				"lit_hs_byres": true,
+				"lit_hs_long_table": true,
+				"lit_hs_tarn_causeway": true,
+				"lit_hs_tarn_steps": true,
+				"slain_host": true,
+				"took_guest_tally": true,
+				"took_host_cup": true,
+				"took_ottar_staff": true
+			},
+			"state": 0
+		}
+	},
+	"breathmark": null,
+	"flags": {
+		"difficulty": "gentle",
+		"ks_aud_cord": true,
+		"ks_aud_cord_found": true,
+		"ks_aud_heather": true,
+		"ks_aud_met": true,
+		"ks_brede_float": true,
+		"ks_brede_float_found": true,
+		"ks_brede_mending": true,
+		"ks_brede_met": true,
+		"ks_goat_song": true,
+		"ks_guest_tally": true,
+		"ks_guest_tally_found": true,
+		"ks_halla_bed": true,
+		"ks_halla_cord": true,
+		"ks_halla_cord_found": true,
+		"ks_halla_met": true,
+		"ks_hesk_met": true,
+		"ks_hesk_tongs": true,
+		"ks_hesk_tongs_found": true,
+		"ks_hesk_wind": true,
+		"ks_host_released": true,
+		"ks_ice_cutter_released": true,
+		"ks_ingra_count": true,
+		"ks_ingra_met": true,
+		"ks_ingra_rye": true,
+		"ks_ingra_rye_found": true,
+		"ks_ivo_met": true,
+		"ks_ivo_mitten": true,
+		"ks_ivo_mitten_found": true,
+		"ks_ivo_supper": true,
+		"ks_lusse_met": true,
+		"ks_netmender_released": true,
+		"ks_ottar_air": true,
+		"ks_ottar_met": true,
+		"ks_ottar_staff": true,
+		"ks_ottar_staff_found": true,
+		"ks_turfwright_released": true,
+		"met_aud": true,
+		"met_brede": true,
+		"met_halla": true,
+		"met_hesk": true,
+		"met_ivo": true,
+		"met_lusse": true,
+		"met_ottar": true,
+		"met_sten": true,
+		"met_steward_ingra": true
+	},
+	"last_hearth": {
+		"area": "tarnhall",
+		"hearth": "hs_byres"
+	},
+	"meta": {
+		"area": "tarnhall",
+		"difficulty": "gentle",
+		"level": 9,
+		"play_s": 498.206231688581,
+		"saved_at": 1794336853.82847
+	},
+	"play_s": 498.206231688581,
+	"player": {
+		"armour": {
+			"body": "armour_traveller_coat",
+			"hands": "",
+			"head": "",
+			"legs": ""
+		},
+		"attributes": {
+			"craft": 8,
+			"heart": 12,
+			"kinship": 8,
+			"lungs": 8,
+			"might": 10,
+			"wind": 10
+		},
+		"attuned_song": "goat_song",
+		"gourd_max": 3,
+		"hotbar": [
+			"hewing_blade",
+			"torch",
+			"",
+			"",
+			"gourd"
+		],
+		"inventory": {
+			"bog_iron": 1.0,
+			"goat_song": 1,
+			"item_host_cup": 1,
+			"item_mending_needle": 1.0,
+			"item_tally_stick": 1
+		},
+		"level": 9,
+		"pos": [
+			219.6,
+			24.5,
+			-322.0
+		],
+		"warmth": 600,
+		"weapon": "hewing_blade",
+		"weapon_level": 0
+	},
+	"save_version": 2
+}

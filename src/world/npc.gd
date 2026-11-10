@@ -171,6 +171,11 @@ func _tick_overhear(dt: float) -> void:
 	var p = Game.player
 	if p == null or not is_instance_valid(p):
 		return
+	if p.get("state") == Player.S.TALK:
+		# the Bearer is in a talk: what is overheard waits (Linnet was
+		# heard arguing with Eyvind in the same breath as she spoke to him)
+		_over_t = 0.5
+		return
 	var r := float(cfg.get("overhear_r", 8.0))
 	if global_position.distance_squared_to(p.global_position) > r * r:
 		_over_t = 0.5
