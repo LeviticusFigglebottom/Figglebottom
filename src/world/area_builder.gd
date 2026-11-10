@@ -16,6 +16,7 @@ static func build(area_id: String) -> Area:
 	area.set_meta("def", def)
 
 	area.env.set_overrides(def.get("env", {}))
+	area.env.build_fog_pockets(def.get("fog_pockets", []))
 	# the land first: buildings sit on it, they are not it (ADR 0003)
 	if def.has("terrain"):
 		var t := Terrain.new()
