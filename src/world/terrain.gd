@@ -51,6 +51,36 @@ func _bind_sets(m: ShaderMaterial) -> void:
 		m.set_shader_parameter(layer + "_mean", ts["mean"])
 	m.set_shader_parameter("has_tex", 1.0 if ok else 0.0)
 
+## Buildings standing on this land (BuildingGen): the shader darkens and
+## bares the ground at their wall feet, wears a way out of each door, keeps
+## snow from under their roofs and banks a drift against them in RIME.
+## kind: 0 house, 1 mound (barrow), 2 open-fronted shed. doors: [[x, z, nx, nz]]
+## thresholds with the way out, in world space.
+const MAX_FOOTPRINTS := 16
+const MAX_DOORS := 24
+var _rects := PackedVector4Array()
+var _rots := PackedVector4Array()
+var _doors := PackedVector4Array()
+
+func add_footprint(center: Vector2, half: Vector2, yaw: float, floor_y: float, kind := 0, doors: Array = []) -> void:
+	if _rects.size() >= MAX_FOOTPRINTS:
+		return
+	_rects.append(Vector4(center.x, center.y, half.x, half.y))
+	_rots.append(Vector4(cos(yaw), sin(yaw), floor_y, float(kind)))
+	for d in doors:
+		if _doors.size() < MAX_DOORS:
+			_doors.append(Vector4(float(d[0]), float(d[1]), float(d[2]), float(d[3])))
+	var m := material()
+	# uniform arrays are fixed-size: pad to the declared length
+	var r := _rects.duplicate(); r.resize(MAX_FOOTPRINTS)
+	var o := _rots.duplicate(); o.resize(MAX_FOOTPRINTS)
+	var dd := _doors.duplicate(); dd.resize(MAX_DOORS)
+	m.set_shader_parameter("house_rect", r)
+	m.set_shader_parameter("house_rot", o)
+	m.set_shader_parameter("house_count", _rects.size())
+	m.set_shader_parameter("door_at", dd)
+	m.set_shader_parameter("door_count", _doors.size())
+
 func setup(s: Dictionary) -> bool:
 	spec = s
 	name = "Terrain"
