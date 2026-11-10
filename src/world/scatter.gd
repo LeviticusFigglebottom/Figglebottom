@@ -451,6 +451,12 @@ const VEG_KINDS := {
 	"heather": {"atlas": "res://assets/textures/veg/T_veg_heather.png", "cell": 0.64, "cards": 3, "lean": 0.36,
 		"wind": 0.035, "keep": 0.45, "bury": 0.4, "dry": Color(0.26, 0.2, 0.15), "dryness": 0.5,
 		"tint_a": Color(0.8, 0.8, 0.72), "tint_b": Color(0.95, 0.85, 0.8)},
+	# the pile of the turf itself: low rosettes laid almost flat, close-set and
+	# near the ground's own colour, so from above the clumps stand in a sward
+	# instead of reading as dots on a photo. Added under every grass rule.
+	"sward": {"atlas": "res://assets/textures/veg/T_veg_grass.png", "cell": 0.4, "cards": 3, "lean": 0.95, "root_shade": 0.92,
+		"wind": 0.02, "keep": 0.0, "bury": 0.5, "dry": Color(0.3, 0.29, 0.15), "dryness": 0.35,
+		"tint_a": Color(0.46, 0.6, 0.33), "tint_b": Color(0.62, 0.68, 0.4)},
 	"sedge": {"atlas": "res://assets/textures/veg/T_veg_sedge.png", "cell": 0.9, "cards": 3, "lean": 0.2,
 		"wind": 0.15, "keep": 0.55, "bury": 0.6, "dry": Color(0.45, 0.38, 0.2), "dryness": 0.8,
 		"tint_a": Color(0.72, 0.8, 0.6), "tint_b": Color(0.95, 0.92, 0.75)},
@@ -482,7 +488,17 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 	var ground := Color(0.1, 0.11, 0.05)
 	if terrain.has_method("palette_color"):
 		ground = terrain.palette_color("turf_a")
+	# the sward rides on the grass rules, after them all, so adding it moved
+	# no existing clump
+	var all_rules: Array = rules.duplicate()
 	for rule in rules:
+		if String(rule.get("kind", "grass")) == "grass":
+			var sw: Dictionary = (rule as Dictionary).duplicate()
+			sw["kind"] = "sward"
+			sw["density"] = float(rule.get("density", 1.0)) * 4.0
+			sw["range"] = minf(float(rule.get("range", 55.0)), 32.0)
+			all_rules.append(sw)
+	for rule in all_rules:
 		var kind := String(rule.get("kind", "grass"))
 		var tag := String(rule.get("tag", "base"))
 		var reg: Array = rule.get("region", [-50, -50, 50, 50])
@@ -519,11 +535,14 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 				p *= 0.55 + 0.45 * terrain.splat_at(px, pz, 3)
 				# drifts: thick patches a few metres across, thin ground between
 				var drift := _patch(px, pz, 7.0, kseed) * 0.65 + _patch(px, pz, 2.6, kseed + 1) * 0.35
-				p *= lerpf(0.08, 1.7, smoothstep(0.38, 0.74, drift))
+				if kind == "sward":
+					p *= lerpf(0.55, 1.5, smoothstep(0.25, 0.75, drift))
+				else:
+					p *= lerpf(0.08, 1.7, smoothstep(0.38, 0.74, drift))
 				if rng.randf() > p * 0.6 or _blocked(keep_clear, px, pz):
 					continue
 				# a clump and sometimes a smaller one grown out of its side
-				var n := 1 + (1 if rng.randf() < 0.3 else 0)
+				var n := 1 + (1 if kind != "sward" and rng.randf() < 0.3 else 0)
 				for j in n:
 					var qx := px
 					var qz := pz
@@ -619,6 +638,7 @@ static func _veg_mesh(kind: String, tag: String, ground := Color(0.1, 0.11, 0.05
 	mat.set_shader_parameter("tint_a", k["tint_a"])
 	mat.set_shader_parameter("tint_b", k["tint_b"])
 	mat.set_shader_parameter("dryness", float(k["dryness"]))
+	mat.set_shader_parameter("root_shade", float(k.get("root_shade", 0.62)))
 	mat.set_shader_parameter("ground_col", ground)
 	mesh.surface_set_material(0, mat)
 	# the wind and the lean carry vertices outside the rest box

@@ -27,6 +27,7 @@ uniform vec3 ground_col : source_color = vec3(0.1, 0.11, 0.05);
 uniform float rime_keep = 0.38;     // share of clumps that still show in RIME
 uniform float rime_bury = 0.5;      // how much of a survivor is under the snow
 uniform float alpha_cut = 0.42;
+uniform float root_shade = 0.62;    // how dark a clump is at its root (a sward has no pit)
 uniform int state_mode = 0;
 
 global uniform float rh_wave_r;
@@ -115,7 +116,7 @@ void fragment() {
 	c *= mix(0.7, 1.0, v_inst.z);
 	// roots sink into the turf colour and its shade
 	float root = smoothstep(0.0, 0.3, h);
-	vec3 thaw_c = mix(ground_col, c, mix(0.35, 1.0, root)) * mix(0.62, 1.0, root);
+	vec3 thaw_c = mix(ground_col, c, mix(0.35, 1.0, root)) * mix(root_shade, 1.0, root);
 	// frosted: pale throughout, whiter toward the tips, never dark blades
 	vec3 frost = mix(vec3(0.62, 0.66, 0.72) + vec3(luma) * 0.6, vec3(0.9, 0.93, 0.98), smoothstep(0.15, 0.75, h));
 	vec3 rime_c = mix(mix(c, vec3(luma), 0.6) * 1.3 + 0.12, frost, 0.72);
@@ -123,6 +124,6 @@ void fragment() {
 	NORMAL = v_n;
 	ROUGHNESS = mix(0.85, 0.7, rime);
 	BACKLIGHT = mix(vec3(0.2, 0.18, 0.07), vec3(0.1, 0.12, 0.15), rime) * h;
-	AO = mix(mix(0.5, 0.9, rime), 1.0, root);
+	AO = mix(mix(min(root_shade + 0.05, 1.0) * 0.8, 0.9, rime), 1.0, root);
 	AO_LIGHT_AFFECT = 0.4;
 }
