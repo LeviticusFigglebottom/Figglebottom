@@ -171,15 +171,7 @@ static func build(area_id: String) -> Area:
 				and f.boss_spawner.dead_once
 				and World.area_flag(area_id, f.boss_spawner.spawn_flag)):
 			f.snap_cleared()
-	for spec in def.get("npcs", []):
-		if not _flag_ok(spec):
-			continue      # a soul may stand only before/after a turn of the story
-		var n := NPC.new()
-		n.npc_id = spec.get("id", "")
-		n.spec = spec
-		n.set_meta("state_tag", spec.get("tag", "thaw"))
-		area.attach(n, spec.get("tag", "thaw"))
-		_place(n, spec)
+	sync_npcs(area)
 	for spec in def.get("plaques", []):
 		if not _flag_ok(spec):
 			continue
@@ -504,6 +496,33 @@ const STRUCTURAL_KITS := ["wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "fl
 
 static func _is_structural(kit) -> bool:
 	return String(kit) in STRUCTURAL_KITS
+
+## The souls of an area follow the story's flags: one may stand only before
+## or after a turn of the story ("absent_flag" / "require_flag"). Run at
+## build, and again each time the memory turns (Area.pre_transition and
+## apply_state): a Holdfast released in RIME must not leave the old THAW
+## scene standing when the Bearer warms the place from inside it.
+static func sync_npcs(area: Area) -> void:
+	var specs: Array = (area.get_meta("def", {}) as Dictionary).get("npcs", [])
+	var standing := {}
+	for c in area.find_children("*", "NPC", true, false):
+		if c.has_meta("spec_i") and not c.is_queued_for_deletion():
+			standing[int(c.get_meta("spec_i"))] = c
+	for i in specs.size():
+		var spec: Dictionary = specs[i]
+		var want := _flag_ok(spec)
+		if want and not standing.has(i):
+			var n := NPC.new()
+			n.npc_id = spec.get("id", "")
+			n.spec = spec
+			n.set_meta("state_tag", spec.get("tag", "thaw"))
+			n.set_meta("spec_i", i)
+			area.attach(n, spec.get("tag", "thaw"))
+			_place(n, spec)
+		elif not want and standing.has(i):
+			var gone: Node3D = standing[i]
+			gone.visible = false
+			gone.queue_free()
 
 ## World-flag conditions on any spec: "require_flag" builds only once the
 ## flag is set; "absent_flag" builds only until it is. Evaluated at area
