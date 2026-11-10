@@ -447,6 +447,7 @@
    "pickup_id": "mending_needle",
    "ahead": 2.2
   },
+  "release_clear": 3.2,
   "release_hearth": "hs_long_hearth"
  },
  "oarsman": {
@@ -607,7 +608,7 @@
     "breath": "up"
    }
   ],
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "res://assets/audio/hound_bark.wav",
   "warmth": 18,
   "model": "hearthhound",
   "class": "res://src/enemies/hearthhound.gd",

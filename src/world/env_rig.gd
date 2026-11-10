@@ -91,7 +91,7 @@ func _ready() -> void:
 	sun.shadow_blur = 1.35
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
 	sun.directional_shadow_blend_splits = true
-	sun.directional_shadow_max_distance = 135.0
+	sun.directional_shadow_max_distance = _shadow_distance()
 	add_child(sun)
 
 	# Secondary shadowless zenith/counter-directional sky & moonlight bounce fill
@@ -102,11 +102,20 @@ func _ready() -> void:
 	sky_fill.rotation_degrees = Vector3(-68.0, 138.0, 0.0)
 	add_child(sky_fill)
 
+## Sun shadow reach per quality tier (render/shadow_distance, Low/High/
+## Ultra). Past ~100 m the third-person camera sees cliffs, not contact
+## shadows; the shorter reach also spends the four splits' texels nearer.
+func _shadow_distance() -> float:
+	var d: Array = DB.tuning("render/shadow_distance", [70.0, 100.0, 135.0])
+	return float(d[clampi(get_graphics_quality(), 0, d.size() - 1)])
+
 func apply_quality_tier() -> void:
 	if world_env == null or world_env.environment == null:
 		return
 	var e := world_env.environment
 	var q := get_graphics_quality()
+	if sun != null:
+		sun.directional_shadow_max_distance = _shadow_distance()
 	e.ssao_enabled = (q >= 1)
 	if e.ssao_enabled:
 		e.ssao_radius = 1.25

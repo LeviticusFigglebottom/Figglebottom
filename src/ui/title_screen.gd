@@ -20,10 +20,14 @@ const STOPS := [
 	{"id": "saltfell_steading", "from": Vector3(16.0, 26.0, -26.0), "to": Vector3(-14.0, 26.0, -26.0), "look": Vector3(0, 30.0, -130)},
 ]
 const STOP_T := 11.0
+## The ledger names the winter as the player chose it, not by its data id.
+const DIFF_NAMES := {"gentle": "The Gentle Thaw", "long": "The Long Winter", "hard": "The Hard Frost"}
 
 var _stage: Node3D
 var _cam: Camera3D
 var _area: Node = null
+var _area_id := ""
+var _warmed := false
 var _deck: Array = []
 var _t := 0.0
 var _from := Vector3.ZERO
@@ -191,18 +195,26 @@ func _process(dt: float) -> void:
 func _swap_stop() -> void:
 	if _done:
 		return
-	if _area != null and is_instance_valid(_area):
-		RH.free_gently(_area)
-		_area = null
 	if _deck.is_empty():
 		_deck = STOPS.duplicate()
 		_deck.shuffle()
 	var stop: Dictionary = _deck.pop_back()
-	var area = AreaBuilder.build(stop["id"])
-	for sp in area.find_children("*", "Spawner", true, false):
-		sp.queue_free()
-	_stage.add_child(area)
-	_area = area
+	# the stops share quarters: keep the built one and only move the camera.
+	# Rebuilding the whole steading under every dip (terrain, navmesh, scatter)
+	# was the title's hitch, tens of seconds on a software renderer.
+	var area = _area if _area != null and is_instance_valid(_area) and _area_id == String(stop["id"]) else null
+	if area == null:
+		if _area != null and is_instance_valid(_area):
+			RH.free_gently(_area)
+		area = AreaBuilder.build(stop["id"])
+		for sp in area.find_children("*", "Spawner", true, false):
+			sp.queue_free()
+		_stage.add_child(area)
+		_area = area
+		_area_id = String(stop["id"])
+		if not _warmed:
+			_warmed = true
+			ShaderWarm.warm(_stage, _cam)
 	# state dressing WITHOUT StateDirector.snap: the title track owns the
 	# music, so the layers/env/shader globals are set by hand
 	var st: int = RH.WState.RIME if randf() < 0.5 else RH.WState.THAW
@@ -263,7 +275,7 @@ func _slot_label(i: int, sum) -> String:
 	var hours := int(sum["play_s"]) / 3600
 	var mins := (int(sum["play_s"]) % 3600) / 60
 	return "%s   Level %d  ·  %s  ·  %s  ·  %dh %02dm" % [
-		name_, sum["level"], area_name, String(sum["difficulty"]), hours, mins]
+		name_, sum["level"], area_name, DIFF_NAMES.get(String(sum["difficulty"]), "The Long Winter"), hours, mins]
 
 func _pick_slot(i: int) -> void:
 	if _slots_mode == "new" and World.slot_summary(i) != null and _armed_slot != i:

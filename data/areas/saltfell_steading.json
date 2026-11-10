@@ -905,7 +905,7 @@
     22.0,
     -26.4
    ],
-   "rot": 180,
+   "rot": 0,
    "require_flag": "ks_netmender_released"
   }
  ],
@@ -1098,7 +1098,15 @@
     -20.0
    ],
    "rot": 0,
-   "tag": "rime"
+   "tag": "rime",
+   "shader": {
+    "tint": [
+     0.74,
+     0.84,
+     0.96
+    ],
+    "mesh_strength": 0.7
+   }
   }
  ],
  "npcs": [
@@ -1131,7 +1139,7 @@
     60.5
    ],
    "rot": 200,
-   "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\n\nKeep hearth in the boat-shed, and it will remember for you."
+   "text": "THE STRAND\n\nThe tide is out and the boats are drawn up.\nThe path to the house is cut into the cliff, west of the racks.\nThe hearth is in the boat-shed."
   },
   {
    "at": [
@@ -1196,14 +1204,29 @@
    "id": "net_float",
    "at": [
     -8.0,
-    0.08,
-    78.8
+    0.11,
+    78.4
    ],
    "item": "item_net_float",
    "kit": "net_float",
    "tag": "rime",
    "set_flag": "ks_brede_float_found",
-   "label": "Chip the float out of the ice"
+   "label": "Chip the float out of the ice",
+   "lift": 1.25,
+   "chip_heavy": true
+  },
+  {
+   "id": "mending_needle",
+   "at": [
+    0.0,
+    22.02,
+    -43.8
+   ],
+   "item": "item_mending_needle",
+   "scene": "res://assets/models/weapons/mending_needle.glb",
+   "tag": "base",
+   "require_flag": "ks_netmender_released",
+   "label": "Take the mending needle"
   },
   {
    "id": "knucklebones",
@@ -1233,6 +1256,83 @@
      11.6,
      31.6
     ]
+   }
+  },
+  {
+   "script": "res://src/world/tide_wall.gd",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "tag": "rime",
+   "params": {
+    "points": [
+     [
+      -64,
+      76.6
+     ],
+     [
+      -54,
+      76.3
+     ],
+     [
+      -46,
+      76.0
+     ],
+     [
+      -38,
+      76.4
+     ],
+     [
+      -30,
+      76.6
+     ],
+     [
+      -22,
+      76.6
+     ],
+     [
+      -14,
+      77.8
+     ],
+     [
+      -6,
+      79.5
+     ],
+     [
+      2,
+      80.3
+     ],
+     [
+      10,
+      79.6
+     ],
+     [
+      18,
+      78.6
+     ],
+     [
+      26,
+      76.8
+     ],
+     [
+      34,
+      76.0
+     ],
+     [
+      44,
+      76.4
+     ]
+    ],
+    "height": 3.9,
+    "gaps": [
+     [
+      -36.0,
+      -23.0
+     ]
+    ],
+    "base_y": -0.6
    }
   },
   {

@@ -53,6 +53,7 @@ var lore_text: Label
 var _lore_panel: Panel
 var _lore_hint: Label
 var pose_label: Label
+static var surveyor: bool = "--surveyor" in OS.get_cmdline_user_args()
 
 # the belt: five slots along the bottom edge (1-4 arms, 5 the gourd)
 var hotbar_root: Control
@@ -542,9 +543,11 @@ func show_keepsake_toast() -> void:
 	_ks_tw.tween_property(_ks_toast, "modulate:a", 0.0, 1.4).set_trans(Tween.TRANS_SINE)
 
 func _process(dt: float) -> void:
-	# the surveyor's line follows the live camera every frame
+	# the surveyor's line follows the live camera every frame. A dev aid,
+	# not a player's: shown only with --surveyor or F3 (it sat in the
+	# corner of every frame of play)
 	var cam := get_viewport().get_camera_3d()
-	if cam != null and Game.current_area_id != "":
+	if cam != null and Game.current_area_id != "" and surveyor:
 		var st := "rime" if Game.area_state() == RH.WState.RIME else "thaw"
 		var p := cam.global_position
 		var r := cam.global_rotation_degrees
@@ -845,6 +848,9 @@ func _input(event: InputEvent) -> void:
 ## J opens the Pack at the Keepsakes leaf (the Bearer's own keys stay in
 ## player.gd; this is a menu key, so the HUD owns it).
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F3:
+		surveyor = not surveyor
+		return
 	if not event.is_action_pressed("keepsakes"):
 		return
 	var p = Game.player
@@ -871,7 +877,25 @@ func hide_boss() -> void:
 ## gold rule beneath — faded in, held a breath, and let go.
 var _title_layer: CanvasLayer = null
 
+## A menu or a talk takes the screen: a place-name card still fading
+## must not sit on top of the panel (it overlapped Brede's first line).
+func clear_area_title() -> void:
+	if _title_layer != null and is_instance_valid(_title_layer):
+		var box := _title_layer.get_child(0) as Control
+		if box != null:
+			var tw := box.create_tween()
+			tw.tween_property(box, "modulate:a", 0.0, 0.25)
+		var layer_ref := _title_layer
+		get_tree().create_timer(0.3).timeout.connect(func():
+			if is_instance_valid(layer_ref):
+				layer_ref.queue_free())
+		_title_layer = null
+
+## The last card raised, as authored (tests and the QA shots read it).
+var last_title := ""
+
 func show_area_title(text: String, hold := 2.2) -> void:
+	last_title = text
 	if _title_layer != null and is_instance_valid(_title_layer):
 		_title_layer.queue_free()
 	_title_layer = CanvasLayer.new()

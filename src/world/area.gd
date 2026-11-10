@@ -263,3 +263,8 @@ func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	region.bake_navigation_mesh(false)   # synchronous on load
 	region.enabled = false
 	return region
+
+## The card shown on arriving at pos: the region's own name. ZoneTitles
+## follows it with the named place the Bearer stands in.
+func arrival_title(_pos: Vector3) -> String:
+	return display_name
