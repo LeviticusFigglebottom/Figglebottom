@@ -279,6 +279,8 @@ def export_glb(path, name, buf, maps, smooth=True, auto_smooth_deg=None, bevel=0
             m.limit_method = "ANGLE"
             m.angle_limit = math.radians(auto_smooth_deg)
             bpy.ops.object.modifier_apply(modifier="b")
+            t = ob.modifiers.new("t", "TRIANGULATE")   # tangents need tris
+            bpy.ops.object.modifier_apply(modifier="t")
         bpy.ops.object.shade_auto_smooth(angle=math.radians(auto_smooth_deg))
     me.materials.append(make_material(name, maps))
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -287,3 +289,87 @@ def export_glb(path, name, buf, maps, smooth=True, auto_smooth_deg=None, bevel=0
     tris = sum(len(p.vertices) - 2 for p in me.polygons)
     print("[proc] %s  tris=%d  %.0f kB" % (os.path.relpath(path, ROOT), tris, os.path.getsize(path) / 1024))
     return tris
+
+
+def lathe(buf, profile, segs, u0, u1, v_per_m=1.0, xf=None, squash=(1.0, 1.0)):
+    """Spin a profile [(radius, z), ...] about Z. Winding faces outward when
+    the profile runs bottom to top on the outside (and top to bottom inside)."""
+    rings = []
+    v = 0.0
+    for i, (r, z) in enumerate(profile):
+        if i > 0:
+            v += math.hypot(r - profile[i - 1][0], z - profile[i - 1][1]) * v_per_m
+        ring = []
+        for k in range(segs + 1):
+            a = TAU * k / segs
+            p = np.array([math.cos(a) * r * squash[0], math.sin(a) * r * squash[1], z])
+            if xf is not None:
+                p = xf[:3, :3] @ p + xf[:3, 3]
+            ring.append(buf.vert(p, (u0 + (u1 - u0) * k / segs, v)))
+        rings.append(ring)
+    for i in range(len(rings) - 1):
+        for k in range(segs):
+            buf.quad(rings[i][k], rings[i][k + 1], rings[i + 1][k + 1], rings[i + 1][k])
+
+
+def blob(buf, rng, centre, radii, segs, rings, u0, u1, v0=0.0, v1=0.3, lump=0.12, xf=None):
+    """A lumpy ellipsoid (loaves, floats, stones, charcoal)."""
+    grid = []
+    ph = rng.random(4) * TAU
+    for j in range(rings + 1):
+        lat = math.pi * (j / rings - 0.5)
+        row = []
+        for k in range(segs + 1):
+            lon = TAU * (k % segs) / segs
+            d = np.array([math.cos(lat) * math.cos(lon), math.cos(lat) * math.sin(lon), math.sin(lat)])
+            w = 1.0 + lump * (math.sin(lon * 2 + ph[0]) * math.cos(lat * 3 + ph[1]) + 0.6 * math.sin(lon * 3 + ph[2] + lat * 2))
+            p = np.asarray(centre) + d * np.asarray(radii) * w
+            if xf is not None:
+                p = xf[:3, :3] @ p + xf[:3, 3]
+            row.append(buf.vert(p, (u0 + (u1 - u0) * k / segs, v0 + (v1 - v0) * j / rings)))
+        grid.append(row)
+    for j in range(rings):
+        for k in range(segs):
+            buf.quad(grid[j][k], grid[j][k + 1], grid[j + 1][k + 1], grid[j + 1][k])
+
+
+def make_atlas(name, columns, size=1024):
+    """Columns side by side, each `(set, fn)`: a committed CC0 set's maps
+    cropped to the column, optionally passed through fn(albedo, orh) ->
+    (albedo, orh) for a tint or a rough change. V tiles; U does not. Returns
+    (maps, [(u0, u1), ...]) with the u ranges inset against mip bleed."""
+    n = len(columns)
+    w = size // n
+    a = np.zeros((size, size, 3), np.float32)
+    nm = np.zeros_like(a)
+    o = np.zeros_like(a)
+    cols = []
+    cache = {}
+    for i, (sname, fn) in enumerate(columns):
+        if sname not in cache:
+            cache[sname] = load_set(sname, size)
+        s = cache[sname]
+        x0 = (i * 97) % (size - w)     # a different strip of the photo for each column
+        alb, orh, nrm = s["albedo"][:, x0:x0 + w].copy(), s["orh"][:, x0:x0 + w].copy(), s["normal"][:, x0:x0 + w]
+        if fn is not None:
+            alb, orh = fn(alb, orh)
+        a[:, i * w:(i + 1) * w] = alb
+        nm[:, i * w:(i + 1) * w] = nrm
+        o[:, i * w:(i + 1) * w] = orh
+        pad = 6.0 / size
+        cols.append((i / n + pad, (i + 1) / n - pad))
+    return save_maps(name, a, nm, orh_to_orm(o)), cols
+
+
+def tint(rgb, gain=1.0, rough=None, keep=0.35):
+    """Column op: pull the photo's mean to `rgb`, keeping its detail."""
+    def fn(alb, orh):
+        mean = alb.reshape(-1, 3).mean(axis=0)
+        detail = alb / np.maximum(mean, 1e-3)
+        out = np.asarray(rgb, np.float32) * (1.0 + (detail - 1.0) * gain)
+        out = out * (1 - keep) + alb * keep * (np.asarray(rgb, np.float32).mean() / max(mean.mean(), 1e-3))
+        if rough is not None:
+            orh = orh.copy()
+            orh[..., 1] = np.clip(orh[..., 1] - orh[..., 1].mean() + rough, 0.05, 1.0)
+        return np.clip(out, 0, 1), orh
+    return fn

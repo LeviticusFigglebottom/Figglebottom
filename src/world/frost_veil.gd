@@ -14,7 +14,27 @@ var plane_size := Vector2(3.4, 5.1)
 ## Netmender's veil is frozen net mesh in rime blue (SLICE.md 3).
 var shader_params: Dictionary = {}
 
+## Per-holdfast dressing (look pass 5): the veil is made of what the place
+## froze round. Shader params (shaders/frost_veil.gdshader) plus "props":
+## "thorn" grows the wood's thorn up the frame, "net" hangs the frozen net.
+## An area's "shader" block still overrides any of it.
+const DRESS := {
+	"hall_veil": {"props": "net"},
+	"open_barrow_veil": {"clods": 0.9, "tint": Color(0.80, 0.80, 0.74)},
+	"breathing_hole_veil": {"cracks": 0.85, "density": 0.5, "refraction": 1.0, "tint": Color(0.72, 0.86, 0.98)},
+	"long_table_veil": {"boards": 0.85, "tint": Color(0.78, 0.83, 0.90)},
+	"hedge_veil": {"props": "thorn", "tint": Color(0.80, 0.84, 0.90)},
+	"fold_veil": {"strands": 0.9, "tint": Color(0.90, 0.87, 0.78)},
+	"wellhead_veil": {"cracks": 0.5, "density": 0.45, "refraction": 1.4, "tint": Color(0.68, 0.88, 0.96)},
+}
+const FRAME_GLB := "res://assets/models/landmarks/lm_veil_rime.glb"
+const NET_GLB := "res://assets/models/landmarks/lm_frost_veil_net.glb"
+## the sheets' spacing and bow (m): the veil's visible thickness
+const SHEET_GAP := 0.2
+const SHEET_BOW := 0.26
+
 var _plane: MeshInstance3D
+var _dress: Node3D   # rimed frame, drifting frost, props: melts with the veil
 var _zone: Interactable
 var _seal: StaticBody3D
 var _engaged := false
@@ -31,14 +51,14 @@ var _aux_planes: Array = []
 
 func _ready() -> void:
 	add_to_group(RH.GROUP_RESPAWN_ON_REST)
-	if has_frame:
-		add_child(KitLib.instance("frost_veil_frame"))
 	_plane = MeshInstance3D.new()
-	var quad := QuadMesh.new()
-	quad.size = plane_size
-	_plane.mesh = quad
+	_plane.mesh = sheet_mesh(plane_size)
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/frost_veil.gdshader")
+	var dress: Dictionary = DRESS.get(gate_id, {})
+	for k in dress:
+		if k != "props":
+			m.set_shader_parameter(String(k), dress[k])
 	for k in shader_params:
 		var v = shader_params[k]
 		if v is Array and (v as Array).size() == 3:
@@ -47,6 +67,7 @@ func _ready() -> void:
 	_plane.set_surface_override_material(0, m)
 	_plane.position = Vector3(0, plane_size.y * 0.5, 0)
 	add_child(_plane)
+	_build_dress(String(dress.get("props", "")))
 
 	_seal = StaticBody3D.new()
 	_seal.collision_layer = 1 << (RH.L_WORLD_RIME - 1)
@@ -66,6 +87,106 @@ func _ready() -> void:
 	_build_aux_seals()
 	if _snap_when_ready:
 		snap_cleared()
+
+## Three bowed sheets in one mesh: back, heart, front (UV2.x = -1, 0, 1).
+## The outer two bow away from each other, so from the side the veil is a
+## lens about 0.9 m through at the middle instead of a card's edge.
+static func sheet_mesh(size: Vector2) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var nx := 10
+	var ny := 12
+	for layer in [-1, 1, 0]:   # heart last: it refracts the two behind it
+		var grid: Array = []
+		for j in ny + 1:
+			var row: Array = []
+			for i in nx + 1:
+				var u := float(i) / nx
+				var v := float(j) / ny
+				# bowed across and, less, up its height; pinned at the edges
+				var bow := sin(u * PI) * (0.6 + 0.4 * sin(v * PI))
+				var z: float = float(layer) * (SHEET_GAP + SHEET_BOW * bow)
+				row.append([Vector3((u - 0.5) * size.x, (0.5 - v) * size.y, z), Vector2(u, v)])
+			grid.append(row)
+		for j in ny:
+			for i in nx:
+				for q in [[0, 0], [1, 0], [1, 1], [0, 0], [1, 1], [0, 1]]:
+					var e: Array = grid[j + q[1]][i + q[0]]
+					st.set_uv(e[1])
+					st.set_uv2(Vector2(float(layer), 0.0))
+					st.add_vertex(e[0])
+	st.generate_normals()
+	return st.commit()
+
+func _build_dress(props: String) -> void:
+	_dress = Node3D.new()
+	_dress.name = "Dress"
+	add_child(_dress)
+	var fit := Vector3(plane_size.x / 3.4, plane_size.y / 5.1, 1.0)
+	if ResourceLoader.exists(FRAME_GLB):
+		var fr := _hero(FRAME_GLB, "M_veil_rime", 0.3)
+		fr.scale = fit
+		_dress.add_child(fr)
+	elif has_frame:
+		_dress.add_child(KitLib.instance("frost_veil_frame"))
+	if props == "thorn" and ResourceLoader.exists(Forest.HERO_DIR + "hd_thornwall.glb"):
+		# the wood's own thorn climbs both jambs and leans in over the gap
+		var tm := Forest._mesh("hero|hd_thornwall|M_thorn_rime|0|1.5", 2)
+		for sx in [-1.0, 1.0]:
+			for k in 2:
+				var mi := MeshInstance3D.new()
+				mi.mesh = tm
+				mi.transform = Transform3D(Basis(Vector3.UP, PI * 0.5 + 0.5 * k * sx).rotated(Vector3.BACK, -0.2 * sx * (k + 0.4))
+						.scaled_local(Vector3(1.0, 1.25 + 0.3 * k, 0.9)), Vector3(sx * (1.75 * fit.x + 0.15 - 0.3 * k), -0.05, 0.12 * (k * 2 - 1)))
+				_dress.add_child(mi)
+	elif props == "net" and ResourceLoader.exists(NET_GLB):
+		# the Netmender's curtain: her frozen net hangs in the heart of it
+		var net := _hero(NET_GLB, "M_veil_rime", 0.15)
+		var bb := _aabb(net)
+		var k := minf(plane_size.x * 0.92 / maxf(maxf(bb.size.x, bb.size.z), 0.1), plane_size.y * 0.8 / maxf(bb.size.y, 0.1))
+		net.scale = Vector3.ONE * k
+		if bb.size.z > bb.size.x:
+			net.rotation.y = PI * 0.5
+		net.position.y = -bb.position.y * k
+		_dress.add_child(net)
+	# frost hanging in the air about it: slow, drifting, never falling straight
+	var p := CPUParticles3D.new()
+	p.name = "FrostDrift"
+	p.amount = 42
+	p.lifetime = 6.0
+	p.preprocess = 6.0
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	p.emission_box_extents = Vector3(plane_size.x * 0.6, plane_size.y * 0.42, 0.7)
+	p.direction = Vector3(0.3, -1.0, 0.0)
+	p.spread = 70.0
+	p.initial_velocity_min = 0.04
+	p.initial_velocity_max = 0.22
+	p.gravity = Vector3(0, -0.04, 0)
+	p.scale_amount_min = 0.03
+	p.scale_amount_max = 0.08
+	p.color = Color(0.86, 0.93, 1.0, 0.75)
+	p.mesh = AreaPortal.make_mote_quad(1.0)
+	p.position = Vector3(0, plane_size.y * 0.48, 0)
+	_dress.add_child(p)
+
+## A GLB instanced with every surface on the hall shader (RIME branch).
+static func _hero(path: String, family: String, tint: float) -> Node3D:
+	var inst: Node3D = (load(path) as PackedScene).instantiate()
+	for c in inst.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		for si in mi.mesh.get_surface_count():
+			mi.set_surface_override_material(si, MaterialLib.hero_mat(mi.mesh.surface_get_material(si), family, 2, tint))
+	return inst
+
+static func _aabb(n: Node3D) -> AABB:
+	var out := AABB()
+	var first := true
+	for c in n.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		var bb := mi.transform * mi.get_aabb()
+		out = bb if first else out.merge(bb)
+		first = false
+	return out
 
 func _build_aux_seals() -> void:
 	for spec in aux_seal_specs:
@@ -164,6 +285,8 @@ func respawn() -> void:
 	_seal.collision_layer = 1 << (RH.L_WORLD_RIME - 1)
 	_plane.transparency = 0.0
 	_plane.show()
+	_dress.scale = Vector3.ONE
+	_dress.show()
 	_set_aux(false)
 	Game.arena_locked = false
 	for hud in get_tree().get_nodes_in_group("hud"):
@@ -181,6 +304,7 @@ func snap_cleared() -> void:
 	_zone.enabled = false
 	_seal.collision_layer = 0
 	_plane.hide()
+	_dress.hide()
 	_set_aux(false)
 
 func dissolve() -> void:
@@ -191,6 +315,9 @@ func dissolve() -> void:
 	var tw := create_tween()
 	tw.tween_property(_plane, "transparency", 1.0, 2.0)
 	tw.tween_callback(_plane.hide)
+	# the rime that framed it slumps and is gone with it
+	tw.parallel().tween_property(_dress, "scale", Vector3(1.0, 0.03, 1.0), 2.0).set_ease(Tween.EASE_IN)
+	tw.tween_callback(_dress.hide)
 	_meltwater()
 
 ## The veil falls as meltwater: drops run down where it stood.
