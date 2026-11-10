@@ -137,7 +137,9 @@
   "fall_lethal_speed": 24.0,
   "bog_drag": 0.55,
   "bog_seconds": 3.0,
-  "thin_ice_seconds": 0.7
+  "thin_ice_seconds": 0.7,
+  "strand_seconds": 2.2,
+  "strand_damage": 0.12
  },
  "render": {
   "_doc": "shadow_distance: the sun's shadow reach in metres per graphics-quality tier (Low, High, Ultra). prop_ranges: [small_max_m, small_range_m, mid_max_m, mid_range_m]; kit props whose largest side is at most small_max_m stop drawing past small_range_m, up to mid_max_m past mid_range_m; larger kit always draws.",

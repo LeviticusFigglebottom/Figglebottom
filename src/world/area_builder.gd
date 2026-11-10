@@ -247,6 +247,7 @@ static func build(area_id: String) -> Area:
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
 	if area.terrain != null:
 		Weather.build(area, area.terrain, def)
+		TrapWarden.build(area)      # no ditch keeps the Bearer (tools/fix_traps.py)
 
 	_mark_indoors(area, def.get("houses", []))
 

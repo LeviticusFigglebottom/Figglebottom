@@ -53,6 +53,8 @@ def write():
             h = height(x, z)
             hs.append(h)
             sp += bytes(int(max(0, min(1, c)) * 255 + 0.5) for c in splat(x, z, h))
+    import terrain_patch                  # ramps out of terrain traps (tools/fix_traps.py)
+    terrain_patch.apply("thornwold", hs, X0, Z0, NX, NZ)
     with open(os.path.join(OUT_DIR, "thornwold_h.bin"), "wb") as f:
         f.write(struct.pack("<%df" % len(hs), *hs))
     with open(os.path.join(OUT_DIR, "thornwold_splat.bin"), "wb") as f:
