@@ -644,6 +644,70 @@ func _louvre() -> void:
 			wood.box(Vector3(cw, 0.03, (az * 2.0 + 0.28) / 4.0 - 0.006), Transform3D(bs, c + Vector3(sgn * cw * 0.5 * cos(cap_a), top + 0.52 + (ax + 0.16) * tan(cap_a) * 0.5 + wood.rnd() * 0.008, bz)), 0)
 	dark.pole(c + Vector3(0, top + 0.56 + (ax + 0.16) * tan(0.5), -az - 0.2), c + Vector3(0, top + 0.56 + (ax + 0.16) * tan(0.5), az + 0.2), 0.045, 0.0, 6)
 
+## RIME: snow banked against the outside of the walls, as its own rime-only
+## mesh. It follows the terrain under it, sits deeper on the lee side and in
+## the corners, and is dug out in front of every door. On a deck (no land
+## under the wall) it is a thin sill of snow instead.
+func build_drifts(terrain: Terrain) -> ArrayMesh:
+	var buf := MeshBuf.new(77)
+	var prof: Array = [[0.04, 1.0], [0.3, 0.92], [0.62, 0.6], [1.0, 0.26], [1.45, 0.0]]
+	var lee_dir := Vector3(-0.8, 0, 0.6)
+	for side in ["N", "S", "W", "E"]:
+		if side in opens:
+			continue
+		var sx := side_xf(side)
+		var span := side_span(side)
+		var gaps := _door_ts(side)
+		var out_w := Basis(Vector3.UP, yaw) * sx.basis.z
+		var lee := 0.72 + 0.28 * out_w.dot(lee_dir)
+		var mid_w := world_of(sx * Vector3(0, 0, 0.8))
+		var on_land := terrain != null and terrain.contains(mid_w.x, mid_w.z) and terrain.height_at(mid_w.x, mid_w.z) > origin.y - 0.6
+		var ws := 1.0 if on_land else 0.4
+		var pts: Array = []
+		var nrm_rows := 0
+		var t := -span * 0.5 - 0.9
+		while t <= span * 0.5 + 0.9 + 0.01:
+			var hb := (0.27 + 0.13 * noise.get_noise_2d(t * 1.3, 17.0 + span)) * lee * (1.0 if on_land else 0.45)
+			hb *= 1.0 - smoothstep(span * 0.5 - 0.2, span * 0.5 + 0.9, absf(t))
+			# corners pile up
+			hb *= 1.0 + 0.5 * smoothstep(span * 0.5 - 1.6, span * 0.5 - 0.3, absf(t))
+			for g in gaps:
+				hb *= smoothstep(DOOR_W * 0.5 + 0.15, DOOR_W * 0.5 + 1.3, absf(t - float(g)))
+			for pr in prof:
+				var lp := sx * Vector3(t, 0, float(pr[0]) * ws)
+				var gy := 0.0
+				if on_land:
+					var wp := world_of(lp)
+					gy = terrain.height_at(wp.x, wp.z) - origin.y
+				pts.append(lp + Vector3(0, gy + hb * float(pr[1]) - (0.03 if float(pr[1]) == 0.0 else 0.0), 0))
+			nrm_rows += 1
+			t += 0.5
+		var np := prof.size()
+		for i in nrm_rows - 1:
+			for j in np - 1:
+				var a: Vector3 = pts[i * np + j]
+				var b: Vector3 = pts[(i + 1) * np + j]
+				var c: Vector3 = pts[(i + 1) * np + j + 1]
+				var d: Vector3 = pts[i * np + j + 1]
+				if maxf(a.y - d.y, b.y - c.y) < 0.012 and j == 0:
+					continue
+				var n0 := _grid_n(pts, nrm_rows, np, i, j, sx.basis.z)
+				var n1 := _grid_n(pts, nrm_rows, np, i + 1, j, sx.basis.z)
+				var n2 := _grid_n(pts, nrm_rows, np, i + 1, j + 1, sx.basis.z)
+				var n3 := _grid_n(pts, nrm_rows, np, i, j + 1, sx.basis.z)
+				var u0 := float(i) * 0.5
+				buf.face_s(a, b, c, d, n0, n1, n2, n3, Vector2(u0, float(prof[j][0])), Vector2(u0 + 0.5, float(prof[j][0])),
+					Vector2(u0 + 0.5, float(prof[j + 1][0])), Vector2(u0, float(prof[j + 1][0])), 0.5)
+	return buf.commit(MaterialLib.get_mat("M_snow", 2, true))
+
+static func _grid_n(pts: Array, rows: int, cols: int, i: int, j: int, out: Vector3) -> Vector3:
+	var du: Vector3 = pts[mini(i + 1, rows - 1) * cols + j] - pts[maxi(i - 1, 0) * cols + j]
+	var dv: Vector3 = pts[i * cols + mini(j + 1, cols - 1)] - pts[i * cols + maxi(j - 1, 0)]
+	var n := du.cross(dv).normalized()
+	if n.y < 0.0:
+		n = -n
+	return (n + out * 0.15).normalized()
+
 ## World position of the smoke-hole mouth (for AreaBuilder's smoke).
 func louvre_world() -> Vector3:
 	return world_of(Vector3(0, h + rise + 1.5, louvre_z))

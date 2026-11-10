@@ -109,6 +109,13 @@ var _leaving := false
 var _quiet_t := 0.0
 var _pipelines := -1
 
+## What the frame just captured cost (for before/after tables).
+func _print_stats(path: String) -> void:
+	print("[shot] stats %s draw_calls=%d primitives=%d objects=%d" % [path.get_file(),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME)])
+
 func _leave() -> void:
 	_leaving = true
 	if DisplayServer.get_name() == "headless":
@@ -203,6 +210,7 @@ func _process(_d: float) -> void:
 				DirAccess.make_dir_recursive_absolute(mdir)
 			mimg.save_png(mpath)
 			print("[shot] saved ", mpath)
+			_print_stats(mpath)
 			_multi_i += 1
 			_multi_step = 0
 			if _multi_i >= _multi.size():
@@ -219,6 +227,7 @@ func _process(_d: float) -> void:
 			DirAccess.make_dir_recursive_absolute(dir)
 		img.save_png(_shot_path)
 		print("[shot] saved ", _shot_path)
+		_print_stats(_shot_path)
 		_leave()
 
 func _spawn_cam() -> void:

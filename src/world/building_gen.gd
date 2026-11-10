@@ -80,6 +80,11 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 			_gable(plank, beam, w, h, sz * l * 0.5, sz, rng, false)
 
 	HouseInterior.build(hd, root)
+	if "--house-stats" in OS.get_cmdline_user_args():
+		# triangle budget per house, for docs/art/WORLD_FIDELITY.md
+		print("[house] %s %s %dx%d tris=%d (small parts %d, interior %d)" % [hd.id, hd.style, int(w), int(l), hd.tri_total(),
+			hd.iron.tri_count() + hd.fine.tri_count() + hd.bark.tri_count(),
+			hd.in_wood.tri_count() + hd.in_dark.tri_count() + hd.in_stone.tri_count() + hd.in_cloth.tri_count() + hd.in_rope.tri_count() + hd.in_hide.tri_count()])
 	if area.terrain != null:
 		# tell the land a house stands here (wall-foot shadow, worn doorways,
 		# no snow under the roof, drifts against the walls)
@@ -93,6 +98,18 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 			hd.yaw, y, 2 if not opens.is_empty() else 0, dws)
 	hd.attach(root)
 	_hd = null
+	if tag == "base":
+		# RIME: snow banked against the walls (rime-only, melts with the wave)
+		var dm := hd.build_drifts(area.terrain)
+		if dm != null:
+			var dmi := MeshInstance3D.new()
+			dmi.name = "Drift_" + hd.id
+			dmi.mesh = dm
+			dmi.transform = root.transform
+			dmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			dmi.visibility_range_end = HouseDetail.LOD_MID
+			dmi.visibility_range_end_margin = 4.0
+			area.attach(dmi, "rime")
 	if hd.style == "hall" and hd.louvre_z != INF:
 		# woodsmoke drifting from the louvre while the house is lived in (THAW)
 		AreaBuilder._smoke(area, hd.louvre_world())

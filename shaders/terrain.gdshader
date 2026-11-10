@@ -22,8 +22,9 @@ render_mode cull_back, depth_draw_opaque, diffuse_burley, specular_schlick_ggx;
 // wrack line, and the ground under buildings. Terrain.add_footprint() tells
 // the shader where houses stand, so the land meets them: contact shadow at
 // the wall foot, a strip of bare trodden earth, washed gravel under the
-// eaves, a worn way out of every door, no snow under a roof, and in RIME a
-// snow drift banked against the walls (a real bank: the vertices rise).
+// eaves, a worn way out of every door, no snow under a roof, and in RIME an
+// unbroken fall of snow at the wall foot (the bank itself is geometry:
+// HouseDetail.build_drifts, because a 1 m grid cannot hug a wall).
 // ---------------------------------------------------------------------------
 
 uniform vec3 turf_a : source_color = vec3(0.17, 0.25, 0.08);
@@ -76,7 +77,6 @@ uniform float has_tex = 0.0;           // 0 until Terrain binds the sets
 uniform float parallax_depth = 0.055;  // metres of relief on path and shingle
 uniform float detail_near = 7.0;       // the finer second sample fades out by here
 uniform float puddle_amount = 0.5;     // 0 = none; raises the puddle / ice-patch cover
-uniform float drift_height = 0.34;     // RIME snow banked against walls, metres
 // buildings standing on this land (Terrain.add_footprint)
 uniform int house_count = 0;
 uniform vec4 house_rect[16];           // xz centre, half width, half length
@@ -169,23 +169,12 @@ float door_wear(vec3 wp) {
 	return w;
 }
 
-// Height of the RIME snow bank at signed distance sd from a wall.
+// Where the RIME snow lies unbroken against a wall, by signed distance sd.
 float drift_at(float sd, float kind) {
 	return (kind < 0.5 || kind > 1.5) ? smoothstep(1.9, 0.15, sd) * step(0.0, sd) : 0.0;
 }
 
 void vertex() {
-	if (house_count > 0) {
-		vec3 wp0 = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-		vec2 hdir;
-		float hkind;
-		float sd = house_sdf(wp0, hdir, hkind);
-		if (sd < 2.0) {
-			// the wind packs it deeper on the lee side; doors are kept dug out
-			float lee = 0.6 + 0.4 * dot(hdir, vec2(-0.8, 0.6));
-			VERTEX.y += drift_height * drift_at(sd, hkind) * lee * local_rime(wp0) * (1.0 - door_wear(wp0));
-		}
-	}
 	v_wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	v_wn = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	v_col = COLOR;
@@ -355,12 +344,12 @@ void fragment() {
 	float wrack = exp(-pow((wet - 0.42) / 0.07, 2.0)) * smoothstep(0.35, 0.7, n2 * 0.6 + n3 * 0.4) * step(0.02, wet);
 	col = mix(col, vec3(0.05, 0.045, 0.03), wrack * 0.55);
 	// puddles (THAW) / ice patches (RIME): the low places of worn ground
-	float flat_g = smoothstep(0.975, 0.992, n.y);
+	float flat_g = smoothstep(0.95, 0.985, n.y);
 	float pud_n = vnoise(v_wp * 0.42 + 3.0) * 0.7 + vnoise(v_wp * 1.3 + 17.0) * 0.3;
 	float pud_w = clamp(b_path * 1.3, 0.0, 1.0) * flat_g * (1.0 - roofed) * (1.0 - rk) * (1.0 - foot);
 	float pud_edge = pud_n + (0.5 - o_path.b) * 0.22 + (puddle_amount - 0.5) * 0.3;
-	float puddle = smoothstep(0.6, 0.66, pud_edge) * pud_w;
-	float damp = smoothstep(0.5, 0.62, pud_edge) * pud_w;
+	float puddle = smoothstep(0.57, 0.62, pud_edge) * pud_w;
+	float damp = smoothstep(0.46, 0.58, pud_edge) * pud_w;
 
 	// THAW: warm evening; RIME: desaturated, then snow on tops, frost elsewhere
 	vec3 thaw_col = col * vec3(1.04, 1.0, 0.92);
@@ -408,9 +397,6 @@ void fragment() {
 	g_n += g_fine;
 	// standing water and ice lie flat
 	g_n *= 1.0 - puddle;
-	// the snow bank leans against the wall
-	float drift_t = clamp(hsd / 1.9, 0.0, 1.0);
-	n = normalize(n + vec3(hdir.x, 0.0, hdir.y) * drift_height * 2.2 * drift_t * (1.0 - drift_t) * drift * rime);
 	// ground: tangent frame is world X / Z; rock: along-face / down-bed
 	vec3 n_ground = normalize(n + vec3(g_n.x, 0.0, -g_n.y));
 	// per-plane tangent offsets (u along the plane's horizontal axis, v down the beds)

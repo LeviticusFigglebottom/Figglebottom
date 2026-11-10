@@ -143,7 +143,7 @@ static func _hearth(hd: HouseDetail, root: Node3D, occ: Array) -> void:
 	var found := false
 	for off in [0.0, 1.7, -1.7, 3.2, -3.2]:
 		var zt: float = zc + off
-		if absf(zt) + hz < hd.l * 0.5 - 1.6 and not _blocked(occ, -hx - 0.5, hx + 0.5, zt - hz - 0.5, zt + hz + 0.5):
+		if absf(zt) + hz < hd.l * 0.5 - 1.1 and not _blocked(occ, -hx - 0.5, hx + 0.5, zt - hz - 0.5, zt + hz + 0.5):
 			zc = zt
 			found = true
 			break
