@@ -21,6 +21,9 @@ Format: worktree → branch.
   - Frost/melt wavefront in `hall`, `hall_ds` and `terrain` (`shaders/wavefront.gdshaderinc`), snow-crystal and pollen/steam/drip wave particles
   - The score (THAW, RIME, the Outsong, the Netmender, title), ambiences and the foley pass: `docs/audio/MUSIC.md`
 
+- `/home/user/fb-anim` → `feat/combat-anims` (ready for review)
+  - Player combat clips: shared combat library, weapon-class clip sets and grips (ADR 0011)
+
 ## todo
 1. Wire Brede's `give_oilskins` gift once his NPC data lands.
 2. Region tier: the Turfwright fight, the Lowe NPCs, the Keepsakes questline.
