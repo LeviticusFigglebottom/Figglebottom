@@ -278,7 +278,19 @@ static func _flame_cards(h: float, r: float) -> ArrayMesh:
 		for v in quad:
 			st.set_normal(Vector3.UP)
 			st.set_uv(v[1])
+			st.set_uv2(Vector2.ZERO)
 			st.add_vertex(v[0])
+	# a level disc low in the flame: from above the cards are edge-on, and
+	# this is the bright heart you look down into (UV2.x = 1 marks it)
+	var dr := w * 0.42
+	var dy := hh * 0.14
+	var disc: Array = [[Vector3(-dr, dy, -dr), Vector2(0, 0)], [Vector3(dr, dy, -dr), Vector2(1, 0)], [Vector3(dr, dy, dr), Vector2(1, 1)],
+		[Vector3(-dr, dy, -dr), Vector2(0, 0)], [Vector3(dr, dy, dr), Vector2(1, 1)], [Vector3(-dr, dy, dr), Vector2(0, 1)]]
+	for v in disc:
+		st.set_normal(Vector3.UP)
+		st.set_uv(v[1])
+		st.set_uv2(Vector2(1, 0))
+		st.add_vertex(v[0])
 	var mesh := st.commit()
 	mesh.surface_set_material(0, _ph("M_flame"))
 	mesh.custom_aabb = AABB(Vector3(-w, 0, -w), Vector3(w * 2.0, hh * 1.1, w * 2.0))
@@ -329,7 +341,7 @@ static func _embers(parent: Node3D, pos: Vector3, spread: float, amount := 10) -
 ## THAW, banked to a faint ember in RIME) with a few low tongues of flame over
 ## it and a small steady ember light that outlasts the flames.
 static func _hearth_bed(n: Node3D, r: float, y: float) -> void:
-	var coals := _sphere(n, r, Vector3(0, y, 0), "M_coals", "coals", Vector3(1.0, 0.36, 1.0))
+	var coals := _sphere(n, r, Vector3(0, y, 0), "M_coals", "coals", Vector3(1.0, 0.24, 1.0))
 	coals.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var tongues: Array = [[Vector3(0.0, 0.1, 0.02), 0.5, 0.14], [Vector3(-0.15, 0.08, 0.1), 0.34, 0.11],
 		[Vector3(0.14, 0.08, -0.08), 0.4, 0.12], [Vector3(0.04, 0.07, 0.18), 0.26, 0.09]]
@@ -560,7 +572,20 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_cyl(n, 0.35, 0.35, 0.06, Vector3(0, 0.2, 0), "M_iron", "hoop_lo")
 			_cyl(n, 0.35, 0.35, 0.06, Vector3(0, 0.7, 0), "M_iron", "hoop_hi")
 		"crate":
-			_box(n, Vector3(1, 1, 1), Vector3(0, 0.5, 0), "M_wood", "crate")
+			# a boarded chest, not a cube: four courses of boards a side with
+			# gaps, corner battens standing proud, a lid of four boards
+			_box(n, Vector3(0.9, 0.9, 0.9), Vector3(0, 0.47, 0), "M_wood_dark", "core")
+			for k in 4:
+				var by := 0.14 + k * 0.245
+				for side in 4:
+					var ang := side * 90.0
+					var off := Vector3(0, by, 0.47).rotated(Vector3.UP, deg_to_rad(ang))
+					_box(n, Vector3(0.96 - 0.01 * (k % 2), 0.225, 0.05), off, "M_drift" if (k + side) % 3 == 0 else "M_wood", "board", Vector3(0, ang, 0))
+			for cx in [-1.0, 1.0]:
+				for cz in [-1.0, 1.0]:
+					_box(n, Vector3(0.1, 0.99, 0.1), Vector3(cx * 0.47, 0.495, cz * 0.47), "M_wood_dark", "batten")
+			for k in 4:
+				_box(n, Vector3(0.245, 0.05, 1.02), Vector3(-0.375 + k * 0.25, 1.0, 0), "M_wood", "lid", Vector3(0, (k % 2) * 1.2 - 0.6, 0))
 		"table_3m":
 			_box(n, Vector3(3.0, 0.1, 1.0), Vector3(0, 0.78, 0), "M_wood", "top")
 			for sx in [-1.3, 1.3]:

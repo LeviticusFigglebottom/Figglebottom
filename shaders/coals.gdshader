@@ -14,7 +14,7 @@ uniform vec3 char_col : source_color = vec3(0.035, 0.03, 0.028);
 uniform vec3 ash_col : source_color = vec3(0.34, 0.32, 0.3);
 uniform float glow_thaw = 5.0;
 uniform float glow_rime = 0.9;
-uniform float lump_scale = 9.0;
+uniform float lump_scale = 21.0;
 
 global uniform float rh_wave_r;
 global uniform vec3 rh_wave_origin;

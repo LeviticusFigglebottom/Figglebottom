@@ -25,6 +25,7 @@ global uniform float rh_wave_band;
 
 varying vec3 v_world_pos;
 varying float v_phase;
+varying float v_disc;
 
 float local_rime(vec3 wp) {
 	if (rh_wave_r < -500.0) {
@@ -49,7 +50,8 @@ float vnoise(vec2 p) {
 void vertex() {
 	vec3 org = MODEL_MATRIX[3].xyz;
 	v_phase = fract(org.x * 3.7 + org.z * 6.1 + org.y * 1.3) * 20.0;
-	float h = 1.0 - UV.y;
+	v_disc = UV2.x;
+	float h = (UV2.x > 0.5) ? 0.0 : 1.0 - UV.y;
 	// the whole tongue leans and recovers; the base stays on its fuel
 	float sway = sin(TIME * 5.1 + v_phase) * 0.06 + sin(TIME * 11.3 + v_phase * 2.3) * 0.03;
 	VERTEX.x += sway * h * h;
@@ -68,6 +70,17 @@ void fragment() {
 	if (presence < 0.5) {
 		discard;
 	}
+	if (v_disc > 0.5) {
+		// the heart, seen from above: a soft bright pool that boils
+		vec2 c = UV * 2.0 - 1.0;
+		float rr = length(c);
+		float boil = vnoise(c * 3.0 + vec2(TIME * 1.3, -TIME * 1.7) + v_phase);
+		float pool = (1.0 - smoothstep(0.15, 0.95, rr + (boil - 0.5) * 0.35));
+		// only when looked down on; from the side the cards do the work
+		float down = smoothstep(0.25, 0.7, abs(NORMAL.z));
+		ALBEDO = mix(flame_tint, vec3(1.0, 0.9, 0.62), pool * 0.6) * flame_energy * (0.5 + boil);
+		ALPHA = pool * down * 0.9;
+	} else {
 	float h = 1.0 - UV.y;
 	float x = UV.x * 2.0 - 1.0;
 	float t = TIME * 1.9;
@@ -92,4 +105,5 @@ void fragment() {
 	float flicker = 0.9 + 0.1 * sin(TIME * 17.0 + v_phase * 2.5);
 	ALBEDO = col * flame_energy * flicker * (0.55 + heat);
 	ALPHA = clamp(a, 0.0, 1.0);
+	}
 }
