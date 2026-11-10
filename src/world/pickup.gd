@@ -20,6 +20,10 @@ var display_scene := ""
 ## a story flag raised on taking it (a Keepsakes step, say)
 var set_flag := ""
 
+## a thing that is looked at, not taken (one set of footprints in the ice):
+## the words go up on the reading panel, the flag is raised, and it stays
+var look_text := ""
+
 var _zone: Interactable
 var _shown := true
 
@@ -83,6 +87,12 @@ func _ready() -> void:
 		t.start()
 
 func _on_take(player) -> void:
+	if look_text != "":
+		if set_flag != "":
+			World.set_flag(set_flag)
+		Game.lore_panel.emit(look_text)
+		World.save_game()
+		return
 	World.set_area_flag(area_id, "took_" + pickup_id)
 	if set_flag != "":
 		World.set_flag(set_flag)

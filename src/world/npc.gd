@@ -40,6 +40,8 @@ func _ready() -> void:
 		set_physics_process(false)
 	elif pose.begins_with("sit"):
 		_sit(pose)
+	if cfg.get("frozen", false):
+		_freeze_over()
 	_overhear = cfg.get("overhear", [])
 	# a body: you cannot walk through a living soul
 	var tag := String(get_meta("state_tag", "thaw"))
@@ -115,6 +117,24 @@ func _on_talk(player) -> void:
 			_vis.back_to_idle(0.4))
 	get_tree().root.add_child(ui)
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+
+## One of the dead the frost kept where they sat (npcs.json "frozen": Old
+## Calder at the fold cairn, in RIME): rimed over, and still.
+func _freeze_over() -> void:
+	var rime := StandardMaterial3D.new()
+	rime.albedo_color = Color(0.82, 0.9, 1.0, 0.62)
+	rime.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	rime.roughness = 0.55
+	rime.emission_enabled = true
+	rime.emission = Color(0.5, 0.62, 0.8)
+	rime.emission_energy_multiplier = 0.12
+	for mi in _vis.find_children("*", "GeometryInstance3D", true, false):
+		(mi as GeometryInstance3D).material_overlay = rime
+	set_physics_process(false)
+	# (the pose it has is the pose it keeps, once the rig has taken it)
+	get_tree().create_timer(0.5).timeout.connect(func():
+		if is_instance_valid(_vis) and _vis.rig != null:
+			_vis.rig.active = false)
 
 # ---------------------------------------------------------------- sitting
 ## Sit (the model's own "sit" loop, feet on the floor, hips at about a third

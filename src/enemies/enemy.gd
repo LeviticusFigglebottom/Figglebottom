@@ -421,6 +421,9 @@ func _pick_attack(dist: float) -> Dictionary:
 	for a in cfg.get("attacks", []):
 		if not _attack_allowed(a) or not _attack_usable(a):
 			continue
+		# "behind_only": a move for whoever has got round it (the Frost-ram's kick)
+		if a.get("behind_only", false) and not _target_behind():
+			continue
 		if dist <= float(a.get("range", 2)) and float(a.get("min_range", 0.0)) <= dist \
 				and _cooldowns.get(a["id"], 0.0) <= 0.0:
 			for i in int(a.get("weight", 1)):
@@ -428,6 +431,13 @@ func _pick_attack(dist: float) -> Dictionary:
 	if pool.is_empty():
 		return {}
 	return pool[randi() % pool.size()]
+
+func _target_behind() -> bool:
+	if target == null or not is_instance_valid(target):
+		return false
+	var to := target.global_position - global_position
+	to.y = 0.0
+	return to.length() > 0.05 and (-vis.global_transform.basis.z).dot(to.normalized()) < -0.35
 
 func attack_by_id(aid: String) -> Dictionary:
 	for a in cfg.get("attacks", []):
@@ -1450,6 +1460,10 @@ func take_hit(packet: DamagePacket) -> void:
 	if dead:
 		return
 	hp -= packet.amount
+	# "breaks_to": damage kinds that end it outright (the Unsung break when
+	# sung at: every Song the Bearer has is one of these)
+	if packet.kind in cfg.get("breaks_to", []):
+		hp = 0.0
 	poise -= packet.poise_damage / stagger_resist
 	var hdir := (global_position - packet.origin).normalized() if packet.origin != Vector3.ZERO else vis.global_transform.basis.z
 	vis.flinch(hdir, 1.0)

@@ -13,6 +13,14 @@ and its flat side faces +X, because Pickup lays a display scene on its side
     assets/models/props/knucklebone.tscn   a sheep's knucklebone (THORNWOLD.md 8)
     assets/models/props/birch_ring.tscn    a ring of plaited birch
     assets/models/props/hedge_gate.tscn    the five-bar gate Eyvind never hung
+    assets/models/props/fold_tally.tscn    Old Calder's fold-tally (REACH.md 8)
+    assets/models/props/calder_boots.tscn  his boots, toes to the wall (stands upright)
+    assets/models/props/bone_whistle.tscn  the shepherd's whistle
+    assets/models/props/ice_tracks.tscn    one set of footprints in the ice (KETTLE; upright)
+    assets/models/props/latch_wool.tscn    a scrap of woad wool (TARNHALL)
+    assets/models/props/woad_band.tscn     Wren's band (COLDWELL.md 8)
+    assets/models/props/mourning_mask.tscn a mourning mask, woad band (Maren's; upright)
+    assets/models/props/child_mask.tscn    the small one off the low peg (upright)
 
 Run: python3 tools/art/procedural/small_props.py"""
 import os
@@ -203,3 +211,104 @@ c, s_ = math.cos(a), math.sin(a)
 nodes.append(("Brace", "MeshInstance3D", ".",
               {"transform": "Transform3D(%g, %g, 0, %g, %g, 0, 0, 0, 1, 0, 0.66, -0.04)" % (c, -s_, s_, c), "mesh": 'SubResource("brace")'}))
 scene("hedge_gate", res, nodes, upright=True)
+
+
+# --- Shepherd's Reach, the Coldwell and the pieces on the way up (REACH.md 8,
+# COLDWELL.md 8) ---------------------------------------------------------------
+WOAD = (0.27, 0.41, 0.59)
+
+# the fold-tally: a hazel stick notched down one edge, each notch crossed and
+# crossed again; one more at the end, cut smaller
+res = [mat("hazel", 0.58, 0.46, 0.3), mat("cut", 0.22, 0.15, 0.09),
+       ("rod", "CylinderMesh", {"top_radius": 0.02, "bottom_radius": 0.024, "height": 0.8,
+                                "radial_segments": 8, "material": 'SubResource("hazel")'}),
+       ("notch", "BoxMesh", {"size": "Vector3(0.05, 0.007, 0.018)", "material": 'SubResource("cut")'}),
+       ("small", "BoxMesh", {"size": "Vector3(0.05, 0.005, 0.009)", "material": 'SubResource("cut")'})]
+nodes = [("FoldTally", "Node3D", None, {}),
+         ("Rod", "MeshInstance3D", ".", {"transform": xf(y=0.4), "mesh": 'SubResource("rod")'})]
+for i in range(43):
+    nodes.append(("N%d" % i, "MeshInstance3D", ".", {"transform": xf(y=0.05 + i * 0.016, z=0.02), "mesh": 'SubResource("notch")'}))
+nodes.append(("Small", "MeshInstance3D", ".", {"transform": xf(y=0.05 + 44 * 0.016, z=0.021), "mesh": 'SubResource("small")'}))
+scene("fold_tally", res, nodes)
+
+# his boots: a pair, side by side, standing
+res = [mat("hide", 0.3, 0.22, 0.15, 0.9), mat("sole", 0.16, 0.12, 0.09, 0.95),
+       ("shaft", "CylinderMesh", {"top_radius": 0.07, "bottom_radius": 0.06, "height": 0.26, "radial_segments": 10,
+                                  "material": 'SubResource("hide")'}),
+       ("foot", "BoxMesh", {"size": "Vector3(0.11, 0.08, 0.27)", "material": 'SubResource("hide")'}),
+       ("sole", "BoxMesh", {"size": "Vector3(0.12, 0.02, 0.28)", "material": 'SubResource("sole")'})]
+nodes = [("CalderBoots", "Node3D", None, {})]
+for k, x in enumerate((-0.09, 0.09)):
+    nodes += [("Shaft%d" % k, "MeshInstance3D", ".", {"transform": xf(x=x, y=0.2, z=0.07), "mesh": 'SubResource("shaft")'}),
+              ("Foot%d" % k, "MeshInstance3D", ".", {"transform": xf(x=x, y=0.06), "mesh": 'SubResource("foot")'}),
+              ("Sole%d" % k, "MeshInstance3D", ".", {"transform": xf(x=x, y=0.01), "mesh": 'SubResource("sole")'})]
+scene("calder_boots", res, nodes, upright=True)
+
+# the whistle: a shin-bone, two holes, a lanyard knot
+res = [mat("bone", 0.88, 0.84, 0.74, 0.6), mat("hole", 0.1, 0.08, 0.06), mat("cord", 0.4, 0.3, 0.2),
+       ("tube", "CylinderMesh", {"top_radius": 0.012, "bottom_radius": 0.015, "height": 0.11, "radial_segments": 8,
+                                 "material": 'SubResource("bone")'}),
+       ("hole", "SphereMesh", {"radius": 0.005, "height": 0.01, "radial_segments": 6, "rings": 3, "material": 'SubResource("hole")'}),
+       ("loop", "TorusMesh", {"inner_radius": 0.02, "outer_radius": 0.025, "rings": 12, "ring_segments": 4,
+                              "material": 'SubResource("cord")'})]
+nodes = [("BoneWhistle", "Node3D", None, {}),
+         ("Tube", "MeshInstance3D", ".", {"transform": xf(y=0.055), "mesh": 'SubResource("tube")'}),
+         ("H0", "MeshInstance3D", ".", {"transform": xf(x=0.012, y=0.05), "mesh": 'SubResource("hole")'}),
+         ("H1", "MeshInstance3D", ".", {"transform": xf(x=0.012, y=0.075), "mesh": 'SubResource("hole")'}),
+         ("Loop", "MeshInstance3D", ".", {"transform": xf(y=0.125), "mesh": 'SubResource("loop")'})]
+scene("bone_whistle", res, nodes)
+
+# one set of footprints frozen into the ice: six prints going away (-Z), the
+# left ones (x < 0) set further ahead of the right than a level stride would
+res = [mat("print", 0.16, 0.2, 0.26, 0.4),
+       ("sole", "BoxMesh", {"size": "Vector3(0.1, 0.012, 0.24)", "material": 'SubResource("print")'}),
+       ("heel", "BoxMesh", {"size": "Vector3(0.085, 0.012, 0.08)", "material": 'SubResource("print")'})]
+nodes = [("IceTracks", "Node3D", None, {})]
+z = 0.6
+for i in range(6):
+    left = i % 2 == 0
+    z -= 0.78 if left else 0.6
+    x = -0.12 if left else 0.12
+    nodes += [("P%d" % i, "MeshInstance3D", ".", {"transform": xf(x=x, y=0.006, z=z), "mesh": 'SubResource("sole")'}),
+              ("H%d" % i, "MeshInstance3D", ".", {"transform": xf(x=x, y=0.006, z=z + 0.19), "mesh": 'SubResource("heel")'})]
+scene("ice_tracks", res, nodes, upright=True)
+
+# a scrap of woad wool, torn off on a latch
+res = [mat("woad", *WOAD, 0.95),
+       ("tuft", "SphereMesh", {"radius": 0.03, "height": 0.05, "radial_segments": 7, "rings": 4, "material": 'SubResource("woad")'}),
+       ("strand", "BoxMesh", {"size": "Vector3(0.008, 0.09, 0.008)", "material": 'SubResource("woad")'})]
+nodes = [("LatchWool", "Node3D", None, {}),
+         ("Tuft", "MeshInstance3D", ".", {"transform": xf(y=0.06), "mesh": 'SubResource("tuft")'}),
+         ("S0", "MeshInstance3D", ".", {"transform": xf(x=0.01, y=0.02), "mesh": 'SubResource("strand")'}),
+         ("S1", "MeshInstance3D", ".", {"transform": xf(x=-0.012, y=0.1, z=0.008), "mesh": 'SubResource("strand")'})]
+scene("latch_wool", res, nodes)
+
+# Wren's band: a strip of woad cloth, the knot still in it
+res = [mat("woad", *WOAD, 0.95),
+       ("strip", "BoxMesh", {"size": "Vector3(0.008, 0.46, 0.05)", "material": 'SubResource("woad")'}),
+       ("knot", "SphereMesh", {"radius": 0.028, "height": 0.05, "radial_segments": 7, "rings": 4, "material": 'SubResource("woad")'})]
+nodes = [("WoadBand", "Node3D", None, {}),
+         ("Strip", "MeshInstance3D", ".", {"transform": xf(y=0.23), "mesh": 'SubResource("strip")'}),
+         ("Knot", "MeshInstance3D", ".", {"transform": xf(y=0.3), "mesh": 'SubResource("knot")'})]
+scene("woad_band", res, nodes)
+
+
+def mask_scene(name, h, root):
+    """A smooth mourning mask: two eye holes, a brow line, a woad band; face to +Z."""
+    w = h * 0.68
+    res = [mat("birch", 0.82, 0.76, 0.64, 0.7), mat("eye", 0.06, 0.05, 0.05), mat("woad", *WOAD, 0.95), mat("brow", 0.4, 0.33, 0.26),
+           ("face", "SphereMesh", {"radius": 0.5, "height": 1.0, "radial_segments": 14, "rings": 8, "material": 'SubResource("birch")'}),
+           ("eye", "SphereMesh", {"radius": 0.5, "height": 1.0, "radial_segments": 8, "rings": 4, "material": 'SubResource("eye")'}),
+           ("band", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 1.04, h * 0.09, h * 0.2), "material": 'SubResource("woad")'}),
+           ("brow", "BoxMesh", {"size": "Vector3(%g, %g, %g)" % (w * 0.7, h * 0.02, h * 0.04), "material": 'SubResource("brow")'})]
+    nodes = [(root, "Node3D", None, {}),
+             ("Face", "MeshInstance3D", ".", {"transform": xf(w, h, h * 0.3, y=h * 0.5), "mesh": 'SubResource("face")'}),
+             ("EyeL", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.09, h * 0.1, x=-w * 0.2, y=h * 0.56, z=h * 0.12), "mesh": 'SubResource("eye")'}),
+             ("EyeR", "MeshInstance3D", ".", {"transform": xf(w * 0.2, h * 0.09, h * 0.1, x=w * 0.2, y=h * 0.56, z=h * 0.12), "mesh": 'SubResource("eye")'}),
+             ("Brow", "MeshInstance3D", ".", {"transform": xf(y=h * 0.68, z=h * 0.13), "mesh": 'SubResource("brow")'}),
+             ("Band", "MeshInstance3D", ".", {"transform": xf(y=h * 0.8), "mesh": 'SubResource("band")'})]
+    scene(name, res, nodes, upright=True)
+
+
+mask_scene("mourning_mask", 0.26, "MourningMask")
+mask_scene("child_mask", 0.17, "ChildMask")

@@ -636,6 +636,10 @@ func _icon_for(id: String) -> String:
 		# Thornwold
 		"hedging_bill": "bill", "item_song_cord": "song_cord", "item_birch_ring": "birch_ring",
 		"item_knucklebone": "knucklebone", "armour_collier": "armour_collier",
+		# Shepherd's Reach, the Coldwell, and the pieces on the way up
+		"item_fold_tally": "fold_tally", "item_calder_boots": "boots", "item_shepherd_whistle": "whistle",
+		"armour_fleece": "armour_fleece", "item_latch_wool": "latch_wool", "item_wren_band": "woad_band",
+		"item_maren_mask": "bare_mask",
 	}
 	return "res://assets/ui/icons/%s.png" % by.get(id, "relic")
 

@@ -175,6 +175,8 @@ static func build(area_id: String) -> Area:
 		var n := NPC.new()
 		n.npc_id = spec.get("id", "")
 		n.spec = spec
+		if World.spring() and String(spec.get("tag", "thaw")) == "thaw":
+			continue      # after the Outsong nobody is remembered here (COLDWELL.md 10)
 		n.set_meta("state_tag", spec.get("tag", "thaw"))
 		area.attach(n, spec.get("tag", "thaw"))
 		_place(n, spec)
@@ -210,6 +212,7 @@ static func build(area_id: String) -> Area:
 		k.display_kit = spec.get("kit", "")
 		k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
 		k.set_flag = spec.get("set_flag", "")
+		k.look_text = spec.get("look", "")
 		area.attach(k, spec.get("tag", "base"))
 		_place(k, spec)
 	for spec in def.get("flag_gates", []):
@@ -543,6 +546,8 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 		gl.omni_range = float(g[2]) if g.size() > 2 else 8.0
 		gl.shadow_enabled = false
 		piece.add_child(gl)
+	if spec.has("group"):
+		piece.add_to_group(String(spec["group"]))   # (the Reach's frozen flock, which lies down)
 	area.attach(piece, tag)
 	return piece
 

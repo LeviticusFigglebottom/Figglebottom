@@ -3207,7 +3207,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    655.5,
+    74.23,
+    -394.12
+   ],
+   "rot": -168.49,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3222,7 +3245,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    601.74,
+    65.59,
+    -388.71
+   ],
+   "rot": -106.0,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3237,7 +3283,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    604.73,
+    67.02,
+    -350.22
+   ],
+   "rot": -68.5,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3252,7 +3321,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    641.55,
+    71.39,
+    -349.3
+   ],
+   "rot": -39.1,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3267,7 +3359,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    642.94,
+    73.11,
+    -386.79
+   ],
+   "rot": -130.92,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3282,7 +3397,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    679.4,
+    75.86,
+    -386.31
+   ],
+   "rot": 126.42,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3297,7 +3435,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    639.37,
+    71.72,
+    -387.3
+   ],
+   "rot": -126.56,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3312,7 +3473,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    610.86,
+    67.55,
+    -356.04
+   ],
+   "rot": -72.01,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3327,7 +3511,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    613.72,
+    67.72,
+    -361.07
+   ],
+   "rot": -76.71,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3342,7 +3549,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    600.92,
+    65.79,
+    -383.95
+   ],
+   "rot": -101.44,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3357,7 +3587,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    677.23,
+    77.12,
+    -362.49
+   ],
+   "rot": 61.1,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3372,7 +3625,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    650.09,
+    74.89,
+    -356.31
+   ],
+   "rot": -32.29,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3387,7 +3663,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    610.36,
+    66.4,
+    -387.1
+   ],
+   "rot": -106.92,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3402,7 +3701,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    687.0,
+    74.77,
+    -355.25
+   ],
+   "rot": 58.19,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3417,7 +3739,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    622.27,
+    68.49,
+    -360.44
+   ],
+   "rot": -72.96,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3432,7 +3777,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    624.02,
+    68.74,
+    -352.51
+   ],
+   "rot": -61.55,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3447,7 +3815,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    606.64,
+    67.18,
+    -349.15
+   ],
+   "rot": -66.82,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3462,7 +3853,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    603.01,
+    66.85,
+    -368.33
+   ],
+   "rot": -86.32,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3477,7 +3891,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    667.84,
+    75.5,
+    -349.47
+   ],
+   "rot": 19.2,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3492,7 +3929,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    674.19,
+    76.55,
+    -386.83
+   ],
+   "rot": 136.27,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3507,7 +3967,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    628.09,
+    68.88,
+    -352.31
+   ],
+   "rot": -58.32,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3522,7 +4005,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    631.1,
+    70.01,
+    -369.68
+   ],
+   "rot": -85.4,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3537,7 +4043,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    657.17,
+    75.54,
+    -353.06
+   ],
+   "rot": -8.51,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3552,7 +4081,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    606.39,
+    67.17,
+    -348.61
+   ],
+   "rot": -66.42,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3567,7 +4119,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    634.33,
+    69.84,
+    -345.43
+   ],
+   "rot": -44.01,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3582,7 +4157,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    667.71,
+    76.85,
+    -355.17
+   ],
+   "rot": 24.61,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3597,7 +4195,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    644.36,
+    71.98,
+    -348.71
+   ],
+   "rot": -33.89,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3612,7 +4233,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    680.23,
+    76.58,
+    -361.81
+   ],
+   "rot": 63.25,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3627,7 +4271,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    612.49,
+    67.74,
+    -349.68
+   ],
+   "rot": -64.83,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3642,7 +4309,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    609.93,
+    66.78,
+    -374.91
+   ],
+   "rot": -93.32,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3657,7 +4347,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    625.71,
+    68.82,
+    -358.17
+   ],
+   "rot": -68.03,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3672,7 +4385,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    623.94,
+    67.77,
+    -388.34
+   ],
+   "rot": -114.38,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3687,7 +4423,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    630.95,
+    69.98,
+    -367.39
+   ],
+   "rot": -80.99,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3702,7 +4461,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    675.86,
+    76.95,
+    -359.91
+   ],
+   "rot": 52.68,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3717,7 +4499,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    622.2,
+    67.6,
+    -386.83
+   ],
+   "rot": -111.42,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3732,7 +4537,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    639.73,
+    72.67,
+    -363.84
+   ],
+   "rot": -68.07,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3747,7 +4575,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    653.83,
+    74.43,
+    -391.79
+   ],
+   "rot": -162.68,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3762,7 +4613,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    622.79,
+    68.32,
+    -367.67
+   ],
+   "rot": -83.36,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3777,7 +4651,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    612.2,
+    67.6,
+    -362.51
+   ],
+   "rot": -78.77,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3792,7 +4689,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    682.85,
+    75.28,
+    -387.83
+   ],
+   "rot": 124.71,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3807,7 +4727,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    639.41,
+    70.51,
+    -346.68
+   ],
+   "rot": -39.11,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3822,7 +4765,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    626.87,
+    68.84,
+    -368.82
+   ],
+   "rot": -84.52,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3837,7 +4803,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    612.91,
+    66.72,
+    -381.35
+   ],
+   "rot": -101.23,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3852,7 +4841,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    626.17,
+    68.05,
+    -387.44
+   ],
+   "rot": -114.53,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3867,7 +4879,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    640.79,
+    72.8,
+    -361.34
+   ],
+   "rot": -60.98,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3882,7 +4917,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    641.69,
+    72.07,
+    -352.7
+   ],
+   "rot": -43.49,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3897,7 +4955,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    601.69,
+    66.87,
+    -346.11
+   ],
+   "rot": -66.06,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3912,7 +4993,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    665.59,
+    75.24,
+    -394.52
+   ],
+   "rot": 166.05,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3927,7 +5031,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    631.13,
+    70.03,
+    -368.95
+   ],
+   "rot": -83.97,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3942,7 +5069,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    683.42,
+    75.86,
+    -378.38
+   ],
+   "rot": 105.23,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3957,7 +5107,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    688.19,
+    74.72,
+    -346.39
+   ],
+   "rot": 47.75,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3972,7 +5145,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    654.49,
+    75.05,
+    -352.77
+   ],
+   "rot": -15.98,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -3987,7 +5183,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    675.69,
+    75.23,
+    -351.31
+   ],
+   "rot": 37.17,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4002,7 +5221,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    630.16,
+    69.54,
+    -361.14
+   ],
+   "rot": -70.0,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4017,7 +5259,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    602.08,
+    66.5,
+    -373.35
+   ],
+   "rot": -91.34,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4032,7 +5297,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    686.8,
+    75.04,
+    -358.3
+   ],
+   "rot": 62.93,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4047,7 +5335,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    677.76,
+    74.39,
+    -393.59
+   ],
+   "rot": 140.55,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4062,7 +5373,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    691.79,
+    75.19,
+    -380.28
+   ],
+   "rot": 104.6,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4077,7 +5411,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    638.05,
+    72.27,
+    -365.57
+   ],
+   "rot": -73.67,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4092,7 +5449,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    694.66,
+    74.81,
+    -368.54
+   ],
+   "rot": 84.3,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4107,7 +5487,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    632.35,
+    69.65,
+    -345.24
+   ],
+   "rot": -45.93,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4122,7 +5525,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    644.38,
+    71.69,
+    -347.41
+   ],
+   "rot": -32.43,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4137,7 +5563,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    616.79,
+    67.1,
+    -378.6
+   ],
+   "rot": -98.68,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4152,7 +5601,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    611.35,
+    66.56,
+    -384.11
+   ],
+   "rot": -103.98,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4167,7 +5639,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    604.7,
+    65.77,
+    -390.73
+   ],
+   "rot": -108.71,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4182,7 +5677,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    690.26,
+    74.89,
+    -348.4
+   ],
+   "rot": 52.05,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4197,7 +5715,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    604.24,
+    65.64,
+    -394.67
+   ],
+   "rot": -112.13,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4212,7 +5753,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    642.85,
+    71.53,
+    -348.34
+   ],
+   "rot": -35.94,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4227,7 +5791,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    626.16,
+    68.31,
+    -378.21
+   ],
+   "rot": -100.39,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   },
   {
    "kit": "sheep",
@@ -4242,7 +5829,30 @@
    "mat_remap": {
     "M_wool": "M_rime",
     "M_leather": "M_rime"
-   }
+   },
+   "group": "flock_rime",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "kit": "sheep",
+   "at": [
+    688.23,
+    75.04,
+    -373.31
+   ],
+   "rot": 92.65,
+   "tag": "rime",
+   "collide": true,
+   "mat_remap": {
+    "M_wool": "M_rime",
+    "M_leather": "M_rime"
+   },
+   "scale": [
+    1.0,
+    0.58,
+    1.0
+   ],
+   "require_flag": "ks_fellcaller_released"
   }
  ],
  "landmarks": [
@@ -4305,6 +5915,17 @@
     3.0,
     2.6
    ]
+  },
+  {
+   "scene": "res://assets/models/props/calder_boots.tscn",
+   "at": [
+    652.1,
+    76.77,
+    -367.1
+   ],
+   "rot": 240,
+   "tag": "thaw",
+   "require_flag": "ks_fellcaller_released"
   }
  ],
  "hearths": [
@@ -4327,12 +5948,22 @@
     -306.0
    ],
    "rot": 160
+  },
+  {
+   "id": "hs_high_fold",
+   "name": "the High Fold",
+   "at": [
+    653.5,
+    76.75,
+    -377.5
+   ],
+   "rot": 60,
+   "require_flag": "ks_fellcaller_released"
   }
  ],
  "spawners": [
   {
    "enemy": "drover",
-   "stand_in": "rimewalker",
    "id": "drover_path",
    "at": [
     556.0,
@@ -4343,7 +5974,6 @@
   },
   {
    "enemy": "drover",
-   "stand_in": "rimewalker",
    "id": "drover_sheilings",
    "at": [
     626.0,
@@ -4354,7 +5984,6 @@
   },
   {
    "enemy": "drover",
-   "stand_in": "rimewalker",
    "id": "drover_bridge",
    "at": [
     624.0,
@@ -4365,7 +5994,6 @@
   },
   {
    "enemy": "frost_ram",
-   "stand_in": "hearthhound",
    "id": "ram_slope_a",
    "at": [
     642.0,
@@ -4376,7 +6004,6 @@
   },
   {
    "enemy": "frost_ram",
-   "stand_in": "hearthhound",
    "id": "ram_slope_b",
    "at": [
     680.0,
@@ -4387,7 +6014,6 @@
   },
   {
    "enemy": "frost_ram",
-   "stand_in": "hearthhound",
    "id": "ram_grass",
    "at": [
     660.0,
@@ -4398,7 +6024,6 @@
   },
   {
    "enemy": "fellcaller",
-   "stand_in": "netmender",
    "id": "fellcaller",
    "at": [
     658.0,
@@ -4431,7 +6056,53 @@
     -360.81
    ],
    "rot": 300,
-   "tag": "thaw"
+   "tag": "thaw",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "id": "sigga",
+   "at": [
+    640.68,
+    71.77,
+    -352.88
+   ],
+   "rot": 200,
+   "tag": "thaw",
+   "absent_flag": "ks_fellcaller_released"
+  },
+  {
+   "id": "old_calder",
+   "at": [
+    653.0,
+    76.75,
+    -368.0
+   ],
+   "rot": 240,
+   "tag": "thaw",
+   "pose": "sit",
+   "seat": "turf",
+   "require_flag": "ks_fellcaller_released"
+  },
+  {
+   "id": "sigga_fold",
+   "at": [
+    654.6,
+    76.75,
+    -366.8
+   ],
+   "rot": 300,
+   "tag": "thaw",
+   "require_flag": "ks_fellcaller_released"
+  },
+  {
+   "id": "calder_rime",
+   "at": [
+    661.0,
+    76.75,
+    -375.2
+   ],
+   "rot": 105,
+   "tag": "rime"
   }
  ],
  "plaques": [
@@ -4453,9 +6124,24 @@
     67.42,
     -292.2
    ],
-   "warmth": 45,
+   "item": "item_shepherd_whistle",
    "tag": "base",
+   "scene": "res://assets/models/props/bone_whistle.tscn",
    "label": "Take the shepherd's whistle"
+  },
+  {
+   "id": "calder_boots",
+   "at": [
+    602.2,
+    67.73,
+    -291.7
+   ],
+   "rot": 12,
+   "item": "item_calder_boots",
+   "tag": "rime",
+   "scene": "res://assets/models/props/calder_boots.tscn",
+   "set_flag": "ks_calder_boots_found",
+   "label": "Take the boots"
   },
   {
    "id": "fold_cache",

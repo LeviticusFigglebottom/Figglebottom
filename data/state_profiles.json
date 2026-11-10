@@ -98,5 +98,56 @@
 		"ambience": "res://assets/audio/ambience/amb_rime.ogg",
 		"music_fade_in": 5.0,
 		"ambience_fade": 2.0
+	},
+	"spring": {
+		"_doc": "After the Outsong (COLDWELL.md 10): replaces the thaw profile everywhere once World.spring() is true. Overcast, cool, green; no music.",
+		"sun_rot": [
+			-50,
+			-72
+		],
+		"sun_color": [
+			0.88,
+			0.91,
+			0.88
+		],
+		"sun_energy": 1.45,
+		"ambient": [
+			0.44,
+			0.47,
+			0.45
+		],
+		"ambient_energy": 0.92,
+		"sky_contribution": 0.2,
+		"ssao_intensity": 1.6,
+		"bg_top": [
+			0.42,
+			0.47,
+			0.5
+		],
+		"bg_horizon": [
+			0.74,
+			0.77,
+			0.75
+		],
+		"fog_color": [
+			0.68,
+			0.72,
+			0.7
+		],
+		"fog_density": 0.0022,
+		"vol_density": 0.004,
+		"vol_albedo": [
+			0.8,
+			0.84,
+			0.82
+		],
+		"exposure": 1.02,
+		"contrast": 1.03,
+		"saturation": 0.9,
+		"glow": 0.5,
+		"music": "",
+		"ambience": "res://assets/audio/ambience/amb_thaw.ogg",
+		"music_fade_in": 4.0,
+		"ambience_fade": 4.0
 	}
 }

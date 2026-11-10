@@ -39,6 +39,10 @@ func set_overrides(ov: Dictionary) -> void:
 	overrides = ov
 
 func _profile(state_name: String) -> Dictionary:
+	# after the Outsong the unfrozen ground is lit by a real spring: grey and
+	# green, no amber (the "spring" profile; an area may override it by name)
+	if state_name == "thaw" and World.spring() and profiles.has("spring"):
+		state_name = "spring"
 	var p: Dictionary = profiles[state_name].duplicate()
 	for k in overrides.get(state_name, {}):
 		p[k] = overrides[state_name][k]

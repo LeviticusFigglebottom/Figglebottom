@@ -308,6 +308,32 @@ def gen_rest_chime():
     write("rest_chime", x, 0.6)
 
 
+def gen_hum():
+    """The hum (docs/audio/MUSIC.md: A-D-F, the remembered tune's first three
+    notes), closed-mouth, one voice. The Bearer hums it resting at a hearth;
+    Old Calder gets three notes of it and loses the fourth (REACH.md 7); it
+    is what the Bearer sings at the wellhead (COLDWELL.md 6)."""
+    r = np.random.default_rng(4406)
+
+    def note(f0, dur, swell):
+        t = t_axis(dur)
+        vib = 1 + 0.004 * np.sin(2 * np.pi * 4.6 * t) * np.minimum(t / 0.5, 1.0)
+        ph = 2 * np.pi * f0 * np.cumsum(vib) / SR
+        x = np.zeros_like(t)
+        for k, a in [(1, 1.0), (2, 0.42), (3, 0.16), (4, 0.07), (5, 0.03)]:
+            x += a * np.sin(k * ph)
+        x = dsp.lp(x, 620)                       # the mouth is shut
+        x += dsp.lp(noise(len(t), r), 1500) * 0.02  # breath through the nose
+        env = np.minimum(t / swell, 1.0) * np.minimum((dur - t) / 0.28, 1.0)
+        return x * np.clip(env, 0.0, 1.0)
+
+    x = np.zeros(samples(3.3))
+    place(x, note(220.0, 0.95, 0.16), 0.0, 0.8)
+    place(x, note(293.66, 0.95, 0.12), 0.85, 0.9)
+    place(x, note(349.23, 1.5, 0.14), 1.7, 1.0)
+    write("hum", x, 0.5)
+
+
 def gen_warmth_pickup():
     """Warmth gathered: an ember's tick and a soft high pluck."""
     x = np.zeros(samples(0.7))
@@ -441,7 +467,7 @@ def gen_misc():
 ALL = {
     "footsteps": gen_footsteps, "frost_hits": gen_frost_hits, "parry": gen_parry,
     "coal_catch": gen_coal_catch, "death": gen_death, "wave": gen_wave,
-    "horn_low": gen_horn_low, "rest_chime": gen_rest_chime, "warmth": gen_warmth_pickup,
+    "horn_low": gen_horn_low, "rest_chime": gen_rest_chime, "hum": gen_hum, "warmth": gen_warmth_pickup,
     "levelup": gen_levelup, "whooshes": gen_whooshes, "impacts": gen_impacts,
     "gourd": gen_gourd, "swells": gen_swells, "creature": gen_creature, "misc": gen_misc,
 }
