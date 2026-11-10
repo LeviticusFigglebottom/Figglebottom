@@ -347,6 +347,9 @@ void fragment() {
 	float flat_g = smoothstep(0.95, 0.985, n.y);
 	float pud_n = vnoise(v_wp * 0.42 + 3.0) * 0.7 + vnoise(v_wp * 1.3 + 17.0) * 0.3;
 	float pud_w = clamp(b_path * 1.3, 0.0, 1.0) * flat_g * (1.0 - roofed) * (1.0 - rk) * (1.0 - foot);
+	// none along a wall foot (they would mirror the fire through the wall);
+	// the worn way out of a door keeps its own
+	pud_w *= max(smoothstep(1.0, 2.8, hsd), tread);
 	float pud_edge = pud_n + (0.5 - o_path.b) * 0.22 + (puddle_amount - 0.5) * 0.3;
 	float puddle = smoothstep(0.57, 0.62, pud_edge) * pud_w;
 	float damp = smoothstep(0.46, 0.58, pud_edge) * pud_w;
@@ -378,6 +381,8 @@ void fragment() {
 	float vein = smoothstep(0.86, 0.97, 1.0 - abs(vnoise(v_wp * 3.1 + 5.0) * 2.0 - 1.0));
 	vec3 ice_c = mix(vec3(0.34, 0.42, 0.5), vec3(0.72, 0.8, 0.88), vein * 0.7 + 0.15 * n2);
 	rime_col = mix(rime_col, ice_c, puddle * 0.85);
+	// an unheated floor under a roof takes hoarfrost, not snow
+	rime_col = mix(rime_col, vec3(0.6, 0.66, 0.74), roofed * (0.22 + 0.2 * n_macro + 0.12 * n2));
 	vec3 albedo = mix(thaw_col, rime_col, rime);
 	vec4 wf = wf_eval(v_wp, n);
 	albedo = wf_albedo(albedo, wf);

@@ -175,12 +175,15 @@ static func _hearth(hd: HouseDetail, root: Node3D, occ: Array) -> void:
 		hd.in_dark.pole(c - dir, c + dir, rng.randf_range(0.035, 0.055), 0.0, 6)
 	var embers := MeshBuf.new(9)
 	for k in 9:
-		embers.stone(Vector3(rng.randf_range(0.06, 0.13), 0.05, rng.randf_range(0.06, 0.12)),
+		embers.stone(Vector3(rng.randf_range(0.04, 0.09), 0.035, rng.randf_range(0.04, 0.08)),
 			Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(rng.randf_range(-0.25, 0.25), 0.045, zc + rng.randf_range(-hz * 0.55, hz * 0.55))), 0.6)
 	for pair in [[ash, "M_peat", 0], [embers, "M_ember", 1]]:
 		var mi := MeshInstance3D.new()
 		mi.name = "hearth_" + ("embers" if int(pair[2]) == 1 else "ash")
-		mi.mesh = (pair[0] as MeshBuf).commit(MaterialLib.get_mat(String(pair[1]), hd.mode, int(pair[2]) == 0))
+		# banked embers glow dull orange: the family's full energy reads as flame
+		var hm: Material = HouseDetail.mat("M_ember", hd.mode, "hearth", {"emission_energy": 0.9}) if int(pair[2]) == 1 \
+			else MaterialLib.get_mat(String(pair[1]), hd.mode, true)
+		mi.mesh = (pair[0] as MeshBuf).commit(hm)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.visibility_range_end = HouseDetail.LOD_MID * 0.7
 		mi.set_instance_shader_parameter("indoor", 1.0)
