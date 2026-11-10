@@ -20,6 +20,9 @@ var region := ""
 var aid := ""
 ## Fixture name (no extension) under tools/test/fixtures/ to start from.
 var start_fixture := ""
+## False for a walk that does not end on a live Bearer at a kept hearth in a
+## cleared `aid` (the endings): it checks its own way to the title and back.
+var round_trip := true
 
 var world: Node3D
 var area: Area
@@ -765,7 +768,7 @@ func _run() -> void:
 
 	await _region()
 
-	if not player.dead and is_instance_valid(player):
+	if round_trip and is_instance_valid(player) and not player.dead:
 		if await _save_title_load():
 			await _after_load()
 	if write_fixture and fails == 0:

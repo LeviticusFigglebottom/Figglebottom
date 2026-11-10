@@ -19,6 +19,7 @@ var _t := 0.0
 var _h := 0.0
 var _done := false
 var _leaving := false
+var _fade: Tween = null
 
 func _ready() -> void:
 	layer = 90
@@ -60,7 +61,18 @@ func _ready() -> void:
 	_root.add_child(_col)
 	for e in lines:
 		_col.add_child(_line(String(e[0]), String(e[1])))
-	create_tween().tween_property(_root, "modulate:a", 1.0, float(DB.tuning("endings/credits/fade", 2.5)))
+	_fade = create_tween()
+	_fade.tween_property(_root, "modulate:a", 1.0, float(DB.tuning("endings/credits/fade", 2.5)))
+
+## Enter lets them go (they fade out as they would at the foot). Not Space
+## or E: over the Outsong's walk out those are still the Bearer's.
+func _unhandled_input(event: InputEvent) -> void:
+	if _done or _leaving or not event.is_action_pressed("ui_accept"):
+		return
+	if event.is_action("dodge") or event.is_action("interact"):
+		return
+	get_viewport().set_input_as_handled()
+	leave()
 
 func _line(kind: String, text: String) -> Control:
 	if kind == "gap":
@@ -115,6 +127,8 @@ func _process(dt: float) -> void:
 ## Freeze the roll `secs` in (the screenshot harness).
 func show_at(secs: float) -> void:
 	_t = secs
+	if _fade != null and _fade.is_valid():
+		_fade.kill()   # (the fade-in would go on writing its own alpha over this)
 	_root.modulate.a = 1.0
 
 func leave() -> void:

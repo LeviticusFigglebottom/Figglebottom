@@ -37,6 +37,7 @@ var beats: Array = []
 var credits: CreditsUI = null
 var cam: Camera3D = null
 var done := false
+var _hud_away := false
 var _t := 0.0
 var _cam_from := Vector3.ZERO
 var _cam_to := Vector3.ZERO
@@ -69,6 +70,15 @@ func _exit_tree() -> void:
 	if active == self:
 		active = null
 
+## The world is being put away (Return to the Title): the ending goes with
+## it. Left running, its credits rolled on over the title screen and its
+## beats went on acting on a Bearer that had been freed.
+func stop() -> void:
+	if credits != null and is_instance_valid(credits):
+		credits.queue_free()
+	credits = null
+	queue_free()
+
 func _beat(n: String) -> void:
 	beats.append(n)
 	beat.emit(n)
@@ -82,6 +92,12 @@ func _until(at: float) -> void:
 		await get_tree().process_frame
 
 func _process(dt: float) -> void:
+	# from the first beat to the last the HUD is away, whatever else thinks
+	# to raise it (or raises a new one) in between
+	if _hud_away:
+		for hud in get_tree().get_nodes_in_group("hud"):
+			if hud is CanvasLayer and (hud as CanvasLayer).visible:
+				(hud as CanvasLayer).visible = false
 	if get_tree().paused:
 		return
 	_t += dt
@@ -93,6 +109,7 @@ func _process(dt: float) -> void:
 		cam.look_at(_look, Vector3.UP)
 
 func _hud(on: bool) -> void:
+	_hud_away = not on
 	for hud in get_tree().get_nodes_in_group("hud"):
 		if hud is CanvasLayer:
 			(hud as CanvasLayer).visible = on
@@ -145,14 +162,30 @@ func _hands_empty(p) -> void:
 	if p.vis.trail != null:
 		p.vis.trail.visible = false
 
-func _wave(to_state: RH.WState) -> void:
+func _wave(to_state: RH.WState, keep_music := false) -> void:
 	var a := _area()
 	if a == null:
 		return
 	if fast:
 		StateDirector.snap(a, to_state)
 	else:
-		await StateDirector.transition(a, to_state, spring, true)
+		await StateDirector.transition(a, to_state, spring, true, keep_music)
+
+## Nothing frost-taken lifts a hand through an ending. The Unsung on the
+## level come back with every rest; whoever followed the Bearer to the
+## spring stops where it stands (the Outsong lets it go with the frost, the
+## Melt puts it away), and nothing already thrown can still him.
+func _still_the_frost_taken(p) -> void:
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		var en := e as Enemy
+		if en == null or en.dead:
+			continue
+		en._end_all_swings()
+		en.target = null
+		en.velocity = Vector3.ZERO
+		en.set_physics_process(false)
+	if p != null and p.get("invulnerable") != null:
+		p.invulnerable = true
 
 ## Whoever sat here as a Holdfast goes with the frost.
 func _let_holdfasts_go(secs: float) -> void:
@@ -184,6 +217,7 @@ func _outsong() -> void:
 		return
 	Game.arena_locked = false
 	p.lock_control(true)
+	_still_the_frost_taken(p)
 	_hud(false)
 	_face_spring(p)
 	_take_camera(_cfg("cam_from", [1.1, 2.0, -4.5]), _cfg("cam_to", [0.9, 1.6, -2.6]), float(_cfg("kneel_at", 16.0)), p)
@@ -211,13 +245,14 @@ func _outsong() -> void:
 		for n in a.find_children("*", "NPC", true, false):
 			(n as Node).queue_free()
 	_let_holdfasts_go(4.0 if not fast else 0.05)
-	await _wave(RH.WState.THAW)
+	await _wave(RH.WState.THAW, true)   # (he is still singing)
 	_beat("spring")
 	await _until(float(_cfg("release_at", 28.5)))
 	p.exit_rest()
 	_hands_empty(p)
 	_give_camera_back(p)
 	p.lock_control(false)
+	p.invulnerable = false
 	Game.snapshot_player()
 	World.save_game()
 	_beat("walk")
@@ -268,6 +303,7 @@ func _hearth_kept() -> void:
 		return
 	Game.arena_locked = false
 	p.lock_control(true)
+	_still_the_frost_taken(p)
 	_hud(false)
 	_face_spring(p)
 	_take_camera(_cfg("cam_begin", [-2.4, 1.6, -4.0]), _cfg("cam_begin", [-2.4, 1.6, -4.0]), 1.0, p)
