@@ -23,6 +23,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import terrain_saltfell as S  # noqa: E402
 import tarn_land as T  # noqa: E402
+import thorn_land as TH  # noqa: E402
+import high_land as HL  # noqa: E402
 from terrain_saltfell import fbm, smooth, vnoise, _lerp, _seg_dist, _pad_weight  # noqa: E402
 
 OUT_DIR = S.OUT_DIR
@@ -153,6 +155,8 @@ def height(x, z):
     if z < -224:
         h = _kettle_carve(x, z, h)
         h = T.tarn_land(x, z, h)
+        h = TH.thorn_land(x, z, h)
+        h = HL.high_land(x, z, h)
     return h
 
 

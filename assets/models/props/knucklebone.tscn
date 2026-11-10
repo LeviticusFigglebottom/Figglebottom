@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="StandardMaterial3D" id="bone"]
+albedo_color = Color(0.860, 0.820, 0.720, 1)
+roughness = 0.6
+
+[sub_resource type="CapsuleMesh" id="knuckle"]
+radius = 0.018
+height = 0.06
+material = SubResource("bone")
+
+[sub_resource type="SphereMesh" id="end"]
+radius = 0.016
+height = 0.032
+radial_segments = 8
+rings = 4
+material = SubResource("bone")
+
+[node name="Knucklebone" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("knuckle")
+
+[node name="EndA" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.006, 0.005, 0)
+mesh = SubResource("end")
+
+[node name="EndB" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.006, 0.056, 0)
+mesh = SubResource("end")

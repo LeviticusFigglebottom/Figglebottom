@@ -3,7 +3,10 @@
   "saltfell_steading",
   "lowe_barrows",
   "kettle_fjord",
-  "tarnhall"
+  "tarnhall",
+  "thornwold",
+  "shepherds_reach",
+  "coldwell"
  ],
  "graph": {
   "saltfell_steading": {
@@ -18,7 +21,19 @@
    "tarnhall": "the Tarn Steps"
   },
   "tarnhall": {
-   "kettle_fjord": "the Tarn Steps"
+   "kettle_fjord": "the Tarn Steps",
+   "thornwold": "the drove-road"
+  },
+  "thornwold": {
+   "tarnhall": "the drove-road",
+   "shepherds_reach": "the fell path"
+  },
+  "shepherds_reach": {
+   "thornwold": "the fell path",
+   "coldwell": "the Upwater"
+  },
+  "coldwell": {
+   "shepherds_reach": "the Upwater"
   }
  }
 }

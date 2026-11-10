@@ -296,7 +296,17 @@ Seventies, small, a long grey mourning cloak she has worn so long it is just her
 - **Drop:** `item_tally_stick` (`release_drop`), set down 2.2 m toward the Bearer.
 - **Hearth:** `hs_open_barrow` (`release_hearth`), gated on the flag in the area data so a rebuilt area keeps it.
 - **After release, RIME:** the twins' barrow has a turf door, the seam cut clean. On the threshold stone, where he set the sod down at the start, **the twins' spindles** (`item_twin_spindles`).
-- **After release, THAW (art pending):** Arne sits outside the barrow on a summer evening with Liv and Asta, arguing with them about which of them gets the window side of the barrow when they are old. Nobody in the scene can be spoken to. This waits on a THAW Arne and the twins; until then the Open Barrow in THAW is the turf-cutters' yard, and Aud's last line carries it.
+- **After release, THAW:** Arne (`arne`, model `arne_thaw`) sits on the grass outside the barrow on a summer evening, talking (`sit_talk`), with Liv and Asta on a sod either side of him (`sit`), half turned to him. They are arguing about which of them gets the window side of the barrow when they are old. Nobody in the scene can be spoken to (`mute`). Within 9 m the Bearer overhears it, a line every few seconds, low over the belt (npcs.json `overhear`):
+  > **Liv:** "I'm having the side by the window."
+  > **Arne:** "There's no window. It's a barrow."
+  > **Asta:** "Then you'll cut one. You cut everything else."
+  > **Arne:** "I'm not cutting a window in a barrow."
+  > **Liv:** "Asta can have the cold side. She likes the cold."
+  > **Asta:** "I don't. I said that once."
+  > **Arne:** "You'll be old women by then. You'll have forgotten all about it."
+  > **Liv:** "You'll have to remind us."
+  > **Arne:** "I'll remind you."
+  Placed by `gen_lowe.py` (`require_flag` `ks_turfwright_released`, THAW only). Aud's last line points to it.
 
 ---
 

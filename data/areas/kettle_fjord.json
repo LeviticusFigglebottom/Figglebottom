@@ -5903,7 +5903,32 @@
     -312.32
    ],
    "rot": 150,
-   "tag": "thaw"
+   "tag": "thaw",
+   "absent_flag": "ks_ice_cutter_released"
+  },
+  {
+   "id": "pell",
+   "at": [
+    -55.7,
+    1.83,
+    -313.29
+   ],
+   "rot": -53.67,
+   "tag": "thaw",
+   "require_flag": "ks_ice_cutter_released"
+  },
+  {
+   "id": "ivo",
+   "at": [
+    -52.4,
+    1.86,
+    -313.39
+   ],
+   "rot": 54.29,
+   "tag": "thaw",
+   "require_flag": "ks_ice_cutter_released",
+   "pose": "sit",
+   "seat": "wood"
   },
   {
    "id": "halla",

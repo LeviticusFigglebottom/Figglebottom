@@ -198,6 +198,10 @@ pickups = [
     {"id": "mending_needle", "at": [0.0, SH + 0.02, -43.8], "item": "item_mending_needle",
      "scene": "res://assets/models/weapons/mending_needle.glb", "tag": "base",
      "require_flag": "ks_netmender_released", "label": "Take the mending needle"},
+    # Wren's knucklebones, four of five, in the turf by the small grave (SLICE.md 8; THORNWOLD.md 7)
+    {"id": "knucklebones", "at": at(42.0, 15.5), "item": "ks_knucklebones", "tag": "rime",
+     "scene": "res://assets/models/props/knucklebone.tscn", "set_flag": "ks_knucklebones_found",
+     "label": "Pick up the knucklebones"},
 ]
 # the Longhouse floor in RIME is one frozen net (SLICE.md 4): the Netmender's
 # arena; she hauls it and lights it (src/world/net_floor.gd)

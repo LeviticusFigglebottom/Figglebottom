@@ -19,9 +19,16 @@ func _ready() -> void:
 	_run.call_deferred()
 
 func _path(from: Vector3, to: Vector3) -> PackedVector3Array:
+	# (the maze is long: lift the polygon search cap a long route needs)
 	var map := area.get_world_3d().navigation_map
-	return NavigationServer3D.map_get_path(map, NavigationServer3D.map_get_closest_point(map, from),
-		NavigationServer3D.map_get_closest_point(map, to), true)
+	var q := NavigationPathQueryParameters3D.new()
+	q.map = map
+	q.start_position = NavigationServer3D.map_get_closest_point(map, from)
+	q.target_position = NavigationServer3D.map_get_closest_point(map, to)
+	q.path_search_max_polygons = 200000
+	var r := NavigationPathQueryResult3D.new()
+	NavigationServer3D.query_path(q, r)
+	return r.path
 
 func _reaches(p: PackedVector3Array, to: Vector3, tol := 2.5) -> bool:
 	return p.size() > 1 and p[p.size() - 1].distance_to(to) < tol
@@ -118,12 +125,15 @@ func _run() -> void:
 		"the Tarn Steps and Tarn Causeway hearths stand")
 	var names := area.base.get_children().map(func(n): return String(n.name))
 	check(names.has("House_hall") and names.has("House_byres"), "the great hall and the byres at its east gable")
-	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 1, "Lusse keeps the thaw")
+	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 2, "Lusse and Ottar keep the thaw")
 	check(player.is_on_floor(), "the Bearer stands at the foot of the Tarn Steps")
 
 	print("== one continuous seam down to Kettle Fjord")
 	var seams := area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto)
-	check(seams.size() == 1 and seams[0].to_area == "kettle_fjord", "a single seam, down the Tarn Steps")
+	var down := seams.filter(func(p): return p.to_area == "kettle_fjord")
+	check(down.size() == 1, "one seam down the Tarn Steps to Kettle Fjord")
+	check(seams.filter(func(p): return p.to_area == "thornwold").size() == 1, "and one out by the drove-road to Thornwold")
+	seams = down
 	var kettle: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/areas/kettle_fjord.json"))
 	var back: Array = kettle["portals"].filter(func(p): return p.get("to", "") == "tarnhall")
 	check(back.size() == 1, "Kettle Fjord has the other side of it")
@@ -149,6 +159,12 @@ func _run() -> void:
 	await ticks(6)
 	var walked: bool = await _walk_path(HALL_IN)
 	check(walked and not player.dead, "the Bearer walks the causeway and into the feast")
+	var wood_seam: Node3D = area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto and p.to_area == "thornwold")[0]
+	var notch := wood_seam.global_position + Vector3(-3.0, 0, 0)
+	var pn := _path(shore, notch)
+	check(_reaches(pn, notch, 3.0), "the drove-road leaves the tarn's far shore (thaw: round by the shore)")
+	if not _reaches(pn, notch, 3.0):
+		print("    ends ", pn[pn.size() - 1] if pn.size() > 0 else Vector3.ZERO, " notch ", notch)
 	player.global_position = Vector3(165.0, 22.4, -345.0)
 	var died := false
 	for i in 40:
@@ -176,9 +192,9 @@ func _run() -> void:
 	if veils.size() == 1:
 		var veil: FrostVeil = veils[0]
 		var boss: Node = veil.boss_spawner.current if veil.boss_spawner != null else null
-		check(boss != null and boss.cfg.get("is_boss", false), "the Host (stand-in) waits behind the veil")
-		check(boss != null and String(boss.cfg.get("release_flag", "")) == "" and boss.get_meta("roster_id", "") == "host",
-			"a stand-in never carries the borrowed holdfast's release")
+		check(boss != null and boss.cfg.get("is_boss", false), "the Host waits behind the veil")
+		check(boss != null and boss is Host and String(boss.cfg.get("release_flag", "")) == "ks_host_released",
+			"the Host himself, no stand-in, with his own release")
 
 	print("== RIME: the doors barred, the way round by the byres")
 	var gate: ShortcutGate = area.rime_layer.find_children("*", "ShortcutGate", true, false)[0]

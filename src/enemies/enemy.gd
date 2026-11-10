@@ -292,8 +292,10 @@ var _rise_until := 0.0
 
 ## Idle chores (spawner "pose"): a looping clip held until the foe rises.
 ## sit = mending nothing (Saltfell); sit_up = one of the barrow dead, sat up
-## facing the road; kneel = a keener at a closed door (LOWE.md 2).
-const IDLE_POSES := {"sit": "sit_mend", "sit_up": "sit_up", "kneel": "kneel_keen", "kneel_fish": "kneel_fish"}
+## facing the road; kneel = a keener at a closed door (LOWE.md 2);
+## sit_feast = a guest in its seat at the long table (TARNHALL.md 5).
+const IDLE_POSES := {"sit": "sit_mend", "sit_up": "sit_up", "kneel": "kneel_keen", "kneel_fish": "kneel_fish",
+		"sit_feast": "sit_feast"}
 
 func _apply_idle_pose() -> void:
 	if idle_pose == "" or not vis.is_humanoid() or not IDLE_POSES.has(idle_pose):
@@ -375,7 +377,7 @@ func _st_combat(dt: float) -> void:
 			_strafe_dir = 1.0 if get_instance_id() % 2 == 0 else -1.0
 		else:
 			_strafe_dir = -_strafe_dir if randf() < 0.4 else _strafe_dir
-		_blocking = cfg.has("block_arc") and randf() < 0.45
+		_blocking = cfg.has("block_arc") and randf() < float(cfg.get("block_chance", 0.45))
 	var fwd := to.normalized()
 	var side := fwd.cross(Vector3.UP) * _strafe_dir
 	var keep := float(cfg.get("keep_range", 0.0))
@@ -472,6 +474,10 @@ func _begin_attack(a: Dictionary) -> void:
 	_atk_off = _line_offset()
 	_tele = null
 	_tele_shown = false
+	_crack = null
+	_crack_shown = false
+	_tgt_last = Vector3.INF
+	_tgt_vel = Vector3.ZERO
 	if a.has("telegraph"):
 		_tele_at = w * float(a.get("telegraph_lock", 0.7))
 	if a.has("sfx_windup"):
@@ -510,6 +516,10 @@ var _tele_at := -1.0
 ## Once per attack: a freed tell compares equal to null, so without this the
 ## recovery spawned a fresh 0.1 s glow every tick after the strike.
 var _tele_shown := false
+var _crack: Node = null
+var _tgt_last := Vector3.INF
+var _tgt_vel := Vector3.ZERO
+var _crack_shown := false
 
 func _st_attack(dt: float) -> void:
 	_sync_blade()   # the blade box wears the weapon's frame through the swing
@@ -520,6 +530,11 @@ func _st_attack(dt: float) -> void:
 	var hits := _hit_times()
 	var last: float = float(hits[hits.size() - 1]) / sm
 	var t := state_t
+	# how the target is really moving (a thrown thing leads it)
+	if _target_valid() and dt > 0.0:
+		if _tgt_last != Vector3.INF:
+			_tgt_vel = _tgt_vel.lerp((target.global_position - _tgt_last) / dt, 0.3)
+		_tgt_last = target.global_position
 	# track the player through most of the windup, commit at the end
 	if t < w * 0.7 and _target_valid():
 		_face(target.global_position - global_position, dt, float(_atk.get("track", 1.2)))
@@ -531,6 +546,17 @@ func _st_attack(dt: float) -> void:
 	if _atk.has("telegraph") and not _tele_shown and t >= _tele_at:
 		_tele_shown = true
 		_tele = _spawn_telegraph(w - t)
+	# ice about to break cracks first (crack_lead seconds before the strike),
+	# the cracks following the aim until it commits
+	if String(_atk.get("type", "")) == "break_ice":
+		var lead := float(_atk.get("crack_lead", 1.0)) / sm
+		if not _crack_shown and t >= w - lead:
+			_crack_shown = true
+			var ic: Dictionary = _atk.get("ice", {})
+			_crack = IceCrack.spawn(get_parent(), _ice_centre(), String(ic.get("shape", "disc")),
+					float(ic.get("radius", 2.0)), float(ic.get("inner", 0.0)), w - t)
+		elif _crack != null and is_instance_valid(_crack) and t < w * 0.7:
+			(_crack as IceCrack).follow(_ice_centre())
 	var in_strike := false
 	for h in hits:
 		var ht := w + float(h) / sm
@@ -578,7 +604,7 @@ func _st_attack(dt: float) -> void:
 
 ## One strike of the current attack, by type (data-driven):
 ##   melee (default), ranged, summon, nova, line, net, haul, break_ice, hook,
-##   alert.
+##   sweep, lob, pool, alert.
 func _strike() -> void:
 	match _atk.get("type", "melee"):
 		"ranged": _fire_projectiles()
@@ -589,6 +615,9 @@ func _strike() -> void:
 		"haul": _haul()
 		"break_ice": _break_ice()
 		"hook": _hook()
+		"sweep": _sweep_strike()
+		"lob": _lob()
+		"pool": _pour_pool()
 		"alert": _alert_others(float(_atk.get("radius", 15.0)))
 		"none": pass
 		_:
@@ -609,9 +638,7 @@ func _strike() -> void:
 func _break_ice() -> void:
 	var ic: Dictionary = _atk.get("ice", {})
 	var shape := String(ic.get("shape", "disc"))
-	var centre := global_position
-	if shape != "ring":
-		centre += Vector3(_atk_dir.x, 0, _atk_dir.z).normalized() * _atk_off
+	var centre := _ice_centre()
 	var holes: Array = [centre]
 	if float(ic.get("lead", 0.0)) > 0.0 and target is CharacterBody3D:
 		var v := (target as CharacterBody3D).velocity
@@ -633,6 +660,14 @@ func _break_ice() -> void:
 			if hb != null:
 				hb.receive(pk)
 	Juice.shake(float(_atk.get("shake", 0.35)), 0.25)
+
+## Where the current break_ice attack opens: on the aim (a disc), or round
+## the body (a ring).
+func _ice_centre() -> Vector3:
+	var centre := global_position
+	if String((_atk.get("ice", {}) as Dictionary).get("shape", "disc")) != "ring":
+		centre += Vector3(_atk_dir.x, 0, _atk_dir.z).normalized() * _atk_off
+	return centre
 
 ## A subclass keeps the holes it broke (the Ice-Cutter closes them on release).
 func _on_broken_ice(_b: BrokenIce) -> void:
@@ -716,7 +751,9 @@ func _spawn_telegraph(remaining: float) -> Node:
 	var xf := Transform3D(Basis.looking_at(_atk_dir, Vector3.UP), global_position)
 	xf.origin += _atk_dir * (_atk_off if _atk.get("at_target", false) else float(tg.get("offset", 0.0)))
 	var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
-	return FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1),
+	# a lobbed thing lands after its flight: the glow holds until then
+	var flight := float((_atk.get("lob", {}) as Dictionary).get("flight", 0.0))
+	return FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1) + flight,
 			Color(tint[0], tint[1], tint[2]))
 
 ## The frost-breath tell (SPEC.md 7): a plume from the mask a beat before a
@@ -792,6 +829,216 @@ func _line_strike() -> void:
 		_on_ridge(r)
 	Juice.shake(float(_atk.get("shake", 0.35)), 0.25)
 	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, -4.0, 1.5)
+
+## Ground-plane test against the committed aim: inside a fan of `arc`
+## degrees round it, between `inner` and `radius` metres (arc 360 = a ring).
+func in_fan(pos: Vector3, radius: float, arc: float, inner := 0.0) -> bool:
+	var to := pos - global_position
+	to.y = 0.0
+	var d := to.length()
+	if d > radius or d < inner:
+		return false
+	if arc >= 359.0 or d < 0.01:
+		return true
+	var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
+	return fwd.angle_to(to / d) <= deg_to_rad(arc * 0.5)
+
+func _hit_player(p: Node, dmg: float, poise: float, kind := "physical", blockable := true) -> void:
+	var hb: Hurtbox = p.get("hurtbox")
+	var pk := DamagePacket.new(dmg, poise, self)
+	pk.kind = kind
+	pk.can_be_parried = false
+	pk.can_be_blocked = blockable
+	if hb != null:
+		hb.receive(pk)
+
+## A sweep (the Host's table coming round, a Cupbearer going round): what
+## stands in the fan round the committed aim ("sweep": {"radius", "arc",
+## "inner"}) is hit, and slid "shove" metres outward; if a wall or a bench
+## stops the slide it is pinned there "pin" seconds (mash to break).
+func _sweep_strike() -> void:
+	var sw: Dictionary = _atk.get("sweep", {})
+	var radius := float(sw.get("radius", 3.0))
+	var arc := float(sw.get("arc", 120.0))
+	var inner := float(sw.get("inner", 0.0))
+	var p := _player()
+	if p != null and not p.get("dead") and in_fan(p.global_position, radius, arc, inner) \
+			and not (p.has_method("is_invulnerable") and p.is_invulnerable()):
+		_hit_player(p, float(_atk.get("dmg", 20)), float(_atk.get("poise_dmg", 20)),
+				String(_atk.get("kind", "physical")), bool(_atk.get("blockable", true)))
+		var shove := float(sw.get("shove", 0.0))
+		if shove > 0.0 and p is CharacterBody3D and not p.get("dead"):
+			var out := p.global_position - global_position
+			out.y = 0.0
+			out = out.normalized() if out.length() > 0.05 else Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
+			var dist := shove
+			var q := PhysicsRayQueryParameters3D.create(p.global_position + Vector3.UP * 0.6,
+					p.global_position + Vector3.UP * 0.6 + out * (shove + 0.5), RH.M_WORLD_ALL)
+			var hit := get_world_3d().direct_space_state.intersect_ray(q)
+			var pinned := not hit.is_empty()
+			if pinned:
+				dist = maxf(0.0, p.global_position.distance_to(hit["position"]) - 0.5)
+			_pull_body = p
+			_pull_t = float(sw.get("shove_time", 0.3))
+			_pull_v = out * dist / _pull_t
+			if pinned and float(sw.get("pin", 0.0)) > 0.0 and hook_hold == null:
+				hook_hold = GrabHold.start(self, p, float(sw["pin"]), int(sw.get("mash", 4)))
+				hook_hold.released.connect(func(_b): hook_hold = null)
+				pinned_bearer.emit(p)
+	_sweep_vfx(radius, arc, inner)
+	Juice.shake(float(_atk.get("shake", 0.3)), 0.25)
+	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -4.0, 0.7)
+
+signal pinned_bearer(p)
+
+func _sweep_vfx(radius: float, arc: float, inner: float) -> void:
+	var p := CPUParticles3D.new()
+	p.amount = int(clampf(radius * arc / 12.0, 24, 200))
+	p.lifetime = 0.6
+	p.one_shot = true
+	p.explosiveness = 0.9
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	p.emission_ring_axis = Vector3.UP
+	p.emission_ring_radius = radius * 0.92
+	p.emission_ring_inner_radius = maxf(inner, radius * 0.6)
+	p.emission_ring_height = 0.1
+	p.direction = Vector3.UP
+	p.spread = 30.0
+	p.initial_velocity_min = 0.8
+	p.initial_velocity_max = 2.2
+	p.gravity = Vector3(0, -6.0, 0)
+	p.scale_amount_min = 0.05
+	p.scale_amount_max = 0.12
+	p.color = Color(0.86, 0.92, 1.0, 0.8)
+	p.mesh = AreaPortal.make_mote_quad(1.2)
+	get_parent().add_child(p)
+	p.global_position = global_position + Vector3.UP * 0.15
+	p.emitting = true
+	RH.free_after(p, 1.2)
+
+## A lob (the Host's bench throw): something heavy leaves the hands at the
+## strike and comes down "flight" seconds later on the committed spot
+## ("at_target" puts it where the Bearer stood; "lob": {"radius", "flight",
+## "lead", "size", "spread", "spread_r", "color"}). Whoever is inside "radius" when it lands is hit. With
+## "lead" a second follows where he is running to, under its own glow.
+var lobbed: Array = []
+signal lob_landed(at: Vector3)
+
+func _lob() -> void:
+	var lb: Dictionary = (_atk.get("lob", {}) as Dictionary).duplicate()
+	lb["dmg"] = float(_atk.get("dmg", 24))          # the hit rides with the throw:
+	lb["poise_dmg"] = float(_atk.get("poise_dmg", 60))   # it lands after the attack ends
+	var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
+	var spots: Array = [global_position + fwd * _atk_off]
+	var lead := float(lb.get("lead", 0.0))
+	if lead > 0.0 and target is CharacterBody3D:
+		var v := (target as CharacterBody3D).velocity
+		if _tgt_vel.length() > v.length():
+			v = _tgt_vel   # how the Bearer has actually been moving through the windup
+		v.y = 0.0
+		var ahead := target.global_position + v * lead
+		if ahead.distance_to(spots[0]) > float(lb.get("radius", 2.0)) * 1.4:
+			spots.append(Vector3(ahead.x, spots[0].y, ahead.z))
+	# "spread": n throws in a ring round the first, "spread_r" out (a Collier's coals)
+	var n_spread := int(lb.get("spread", 1))
+	for i in range(1, n_spread):
+		var a := TAU * float(i) / float(n_spread - 1) + randf() * 0.6
+		spots.append(spots[0] + Vector3(cos(a), 0.0, sin(a)) * float(lb.get("spread_r", 2.0)))
+	var flight := float(lb.get("flight", 0.5))
+	var from := global_position + Vector3.UP * float(cfg.get("arm_h", 1.4)) * 1.2
+	for i in spots.size():
+		var at: Vector3 = spots[i]
+		at.y = global_position.y
+		if i > 0 and _atk.has("telegraph"):
+			var tg: Dictionary = _atk["telegraph"]
+			var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
+			FloorTelegraph.spawn(get_parent(), Transform3D(Basis(), at), "ring", tg.get("size", [2.0]),
+					flight + 0.15 * i, Color(tint[0], tint[1], tint[2]))
+		_throw_one(from, at, flight + 0.15 * i, lb)
+	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -2.0, 0.6)
+
+func _throw_one(from: Vector3, at: Vector3, flight: float, lb: Dictionary) -> void:
+	var body := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	var sz: Array = lb.get("size", [2.2, 0.45, 0.45])
+	bm.size = Vector3(sz[0], sz[1], sz[2])
+	body.mesh = bm
+	var m := StandardMaterial3D.new()
+	var lc: Array = lb.get("color", [0.27, 0.2, 0.14])
+	m.albedo_color = Color(lc[0], lc[1], lc[2])
+	m.roughness = 0.9
+	body.material_override = m
+	get_parent().add_child(body)
+	body.global_position = from
+	lobbed.append(body)
+	var peak := maxf(from.y, at.y) + float(lb.get("arc", 2.4))
+	var fly := func(k: float) -> void:
+		if not is_instance_valid(body):
+			return
+		var pos := from.lerp(at, k)
+		pos.y = lerpf(lerpf(from.y, peak, k), lerpf(peak, at.y + 0.25, k), k)
+		body.global_position = pos
+		body.rotation = Vector3(k * 2.4, k * 0.8, 0.0)
+	var tw := body.create_tween()
+	tw.tween_method(fly, 0.0, 1.0, maxf(flight, 0.05))
+	tw.tween_callback(_lob_land.bind(body, at, lb))
+
+func _lob_land(body: Node3D, at: Vector3, lb: Dictionary) -> void:
+	lobbed.erase(body)
+	if is_instance_valid(body):
+		body.rotation = Vector3(0, randf() * TAU, 0)
+		var tw := body.create_tween()
+		tw.tween_interval(1.4)
+		tw.tween_property(body, "scale", Vector3(1, 0.05, 1), 0.4)
+		tw.tween_callback(body.queue_free)
+	if dead:
+		return
+	var p := _player()
+	if p != null and not p.get("dead"):
+		var d := Vector2(p.global_position.x - at.x, p.global_position.z - at.z).length()
+		if d <= float(lb.get("radius", 2.0)):
+			_hit_player(p, float(lb.get("dmg", 24)), float(lb.get("poise_dmg", 60)), "physical", false)
+	_splinters(at)
+	Juice.shake(0.4, 0.25)
+	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", at, 0.0, 0.5)
+	lob_landed.emit(at)
+
+func _splinters(at: Vector3) -> void:
+	var p := CPUParticles3D.new()
+	p.amount = 40
+	p.lifetime = 0.9
+	p.one_shot = true
+	p.explosiveness = 0.95
+	p.direction = Vector3.UP
+	p.spread = 70.0
+	p.initial_velocity_min = 1.5
+	p.initial_velocity_max = 4.0
+	p.gravity = Vector3(0, -9.0, 0)
+	p.scale_amount_min = 0.06
+	p.scale_amount_max = 0.16
+	p.color = Color(0.42, 0.32, 0.22, 1.0)
+	p.mesh = AreaPortal.make_mote_quad(1.0)
+	get_parent().add_child(p)
+	p.global_position = at + Vector3.UP * 0.3
+	p.emitting = true
+	RH.free_after(p, 1.4)
+
+## A pool (the Host tipping a horn): frost spreads across the floor from
+## where it pours ("pool": {"from", "to", "grow", "life", "dmg", "tick"}),
+## its edge glowing as it spreads; whoever stands on it takes frost every
+## tick. A subclass keeps the pools it poured.
+func _pour_pool() -> void:
+	var pl: Dictionary = _atk.get("pool", {})
+	var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
+	var at := global_position + fwd * (_atk_off if _atk.get("at_target", false) else float(pl.get("ahead", 3.0)))
+	var fp := FrostPool.spawn(get_parent(), at, float(pl.get("from", 1.2)), float(pl.get("to", 6.0)),
+			float(pl.get("grow", 3.0)), float(pl.get("life", 8.0)), float(pl.get("dmg", 6.0)),
+			float(pl.get("tick", 0.5)), self)
+	_on_pool(fp)
+	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", at, -6.0, 0.45)
+
+func _on_pool(_fp: FrostPool) -> void:
+	pass
 
 ## A subclass keeps the ridges it raised (the Netmender mends them).
 func _on_ridge(_r: IceRidge) -> void:

@@ -52,3 +52,13 @@ Keep one `Enemy` state machine with data-driven attacks. Add only what the slice
   - `release_drop.at_seal` sets the drop in the middle of that hole.
   - `release_drop.set_flag` raises a Keepsakes flag on taking it.
 - **Subclass:** `IceCutter` (`src/enemies/ice_cutter.gd`). Base `Enemy` serves the quadruped Sledge-dog, as `QuadRig` poses with no subclass.
+
+## Update: Tarnhall (feat/tarnhall-encounters)
+
+- **Cracks before ice breaks** (lead feedback on Kettle): every `break_ice` attack lays an `IceCrack` (`src/enemies/ice_crack.gd`) `crack_lead` seconds (default 1.0) before the strike. Dark cracks spread out from where it will open, and follow the aim until it commits. The sink time is unchanged.
+- **`sweep`** hits whatever stands in a fan round the committed aim (`"sweep": {"radius", "arc", "inner"}`; arc 360 is a ring). `shove` slides the Bearer outward. If a wall or bench stops the slide, he is pinned (`pin` seconds, mash to break, a `GrabHold`). Fan telegraphs take an inner radius as a third size.
+- **`lob`** throws something that lands `flight` seconds after the strike on the committed spot (`at_target`). The ring tell holds through the flight. `lead` throws a second where the Bearer has actually been running during the windup.
+- **`pool`** pours a `FrostPool` (`src/enemies/frost_pool.gd`). It spreads `from`→`to` metres over `grow` seconds, its edge glowing as it spreads, and lasts `life`. Frost bites every `tick`.
+- **`block_chance`** tunes how often a foe with a `block_arc` keeps its shield up while circling.
+- **Release:** `release_gates` lifts the named shortcut bars (`ShortcutGate.lift_bar()`) and sets their area flags, so a rebuilt area builds them open. An opened gate on a state layer keeps zero collision across layer toggles.
+- **Subclass:** `Host` (`src/enemies/host.gd`). His adds are the seated feast-guest stills the area already lays: he raises them out of their places (a `sit_feast` pose that rises), and he refills the horns in front of the empty seats. `hold` is reused for Pour.

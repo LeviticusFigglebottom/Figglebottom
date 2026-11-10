@@ -108,10 +108,12 @@ func on_boss_slain(area_id: String, boss: Node = null) -> void:
 ## What a released holdfast leaves (SLICE.md 6), from its data:
 ##   release_drop: {item, scene, label, pickup_id, ahead, set_flag, at_seal} ->
 ##     a pickup set down in front of where it sat, toward the Bearer, so it
-##     is seen at once (or, with at_seal, in the middle of the sealed hole)
+##     is seen at once (or, with at_seal, in the middle of the sealed hole;
+##     with at_point, at the boss's drop_point())
 ##   release_seal: {radius} -> the boss's seal_point() hole closes for good
 ##   release_hearth: a hearths entry id (gated on release_flag in the area
 ##     data) that wakes now, so a rebuilt area keeps it
+##   release_gates: [gate ids] -> their bars lift now and stay lifted
 func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 	_clear_of_hearth(boss, bcfg)
 	# release_seal: the Holdfast's own hole closes (KETTLE.md 9)
@@ -141,6 +143,16 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 		k.global_position = b.global_position + toward.normalized() * float(drop.get("ahead", 2.2)) + Vector3.UP * 0.02
 		if bool(drop.get("at_seal", false)) and seal_at != Vector3.INF:
 			k.global_position = seal_at + Vector3.UP * 0.12   # frozen into the new ice
+		elif bool(drop.get("at_point", false)) and b.has_method("drop_point"):
+			k.global_position = b.drop_point()   # where the Holdfast says (the Hedgelayer: on the grave)
+	# release_gates: the bars he kept lift by themselves (TARNHALL.md 9); the
+	# area flag keeps them open when the area is rebuilt
+	for gid in bcfg.get("release_gates", []):
+		if current_area != null:
+			for g in current_area.find_children("*", "ShortcutGate", true, false):
+				if String(g.get("gate_id")) == String(gid):
+					g.lift_bar()
+		World.set_area_flag(current_area_id, "gate_" + String(gid))
 	var hid := String(bcfg.get("release_hearth", ""))
 	if hid != "" and current_area != null and find_hearth(hid) == null:
 		var def: Dictionary = current_area.get_meta("def", {})

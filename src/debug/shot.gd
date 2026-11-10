@@ -4,9 +4,14 @@ extends Node
 ##   --shot=PATH            capture viewport to PATH then quit
 ##   --shot-frames=N        frames to wait before capture (default 30)
 ##   --shot-cam=x,y,z,yaw_deg,pitch_deg[,fov]   spawn a free camera for the shot
+##   --shot-settle=N        spawn that camera N frames before capture (default 10);
+##                          real GPUs need longer for SDFGI / volumetric fog to settle
+##   --shot-quality=0|1|2   force the graphics tier (default: auto, 2 on a GPU, 1 on lavapipe)
 ##   --state=thaw|rime     force initial world state for the loaded area
 ##   --shot-pack         populate sample gear/relics and open InventoryUI
 ##   --quit-after=N         quit after N frames (no capture)
+##   --shot-nohud           hide every CanvasLayer (HUD, zone titles) for art comparisons
+##   --gfx=0|1|2            force the graphics tier (lavapipe defaults to 1: no SDFGI/SSIL/SSR)
 ##   --hearth-frame=N       rest at the first hearth on frame N; with
 ##   --shot-seq=s1,s2,...   captures PATH_0.png.. that many seconds after it
 ##   --hearth-toggle        make that rest turn the world (THAW <-> RIME)
@@ -15,7 +20,9 @@ var _shot_path := ""
 var _frames_left := -1
 var _quit_after := -1
 var _cam_spec := ""
+var _settle := 10         # frames between spawning the shot camera and capture
 var _open_pack := false
+var _no_hud := false
 var _trigger_gourd := false
 var _stage := ""          # "combat" | "death" | "rest" | "swing" | "foe_death" | "boss"
 var _stage_frame := 0
@@ -42,8 +49,17 @@ func _ready() -> void:
 			_shot_path = arg.get_slice("=", 1)
 		elif arg.begins_with("--shot-frames="):
 			_frames_left = int(arg.get_slice("=", 1))
+		elif arg.begins_with("--shot-quality="):
+			# set before the world builds its EnvRig, which reads the static tier
+			EnvRig.set_graphics_quality(int(arg.get_slice("=", 1)))
+		elif arg.begins_with("--shot-settle="):
+			_settle = maxi(int(arg.get_slice("=", 1)), 3)
 		elif arg.begins_with("--shot-cam="):
 			_cam_spec = arg.get_slice("=", 1)
+		elif arg == "--shot-nohud":
+			_no_hud = true
+		elif arg.begins_with("--gfx="):
+			EnvRig.graphics_quality = clampi(int(arg.get_slice("=", 1)), 0, 2)
 		elif arg == "--shot-pack":
 			_open_pack = true
 		elif arg == "--shot-gourd":
@@ -108,6 +124,9 @@ func _process(_d: float) -> void:
 				get_tree().quit()
 	if _shot_path == "" or _frames_left < 0 or not _seq.is_empty():
 		return
+	if _no_hud:
+		for cl in get_tree().root.find_children("*", "CanvasLayer", true, false):
+			(cl as CanvasLayer).visible = false
 	if _cam_spec != "" and not _trigger_gourd and Game.player != null and Game.player.hurtbox != null:
 		Game.player.hurtbox.monitorable = false
 		Game.player.hurtbox.monitoring = false
@@ -135,7 +154,7 @@ func _process(_d: float) -> void:
 			_spawn_cam()
 	if _trigger_gourd and Game.player != null and Game.player.state == Player.S.GOURD and Game.player.state_t >= 0.76:
 		_frames_left = min(_frames_left, 2)
-	if _frames_left == 10 and _cam_spec != "":
+	if _frames_left == _settle and _cam_spec != "":
 		_spawn_cam()
 	if not _multi.is_empty() and _frames_left <= 8:
 		if _multi_step == 0:

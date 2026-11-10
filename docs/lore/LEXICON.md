@@ -82,10 +82,19 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | Lusse | NPC (Tarnhall) | hall-singer |
 | the Tarn Causeway / the Byres / the Long Table | areas (Tarnhall) | |
 | Feast-guest / Cupbearer / Hall-champion | enemies (Tarnhall) | |
+| Ottar | NPC (Tarnhall) | a guest from the far end of the water, going home since noon |
+| the Goat Song | song | burst; taught by Lusse |
+| Guest-Tally / the Host's Cup / Ottar's Stick / Fish-Barrel Head | keepsake items (Tarnhall) | `item_guest_tally`, `item_host_cup`, `item_ottar_staff`, `item_barrel_head` |
+| Host's Carving Cleaver | weapon (Tarnhall) | `feast_cleaver` |
+| the Byres / the Long Table | Hearthstones (Tarnhall) | the yard by the cattle door; the hall's cold fire, woken on release |
 | the Hedgelayer (Eyvind Brask) | Holdfast (Thornwold) | hedged in his betrothed's grave |
 | Linnet | NPC (Thornwold) | collier, the Hedgelayer's betrothed |
 | the Collier's Clearing / the Hedge | areas (Thornwold) | |
 | Collier / Rime-stag | enemies (Thornwold) | |
+| Eyvind | NPC (Thornwold) | the Hedgelayer in THAW, arguing with Linnet about the gate |
+| the Outer Ring / the Pine | Hearthstones (Thornwold) | outside the maze; at the grave, woken on release |
+| Linnet's Song-cord / Ring of Plaited Birch / Knucklebone | keepsake items (Thornwold) | `item_song_cord`, `item_birch_ring`, `item_knucklebone` |
+| Hedging Bill / Collier's Leathers | weapon / armour (Thornwold) | `hedging_bill`, `armour_collier` |
 | the Fellcaller (Sigga Calder) | Holdfast (Shepherd's Reach) | would not leave her father at the high fold |
 | Old Calder | NPC (Shepherd's Reach) | shepherd, the Fellcaller's father |
 | the Sheilings / the High Fold | areas (Shepherd's Reach) | |

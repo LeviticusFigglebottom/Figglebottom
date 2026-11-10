@@ -358,12 +358,14 @@
     ]
    }
   ],
-  "services": []
+  "services": [],
+  "height": 1.55
  },
  "halla": {
   "name": "Halla, trader",
   "short_name": "Halla",
   "body": "mannequin_thaw",
+  "model": "halla",
   "first_flags": [
    "ks_halla_met"
   ],
@@ -437,6 +439,7 @@
   "name": "Sten, Halla's crewman",
   "short_name": "Sten",
   "body": "mannequin_thaw",
+  "model": "sten",
   "lines_first": [
    "Sorry. Don't mind me. It's the crossing, it gets in your chest.",
    "Sten. I row for Halla. When she lets me. She says I cough out of time.",
@@ -460,17 +463,422 @@
   ]
  },
  "lusse": {
-  "name": "Lusse",
+  "name": "Lusse, hall-singer",
   "short_name": "Lusse",
   "body": "mannequin_thaw",
+  "model": "lusse",
   "lines_first": [
-   "You came up the steps in time. Sit. No, there. We're on the ninth verse.",
-   "The goat ate the sail, and the mast, and then it ate the man who said it couldn't. Chorus! You know the chorus.",
-   "Gaute's bought fish from the trader's boat. Good fish. Nobody's cooked so much fish since my wedding."
+   "You came up the steps in time. Sit. No, there, by the post. We're on the ninth verse.",
+   "The goat ate the sail. Then the mast. Then the man who said it couldn't. That's where you come in.",
+   "Gaute had me plait him a tally cord for the door. Seven neighbourhoods. My fingers are raw and he still says it's short.",
+   "Fish from the trader's boat. Good fish. Nobody's cooked so much fish since my wedding."
   ],
   "lines_repeat": [
    "Again, from the goat. Louder.",
-   "Somebody's coughing on the far bench. Pass him a horn, it'll settle him."
+   "Somebody's coughing on the far bench. Pass him a horn, it'll settle him.",
+   "You're flat. Everybody's flat. Gaute's flattest and he's the host, so that's how it goes now."
+  ],
+  "services": [
+   {
+    "id": "sing_goat_song",
+    "type": "gift",
+    "item": "goat_song",
+    "once_flag": "ks_goat_song",
+    "label": "Sing the chorus",
+    "line_done": "Not bad. Again, and this time come in when I point."
+   },
+   {
+    "id": "buy_long_note",
+    "type": "buy",
+    "item": "long_note",
+    "warmth": 300,
+    "once_flag": "bought_long_note",
+    "label": "Learn the Long Note",
+    "line_done": "From the belly. Not the throat. Gaute holds it from the throat, and listen to him."
+   }
+  ],
+  "first_flags": [
+   "ks_lusse_met"
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_song_cord",
+    "absent_flag": "ks_song_cord_read",
+    "take_item": false,
+    "set_flag": "ks_song_cord_read",
+    "toast": "Lusse reads the cord."
+   },
+   {
+    "needs_item": "item_guest_tally",
+    "absent_flag": "ks_guest_tally",
+    "take_item": true,
+    "set_flag": "ks_guest_tally",
+    "toast": "Lusse takes the tally."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_song_cord_read",
+    "lines": [
+     "This is an Outsong. Somebody's tied their own. You don't see that.",
+     "She starts with the clamps. Then a man with a bill. Then she doesn't know how it ends, so she's left it loose. Here."
+    ]
+   },
+   {
+    "flag": "ks_guest_tally",
+    "lines": [
+     "Forty-one. Forty-two. Hold it still. Forty-one.",
+     "From the goat, then. From the start. Everybody."
+    ]
+   },
+   {
+    "flag": "ks_host_released",
+    "lines": [
+     "Somebody's opened the doors. Good. You could stand a spoon in the air in here."
+    ]
+   },
+   {
+    "flag": "ks_goat_song",
+    "lines": [
+     "There. Now you'll have it in your head till the Melt. I'm not sorry."
+    ]
+   }
+  ]
+ },
+ "ottar": {
+  "name": "Ottar",
+  "short_name": "Ottar",
+  "body": "mannequin_thaw",
+  "first_flags": [
+   "ks_ottar_met"
+  ],
+  "lines_first": [
+   "I'm away. Boots are on. It's a long row and I want to be home before the light goes.",
+   "Ottar. Up the far end, past the falls. The wife's on her own with the calving.",
+   "Gaute says one more horn. He's been saying one more horn since noon.",
+   "I've left my stick by the door so I don't forget it. Don't let me forget it."
+  ],
+  "lines_repeat": [
+   "Any minute now.",
+   "Hear the far bench barking? It's the smoke. He never could build a fire.",
+   "One more and I'm away."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_ottar_staff",
+    "absent_flag": "ks_ottar_staff",
+    "take_item": true,
+    "set_flag": "ks_ottar_staff",
+    "toast": "Ottar takes his stick."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_host_released",
+    "set_flag": "ks_ottar_air",
+    "lines": [
+     "Who's opened the doors? Feel that. You can smell the tarn."
+    ]
+   },
+   {
+    "flag": "ks_ottar_staff",
+    "lines": [
+     "That's my stick. Where was that? I left it by the door.",
+     "Well. I'll sit for the end of the song, then."
+    ]
+   }
+  ],
+  "services": []
+ },
+ "arne": {
+  "name": "Arne Holm",
+  "short_name": "Arne",
+  "body": "mannequin_thaw",
+  "model": "arne_thaw",
+  "height": 1.85,
+  "mute": true,
+  "pose": "sit_talk",
+  "_scene": "LOWE.md 8: after the release, THAW: outside the twins' barrow on a summer evening with Liv and Asta. Nobody in the scene can be spoken to; the Bearer overhears.",
+  "overhear": [
+   [
+    "liv",
+    "I'm having the side by the window."
+   ],
+   [
+    "arne",
+    "There's no window. It's a barrow."
+   ],
+   [
+    "asta",
+    "Then you'll cut one. You cut everything else."
+   ],
+   [
+    "arne",
+    "I'm not cutting a window in a barrow."
+   ],
+   [
+    "liv",
+    "Asta can have the cold side. She likes the cold."
+   ],
+   [
+    "asta",
+    "I don't. I said that once."
+   ],
+   [
+    "arne",
+    "You'll be old women by then. You'll have forgotten all about it."
+   ],
+   [
+    "liv",
+    "You'll have to remind us."
+   ],
+   [
+    "arne",
+    "I'll remind you."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "liv": {
+  "name": "Liv",
+  "short_name": "Liv",
+  "body": "mannequin_thaw",
+  "model": "liv",
+  "height": 1.1,
+  "mute": true,
+  "pose": "sit",
+  "seat": "turf"
+ },
+ "asta": {
+  "name": "Asta",
+  "short_name": "Asta",
+  "body": "mannequin_thaw",
+  "model": "asta",
+  "height": 1.1,
+  "mute": true,
+  "pose": "sit",
+  "seat": "turf",
+  "_pose": "sit, on a sod: her sit_talk spreads the smock into a flat disc on the grass"
+ },
+ "pell": {
+  "name": "Old Pell",
+  "short_name": "Pell",
+  "body": "mannequin_thaw",
+  "model": "pell_thaw",
+  "height": 1.8,
+  "mute": true,
+  "pose": "sit",
+  "seat": "wood",
+  "_scene": "KETTLE.md 9: after the release, THAW: at the fish-kettle with Ivo, supper on. He cannot be spoken to; the Bearer overhears.",
+  "overhear": [
+   [
+    "pell",
+    "Stir it from the bottom. It catches."
+   ],
+   [
+    "ivo",
+    "I am stirring it from the bottom."
+   ],
+   [
+    "pell",
+    "Then from lower down."
+   ],
+   [
+    "ivo",
+    "The ice'll be made by the new moon. You said."
+   ],
+   [
+    "pell",
+    "I said maybe. Eat your supper."
+   ],
+   [
+    "ivo",
+    "Fish again."
+   ],
+   [
+    "pell",
+    "Sixty years. I only know the one way."
+   ]
+  ],
+  "overhear_r": 8.0
+ },
+ "linnet": {
+  "name": "Linnet, collier",
+  "short_name": "Linnet",
+  "body": "mannequin_thaw",
+  "model": "linnet",
+  "height": 1.65,
+  "first_flags": [
+   "ks_linnet_met"
+  ],
+  "lines_first": [
+   "Mind the clamp, it's breathing. If it stops breathing, come and get me, I'll be wherever he is.",
+   "Linnet. That's Eyvind. He's laying a hedge round a field we haven't got yet.",
+   "He wants the gate east for the sun on the latch. The sun's got nothing to do with it. He just doesn't want the west.",
+   "We're to be married after the Melt. If he decides about the gate."
+  ],
+  "lines_repeat": [
+   "If the smoke goes blue, it's burning. If it goes white, it's cooking. If it goes black, run.",
+   "He'll come round. He comes round to everything if you leave him long enough with a bill in his hand."
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_birch_ring",
+    "absent_flag": "ks_birch_ring",
+    "take_item": true,
+    "set_flag": "ks_birch_ring",
+    "toast": "Linnet takes the ring."
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "ks_hedgelayer_released",
+    "lines": [
+     "He's laid it down. The gate. Across the gap, flat. I said that's not a gate. He said it is, it's just lying down."
+    ]
+   },
+   {
+    "flag": "ks_birch_ring",
+    "lines": [
+     "That's mine. I had it on this morning. He made it. Don't tell him I took it off to work."
+    ]
+   }
+  ],
+  "services": [
+   {
+    "id": "give_collier_leathers",
+    "type": "gift",
+    "item": "armour_collier",
+    "once_flag": "got_collier_leathers",
+    "label": "Take the spare leathers",
+    "line_done": "They were my brother's. He grew. Don't stand downwind of the clamps in them."
+   }
+  ]
+ },
+ "eyvind": {
+  "name": "Eyvind",
+  "short_name": "Eyvind",
+  "body": "mannequin_thaw",
+  "model": "eyvind_thaw",
+  "height": 1.85,
+  "mute": true,
+  "_scene": "THORNWOLD.md 7: before the release, at the clearing, arguing with Linnet about where the gate goes. Nobody can join in; the Bearer overhears.",
+  "overhear": [
+   [
+    "eyvind",
+    "East side. Morning sun on the latch, it won't freeze shut."
+   ],
+   [
+    "linnet",
+    "East side and the cows come out straight into the bog."
+   ],
+   [
+    "eyvind",
+    "Cows can learn."
+   ],
+   [
+    "linnet",
+    "Your cows can. My father's cows are cleverer than that."
+   ],
+   [
+    "eyvind",
+    "West, then."
+   ],
+   [
+    "linnet",
+    "West's where the wind comes from. You want the wind in your gate?"
+   ],
+   [
+    "eyvind",
+    "There's no side you'll have."
+   ],
+   [
+    "linnet",
+    "There is. I'm just not telling you yet."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "eyvind_gate": {
+  "name": "Eyvind",
+  "short_name": "Eyvind",
+  "body": "mannequin_thaw",
+  "model": "eyvind_thaw",
+  "height": 1.85,
+  "mute": true,
+  "_scene": "THORNWOLD.md 9: after the release, THAW: at the gap of the innermost ring with Linnet, the gate lying flat across it.",
+  "overhear": [
+   [
+    "linnet",
+    "Well?"
+   ],
+   [
+    "eyvind",
+    "I've thought about it."
+   ],
+   [
+    "linnet",
+    "And?"
+   ],
+   [
+    "eyvind",
+    "I'm laying it flat. Across the gap. You come in whichever side you like."
+   ],
+   [
+    "linnet",
+    "That's not a gate."
+   ],
+   [
+    "eyvind",
+    "It's a gate lying down."
+   ],
+   [
+    "linnet",
+    "All right."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "old_calder": {
+  "name": "Old Calder",
+  "short_name": "Calder",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Hold still, Brokenhorn. Not you. Her. The one with the torn ear.",
+   "Wall comes down every winter and I put it back every summer. The wall and I have an understanding.",
+   "The lass calls them in at night. You'll hear her. Every sheep on the mountain looks up."
+  ],
+  "lines_repeat": [
+   "Forty-one, forty-two. Where's Smudge. There's Smudge.",
+   "Mind the beck. It's colder than it looks and it looks cold."
+  ],
+  "services": []
+ },
+ "maren": {
+  "name": "Maren",
+  "short_name": "Maren",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "Have you come far? You look like you've come far.",
+   "We came up to see the water go. She's never seen it go.",
+   "Don't watch the flowers out of sight, love. They go all the way to the sea."
+  ],
+  "lines_repeat": [
+   "It's loud, isn't it. It's always this loud the first day.",
+   "Have you far to go?"
+  ],
+  "services": []
+ },
+ "wren": {
+  "name": "Wren",
+  "short_name": "Wren",
+  "body": "mannequin_thaw",
+  "lines_first": [
+   "That one's going to the sea.",
+   "And that one."
+  ],
+  "lines_repeat": [
+   "And that one."
   ],
   "services": []
  }

@@ -1227,6 +1227,19 @@
    "tag": "base",
    "require_flag": "ks_netmender_released",
    "label": "Take the mending needle"
+  },
+  {
+   "id": "knucklebones",
+   "at": [
+    42.0,
+    21.84,
+    15.5
+   ],
+   "item": "ks_knucklebones",
+   "tag": "rime",
+   "scene": "res://assets/models/props/knucklebone.tscn",
+   "set_flag": "ks_knucklebones_found",
+   "label": "Pick up the knucklebones"
   }
  ],
  "scripted": [

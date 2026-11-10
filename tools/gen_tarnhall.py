@@ -25,6 +25,7 @@ import terrain_tarnhall as K  # noqa: E402
 import terrain_lowe as L  # noqa: E402
 import tarn_land as T  # noqa: E402
 from seams_tarnhall import seam  # noqa: E402
+from seams_thornwold import seam as wood_seam  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if __name__ == "__main__" and "--keep-terrain" not in sys.argv:
@@ -123,6 +124,7 @@ while x < TX1 - 0.6:
                       "mat": "M_drift", "tag": "base", "collide": False})
     k += 1
     x += 1.6
+SEATS = []
 # the guests. THAW: the benches packed. RIME: the same guests, white, in
 # their seats (the Tripo feast-guest as a still); some stand when you come in.
 for i in range(8):
@@ -132,11 +134,21 @@ for i in range(8):
         if (i + (side > 0)) % 2 == 0:
             PROPS.append({"kit": "mannequin_thaw", "at": [r2(gx), FY, r2(gz)], "rot": 0 if side > 0 else 180, "tag": "thaw", "collide": False})
         elif i % 3 != 1:
-            LANDMARKS.append({"scene": "res://assets/models/enemies/feast_guest.glb", "at": [r2(gx), FY, r2(gz)],
-                              "rot": 180 if side > 0 else 0, "tag": "rime"})
-# the hall's light: the fire along the middle of the floor (THAW), dead in RIME
-PROPS.append({"kit": "fish_kettle", "at": [r2(HALL_C[0] - 4), FY, r2(HALL_C[1] + 2.4)], "rot": 0, "tag": "thaw", "glow": [2.0, 2.4, 14.0]})
-PROPS.append({"kit": "fish_kettle", "at": [r2(HALL_C[0] + 8), FY, r2(HALL_C[1] + 2.4)], "rot": 40, "tag": "thaw", "glow": [2.0, 2.0, 12.0]})
+            # seated in their places (sit_feast); the Host raises them (TARNHALL.md 6)
+            SEATS.append({"enemy": "feast_guest_seated", "id": "seat_%d_%s" % (i, "s" if side > 0 else "n"),
+                          "at": [r2(gx), FY + 0.1, r2(gz)], "face": 0 if side > 0 else 180, "pose": "sit_feast",
+                          "absent_flag": "ks_host_released"})
+# the long hearth down the middle of the floor: fires burning along it in
+# THAW (light through the smoke-holes above), cold ash in RIME
+HEARTH_Z = HALL_C[1] + 1.6
+BOXES.append({"min": [HALL_X0 + 6.0, FY, r2(HEARTH_Z - 0.75)], "max": [HALL_X1 - 8.0, FY + 0.22, r2(HEARTH_Z + 0.75)],
+              "mat": "M_drystone", "tag": "base"})
+SMOKE_HOLES = []
+for i, hx in enumerate((HALL_X0 + 8.5, HALL_X0 + 15.0, HALL_X0 + 21.5)):
+    PROPS.append({"kit": "hearth_fire", "at": [r2(hx), FY + 0.22, r2(HEARTH_Z)], "rot": i * 37, "tag": "thaw", "collide": False,
+                  "glow": [1.4, 3.2, 16.0], "embed": True})
+    PROPS.append({"kit": "hearth_logs", "at": [r2(hx), FY + 0.22, r2(HEARTH_Z)], "rot": i * 37, "tag": "rime", "collide": False, "embed": True})
+    SMOKE_HOLES.append([r2(hx), FY + 2.6, r2(HEARTH_Z)])
 
 # --- the byres --------------------------------------------------------------
 for i in range(3):
@@ -250,6 +262,11 @@ def on_road(i, f, dy=0.0, off=0.0):
 hearths = [
     {"id": "hs_tarn_steps", "name": "the Tarn Steps", "at": on_road(3, 0.5, 0.0, 2.0), "rot": 200},
     {"id": "hs_tarn_causeway", "name": "the Tarn Causeway", "at": at(124.0, -331.0), "rot": 250},
+    # the byre yard by the cattle door: nearest hearth to the Host (TARNHALL.md 1)
+    {"id": "hs_byres", "name": "the Byres", "at": at(BYRE_C[0] - 4.0, BYRE_C[1] + 8.0), "rot": 180},
+    # the hall's cold fire, woken when he is released (release_hearth)
+    {"id": "hs_long_table", "name": "the Long Table", "at": [r2(HALL_C[0] - 1.0), FY, r2(HALL_C[1] + 2.6)], "rot": 90,
+     "require_flag": "ks_host_released"},
 ]
 spawners = [
     {"enemy": "feast_guest", "stand_in": "rimewalker", "id": "guest_steps", "at": on_road(4, 0.6, 0.1), "face": 240},
@@ -261,16 +278,31 @@ spawners = [
     {"enemy": "cupbearer", "stand_in": "keener", "id": "cupbearer_byre_b", "at": [r2(BYRE_X0 + 10.5), FY + 0.1, r2(BYRE_C[1] + 1.0)], "face": 270},
     {"enemy": "hall_champion", "stand_in": "cairn_carrier", "id": "champion_bridge", "at": at(T.CHANNEL[1] + 6.0, BRIDGE_Z + 0.6, 0.1), "face": 90,
      "dead_once": True},
-    {"enemy": "host", "stand_in": "netmender", "id": "host", "at": [r2(HALL_C[0] + 2.0), FY + 0.1, r2(HALL_C[1] + 3.0)], "face": 90,
+    # at the cattle door, facing out into the yard (TARNHALL.md 3)
+    {"enemy": "hall_champion", "stand_in": "cairn_carrier", "id": "champion_byre_door", "at": at(BYRE_DOOR[0], BYRE_DOOR[1] + 1.8, 0.1), "face": 180},
+    # the Host at the long table, filling the horns (TARNHALL.md 4, 6)
+    {"enemy": "host", "stand_in": "netmender", "id": "host", "at": [r2(HALL_C[0] + 2.0), FY + 0.1, r2(TABLE_Z + 3.0)], "face": 0,
      "dead_once": True, "frost_veil_id": "long_table_veil"},
-]
+] + SEATS
 VEIL = [r2(BYRE_X0 + 1.4), FY, DOOR_Z]
 pickups = [
     {"id": "byre_cache", "at": [r2(BYRE_C[0] + 4.6), FY, r2(BYRE_C[1] - 3.2)], "item": "bog_iron", "count": 2, "tag": "rime",
      "label": "Pry up what the byre floor holds"},
     {"id": "tarn_horn", "at": [r2(HALL_X0 - 4.6), PORCH_Y, r2(HALL_C[1] + 5.8)], "warmth": 45, "tag": "base", "label": "Take the guest's horn"},
+    # TARNHALL.md 3, 4, 9
+    {"id": "feast_cleaver", "at": [r2(BYRE_C[0] + 3.4), FY, r2(BYRE_C[1] + 2.2)], "item": "feast_cleaver", "tag": "rime",
+     "scene": "res://assets/models/weapons/feast_cleaver.glb", "label": "Take the carving cleaver"},
+    {"id": "barrel_head", "at": at(BYRE_C[0] + 1.0, BYRE_C[1] + 7.5), "item": "item_barrel_head", "tag": "rime",
+     "scene": "res://assets/models/props/barrel_head.tscn", "label": "Prise off the barrel head"},
+    {"id": "ottar_staff", "at": [r2(HALL_X0 + 1.2), FY, r2(DOOR_Z - 1.6)], "item": "item_ottar_staff", "tag": "rime",
+     "scene": "res://assets/models/props/ottar_stick.tscn", "label": "Take the walking stick", "set_flag": "ks_ottar_staff_found"},
+    {"id": "guest_tally", "at": [r2(HALL_X0 + 1.7), FY, r2(DOOR_Z + 2.4)], "item": "item_guest_tally", "tag": "rime",
+     "scene": "res://assets/models/props/guest_tally.tscn", "label": "Untie the guest-tally",
+     "appear_flag": "ks_host_released", "set_flag": "ks_guest_tally_found"},
 ]
-npcs = [{"id": "lusse", "at": [r2(HALL_C[0] + 1.0), FY, r2(HALL_C[1] + 2.0)], "rot": 200, "tag": "thaw"}]
+npcs = [{"id": "lusse", "at": [r2(HALL_C[0] + 1.0), FY, r2(HALL_C[1] + 4.6)], "rot": 200, "tag": "thaw"},
+        # just inside the front door with his boots on (TARNHALL.md 7)
+        {"id": "ottar", "at": [r2(HALL_X0 + 2.2), FY, r2(DOOR_Z - 1.4)], "rot": 270, "tag": "thaw"}]
 
 portal = seam("tarnhall")
 arrive = seam("kettle_fjord")       # Kettle's side of the seam sets you down here
@@ -300,15 +332,20 @@ D = {
     "id": "tarnhall",
     "name": "Tarnhall",
     "start": {"pos": START, "yaw": arrive["spawn_yaw"]},
-    "env": {"thaw": {"sun_rot": [-16, -110], "sun_energy": 2.6, "fog_density": 0.001, "vol_density": 0.005,
-                     "ambient_energy": 0.58, "exposure": 1.04,
-                     "fill_color": [1.0, 0.74, 0.48], "fill_energy": 0.5, "fill_rot": [24, 70]},
+    # THAW: clear evening light (not a dusk-orange wash), a soft bounce
+    "env": {"thaw": {"sun_rot": [-20, -110], "sun_energy": 2.6, "sun_color": [1.0, 0.9, 0.74], "fog_density": 0.001, "vol_density": 0.004,
+                     "ambient": [0.36, 0.35, 0.34], "ambient_energy": 0.78, "exposure": 1.12, "saturation": 0.98,
+                     "fill_color": [0.92, 0.84, 0.72], "fill_energy": 0.45, "fill_rot": [24, 70]},
             "rime": {"sun_rot": [-26, -70], "fog_density": 0.006, "vol_density": 0.016}},
     "terrain": K.terrain_block(),
     "nav_bounds": [24, -16, -400, 280, 90, -256],
     "weather": {"gulls": False, "spindrift": 10},
     "water": water,
     "falls": FALLS,
+    # light coming down through the smoke-holes onto the hearth (THAW)
+    "scripted": [{"script": "res://src/world/god_rays.gd", "at": sh, "tag": "thaw",
+                  "params": {"count": 3, "span_x": 2.5, "span_z": 1.6, "sun": [-78, -100], "seed_v": k3}}
+                 for k3, sh in enumerate(SMOKE_HOLES)],
     "hazards": hazards,
     "zones": [
         {"name": "THE TARN CAUSEWAY", "min": [24, -400], "max": [HALL_X0 - 0.5, -256]},
@@ -328,7 +365,7 @@ D = {
     "plaques": [{"at": at(127.0, -337.5, 0.0), "rot": 230,
                  "text": "TARNHALL\n\nSeven neighbourhoods came up the water every Long Light to feast here."}],
     "pickups": pickups,
-    "portals": [portal],
+    "portals": [portal, wood_seam("tarnhall")],
     "scatter": {
         "seed": 9090,
         "clear": [[HALL_C[0], HALL_C[1], 24.0], [BYRE_C[0], BYRE_C[1], 9.0], [124.0, -331.0, 4.0]],

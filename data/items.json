@@ -151,5 +151,51 @@
    },
    "weight": 6.5
   }
+ },
+ "item_host_cup": {
+  "name": "The Host's Cup",
+  "desc": "A big ox-horn on a turned birch foot, banded in tin at the rim, from the high seat of Tarnhall. Every horn on the long table was full and frozen over. This one was dry, with a skin of dust inside it."
+ },
+ "item_guest_tally": {
+  "name": "Guest-Tally",
+  "desc": "A long plaited cord of yellow and oat wool, knotted once for each guest let in at the door. Lusse plaited it; the knots are the Host's, big and careful. Near the end the knots are all one knot, untied and tied again until the wool has felted."
+ },
+ "goat_song": {
+  "name": "The Goat Song",
+  "desc": "A hall song about a goat that ate a sail, then the mast, then the man who said it couldn't. Thirty-one verses and one chorus. Lusse sings the verses. Anyone in earshot is the chorus, and she stops the song until they are."
+ },
+ "item_ottar_staff": {
+  "name": "Ottar's Stick",
+  "desc": "A rowan walking stick with a horn cap, the bark left on for the grip. It was leaning inside the barred door, where you put a thing so you will see it on your way out. The mud on the tip is from the steps coming up."
+ },
+ "item_barrel_head": {
+  "name": "Fish-Barrel Head",
+  "desc": "The round pine head of a fish barrel, branded with a trader's mark: a knot inside a ring. Forty barrels came up the water for the feast. This one had only been started on; the nails are half drawn."
+ },
+ "item_song_cord": {
+  "name": "Linnet's Song-cord",
+  "desc": "A knotted cord of plaited oat and yellow wool with a bone toggle, the knots of all sizes. It is an Outsong, tied by the one it was for, the night before she needed it. The last knot is left loose."
+ },
+ "item_birch_ring": {
+  "name": "Ring of Plaited Birch",
+  "desc": "A ring of birch bark plaited round on itself, small enough for one finger. It was in the ash at the foot of the eastmost clamp, where it would have been taken off to work. Eyvind plaited it in an evening and spent a week saying it was nothing."
+ },
+ "item_knucklebone": {
+  "name": "Knucklebone",
+  "desc": "A sheep's knucklebone, worn smooth. It was in the middle of the drove-road, on the side going east. There is a tooth-mark on it."
+ },
+ "armour_collier": {
+  "name": "Collier's Leathers",
+  "desc": "A soot-black leather apron and jerkin over oat wool, scorched at the hems, for working the clamps. The leather is cracked at the elbows. It smells of smoke whatever you do to it.",
+  "armour": {
+   "slot": "body",
+   "poise": 7,
+   "absorb": {
+    "phys": 0.1,
+    "frost": 0.1,
+    "fire": 0.2
+   },
+   "weight": 7.5
+  }
  }
 }

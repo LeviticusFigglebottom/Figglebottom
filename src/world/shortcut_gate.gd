@@ -65,6 +65,15 @@ func _on_unbar(_p) -> void:
 	Game.toast.emit("The gate stands open.")
 	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -6.0, 0.55)
 
+## A released Holdfast lifts the bar from wherever he is (TARNHALL.md 9):
+## the flag is set and the leaves swing open by themselves.
+func lift_bar() -> void:
+	if _is_open():
+		return
+	World.set_area_flag(area_id, "gate_" + gate_id)
+	_apply_open(false)
+	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -2.0, 0.4)
+
 func _apply_open(instant: bool) -> void:
 	_front.enabled = false
 	_back.enabled = false
@@ -73,6 +82,9 @@ func _apply_open(instant: bool) -> void:
 			c.visible = false         # (doors drawn as dressing swing out of the way)
 	var body := get_node("GateBody") as StaticBody3D
 	body.collision_layer = 0
+	# a gate on a state layer (Tarnhall's doors, RIME only): the layer's
+	# collision toggles restore orig_layer, so an open gate stays open
+	body.set_meta("orig_layer", 0)
 	for i in _leaves.size():
 		var leaf := _leaves[i]
 		# both leaves swing in toward the unbarring (-Z) side

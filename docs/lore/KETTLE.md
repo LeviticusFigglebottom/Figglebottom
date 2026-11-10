@@ -316,6 +316,14 @@ Voice per `WRITING.md`: a plain fact, then one human detail. No morals.
 - **Drop:** `item_ivo_mitten` (`release_drop`), set into the middle of the closed hole, not toward the Bearer, and it raises `ks_ivo_mitten_found`.
 - **Seal:** `release_seal` closes the hole's own thin-ice hazard and its water, now and on every rebuild of the area.
 - **No hearth** wakes: the Fish-Houses stays the nearest.
+- **After release, THAW:** Old Pell (`pell`, model `pell_thaw`) sits on a crate at the westmost fish-kettle with the supper on, and Ivo sits across the fire from him on another (the same Ivo, moved from the dogs: `require_flag` / `absent_flag` on `ks_ice_cutter_released`, so his thread can still be closed). Pell cannot be spoken to (`mute`); Ivo can. Within 8 m the Bearer overhears them (npcs.json `overhear`):
+  > **Pell:** "Stir it from the bottom. It catches."
+  > **Ivo:** "I am stirring it from the bottom."
+  > **Pell:** "Then from lower down."
+  > **Ivo:** "The ice'll be made by the new moon. You said."
+  > **Pell:** "I said maybe. Eat your supper."
+  > **Ivo:** "Fish again."
+  > **Pell:** "Sixty years. I only know the one way."
 
 ---
 

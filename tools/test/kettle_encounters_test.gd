@@ -297,8 +297,10 @@ func _ice_cutter() -> void:
 	await _revive()
 
 	print("== ring cut: a ring round him drops away")
+	await _close_all_ice()   # (nothing left open from the moves before)
 	ic.target = player
-	ic._cooldowns.clear()
+	for a2 in ic.cfg.get("attacks", []):   # (and he picks nothing else meanwhile)
+		ic._cooldowns[String(a2["id"])] = 99.0
 	ic._set_state(Enemy.ES.COMBAT)
 	player.invulnerable = false
 	player.hp = player.max_hp
@@ -307,7 +309,12 @@ func _ice_cutter() -> void:
 	var rc := ic.attack_by_id("ring_cut")
 	var n0 := ic.open_holes()
 	ic._begin_attack(rc)
-	await _secs(float(rc["windup"]) / ic._speed_mult() + 0.1)
+	# (wait on the ring itself, not the clock: a loaded machine runs several
+	# physics steps a frame, and a fixed wait could leave him on it past the sink)
+	var waited := 0
+	while ic.open_holes() <= n0 and waited < 240:
+		await ticks(1)
+		waited += 1
 	var ring: BrokenIce = ic.holes[ic.holes.size() - 1]
 	check(ic.open_holes() == n0 + 1 and ring.shape == "ring" and ring.covers(player.global_position)
 			and not ring.covers(ic.global_position), "a ring from 2.5 to 5 m: the Bearer at 3.6 m is on it, he is not")

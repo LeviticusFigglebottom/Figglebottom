@@ -25,6 +25,8 @@ var bench_size := Vector3(2.4, 0.7, 2.0)
 var shots: Array = []
 ## ground tint in THAW (RIME is always hoar-grey)
 var ground_thaw := [Color(0.30, 0.22, 0.14), Color(0.42, 0.36, 0.24)]
+## states --shots renders (THAW-only casts skip RIME)
+var states: Array = ["thaw", "rime"]
 
 const THAW := {
 	"sky_top": Color(0.36, 0.42, 0.55), "sky_horizon": Color(0.86, 0.66, 0.46),
@@ -85,7 +87,7 @@ func _capture_all() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://docs/screens"))
 	for i in 50:
 		await get_tree().process_frame
-	for state in ["thaw", "rime"]:
+	for state in states:
 		_apply_state(state == "rime")
 		for s in shots:
 			_set_shot(s)

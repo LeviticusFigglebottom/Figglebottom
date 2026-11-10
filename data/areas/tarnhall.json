@@ -12,20 +12,31 @@
  "env": {
   "thaw": {
    "sun_rot": [
-    -16,
+    -20,
     -110
    ],
    "sun_energy": 2.6,
-   "fog_density": 0.001,
-   "vol_density": 0.005,
-   "ambient_energy": 0.58,
-   "exposure": 1.04,
-   "fill_color": [
+   "sun_color": [
     1.0,
-    0.74,
-    0.48
+    0.9,
+    0.74
    ],
-   "fill_energy": 0.5,
+   "fog_density": 0.001,
+   "vol_density": 0.004,
+   "ambient": [
+    0.36,
+    0.35,
+    0.34
+   ],
+   "ambient_energy": 0.78,
+   "exposure": 1.12,
+   "saturation": 0.98,
+   "fill_color": [
+    0.92,
+    0.84,
+    0.72
+   ],
+   "fill_energy": 0.45,
    "fill_rot": [
     24,
     70
@@ -64,19 +75,19 @@
   "seed": 7331,
   "palette": {
    "turf_a": [
-    0.2,
-    0.25,
-    0.11
+    0.16,
+    0.17,
+    0.13
    ],
    "turf_b": [
-    0.3,
-    0.29,
-    0.14
+    0.21,
+    0.2,
+    0.16
    ],
    "rock_col": [
-    0.3,
-    0.3,
-    0.31
+    0.31,
+    0.31,
+    0.32
    ]
   }
  },
@@ -986,6 +997,65 @@
    ],
    "width": 2.8,
    "tag": "rime"
+  }
+ ],
+ "scripted": [
+  {
+   "script": "res://src/world/god_rays.gd",
+   "at": [
+    188.5,
+    26.900000000000002,
+    -328.4
+   ],
+   "tag": "thaw",
+   "params": {
+    "count": 3,
+    "span_x": 2.5,
+    "span_z": 1.6,
+    "sun": [
+     -78,
+     -100
+    ],
+    "seed_v": 0
+   }
+  },
+  {
+   "script": "res://src/world/god_rays.gd",
+   "at": [
+    195.0,
+    26.900000000000002,
+    -328.4
+   ],
+   "tag": "thaw",
+   "params": {
+    "count": 3,
+    "span_x": 2.5,
+    "span_z": 1.6,
+    "sun": [
+     -78,
+     -100
+    ],
+    "seed_v": 1
+   }
+  },
+  {
+   "script": "res://src/world/god_rays.gd",
+   "at": [
+    201.5,
+    26.900000000000002,
+    -328.4
+   ],
+   "tag": "thaw",
+   "params": {
+    "count": 3,
+    "span_x": 2.5,
+    "span_z": 1.6,
+    "sun": [
+     -78,
+     -100
+    ],
+    "seed_v": 2
+   }
   }
  ],
  "hazards": [
@@ -2394,6 +2464,20 @@
    "mat": "M_drift",
    "tag": "base",
    "collide": false
+  },
+  {
+   "min": [
+    186.0,
+    24.3,
+    -329.15
+   ],
+   "max": [
+    208.0,
+    24.52,
+    -327.65
+   ],
+   "mat": "M_drystone",
+   "tag": "base"
   },
   {
    "min": [
@@ -4732,34 +4816,91 @@
    "collide": false
   },
   {
-   "kit": "fish_kettle",
+   "kit": "hearth_fire",
    "at": [
-    194.0,
-    24.3,
-    -327.6
+    188.5,
+    24.52,
+    -328.4
    ],
    "rot": 0,
    "tag": "thaw",
+   "collide": false,
    "glow": [
-    2.0,
-    2.4,
-    14.0
-   ]
+    1.4,
+    3.2,
+    16.0
+   ],
+   "embed": true
   },
   {
-   "kit": "fish_kettle",
+   "kit": "hearth_logs",
    "at": [
-    206.0,
-    24.3,
-    -327.6
+    188.5,
+    24.52,
+    -328.4
    ],
-   "rot": 40,
+   "rot": 0,
+   "tag": "rime",
+   "collide": false,
+   "embed": true
+  },
+  {
+   "kit": "hearth_fire",
+   "at": [
+    195.0,
+    24.52,
+    -328.4
+   ],
+   "rot": 37,
    "tag": "thaw",
+   "collide": false,
    "glow": [
-    2.0,
-    2.0,
-    12.0
-   ]
+    1.4,
+    3.2,
+    16.0
+   ],
+   "embed": true
+  },
+  {
+   "kit": "hearth_logs",
+   "at": [
+    195.0,
+    24.52,
+    -328.4
+   ],
+   "rot": 37,
+   "tag": "rime",
+   "collide": false,
+   "embed": true
+  },
+  {
+   "kit": "hearth_fire",
+   "at": [
+    201.5,
+    24.52,
+    -328.4
+   ],
+   "rot": 74,
+   "tag": "thaw",
+   "collide": false,
+   "glow": [
+    1.4,
+    3.2,
+    16.0
+   ],
+   "embed": true
+  },
+  {
+   "kit": "hearth_logs",
+   "at": [
+    201.5,
+    24.52,
+    -328.4
+   ],
+   "rot": 74,
+   "tag": "rime",
+   "collide": false,
+   "embed": true
   },
   {
    "kit": "creel_stack",
@@ -4790,56 +4931,6 @@
     -333.5
    ],
    "rot": -90
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    186.5,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    192.79,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    195.93,
-    24.3,
-    -335.55
-   ],
-   "rot": 0,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    202.21,
-    24.3,
-    -335.55
-   ],
-   "rot": 0,
-   "tag": "rime"
-  },
-  {
-   "scene": "res://assets/models/enemies/feast_guest.glb",
-   "at": [
-    205.36,
-    24.3,
-    -331.65
-   ],
-   "rot": 180,
-   "tag": "rime"
   }
  ],
  "gates": [
@@ -4886,6 +4977,27 @@
     -331.0
    ],
    "rot": 250
+  },
+  {
+   "id": "hs_byres",
+   "name": "the Byres",
+   "at": [
+    219.6,
+    24.3,
+    -322.0
+   ],
+   "rot": 180
+  },
+  {
+   "id": "hs_long_table",
+   "name": "the Long Table",
+   "at": [
+    197.0,
+    24.3,
+    -327.4
+   ],
+   "rot": 90,
+   "require_flag": "ks_host_released"
   }
  ],
  "spawners": [
@@ -4969,17 +5081,88 @@
    "dead_once": true
   },
   {
+   "enemy": "hall_champion",
+   "stand_in": "cairn_carrier",
+   "id": "champion_byre_door",
+   "at": [
+    222.6,
+    24.4,
+    -323.2
+   ],
+   "face": 180
+  },
+  {
    "enemy": "host",
    "stand_in": "netmender",
    "id": "host",
    "at": [
     200.0,
     24.400000000000002,
-    -327.0
+    -330.6
    ],
-   "face": 90,
+   "face": 0,
    "dead_once": true,
    "frost_veil_id": "long_table_veil"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_0_s",
+   "at": [
+    186.5,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_2_s",
+   "at": [
+    192.79,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_3_n",
+   "at": [
+    195.93,
+    24.400000000000002,
+    -335.55
+   ],
+   "face": 180,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_5_n",
+   "at": [
+    202.21,
+    24.400000000000002,
+    -335.55
+   ],
+   "face": 180,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "feast_guest_seated",
+   "id": "seat_6_s",
+   "at": [
+    205.36,
+    24.400000000000002,
+    -331.65
+   ],
+   "face": 0,
+   "pose": "sit_feast",
+   "absent_flag": "ks_host_released"
   }
  ],
  "frost_veils": [
@@ -5000,9 +5183,19 @@
    "at": [
     199.0,
     24.3,
-    -328.0
+    -325.4
    ],
    "rot": 200,
+   "tag": "thaw"
+  },
+  {
+   "id": "ottar",
+   "at": [
+    182.2,
+    24.3,
+    -330.4
+   ],
+   "rot": 270,
    "tag": "thaw"
   }
  ],
@@ -5040,6 +5233,57 @@
    "warmth": 45,
    "tag": "base",
    "label": "Take the guest's horn"
+  },
+  {
+   "id": "feast_cleaver",
+   "at": [
+    227.0,
+    24.3,
+    -327.8
+   ],
+   "item": "feast_cleaver",
+   "tag": "rime",
+   "scene": "res://assets/models/weapons/feast_cleaver.glb",
+   "label": "Take the carving cleaver"
+  },
+  {
+   "id": "barrel_head",
+   "at": [
+    224.6,
+    24.3,
+    -322.5
+   ],
+   "item": "item_barrel_head",
+   "tag": "rime",
+   "scene": "res://assets/models/props/barrel_head.tscn",
+   "label": "Prise off the barrel head"
+  },
+  {
+   "id": "ottar_staff",
+   "at": [
+    181.2,
+    24.3,
+    -330.6
+   ],
+   "item": "item_ottar_staff",
+   "tag": "rime",
+   "scene": "res://assets/models/props/ottar_stick.tscn",
+   "label": "Take the walking stick",
+   "set_flag": "ks_ottar_staff_found"
+  },
+  {
+   "id": "guest_tally",
+   "at": [
+    181.7,
+    24.3,
+    -326.6
+   ],
+   "item": "item_guest_tally",
+   "tag": "rime",
+   "scene": "res://assets/models/props/guest_tally.tscn",
+   "label": "Untie the guest-tally",
+   "appear_flag": "ks_host_released",
+   "set_flag": "ks_guest_tally_found"
   }
  ],
  "portals": [
@@ -5063,6 +5307,27 @@
     -300.71
    ],
    "spawn_yaw": 111.8
+  },
+  {
+   "to": "thornwold",
+   "auto": true,
+   "at": [
+    272.3,
+    26.45,
+    -323.82
+   ],
+   "rot": 83.88,
+   "zone": [
+    18,
+    8,
+    2
+   ],
+   "spawn": [
+    276.28,
+    28.56,
+    -323.4
+   ],
+   "spawn_yaw": -96.12
   }
  ],
  "scatter": {

@@ -1,5 +1,5 @@
 {
- "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md and KETTLE.md.",
+ "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7, docs/lore/TARNHALL.md §7, docs/lore/THORNWOLD.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md, KETTLE.md, TARNHALL.md and THORNWOLD.md.",
  "toast": "A keepsake is remembered.",
  "threads": [
   {
@@ -131,6 +131,86 @@
     {
      "flag": "ks_halla_bed",
      "line": "Halla has put Sten by the fire in the end house."
+    }
+   ]
+  },
+  {
+   "id": "guest_tally",
+   "title": "The guest-tally",
+   "steps": [
+    {
+     "flag": "ks_lusse_met",
+     "line": "Lusse is on the ninth verse of the goat song and wants the chorus from everyone."
+    },
+    {
+     "flag": "ks_goat_song",
+     "line": "Lusse had the chorus out of you. She said it was nearly right."
+    },
+    {
+     "flag": "ks_guest_tally_found",
+     "line": "The guest-tally was on the inside of the door-post. The last knots were one knot, tied over and over."
+    },
+    {
+     "flag": "ks_guest_tally",
+     "line": "Lusse counted the tally twice and got two numbers, and started the goat song again from the first verse."
+    }
+   ]
+  },
+  {
+   "id": "ottar_stick",
+   "title": "Ottar's stick",
+   "steps": [
+    {
+     "flag": "ks_ottar_met",
+     "line": "Ottar has his boots on to row home before dark. He has had them on since noon."
+    },
+    {
+     "flag": "ks_ottar_staff_found",
+     "line": "Ottar's stick was leaning inside the barred door, where he left it so as not to forget it."
+    },
+    {
+     "flag": "ks_ottar_staff",
+     "line": "Ottar took his stick back and sat down again for the end of the song."
+    },
+    {
+     "flag": "ks_ottar_air",
+     "line": "Somebody opened the doors, and Ottar went and stood in them."
+    }
+   ]
+  },
+  {
+   "id": "song_cord",
+   "title": "Linnet's song-cord",
+   "steps": [
+    {
+     "flag": "ks_linnet_met",
+     "line": "Linnet and Eyvind cannot agree where the gate goes. Neither of them wants to."
+    },
+    {
+     "flag": "ks_birch_ring",
+     "line": "The birch ring was in the ash at the eastmost clamp. Linnet took it off to work."
+    },
+    {
+     "flag": "ks_song_cord_found",
+     "line": "At the grave was a knotted cord. Nobody here could read it."
+    },
+    {
+     "flag": "ks_song_cord_read",
+     "line": "Lusse read Linnet's cord. It is an Outsong, tied by the one it was for."
+    }
+   ]
+  },
+  {
+   "id": "knucklebones",
+   "title": "Knucklebones",
+   "steps": [
+    {
+     "flag": "ks_knucklebones_found",
+     "line": "Four knucklebones were in the turf by the small grave on the cliff. The set has five."
+    },
+    {
+     "flag": "ks_knucklebone_found",
+     "line": "There was a knucklebone in the middle of the drove-road, on the side going east."
     }
    ]
   }

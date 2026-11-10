@@ -47,6 +47,9 @@ const PIECES := {
 	"torch": {"size": [0.14, 0.14, 1.0], "origin": "grip-center"},
 	"shield_kite": {"size": [0.5, 0.1, 0.6], "origin": "strap"},
 	"fish_kettle": {"size": [1.6, 1.6, 2.2], "origin": "bottom-center"},
+	"sheep": {"size": [0.6, 1.3, 1.0], "origin": "bottom-center"},
+	"hearth_fire": {"size": [1.4, 1.4, 0.9], "origin": "bottom-center"},
+	"hearth_logs": {"size": [1.4, 1.4, 0.4], "origin": "bottom-center"},
 	"net_frame": {"size": [3.6, 0.4, 2.5], "origin": "bottom-center"},
 	"rope_coil": {"size": [0.9, 0.9, 0.35], "origin": "bottom-center"},
 	"creel_stack": {"size": [1.4, 0.8, 1.2], "origin": "bottom-center"},
@@ -76,6 +79,18 @@ static func has_piece(id: String) -> bool:
 	return PIECES.has(id)
 
 ## state_mode: 0 base / 1 thaw-only / 2 rime-only (drives dissolve behavior)
+## Pieces with a Tripo hero variant (docs/art/LOOK_PASS.md): the GLB is
+## placed in the primitive's footprint and shaded through MaterialLib.hero_mat
+## (state branch, snow crust, dissolve). Same id, same size, same origin, so
+## every generator that places the piece gets the variant; a missing file
+## falls back to the primitives.
+##   glb, family, length (m along local Z), yaw (deg), lift (m), flip (keel up)
+const HERO_PIECES := {
+	"boat": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 6.0, "yaw": 90.0, "lift": 0.0},
+	"drying_rack": {"glb": "res://assets/models/kit/kit_drying_rack_hero.glb", "family": "M_wood", "length": 4.0, "yaw": 90.0, "lift": 0.0},
+	"boat_upturned": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 5.8, "yaw": 90.0, "lift": 1.32, "flip": true},
+}
+
 static func instance(id: String, state_mode := 0, mat_remap: Dictionary = {}) -> Node3D:
 	if not PIECES.has(id):
 		push_error("KitLib: unknown piece '%s'" % id)
@@ -84,12 +99,42 @@ static func instance(id: String, state_mode := 0, mat_remap: Dictionary = {}) ->
 	node.name = id
 	if id.begins_with("mannequin_"):
 		_build_mannequin(node, id)
+	elif HERO_PIECES.has(id) and ResourceLoader.exists(String(HERO_PIECES[id]["glb"])):
+		_build_hero(node, id)
 	else:
 		_build_piece(node, id)
 	remap_materials(node, state_mode, mat_remap)
 	node.set_meta("kit_id", id)
 	node.set_meta("state_mode", state_mode)
 	return node
+
+static func _build_hero(n: Node3D, id: String) -> void:
+	var h: Dictionary = HERO_PIECES[id]
+	var inst := (load(String(h["glb"])) as PackedScene).instantiate() as Node3D
+	# colliders come from the generator's own shapes, not the landmark's
+	for c in inst.find_children("*", "CollisionObject3D", true, false):
+		c.get_parent().remove_child(c)
+		c.free()
+	var aabb := AABB()
+	var first := true
+	for mi in inst.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		var bb := m.get_aabb()
+		aabb = bb if first else aabb.merge(bb)
+		first = false
+		m.set_meta("hero_family", String(h.get("family", "M_wood")))
+	var long := maxf(aabb.size.x, aabb.size.z)
+	var sc := float(h.get("length", long)) / maxf(long, 0.01)
+	inst.scale = Vector3.ONE * sc
+	inst.rotation_degrees = Vector3(0, float(h.get("yaw", 0.0)), 180.0 if h.get("flip", false) else 0.0)
+	inst.position.y = float(h.get("lift", 0.0))
+	n.add_child(inst)
+	if id == "boat_upturned":
+		# keep the trestles it rests on
+		for z in [-1.6, 1.6]:
+			_box(n, Vector3(1.6, 0.08, 0.1), Vector3(0, 0.62, z), "M_wood", "trestle_bar")
+			for sx in [-0.7, 0.7]:
+				_box(n, Vector3(0.08, 0.66, 0.08), Vector3(sx, 0.31, z), "M_wood", "trestle_leg", Vector3(0, 0, sx * 14))
 
 # ------------------------------------------------------------ primitives
 
@@ -262,6 +307,22 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			for k in 5:
 				_box(n, Vector3(0.6, 0.12, 0.12), Vector3(0, 0.08, 0), "M_wood", "fire_log%d" % k, Vector3(0, k * 36, 0))
 			_flame(n, Vector3(0, 0.12, 0), 0.45, 0.28, "fire_flame")
+		"sheep":
+			# a fell ewe: a round fleece on four thin legs, a dark face
+			_sphere(n, 0.5, Vector3(0, 0.72, 0), "M_wool", "fleece", Vector3(0.62, 0.62, 1.05))
+			_box(n, Vector3(0.2, 0.26, 0.34), Vector3(0, 0.86, -0.62), "M_leather", "face", Vector3(-28, 0, 0))
+			_box(n, Vector3(0.3, 0.1, 0.08), Vector3(0, 0.98, -0.52), "M_leather", "ears")
+			for lx in [-0.16, 0.16]:
+				for lz in [-0.32, 0.32]:
+					_box(n, Vector3(0.07, 0.5, 0.07), Vector3(lx, 0.25, lz), "M_wood_dark", "leg")
+		"hearth_fire", "hearth_logs":
+			# a fire on the long hearth: split logs crossed on the embers
+			# (hearth_logs: the same fire, out; RIME)
+			for k in 4:
+				_box(n, Vector3(1.2, 0.14, 0.14), Vector3(0, 0.1 + (k % 2) * 0.12, 0), "M_wood_dark", "log%d" % k, Vector3(0, k * 47, 4))
+			_box(n, Vector3(1.0, 0.05, 0.8), Vector3(0, 0.03, 0), "M_ember" if id == "hearth_fire" else "M_stone_dark", "bed")
+			if id == "hearth_fire":
+				_flame(n, Vector3(0, 0.2, 0), 0.75, 0.35, "fire_flame")
 		"net_frame":
 			# a net hung to dry between two poles, sagging, floats along the head-rope
 			for sx in [-1.6, 1.6]:
@@ -533,6 +594,11 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 	for mi in _mesh_instances(node):
 		var mesh := mi.mesh
 		if mesh == null:
+			continue
+		if mi.has_meta("hero_family"):
+			for s in mesh.get_surface_count():
+				mi.set_surface_override_material(s, MaterialLib.hero_mat(mesh.surface_get_material(s),
+					String(mi.get_meta("hero_family")), state_mode))
 			continue
 		for s in mesh.get_surface_count():
 			var src := mesh.surface_get_material(s)

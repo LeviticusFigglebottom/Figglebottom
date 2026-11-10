@@ -230,5 +230,58 @@
    "chip": 0.5
   },
   "no_attack": true
+ },
+ "feast_cleaver": {
+  "name": "Host's Carving Cleaver",
+  "desc": "A broad black-iron cleaver with a knotwork oak handle and a ring at the butt, for carving at the feast. It goes through the joint and into the board under it. The ring is for hanging it by the high seat, on a nail he drove in himself, crooked.",
+  "class": "longsword",
+  "kit": "feast_cleaver",
+  "damage": 52.0,
+  "poise_damage": 28,
+  "scaling": {
+   "might": 0.65,
+   "craft": 0.15
+  },
+  "stamina": {
+   "light": 19,
+   "heavy": 33,
+   "sprint": 22
+  },
+  "moveset": "longsword",
+  "upgrade": {
+   "per_level": 6,
+   "max": 5
+  },
+  "block": {
+   "stab": 0.8,
+   "chip": 0.18
+  }
+ },
+ "hedging_bill": {
+  "name": "Hedging Bill",
+  "desc": "A long-handled billhook, a hooked black iron blade with a back spike on a hazel haft, the binding rawhide. It cuts a stem two-thirds through so it bends and lives. The haft is rubbed pale in two places, a hand's width apart.",
+  "class": "halberd",
+  "kit": "hedging_bill",
+  "damage": 54.0,
+  "poise_damage": 28,
+  "scaling": {
+   "might": 0.4,
+   "craft": 0.45
+  },
+  "stamina": {
+   "light": 19,
+   "heavy": 32,
+   "sprint": 22
+  },
+  "moveset": "halberd",
+  "two_handed": true,
+  "block": {
+   "stab": 1.05,
+   "chip": 0.28
+  },
+  "upgrade": {
+   "per_level": 7,
+   "max": 5
+  }
  }
 }

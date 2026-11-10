@@ -630,6 +630,12 @@ func _icon_for(id: String) -> String:
 		"item_tally_stick": "tally", "item_twin_spindles": "spindles", "item_orm_cord": "knot_cord",
 		"item_halla_cord": "knot_cord", "item_hesk_tongs": "tongs", "ks_woad_thread": "woad_thread",
 		"item_ivo_mitten": "mitten", "item_kettle_ladle": "ladle",
+		# Tarnhall
+		"feast_cleaver": "cleaver", "goat_song": "song", "item_host_cup": "host_cup",
+		"item_guest_tally": "guest_tally", "item_ottar_staff": "stick", "item_barrel_head": "barrel_head",
+		# Thornwold
+		"hedging_bill": "bill", "item_song_cord": "song_cord", "item_birch_ring": "birch_ring",
+		"item_knucklebone": "knucklebone", "armour_collier": "armour_collier",
 	}
 	return "res://assets/ui/icons/%s.png" % by.get(id, "relic")
 

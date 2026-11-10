@@ -378,6 +378,7 @@ func _lowe_foe_stage(p: Player, id: String, hint: Vector3, atk: String, frac: fl
 		e.vis.idle(0.0)
 	if _f >= 6:
 		_side_cam(p, e, cam_dist, cam_h, look, 50.0)
+		_quiet_card()
 	if _f < 50:
 		# nothing before the beat: a hole cut under the staged Bearer would
 		# take him (the fjord does not care for i-frames) and the shot with him
@@ -659,3 +660,406 @@ func _st_kettle_sten(p: Player) -> void:
 func _quiet_titles() -> void:
 	for z in get_tree().current_scene.find_children("*", "ZoneTitles", true, false):
 		z.queue_free()
+
+## The region's own arrival card (not the release card) is not the beat either.
+func _quiet_card() -> void:
+	for hud in get_tree().get_nodes_in_group("hud"):
+		var tl = hud.get("_title_layer")
+		if tl != null and is_instance_valid(tl):
+			tl.queue_free()
+
+# ------------------------------------------------------------------ Tarnhall
+## (tarnhall; docs/screens/tarnhall_enc_*.png): tarnhall_guest, tarnhall_cupbearer,
+## tarnhall_champion, host_p1, host_p1b, host_p2, host_p2b, host_p3,
+## tarnhall_release, tarnhall_doors (RIME); tarnhall_lusse, tarnhall_ottar
+## (THAW). And kettle_crack (kettle_fjord, RIME): the ice cracking first.
+const HALL_FLOOR := Vector3(200.0, 24.4, -326.5)   # the open floor south of the table
+
+func _st_tarnhall_guest(p: Player) -> void:
+	_lowe_foe_stage(p, "feast_guest", Vector3(202, 0, -320), "toast", 0.8, 1.9, 4.6, 1.2, 1.0)
+
+func _st_tarnhall_cupbearer(p: Player) -> void:
+	_lowe_foe_stage(p, "cupbearer", Vector3(220, 0, -328.5), "going_round", 0.8, 2.2, 4.4, 1.4, 1.0,
+			Vector3(208.0, 24.55, -319.0))
+
+func _st_tarnhall_champion(p: Player) -> void:
+	# (the camera on its shield side: the board grown into the left forearm)
+	_lowe_foe_stage(p, "hall_champion", Vector3(222.6, 0, -323.2), "shield_rush", 0.8, 6.0, -6.0, 1.8, 1.0,
+			Vector3(204.0, 24.55, -321.0))
+
+func _st_kettle_crack(p: Player) -> void:
+	# the cracks spread a second before the ice opens: frozen half a second out
+	_lowe_foe_stage(p, "ice_fisher", Vector3(-33, 0, -328.8), "cut_hole", 0.62, 3.5, 4.6, 2.2, 0.4,
+			Vector3(-40, 0.15, -338))
+
+## The Host: woken at the table, the phase set, the Bearer on the hall floor
+## `gap` metres off; `atk` started and frozen `frac` of the way through its
+## windup (or `after` seconds past the strike), or a transition frozen at
+## `trans_t` seconds. The camera stands behind the Bearer's right shoulder,
+## under the roof.
+var _host_set := false
+
+func _host_stage(p: Player, ph: int, atk: String, frac: float, gap: float, after := -1.0,
+		trans := "", trans_t := 0.0, cam_back := 4.6, cam_up := 2.6, side := 2.6) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("host", Vector3(200, 0, -330))
+		if _foe == null:
+			return
+	var h := _foe as Host
+	if h == null:
+		return
+	if not _host_set:
+		_host_set = true
+		_t0 = _clock
+		h.target = p
+		h._stand_done()
+		h._set_state(Enemy.ES.COMBAT)
+		h.vis.idle(0.0)
+		h.phase = ph
+		if ph >= 2:
+			h.hp = h.max_hp * 0.5
+		if ph >= 3:
+			h.hp = h.max_hp * 0.2
+		h.vis.rotation.y = PI   # facing the hall floor (+z)
+		for a in h.cfg.get("attacks", []):
+			h._cooldowns[String(a["id"])] = 99.0
+		_place_player(p, h.global_position + Vector3(0.6, 0.1, gap), 0.0)
+	var to := h.global_position - p.global_position
+	to.y = 0
+	p.vis.rotation.y = atan2(-to.x, -to.z)
+	# from the east end of the open floor, looking along the hall across the
+	# pair (a camera behind the Bearer would stand in the south wall)
+	var mid := h.global_position.lerp(p.global_position, 0.45)
+	_cam.global_position = mid + Vector3(side, cam_up, cam_back)
+	_cam.look_at(mid + Vector3.UP * 1.4, Vector3.UP)
+	if _cam_fix.size() == 2:   # a beat at the bench, not between the two of them
+		_cam.global_position = h.global_position + (_cam_fix[0] as Vector3)
+		_cam.look_at(h.global_position + (_cam_fix[1] as Vector3), Vector3.UP)
+	_cam.fov = 60.0
+	_quiet_card()
+	if _clock - _t0 < 0.8:
+		return
+	if not _started:
+		_started = true
+		_t1 = _clock
+		if trans != "":
+			h._begin_transition(trans)
+		else:
+			h._cooldowns.clear()
+			h._begin_attack(h.attack_by_id(atk))
+		return
+	if trans != "":
+		if h.state == Enemy.ES.TRANSITION and h.state_t >= trans_t:
+			_freeze()
+		return
+	if h.state == Enemy.ES.HOLD and h.state_t >= 1.2:
+		_freeze()
+	elif after >= 0.0:
+		var w := float(h.attack_by_id(atk)["windup"]) / h._speed_mult()
+		if _clock - _t1 >= w + after:
+			_freeze()
+	elif h.state == Enemy.ES.ATTACK and String(h._atk.get("id", "")) == atk \
+			and h.state_t >= float(h._atk["windup"]) / h._speed_mult() * frac:
+		_freeze()
+
+func _st_host_p1(p: Player) -> void:
+	_host_stage(p, 1, "table_sweep", 0.85, 4.2, -1.0, "", 0.0, 1.6, 3.6, 8.0)
+
+func _st_host_p1b(p: Player) -> void:
+	_host_stage(p, 1, "bench_throw", 0.0, 7.0, 0.22, "", 0.0, 1.4, 3.2, 8.5)
+
+var _cam_fix: Array = []
+
+func _st_host_p2(p: Player) -> void:
+	# the guests standing up out of their places beside him
+	_cam_fix = [Vector3(-4.5, 3.0, 4.0), Vector3(3.0, 1.4, -1.0)]
+	_host_stage(p, 2, "", 0.0, 6.0, -1.0, "p2", 2.0, 1.0, 3.0, 8.0)
+
+func _st_host_p2b(p: Player) -> void:
+	_host_stage(p, 2, "tip_horn", 0.0, 7.5, 1.8, "", 0.0, 1.4, 4.0, 8.5)
+
+func _st_host_p3(p: Player) -> void:
+	_host_stage(p, 3, "pour", 1.0, 7.0, -1.0, "", 0.0, 1.2, 2.8, 7.0)
+
+## Release: he sits down at the table; the guests sit; the cup beside him.
+func _st_tarnhall_release(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("host", Vector3(200, 0, -330))
+	var h := _foe as Host
+	if h == null:
+		return
+	if not h.released:
+		h.target = p
+		h._stand_done()
+		h.raise_guests(2)
+		_place_player(p, h.global_position + Vector3(1.2, 0.1, 5.0), 0.0)
+		h._die()
+		_t0 = _clock
+	_cam.global_position = h.global_position + Vector3(4.6, 2.6, 6.4)
+	_cam.look_at(h.global_position + Vector3(-0.6, 1.4, 0.4), Vector3.UP)
+	_cam.fov = 58.0
+	if _clock - _t0 > 3.2:
+		_freeze()
+
+## The doors: the bar lifted, the leaves open on the tarn; the tally on the post.
+func _st_tarnhall_doors(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("host", Vector3(200, 0, -330))
+	var h := _foe as Host
+	if h == null:
+		return
+	if not h.released:
+		h.target = p
+		h._stand_done()
+		_place_player(p, Vector3(191.5, 24.5, -326.0), -PI / 2)   # behind the camera
+		h._die()
+		_t0 = _clock
+	_cam.global_position = Vector3(188.5, 26.6, -325.4)
+	_cam.look_at(Vector3(180.0, 25.4, -328.6), Vector3.UP)
+	_cam.fov = 62.0
+	if _clock - _t0 > 2.6:
+		_freeze()
+
+func _st_tarnhall_lusse(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_npc_talk_stage(p, "lusse", 1)
+
+func _st_tarnhall_ottar(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_npc_talk_stage(p, "ottar", 2)
+
+# ------------------------------------------------------------------ release scenes
+## The post-release THAW scenes (docs/screens/release_*.png; run with
+## --state=thaw and --flag=<the release flag>): release_lowe (Arne and the
+## twins outside their barrow), release_kettle (Pell and Ivo at the kettle).
+## The camera faces the group; the Bearer stands just behind it, in earshot,
+## and the beat is a line of their talk overheard.
+func _release_stage(p: Player, id: String, eye: Vector3, look_up: float, line := 1) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	var n := _find_npc(id)
+	if n == null:
+		return
+	var fwd := -n.global_transform.basis.z
+	fwd.y = 0
+	fwd = fwd.normalized()
+	var right := fwd.cross(Vector3.UP)
+	var cam := n.global_position + fwd * eye.z + right * eye.x + Vector3.UP * eye.y
+	if _f == 3:
+		_place_player(p, n.global_position + fwd * (eye.z + 1.2) + Vector3.UP * 0.3, atan2(fwd.x, fwd.z))
+		_t0 = _clock
+		n.overheard.connect(func(_w, _l): _heard += 1)
+	_cam.global_position = cam
+	_cam.look_at(n.global_position + Vector3.UP * look_up - right * eye.x * 0.3, Vector3.UP)
+	_cam.fov = 50.0
+	if _heard >= line and _clock - _t0 > 1.0:
+		_hold_clock += get_process_delta_time()
+		if _hold_clock > 1.0:
+			_freeze()
+
+var _heard := 0
+var _hold_clock := 0.0
+
+func _st_release_lowe(p: Player) -> void:
+	_release_stage(p, "arne", Vector3(0.6, 1.5, 4.6), 0.7, 3)
+
+## Pell and Ivo across the kettle: from the side, so the kettle sits between
+## them and not between them and the camera.
+func _st_release_kettle(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	var pell := _find_npc("pell")
+	var ivo := _find_npc("ivo")
+	if pell == null or ivo == null:
+		return
+	var mid := (pell.global_position + ivo.global_position) * 0.5
+	var axis := ivo.global_position - pell.global_position
+	axis.y = 0
+	var side := axis.normalized().cross(Vector3.UP) * _kettle_side
+	var cam := mid + side * 5.2 + Vector3.UP * 1.9
+	if _f == 3:
+		_place_player(p, mid + side * 6.6 + Vector3.UP * 0.3, atan2(side.x, side.z))
+		_t0 = _clock
+		pell.overheard.connect(func(_w, _l): _heard += 1)
+	_cam.global_position = cam
+	_cam.look_at(mid + Vector3.UP * 0.8, Vector3.UP)
+	_cam.fov = 50.0
+	if _heard >= 2 and _clock - _t0 > 1.0:
+		_hold_clock += get_process_delta_time()
+		if _hold_clock > 1.0:
+			_freeze()
+
+var _kettle_side := -1.0   # (the shelf side, not the cliff)
+
+# ------------------------------------------------------------------ Thornwold
+## (thornwold; docs/screens/thornwold_enc_*.png): thorn_collier, thorn_stag,
+## hedgelayer_p1, hedgelayer_p2, hedgelayer_p3, thorn_release (RIME);
+## thorn_argument (THAW), thorn_after (THAW, --flag=ks_hedgelayer_released).
+func _st_thorn_collier(p: Player) -> void:
+	# on the clearing's open floor (on the road the camera would stand in the thorn)
+	_lowe_foe_stage(p, "collier", Vector3(380, 0, -312), "rake", 0.8, 2.0, 4.4, 1.3, 1.0,
+			Vector3(343.0, 34.5, -303.0))
+
+func _st_thorn_stag(p: Player) -> void:
+	_lowe_foe_stage(p, "rime_stag", Vector3(400, 0, -300), "bound", 0.7, 7.0, 7.0, 2.4, 1.2,
+			Vector3(348.0, 34.5, -300.0))
+
+## The Hedgelayer: woken, the phase set (with its ring), the Bearer `gap`
+## metres off toward the middle of the grave's clearing; `atk` started and
+## frozen `frac` of the way through its windup, or `after` seconds past it.
+var _hl_set := false
+var _hl_cam_grave := false
+var _hl_dir := Vector2(0.85, 0.3)   # where the Bearer stands: round the ring, and in
+
+func _hl_stage(p: Player, ph: int, atk: String, frac: float, gap: float, after := -1.0,
+		cam := Vector3(5.0, 3.6, 6.0), hold_t := 0.0) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f == 3:
+		_foe = _foe_near("hedgelayer", Vector3(448, 0, -321))
+	var h := _foe as Hedgelayer
+	if h == null:
+		return
+	if not _hl_set:
+		_hl_set = true
+		_t0 = _clock
+		h.target = p
+		h._stand_done()
+		h.vis.idle(0.0)
+		h.phase = ph
+		if ph >= 2:
+			h.hp = h.max_hp * 0.5
+			h._raise_ring(h.cfg["ring2"])
+		if ph >= 3:
+			h.hp = h.max_hp * 0.2
+			h._raise_ring(h.cfg["ring3"])
+		h._set_state(Enemy.ES.COMBAT)
+		for a in h.cfg.get("attacks", []):
+			h._cooldowns[String(a["id"])] = 99.0
+		# round the ring from him (not toward the grave: the pine and the turf
+		# are there), so what he raises lands on open floor
+		var to_g := h.grave_point() - h.global_position
+		to_g.y = 0
+		var tang := to_g.normalized().cross(Vector3.UP)
+		var at := h.global_position + (tang * _hl_dir.x + to_g.normalized() * _hl_dir.y).normalized() * gap
+		_place_player(p, Vector3(at.x, h.global_position.y + 0.3, at.z), 0.0)
+	var mid := h.global_position.lerp(p.global_position, 0.5)
+	var axis := p.global_position - h.global_position
+	axis.y = 0
+	var side := axis.normalized().cross(Vector3.UP)
+	if _hl_cam_grave:
+		# up over the grave, looking out at the Bearer and the hedge beside him
+		var g := h.grave_point()
+		var out := p.global_position - g
+		out.y = 0
+		_cam.global_position = g - out.normalized() * 1.5 + Vector3.UP * 6.5
+		_cam.look_at(p.global_position + Vector3.UP * 0.5, Vector3.UP)
+	elif cam.y < 0.0:
+		# behind the Bearer, looking at him
+		_cam.global_position = p.global_position + axis.normalized() * absf(cam.z) + side * cam.x + Vector3.UP * absf(cam.y)
+		_cam.look_at(h.global_position + Vector3.UP * 1.8, Vector3.UP)
+	elif cam.z < 0.0:
+		# over his shoulder: past him to the Bearer and what rises behind
+		_cam.global_position = h.global_position + side * cam.x + Vector3.UP * cam.y + axis.normalized() * cam.z
+		_cam.look_at(p.global_position + axis.normalized() * 1.5 + Vector3.UP * 1.0, Vector3.UP)
+	else:
+		_cam.global_position = mid + side * cam.x + Vector3.UP * cam.y + axis.normalized() * cam.z
+		_cam.look_at(mid + Vector3.UP * 1.2, Vector3.UP)
+	_cam.fov = 58.0
+	if _clock - _t0 < 0.8:
+		return
+	if not _started:
+		_started = true
+		_t1 = _clock
+		h._cooldowns.clear()
+		h.target = p
+		h._begin_attack(h.attack_by_id(atk))
+		return
+	if h.state == Enemy.ES.HOLD and h._hold_kind == "measure" and h.state_t >= 1.2:
+		_freeze()
+	elif after >= 0.0:
+		var w := float(h.attack_by_id(atk)["windup"]) / h._speed_mult()
+		if _clock - _t1 >= w + after:
+			_freeze()
+	elif h.state == Enemy.ES.ATTACK and String(h._atk.get("id", "")) == atk \
+			and h.state_t >= float(h._atk["windup"]) / h._speed_mult() * frac:
+		_freeze()
+
+func _st_hedgelayer_p1(p: Player) -> void:
+	_hl_dir = Vector2(0.6, 0.8)   # (so the wall rises on open floor, short of the ring)
+	_hl_stage(p, 1, "raise_wall", 0.0, 5.0, 0.5, Vector3(2.2, 3.6, -4.5))
+
+func _st_hedgelayer_p2(p: Player) -> void:
+	# in the hedge: the circle glowing where he will step out
+	_hl_cam_grave = true
+	_hl_stage(p, 2, "step_into", 0.0, 5.0, 1.2 + 0.4, Vector3(2.5, 4.4, -4.0))
+
+func _st_hedgelayer_p3(p: Player) -> void:
+	_hl_dir = Vector2(0.0, 1.0)   # (straight in toward the grave: he is in the ring's gap)
+	_hl_stage(p, 3, "where_it_goes", 1.0, 4.0, -1.0, Vector3(1.4, -2.6, 3.4))
+
+## Release: he kneels at the gap; the ring unlays; the gate lies down; the cord.
+func _st_thorn_release(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	if _f == 3:
+		_foe = _foe_near("hedgelayer", Vector3(448, 0, -321))
+	var h := _foe as Hedgelayer
+	if h == null:
+		return
+	if not h.released:
+		h.target = p
+		h._stand_done()
+		h.phase = 2
+		h._raise_ring(h.cfg["ring2"])
+		var g := h.grave_point()
+		_place_player(p, g + Vector3(-6.0, 0.3, 4.0), 0.0)
+		h._die()
+		_t0 = _clock
+	var g2 := h.grave_point()
+	for v in get_tree().current_scene.find_children("*", "FrostVeil", true, false):
+		(v as Node3D).visible = false   # (it falls as meltwater; the beat is the gate)
+	# from the road side of the gap, outside the ring: the gate laid down in it
+	_cam.global_position = g2 + Vector3(-17.0, 3.4, 3.2)
+	_cam.look_at(g2 + Vector3(-11.0, 0.2, 0.0), Vector3.UP)
+	_cam.fov = 58.0
+	if _clock - _t0 > 3.0:
+		_freeze()
+
+func _st_thorn_argument(p: Player) -> void:
+	_release_stage(p, "eyvind", Vector3(1.6, 1.6, 5.0), 0.9, 2)
+
+## After: the two of them either side of the gap, the gate lying flat
+## across it between them; from the road side, outside the rings.
+func _st_thorn_after(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	var e := _find_npc("eyvind_gate")
+	var l := _find_npc("linnet")
+	if e == null or l == null:
+		return
+	var mid := (e.global_position + l.global_position) * 0.5
+	var out := Vector3(-1, 0, 0)   # the rings' gap faces west, to the road
+	if _f == 3:
+		_place_player(p, mid + out * 7.4 + Vector3.UP * 0.3, atan2(-out.x, -out.z) + PI)
+		_t0 = _clock
+		e.overheard.connect(func(_w, _l): _heard += 1)
+	_cam.global_position = mid + out * 6.2 + Vector3(0, 2.2, 1.2)
+	_cam.look_at(mid + Vector3(1.2, 0.7, 0), Vector3.UP)
+	_cam.fov = 52.0
+	if _heard >= 4 and _clock - _t0 > 1.0:
+		_hold_clock += get_process_delta_time()
+		if _hold_clock > 1.0:
+			_freeze()

@@ -2,35 +2,35 @@
 
 _Last updated: 2026-11-07 (founding session)_
 
-## State (on main f3d7b88: 714 checks, all green)
+## State (on main fd6bf02: 850 checks, all green)
 | Region | World | Encounters and writing |
 |---|---|---|
 | Saltfell (vertical slice) | ✅ | ✅ |
 | The Lowe | ✅ | ✅ |
-| Kettle Fjord | ✅ (walls, dressing, see-through ice) | ✅ |
-| Tarnhall | ✅ | in flight |
-| Thornwold | in flight | todo |
-| Shepherd's Reach | todo | todo |
-| The Coldwell | todo | todo |
+| Kettle Fjord | ✅ | ✅ |
+| Tarnhall | ✅ | ✅ (the Host, seated guests, Lusse, Ottar) |
+| Thornwold | ✅ (THAW/RIME hedge maze) | todo |
+| Shepherd's Reach | in flight | todo |
+| The Coldwell | in flight | todo, plus both endings |
 
-- **Tripo:** every region's hero art is on main. The balance is 15,335.
-- **Controller:** the Bearer now steps up to 0.35 m and snaps down stairs.
-- **Disk:** keep it clean. Remove the worktrees of merged branches with `git worktree remove --force`. Raw downloads can be fetched again by Tripo project id.
+- **Tripo balance:** about 14,280, before the look pass.
+- **Owner feedback:** procedural assets clash with the Tripo art. The look pass fixes this: CC0 PBR textures, UVs, Tripo-textured buildings, Tripo rocks and trees.
+- **Test flake:** `kettle_encounters` ring-cut flaked under load. The test is now isolated: it closes old ice, puts other moves on cooldown, and waits for the ring to open.
 
 ## In flight (worktree → branch)
 | Worktree | Branch | Work |
 |---|---|---|
-| `/home/user/fb-qa` | `fix/slice-qa` | Full-slice end-to-end test, fixes, perf |
-| `/home/user/figglebottom` | `feat/thornwold` | Tarnhall light and a second seam, then the Thornwold region |
-| `/home/user/fb-enc4` | `feat/tarnhall-encounters` | `TARNHALL.md`, the Host's three phases, the hall doors |
-| `/home/user/fb-art4` | `art/npcs-release-scenes` | THAW NPC models (Halla, Sten, Arne and the twins, Pell and Ivo, the child Bearer) |
-| Owner's PC | `gpu/*` | Jobs in `LOCAL_GPU_TASKS.md`. Replies go via `LOCAL_OUTBOX.md`; the worker writes to `LOCAL_INBOX.md` on `gpu/inbox` |
+| `/home/user/fb-qa` | `fix/slice-qa` | Merge main in, then body collision, enemy draw calls, title hitch, the tide wall |
+| `/home/user/fb-look` | `art/unified-look` | The whole-world material/texture pass, plus trees and hedges |
+| `/home/user/figglebottom` | `feat/reach-coldwell` | Shepherd's Reach and the Coldwell worlds, the ending hook, the THAW sky |
+| `/home/user/fb-enc5` | `feat/release-scenes` | NPC sit support; the Lowe, Kettle and Tarnhall post-release THAW scenes |
+| Owner's PC | `gpu/*` | `LOCAL_GPU_TASKS.md`. Nothing has been received yet |
 
 ## Next exact step
-1. Review and merge branches as they land.
-2. Then Shepherd's Reach and the Coldwell, world first, then encounters.
-3. The endings: the Outsong and the Hearth Kept.
-4. Release-scene staging using the new NPC models.
+1. Merge each branch above once its tests pass.
+2. Thornwold encounters (the Hedgelayer, Linnet, Eyvind), then Reach and Coldwell encounters.
+3. The endings.
+4. A full-game QA pass.
 
 ## Tripo access (for future sessions)
 - **Tool:** the unofficial `Neko-Yukari/tripo-studio-mcp`. Clone it into the scratchpad and run it with `TRIPO_GATEWAY=0` and `TRIPO_STUDIO_STATE=<scratchpad>/tripo/studio-state.json`.
