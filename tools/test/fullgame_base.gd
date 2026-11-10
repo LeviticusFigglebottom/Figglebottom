@@ -372,6 +372,7 @@ func _hearth_lit(hearth_id: String) -> bool:
 ## (prompted portal). `via` is a point on this side, at or just past the
 ## portal. Re-binds `area` once the new one stands. Returns true on arrival.
 func _cross(to_area: String, via: Vector3, max_ticks := 9000, fight := false) -> bool:
+	var stilled0 := _stilled
 	_halt = func(): return Game.current_area_id == to_area
 	await _walk_path(via, max_ticks, fight)
 	if Game.current_area_id != to_area:
@@ -385,6 +386,13 @@ func _cross(to_area: String, via: Vector3, max_ticks := 9000, fight := false) ->
 		if it != null and it.get_parent() is AreaPortal:
 			player.try_interact()
 	var ok := await _until(func(): return Game.current_area_id == to_area and player.input_enabled, 12.0)
+	if ok and _stilled != stilled0:
+		# a fall on the way wakes the Bearer at the last hearth, which may
+		# itself be in `to_area`: that is not a crossing
+		area = Game.current_area
+		print("  (cross to %s: the Bearer fell on the way and woke at %s)" % [to_area,
+			str(player.global_position.snapped(Vector3.ONE * 0.1))])
+		return false
 	if ok:
 		area = Game.current_area
 		await ticks(30)
@@ -534,7 +542,13 @@ func _die_and_recover(hearth_id: String) -> void:
 		await _settle()
 		if bm_tries == 1 or _near_interact("Reclaim") != null:
 			await _shot("breathmark")
-		check(_near_interact("Reclaim") != null, "the Breathmark offers itself")
+		var offered := _near_interact("Reclaim") != null
+		if not offered and bm_tries < 3:
+			# a fight on the way back pulled the Bearer off the spot: walk to it again
+			print("  (breathmark, try %d: at %s, %.1f m off the mark)" % [bm_tries,
+				str(player.global_position.snapped(Vector3.ONE * 0.1)), player.global_position.distance_to(bpos)])
+			continue
+		check(offered, "the Breathmark offers itself")
 		w_before = Game.warmth
 		bm_amount = int(World.breathmark["amount"]) if World.breathmark != null else 0
 		player.try_interact()
