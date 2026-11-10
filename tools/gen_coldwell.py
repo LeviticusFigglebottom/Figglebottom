@@ -79,7 +79,10 @@ for k in range(8, len(RIVER) - 4, 6):
     nx_, ny_, nz_ = RIVER[k + 1]
     face = math.degrees(math.atan2(nx_ - x, nz_ - z))
     scene = "res://assets/models/enemies/unsung.glb" if k % 12 == 2 else "res://assets/models/enemies/upwalker.glb"
-    LANDMARKS.append({"scene": scene, "at": [x + 0.8 * math.sin(k), r2(y - 0.25), z], "rot": r2(face), "tag": "rime"})
+    # each stopped mid-something: wading on, standing, bowed, gone to the knees
+    # ("pose": clip@fraction, held by PoseHold; unposed they stand arms-out)
+    pose = ["walk@0.15", "idle@0.3", "hit@0.45", "walk@0.62", "defeat@0.38", "idle@0.8", "hit@0.3", "walk@0.4"][(k // 6) % 8]
+    LANDMARKS.append({"scene": scene, "at": [x + 0.8 * math.sin(k), r2(y - 0.25), z], "rot": r2(face), "tag": "rime", "pose": pose})
 
 # --- the Wellhead ---------------------------------------------------------------------
 LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_wellhead.glb", "at": at(WX, WZ, -0.05), "rot": 90, "scale": 1.0,
@@ -162,7 +165,9 @@ D = {
     "terrain": K.terrain_block(),
     "nav_bounds": [676, 40, -556, 964, 220, -364],
     "weather": {"gulls": False, "spindrift": 16},
-    "water": [{"at": [r2(WX), r2(g(WX, WZ) + 0.6), r2(WZ)], "radius": 2.6, "tag": "thaw"}],
+    # the spring: its own shader (clear rim, dark still eye); RIME: iced over
+    "water": [{"at": [r2(WX), r2(g(WX, WZ) + 0.6), r2(WZ)], "radius": 2.6, "tag": "thaw", "mat": "M_spring"},
+              {"at": [r2(WX), r2(g(WX, WZ) + 0.6), r2(WZ)], "radius": 2.6, "tag": "rime", "mat": "M_ice_sheet"}],
     "falls": FALLS,
     "hazards": [{"kind": "fall", "min": [676, -2, -556], "max": [964, 400, -364]}],
     "zones": [

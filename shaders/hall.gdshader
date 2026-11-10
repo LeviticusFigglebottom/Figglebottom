@@ -52,6 +52,13 @@ uniform float board_tone = 1.0;
 // grows with height squared; RIME freezes it
 uniform float wind_sway = 0.0;              // metres of tip travel
 uniform float wind_height = 12.0;           // height the full sway is reached at             // uv mode: ProcMesh UV2.x per-board tone (0 for imported meshes)
+// living stock without a rig (the Reach ewes): the head and neck swing about
+// a pivot at the withers, in the vertex shader. Off in RIME: they are stills.
+uniform float graze_amp = 0.0;              // radians of head travel (0 = off)
+uniform vec2 graze_pivot = vec2(0.22, 0.62);// model-space x, y of the neck's root
+uniform vec2 graze_from = vec2(0.2, 0.5);   // weight starts past this x, and above this y
+uniform float graze_mode = 0.0;             // 0 head up, looks about and dips; 1 head down, cropping
+uniform float graze_ear_y = 9.0;            // ears: everything above this flicks
 uniform int use_local_triplanar = 0; // 1 = lock triplanar to mesh/limb space (characters)
 // RIME snow: the snow set, sampled top-down
 uniform sampler2D snow_tex : source_color, hint_default_white, filter_linear_mipmap_anisotropic, repeat_enable;
@@ -120,6 +127,32 @@ void vertex() {
 		float frozen = 1.0 - 0.85 * local_rime(org);
 		vec3 wdir = (inverse(MODEL_MATRIX) * vec4(0.8, 0.0, -0.6, 0.0)).xyz;
 		VERTEX += normalize(wdir) * g * wind_sway * hgt * hgt * frozen;
+	}
+	if (graze_amp > 0.0) {
+		vec3 gorg = MODEL_MATRIX[3].xyz;
+		float gph = dot(gorg.xz, vec2(1.7, 2.3));
+		float alive = 1.0 - smoothstep(0.2, 0.6, local_rime(gorg));
+		float w = smoothstep(graze_from.x, graze_from.x + 0.2, VERTEX.x) * smoothstep(graze_from.y, graze_from.y + 0.2, VERTEX.y);
+		float t = TIME + gph;
+		// head up: mostly still, a slow look to one side, now and then a
+		// dip to the grass. Head down: a quick cropping nod, lifted
+		// sometimes to chew.
+		float dip = pow(0.5 + 0.5 * sin(t * 0.23), 6.0);
+		float nod = mix(-dip * 1.6 + 0.08 * sin(t * 0.9),
+				0.16 * sin(t * 5.2) * (0.5 + 0.5 * sin(t * 0.61)) + 0.9 * pow(0.5 + 0.5 * sin(t * 0.17 + 1.0), 8.0), graze_mode);
+		float turn = 0.5 * sin(t * 0.31 + 2.0) * (1.0 - graze_mode * 0.7);
+		float a_n = nod * graze_amp * w * alive;
+		float a_t = turn * graze_amp * w * alive;
+		vec3 rel = VERTEX - vec3(graze_pivot.x, graze_pivot.y, 0.0);
+		// pitch about the model's Z (nose down is negative), then a turn about Y
+		rel.xy = vec2(rel.x * cos(a_n) - rel.y * sin(a_n), rel.x * sin(a_n) + rel.y * cos(a_n));
+		rel.xz = vec2(rel.x * cos(a_t) - rel.z * sin(a_t), rel.x * sin(a_t) + rel.z * cos(a_t));
+		VERTEX = rel + vec3(graze_pivot.x, graze_pivot.y, 0.0);
+		// an ear flicks: a short shiver, a few seconds apart
+		float flick = smoothstep(0.96, 1.0, sin(t * 0.83 + 4.0)) * step(graze_ear_y, VERTEX.y);
+		VERTEX.z += sin(TIME * 34.0) * 0.012 * flick * alive * sign(VERTEX.z);
+		// the barrel breathes
+		VERTEX.z *= 1.0 + 0.012 * sin(t * 1.4) * (1.0 - w) * alive;
 	}
 	v_local_pos = VERTEX;
 	v_local_nrm = normalize(NORMAL);

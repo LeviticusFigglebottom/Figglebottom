@@ -106,7 +106,18 @@
     -478.0
    ],
    "radius": 2.6,
-   "tag": "thaw"
+   "tag": "thaw",
+   "mat": "M_spring"
+  },
+  {
+   "at": [
+    922.0,
+    157.54,
+    -478.0
+   ],
+   "radius": 2.6,
+   "tag": "rime",
+   "mat": "M_ice_sheet"
   }
  ],
  "falls": [
@@ -1490,7 +1501,8 @@
     -380.74
    ],
    "rot": 111.16,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "idle@0.3"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1500,7 +1512,8 @@
     -385.0
    ],
    "rot": 111.06,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "hit@0.45"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1510,7 +1523,8 @@
     -389.31
    ],
    "rot": 111.06,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "walk@0.62"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1520,7 +1534,8 @@
     -393.62
    ],
    "rot": 110.79,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "defeat@0.38"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1530,7 +1545,8 @@
     -399.81
    ],
    "rot": 121.31,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "idle@0.8"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1540,7 +1556,8 @@
     -406.09
    ],
    "rot": 121.55,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "hit@0.3"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1550,7 +1567,8 @@
     -412.24
    ],
    "rot": 129.73,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "walk@0.4"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1560,7 +1578,8 @@
     -419.92
    ],
    "rot": 129.73,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "walk@0.15"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1570,7 +1589,8 @@
     -427.6
    ],
    "rot": 129.73,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "idle@0.3"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1580,7 +1600,8 @@
     -434.73
    ],
    "rot": 129.29,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "hit@0.45"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1590,7 +1611,8 @@
     -442.33
    ],
    "rot": 129.11,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "walk@0.62"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1600,7 +1622,8 @@
     -449.93
    ],
    "rot": -59.12,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "defeat@0.38"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1610,7 +1633,8 @@
     -453.76
    ],
    "rot": 116.69,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "idle@0.8"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1620,7 +1644,8 @@
     -459.13
    ],
    "rot": 116.44,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "hit@0.3"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1630,7 +1655,8 @@
     -462.04
    ],
    "rot": 102.99,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "walk@0.4"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1640,7 +1666,8 @@
     -464.74
    ],
    "rot": 103.06,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "walk@0.15"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1650,7 +1677,8 @@
     -466.69
    ],
    "rot": 94.88,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "idle@0.3"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1660,7 +1688,8 @@
     -467.69
    ],
    "rot": 94.57,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "hit@0.45"
   },
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1670,7 +1699,8 @@
     -468.51
    ],
    "rot": 93.16,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "walk@0.62"
   },
   {
    "scene": "res://assets/models/enemies/unsung.glb",
@@ -1680,7 +1710,8 @@
     -469.18
    ],
    "rot": 93.16,
-   "tag": "rime"
+   "tag": "rime",
+   "pose": "defeat@0.38"
   },
   {
    "scene": "res://assets/models/landmarks/lm_wellhead.glb",
