@@ -109,7 +109,13 @@ func _ready() -> void:
 	var chapters: Array = npc_cfg.get("chapters", [])
 	if chapters.size() > 0:
 		var ci := int(World.flag_val("chapter_" + nid, 0))
-		if ci < chapters.size():
+		var closing := _closing_lines()
+		if not closing.is_empty():
+			# an errand closed in this very talk is answered before the tale
+			# goes on: a Bearer who rested before he met Calder shows him his
+			# boots first, and the journal said so while Calder said nothing
+			_lines = closing
+		elif ci < chapters.size():
 			_lines = chapters[ci]
 			World.set_flag("chapter_" + nid, ci + 1)
 			# a chapter may be a Keepsakes step ("chapter_flags": [[..], [..]])
@@ -132,15 +138,22 @@ func _repeat_lines() -> Array:
 	# an errand closed in this very talk is answered first: arriving with the
 	# rye after the release must still hear about the dog (the release's own
 	# lines, and their Keepsakes step, wait for the next talk)
-	for w in npc_cfg.get("lines_when", []):
-		if _closed_now.has(String(w.get("flag", ""))):
-			return w.get("lines", [])
+	var closing := _closing_lines()
+	if not closing.is_empty():
+		return closing
 	for w in npc_cfg.get("lines_when", []):
 		if World.flag(String(w.get("flag", ""))):
 			if String(w.get("set_flag", "")) != "":
 				World.set_flag(String(w["set_flag"]))
 			return w.get("lines", [])
 	return npc_cfg.get("lines_repeat", [])
+
+## The "lines_when" lines of an errand closed in this talk, or none.
+func _closing_lines() -> Array:
+	for w in npc_cfg.get("lines_when", []):
+		if _closed_now.has(String(w.get("flag", ""))):
+			return w.get("lines", [])
+	return []
 
 ## Things handed over just by talking (SLICE.md: "talk to Ingra carrying the
 ## sack"): no menu entry, the errand closes when you arrive with it.
