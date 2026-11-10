@@ -827,15 +827,21 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 	var center := (mn + mx) * 0.5
 	var size := mx - mn
 	var fam := String(spec.get("mat", "M_stone"))
-	# a wide, thin timber box is a deck, a jetty or a bridge: lay it in planks
-	if fam == "M_wood" and size.y < 0.5 and maxf(size.x, size.z) > 1.5 and minf(size.x, size.z) > 0.8:
-		fam = "M_planks"
-	var mat := MaterialLib.get_mat(fam, _state_mode(tag))
+	var mode := _state_mode(tag)
 	var mi := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = size
-	mi.mesh = bm
-	mi.material_override = mat
+	var timber := fam == "M_wood" or fam == "M_wood_dark" or fam == "M_drift"
+	if timber and size.y < 0.5 and maxf(size.x, size.z) > 1.5 and minf(size.x, size.z) > 0.8:
+		# a wide, thin timber box is a deck, a jetty or a bridge: lay it in
+		# real planks across its width, on two stringers
+		mi.mesh = _deck_mesh(size, fam, mode, hash(Vector3i(center * 10.0)))
+	elif timber and size.y > 1.5 and maxf(size.x, size.z) < 0.6:
+		# a tall, thin timber box is a pile or a stilt: a round adzed post
+		mi.mesh = _pile_mesh(size, fam, mode, hash(Vector3i(center * 10.0)))
+	else:
+		var bm := BoxMesh.new()
+		bm.size = size
+		mi.mesh = bm
+		mi.material_override = MaterialLib.get_mat(fam, mode)
 	mi.position = center
 	area.attach(mi, tag)
 	if spec.get("collide", true):
@@ -849,6 +855,59 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 		body.add_child(cs)
 		body.position = center
 		area.attach(body, tag)
+
+## A deck in place of a box of the same size: boards of uneven width laid
+## across the short span with gaps, ends ragged by a few centimetres, two
+## stringers and a kerb board under the long edges. The collider stays the box.
+static func _deck_mesh(size: Vector3, fam: String, mode: int, seed: int) -> ArrayMesh:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var along_x := size.x >= size.z
+	var run := size.x if along_x else size.z       # the long way
+	var span := size.z if along_x else size.x      # boards lie across this
+	var th := minf(size.y, 0.09)
+	var top := size.y * 0.5 - th * 0.5
+	var t := -run * 0.5
+	while t < run * 0.5 - 0.03:
+		var bw := minf(rng.randf_range(0.2, 0.32), run * 0.5 - t)
+		var bl := span + rng.randf_range(-0.03, 0.1)
+		var c := t + bw * 0.5
+		var pos := Vector3(c, top + rng.randf_range(-0.012, 0.0), rng.randf_range(-0.03, 0.03)) if along_x \
+				else Vector3(rng.randf_range(-0.03, 0.03), top + rng.randf_range(-0.012, 0.0), c)
+		var sz := Vector3(bw - 0.014, th, bl) if along_x else Vector3(bl, th, bw - 0.014)
+		ProcMesh.box(st, sz, Transform3D(Basis(Vector3.UP, deg_to_rad(rng.randf_range(-0.8, 0.8))), pos))
+		t += bw
+	# stringers under the long edges carry the boards (and fill the box depth)
+	var sh := maxf(size.y - th, 0.12)
+	for e in [-1.0, 1.0]:
+		var off: float = e * (span * 0.5 - 0.14)
+		var spos := Vector3(0, top - th * 0.5 - sh * 0.5, off) if along_x else Vector3(off, top - th * 0.5 - sh * 0.5, 0)
+		ProcMesh.box(st, Vector3(run, sh, 0.16) if along_x else Vector3(0.16, sh, run), Transform3D(Basis.IDENTITY, spos))
+	var mesh := ProcMesh.finish(st)
+	mesh.surface_set_material(0, MaterialLib.get_mat("M_planks" if fam == "M_wood" else fam, mode, true))
+	return mesh
+
+## A pile in place of a box: a round post, a little out of true, thicker at
+## the foot, with metre UVs so the grain runs up it.
+static func _pile_mesh(size: Vector3, fam: String, mode: int, seed: int) -> ArrayMesh:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var r := maxf(size.x, size.z) * 0.56
+	var cm := CylinderMesh.new()
+	cm.top_radius = r * rng.randf_range(0.82, 0.95)
+	cm.bottom_radius = r * rng.randf_range(1.05, 1.2)
+	cm.height = size.y
+	cm.radial_segments = 9
+	cm.rings = 2
+	var lean := Basis(Vector3.RIGHT, deg_to_rad(rng.randf_range(-1.5, 1.5))) * Basis(Vector3.BACK, deg_to_rad(rng.randf_range(-1.5, 1.5)))
+	ProcMesh.append(st, cm, Transform3D(lean * Basis(Vector3.UP, rng.randf() * TAU), Vector3.ZERO), Vector2(TAU * r, size.y))
+	var mesh := ProcMesh.finish(st)
+	mesh.surface_set_material(0, MaterialLib.get_mat(fam, mode, true))
+	return mesh
 
 ## Invisible impassable volume (collapsed debris etc.) — dress it with props.
 static func _blocker(area: Area, spec: Dictionary) -> void:
