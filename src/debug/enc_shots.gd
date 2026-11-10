@@ -1449,7 +1449,17 @@ func _st_ending_pegs(p: Player) -> void:
 	if _f > 70:
 		_freeze()
 
-func _st_ending_credits(_p: Player) -> void:
+func _st_ending_credits(p: Player) -> void:
+	if _f == 2:
+		_quiet_titles()
+	_quiet_card()
+	if _f > 1:
+		# (this harness's camera is born at the origin: at Saltfell that is
+		# under the turf, and the roll was photographed over the world's
+		# underside. Stand it behind the Bearer, and put the HUD away.)
+		for hud in get_tree().get_nodes_in_group("hud"):
+			(hud as CanvasLayer).visible = false
+		_frame(p.global_position, p.vis, Vector3(-2.4, 1.5, -6.4), 1.2, 56.0)
 	if _f == 3:
 		var c := CreditsUI.new()
 		c.over_world = false

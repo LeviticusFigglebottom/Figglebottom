@@ -73,6 +73,10 @@ func engage_from_veil(p: Node3D) -> void:
 func _st_idle(dt: float) -> void:
 	velocity.x = move_toward(velocity.x, 0, 8 * dt)
 	velocity.z = move_toward(velocity.z, 0, 8 * dt)
+	# the call is a one-shot clip: she makes it over and over (REACH.md 6),
+	# not once and then stands idle until the Bearer comes
+	if not stood and vis.current_clip() != "call":
+		vis.play("call", 0.3, 0.5)
 	var p := _player()
 	if p == null or p.get("dead"):
 		return
@@ -91,6 +95,8 @@ func take_hit(packet: DamagePacket) -> void:
 	if state == ES.HOLD:
 		_hold_quiet = 0.0   # she keeps calling to him while the Bearer keeps at it
 	var was_up := stood
+	if packet.source != null and packet.source.is_in_group("player"):
+		packet.amount *= Game.test_boss_dmg_mult   # 1.0 outside the full-game walk
 	super.take_hit(packet)
 	if not was_up and not dead and state != ES.TRANSITION:
 		if packet.source != null and packet.source.is_in_group("player"):

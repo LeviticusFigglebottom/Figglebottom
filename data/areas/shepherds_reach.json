@@ -6282,6 +6282,20 @@
    "label": "Take the boots"
   },
   {
+   "id": "fold_tally",
+   "at": [
+    659.98,
+    76.8,
+    -374.79
+   ],
+   "item": "item_fold_tally",
+   "tag": "base",
+   "label": "Take the fold-tally",
+   "scene": "res://assets/models/props/fold_tally.tscn",
+   "set_flag": "ks_fold_tally_found",
+   "require_flag": "ks_fellcaller_released"
+  },
+  {
    "id": "fold_cache",
    "at": [
     651.0,

@@ -34,7 +34,9 @@ func snap(area: Area, to_state: RH.WState) -> void:
 ## The spectacle: the world remembers (warm) or forgets (still).
 ## `force` runs the wave even when World already answers `to_state` (the
 ## endings: the flag has turned the answer before the world has turned).
-func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false) -> void:
+## `keep_music` leaves whatever is playing alone (the Outsong is sung
+## through the melt it brings; the wave used to cut it off at the coal).
+func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false, keep_music := false) -> void:
 	if transitioning or area == null:
 		return
 	if not force and World.get_area_state(area.area_id) == to_state:
@@ -62,7 +64,8 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 	# ice cracks ride the frost line out, or give as it melts
 	var wave_cfg: Dictionary = AudioDirector.cfg("wave", {})
 	AudioDirector.sfx(String(wave_cfg.get("to_rime" if to_rime else "to_thaw", "")), 0.0)
-	AudioDirector.play_music("", float(wave_cfg.get("music_out_fade", 2.5)))   # music dies during the wave
+	if not keep_music:
+		AudioDirector.play_music("", float(wave_cfg.get("music_out_fade", 2.5)))   # music dies during the wave
 	Juice.shake(0.25, 1.2)
 
 	var env_from := 0.0 if to_rime else 1.0
@@ -84,7 +87,11 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 	area.apply_state(to_state)
 	World.set_area_state(area.area_id, to_state)
 	World.save_game()
-	AudioDirector.play_state(area.env, to_state)
+	if keep_music:
+		var prof: Dictionary = area.env.audio_for(to_state)
+		AudioDirector.play_ambience(String(prof.get("ambience", "")), float(prof.get("ambience_fade", 2.0)))
+	else:
+		AudioDirector.play_state(area.env, to_state)
 	transitioning = false
 	transition_finished.emit(area.area_id, to_state)
 

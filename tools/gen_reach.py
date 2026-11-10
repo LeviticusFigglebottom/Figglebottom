@@ -176,6 +176,8 @@ spawners = [
     {"enemy": "fellcaller", "id": "fellcaller", "at": at(FELLCALLER[0], FELLCALLER[1], 0.1), "face": 315,
      "dead_once": True, "frost_veil_id": "fold_veil"},
 ]
+_fo = (FELLCALLER[0] - FATHER[0], FELLCALLER[1] - FATHER[1])
+TALLY_OFF = (_fo[0] / math.hypot(*_fo) * 1.1, _fo[1] / math.hypot(*_fo) * 1.1)
 VEIL = at(GAP[0], GAP[1])
 S0 = H.SHEILINGS[0]
 pickups = [
@@ -184,6 +186,13 @@ pickups = [
      "scene": "res://assets/models/props/bone_whistle.tscn", "label": "Take the shepherd's whistle"},
     {"id": "calder_boots", "at": at(S0[0] + 2.2, S0[1] + 4.3, 0.02), "rot": 12, "item": "item_calder_boots", "tag": "rime",
      "scene": "res://assets/models/props/calder_boots.tscn", "set_flag": "ks_calder_boots_found", "label": "Take the boots"},
+    # REACH.md 9: the fold-tally by his hand. The Fellcaller sets it down herself
+    # at the release (release_drop, the same pickup id, at her drop_point());
+    # this keeps it for a Bearer who walks out or puts the game down before
+    # taking it, on the same spot: 1.1 m from him toward where she stood.
+    {"id": "fold_tally", "at": at(FATHER[0] + TALLY_OFF[0], FATHER[1] + TALLY_OFF[1], 0.05), "item": "item_fold_tally", "tag": "base",
+     "label": "Take the fold-tally", "scene": "res://assets/models/props/fold_tally.tscn", "set_flag": "ks_fold_tally_found",
+     "require_flag": "ks_fellcaller_released"},
     {"id": "fold_cache", "at": at(FX - 9.0, FZ + 18.0, 0.05), "item": "bog_iron", "count": 2, "tag": "rime", "label": "Pry up what the frost holds"},
 ]
 # the trod from the bridge up to the fold's gap: Sigga calls from the slope beside it
