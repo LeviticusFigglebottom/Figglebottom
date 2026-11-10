@@ -344,7 +344,7 @@ func _saves() -> void:
 	player.equip_armour("body", "armour_saltfell_oilskins")
 	World.save_game()
 	var saved = JSON.parse_string(FileAccess.open(World.save_path(), FileAccess.READ).get_as_text())
-	check(int(saved.get("save_version", 0)) == World.SAVE_VERSION and World.SAVE_VERSION == 2,
+	check(int(saved.get("save_version", 0)) == World.SAVE_VERSION and World.SAVE_VERSION == 3,
 		"saves carry save_version %d" % World.SAVE_VERSION)
 	check(String(saved["player"]["armour"]["body"]) == "armour_saltfell_oilskins", "the save holds the worn armour")
 	player.equip_armour("body", "armour_traveller_coat")
@@ -363,6 +363,13 @@ func _saves() -> void:
 	check(int(m["player"]["level"]) == 4 and int(m["breathmark"]["amount"]) == 57
 		and bool(m["areas"]["saltfell_strand"]["flags"]["took_strand_bog_iron"]), "nothing else is lost")
 	check(World.migrate(m.duplicate(true)) == m, "migrating a current save changes nothing")
+	# a version-2 save (armour, no ending in its meta) gains the empty ending
+	var v2 := m.duplicate(true)
+	v2["save_version"] = 2
+	v2["meta"].erase("ending")
+	var m3 := World.migrate(v2)
+	check(int(m3["save_version"]) == 3 and String(m3["meta"].get("ending", "x")) == ""
+		and m3["player"]["armour"] == m["player"]["armour"], "a v2 save is lifted to v3 with no ending yet")
 	# the fixture through the real load path
 	var f := FileAccess.open(World.save_path(), FileAccess.WRITE)
 	f.store_string(FileAccess.open(fx_path, FileAccess.READ).get_as_text())
