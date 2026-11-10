@@ -101,7 +101,6 @@ const FAMILIES := {
 	"M_bark_birch":   {"albedo": Color(0.58, 0.56, 0.52), "rough": 0.88, "metallic": 0.0, "specular": 0.40, "normal_scale": 1.1, "rim": 0.3, "moss": 0.15, "crack": 0.6},
 	"M_needles":      {"albedo": Color(0.12, 0.20, 0.12), "rough": 0.90, "metallic": 0.0, "specular": 0.30, "rim": 0.45, "sss": 0.3, "moss": 0.0, "crack": 0.0},
 	"M_leaves":       {"albedo": Color(0.32, 0.40, 0.16), "rough": 0.85, "metallic": 0.0, "specular": 0.30, "rim": 0.5, "sss": 0.45, "moss": 0.0, "crack": 0.0},
-	"M_wool":         {"albedo": Color(0.70, 0.66, 0.58), "rough": 0.95, "metallic": 0.0, "specular": 0.25, "rim": 0.55, "sheen": 0.5, "moss": 0.0, "crack": 0.0},
 	"M_thorn":        {"albedo": Color(0.24, 0.17, 0.11), "rough": 0.90, "metallic": 0.0, "specular": 0.35, "rim": 0.3, "moss": 0.25, "crack": 0.0},
 	"M_foliage":      {"albedo": Color(0.2, 0.32, 0.16), "rough": 0.88, "metallic": 0.0, "specular": 0.40, "rim": 0.55, "sss": 0.35, "moss": 0.0, "crack": 0.0, "vc": 1},
 	# polished pale stone: ivory marble, no moss (nothing decays
