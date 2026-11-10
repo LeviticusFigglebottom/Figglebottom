@@ -97,9 +97,17 @@ func _build_aux_seals() -> void:
 		_aux_walls.append(wall)
 		_aux_planes.append(plane)
 
+## The seal's wall, up or down. The area's state swaps (and a navmesh
+## rebake) put every collider back on its remembered "orig_layer": keep that
+## in step, or a fallen veil comes back as an unseen wall across the door
+## (Tarnhall: the hall doors' rebake on release; anywhere: THAW and back).
+func _wall(body: StaticBody3D, up: bool) -> void:
+	body.collision_layer = (1 << (RH.L_WORLD_RIME - 1)) if up else 0
+	body.set_meta("orig_layer", body.collision_layer)
+
 func _set_aux(up: bool) -> void:
 	for w in _aux_walls:
-		(w as StaticBody3D).collision_layer = (1 << (RH.L_WORLD_RIME - 1)) if up else 0
+		_wall(w as StaticBody3D, up)
 	for p in _aux_planes:
 		(p as MeshInstance3D).visible = up
 
@@ -161,7 +169,7 @@ func respawn() -> void:
 		return   # the holdfast rests forever; the veil stays down
 	_engaged = false
 	_zone.enabled = true
-	_seal.collision_layer = 1 << (RH.L_WORLD_RIME - 1)
+	_wall(_seal, true)
 	_plane.transparency = 0.0
 	_plane.show()
 	_set_aux(false)
@@ -179,12 +187,12 @@ func snap_cleared() -> void:
 		return
 	_engaged = true
 	_zone.enabled = false
-	_seal.collision_layer = 0
+	_wall(_seal, false)
 	_plane.hide()
 	_set_aux(false)
 
 func dissolve() -> void:
-	_seal.collision_layer = 0
+	_wall(_seal, false)
 	_zone.enabled = false
 	_set_aux(false)
 	Game.arena_locked = false
