@@ -141,3 +141,18 @@ Headless screenshots run on lavapipe, which `EnvRig.get_graphics_quality()` puts
 5. **Sward.** Every grass rule also lays a `sward` kind under itself: 0.4 m rosettes of the grass atlas laid almost flat, four times the rule's density, range 32 m, tinted near the ground colour with no root shadow. From above the clumps now stand in a pile instead of reading as dots on a photo. It is added after all authored rules, so no existing clump moved. `terrain.gdshader` is untouched.
 
 Pairs: `docs/screens/look3_after_*.png`; the before for a shared camera is the matching `look2_after_*.png`. New cameras (after only): hall `2.5,23.6,-22,30,-10,70`, well `9.5,23.3,1,50,-12,55`, sward_top `-14,30,2,-45,-50,62` (all saltfell_steading thaw).
+
+---
+
+# Look pass 4 (same branch)
+
+1. **Decks and piles.** `AreaBuilder._solid_box` no longer draws a timber box as a box: a wide thin one becomes a deck of individual boards (uneven widths, gaps, ragged ends) on two stringers (`_deck_mesh`), and a tall thin one becomes a round, slightly out-of-true post with grain running up it (`_pile_mesh`). Area JSON and colliders are unchanged, so every jetty, bridge deck, pile and fish-house stilt in every region is covered.
+2. **Crate** is boards, battens and a lid instead of a cube.
+3. **Flames** have a level heart disc low in the tongue (UV2.x = 1), drawn only when looked down on; the coal mound is flatter with smaller lumps.
+4. **Grass** has a third layer, `blades`: 0.24 m upright tufts at six times the rule's density, drawn within 11 m.
+5. **Well** stone regraded to the dry-stone grey-green with `regrade_glb.py --hue 70 190 --target 0.40 0.41 0.36 --sat-min 0.1 --value 0.9`.
+6. **Forest draw cost** (a GPU counted 9.5 M primitives down the Thornwold maze). Heroes now draw in three bands: full mesh to 42 m (trees) / 26 m (hedges), decimated mesh with shadows to 95 / 60 m, decimated mesh without shadows and with a fade to 170 / 110 m. The constants are at the top of `forest.gd`. **Not measured**: this box has no GPU, so the < 2.5 M target is an estimate to verify with the perf tour.
+
+**Blocked:** eight more Tripo props (crate, salt pan, woodpile, net frame, wayside plaque, long-fire logs, door leaf, rime spike) have approved-looking reference images (`look2/img/*` in the session scratchpad, not committed) but the paid generation step was denied by the session's permission system. The same applies to rigging the ewes. Those pieces are still primitives.
+
+Pairs: `docs/screens/look4_after_*.png`; before = the matching `look3_after_*` / `look2_after_*`. New cameras (saltfell_steading thaw): grass_near `-14,23.3,2,-45,-28,62`, fire_above `-26.3,24.6,22.3,165,-62,55`; kettle_jetty `-79,3.6,-311,60,-14,70` (kettle_fjord thaw).

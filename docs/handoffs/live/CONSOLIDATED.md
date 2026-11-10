@@ -30,9 +30,10 @@ _Last updated: 2026-11-07 (founding session)_
 ## Look pass 2 (`art/look-pass-2`, 2026-11-10)
 - **Done:** see `docs/art/LOOK_PASS.md` ("Look pass 2") for the method, rules and camera table; pairs are `docs/screens/look2_{before,after}_*.png`.
 - **Pass 3 (same branch):** card flames with embers, six Tripo furniture pieces (table, bench, barrel, rope coil, creels, well), the sheiling roof regrade, aurora at 0.5, a sward layer under every grass rule.
+- **Pass 4 (same branch):** plank decks and round piles from timber boxes, boarded crate, flame heart, near blade layer, well regrade, three-band forest/hedge LODs. Eight further Tripo props and the ewe rigs were blocked: the paid generation call was denied by the session permission system (reference images exist only in that session's scratchpad).
 - **Tripo:** 760 (pass 2) + 570 (pass 3) = 1,330 credits; balance 10,590 afterwards. Rows are in `docs/art/TRIPO_LEDGER.md`.
 - **Resume:** `git checkout art/look-pass-2 && python3 tools/art/texture_imports.py && godot --headless --path . --import`, then `tools/test.sh steading`. To rebuild the veg atlases: put the three sprite sheets in `raw/veg/` and run `python3 tools/art/veg_atlas.py`. After re-running `blender_process.py --only lm_sheiling`, re-run `tools/art/regrade_glb.py` (command in PROVENANCE).
-- **Not done (next):** crates, salt pans, ladders, woodpile, net frames, plaques, grave markers, jetty piles and deck edges, the Lowe barrow doorway (all still primitives); ewe idle motion (the models are unrigged); shore foam.
+- **Not done (next):** salt pans, woodpile, net frames, plaques, hearth-fire logs, rime spikes, ladders and `column_4m` are still primitives; ewe rig and walk; verify the Thornwold primitive count on a GPU (`tools/perf_tour.sh`); shore foam.
 
 ## Next exact step
 1. Merge each branch above once its tests pass.
