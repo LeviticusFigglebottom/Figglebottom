@@ -48,6 +48,7 @@ const TREE_FAR := 170.0
 const HEDGE_NEAR := 26.0
 const HEDGE_MID := 60.0
 const HEDGE_FAR := 110.0
+const RANGE_MARGIN := 4.0
 
 static var _cache: Dictionary = {}
 
@@ -167,15 +168,21 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 		mmi.multimesh = mm
 		mmi.position = c
 		mmi.visibility_range_end = range_end
-		mmi.visibility_range_end_margin = 10.0
+		mmi.visibility_range_end_margin = RANGE_MARGIN
 		if not shadows:
 			# the last band: no shadow passes, and it thins out instead of popping
 			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			mmi.name = "Forest_%s_%s_%d_%d_far" % [label, tag, k.x, k.y]
 		if range_begin > 0.0:
-			mmi.visibility_range_begin = range_begin
-			mmi.visibility_range_begin_margin = 10.0
+			# A range only changes state a margin past its threshold, and a
+			# camera that spawns inside the margin starts with it hidden: a
+			# band is certain only below end - margin and above begin + margin.
+			# So each band starts two margins before the one inside it ends
+			# (the old single-threshold handoff left a ring 20 m deep where a
+			# fresh camera saw neither).
+			mmi.visibility_range_begin = maxf(range_begin - RANGE_MARGIN * 2.0, 0.1)
+			mmi.visibility_range_begin_margin = RANGE_MARGIN
 		area.attach(mmi, tag)
 
 # ------------------------------------------------------------ meshes
