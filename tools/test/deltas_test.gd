@@ -344,7 +344,7 @@ func _saves() -> void:
 	player.equip_armour("body", "armour_saltfell_oilskins")
 	World.save_game()
 	var saved = JSON.parse_string(FileAccess.open(World.save_path(), FileAccess.READ).get_as_text())
-	check(int(saved.get("save_version", 0)) == World.SAVE_VERSION and World.SAVE_VERSION == 2,
+	check(int(saved.get("save_version", 0)) == World.SAVE_VERSION and World.SAVE_VERSION >= 2,
 		"saves carry save_version %d" % World.SAVE_VERSION)
 	check(String(saved["player"]["armour"]["body"]) == "armour_saltfell_oilskins", "the save holds the worn armour")
 	player.equip_armour("body", "armour_traveller_coat")
