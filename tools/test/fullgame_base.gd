@@ -370,6 +370,10 @@ var _warmth_at_death := 0
 func _on_stilled() -> void:
 	_stilled += 1
 	_warmth_at_death = Game.warmth
+	var pl := Game.player as Node3D
+	print("  (stilled #%d: %s at %s, %s, carrying %d)" % [_stilled, Game.current_area_id,
+		str(pl.global_position.snapped(Vector3.ONE * 0.1)) if pl != null else "?",
+		"RIME" if World.get_area_state(Game.current_area_id) == RH.WState.RIME else "THAW", Game.warmth])
 
 func _settle() -> void:
 	await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
@@ -507,7 +511,8 @@ func _die_and_recover(hearth_id: String) -> void:
 		await _walk_path(killer.global_position, 3600, false)
 	var t_out := 0
 	var last_poke := -9999
-	while _stilled == stilled0 and t_out < 60 * 180:
+	# a Bearer grown by several regions takes a long time to bring down
+	while _stilled == stilled0 and t_out < 60 * 480:
 		var f3 := _foe_near(30.0)
 		if f3 == null:
 			f3 = _foe_near(300.0, false, 60.0)
@@ -521,8 +526,8 @@ func _die_and_recover(hearth_id: String) -> void:
 				player.sim_move = Vector3(0, 0, -1)
 			else:
 				player.sim_move = Vector3.ZERO
-				# a blow now and then wakes it; never enough to win
-				if t_out - last_poke > 60 * 8 and player.try_attack(false):
+				# a blow wakes a foe that has not seen him; never enough to win
+				if f3.target == null and t_out - last_poke > 60 * 8 and player.try_attack(false):
 					last_poke = t_out
 		await ticks(3)
 		t_out += 3
@@ -760,6 +765,9 @@ func _run() -> void:
 
 	await _region()
 
+	# the next region starts from this save: a fall the walk did not notice
+	# would leave its warmth lying behind for good
+	check(World.breathmark == null, "no Breathmark is left lying behind (%s)" % str(World.breathmark))
 	if not player.dead and is_instance_valid(player):
 		if await _save_title_load():
 			await _after_load()

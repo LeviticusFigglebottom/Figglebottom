@@ -221,7 +221,8 @@ D = {
     "hazards": [
         {"kind": "drown", "min": [-1200, -40, -1200], "max": [1200, -1.15, 1200]},
         {"kind": "kill", "min": [S.RAVINE_HEAD_X + 2, -10, -112], "max": [130, S.RAVINE_FLOOR + 4.0, -50]},
-        {"kind": "bog", "tag": "thaw", "min": [L.BOG[0] - 27, r2(W - 4), L.BOG[1] - 27], "max": [L.BOG[0] + 27, r2(W - 0.45), L.BOG[1] + 27]},
+        {"kind": "bog", "tag": "thaw", "min": [L.BOG[0] - 27, r2(W - 4), L.BOG[1] - 27], "max": [L.BOG[0] + 27, r2(W - 0.45), L.BOG[1] + 27],
+         "radius": 27.0},   # the pool is round: its box's corners are dry heather
         {"kind": "fall", "min": [-100, 0, -112], "max": [70, 60, -78]},
         {"kind": "fall", "min": [-135, -2, -262], "max": [-88, 60, -78]},
     ],

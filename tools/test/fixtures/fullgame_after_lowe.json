@@ -1,0 +1,131 @@
+{
+	"areas": {
+		"lowe_barrows": {
+			"cleared": true,
+			"flags": {
+				"lit_hs_barrow_road": true,
+				"lit_hs_drying_stacks": true,
+				"lit_hs_open_barrow": true,
+				"slain_turfwright": true,
+				"took_hesk_tongs": true,
+				"took_kin_a_grave_goods": true,
+				"took_orm_cord": true,
+				"took_peat_island_iron": true,
+				"took_tally_stick": true,
+				"took_turf_spade": true,
+				"took_twin_spindles": true,
+				"took_woad_thread": true
+			},
+			"state": 0
+		},
+		"saltfell_steading": {
+			"cleared": true,
+			"flags": {
+				"gate_boatshed_back": true,
+				"lit_hs_boat_shed": true,
+				"lit_hs_long_hearth": true,
+				"lit_hs_salt_house": true,
+				"slain_netmender": true,
+				"took_mending_needle": true,
+				"took_net_float": true,
+				"took_rye_sack": true
+			},
+			"state": 0
+		}
+	},
+	"breathmark": {
+		"amount": 1395,
+		"area": "lowe_barrows",
+		"pos": [
+			-12.8696994781494,
+			41.0915107727051,
+			-164.830657958984
+		]
+	},
+	"flags": {
+		"bought_turf_song": true,
+		"difficulty": "gentle",
+		"got_barrow_cloak": true,
+		"ks_aud_cord": true,
+		"ks_aud_cord_found": true,
+		"ks_aud_heather": true,
+		"ks_aud_met": true,
+		"ks_brede_float": true,
+		"ks_brede_float_found": true,
+		"ks_brede_mending": true,
+		"ks_brede_met": true,
+		"ks_hesk_met": true,
+		"ks_hesk_tongs": true,
+		"ks_hesk_tongs_found": true,
+		"ks_hesk_wind": true,
+		"ks_ingra_count": true,
+		"ks_ingra_met": true,
+		"ks_ingra_rye": true,
+		"ks_ingra_rye_found": true,
+		"ks_netmender_released": true,
+		"ks_turfwright_released": true,
+		"lowe_bridge_down": true,
+		"met_aud": true,
+		"met_brede": true,
+		"met_hesk": true,
+		"met_steward_ingra": true
+	},
+	"last_hearth": {
+		"area": "lowe_barrows",
+		"hearth": "hs_open_barrow"
+	},
+	"meta": {
+		"area": "lowe_barrows",
+		"difficulty": "gentle",
+		"ending": "",
+		"level": 11,
+		"play_s": 1087.09990013268,
+		"saved_at": 1794352669.21062
+	},
+	"play_s": 1087.09990013268,
+	"player": {
+		"armour": {
+			"body": "armour_traveller_coat",
+			"hands": "",
+			"head": "",
+			"legs": ""
+		},
+		"attributes": {
+			"craft": 8,
+			"heart": 14,
+			"kinship": 8,
+			"lungs": 8,
+			"might": 12,
+			"wind": 8
+		},
+		"attuned_song": "turf_song",
+		"gourd_max": 3,
+		"hotbar": [
+			"hewing_blade",
+			"torch",
+			"turf_spade",
+			"",
+			"gourd"
+		],
+		"inventory": {
+			"armour_barrow_cloak": 1.0,
+			"bog_iron": 3.0,
+			"item_mending_needle": 1.0,
+			"item_tally_stick": 1.0,
+			"item_twin_spindles": 1.0,
+			"ks_woad_thread": 1.0,
+			"turf_song": 1.0,
+			"turf_spade": 1.0
+		},
+		"level": 11,
+		"pos": [
+			39.9788284301758,
+			45.5835037231445,
+			-204.815567016602
+		],
+		"warmth": 0,
+		"weapon": "hewing_blade",
+		"weapon_level": 1
+	},
+	"save_version": 3
+}

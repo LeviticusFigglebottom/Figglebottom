@@ -16,6 +16,10 @@ var size := Vector3.ONE
 var _falling: Dictionary = {}    # body id -> worst downward speed this fall
 var _sunk: Dictionary = {}       # body id -> seconds in the bog / on thin ice
 var seconds := -1.0              # override for "thin"
+## A round pool in a square box ("bog"): beyond this many metres from the
+## box's middle the ground is dry. The Lowe's bog box took the Bearer on the
+## road past its corner, where the heather dips below the water's height.
+var radius := -1.0
 
 func _ready() -> void:
 	add_to_group("hazards")
@@ -73,6 +77,10 @@ func _bog(dt: float) -> void:
 		if not (b is Player) or (b as Player).dead:
 			continue
 		var p := b as Player
+		if radius > 0.0:
+			var off := to_local(p.global_position)
+			if Vector2(off.x, off.z).length() > radius:
+				continue
 		var key := p.get_instance_id()
 		inside[key] = true
 		var limit := float(DB.tuning("hazard/bog_seconds", 3.0))

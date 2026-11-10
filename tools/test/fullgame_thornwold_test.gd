@@ -77,7 +77,7 @@ func _on_heard(who, line) -> void:
 func _init() -> void:
 	region = "thornwold"
 	aid = "thornwold"
-	start_fixture = "fullgame_start_thornwold_provisional"
+	start_fixture = "fullgame_after_tarnhall"
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--fullgame-leg="):
 			_skip_to = a.get_slice("=", 1)

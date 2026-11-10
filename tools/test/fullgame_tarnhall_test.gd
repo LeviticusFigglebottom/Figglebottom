@@ -24,7 +24,7 @@ var toasts: Array = []
 func _init() -> void:
 	region = "tarnhall"
 	aid = "tarnhall"
-	start_fixture = "fullgame_start_tarnhall_provisional"
+	start_fixture = "fullgame_after_kettle"
 
 # ------------------------------------------------------------------ helpers
 ## A section head, and how long the last one took (wall and game seconds,

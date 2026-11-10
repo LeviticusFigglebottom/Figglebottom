@@ -60,7 +60,7 @@ var _planned_falls := 0
 func _init() -> void:
 	region = "kettle"
 	aid = "kettle_fjord"
-	start_fixture = "fullgame_start_kettle_provisional"
+	start_fixture = "fullgame_after_lowe"
 
 func _on_area_title(t: String) -> void:
 	cards.append(t)
@@ -535,6 +535,25 @@ func _on_stilled() -> void:
 			near.global_position.distance_to(player.global_position)]) if near != null else "none"])
 
 # -------------------------------------------------------------------- region
+## Halla's flask: bought if the Bearer carries its price, refused in her
+## words if not (he may reach the fjord with nothing; she is asked again
+## once it has paid him).
+func _flask(ui: DialogueUI) -> void:
+	var ids: Array = ui._options.map(func(o): return String(o.get("id", "")))
+	if not ids.has("buy_flask"):
+		return
+	var gmax := int(player.gourd_max)
+	var w0 := Game.warmth
+	ui.choose(ids.find("buy_flask"))
+	await ticks(3)
+	if w0 >= 320:
+		check(int(player.gourd_max) == gmax + 1 and Game.warmth == w0 - 320, "the flask deepens the gourd for 320 warmth")
+		check(ui.text_label.text == "Keep the cork in. That's all the advice you get for free.", "her line on the flask")
+	else:
+		check(int(player.gourd_max) == gmax and Game.warmth == w0 and not World.flag("bought_halla_flask"),
+			"with %d warmth the flask stays hers" % w0)
+		check(ui.text_label.text == "That's 320 warmth. Come back when you've got it.", "and she says what it costs (%s)" % ui.text_label.text)
+
 func _region() -> void:
 	Game.area_title.connect(_on_area_title)
 	Game.title_card.connect(_on_title_card)
@@ -644,13 +663,7 @@ func _region() -> void:
 		check(labels.any(func(l): return String(l).begins_with("Trade for a stoppered flask"))
 			and labels.any(func(l): return String(l).begins_with("Buy a sealing harpoon"))
 			and labels.any(func(l): return String(l).begins_with("Buy a lump of iron")), "labels as KETTLE.md gives them")
-		var gmax := int(player.gourd_max)
-		var w0 := Game.warmth
-		if ids.has("buy_flask"):
-			ui.choose(ids.find("buy_flask"))
-			await ticks(3)
-			check(int(player.gourd_max) == gmax + 1 and Game.warmth == w0 - 320, "the flask deepens the gourd for 320 warmth")
-			check(ui.text_label.text == "Keep the cork in. That's all the advice you get for free.", "her line on the flask")
+		await _flask(ui)
 		await _leave(ui)
 	check(World.flag("ks_halla_met") and _journal("halla_cord") == HALLA_THREAD.slice(0, 1), "Halla's thread begins")
 	ui = await _talk("sten")
@@ -890,6 +903,16 @@ func _finale() -> void:
 	check(lines.size() == 1 and lines[0] == "I've put him in the end house by the fire. He can come down on the next boat. There's always a next boat.",
 		"Halla, a second time: Sten is by the fire (%s)" % str(lines.slice(0, 1)))
 	check(World.flag("ks_halla_bed") and _journal("halla_cord") == HALLA_THREAD, "Halla's cord: four lines, in order (%d)" % _journal("halla_cord").size())
+	if not World.flag("bought_halla_flask"):
+		# the Bearer came down the Kettle Road with nothing to trade; the
+		# fjord has paid him since
+		var hui := await _talk("halla")
+		check(hui != null, "Halla again, for the flask")
+		if hui != null:
+			await _lines_of(hui)
+			await _flask(hui)
+			await _leave(hui)
+	check(World.flag("bought_halla_flask"), "the flask is bought")
 
 	print("== turning freely, and the last rest")
 	check(await _rest_alive(HS_HOUSES, "toggle"), "the Fish-Houses turns the memory back")
