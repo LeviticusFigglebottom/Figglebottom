@@ -303,6 +303,22 @@ func _apply_idle_pose() -> void:
 	vis.play(String(IDLE_POSES[idle_pose]), 0.0)
 	_risen = false
 
+## Re-path throttle (perf, Job 4): setting target_position queues a path
+## query, so each foe re-targets only when the quarry has moved enough for the
+## path to change (a tolerance that grows with distance) or every 0.3 s,
+## staggered per foe. Steering still follows get_next_path_position() each frame.
+var _nav_goal := Vector3(INF, INF, INF)
+var _nav_t := 0.0
+
+func _nav_retarget(dt: float, dist: float) -> void:
+	_nav_t -= dt
+	var tp := target.global_position
+	var tol := maxf(0.35, dist * 0.08)
+	if _nav_t <= 0.0 or _nav_goal.distance_squared_to(tp) > tol * tol:
+		agent.target_position = tp
+		_nav_goal = tp
+		_nav_t = 0.3 + float(get_instance_id() % 7) * 0.01
+
 func _st_approach(dt: float) -> void:
 	if not _target_valid():
 		return
@@ -320,7 +336,7 @@ func _st_approach(dt: float) -> void:
 		_rec_t -= dt
 		dir = _rec_dir
 	else:
-		agent.target_position = target.global_position
+		_nav_retarget(dt, dist)
 		var next := agent.get_next_path_position()
 		dir = (next - global_position)
 	dir.y = 0

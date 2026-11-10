@@ -16,6 +16,7 @@ static func build(area_id: String) -> Area:
 	area.set_meta("def", def)
 
 	area.env.set_overrides(def.get("env", {}))
+	area.env.build_fog_pockets(def.get("fog_pockets", []))
 	# the land first: buildings sit on it, they are not it (ADR 0003)
 	if def.has("terrain"):
 		var t := Terrain.new()
@@ -136,6 +137,7 @@ static func build(area_id: String) -> Area:
 		s.face_deg = float(spec.get("face", 0))
 		s.dead_once = spec.get("dead_once", false)
 		s.pose = String(spec.get("pose", ""))
+		s.absent_flag = String(spec.get("absent_flag", ""))
 		s.spawn_flag = "slain_" + spec.get("id", spec.get("enemy", "e"))
 		s.area_id = area_id
 		var tag: String = spec.get("tag", "rime")
@@ -551,6 +553,13 @@ static func sync_flagged(area: Area) -> void:
 				(node as Node).queue_free()
 				late.erase(key)
 	area.set_meta("flag_built", late)
+
+## The memory turning is a new visit as well (Area.pre_transition and
+## apply_state): a Holdfast released in RIME must not leave the old THAW
+## scene standing when the Bearer warms the place from inside it.
+static func sync_npcs(area: Area) -> void:
+	if area.has_meta("flag_built"):
+		sync_flagged(area)
 
 static func _has_pickup(area: Area, id: String) -> bool:
 	for p in area.find_children("*", "Pickup", true, false):

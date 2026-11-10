@@ -227,6 +227,12 @@ func _fight(radius := 14.0, max_s := 90.0, boss := false) -> bool:
 				player.sim_move = Vector3(1 if randf() < 0.5 else -1, 0, 0.4)
 				player.try_roll()
 			elif player.stamina > 18.0:
+				# a swing goes where the stick points, else where the body
+				# already faces: backing off (or standing as the foe circles)
+				# it cut the air beside him. Turn to the foe to strike.
+				if player.sim_move.z > 0.0:
+					player.sim_move = Vector3.ZERO
+				player.vis.rotation.y = player.cam.yaw
 				player.try_attack(false)
 		await ticks(3)
 		n += 3
@@ -569,9 +575,16 @@ func _veil(near := Vector3.INF) -> FrostVeil:
 
 func _part_veil(veil: FrostVeil, fight := true) -> bool:
 	var front := veil.global_position + veil.global_transform.basis.z * 1.3
-	await _walk_path(front, 6000, fight)
-	if fight:
-		await _fight(10.0, 60.0)
+	# a fight on the way ends the walk early: take the path again, never the
+	# straight line through a wall
+	for attempt in 4:
+		await _walk_path(front, 6000, fight)
+		if fight:
+			await _fight(10.0, 60.0)
+		if player.dead:
+			return false
+		if Vector2(front.x - player.global_position.x, front.z - player.global_position.z).length() < 1.5:
+			break
 	await _walk_to(front, 300, 0.6, fight)
 	await _settle()
 	if _near_interact("Part") == null:
@@ -601,13 +614,17 @@ func _duel(boss_id: String, veil: FrostVeil, mult := 3.0, max_s := 600.0, each :
 	var t_fight := 0
 	var deaths := 0
 	while boss != null and not boss.dead and t_fight < int(60 * max_s):
-		if player.dead:
-			deaths += 1
-			await _until(func(): return not player.dead, 10.0)
-			await ticks(30)
-			area = Game.current_area
+		if player.dead or not Game.arena_locked:
+			# fallen, or the veil not yet parted again: never fight the
+			# Holdfast through the wall from outside its arena
+			if player.dead:
+				deaths += 1
+				await _until(func(): return not player.dead, 10.0)
+				await ticks(30)
+				area = Game.current_area
 			await _part_veil(veil if is_instance_valid(veil) else _veil(), true)
 			boss = _foe(boss_id)
+			t_fight += 120
 			continue
 		phases[boss.phase] = true
 		if boss.phase >= 2 and not shot_phases.has(boss.phase):

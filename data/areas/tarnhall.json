@@ -51,6 +51,26 @@
    "vol_density": 0.016
   }
  },
+ "fog_pockets": [
+  {
+   "id": "tarn_steps",
+   "at": [
+    82,
+    15,
+    -316
+   ],
+   "size": [
+    32,
+    12,
+    32
+   ],
+   "density": [
+    0.02,
+    0.05
+   ],
+   "height_falloff": 0.5
+  }
+ ],
  "terrain": {
   "source": "res://data/terrain/tarnhall_h.bin",
   "splat": "res://data/terrain/tarnhall_splat.bin",
@@ -1233,7 +1253,8 @@
    "doors": [
     [
      "N",
-     1
+     1,
+     -2.0
     ],
     [
      "W",
@@ -5169,7 +5190,7 @@
   {
    "id": "long_table_veil",
    "at": [
-    218.0,
+    216.3,
     24.3,
     -329.0
    ],

@@ -54,6 +54,7 @@ func attach(node: Node3D, state_tag := "base") -> void:
 ## The transformation wave calls this at its END; loads call it directly.
 func apply_state(s: RH.WState) -> void:
 	_applied = s
+	AreaBuilder.sync_npcs(self)   # who stands here follows the story's flags
 	var rime_on := s == RH.WState.RIME
 	_set_layer_active(thaw_layer, not rime_on)
 	_set_layer_active(rime_layer, rime_on)
@@ -78,6 +79,7 @@ func settle_new(node: Node3D, state_tag: String) -> void:
 ## During the wave both layers are visible (shader dissolve owns pixel
 ## presence); collision swaps immediately to the target so routes change.
 func pre_transition(target: RH.WState) -> void:
+	AreaBuilder.sync_npcs(self)   # before the wave shows the other layer
 	thaw_layer.visible = true
 	rime_layer.visible = true
 	_set_layer_collision(thaw_layer, target != RH.WState.RIME)
