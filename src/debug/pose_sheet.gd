@@ -177,7 +177,8 @@ func _foe_sheet(foe: String, attack: String) -> String:
 		if vis.quad != null:
 			# quadrupeds: one cell per pose (the attack id is ignored)
 			var names: Array = [""]
-			for pn0 in ["crouch", "lower", "lunge", "leap", "land", "rear", "bark", "shake", "flinch", "dead"]:
+			for pn0 in (["lower", "drive", "gore", "rear", "launch", "leap", "land", "recover"] if vis.quad.poses.has("gore") \
+					else ["crouch", "launch", "lunge", "bite", "land", "recover", "bark", "hold", "flinch", "dead"]):
 				if vis.quad.poses.has(pn0):
 					names.append(pn0)
 			vis.quad.pose_seq = {}
@@ -185,6 +186,8 @@ func _foe_sheet(foe: String, attack: String) -> String:
 			vis.position = Vector3((i % 4 - 1.5) * 2.35, 0.25 if i < 4 else -2.45, 0)
 			vis.rotation_degrees.y = 100.0
 			vis.scale = Vector3.ONE * minf(1.0, 1.1 / maxf(float(cfg.get("hurt_h", 1.0)), 0.5))
+			if attack == "more":   # the poses past the first eight cells
+				names = names.slice(7)
 			var pn := String(names[i]) if i < names.size() else ""
 			vis.quad.only(pn, 0.0)
 			vis.quad._physics_process(1.0)

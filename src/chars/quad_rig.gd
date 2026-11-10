@@ -67,8 +67,34 @@ var _seq_next := ""
 var _seq_t := 0.0
 var _seq_blend := 0.1
 
+## A strike in flight (clip_meta models.<id>.strikes): the poses still to
+## come, each [pose, seconds from now, blend]. Timed off the attack's data
+## windup by strike(), so the launch always leaves just before contact.
+var _queue: Array = []
+
 ## Release every pose except `keep`.
 func only(keep: String, blend := 0.2) -> void:
+	_queue.clear()
+	_only(keep, blend)
+
+## Crouch-load now, held for the telegraph, then the keyed beats of the
+## strike: launch `lead` seconds before `contact_at`, and each later beat
+## [pose, seconds after the one before, blend] (full extension, bite or gore,
+## landing, recover).
+func strike(st: Dictionary, contact_at: float) -> void:
+	_queue.clear()
+	_only(String(st.get("load", "")), minf(contact_at * 0.5, float(st.get("rise", 0.16))))
+	var at := maxf(contact_at - float(st.get("lead", 0.1)), 0.0)
+	for beat in st.get("chain", []):
+		if not (beat is Array) or (beat as Array).size() < 3 or not poses.has(String(beat[0])):
+			continue
+		at += float(beat[1])
+		_queue.append([String(beat[0]), at, float(beat[2])])
+
+func striking() -> bool:
+	return not _queue.is_empty()
+
+func _only(keep: String, blend: float) -> void:
 	for n in poses:
 		set_pose(n, 1.0 if n == keep else 0.0, blend)
 	_seq_next = ""
@@ -90,6 +116,12 @@ func gait(dt: float, ground_speed: float) -> void:
 func _physics_process(dt: float) -> void:
 	if skel == null:
 		return
+	if not _queue.is_empty():
+		for beat in _queue:
+			beat[1] -= dt
+		while not _queue.is_empty() and float(_queue[0][1]) <= 0.0:
+			var beat: Array = _queue.pop_front()
+			_only(String(beat[0]), float(beat[2]))
 	if _seq_next != "":
 		_seq_t -= dt
 		if _seq_t <= 0.0:
