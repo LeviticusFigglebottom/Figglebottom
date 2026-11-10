@@ -48,7 +48,7 @@ if [ -n "${VIEWS_FILE:-}" ]; then VIEWS="$(cat "$VIEWS_FILE")"; fi
 while read -r name area cam extra; do
   [ -z "$name" ] && continue
   if [ -n "$FILTER" ] && [[ "$name" != *"$FILTER"* ]]; then continue; fi
-  for state in thaw rime; do
+  for state in ${STATES:-thaw rime}; do
     out="$PNG/${name}_${state}.png"
     echo "=== $name $state"
     # Quality 2 is the auto tier on a real GPU (1 on lavapipe). 2400 frames is
