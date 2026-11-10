@@ -418,7 +418,7 @@ func _fight(radius := 14.0, max_s := 90.0, boss := false) -> bool:
 		d.y = 0
 		var dist := d.length()
 		var dn := d.normalized() if dist > 0.01 else Vector3.FORWARD
-		var reach := 2.4 if not boss else 3.2
+		var reach := 2.0 if not boss else 3.2   # (a Sealer stands off at 2.4 m: come inside it)
 		var low := player.hp < player.max_hp * 0.4 and player.gourds > 0
 		player.sim_sprint = false
 		var threat := _ice_threat()
@@ -463,12 +463,12 @@ func _fight(radius := 14.0, max_s := 90.0, boss := false) -> bool:
 		else:
 			player.cam.yaw = atan2(-dn.x, -dn.z)
 			var right := Vector3(-dn.z, 0, dn.x)
-			if dist < reach * 0.55:
-				_go(-dn)   # hold a sword's length off
-			elif _wet(p + dn * 1.2, 0.3):
+			if _wet(p + dn * 1.2, 0.3):
 				_go(right * _veer)   # he stands over water: come round
 			else:
-				player.sim_move = Vector3.ZERO
+				# hold a sword's length off (a step back, still facing him)
+				var back_ok := dist < reach * 0.55 and not _wet(p - dn * 1.0) and not _wet(p - dn * 2.0)
+				player.sim_move = Vector3(0, 0, 0.5) if back_ok else Vector3.ZERO
 				var s := 1.0 if randf() < 0.5 else -1.0
 				var roll_dir := (right * s - dn * 0.4).normalized()
 				var roll_ok := true
