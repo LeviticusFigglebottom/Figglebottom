@@ -114,7 +114,7 @@ func _on_enter(player) -> void:
 			and intercept.has_method("on_parted") and intercept.on_parted(self, player)
 	# step through the veil
 	var through: Vector3 = global_position - global_transform.basis.z * 2.2
-	through.y = player.global_position.y
+	through.y = _ground_y(through, player.global_position.y)
 	var tw := create_tween()
 	player.lock_control(true)
 	tw.tween_property(player, "global_position", through, 0.7)
@@ -127,6 +127,16 @@ func _on_enter(player) -> void:
 				a.blink_to_player()
 		_engage_boss())
 	AudioDirector.sfx_at("res://assets/audio/veil_enter.wav", global_position, -2.0)
+
+## The ground on the far side. A veil may stand on a slope (the Open
+## Barrow's gap climbs 0.7 m across it): carried through at the height he
+## came in at, the Bearer ended under the turf and was thrown back out of a
+## sealed arena.
+func _ground_y(p: Vector3, fallback: float) -> float:
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3.UP * 3.0, p + Vector3.DOWN * 4.0, RH.M_WORLD_ALL)
+	q.exclude = [_seal.get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	return (hit["position"] as Vector3).y + 0.02 if not hit.is_empty() else fallback
 
 func _engage_boss() -> void:
 	if boss_spawner != null and boss_spawner.current != null and not boss_spawner.current.dead:
