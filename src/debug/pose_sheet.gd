@@ -102,7 +102,9 @@ func _rig_sheet(clip: String, kit: String) -> String:
 			else:
 				times = [s, lerpf(s, c, 0.4), lerpf(s, c, 0.75), c - 0.04, c, c + 0.05, c + 0.14, lerpf(c, e, 0.6)]
 			var set_tag := vis.rig.clip_set
-			tag = "%s_%s" % [set_tag, clip] if set_tag != "" else clip
+			tag = "%s_%s" % [kit, clip]   # one sheet per weapon, even where two share a class
+			if set_tag == "":
+				tag = clip
 			if absf(_item_yaw - _yaw) > 1.0:
 				tag += "_side"
 			info = "%s  [%s]  ->  %s   start %.2f  contact %.2f  end %.2f" % [clip, kit, vis.rig.qualified(clip), sec.x, sec.y, sec.z]

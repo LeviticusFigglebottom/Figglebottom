@@ -235,6 +235,10 @@ func impact_dig(might := 1.0) -> void:
 	_dig = float(pol.get("impact_dig_deg", 0.0)) * might
 	_dig_rate = _dig / maxf(float(pol.get("impact_dig_ease", 0.2)), 0.01)
 
+## Seconds before the hit window that the swing ribbon starts (clip_meta polish).
+func trail_lead() -> float:
+	return float((HumanoidLib.meta().get("polish", {}) as Dictionary).get("trail_lead", 0.0))
+
 ## Whether a clip resolves on this rig (humanoid: through sets and aliases).
 func has_clip(clip: String) -> bool:
 	if rig != null:
@@ -384,6 +388,8 @@ func add_trail() -> void:
 	st.set("base_up", ext.x)
 	st.set("tip_up", ext.y)
 	trail = st
+	if rig != null:
+		st.set("sampler", Callable(self, "weapon_xform"))
 	# sibling of the weapon so set_weapon() never frees it
 	weapon_mount.get_parent().add_child(trail)
 

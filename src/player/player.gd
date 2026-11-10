@@ -1016,6 +1016,8 @@ func _bow_release() -> void:
 	vis.back_to_idle(0.2)
 	if _bow_t < 0.45:
 		return          # string never came to the cheek — no loose, no arrow
+	if vis.has_clip("bow_loose"):
+		vis.play("bow_loose", 0.03)   # the release; locomotion takes over when it has played
 	if int(inventory.get("arrows", 0)) < 1 or stamina < 1.0 or _winded > 0.0 or dead:
 		return
 	var w := weapon_data()
@@ -1162,6 +1164,10 @@ func _st_attack(dt: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, 26 * dt)
 		velocity.z = move_toward(velocity.z, 0, 26 * dt)
 
+	# the ribbon starts a beat before the hitbox opens, so the whole arc into
+	# the contact is drawn (anim polish; the hit window itself is untouched)
+	if vis.is_humanoid() and not vis.trail.visible and not _atk_hit_open and t >= wind - vis.trail_lead():
+		vis.trail.visible = true
 	if not _atk_hit_open and t >= wind:
 		_atk_hit_open = true
 		_open_hitbox(_atk)

@@ -9,7 +9,7 @@ movesets that use them, so playback rates stay close to 1.
 """
 import anim_pose as A
 import anim_rig as R
-from anim_pose import concat, warp, two_hand, ease_to
+from anim_pose import concat, warp, two_hand, ease_to, floor_clamp, lift_to_floor
 
 P = R.P
 DOWN = [0, 0, -1]
@@ -75,7 +75,7 @@ def sw_cleave(c):
 def sw_heavy(c):
     """The cleave as a committed heavy: the blade hangs overhead before it
     falls, and the low follow-through is held."""
-    return warp(c.mocap("ual1", "Sword_Attack"), [(3, 11, 1.4), (15, 23, 1.3)])
+    return floor_clamp(warp(c.mocap("ual1", "Sword_Attack"), [(3, 11, 1.4), (15, 23, 1.3)]), c.grips["onehand"], 0.85)
 
 
 def _slam(c):
@@ -85,7 +85,7 @@ def _slam(c):
 
 
 def sw_slam(c):
-    return warp(_slam(c), [(22, 38, 0.5)])
+    return floor_clamp(warp(_slam(c), [(22, 38, 0.5)]), c.grips["onehand"], 0.85)
 
 
 def sw_dash(c):
@@ -132,15 +132,23 @@ def guard_hold(c):
 
 
 def _hit_on(rig, fps, arm="LeftArm"):
-    """A blow soaked on the guard: the guard arm is driven in, the body rocks
-    back over bent knees, rebounds past the pose and settles."""
+    """A blow soaked on the guard: the shield arm is driven in against the
+    chest, the torso rocks back and twists off the line, the back foot gives
+    half a step, then the body shoves back past the pose and settles."""
+    z3 = [0, 0, 0]
     return rig.clip([
-        (0.00, "inout", {"hips": [0] * 6, "chest": [0, 0, 0], "head": [0, 0], "bones": {arm: [0, 0, 0]}}),
-        (0.06, "out", {"hips": [0, -0.12, -0.09, -5, -6, 0], "chest": [-8, -11, 0], "head": [0, 10],
-                       "bones": {arm: [-22, -14, 0]}}),
-        (0.20, "inout", {"hips": [0, 0.02, -0.02, 1, 2, 0], "chest": [2, 3, 0], "head": [0, -2],
-                         "bones": {arm: [4, 3, 0]}}),
-        (0.42, "inout", {"hips": [0] * 6, "chest": [0, 0, 0], "head": [0, 0], "bones": {arm: [0, 0, 0]}}),
+        (0.00, "inout", {"hips": [0] * 6, "chest": z3, "head": [0, 0], "footR": [0] * 5,
+                         "bones": {arm: z3, "LeftForeArm": z3, "RightArm": z3}}),
+        (0.06, "out", {"hips": [0.02, -0.17, -0.11, -10, -9, 2], "chest": [-16, -17, 3], "head": [6, 14],
+                       "footR": [0.03, -0.14, 0.05, -6, 14],
+                       "bones": {arm: [-34, -22, 0], "LeftForeArm": [-18, -8, 0], "RightArm": [-16, -12, 0]}}),
+        (0.14, "out", {"hips": [0.02, -0.21, -0.13, -11, -6, 2], "chest": [-14, -12, 2], "head": [4, 8],
+                       "footR": [0.04, -0.26, 0, -6, 0],
+                       "bones": {arm: [-28, -16, 0], "LeftForeArm": [-12, -5, 0], "RightArm": [-12, -8, 0]}}),
+        (0.28, "inout", {"hips": [0, -0.08, -0.06, 2, 5, 0], "chest": [5, 6, 0], "head": [0, -3],
+                         "bones": {arm: [8, 5, 0], "LeftForeArm": [3, 0, 0], "RightArm": z3}}),
+        (0.50, "inout", {"hips": [0, -0.03, 0, 0, 0, 0], "chest": z3, "head": [0, 0], "footR": [0.01, -0.06, 0, 0, 0],
+                         "bones": {arm: z3, "LeftForeArm": z3}}),
     ], fps)
 
 
@@ -242,11 +250,11 @@ def hop_back(c):
 
 
 def fall_back(c):
-    return c.mocap("ual1", "Death01")
+    return floor_clamp(lift_to_floor(c.mocap("ual1", "Death01")), c.grips["onehand"], 0.85)
 
 
 def dive_roll(c):
-    return c.mocap("ual1", "Roll")
+    return floor_clamp(lift_to_floor(c.mocap("ual1", "Roll")), c.grips["onehand"], 0.85)
 
 
 def guard_break(c):
@@ -254,7 +262,7 @@ def guard_break(c):
 
 
 def knockdown(c):
-    return c.mocap("ual2", "Hit_Knockback")
+    return floor_clamp(lift_to_floor(c.mocap("ual2", "Hit_Knockback")), c.grips["onehand"], 0.85)
 
 
 # --------------------------------------------- two hands (greatblade, maul)
@@ -264,7 +272,8 @@ HAFT_READY = {"hips": [0, 0, -0.02, -14, 2, 0], "chest": [-8, 3, 0], "head": [20
 
 
 def _two(c, poses, grip):
-    return two_hand(poses, c.grips[grip], fist_from=c.stance())
+    # great weapons are long: lay the blade on the ground rather than through it
+    return two_hand(floor_clamp(poses, c.grips[grip], 1.5), c.grips[grip], fist_from=c.stance())
 
 
 def gs_light_a(c, grip="twohand"):
@@ -364,15 +373,15 @@ def sp_thrust_b(c):
     return rig.clip([
         (0.00, "inout", _sp()),
         (0.12, "out", _sp(hips=[0, -0.06, -0.03, -46, 0, 0], chest=[-24, -4, 0], head=[60, 4],
-                          weapon=[0.30, -0.30, 1.46, -0.10, 1, -0.12, 0.6, 0, -1], left=0.60,
+                          weapon=[0.30, -0.30, 1.44, -0.10, 1, -0.05, 0.6, 0, -1], left=0.60,
                           rpole=[0.9, -0.5, 0.2])),
         (0.25, "in", _sp(hips=[0, 0.22, -0.10, -12, 12, 0], chest=[6, 14, 0], head=[8, -2],
                          footL=[-0.04, 0.46, 0, 4, 0], footR=[0.06, -0.16, 0.05, -38, 24],
-                         weapon=[0.14, 0.44, 1.42, -0.02, 1, -0.24, 0.6, 0, -1], left=0.34,
+                         weapon=[0.14, 0.44, 1.38, -0.02, 1, -0.12, 0.6, 0, -1], left=0.34,
                          rpole=[0.9, -0.4, 0.1])),
         (0.32, "out", _sp(hips=[0, 0.25, -0.11, -9, 13, 0], chest=[8, 15, 0], head=[6, -2],
                           footL=[-0.04, 0.46, 0, 4, 0], footR=[0.06, -0.16, 0.05, -38, 26],
-                          weapon=[0.13, 0.49, 1.40, -0.02, 1, -0.26, 0.6, 0, -1], left=0.32,
+                          weapon=[0.13, 0.49, 1.36, -0.02, 1, -0.13, 0.6, 0, -1], left=0.32,
                           rpole=[0.9, -0.4, 0.1])),
         (0.52, "inout", _sp(hips=[0, 0.10, -0.06, -24, 5, 0], chest=[-8, 4, 0], head=[28, 0],
                             footL=[-0.04, 0.34, 0, 6, 0],
@@ -455,7 +464,7 @@ def sp_stab(c):
 # ------------------------------------------------------------------------ bow
 BOW_READY = {"hips": [0, 0, -0.02, -62, 0, 0], "chest": [-18, 0, 0], "head": [78, 0],
              "footL": [-0.02, 0.14, 0, 0, 0], "footR": [0.04, -0.14, 0, -60, 0],
-             "lhand": [-0.10, 0.42, 1.18], "lrot": [-80, 0, 0], "lpole": [-0.7, 0, -0.7],
+             "lhand": [-0.10, 0.42, 1.18], "lrot": [-80, 0, 0], "lpole": [-0.7, 0, -0.7], "lfist": True,
              "rhand": [0.10, 0.30, 1.12], "rrot": [70, 0, 0], "rpole": [0.6, -0.6, -0.5]}
 
 
@@ -491,6 +500,17 @@ def _carry(stance):
     return lambda c: A.hold(stance(c), 31)
 
 
+def bow_loose(c):
+    """The release: the string hand snaps back off the cheek, the bow arm
+    kicks and rolls forward, the chest opens; then both lower to the ready."""
+    rig = c.rig("onehand")
+    snap = dict(BOW_DRAWN, rhand=[0.16, -0.26, 1.50], rrot=[96, 0, 0], rpole=[0.4, -1.0, 0.2],
+                lhand=[-0.13, 0.70, 1.44], lrot=[-92, 8, 0], chest=[-22, -5, 0], hips=[0, -0.03, -0.03, -77, -3, 0])
+    follow = dict(snap, rhand=[0.20, -0.30, 1.44], lhand=[-0.13, 0.69, 1.40], lrot=[-94, 14, 0])
+    return rig.clip([(0.00, "inout", BOW_DRAWN), (0.05, "out", snap), (0.20, "out", follow),
+                     (0.60, "inout", _bow())], c.fps)
+
+
 def _pa(fn):
     return lambda c: fn(c, "polearm")
 
@@ -517,5 +537,5 @@ def clips():
         "gs_carry": _carry(lambda c: c.haft_stance("twohand")), "pa_carry": _carry(lambda c: c.haft_stance("polearm")),
         "sp_carry": _carry(lambda c: c.spear_stance()),
         # bow
-        "bow_pull": bow_pull, "bow_aim": bow_aim,
+        "bow_pull": bow_pull, "bow_aim": bow_aim, "bow_loose": bow_loose,
     }

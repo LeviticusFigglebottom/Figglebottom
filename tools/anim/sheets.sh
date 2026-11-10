@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Contact sheets for the combat clips: 8 frames across each swing, 1280x720,
-# into docs/screens/anim_<set>_<clip>_sheet.png. Usage:
+# into docs/screens/anim_<kit>_<clip>_sheet.png. Usage:
 #   tools/anim/sheets.sh attack_l1@hewing_blade attack_h@greatblade ...
 #   POSE_ARGS="--pose-whole --pose-out=/tmp/x" tools/anim/sheets.sh src_roll
 set -euo pipefail

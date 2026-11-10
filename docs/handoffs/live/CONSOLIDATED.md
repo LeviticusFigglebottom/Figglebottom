@@ -28,10 +28,12 @@ _Last updated: 2026-11-07 (founding session)_
 | Owner's PC | `gpu/*` | `LOCAL_GPU_TASKS.md`. Nothing has been received yet |
 
 ## Combat animation (feat/combat-anims, ADR 0011)
-- **State:** `assets/anim/combat_lib.glb` holds 46 clips (CC0 Quaternius mocap retargeted, two-handed re-poses, hand-keyed thrusts/riposte/parries/guards/reacts/bow). The Bearer picks clips by weapon class (`clip_meta.json` → `weapon_class`, `clip_sets`, `mounts."weapon@<class>"`). No Tripo credits spent, no feel numbers changed. `anim` (143), `combat`, `deltas`, `encounters`, `smoke` pass.
-- **Rebuild:** `tools/anim/fetch_ual.sh`, then `$BPY tools/anim/build_combat_lib.py`, then `godot --headless --path . --import`. Look with `tools/anim/sheets.sh attack_l1@hewing_blade attack_h@greatblade ...` (sheets in `docs/screens/anim_<class>_<clip>_sheet.png`); in-game with `tools/shot.sh OUT.png --area=saltfell_steading --state=rime --shot-stage=bearer_light1|bearer_light2|bearer_heavy|bearer_sprint [--shot-weapon=greatblade]`.
-- **Next:** opt armed humanoid foes in (`"clip_sets": true` on the model row, then map their `atk_*` names in a set); a true two-handed capture would beat the re-posed `gs_*` set; the swing trail is hard to see in the in-game shots and wants a look.
-- **Known weak spots:** block-hit reacts are small; the bow draw's left hand is open; blades dip through the floor at the bottom of the heavy smash and the dive roll.
+- **State:** `assets/anim/combat_lib.glb` holds 47 clips (CC0 Quaternius mocap retargeted, two-handed re-poses, hand-keyed thrusts/riposte/parries/guards/reacts/bow). The Bearer picks clips by weapon class (`clip_meta.json` → `weapon_class`, `clip_sets`, `mounts."weapon@<class>"`). No Tripo credits spent, no feel numbers changed. `anim` (143), `combat`, `deltas`, `encounters`, `smoke` pass.
+- **Rebuild:** `tools/anim/fetch_ual.sh`, then `$BPY tools/anim/build_combat_lib.py`, then `godot --headless --path . --import`. Look with `tools/anim/sheets.sh attack_l1@hewing_blade attack_h@greatblade ...` (sheets in `docs/screens/anim_<kit>_<clip>_sheet.png`); in-game with `tools/shot.sh OUT.png --area=saltfell_steading --state=rime --shot-stage=bearer_light1|bearer_light2|bearer_heavy|bearer_sprint [--shot-weapon=greatblade]`.
+- **Swing trail:** it was invisible on every humanoid: the shader wrote its glow to EMISSION, which an unshaded material drops, and it blended additively (lost over snow). It now writes ALBEDO, alpha-blends, samples the pose on the physics tick and starts `polish.trail_lead` before the hit window.
+- **Player hitbox:** left as the data box in front of him (moveset `hitbox` reach/width/height). A blade-following volume would hit different foes at the same data timings (the box covers the whole reach for the whole active window; a blade covers a moving slice), so it is a feel change for the owner, not an animation fix.
+- **Foes not opted in:** the Oarsman, hall champion, cupbearer and collier are all bare-handed with their own overlays and windups of 0.8–1.2 s (the library clips would play at under half speed); there is no drover row. An armed humanoid foe opts in with `"clip_sets": true` plus a set mapping its `atk_*` names.
+- **Known weak spots:** the two-handed sets are one-handed mocap re-posed; the bow loose is small.
 
 ## Next exact step
 1. Merge each branch above once its tests pass.

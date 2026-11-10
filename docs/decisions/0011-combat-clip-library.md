@@ -40,4 +40,7 @@ Player code changes are small: a `block_hit` react over the guard hold, `stagger
 - Tripo's `dodge_roll` is replaced by the library dive roll (it started from a raised-arm pose and sank through the floor); Tripo `drink` and `rest` stay.
 - The two-handed and long-haft sets are one-handed mocap re-posed, so the left hand follows rather than drives; they read well but are not true two-handed captures.
 - Rebuilding needs `raw/anim_src/` (`tools/anim/fetch_ual.sh`) and the bpy venv. The GLB and its `.import` are committed.
-- Contact sheets: `tools/anim/sheets.sh` (pose_sheet sandbox, rig mode) writes `docs/screens/anim_<class>_<clip>_sheet.png`.
+- Contact sheets: `tools/anim/sheets.sh` (pose_sheet sandbox, rig mode) writes `docs/screens/anim_<kit>_<clip>_sheet.png`.
+- The player's hitbox stays the moveset's data box. Making it follow the blade would change who is hit at the same data timings, so it was left for an owner decision.
+- The swing trail (invisible on humanoids before: EMISSION on an unshaded material, additive over snow) now draws from ALBEDO with alpha blending, sampled from the pose on the physics tick.
+- Retargeted falls and rolls are lifted so no body part sinks (`lift_to_floor`), and blades are laid along the ground instead of through it (`floor_clamp`).

@@ -2392,8 +2392,8 @@
   },
   "guard_hit": {
    "start": 0.0,
-   "end": 0.43,
-   "contact": 0.06
+   "contact": 0.06,
+   "end": 0.5
   },
   "guard_parry": {
    "start": 0.0,
@@ -2562,6 +2562,11 @@
   },
   "sp_carry": {
    "loop": true
+  },
+  "bow_loose": {
+   "start": 0.0,
+   "contact": 0.05,
+   "end": 0.6
   }
  },
  "aliases": {
@@ -2842,13 +2847,17 @@
    ],
    "bow_hold": [
     "bow_aim"
+   ],
+   "bow_loose": [
+    "bow_loose"
    ]
   }
  },
  "polish": {
-  "_doc": "strike polish layered over the clips by CharVisual (humanoids only): a lean away through the wind-up, spent by the contact frame, and a forward dig on a landed hit that Juice's hit-stop holds. Degrees and seconds.",
+  "_doc": "strike polish layered over the clips by CharVisual (humanoids only): a lean away through the wind-up, spent by the contact frame, and a forward dig on a landed hit that Juice's hit-stop holds. Degrees and seconds. trail_lead: seconds before the hit window opens that the swing ribbon starts drawing.",
   "antic_lean_deg": 3.5,
   "impact_dig_deg": 3.0,
-  "impact_dig_ease": 0.22
+  "impact_dig_ease": 0.22,
+  "trail_lead": 0.09
  }
 }

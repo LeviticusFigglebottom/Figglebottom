@@ -115,6 +115,7 @@ class Rig:
       lhand  [r, f, u]                        free left wrist target
       rhand  [r, f, u]                        free right wrist target (no weapon control)
       lrot / rrot [yaw, pitch, roll]          free hand orientation from its rest (T) pose
+      lfist  True                             close the left hand (as the base's sword hand)
       rpole / lpole [r, f, u]                 elbow direction
       bones  {name: [yaw, pitch, roll]}       extra FK on a bone (short Mixamo name)
     """
@@ -168,6 +169,8 @@ class Rig:
             p.arm_ik("Left", V(*c["lhand"]), V(*lp) if lp else V(-0.5, -0.3, -0.8))
             if c.get("lrot") is not None:
                 p.set_world(P + "LeftHand", ypr(*c["lrot"]) @ s.w0[P + "LeftHand"])
+            if c.get("lfist") and self.fist_from is not None:
+                copy_fist(p, self.fist_from)
         if w is None and c.get("rhand") is not None:
             rp = c.get("rpole")
             p.arm_ik("Right", V(*c["rhand"]), V(*rp) if rp else V(0.5, -0.3, -0.8))
@@ -252,6 +255,55 @@ def ease_to(poses, target, n, end=True):
 
 def hold(pose, n):
     return [pose.copy() for _ in range(n)]
+
+
+def floor_clamp(poses, grip, length, floor=0.03):
+    """Keep the blade out of the ground: where its tip would dip under the
+    floor the wrist cocks just enough to lay it along the surface."""
+    out = []
+    h = P + "RightHand"
+    for p in poses:
+        p = p.copy()
+        g, a, _e = grip.weapon_of(p)
+        tip = g + a * length
+        if tip.z < floor:
+            want_z = max(-0.2, min(1.0, (floor - g.z) / length))
+            flat = Vector((a.x, a.y, 0.0))
+            if flat.length < 1e-4:
+                flat = Vector((0.0, -1.0, 0.0))
+            flat.normalize()
+            target = flat * math.sqrt(max(0.0, 1.0 - want_z * want_z)) + Vector((0, 0, want_z))
+            q = a.rotation_difference(target)
+            wrist = p.pos(h).copy()
+            p.set_world(h, q @ p.W(h))
+            # the grip point stays where it was: the wrist swings round it
+            g2, _a2, _e2 = grip.weapon_of(p)
+            p.arm_ik("Right", wrist + (g - g2), None)
+        out.append(p)
+    return out
+
+
+BODY_R = {"Hips": 0.13, "Spine1": 0.13, "Spine2": 0.14, "Head": 0.11, "LeftLeg": 0.07, "RightLeg": 0.07,
+          "LeftFoot": 0.05, "RightFoot": 0.05, "LeftForeArm": 0.05, "RightForeArm": 0.05,
+          "LeftHand": 0.04, "RightHand": 0.04, "LeftArm": 0.07, "RightArm": 0.07}
+
+
+def lift_to_floor(poses, smooth=2):
+    """Retargeted falls and rolls sink a little (the source body is slimmer):
+    raise the pelvis wherever a body part would be under the ground."""
+    need = []
+    for p in poses:
+        low = min(p.pos(P + b).z - r for b, r in BODY_R.items())
+        need.append(max(0.0, -low))
+    for _ in range(smooth):   # spread each lift over its neighbours so it never pops
+        need = [max(need[i], 0.5 * (need[max(i - 1, 0)] + need[min(i + 1, len(need) - 1)])) for i in range(len(need))]
+    out = []
+    for p, dz in zip(poses, need):
+        p = p.copy()
+        p.hips = p.hips + Vector((0, 0, dz))
+        p.dirty()
+        out.append(p)
+    return out
 
 
 def two_hand(poses, grip, d=None, fist_from=None, chest_help=0.6):

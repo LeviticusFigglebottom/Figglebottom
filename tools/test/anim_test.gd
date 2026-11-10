@@ -312,7 +312,21 @@ func _run() -> void:
 	var cpc := prig2.contact_time("parry")
 	check(cpc >= float(cpr.get("windup", 0.08)) and cpc <= float(cpr.get("windup", 0.08)) + float(cpr.get("window", 0.16)),
 		"the parry sweep peaks inside the parry window (%.2f s)" % cpc)
-	# a stagger from cbehind picks the forward lurch
+	# the swing ribbon samples the pose on the physics tick, so it has an arc
+	# to draw however few frames get rendered
+	player.vis.play_timed("attack_l1", 0.3, 0.07, 0.55, 1.85)
+	await ticks(12)
+	player.vis.trail.visible = true
+	await ticks(8)
+	var tpts: Array = player.vis.trail.get("_pts")
+	var sweep := 0.0
+	for ti in range(1, tpts.size()):
+		sweep += (tpts[ti]["t"] as Vector3).distance_to(tpts[ti - 1]["t"])
+	check(tpts.size() >= 6 and sweep > 1.0, "the swing trail records the arc per physics tick (%d samples, %.2f m)" % [tpts.size(), sweep])
+	player.vis.trail.visible = false
+	player.vis.back_to_idle(0.01)
+	await ticks(3)
+	# a stagger from behind picks the forward lurch
 	player.invulnerable = false
 	player.poise = 0.01
 	player.hp = player.max_hp
@@ -330,5 +344,6 @@ func _run() -> void:
 	await ticks(2)
 	check(player.vis.rig.clip_set == "bow" and player.vis.rig.qualified("bow_draw") == "bow_pull",
 		"the bow draws with its own clip")
+	check(player.vis.rig.qualified("bow_loose") == "bow_loose", "and looses with one")
 	player.equip_weapon("hewing_blade")
 	finish()
