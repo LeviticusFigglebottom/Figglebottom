@@ -8,8 +8,8 @@ Rimeholt is built by several Claude sessions at once. This file is the shared ba
 |---|---|---|---|
 | **Lead** | cloud | `session_01F3vrUNPtFufos1qRX6SLeD` | `main`, merges, direction, Tripo credits; subagents on its box (art look pass, animation, encounters and endings) |
 | **GPU worker** | owner's PC (RX 9070 XT) | `session_01F3vrULYKUDQFNtUuJaVFi3` | real-GPU perf, galleries, full-suite test runs; branches `gpu/*` |
-| **QA env** | cloud | see `CONSOLIDATED.md` | full-game end-to-end tests and bug fixes; branches `fix/qa-*` |
-| **World-fidelity env** | cloud | see `CONSOLIDATED.md` | building geometry, interiors and lighting, terrain close-up; branches `art/world-*` |
+| **QA env** | cloud | `session_01F3vrULw7QwSZZNWUB551br` | full-game end-to-end tests and bug fixes; branches `fix/qa-*` |
+| **World-fidelity env** | cloud | `session_01F3vrULm3SXqTh8xCJswNEX` | building geometry, interiors and lighting, terrain close-up; branches `art/world-*` |
 
 ## File ownership
 
