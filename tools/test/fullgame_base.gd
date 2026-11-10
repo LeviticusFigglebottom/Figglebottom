@@ -143,7 +143,11 @@ func _walk_to(to: Vector3, max_ticks := 900, tol := 1.0, fight := true) -> bool:
 			var f := _foe_near(7.0, true)
 			if f != null:
 				player.sim_move = Vector3.ZERO
+				# (the fight's own time counts: a foe that cannot be reached
+				# must not hold the walk for ever)
+				var f0 := Engine.get_physics_frames()
 				await _fight(16.0, 60.0)
+				waited += int(Engine.get_physics_frames() - f0)
 				if player.dead:
 					break
 		var d := to - player.global_position
@@ -178,9 +182,15 @@ func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
 			pass
 		k += 1
 		# a fight pulls the Bearer off the line; re-plan from where we stand
-		if fight and player.global_position.distance_to(p[k - 1]) > 2.5:
+		# (measured on the flat, and never without a tick: a waypoint on a deck
+		# overhead is "reached" from the ice under it, and re-planning there
+		# spun this loop for ever without yielding)
+		var off := player.global_position - p[k - 1]
+		if fight and Vector2(off.x, off.z).length() > 2.5:
 			p = _path(player.global_position, to)
 			k = 1
+			await ticks(1)
+			used += 1
 	return true
 
 ## A plain melee bot: close in, light swings, drink below 40%, roll back out
