@@ -70,7 +70,20 @@
     0.8,
     0.64,
     0.54
-   ]
+   ],
+   "ambient": [
+    0.38,
+    0.38,
+    0.42
+   ],
+   "ambient_energy": 1.05,
+   "fill_color": [
+    0.62,
+    0.68,
+    0.78
+   ],
+   "fill_energy": 0.8,
+   "sky_contribution": 0.34
   },
   "rime": {
    "sun_rot": [

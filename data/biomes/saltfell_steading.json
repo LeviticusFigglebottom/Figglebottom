@@ -67,7 +67,8 @@
     0.72,
     0.6
    ],
-   "vol_density": 0.003
+   "vol_density": 0.003,
+   "ambient_energy": 0.8
   },
   "rime": {
    "sun_rot": [

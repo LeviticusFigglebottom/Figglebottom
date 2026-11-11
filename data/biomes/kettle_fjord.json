@@ -64,12 +64,19 @@
     0.64,
     0.71
    ],
-   "fill_energy": 0.75,
+   "fill_energy": 0.95,
    "fog_color": [
     0.72,
     0.7,
     0.66
-   ]
+   ],
+   "ambient": [
+    0.36,
+    0.39,
+    0.44
+   ],
+   "ambient_energy": 1.15,
+   "sky_contribution": 0.4
   },
   "rime": {
    "sun_rot": [
