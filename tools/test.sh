@@ -24,6 +24,8 @@ for scene in tools/test/*_test.tscn; do
   # the full-slice walk plays the whole 20-minute slice in real time
   limit=300
   [ "$name" = "fullslice" ] && limit=2700
+  # the collision audit builds every area five times over (about 5 minutes)
+  [ "$name" = "collision_audit" ] && limit=900
   # the full-game region walks (fullgame_<region>) each play a whole region
   case "$name" in fullgame_*) limit=2700 ;; esac
   timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \
