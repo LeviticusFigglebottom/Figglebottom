@@ -209,6 +209,8 @@ def audit(area_id):
             continue
         if p.get("embed"):
             continue      # afloat or frozen into the ice on purpose
+        if p.get("on"):
+            continue      # set down on furniture (a table top), not on the floor
         at = v3(p["at"])
         is_rail = kit in RAILING
         # railings reach a bit further to find the floor edge they line; vertical

@@ -121,13 +121,13 @@ x = TX0 + 0.8
 while x < TX1 - 0.6:
     for side in (-1, 1):
         hz = TABLE_Z + side * 0.42
-        PROPS.append({"kit": "feast_horn", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "thaw", "collide": False})
-        PROPS.append({"kit": "feast_horn_frozen", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "rime", "collide": False})
+        PROPS.append({"kit": "feast_horn", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "thaw", "collide": False, "on": "table"})
+        PROPS.append({"kit": "feast_horn_frozen", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "rime", "collide": False, "on": "table"})
     if k % 2 == 0:
-        PROPS.append({"kit": "trencher", "at": [r2(x + 0.52), FY + 0.82, r2(TABLE_Z)], "rot": (k * 23) % 40 - 20, "collide": False})
+        PROPS.append({"kit": "trencher", "at": [r2(x + 0.52), FY + 0.82, r2(TABLE_Z)], "rot": (k * 23) % 40 - 20, "collide": False, "on": "table"})
     if k % 3 == 1:
-        PROPS.append({"kit": "fat_lamp", "at": [r2(x + 0.5), FY + 0.82, r2(TABLE_Z + 0.05)], "rot": k * 50, "tag": "thaw", "collide": False})
-        PROPS.append({"kit": "fat_lamp_cold", "at": [r2(x + 0.5), FY + 0.82, r2(TABLE_Z + 0.05)], "rot": k * 50, "tag": "rime", "collide": False})
+        PROPS.append({"kit": "fat_lamp", "at": [r2(x + 1.05), FY + 0.82, r2(TABLE_Z)], "rot": k * 50, "tag": "thaw", "collide": False, "on": "table"})
+        PROPS.append({"kit": "fat_lamp_cold", "at": [r2(x + 1.05), FY + 0.82, r2(TABLE_Z)], "rot": k * 50, "tag": "rime", "collide": False, "on": "table"})
     k += 1
     x += 1.6
 SEATS = []

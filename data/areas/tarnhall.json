@@ -3737,7 +3737,8 @@
    ],
    "rot": 340,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3748,7 +3749,8 @@
    ],
    "rot": 340,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3759,7 +3761,8 @@
    ],
    "rot": 20,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3770,7 +3773,8 @@
    ],
    "rot": 20,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -3780,7 +3784,8 @@
     -333.6
    ],
    "rot": -20,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3791,7 +3796,8 @@
    ],
    "rot": 47,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3802,7 +3808,8 @@
    ],
    "rot": 47,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3813,7 +3820,8 @@
    ],
    "rot": 87,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3824,29 +3832,32 @@
    ],
    "rot": 87,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp",
    "at": [
-    187.9,
+    188.45,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 50,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp_cold",
    "at": [
-    187.9,
+    188.45,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 50,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3857,7 +3868,8 @@
    ],
    "rot": 114,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3868,7 +3880,8 @@
    ],
    "rot": 114,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3879,7 +3892,8 @@
    ],
    "rot": 154,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3890,7 +3904,8 @@
    ],
    "rot": 154,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -3900,7 +3915,8 @@
     -333.6
    ],
    "rot": -14,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3911,7 +3927,8 @@
    ],
    "rot": 181,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3922,7 +3939,8 @@
    ],
    "rot": 181,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3933,7 +3951,8 @@
    ],
    "rot": 221,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3944,7 +3963,8 @@
    ],
    "rot": 221,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3955,7 +3975,8 @@
    ],
    "rot": 248,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3966,7 +3987,8 @@
    ],
    "rot": 248,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -3977,7 +3999,8 @@
    ],
    "rot": 288,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -3988,7 +4011,8 @@
    ],
    "rot": 288,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -3998,29 +4022,32 @@
     -333.6
    ],
    "rot": -8,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp",
    "at": [
-    192.7,
+    193.25,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 200,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp_cold",
    "at": [
-    192.7,
+    193.25,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 200,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4031,7 +4058,8 @@
    ],
    "rot": 315,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4042,7 +4070,8 @@
    ],
    "rot": 315,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4053,7 +4082,8 @@
    ],
    "rot": 355,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4064,7 +4094,8 @@
    ],
    "rot": 355,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4075,7 +4106,8 @@
    ],
    "rot": 22,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4086,7 +4118,8 @@
    ],
    "rot": 22,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4097,7 +4130,8 @@
    ],
    "rot": 62,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4108,7 +4142,8 @@
    ],
    "rot": 62,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -4118,7 +4153,8 @@
     -333.6
    ],
    "rot": -2,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4129,7 +4165,8 @@
    ],
    "rot": 89,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4140,7 +4177,8 @@
    ],
    "rot": 89,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4151,7 +4189,8 @@
    ],
    "rot": 129,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4162,29 +4201,32 @@
    ],
    "rot": 129,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp",
    "at": [
-    197.5,
+    198.05,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 350,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp_cold",
    "at": [
-    197.5,
+    198.05,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 350,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4195,7 +4237,8 @@
    ],
    "rot": 156,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4206,7 +4249,8 @@
    ],
    "rot": 156,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4217,7 +4261,8 @@
    ],
    "rot": 196,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4228,7 +4273,8 @@
    ],
    "rot": 196,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -4238,7 +4284,8 @@
     -333.6
    ],
    "rot": 4,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4249,7 +4296,8 @@
    ],
    "rot": 223,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4260,7 +4308,8 @@
    ],
    "rot": 223,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4271,7 +4320,8 @@
    ],
    "rot": 263,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4282,7 +4332,8 @@
    ],
    "rot": 263,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4293,7 +4344,8 @@
    ],
    "rot": 290,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4304,7 +4356,8 @@
    ],
    "rot": 290,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4315,7 +4368,8 @@
    ],
    "rot": 330,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4326,7 +4380,8 @@
    ],
    "rot": 330,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -4336,29 +4391,32 @@
     -333.6
    ],
    "rot": 10,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp",
    "at": [
-    202.3,
+    202.85,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 500,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp_cold",
    "at": [
-    202.3,
+    202.85,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 500,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4369,7 +4427,8 @@
    ],
    "rot": 357,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4380,7 +4439,8 @@
    ],
    "rot": 357,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4391,7 +4451,8 @@
    ],
    "rot": 37,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4402,7 +4463,8 @@
    ],
    "rot": 37,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4413,7 +4475,8 @@
    ],
    "rot": 64,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4424,7 +4487,8 @@
    ],
    "rot": 64,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4435,7 +4499,8 @@
    ],
    "rot": 104,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4446,7 +4511,8 @@
    ],
    "rot": 104,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -4456,7 +4522,8 @@
     -333.6
    ],
    "rot": 16,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4467,7 +4534,8 @@
    ],
    "rot": 131,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4478,7 +4546,8 @@
    ],
    "rot": 131,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4489,7 +4558,8 @@
    ],
    "rot": 171,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4500,29 +4570,32 @@
    ],
    "rot": 171,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp",
    "at": [
-    207.1,
+    207.65,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 650,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "fat_lamp_cold",
    "at": [
-    207.1,
+    207.65,
     25.12,
-    -333.55
+    -333.6
    ],
    "rot": 650,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4533,7 +4606,8 @@
    ],
    "rot": 198,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4544,7 +4618,8 @@
    ],
    "rot": 198,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn",
@@ -4555,7 +4630,8 @@
    ],
    "rot": 238,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "feast_horn_frozen",
@@ -4566,7 +4642,8 @@
    ],
    "rot": 238,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "trencher",
@@ -4576,7 +4653,8 @@
     -333.6
    ],
    "rot": -18,
-   "collide": false
+   "collide": false,
+   "on": "table"
   },
   {
    "kit": "mannequin_thaw",
