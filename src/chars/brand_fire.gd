@@ -32,7 +32,7 @@ var _gutter := 0.0                 # 0 steady .. 1 nearly blown out
 ## The wind the RIME snow falls on (area.gd drifts it the same way).
 const WIND_DIR := Vector3(0.93, 0.0, 0.37)
 
-static var _smoke_mat: StandardMaterial3D = null
+static var _smoke_mat: ShaderMaterial = null
 static var _spark_mat: StandardMaterial3D = null
 
 func setup(fire: Dictionary) -> void:
@@ -53,8 +53,8 @@ func setup(fire: Dictionary) -> void:
 	# the head itself glows: with the flame out this is all that is left
 	_coal = MeshInstance3D.new()
 	var sm := SphereMesh.new()
-	sm.radius = r * 0.9
-	sm.height = r * 2.2
+	sm.radius = r * 0.62
+	sm.height = r * 1.5
 	sm.radial_segments = 10
 	sm.rings = 5
 	var cm := StandardMaterial3D.new()
@@ -63,7 +63,7 @@ func setup(fire: Dictionary) -> void:
 	cm.albedo_color = Color(1.0, 0.32, 0.06)
 	sm.material = cm
 	_coal.mesh = sm
-	_coal.position.y = -r * 0.6
+	_coal.position.y = -r * 0.2   # sunk in the top of the wrap: a glow in the pitch, not a ball beside it
 	_coal.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(_coal)
 	_embers = _make_sparks(14, 1.3)
@@ -119,13 +119,8 @@ static func _make_sparks(amount: int, life: float) -> CPUParticles3D:
 
 func _make_smoke() -> CPUParticles3D:
 	if _smoke_mat == null:
-		_smoke_mat = StandardMaterial3D.new()
-		_smoke_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		_smoke_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-		_smoke_mat.vertex_color_use_as_albedo = true
-		_smoke_mat.albedo_texture = _puff_tex()
-		_smoke_mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+		_smoke_mat = ShaderMaterial.new()
+		_smoke_mat.shader = load("res://shaders/smoke_puff.gdshader")
 	var p := CPUParticles3D.new()
 	p.name = "smoke"
 	p.amount = 12
@@ -142,44 +137,15 @@ func _make_smoke() -> CPUParticles3D:
 	p.initial_velocity_max = 0.8
 	p.angle_min = 0.0
 	p.angle_max = 360.0
-	p.angular_velocity_min = -40.0
-	p.angular_velocity_max = 40.0
 	p.scale_amount_min = 0.7
 	p.scale_amount_max = 1.2
-	var grow := Curve.new()
-	grow.add_point(Vector2(0.0, 0.25))
-	grow.add_point(Vector2(1.0, 1.0))
-	p.scale_amount_curve = grow
-	var fade := Gradient.new()
-	fade.set_color(0, Color(0.16, 0.13, 0.11, 0.0))
-	fade.set_color(1, Color(0.45, 0.45, 0.46, 0.0))
-	fade.add_point(0.15, Color(0.16, 0.14, 0.12, 0.3))
-	fade.add_point(0.6, Color(0.3, 0.29, 0.28, 0.14))
-	p.color_ramp = fade
 	var q := QuadMesh.new()
-	q.size = Vector2(0.34, 0.34)
+	q.size = Vector2(0.36, 0.36)
 	q.material = _smoke_mat
 	p.mesh = q
 	p.position.y = float(cfg.get("flame_h", 0.34)) * 0.9
 	p.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return p
-
-static var _puff: GradientTexture2D = null
-
-static func _puff_tex() -> Texture2D:
-	if _puff == null:
-		var g := Gradient.new()
-		g.set_color(0, Color(1, 1, 1, 1))
-		g.set_color(1, Color(1, 1, 1, 0))
-		g.add_point(0.55, Color(1, 1, 1, 0.45))
-		_puff = GradientTexture2D.new()
-		_puff.gradient = g
-		_puff.fill = GradientTexture2D.FILL_RADIAL
-		_puff.fill_from = Vector2(0.5, 0.5)
-		_puff.fill_to = Vector2(1.0, 0.5)
-		_puff.width = 48
-		_puff.height = 48
-	return _puff
 
 ## Light it (drawn) or let it die to a coal (stowed). `now` skips the ease.
 func set_lit(on: bool, now := false) -> void:

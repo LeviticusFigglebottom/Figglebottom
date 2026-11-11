@@ -5267,12 +5267,12 @@
   "stow@brand": {
    "bone": "mixamorig_Hips",
    "pos": [
-    -0.21,
-    0.14,
-    0.02
+    -0.2,
+    0.1,
+    0.0
    ],
    "rot": [
-    -158.0,
+    -135.0,
     0.0,
     6.0
    ],
@@ -5358,8 +5358,8 @@
   "hewing_blade": {
    "scene": "res://assets/models/weapons/hewing_blade.glb",
    "trail": [
-    0.12,
-    0.8
+    0.16,
+    0.86
    ]
   },
   "saltfell_shield": {
@@ -5369,50 +5369,90 @@
   "maul": {
    "scene": "res://assets/models/weapons/post_maul.glb",
    "trail": [
-    0.2,
-    1.2
+    0.86,
+    1.16
    ],
-   "_note": "the post maul Hesk sells (LOWE.md 9): grip at origin, head +Y"
+   "_note": "the post maul Hesk sells (LOWE.md 9): grip at origin, head +Y",
+   "trail_tint": [
+    0.8,
+    0.72,
+    0.6
+   ],
+   "trail_weight": 1.35,
+   "trail_life": 0.22,
+   "trail_energy": 0.15
   },
   "turf_spade": {
    "scene": "res://assets/models/weapons/turf_spade.glb",
    "trail": [
-    0.12,
-    1.55
+    0.82,
+    1.3
    ],
-   "_note": "grip at origin, blade +Y"
+   "_note": "grip at origin, blade +Y",
+   "trail_tint": [
+    0.8,
+    0.84,
+    0.86
+   ],
+   "trail_life": 0.16
   },
   "ice_auger": {
    "scene": "res://assets/models/weapons/ice_auger.glb",
    "trail": [
-    0.1,
-    1.4
+    0.8,
+    1.25
    ],
-   "_note": "grip at origin, bit +Y"
+   "_note": "grip at origin, bit +Y",
+   "trail_tint": [
+    0.8,
+    0.84,
+    0.86
+   ],
+   "trail_weight": 0.55,
+   "trail_life": 0.09
   },
   "sealer_harpoon": {
    "scene": "res://assets/models/weapons/sealer_harpoon.glb",
    "trail": [
-    0.1,
-    1.8
+    1.02,
+    1.45
    ],
-   "_note": "grip at origin, head +Y"
+   "_note": "grip at origin, head +Y",
+   "trail_tint": [
+    0.8,
+    0.84,
+    0.86
+   ],
+   "trail_weight": 0.55,
+   "trail_life": 0.09
   },
   "feast_cleaver": {
    "scene": "res://assets/models/weapons/feast_cleaver.glb",
    "trail": [
-    0.12,
-    0.6
+    0.22,
+    0.58
    ],
-   "_note": "the Host's carving cleaver (TARNHALL.md 8): grip at origin, blade +Y"
+   "_note": "the Host's carving cleaver (TARNHALL.md 8): grip at origin, blade +Y",
+   "trail_tint": [
+    0.8,
+    0.84,
+    0.86
+   ],
+   "trail_life": 0.12
   },
   "hedging_bill": {
    "scene": "res://assets/models/weapons/hedging_bill.glb",
    "trail": [
-    0.1,
-    1.4
+    1.12,
+    1.55
    ],
-   "_note": "Eyvind's hedging bill (THORNWOLD.md 8): grip at origin, hook +Y"
+   "_note": "Eyvind's hedging bill (THORNWOLD.md 8): grip at origin, hook +Y",
+   "trail_tint": [
+    0.8,
+    0.84,
+    0.86
+   ],
+   "trail_life": 0.16
   },
   "torch": {
    "scene": "res://assets/models/weapons/torch.glb",
@@ -5439,10 +5479,12 @@
   "greatblade": {
    "scene": "res://assets/models/weapons/greatblade.glb",
    "trail": [
-    0.3,
+    0.28,
     1.22
    ],
-   "_note": "the long war-knife: right hand at origin high on the two-hand grip, blade +Y, edge +Z"
+   "_note": "the long war-knife: right hand at origin high on the two-hand grip, blade +Y, edge +Z",
+   "trail_weight": 1.2,
+   "trail_life": 0.18
   },
   "quiver": {
    "scene": "res://assets/models/weapons/quiver.glb",
@@ -5451,10 +5493,17 @@
   "spear": {
    "scene": "res://assets/models/weapons/spear.glb",
    "trail": [
-    1.25,
+    1.26,
     1.6
    ],
-   "_note": "plain ash spear: grip at origin, leaf +Y"
+   "_note": "plain ash spear: grip at origin, leaf +Y",
+   "trail_tint": [
+    0.8,
+    0.84,
+    0.86
+   ],
+   "trail_weight": 0.55,
+   "trail_life": 0.09
   },
   "bow": {
    "scene": "res://assets/models/weapons/bow.glb",
@@ -5472,7 +5521,8 @@
   "arrows": {
    "scene": "res://assets/models/weapons/quiver.glb",
    "_note": "what a cache of arrows looks like on the ground (Pickup)"
-  }
+  },
+  "_doc": "weapon kit -> model and how its swing reads. scene: the GLB (grip at the origin, head +Y, edge +Z). trail [from, to]: the part of the weapon that marks the air, metres up from the grip (the head or blade, not the haft). trail_tint, trail_life (s the arc lingers), trail_weight (opacity: a maul drags a heavy smear, a spear point barely marks), trail_energy (glow), trail_style ember (fire, the torch). seat {pos, rot}: this weapon's own shift in the fist inside its class grip. fire: a flame on the head (BrandFire)."
  },
  "clips": {
   "idle": {

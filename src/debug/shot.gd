@@ -420,6 +420,7 @@ func _char_stage(p: Player) -> void:
 ## The Bearer's own strikes on a foe (the combat clips, ADR 0011), frozen a
 ## few ticks into the active window so the trail and the hit both show:
 ##   bearer_light1 / bearer_light2 / bearer_heavy / bearer_sprint
+##   bearer_bow (the full draw, held) / bearer_hold (the weapon carried, no foe)
 ## --shot-weapon=<id> arms him first; --shot-beat=<s> moves the capture
 ## (seconds after the windup ends; negative looks at the wind-up).
 func _bearer_stage(p: Player, foe: Enemy) -> void:
@@ -451,11 +452,34 @@ func _bearer_stage(p: Player, foe: Enemy) -> void:
 				p._chain_attack(true)
 			"bearer_sprint":
 				p._sprint_attack()
+			"bearer_bow":
+				# the draw, driven by hand (no key is held in a shot): nock,
+				# pull, and hold at the cheek
+				p.inventory["arrows"] = 12
+				p.set_physics_process(false)
+				p.vis.play("bow_draw", 0.1)
+				p._nock_arrow(true)
+			"bearer_hold":
+				foe.visible = false   # the weapon carried, nobody to hit
+	if _stage == "bearer_bow" or _stage == "bearer_hold":
+		_frame_char_cam(p, foe)
+		if _stage == "bearer_bow" and _stage_frame > 30 and p.vis.rig.action_time() > 0.74 and p.vis.current_clip() != "bow_hold":
+			p.vis.play("bow_hold", 0.08)
+		var settled := _stage_frame > (150 if _stage == "bearer_hold" else 30) and \
+				(_stage == "bearer_hold" or p.vis.current_clip() == "bow_hold")
+		if settled and not get_tree().paused and _stage_frame > 60:
+			_hold_frames += 1
+			if _hold_frames > 20:   # a few drawn frames so the string, flame and smoke are all up
+				get_tree().paused = true
+				_frames_left = mini(_frames_left, 4)
+		return
 	if _stage_frame >= 30:
 		_frame_char_cam(p, foe)
 		if p.state == Player.S.ATTACK and p.state_t >= float(p._atk["windup"]) + beat and not get_tree().paused:
 			get_tree().paused = true
 			_frames_left = mini(_frames_left, 4)
+
+var _hold_frames := 0
 
 func _frame_char_cam(p: Player, foe: Enemy) -> void:
 	var cam := get_tree().current_scene.find_child("ShotCam", false, false) as Camera3D
@@ -482,6 +506,12 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 	cam.global_position = tgt + side * 3.6 + Vector3.UP * 0.35
 	if _stage.begins_with("bearer_"):   # three-quarter, from behind the Bearer's sword arm
 		cam.global_position = tgt + side * 3.3 - axis.normalized() * 1.3 + Vector3.UP * 0.45
+	if _stage == "bearer_hold":   # the Bearer alone, from his front quarter, the light in frame
+		tgt = p.global_position + Vector3.UP * 1.25
+		cam.global_position = tgt + axis.normalized() * 2.9 + side * 2.2 + Vector3.UP * 0.25
+	elif _stage == "bearer_bow":  # down the bow arm's side: stave, string and shaft all in profile
+		tgt = p.global_position + Vector3.UP * 1.3
+		cam.global_position = tgt - side * 2.9 + axis.normalized() * 0.6 + Vector3.UP * 0.2
 	cam.look_at(tgt, Vector3.UP)
 	cam.fov = 48.0
 
