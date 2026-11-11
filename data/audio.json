@@ -22,6 +22,13 @@
 	"foley": {
 		"frost_hit": ["res://assets/audio/foley/hit_frost_1.wav", "res://assets/audio/foley/hit_frost_2.wav", "res://assets/audio/foley/hit_frost_3.wav"],
 		"frost_fall": "res://assets/audio/foley/frost_fall.wav",
-		"coal_catch": "res://assets/audio/foley/coal_catch.wav"
+		"coal_catch": "res://assets/audio/foley/coal_catch.wav",
+		"strike_wood": ["res://assets/audio/foley/strike_wood_1.wav", "res://assets/audio/foley/strike_wood_2.wav"],
+		"strike_stone": ["res://assets/audio/foley/strike_stone_1.wav", "res://assets/audio/foley/strike_stone_2.wav"],
+		"strike_metal": ["res://assets/audio/foley/strike_metal_1.wav", "res://assets/audio/foley/strike_metal_2.wav"],
+		"strike_ice": ["res://assets/audio/foley/strike_ice_1.wav", "res://assets/audio/foley/strike_ice_2.wav"],
+		"strike_cloth": ["res://assets/audio/foley/strike_cloth_1.wav", "res://assets/audio/foley/strike_cloth_2.wav"],
+		"strike_turf": ["res://assets/audio/foley/strike_turf_1.wav", "res://assets/audio/foley/strike_turf_2.wav"],
+		"strike_snow": ["res://assets/audio/foley/strike_snow_1.wav", "res://assets/audio/foley/strike_snow_2.wav"]
 	}
 }

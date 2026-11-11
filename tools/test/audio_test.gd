@@ -59,6 +59,19 @@ func _run() -> void:
 	for k in ["frost_hit", "frost_fall", "coal_catch"]:
 		var path := AudioDirector.foley(k)
 		check(_fresh(path) != null, "foley %s resolves (%s)" % [k, path])
+	# the blade on the world: every surface's foley set, every take
+	var strike_bad: Array = []
+	for surf in Surfaces.all():
+		var set_key := String(Surfaces.table()["fx"][surf].get("sound", {}).get("foley", ""))
+		var takes = DB.table("audio").get("foley", {}).get(set_key, [])
+		if not (takes is Array) or (takes as Array).is_empty():
+			strike_bad.append(surf)
+			continue
+		for path in takes:
+			var st := _fresh(String(path))
+			if st == null or st.get_length() > 1.0 or _loops(st):
+				strike_bad.append(String(path))
+	check(strike_bad.is_empty(), "every surface's strike foley resolves, short and unlooped (%s)" % str(strike_bad))
 	var missing := 0
 	for surf in ["turf", "shingle", "plank", "snow"]:
 		for i in 4:
