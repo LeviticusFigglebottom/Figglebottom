@@ -102,8 +102,8 @@ void fragment() {
 	float floor_pool = smoothstep(0.18, -0.01, hy) * 0.22;
 	float frame = edge_x * edge_y;
 
-	vec3 deep_col = tint * vec3(0.52, 0.56, 0.64);
-	vec3 crest_col = tint * vec3(1.22, 1.15, 0.96);
+	vec3 deep_col = tint * vec3(0.72, 0.77, 0.87);
+	vec3 crest_col = tint * vec3(1.16, 1.17, 1.14);
 	vec3 col = mix(deep_col, crest_col, clamp(body * 0.65 + crest * 0.55, 0.0, 1.0));
 
 	float heart = 1.0 - abs(v_layer);     // 1 on the middle sheet
@@ -145,11 +145,11 @@ void fragment() {
 		float seam = abs(fract(bx) - 0.5);
 		float tone = hash13(vec3(floor(bx), 3.0, 7.0));
 		float grain = vnoise(vec3(v_lp.x * 30.0, v_lp.y * 1.6, floor(bx)));
-		vec3 wood = vec3(0.30, 0.27, 0.25) * (0.75 + 0.5 * tone) * (0.8 + 0.4 * grain);
+		vec3 wood = vec3(0.50, 0.50, 0.53) * (0.8 + 0.4 * tone) * (0.85 + 0.3 * grain);
 		float creep = smoothstep(0.5, 0.2, seam + (cloud1 - 0.5) * 0.5);   // frost thickest at the seams
 		float plank = heart * boards * (1.0 - creep * 0.85);
-		col = mix(col, wood, plank * 0.8);
-		col = mix(col, vec3(0.1, 0.09, 0.09), heart * boards * (1.0 - smoothstep(0.0, 0.03, 0.5 - seam)) * 0.7);
+		col = mix(col, wood, plank * 0.6);
+		col = mix(col, vec3(0.2, 0.2, 0.22), heart * boards * (1.0 - smoothstep(0.0, 0.03, 0.5 - seam)) * 0.6);
 		dress += heart * boards * 0.7;
 	}
 	// frozen sod: dark clods of turf lifted into the veil, thick at the foot
@@ -169,7 +169,7 @@ void fragment() {
 	float rimf = pow(graze, 2.0);
 	col = mix(col, crest_col, rimf * 0.5);
 
-	float a = (body * density * 0.8 + floor_pool + 0.12 + crest * 0.20) * mix(0.5, 0.62, heart);
+	float a = (body * density * 0.8 + floor_pool + 0.12 + crest * 0.20) * mix(0.5, 0.8, heart);
 	a = a + dress + rimf * 0.45;
 	a = clamp(a * frame, 0.0, 0.94);
 
@@ -177,10 +177,12 @@ void fragment() {
 	vec3 emis = col * (0.30 + body * 0.42 + crest * 0.55 + dress * 0.25);
 	if (heart > 0.5 && refraction > 0.001) {
 		vec2 bend = (q.xy - 0.5) * 0.045 * refraction * frame;
-		vec3 behind = textureLod(screen_tex, SCREEN_UV + bend, 1.5 + 2.0 * body).rgb;
+		// (level 0 and a second tap: the screen copy's higher mips are not
+		// reliable on every driver, and came out black under lavapipe)
+		vec3 behind = 0.5 * (textureLod(screen_tex, SCREEN_UV + bend, 0.0).rgb + textureLod(screen_tex, SCREEN_UV - bend * 0.6, 0.0).rgb);
 		float glass = clamp(0.55 * refraction, 0.0, 0.9) * frame;
 		// what shows through is the bent scene, tinted; the mist sits on it
-		vec3 through_c = behind * mix(vec3(1.0), tint * 1.05, 0.5);
+		vec3 through_c = behind * mix(vec3(1.0), tint * 1.05, 0.5) + tint * 0.11;
 		ALBEDO = vec3(0.0);
 		EMISSION = mix(through_c, col + emis * 0.6, a);
 		ALPHA = max(a, glass);

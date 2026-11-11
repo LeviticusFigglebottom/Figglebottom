@@ -9,7 +9,7 @@ render_mode blend_mix, depth_draw_opaque, cull_back, specular_schlick_ggx, diffu
 // ---------------------------------------------------------------------------
 
 uniform int state_mode = 1;
-uniform float radius = 2.6;
+uniform float radius = 2.55;
 uniform vec3 shallow_tint : source_color = vec3(0.62, 0.80, 0.80);
 uniform vec3 deep_tint : source_color = vec3(0.012, 0.035, 0.045);
 uniform float clarity = 0.7;      // metres of water before the bed is lost

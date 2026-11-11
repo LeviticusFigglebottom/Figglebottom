@@ -251,7 +251,7 @@ def snow_clump(buf, rng, centre, size, sides=7):
             buf.quad(rings[a][k], rings[b][k], rings[b][k + 1], rings[a][k + 1])
 
 
-def drift(buf, rng, half_len, half_w, height, segs=10, rows=3):
+def drift(buf, rng, half_len, half_w, height, segs=10, rows=3, taper=False):
     """Snow banked along the foot: a long low ridge with a ragged edge."""
     u0, u1 = U_SNOW
     grid = []
@@ -259,6 +259,9 @@ def drift(buf, rng, half_len, half_w, height, segs=10, rows=3):
         x = -half_len + 2 * half_len * i / segs
         row = []
         endf = math.sin(math.pi * i / segs) ** 0.5 * 0.5 + 0.5
+        if taper:
+            # a drift on its own runs out to nothing at both ends
+            endf = math.sin(math.pi * i / segs) ** 0.8
         for j in range(-rows, rows + 1):
             t = j / rows
             w = half_w * (1.0 + 0.25 * math.sin(x * 3.1 + j) + rng.normal(0, 0.06))

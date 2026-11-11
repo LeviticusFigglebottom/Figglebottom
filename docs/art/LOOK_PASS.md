@@ -156,3 +156,46 @@ Pairs: `docs/screens/look3_after_*.png`; the before for a shared camera is the m
 **Blocked:** eight more Tripo props (crate, salt pan, woodpile, net frame, wayside plaque, long-fire logs, door leaf, rime spike) have approved-looking reference images (`look2/img/*` in the session scratchpad, not committed) but the paid generation step was denied by the session's permission system. The same applies to rigging the ewes. Those pieces are still primitives.
 
 Pairs: `docs/screens/look4_after_*.png`; before = the matching `look3_after_*` / `look2_after_*`. New cameras (saltfell_steading thaw): grass_near `-14,23.3,2,-45,-28,62`, fire_above `-26.3,24.6,22.3,165,-62,55`; kettle_jetty `-79,3.6,-311,60,-14,70` (kettle_fjord thaw).
+
+---
+
+# Look pass 5 (branch `art/look-pass-5`)
+
+**Problem.** The real-GPU review (`docs/qa/GPU_VISUAL_DIFF.md`, job 5) ranked what still read as generated. Worst: Thornwold's RIME thorn ("flat glassy shards", "stacked card strips"), the frost veils (one card, gone edge-on), and the last box props. Paid Tripo generation was not available, so everything here is modelled in Blender scripts, built from the CC0 sets, or done in shaders.
+
+**How the modelled pieces are made** (`tools/art/procedural/`, run with the bpy venv):
+
+- `proc_common.py`: a mesh buffer with UVs (tubes on parallel-transport frames, lathes, boxes mapped in metres, lumpy blobs), an atlas builder (columns of committed CC0 sets, V tiling), and `export_glb` (textured Principled material, tangents, JPEGs embedded). The GLB carries base colour, normal and roughness, so `MaterialLib.hero_mat` treats it exactly like a Tripo mesh.
+- One script per family; every piece is seeded and deterministic. Re-running a script rewrites its GLBs byte-for-byte unless the script changed.
+
+**What changed.**
+
+1. **Frozen thorn** (`thorn_rime.py`; `Forest.HERO_HEDGES`, `ThornWall`).
+   - A skeleton is grown, then skinned: stems and arching canes rise and bend under their own weight, space colonisation fills the volume with twigs, radii follow the pipe model, a smooth displacement kinks it all. Thorns are set along the thin wood; snow lies in the forks and is banked at the foot.
+   - Pieces: two hedge sections (`hd_thorn3a/b`, 2.8 m x 3 m), a heap for the plugged drove road (`hd_thorn_heap`, style `thorn_heap`), and the Hedgelayer's raised wall (`hd_thornwall`).
+   - A section is set in **one course at the height it was grown for**. Stretching and stacking the old Tripo section is what produced the shards and the bands.
+   - Family `M_thorn_rime`: matt black wood under hoar frost, snow crust on top faces. `M_rime`'s gloss and glow on thin geometry was the "glass".
+   - The Tripo `hd_thorn2` is removed.
+2. **Frost veils** (`shaders/frost_veil.gdshader`, `src/world/frost_veil.gd`, `veil_frame.py`).
+   - Three bowed sheets, about 0.9 m through. Each carries its own mist with a parallax offset; the heart sheet refracts the scene behind it; sheets brighten where they turn edge-on.
+   - A frame of grown ice (`lm_veil_rime.glb`: crystals up both jambs to a pointed arch, icicles, snow at the feet) replaces the three wooden boxes. Frost drifts about it on CPU particles.
+   - Per holdfast (`FrostVeil.DRESS`, overridable from the area's `shader` block): the Netmender's frozen net (the unused Tripo `lm_frost_veil_net`) hangs in the hall door; sod clods at the barrow; sheet-ice cracks at the Kettle and the Coldwell; door boards at Tarnhall; the wood's thorn up the jambs in Thornwold; frozen fleece locks at the fold.
+   - The seal, the interaction zone and the aux walls are the same nodes with the same shapes. The dressing melts with the veil and returns on respawn.
+3. **Props** (`kit_props.py`, through `KitLib.HERO_PIECES`): woodpile, long-fire logs on an ash bed (lit: coals, two flames, sparks), salt pan, net frame with a real knotted mesh, wayside plaque, door leaf, rime spike. Same ids, footprints and colliders.
+   - **The Long Table's "white cubes" were its drinking horns**, drawn as boxes. They are horn beakers now (frozen over in RIME), with bread boards, and soapstone **fat lamps** with a rush wick. No candles (ORIGINALITY.md 3).
+   - The causeway "granite cube", the boat-shed "slab" and the box benches in the gallery were the primitive hearthstone and furniture, already replaced in passes 2 and 3; that gallery predates their merge.
+4. **Masks** (`masks.py`): the mourning masks are dished birch boards with eye holes cut through, a carved brow and a painted band.
+5. **Coldwell.** Landmarks take `"pose": "<clip>@<fraction>"` (`PoseHold`): the river dead hold a frame of their own clips instead of the bind pose. The spring has its own shader (`spring.gdshader`: bed visible at the rim, a dark still eye, slow rings), a cobble kerb (`lm_spring_kerb`) hides the Tripo wellhead's pale base slab, and it is iced over in RIME.
+6. **Ewes.** Unrigged still, but alive in THAW: the hall shader swings head and neck about the withers and flicks an ear (`graze_*` uniforms, set per GLB in `HERO_PIECES`), and `FlockWander` ambles each one a few steps at a time on a 2.6 m tether. Sixteen more are out. In RIME they are stills.
+7. **Thornwold draw cost.** The full thorn mesh is drawn only within 13 m and casts no shadow; the far mesh casts for it (`SHADOWS_ONLY`), then carries the middle and far bands as before. Counts are in the table below.
+
+## Rules added
+
+- **Modelled pieces:** put the generator in `tools/art/procedural/`, build on `proc_common`, texture from committed CC0 sets through `make_atlas`, add a PROVENANCE row. Author at the kit footprint and leave `length` out of `HERO_PIECES`; set `"tint": 0.0` when one atlas holds several materials.
+- **Frozen thorn is never stretched or stacked.** A different height is a different piece.
+- **A veil's look is dressing only.** Do not move the seal or the zone for the art.
+- **Rigged figures as dressing** need a `"pose"`.
+
+## Before/after cameras (pass 5)
+
+`tools/art/look5_shots.sh before|after [filter]`, 1280x720, `--shot-nohud`; pairs in `docs/screens/look5_{before,after}_*.png`. The gallery's veil cameras stand inside the veil, so each veil also has a camera 6-7 m out.

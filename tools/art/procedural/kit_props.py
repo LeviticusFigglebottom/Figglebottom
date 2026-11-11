@@ -306,7 +306,7 @@ def rime_spike():
         a = rng.random() * TAU
         vf.crystal(buf, rng, (math.cos(a) * 0.3, math.sin(a) * 0.3, 0.02), (math.cos(a), math.sin(a), 0.5), rng.uniform(0.15, 0.3), 0.035)
     d = pc.MeshBuf()
-    tr.drift(d, rng, 0.42, 0.4, 0.14, segs=6, rows=2)
+    tr.drift(d, rng, 0.5, 0.42, 0.14, segs=8, rows=3, taper=True)
     buf.merge(d)
     return buf, maps, {"smooth": False}
 
@@ -393,7 +393,28 @@ def fat_lamp():
     return buf, maps, {"auto_smooth_deg": 50}
 
 
+def spring_kerb():
+    """Three courses of river cobbles round the Coldwell spring: the kerb the
+    pool sits in (it hides the Tripo wellhead's pale base slab)."""
+    rng = np.random.default_rng(52)
+    maps, (stone, moss) = pc.make_atlas("spring_kerb", [
+        ("fieldstone", pc.tint((0.36, 0.37, 0.34), 1.0)), ("rock", pc.tint((0.30, 0.34, 0.26), 1.0))])
+    buf = pc.MeshBuf()
+    for course, (n, rad, z, sz) in enumerate(((29, 3.05, 0.2, 0.34), (27, 2.95, 0.64, 0.3), (25, 2.84, 1.0, 0.24))):
+        for k in range(n):
+            a = TAU * (k + 0.5 * course) / n + rng.normal(0, 0.03)
+            r = rad + rng.normal(0, 0.05)
+            col = moss if rng.random() < 0.3 else stone
+            u0 = col[0] + rng.random() * (col[1] - col[0]) * 0.4
+            pc.blob(buf, rng, (0, 0, 0), (TAU * rad / n * rng.uniform(0.52, 0.62), rng.uniform(0.26, 0.36), sz * rng.uniform(0.85, 1.15)),
+                    9, 6, u0, u0 + (col[1] - col[0]) * 0.55, rng.random(), rng.random() + 0.5, lump=0.1,
+                    xf=pc.xform(pos=(math.cos(a) * r, math.sin(a) * r, z + rng.normal(0, 0.03)), rot_z=a + math.pi / 2 + rng.normal(0, 0.12),
+                                rot_x=rng.normal(0, 0.12)))
+    return buf, maps, {}
+
+
 PIECES = {
+    "lm_spring_kerb": spring_kerb,
     "kit_woodpile_p": woodpile,
     "kit_hearth_logs_p": hearth_logs,
     "kit_salt_pan_p": salt_pan,
@@ -416,7 +437,8 @@ def main():
         if a.only and a.only != name:
             continue
         buf, maps, opts = fn()
-        pc.export_glb(os.path.join(OUT, name + ".glb"), name, buf, maps, **opts)
+        out_dir = OUT if name.startswith("kit_") else os.path.join(pc.ROOT, "assets", "models", "landmarks")
+        pc.export_glb(os.path.join(out_dir, name + ".glb"), name, buf, maps, **opts)
 
 
 if __name__ == "__main__":

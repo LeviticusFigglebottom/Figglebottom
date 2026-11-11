@@ -57,7 +57,7 @@ const TREE_FAR := 170.0
 const HEDGE_NEAR := 26.0
 ## the modelled thorn is ~20k triangles a section close up (every twig and
 ## thorn is geometry), so its full mesh is kept to the few sections in reach
-const THORN_NEAR := 13.0
+const THORN_NEAR := 11.0
 const HEDGE_MID := 60.0
 const HEDGE_FAR := 110.0
 const RANGE_MARGIN := 4.0

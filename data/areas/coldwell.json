@@ -102,20 +102,20 @@
   {
    "at": [
     922.0,
-    157.54,
+    157.81,
     -478.0
    ],
-   "radius": 2.6,
+   "radius": 2.55,
    "tag": "thaw",
    "mat": "M_spring"
   },
   {
    "at": [
     922.0,
-    157.54,
+    157.81,
     -478.0
    ],
-   "radius": 2.6,
+   "radius": 2.55,
    "tag": "rime",
    "mat": "M_ice_sheet"
   }
@@ -1714,6 +1714,32 @@
    "pose": "defeat@0.38"
   },
   {
+   "scene": "res://assets/models/landmarks/lm_spring_kerb.glb",
+   "at": [
+    922.0,
+    156.89,
+    -478.0
+   ],
+   "rot": 0,
+   "family": "M_stone"
+  },
+  {
+   "scene": "res://assets/models/landmarks/lm_wellhead_thaw.glb",
+   "at": [
+    922.0,
+    156.89,
+    -478.0
+   ],
+   "rot": 90,
+   "scale": 1.0,
+   "tag": "thaw",
+   "blocker": [
+    6.4,
+    2.6,
+    5.8
+   ]
+  },
+  {
    "scene": "res://assets/models/landmarks/lm_wellhead.glb",
    "at": [
     922.0,
@@ -1722,6 +1748,7 @@
    ],
    "rot": 90,
    "scale": 1.0,
+   "tag": "rime",
    "blocker": [
     6.4,
     2.6,

@@ -127,7 +127,7 @@ def main():
     # snow banked against both feet
     for sx in (-1, 1):
         d = pc.MeshBuf()
-        tr.drift(d, rng, 0.75, 0.55, 0.32, segs=6, rows=2)
+        tr.drift(d, rng, 0.85, 0.6, 0.3, segs=10, rows=3, taper=True)
         buf.merge(d, pc.xform(pos=(sx * 1.75, 0, 0)))
     out = os.path.join(pc.ROOT, "assets", "models", "landmarks", "lm_veil_rime.glb")
     pc.export_glb(out, "lm_veil_rime", buf, atlas(), smooth=False)

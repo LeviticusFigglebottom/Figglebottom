@@ -85,8 +85,15 @@ for k in range(8, len(RIVER) - 4, 6):
     LANDMARKS.append({"scene": scene, "at": [x + 0.8 * math.sin(k), r2(y - 0.25), z], "rot": r2(face), "tag": "rime", "pose": pose})
 
 # --- the Wellhead ---------------------------------------------------------------------
+# a kerb of river cobbles round the pool (modelled, tools/art/procedural/kit_props.py)
+LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_spring_kerb.glb", "at": at(WX, WZ, -0.05), "rot": 0, "family": "M_stone"})
+# the wellhead was generated frozen (ice basin, rime on every edge): that is
+# its RIME face. THAW takes a regrade of the same mesh, the ice-blue pulled
+# to wet mossed stone (tools/art/regrade_glb.py, row in PROVENANCE.md).
+LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_wellhead_thaw.glb", "at": at(WX, WZ, -0.05), "rot": 90, "scale": 1.0,
+                  "tag": "thaw", "blocker": [6.4, 2.6, 5.8]})
 LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_wellhead.glb", "at": at(WX, WZ, -0.05), "rot": 90, "scale": 1.0,
-                  "blocker": [6.4, 2.6, 5.8]})
+                  "tag": "rime", "blocker": [6.4, 2.6, 5.8]})
 GAP_A = 180.0                      # the ring opens toward the Upwater (west)
 STONES = []
 for k in range(14):
@@ -165,9 +172,10 @@ D = {
     "terrain": K.terrain_block(),
     "nav_bounds": [676, 40, -556, 964, 220, -364],
     "weather": {"gulls": False, "spindrift": 16},
-    # the spring: its own shader (clear rim, dark still eye); RIME: iced over
-    "water": [{"at": [r2(WX), r2(g(WX, WZ) + 0.6), r2(WZ)], "radius": 2.6, "tag": "thaw", "mat": "M_spring"},
-              {"at": [r2(WX), r2(g(WX, WZ) + 0.6), r2(WZ)], "radius": 2.6, "tag": "rime", "mat": "M_ice_sheet"}],
+    # the spring: its own shader (clear rim, dark still eye); RIME: iced over.
+    # It lies just over the wellhead model's own flat water, inside the kerb.
+    "water": [{"at": [r2(WX), r2(g(WX, WZ) + 0.87), r2(WZ)], "radius": 2.55, "tag": "thaw", "mat": "M_spring"},
+              {"at": [r2(WX), r2(g(WX, WZ) + 0.87), r2(WZ)], "radius": 2.55, "tag": "rime", "mat": "M_ice_sheet"}],
     "falls": FALLS,
     "hazards": [{"kind": "fall", "min": [676, -2, -556], "max": [964, 400, -364]}],
     "zones": [

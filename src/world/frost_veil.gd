@@ -19,7 +19,8 @@ var shader_params: Dictionary = {}
 ## "thorn" grows the wood's thorn up the frame, "net" hangs the frozen net.
 ## An area's "shader" block still overrides any of it.
 const DRESS := {
-	"hall_veil": {"props": "net"},
+	# (the hall's veil hangs in its doorway: sized to the door, not the gable)
+	"hall_veil": {"props": "net", "size": Vector2(2.5, 3.1)},
 	"open_barrow_veil": {"clods": 0.9, "tint": Color(0.80, 0.80, 0.74)},
 	"breathing_hole_veil": {"cracks": 0.85, "density": 0.5, "refraction": 1.0, "tint": Color(0.72, 0.86, 0.98)},
 	"long_table_veil": {"boards": 0.85, "tint": Color(0.78, 0.83, 0.90)},
@@ -51,13 +52,15 @@ var _aux_planes: Array = []
 
 func _ready() -> void:
 	add_to_group(RH.GROUP_RESPAWN_ON_REST)
+	var dress: Dictionary = DRESS.get(gate_id, {})
+	if dress.has("size"):
+		plane_size = dress["size"]
 	_plane = MeshInstance3D.new()
 	_plane.mesh = sheet_mesh(plane_size)
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/frost_veil.gdshader")
-	var dress: Dictionary = DRESS.get(gate_id, {})
 	for k in dress:
-		if k != "props":
+		if k != "props" and k != "size":
 			m.set_shader_parameter(String(k), dress[k])
 	for k in shader_params:
 		var v = shader_params[k]
