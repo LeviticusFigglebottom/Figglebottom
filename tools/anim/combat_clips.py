@@ -467,9 +467,11 @@ def sp_stab(c):
 
 
 # ------------------------------------------------------------------------ bow
+# The bow hand is rolled thumb-up (lrot pitch): the stave stands in the fist,
+# canted a little as a fowler holds it.
 BOW_READY = {"hips": [0, 0, -0.02, -62, 0, 0], "chest": [-18, 0, 0], "head": [78, 0],
              "footL": [-0.02, 0.14, 0, 0, 0], "footR": [0.04, -0.14, 0, -60, 0],
-             "lhand": [-0.10, 0.42, 1.18], "lrot": [-80, 0, 0], "lpole": [-0.7, 0, -0.7], "lfist": True,
+             "lhand": [-0.10, 0.42, 1.18], "lrot": [-80, -62, 0], "lpole": [-0.7, 0, -0.7], "lfist": True,
              "rhand": [0.10, 0.30, 1.12], "rrot": [70, 0, 0], "rpole": [0.6, -0.6, -0.5]}
 
 
@@ -480,14 +482,14 @@ def _bow(**kw):
 
 
 BOW_DRAWN = _bow(hips=[0, -0.02, -0.03, -74, -2, 0], chest=[-14, -3, 0], head=[86, 0],
-                 lhand=[-0.12, 0.66, 1.46], lrot=[-88, 0, 0],
+                 lhand=[-0.12, 0.66, 1.46], lrot=[-88, -78, 0],
                  rhand=[0.08, -0.04, 1.50], rrot=[80, 0, 0], rpole=[0.5, -1.0, 0.1])
 
 
 def bow_pull(c):
     """Raise the bow and draw to the cheek (the hold takes over at 0.72 s)."""
     rig = c.rig("onehand")
-    up = _bow(lhand=[-0.12, 0.62, 1.42], lrot=[-88, 0, 0], rhand=[0.02, 0.44, 1.42], rrot=[75, 0, 0],
+    up = _bow(lhand=[-0.12, 0.62, 1.42], lrot=[-88, -78, 0], rhand=[0.02, 0.44, 1.42], rrot=[75, 0, 0],
               hips=[0, 0, -0.02, -70, 0, 0], head=[84, 0])
     return rig.clip([(0.00, "inout", _bow()), (0.26, "out", up), (0.66, "inout", BOW_DRAWN),
                      (0.80, "inout", BOW_DRAWN)], c.fps)
@@ -510,8 +512,8 @@ def bow_loose(c):
     kicks and rolls forward, the chest opens; then both lower to the ready."""
     rig = c.rig("onehand")
     snap = dict(BOW_DRAWN, rhand=[0.16, -0.26, 1.50], rrot=[96, 0, 0], rpole=[0.4, -1.0, 0.2],
-                lhand=[-0.13, 0.70, 1.44], lrot=[-92, 8, 0], chest=[-22, -5, 0], hips=[0, -0.03, -0.03, -77, -3, 0])
-    follow = dict(snap, rhand=[0.20, -0.30, 1.44], lhand=[-0.13, 0.69, 1.40], lrot=[-94, 14, 0])
+                lhand=[-0.13, 0.70, 1.44], lrot=[-92, -70, 0], chest=[-22, -5, 0], hips=[0, -0.03, -0.03, -77, -3, 0])
+    follow = dict(snap, rhand=[0.20, -0.30, 1.44], lhand=[-0.13, 0.69, 1.40], lrot=[-94, -62, 0])
     return rig.clip([(0.00, "inout", BOW_DRAWN), (0.05, "out", snap), (0.20, "out", follow),
                      (0.60, "inout", _bow())], c.fps)
 
