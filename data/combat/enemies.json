@@ -3997,6 +3997,7 @@
   "release_flag": "ks_leadvoice_released",
   "release_card": "MAREN — RELEASED",
   "release_outsong": false,
+  "release_stays": true,
   "release_drop": {
    "item": "item_wren_band",
    "label": "Take the band",

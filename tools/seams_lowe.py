@@ -28,9 +28,12 @@ def seams(for_area):
     mid = BRIDGE["hinge_z"] + blen * 0.5
     sy = r2(S.height(PASS["x"], PASS["z"] + 4.0) + 0.3)
     ly = r2(S.height(PASS["x"], PASS["z"] - 4.0) + 0.3)
+    # the Saltfell lip is lower than the hinge: the lowered deck slopes down
+    # to rest on it (laid level, its far end was too high a step to climb)
+    far_drop = r2(max(0.0, by - 0.01 - S.height(BRIDGE["x"], BRIDGE["hinge_z"] + blen)))
     bridge = {"script": "res://src/world/drawbridge.gd", "at": [BRIDGE["x"], by, BRIDGE["hinge_z"]], "rot": 180,
               "params": {"flag": "lowe_bridge_down", "length": r2(blen), "width": 2.4,
-                         "operable": for_area == "lowe_barrows"}}
+                         "operable": for_area == "lowe_barrows", "far_drop": far_drop}}
     if for_area == "lowe_barrows":
         portals = [
             {"to": "saltfell_steading", "auto": True, "at": [PASS["x"], sy - 0.3, PASS["z"]], "zone": [PASS["w"], 5, 2],

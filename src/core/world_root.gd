@@ -24,6 +24,14 @@ func return_to_title() -> void:
 		World.save_game()
 	Game.arena_locked = false
 	get_tree().paused = false
+	if EndingDirector.active != null and is_instance_valid(EndingDirector.active):
+		EndingDirector.active.stop()
+	# (a seam, a door or a death may have raised another area since the front
+	# door raised one: put away the one that stands now. Left standing, the
+	# resumed journey was built on top of it, and its hearths turned the
+	# wrong one.)
+	if Game.current_area != null and is_instance_valid(Game.current_area):
+		_area = Game.current_area
 	for n in [_hud, _player, _area]:
 		if n != null and is_instance_valid(n):
 			remove_child(n)

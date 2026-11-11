@@ -176,7 +176,8 @@ func _physics_process(dt: float) -> void:
 
 ## Only heavy blows break it (SLICE.md 6: two heavy hits).
 func take_hit(packet: DamagePacket) -> void:
-	var heavy := packet.source != null and bool(packet.source.get("_atk_is_heavy"))
+	# (a foe's own swing can land on it too: it has no such field, and bool(null) is an error)
+	var heavy: bool = packet.source != null and packet.source.get("_atk_is_heavy") == true
 	if not heavy:
 		return
 	heavy_hits += 1

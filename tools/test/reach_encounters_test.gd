@@ -541,4 +541,19 @@ func _reach() -> void:
 	await _close(ui)
 	check(_lines_of("calder_boots") == _expected("calder_boots", 4), "Calder's boots: four lines, in order")
 	check(int(player.inventory.get("item_calder_boots", 0)) == 1, "the Bearer still has the boots")
+
+	print("== a Bearer who rested first: the boots shown to a Calder he never met")
+	for f in ["chapter_old_calder", "met_old_calder", "ks_calder_met", "ks_calder_hum", "ks_calder_boots_shown"]:
+		World.flags.erase(f)
+	ui = _talk("old_calder")
+	await ticks(2)
+	check(_all_lines(ui) == DB.npc("old_calder")["lines_when"][1]["lines"], "he answers the boots before he starts his tale")
+	check(World.flag("ks_calder_boots_shown") and not World.flag("ks_calder_met") and int(World.flag_val("chapter_old_calder", 0)) == 0,
+		"and the tale has not moved on")
+	await _close(ui)
+	ui = _talk("old_calder")
+	await ticks(2)
+	check(ui.text_label.text.begins_with("Hold still, Brokenhorn."), "the first audience comes next")
+	await _close(ui)
+	check(World.flag("ks_calder_met") and _lines_of("calder_boots") == _expected("calder_boots", 4), "and its line heads the thread again")
 	player.invulnerable = false

@@ -523,10 +523,15 @@ func _lowe() -> void:
 		"the tally-stick lies in front of where he knelt")
 	check(Game.find_hearth("hs_open_barrow") != null, "the Open Barrow becomes a Hearthstone")
 	check(tw.live_ridges() == 0 and tw.live_walls() == 0, "the cuts and walls sink")
+	# left lying, it must outlast a rebuilt Lowe (leaving, or save and resume)
+	await _build(RH.WState.RIME)
+	stick = _pickup("tally_stick")
+	check(stick != null and stick.item_id == "item_tally_stick", "left lying, the tally-stick waits in a rebuilt Lowe")
 	if stick != null:
 		stick._on_take(player)
 	check(int(player.inventory.get("item_tally_stick", 0)) == 1, "the Bearer takes the tally-stick")
 	await _build(RH.WState.RIME)
+	check(_pickup("tally_stick") == null, "and once taken it is not set down again")
 	check(_pickup("twin_spindles") != null, "the twins' spindles are on the threshold stone")
 	check(Game.find_hearth("hs_open_barrow") != null, "the hearth stays lit in a rebuilt Lowe")
 

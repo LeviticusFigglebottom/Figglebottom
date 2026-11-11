@@ -556,6 +556,14 @@ func _fjord() -> void:
 	var mitten := _pickup("ivo_mitten")
 	check(mitten != null and Vector2(mitten.global_position.x - hole.x, mitten.global_position.z - hole.z).length() < 0.3,
 		"the mitten lies in the new ice where the hole was")
+	# left where it lies, it is still there when the fjord is built again
+	await _build(RH.WState.RIME)
+	await ticks(10)
+	mitten = _pickup("ivo_mitten")
+	var mittens := area.find_children("*", "Pickup", true, false).filter(func(k): return (k as Pickup).pickup_id == "ivo_mitten")
+	check(mitten != null and mittens.size() == 1
+			and Vector2(mitten.global_position.x - hole.x, mitten.global_position.z - hole.z).length() < 0.3,
+		"walked away from, the mitten stays in the ice of a rebuilt fjord (%d)" % mittens.size())
 	if mitten != null:
 		mitten._on_take(player)
 	check(int(player.inventory.get("item_ivo_mitten", 0)) == 1 and World.flag("ks_ivo_mitten_found"),

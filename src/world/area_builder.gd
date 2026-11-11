@@ -35,6 +35,7 @@ static func build(area_id: String) -> Area:
 		var hz := HazardVolume.new()
 		hz.kind = String(spec.get("kind", "fall"))
 		hz.seconds = float(spec.get("seconds", -1.0))
+		hz.radius = float(spec.get("radius", -1.0))
 		var hmn := _v3(spec["min"])
 		var hmx := _v3(spec["max"])
 		hz.size = hmx - hmn
@@ -152,6 +153,7 @@ static func build(area_id: String) -> Area:
 		s.face_deg = float(spec.get("face", 0))
 		s.dead_once = spec.get("dead_once", false)
 		s.pose = String(spec.get("pose", ""))
+		s.absent_flag = String(spec.get("absent_flag", ""))
 		s.spawn_flag = "slain_" + spec.get("id", spec.get("enemy", "e"))
 		s.area_id = area_id
 		var tag: String = spec.get("tag", "rime")
@@ -186,7 +188,13 @@ static func build(area_id: String) -> Area:
 				and f.boss_spawner.dead_once
 				and World.area_flag(area_id, f.boss_spawner.spawn_flag)):
 			f.snap_cleared()
-	sync_npcs(area)
+	var late := {}     # flag-gated souls and finds, by list and index (sync_flagged)
+	var npc_specs: Array = def.get("npcs", [])
+	for i in npc_specs.size():
+		var spec: Dictionary = npc_specs[i]
+		if not _npc_ok(spec):
+			continue      # a soul may stand only before/after a turn of the story
+		late["npcs:%d" % i] = _npc(area, spec)
 	for spec in def.get("plaques", []):
 		if not _flag_ok(spec):
 			continue
@@ -205,25 +213,15 @@ static func build(area_id: String) -> Area:
 			sn.set(k, spec["params"][k])
 		area.attach(sn, spec.get("tag", "base"))
 		_place(sn, spec)
-	for spec in def.get("pickups", []):
+	var pickup_specs: Array = def.get("pickups", [])
+	for i in pickup_specs.size():
+		var spec: Dictionary = pickup_specs[i]
 		if not _flag_ok(spec):
 			continue    # quest relics stay unseen until their word is given
-		var k := Pickup.new()
-		k.pickup_id = spec.get("id", "pickup")
-		k.area_id = area_id
-		k.warmth = int(spec.get("warmth", 0))
-		k.item_id = spec.get("item", "")
-		k.item_count = int(spec.get("count", 1))
-		k.label = spec.get("label", "Take")
-		k.appear_flag = spec.get("appear_flag", "")
-		k.display_kit = spec.get("kit", "")
-		k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
-		k.set_flag = spec.get("set_flag", "")
-		k.look_text = spec.get("look", "")
-		k.display_lift = float(spec.get("lift", 0.0))
-		k.chip_heavy = bool(spec.get("chip_heavy", false))
-		area.attach(k, spec.get("tag", "base"))
-		_place(k, spec)
+		var k := _pickup(area, spec)
+		if spec.has("require_flag") or spec.has("absent_flag"):
+			late["pickups:%d" % i] = k
+	area.set_meta("flag_built", late)
 	for spec in def.get("flag_gates", []):
 		var fgate := FlagGate.new()
 		var gtag: String = spec.get("tag", "base")
@@ -486,6 +484,16 @@ static func _extent(def: Dictionary) -> Array:
 static func _v3(a) -> Vector3:
 	return Vector3(a[0], a[1], a[2]) if a is Array and a.size() >= 3 else Vector3.ZERO
 
+## A story flag turned while the Bearer stands in the area (a release). The
+## souls and relics gated on it ("require_flag" / "absent_flag") were placed
+## when the area was built, so without this the scene a release earns (Old
+## Pell and Ivo at the kettle, KETTLE.md 9) waited for the next load: the
+## first warming after the duel still showed the evening before it.
+static func refresh_flagged(area: Area) -> void:
+	if area == null or not is_instance_valid(area):
+		return
+	sync_flagged(area)
+
 static func _place(n: Node3D, spec: Dictionary) -> void:
 	n.position = _v3(spec.get("at", [0, 0, 0]))
 	n.rotation.y = deg_to_rad(float(spec.get("rot", 0)))
@@ -513,38 +521,90 @@ const STRUCTURAL_KITS := ["wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "fl
 static func _is_structural(kit) -> bool:
 	return String(kit) in STRUCTURAL_KITS
 
-## The souls of an area follow the story's flags: one may stand only before
-## or after a turn of the story ("absent_flag" / "require_flag"). Run at
-## build, and again each time the memory turns (Area.pre_transition and
+static func _npc(area: Area, spec: Dictionary) -> NPC:
+	var n := NPC.new()
+	n.npc_id = spec.get("id", "")
+	n.spec = spec
+	n.set_meta("state_tag", spec.get("tag", "thaw"))
+	area.attach(n, spec.get("tag", "thaw"))
+	_place(n, spec)
+	return n
+
+static func _pickup(area: Area, spec: Dictionary) -> Pickup:
+	var k := Pickup.new()
+	k.pickup_id = spec.get("id", "pickup")
+	k.area_id = area.area_id
+	k.warmth = int(spec.get("warmth", 0))
+	k.item_id = spec.get("item", "")
+	k.item_count = int(spec.get("count", 1))
+	k.label = spec.get("label", "Take")
+	k.appear_flag = spec.get("appear_flag", "")
+	k.display_kit = spec.get("kit", "")
+	k.display_scene = spec.get("scene", "")   # a Tripo mesh lying where it was found
+	k.set_flag = spec.get("set_flag", "")
+	k.look_text = spec.get("look", "")
+	k.display_lift = float(spec.get("lift", 0.0))
+	k.chip_heavy = bool(spec.get("chip_heavy", false))
+	area.attach(k, spec.get("tag", "base"))
+	_place(k, spec)
+	return k
+
+## A rest is a new visit too. Souls and finds gated on a story flag are
+## placed at area build, so after a release the Bearer had to leave the
+## region and come back before its THAW scene stood (Arne and his girls
+## outside the barrow) or its finds lay there (the twins' spindles).
+## Game.hearth_flow calls this as he kneels: what the story has since
+## allowed is placed, and a soul it no longer allows steps away.
+static func sync_flagged(area: Area) -> void:
+	var def: Dictionary = area.get_meta("def", {})
+	var late: Dictionary = area.get_meta("flag_built", {})
+	for list in ["npcs", "pickups"]:
+		var specs: Array = def.get(list, [])
+		for i in specs.size():
+			var spec: Dictionary = specs[i]
+			if list == "pickups" and not (spec.has("require_flag") or spec.has("absent_flag")):
+				continue
+			var ok := _npc_ok(spec) if list == "npcs" else _flag_ok(spec)
+			var key := "%s:%d" % [list, i]
+			var node = late.get(key)
+			var there: bool = node != null and is_instance_valid(node) and not (node as Node).is_queued_for_deletion()
+			if ok and not there:
+				if list == "pickups" and (_has_pickup(area, String(spec.get("id", "")))
+						or World.area_flag(area.area_id, "took_" + String(spec.get("id", "")))):
+					continue    # a release set it down itself (the tally-stick), or it is taken
+				var made: Node3D = _npc(area, spec) if list == "npcs" else _pickup(area, spec)
+				area.settle_new(made, String(spec.get("tag", "thaw" if list == "npcs" else "base")))
+				late[key] = made
+			elif not ok and there and list == "npcs":
+				(node as Node3D).visible = false
+				(node as Node).queue_free()
+				late.erase(key)
+	area.set_meta("flag_built", late)
+
+## The memory turning is a new visit as well (Area.pre_transition and
 ## apply_state): a Holdfast released in RIME must not leave the old THAW
 ## scene standing when the Bearer warms the place from inside it.
 static func sync_npcs(area: Area) -> void:
-	var specs: Array = (area.get_meta("def", {}) as Dictionary).get("npcs", [])
-	var standing := {}
-	for c in area.find_children("*", "NPC", true, false):
-		if c.has_meta("spec_i") and not c.is_queued_for_deletion():
-			standing[int(c.get_meta("spec_i"))] = c
-	for i in specs.size():
-		var spec: Dictionary = specs[i]
-		var want := _flag_ok(spec)
-		if World.spring() and String(spec.get("tag", "thaw")) == "thaw":
-			want = false      # after the Outsong nobody is remembered here (COLDWELL.md 10)
-		if want and not standing.has(i):
-			var n := NPC.new()
-			n.npc_id = spec.get("id", "")
-			n.spec = spec
-			n.set_meta("state_tag", spec.get("tag", "thaw"))
-			n.set_meta("spec_i", i)
-			area.attach(n, spec.get("tag", "thaw"))
-			_place(n, spec)
-		elif not want and standing.has(i):
-			var gone: Node3D = standing[i]
-			gone.visible = false
-			gone.queue_free()
+	if area.has_meta("flag_built"):
+		sync_flagged(area)
+
+static func _has_pickup(area: Area, id: String) -> bool:
+	for p in area.find_children("*", "Pickup", true, false):
+		if (p as Pickup).pickup_id == id and not p.is_queued_for_deletion():
+			return true
+	return false
+
+## A soul stands by the story's flags, and after the Outsong nobody is
+## remembered in THAW any more (COLDWELL.md 10).
+static func _npc_ok(spec: Dictionary) -> bool:
+	if World.spring() and String(spec.get("tag", "thaw")) == "thaw":
+		return false
+	return _flag_ok(spec)
 
 ## World-flag conditions on any spec: "require_flag" builds only once the
 ## flag is set; "absent_flag" builds only until it is. Evaluated at area
-## build, so the highland changes shape between visits, not mid-room.
+## build, so the highland changes shape between visits, not mid-room (souls
+## and finds are looked at again at every rest: sync_flagged).
 static func _flag_ok(spec: Dictionary) -> bool:
 	if spec.has("require_flag") and not World.flag(String(spec["require_flag"])):
 		return false

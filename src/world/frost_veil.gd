@@ -175,6 +175,12 @@ func _build_dress(props: String) -> void:
 ## A GLB instanced with every surface on the hall shader (RIME branch).
 static func _hero(path: String, family: String, tint: float) -> Node3D:
 	var inst: Node3D = (load(path) as PackedScene).instantiate()
+	# dressing only: a model that brings its own collider (the frozen net
+	# does) walled the Longhouse doorway off for good, in both memories and
+	# on the navmesh. The veil's seal is the only thing that stops anyone.
+	for body in inst.find_children("*", "CollisionObject3D", true, false):
+		body.get_parent().remove_child(body)
+		body.free()
 	for c in inst.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
 		for si in mi.mesh.get_surface_count():
@@ -221,9 +227,17 @@ func _build_aux_seals() -> void:
 		_aux_walls.append(wall)
 		_aux_planes.append(plane)
 
+## The seal's wall, up or down. The area's state swaps (and a navmesh
+## rebake) put every collider back on its remembered "orig_layer": keep that
+## in step, or a fallen veil comes back as an unseen wall across the door
+## (Tarnhall: the hall doors' rebake on release; anywhere: THAW and back).
+func _wall(body: StaticBody3D, up: bool) -> void:
+	body.collision_layer = (1 << (RH.L_WORLD_RIME - 1)) if up else 0
+	body.set_meta("orig_layer", body.collision_layer)
+
 func _set_aux(up: bool) -> void:
 	for w in _aux_walls:
-		(w as StaticBody3D).collision_layer = (1 << (RH.L_WORLD_RIME - 1)) if up else 0
+		_wall(w as StaticBody3D, up)
 	for p in _aux_planes:
 		(p as MeshInstance3D).visible = up
 
@@ -238,7 +252,7 @@ func _on_enter(player) -> void:
 			and intercept.has_method("on_parted") and intercept.on_parted(self, player)
 	# step through the veil
 	var through: Vector3 = global_position - global_transform.basis.z * 2.2
-	through.y = player.global_position.y
+	through.y = _ground_y(through, player.global_position.y)
 	var tw := create_tween()
 	player.lock_control(true)
 	tw.tween_property(player, "global_position", through, 0.7)
@@ -251,6 +265,16 @@ func _on_enter(player) -> void:
 				a.blink_to_player()
 		_engage_boss())
 	AudioDirector.sfx_at("res://assets/audio/veil_enter.wav", global_position, -2.0)
+
+## The ground on the far side. A veil may stand on a slope (the Open
+## Barrow's gap climbs 0.7 m across it): carried through at the height he
+## came in at, the Bearer ended under the turf and was thrown back out of a
+## sealed arena.
+func _ground_y(p: Vector3, fallback: float) -> float:
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3.UP * 3.0, p + Vector3.DOWN * 4.0, RH.M_WORLD_ALL)
+	q.exclude = [_seal.get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	return (hit["position"] as Vector3).y + 0.02 if not hit.is_empty() else fallback
 
 func _engage_boss() -> void:
 	if boss_spawner != null and boss_spawner.current != null and not boss_spawner.current.dead:
@@ -285,7 +309,7 @@ func respawn() -> void:
 		return   # the holdfast rests forever; the veil stays down
 	_engaged = false
 	_zone.enabled = true
-	_seal.collision_layer = 1 << (RH.L_WORLD_RIME - 1)
+	_wall(_seal, true)
 	_plane.transparency = 0.0
 	_plane.show()
 	_dress.scale = Vector3.ONE
@@ -305,13 +329,13 @@ func snap_cleared() -> void:
 		return
 	_engaged = true
 	_zone.enabled = false
-	_seal.collision_layer = 0
+	_wall(_seal, false)
 	_plane.hide()
 	_dress.hide()
 	_set_aux(false)
 
 func dissolve() -> void:
-	_seal.collision_layer = 0
+	_wall(_seal, false)
 	_zone.enabled = false
 	_set_aux(false)
 	Game.arena_locked = false

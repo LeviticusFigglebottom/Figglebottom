@@ -270,6 +270,8 @@ def audit(area_id):
             for e in d.get(key, []):
                 if e.get("tag", "base") not in ("base", state):
                     continue
+                if e.get("audit_skip"):
+                    continue   # (the spec says why: ground a story turn makes)
                 ex, _, ez = e["at"]
                 c = (int(round(ex - X0)), int(round(ez - Z0)))
                 near = any((c[0] + a, c[1] + b) in seen for a in (-1, 0, 1) for b in (-1, 0, 1))

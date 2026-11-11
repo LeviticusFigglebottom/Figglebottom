@@ -98,6 +98,10 @@ func on_boss_slain(area_id: String, boss: Node = null) -> void:
 	else:
 		toast.emit("The holdfast rests. The memory is yours to keep or let go.")
 	_release_leavings(boss, bcfg)
+	# whoever the release brings back (or sends away) in this area's other
+	# memory is placed now, not at the next load
+	if current_area != null and current_area_id == area_id:
+		AreaBuilder.refresh_flagged(current_area)
 	area_cleared.emit(area_id)
 	# the Outsong is sung for them; the world's music returns once it ends
 	var after := ""
@@ -137,6 +141,8 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 		k.display_scene = String(drop.get("scene", ""))
 		k.set_flag = String(drop.get("set_flag", ""))
 		var holder: Node = current_area.base if current_area != null else b.get_parent()
+		if bool(drop.get("at_seal", false)) and current_area != null:
+			holder = current_area.rime_layer   # (new ice is RIME's: warmed, the hole is open water)
 		holder.add_child(k)
 		var toward := Vector3.ZERO
 		if player != null and is_instance_valid(player):
@@ -341,6 +347,8 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 		p.enter_rest()
 		p.heal_full()
 	AudioDirector.sfx(AudioDirector.foley("coal_catch"), -3.0)   # the coal takes in the stone
+	if area != null:
+		AreaBuilder.sync_flagged(area)   # what the story has changed since the area was built
 	# and the Bearer hums, as always, three notes (WORLD.md 4.6; MUSIC.md)
 	if p != null and AudioDirector.cfg("hum", "") != "":
 		get_tree().create_timer(1.1).timeout.connect(func(): AudioDirector.sfx(String(AudioDirector.cfg("hum", "")), -11.0))

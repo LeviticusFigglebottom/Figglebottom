@@ -1404,7 +1404,8 @@
     "flag": "lowe_bridge_down",
     "length": 13.6,
     "width": 2.4,
-    "operable": false
+    "operable": false,
+    "far_drop": 0.39
    }
   }
  ],

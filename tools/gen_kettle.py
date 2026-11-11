@@ -86,10 +86,16 @@ for i, (hx, yaw) in enumerate(FISH):
     hz = edge_z(hx) - 6.5
     HOUSES.append({"id": "fishhouse_%d" % i, "center": [hx, r2(hz)], "size": [8, 8], "yaw": yaw, "y": DECK,
                    "doors": [["S", 0 if i != 1 else 1]], "gate_doors": [], "open": [], "wall_h": 2.8})
+    # the door: an 8 m front has its door bays 2 m either side of the middle
+    # (BuildingGen), so the walk to the shore runs from there. A walk from
+    # the middle met the wall, and nobody could go in for the ladle or the auger.
+    lx = -2.0 if i != 1 else 2.0
+    dx = hx + lx * math.cos(math.radians(yaw)) + 4.0 * math.sin(math.radians(yaw))
+    dz = hz - lx * math.sin(math.radians(yaw)) + 4.0 * math.cos(math.radians(yaw))
     BUILDINGS.append({"id": "fishhouse_%d" % i, "center": [hx, r2(hz)], "size": [8, 8], "yaw": yaw, "y": DECK,
-                      "doors": [[hx, r2(hz + 4)]], "open": []})
+                      "doors": [[r2(dx), r2(dz)]], "open": []})
     deck(hx - 4.6, hz - 4.6, hx + 4.6, hz + 4.6)                   # the platform
-    deck(hx - 1.1, hz + 4.0, hx + 1.1, edge_z(hx) + 5.6)          # the walk to the shore
+    deck(dx - 1.1, hz + 4.0, dx + 1.1, edge_z(dx) + 5.6)          # the walk to the shore
 
 # the trader's boat at the middle house, sail half furled (THAW)
 TRADER = (-38.5, edge_z(-38.5) - 14.0)
@@ -290,6 +296,13 @@ pickups = [
     # a sealer's harpoon frozen into the ice beside a boat that was leaving
     {"id": "sealer_harpoon", "at": [r2(B0[0] + 2.5), 0.06, r2(B0[1] + 1.5)], "item": "sealer_harpoon", "tag": "rime",
      "label": "Work the harpoon free", "scene": "res://assets/models/weapons/sealer_harpoon.glb"},
+    # Ivo's mitten in the new ice over the hole (KETTLE.md 9). The release sets
+    # one down at once (Game._release_leavings, same id); this entry keeps it
+    # there if the journey is saved and resumed before it is taken.
+    {"id": "ivo_mitten", "at": [HOLE[0], 0.17, HOLE[1]], "item": "item_ivo_mitten", "tag": "rime",
+     "label": "Chip the mitten free", "set_flag": "ks_ivo_mitten_found",
+     "scene": "res://assets/models/props/ivo_mitten.tscn", "require_flag": "ks_ice_cutter_released",
+     "audit_skip": "the hole under it is thin ice until the release seals it (release_seal)"},
     # WORLD.md 4.3: one set of footprints frozen into the ice out in the middle, going up the fjord
     {"id": "ice_tracks", "at": [TRACKS[0], 0.06, TRACKS[1]], "rot": -90, "tag": "rime",
      "scene": "res://assets/models/props/ice_tracks.tscn", "label": "Look at the tracks", "set_flag": "ks_ice_tracks_seen",

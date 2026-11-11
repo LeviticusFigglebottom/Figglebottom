@@ -14,6 +14,12 @@ var area_id := ""
 ## card or leavings of the holdfast it borrows the body of)
 var stand_in_for := ""
 
+## the area spec's "absent_flag": once that story flag is raised the foe is
+## gone for good (Tarnhall's seated guests, once the Host is released). The
+## builder leaves such a spawner out of a rebuilt area; this keeps a rest in
+## the same visit from seating them again.
+var absent_flag := ""
+
 var current: Enemy = null
 
 func _ready() -> void:
@@ -23,9 +29,13 @@ func _ready() -> void:
 func respawn() -> void:
 	if dead_once and area_id != "" and World.area_flag(area_id, spawn_flag):
 		_reseal.call_deferred()
+		_leave_released()
 		return
 	if current != null and is_instance_valid(current):
 		current.queue_free()
+	if absent_flag != "" and World.flag(absent_flag):
+		current = null
+		return
 	var ecfg: Dictionary = DB.table("enemies").get(enemy_id, {})
 	if ecfg.has("class"):
 		current = load(ecfg["class"]).new()
@@ -45,6 +55,24 @@ func respawn() -> void:
 	current.vis.rotation.y = deg_to_rad(face_deg)
 	if dead_once:
 		current.died.connect(func(_e): World.set_area_flag(area_id, spawn_flag))
+
+## A released Holdfast that stays where it sat (data "release_stays": the
+## Leadvoice, COLDWELL.md 6 and 9) is still there in a rebuilt area. Without
+## this a save resumed after her release found the wellhead empty, and both
+## endings played to nobody.
+func _leave_released() -> void:
+	var ecfg: Dictionary = DB.table("enemies").get(enemy_id, {})
+	if not bool(ecfg.get("release_stays", false)) or not ecfg.has("class"):
+		return
+	if current != null and is_instance_valid(current):
+		return
+	current = load(ecfg["class"]).new()
+	current.setup(enemy_id)
+	add_child(current)
+	current.global_position = global_position
+	current.vis.rotation.y = deg_to_rad(face_deg)
+	if current.has_method("rest_released"):
+		current.rest_released()
 
 ## A released Holdfast that closed a hole (release_seal) keeps it closed in a
 ## rebuilt area: the hole lies hole_ahead metres along the way it faced.

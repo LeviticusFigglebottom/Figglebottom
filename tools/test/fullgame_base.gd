@@ -20,6 +20,9 @@ var region := ""
 var aid := ""
 ## Fixture name (no extension) under tools/test/fixtures/ to start from.
 var start_fixture := ""
+## False for a walk that does not end on a live Bearer at a kept hearth in a
+## cleared `aid` (the endings): it checks its own way to the title and back.
+var round_trip := true
 
 var world: Node3D
 var area: Area
@@ -143,7 +146,11 @@ func _walk_to(to: Vector3, max_ticks := 900, tol := 1.0, fight := true) -> bool:
 			var f := _foe_near(7.0, true)
 			if f != null:
 				player.sim_move = Vector3.ZERO
+				# (the fight's own time counts: a foe that cannot be reached
+				# must not hold the walk for ever)
+				var f0 := Engine.get_physics_frames()
 				await _fight(16.0, 60.0)
+				waited += int(Engine.get_physics_frames() - f0)
 				if player.dead:
 					break
 		var d := to - player.global_position
@@ -178,9 +185,15 @@ func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
 			pass
 		k += 1
 		# a fight pulls the Bearer off the line; re-plan from where we stand
-		if fight and player.global_position.distance_to(p[k - 1]) > 2.5:
+		# (measured on the flat, and never without a tick: a waypoint on a deck
+		# overhead is "reached" from the ice under it, and re-planning there
+		# spun this loop for ever without yielding)
+		var off := player.global_position - p[k - 1]
+		if fight and Vector2(off.x, off.z).length() > 2.5:
 			p = _path(player.global_position, to)
 			k = 1
+			await ticks(1)
+			used += 1
 	return true
 
 ## A plain melee bot: close in, light swings, drink below 40%, roll back out
@@ -360,6 +373,10 @@ var _warmth_at_death := 0
 func _on_stilled() -> void:
 	_stilled += 1
 	_warmth_at_death = Game.warmth
+	var pl := Game.player as Node3D
+	print("  (stilled #%d: %s at %s, %s, carrying %d)" % [_stilled, Game.current_area_id,
+		str(pl.global_position.snapped(Vector3.ONE * 0.1)) if pl != null else "?",
+		"RIME" if World.get_area_state(Game.current_area_id) == RH.WState.RIME else "THAW", Game.warmth])
 
 func _settle() -> void:
 	await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
@@ -378,6 +395,7 @@ func _hearth_lit(hearth_id: String) -> bool:
 ## (prompted portal). `via` is a point on this side, at or just past the
 ## portal. Re-binds `area` once the new one stands. Returns true on arrival.
 func _cross(to_area: String, via: Vector3, max_ticks := 9000, fight := false) -> bool:
+	var stilled0 := _stilled
 	_halt = func(): return Game.current_area_id == to_area
 	await _walk_path(via, max_ticks, fight)
 	if Game.current_area_id != to_area:
@@ -391,6 +409,13 @@ func _cross(to_area: String, via: Vector3, max_ticks := 9000, fight := false) ->
 		if it != null and it.get_parent() is AreaPortal:
 			player.try_interact()
 	var ok := await _until(func(): return Game.current_area_id == to_area and player.input_enabled, 12.0)
+	if ok and _stilled != stilled0:
+		# a fall on the way wakes the Bearer at the last hearth, which may
+		# itself be in `to_area`: that is not a crossing
+		area = Game.current_area
+		print("  (cross to %s: the Bearer fell on the way and woke at %s)" % [to_area,
+			str(player.global_position.snapped(Vector3.ONE * 0.1))])
+		return false
 	if ok:
 		area = Game.current_area
 		await ticks(30)
@@ -489,7 +514,8 @@ func _die_and_recover(hearth_id: String) -> void:
 		await _walk_path(killer.global_position, 3600, false)
 	var t_out := 0
 	var last_poke := -9999
-	while _stilled == stilled0 and t_out < 60 * 180:
+	# a Bearer grown by several regions takes a long time to bring down
+	while _stilled == stilled0 and t_out < 60 * 480:
 		var f3 := _foe_near(30.0)
 		if f3 == null:
 			f3 = _foe_near(300.0, false, 60.0)
@@ -503,8 +529,8 @@ func _die_and_recover(hearth_id: String) -> void:
 				player.sim_move = Vector3(0, 0, -1)
 			else:
 				player.sim_move = Vector3.ZERO
-				# a blow now and then wakes it; never enough to win
-				if t_out - last_poke > 60 * 8 and player.try_attack(false):
+				# a blow wakes a foe that has not seen him; never enough to win
+				if f3.target == null and t_out - last_poke > 60 * 8 and player.try_attack(false):
 					last_poke = t_out
 		await ticks(3)
 		t_out += 3
@@ -540,7 +566,13 @@ func _die_and_recover(hearth_id: String) -> void:
 		await _settle()
 		if bm_tries == 1 or _near_interact("Reclaim") != null:
 			await _shot("breathmark")
-		check(_near_interact("Reclaim") != null, "the Breathmark offers itself")
+		var offered := _near_interact("Reclaim") != null
+		if not offered and bm_tries < 3:
+			# a fight on the way back pulled the Bearer off the spot: walk to it again
+			print("  (breathmark, try %d: at %s, %.1f m off the mark)" % [bm_tries,
+				str(player.global_position.snapped(Vector3.ONE * 0.1)), player.global_position.distance_to(bpos)])
+			continue
+		check(offered, "the Breathmark offers itself")
 		w_before = Game.warmth
 		bm_amount = int(World.breathmark["amount"]) if World.breathmark != null else 0
 		player.try_interact()
@@ -561,9 +593,16 @@ func _veil(near := Vector3.INF) -> FrostVeil:
 
 func _part_veil(veil: FrostVeil, fight := true) -> bool:
 	var front := veil.global_position + veil.global_transform.basis.z * 1.3
-	await _walk_path(front, 6000, fight)
-	if fight:
-		await _fight(10.0, 60.0)
+	# a fight on the way ends the walk early: take the path again, never the
+	# straight line through a wall
+	for attempt in 4:
+		await _walk_path(front, 6000, fight)
+		if fight:
+			await _fight(10.0, 60.0)
+		if player.dead:
+			return false
+		if Vector2(front.x - player.global_position.x, front.z - player.global_position.z).length() < 1.5:
+			break
 	await _walk_to(front, 300, 0.6, fight)
 	await _settle()
 	if _near_interact("Part") == null:
@@ -593,13 +632,17 @@ func _duel(boss_id: String, veil: FrostVeil, mult := 3.0, max_s := 600.0, each :
 	var t_fight := 0
 	var deaths := 0
 	while boss != null and not boss.dead and t_fight < int(60 * max_s):
-		if player.dead:
-			deaths += 1
-			await _until(func(): return not player.dead, 10.0)
-			await ticks(30)
-			area = Game.current_area
+		if player.dead or not Game.arena_locked:
+			# fallen, or the veil not yet parted again: never fight the
+			# Holdfast through the wall from outside its arena
+			if player.dead:
+				deaths += 1
+				await _until(func(): return not player.dead, 10.0)
+				await ticks(30)
+				area = Game.current_area
 			await _part_veil(veil if is_instance_valid(veil) else _veil(), true)
 			boss = _foe(boss_id)
+			t_fight += 120
 			continue
 		phases[boss.phase] = true
 		if boss.phase >= 2 and not shot_phases.has(boss.phase):
@@ -667,7 +710,12 @@ func _save_title_load() -> bool:
 	check(Keepsakes.journal() == journal_before, "the Keepsakes kept, in order")
 	var lost := []
 	for k in flags_before:
-		if str(World.flags.get(k)) != str(flags_before[k]):
+		var was = flags_before[k]
+		var now = World.flags.get(k)
+		# (a counted flag, a speaker's chapter, is an int until the save's
+		# JSON hands it back a float: 2 and 2.0 are the same chapter)
+		var numbers: bool = (was is int or was is float) and (now is int or now is float)
+		if (numbers and float(was) != float(now)) or (not numbers and str(now) != str(was)):
 			lost.append(k)
 	check(lost.is_empty(), "story flags kept (%s)" % str(lost))
 	var lost_a := []
@@ -711,7 +759,24 @@ func _run() -> void:
 	print("== resume from %s" % start_fixture)
 	world = (load("res://scenes/world.tscn") as PackedScene).instantiate()
 	add_child(world)
-	var began := await _until(func(): return Game.player != null and is_instance_valid(Game.player), 60.0)
+	if not DisplayServer.get_name().contains("headless"):
+		# with a window (the shots run) the world scene opens on its real
+		# front door: let the house card go and resume the hearth
+		await _until(func(): return _child_of_type(world, "res://src/ui/house_card.gd") != null, 30.0)
+		await _secs(1.0)
+		var key := InputEventKey.new()
+		key.keycode = KEY_SPACE
+		key.pressed = true
+		get_tree().root.push_input(key)
+		var title: Node = await _wait_child("res://src/ui/title_screen.gd", 240.0)
+		if title != null:
+			await _secs(1.0)
+			var mb: Array = title._main_box.get_children().filter(func(c): return c is Button)
+			mb[0].pressed.emit()
+			await ticks(4)
+			var sb: Array = title._slots_box.get_children().filter(func(c): return c is Button)
+			sb[0].pressed.emit()
+	var began := await _until(func(): return Game.player != null and is_instance_valid(Game.player), 240.0)
 	check(began, "the hearth resumes: the Bearer stands in the world")
 	if not began:
 		finish()
@@ -725,7 +790,10 @@ func _run() -> void:
 
 	await _region()
 
-	if not player.dead and is_instance_valid(player):
+	# the next region starts from this save: a fall the walk did not notice
+	# would leave its warmth lying behind for good
+	check(World.breathmark == null, "no Breathmark is left lying behind (%s)" % str(World.breathmark))
+	if round_trip and is_instance_valid(player) and not player.dead:
 		if await _save_title_load():
 			await _after_load()
 	if write_fixture and fails == 0:

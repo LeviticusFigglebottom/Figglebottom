@@ -116,6 +116,9 @@ func _ready() -> void:
 	World.flag_raised.connect(_on_flag_raised)
 	Juice.post_flash_requested.connect(_on_post_flash)
 	StateDirector.transition_started.connect(_on_transition)
+	visibility_changed.connect(func():
+		if _title_layer != null and is_instance_valid(_title_layer):
+			_title_layer.visible = visible)
 	if Game.player != null:
 		_bind_player(Game.player)
 	else:
@@ -885,9 +888,12 @@ func clear_area_title() -> void:
 		if box != null:
 			var tw := box.create_tween()
 			tw.tween_property(box, "modulate:a", 0.0, 0.25)
-		var layer_ref := _title_layer
+		# (by id: the card's own fade may free it first, and a freed capture
+		# logs an engine error every time)
+		var layer_id := _title_layer.get_instance_id()
 		get_tree().create_timer(0.3).timeout.connect(func():
-			if is_instance_valid(layer_ref):
+			var layer_ref := instance_from_id(layer_id) as Node
+			if layer_ref != null and is_instance_valid(layer_ref):
 				layer_ref.queue_free())
 		_title_layer = null
 
@@ -900,6 +906,9 @@ func show_area_title(text: String, hold := 2.2) -> void:
 		_title_layer.queue_free()
 	_title_layer = CanvasLayer.new()
 	_title_layer.layer = 11
+	# (a layer inside a layer does not follow its parent's visibility: an
+	# ending that has put the HUD away wants no card over it either)
+	_title_layer.visible = visible
 	add_child(_title_layer)
 	var box := Control.new()
 	box.set_anchors_preset(Control.PRESET_FULL_RECT)

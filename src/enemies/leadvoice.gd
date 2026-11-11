@@ -113,6 +113,8 @@ func take_hit(packet: DamagePacket) -> void:
 	if is_invulnerable():
 		return
 	var was_up := stood
+	if packet.source != null and packet.source.is_in_group("player"):
+		packet.amount *= Game.test_boss_dmg_mult   # 1.0 outside the full-game walk
 	if phase == 3:
 		# on her feet, a blade is nothing to her: only the verses count
 		var keep := hp
@@ -224,6 +226,7 @@ func gap_dir() -> Vector3:
 	return Vector3(-sin(a), 0, -cos(a))
 
 var _home_yaw := 0.0
+var _seat := Vector3.INF
 
 ## They stand up between her and the Bearer (or come in through the gap),
 ## already turned to him: in the way.
@@ -284,7 +287,14 @@ func _st_extra(dt: float) -> void:
 func _physics_process(dt: float) -> void:
 	if _home_yaw == 0.0 and state == ES.IDLE:
 		_home_yaw = vis.rotation.y
+	if _seat == Vector3.INF:
+		_seat = global_position
 	super._physics_process(dt)
+	# she does not move from where she sits (COLDWELL.md 6): a Bearer who
+	# rolled into her and came up inside her body was pushing her off her
+	# seat, a hand's width at a time
+	global_position.x = _seat.x
+	global_position.z = _seat.z
 	if dead and not released:
 		return
 	velocity.x = 0
@@ -435,6 +445,12 @@ func _release_flow() -> void:
 			hud.hide_boss()
 	if not _engaged_by_veil:
 		Game.on_boss_slain(Game.current_area_id, self)
+		# woken from between the stones, never through the veil: it falls all
+		# the same. Left standing, it could still be parted after her release,
+		# and sealed the Coldwell's seam (arena_locked) with nobody to fight.
+		for v in get_tree().get_nodes_in_group(RH.GROUP_RESPAWN_ON_REST):
+			if v is FrostVeil and (v as FrostVeil).boss_spawner != null and (v as FrostVeil).boss_spawner.current == self:
+				(v as FrostVeil).dissolve()
 	_second_drop()
 	released_boss.emit()
 
@@ -459,6 +475,18 @@ func _second_drop() -> void:
 	toward = toward.normalized() if toward.length() > 0.1 else gap_dir()
 	k.global_position = global_position + toward * float(drop.get("ahead", 2.0)) \
 			+ toward.cross(Vector3.UP) * float(drop.get("side", 1.3)) + Vector3.UP * 0.02
+
+## Released on an earlier visit (data "release_stays"; the spawner calls
+## this in a rebuilt area): sat as she was left, with nothing to fight.
+func rest_released() -> void:
+	released = true
+	dead = true
+	stood = true
+	hp = 0.0
+	_set_state(ES.DEAD)
+	sing_zone.enabled = false
+	hurtbox.set_deferred("monitorable", false)
+	_sit(0.0)
 
 ## She stays where she sat; no dissolve.
 func _fade_out() -> void:

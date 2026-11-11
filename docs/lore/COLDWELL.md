@@ -254,6 +254,7 @@ Pieces 1, 3 and 4 were written in `WORLD.md` but not placed. They are placed now
 ## 9. The release beat and what she leaves
 
 - **In the arena:** the third verse; she sits; the rime ridges fall; the Unsung go; the veil melts; **MAREN — RELEASED**; silence.
+- **She stays sat** (`release_stays`): in a rebuilt Coldwell (a save resumed, a walk down to the Reach and back) she is still there, released, until an ending takes her.
 - **Flag:** `ks_leadvoice_released`.
 - **Drops:** `item_wren_band` (`release_drop`, raises `ks_wren_band_found`) and `item_maren_mask` (`release_drop2`), side by side in front of her.
 - **Warmth:** none.
@@ -295,7 +296,7 @@ Both run from the `ending_choice` hook through `EndingDirector` (ADR 0013). Ever
 
 ### Credits
 
-One column in the house type on a soft dark band, rolling up once, slowly (`CreditsUI`, `game.json` `credits`). The game's name, the house, the tools. A knot at the foot. No dedication, no last line.
+One column in the house type on a soft dark band, rolling up once, slowly (`CreditsUI`, `game.json` `credits`). The game's name, the house, the tools. A knot at the foot. No dedication, no last line. Enter lets them go early (they fade as they would at the foot); nothing on screen says so. Space and E stay the Bearer's on the walk out.
 
 ---
 
