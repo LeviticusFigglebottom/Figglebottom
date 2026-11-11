@@ -157,7 +157,8 @@ static func _decks(area: Area, t: Terrain, def: Dictionary, rng: RandomNumberGen
 		var mx: Array = b["max"]
 		var sx := float(mx[0]) - float(mn[0])
 		var sz := float(mx[2]) - float(mn[2])
-		if float(mx[1]) - float(mn[1]) > 0.6 or minf(sx, sz) < 2.2 or maxf(sx, sz) < 5.0:
+		# a deck with room to walk round a creel: never a jetty or a plank bridge
+		if float(mx[1]) - float(mn[1]) > 0.6 or minf(sx, sz) < 4.5 or maxf(sx, sz) < 5.0:
 			continue
 		var top := float(mx[1])
 		# decks only: timber well clear of the land under it, or over water
@@ -256,12 +257,14 @@ static func _in_thicket(def: Dictionary, p: Vector3, r: float) -> bool:
 				return true
 	return false
 
-## ks scales the keep-out radii: a single small prop may stand closer.
+## ks scales the keep-out round dressing (props, landmarks, finds): a single
+## small prop may stand closer to those. Gates, hearths, portals, foes and
+## veils always keep their full clearance.
 static func _free(def: Dictionary, p: Vector3, r: float, ks := 1.0) -> bool:
 	for key in KEEP_OUT:
 		for sp in def.get(key, []):
 			var at: Array = sp.get("at", [])
-			if at.size() >= 3 and Vector2(p.x - float(at[0]), p.z - float(at[2])).length() < r + float(KEEP_OUT[key]) * ks:
+			if at.size() >= 3 and Vector2(p.x - float(at[0]), p.z - float(at[2])).length() < r + float(KEEP_OUT[key]) * (ks if key in ["props", "pieces", "landmarks", "pickups", "plaques"] else 1.0):
 				return false
 	var st: Array = def.get("start", {}).get("pos", [])
 	if st.size() >= 3 and Vector2(p.x - float(st[0]), p.z - float(st[2])).length() < r + 9.0:
