@@ -1,5 +1,5 @@
 {
- "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7, docs/lore/TARNHALL.md §7, docs/lore/THORNWOLD.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md, KETTLE.md, TARNHALL.md and THORNWOLD.md.",
+ "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7, docs/lore/TARNHALL.md §7, docs/lore/THORNWOLD.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. New steps and the Smudge thread are from docs/lore/POI.md. Lines are verbatim from SLICE.md, LOWE.md, KETTLE.md, TARNHALL.md and THORNWOLD.md.",
  "toast": "A keepsake is remembered.",
  "threads": [
   {
@@ -17,6 +17,10 @@
     {
      "flag": "ks_ingra_rye",
      "line": "Ingra said he was a good dog."
+    },
+    {
+     "flag": "ks_ingra_bowls",
+     "line": "Ingra was three bowls short. She had known she was three short."
     },
     {
      "flag": "ks_ingra_count",
@@ -61,6 +65,10 @@
     {
      "flag": "ks_hesk_tongs",
      "line": "Hesk said they were never that good, and took them."
+    },
+    {
+     "flag": "ks_hesk_iron",
+     "line": "Hesk said he would have Arne's spade back to him by the morning."
     },
     {
      "flag": "ks_hesk_wind",
@@ -219,6 +227,28 @@
     {
      "flag": "ks_calder_boots_shown",
      "line": "Calder says the boots are his. He says he has his on."
+    }
+   ]
+  },
+  {
+   "id": "smudge",
+   "title": "Smudge",
+   "steps": [
+    {
+     "flag": "ks_smudge_named",
+     "line": "Calder counts a ewe called Smudge last, every time."
+    },
+    {
+     "flag": "ks_smudge_found",
+     "line": "One ewe is not facing the fold. She is at the sheiling door."
+    },
+    {
+     "flag": "ks_smudge_told",
+     "line": "Calder says Smudge comes to a pocket. She has never once come to a call."
+    },
+    {
+     "flag": "ks_smudge_fed",
+     "line": "Smudge ate the oatcake and went back to the door."
     }
    ]
   },

@@ -640,6 +640,12 @@ func _icon_for(id: String) -> String:
 		"item_fold_tally": "fold_tally", "item_calder_boots": "boots", "item_shepherd_whistle": "whistle",
 		"armour_fleece": "armour_fleece", "armour_hall": "armour_hall", "item_latch_wool": "latch_wool", "item_wren_band": "woad_band",
 		"item_maren_mask": "bare_mask",
+		# points of interest: Saltfell
+		"item_thole_pin": "thole_pin", "item_pan_salt": "pan_salt", "item_three_bowls": "three_bowls",
+		# points of interest: the Lowe
+		"item_birch_cup": "birch_cup", "item_spade_iron": "spade_iron", "item_small_spades": "small_spades",
+		# points of interest: Shepherd's Reach
+		"item_calder_blanket": "blanket",
 	}
 	return "res://assets/ui/icons/%s.png" % by.get(id, "relic")
 

@@ -633,6 +633,81 @@ def icon_bare_mask():
     return im
 
 
+# --- points of interest: Saltfell (docs/lore/POI.md 2)
+def icon_thole_pin():
+    """A whittled peg with a shoulder: thick above, thin where it sits in the gunwale."""
+    im, d = canvas()
+    d.polygon(rot([(56, 14), (72, 14), (74, 62), (56, 62)], 28), fill=INK)
+    d.polygon(rot([(59, 62), (70, 62), (67, 112), (62, 112)], 28), fill=INK)
+    d.line(rot([(60, 22), (61, 56)], 28), fill=DARK, width=2)
+    return im
+
+
+def icon_pan_salt():
+    """A loaf of grey salt, scorched dark along the bottom."""
+    im, d = canvas()
+    d.chord((14, 34, 114, 122), 180, 360, fill=INK)
+    d.rounded_rectangle((14, 76, 114, 96), radius=6, fill=DARK)
+    d.line([(40, 52), (52, 60)], fill=DARK, width=2)
+    d.line([(70, 48), (84, 58)], fill=DARK, width=2)
+    return im
+
+
+def icon_three_bowls():
+    """Three bowls, one inside the next."""
+    im, d = canvas()
+    for i, (y, w) in enumerate(((84, 50), (66, 44), (48, 38))):
+        d.chord((64 - w, y - w * 0.55, 64 + w, y + w * 0.55), 0, 180, fill=INK if i != 1 else DARK)
+        d.line([(64 - w, y), (64 + w, y)], fill=DARK if i != 1 else INK, width=3)
+    d.ellipse((34, 40, 94, 54), fill=ICE)
+    return im
+
+
+# --- points of interest: the Lowe (docs/lore/POI.md 3)
+def icon_birch_cup():
+    """A small cup left upside down: rim on the ground, foot up."""
+    im, d = canvas()
+    d.polygon([(30, 96), (98, 96), (84, 44), (44, 44)], fill=INK)
+    d.rounded_rectangle((46, 30, 82, 46), radius=5, fill=INK)
+    d.line([(24, 98), (104, 98)], fill=DARK, width=4)
+    d.line([(50, 58), (48, 84)], fill=DARK, width=2)
+    return im
+
+
+def icon_spade_iron():
+    """A spade blade with an empty socket: one half ground bright, one not started."""
+    im, d = canvas()
+    d.polygon([(40, 44), (88, 44), (88, 104), (64, 116), (40, 104)], fill=DARK)
+    d.polygon([(64, 44), (88, 44), (88, 104), (64, 116)], fill=INK)
+    d.rounded_rectangle((54, 14, 74, 46), radius=4, fill=DARK)
+    d.ellipse((58, 16, 70, 26), fill=(0, 0, 0, 0))
+    d.polygon([(88, 52), (102, 56), (102, 76), (88, 80)], fill=INK)
+    return im
+
+
+def icon_small_spades():
+    """Two short turf spades side by side, T-grips, blades a hand wide."""
+    im, d = canvas()
+    for x, top in ((44, 22), (82, 28)):
+        d.line([(x, top), (x, 88)], fill=INK, width=5)
+        d.line([(x - 12, top), (x + 12, top)], fill=INK, width=5)
+        d.polygon([(x - 10, 84), (x + 10, 84), (x + 10, 110), (x, 116), (x - 10, 110)], fill=DARK)
+        d.line([(x - 4, top + 14), (x + 4, top + 14)], fill=DARK, width=2)
+    d.line([(78, 48), (86, 48)], fill=DARK, width=2)
+    return im
+
+
+# --- points of interest: Shepherd's Reach (docs/lore/POI.md 7)
+def icon_blanket():
+    """A blanket folded in four, the corners squared."""
+    im, d = canvas()
+    for i in range(4):
+        y = 84 - i * 14
+        d.rounded_rectangle((22, y, 106, y + 12), radius=3, fill=INK if i % 2 == 0 else DARK)
+    d.line([(22, 40), (106, 40)], fill=DARK, width=2)
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in list(globals().items()):

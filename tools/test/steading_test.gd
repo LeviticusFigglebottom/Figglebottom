@@ -116,7 +116,8 @@ func _run() -> void:
 		"one hearth on the Strand, one on the shelf")
 	check(_awake_foes().size() == 0, "no enemies awake in thaw")
 	var npcs := area.thaw_layer.find_children("*", "NPC", true, false)
-	check(npcs.size() == 2, "Ingra and Brede keep the thaw")
+	# (the two salt-boilers in the salt house are voices, never seen: POI.md 2.2)
+	check(npcs.filter(func(n): return not DB.npc((n as NPC).npc_id).get("unseen", false)).size() == 2, "Ingra and Brede keep the thaw")
 	check(player.is_on_floor() and absf(player.global_position.y - area.terrain.height_at(
 		player.global_position.x, player.global_position.z)) < 0.6, "the Bearer stands on the shingle")
 	check(area.get_tree().get_nodes_in_group("hazards").size() >= 3, "drown, ravine and fall volumes guard the edges")

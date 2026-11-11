@@ -17,6 +17,11 @@ var _vis: CharVisual
 func _ready() -> void:
 	cfg = DB.npc(npc_id)
 	cfg["id"] = npc_id
+	if cfg.get("unseen", false):
+		# a voice from inside a house or off down the road (POI.md): no body,
+		# nothing to walk into, nobody to speak to; only what is overheard
+		_overhear = cfg.get("overhear", [])
+		return
 	_vis = CharVisual.new()
 	add_child(_vis)
 	# a Tripo villager (npcs.json "model"); the mannequin stands in otherwise
@@ -78,9 +83,11 @@ func _ready() -> void:
 var _look_t := 6.0
 
 func _physics_process(dt: float) -> void:
-	if _vis == null or not is_visible_in_tree():
+	if not is_visible_in_tree():
 		return
 	_tick_overhear(dt)
+	if _vis == null:
+		return
 	if seated:
 		return
 	if _vis.is_humanoid():

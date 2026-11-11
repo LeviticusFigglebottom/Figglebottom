@@ -102,7 +102,8 @@ for i in range(len(L.ROAD) - 1):
         z = az + dz * t + nz * side * 4.2
         place.append({"kind": "standing_stone", "at": [r2(x), r2(z)], "scale": 1.3, "rot": r2((i * 53 + t * 90) % 360)})
 # cut peat stacked to dry at the bog's edge
-for (x, z, r) in [(-60, -170, 20), (-63, -175, 75), (-22, -176, -30), (-20, -200, 10), (-58, -205, 44)]:
+# (the two that stood at Hesk's fire are the peat wall along the cutting's lip now: POI.md 3.3)
+for (x, z, r) in [(-22, -176, -30), (-20, -200, 10), (-58, -205, 44)]:
     place.append({"kind": "peat_stack", "at": [x, z], "rot": r})
 # the island of cut peat in the bog
 for k in range(4):
@@ -191,6 +192,141 @@ pickups = [
      "require_flag": "ks_turfwright_released"},
 ]
 
+# ----------------------------------------------------------------- points of interest
+# docs/lore/POI.md 3, and the Lowe's own prop set (docs/art/BIOMES.md). Every
+# piece here is set by hand, never by the scatter rules, so it survives a
+# regenerate.
+WAYSIDE_CLEAR = []       # [x, z, r]: ground Wayside leaves open
+POI_CLEAR = []           # the same for the scatter rules
+NPCS_POI, PLAQUES_POI = [], []
+
+
+def prop(kit, x, z, rot=0, tag="base", **kw):
+    d = {"kit": kit, "at": at(x, z), "rot": r2(rot)}
+    if tag != "base":
+        d["tag"] = tag
+    d.update(kw)
+    PROPS.append(d)
+    POI_CLEAR.append([r2(x), r2(z), 2.4])
+    return d
+
+
+def barrow_at(bid, ox, oz):
+    """A point in a barrow's own frame (x across, +z out of the door) on the map."""
+    b = [b for b in list(L.LONG_BARROWS) + [L.TWIN] if b[0] == bid][0]
+    return rot_off(b[1], b[2], DOORS[bid][0], ox, oz)
+
+
+BY = {b[0]: b for b in L.LONG_BARROWS}
+
+# --- 3.1 lw_bread_mound: the Bread Mound (on top of kin_b) ---------------------
+# Sod steps up the mound's back shoulder; on top, THAW: a cloth, crumbs and an
+# upturned cup; RIME: the cloth is gone and the cup is frozen to the turf.
+KB = BY["kin_b"]
+KB_YAW = DOORS["kin_b"][0]
+KB_TOP = 2.6 + KB[3] * 0.12 - 0.2                      # the mound's crown over its pad (building_gen._barrow)
+_sx, _sz = barrow_at("kin_b", 0.0, -(KB[4] * 0.5 + 0.6) - 1.0)
+prop("lw_mound_steps", _sx, _sz, KB_YAW + 180, collide=True)
+BREAD = barrow_at("kin_b", 0.0, -0.9)                  # the crown (the mound sits 0.6 m back of its pad's middle)
+prop("lw_bread_cloth", BREAD[0], BREAD[1], KB_YAW + 20, tag="thaw", collide=False, lift=r2(KB_TOP), settle=True)
+CUP = barrow_at("kin_b", 0.62, -0.7)
+prop("lw_birch_cup", CUP[0], CUP[1], 0, tag="thaw", collide=False, lift=r2(KB_TOP), settle=True)
+BREAD_CUP = {"id": "birch_cup", "at": at(CUP[0], CUP[1]), "item": "item_birch_cup", "kit": "lw_birch_cup", "tag": "rime",
+             "label": "Prise the cup off the turf", "raise": r2(KB_TOP), "settle": True}
+_px, _pz = barrow_at("kin_b", 1.5, -(KB[4] * 0.5 + 0.6) - 2.9)
+prop("lw_kin_post", _px, _pz, KB_YAW + 160)
+NPCS_POI.append({"id": "bread_family", "at": at(KB[1], KB[2]), "rot": 0, "tag": "thaw"})
+
+# --- 3.2 lw_last_mound: the Last Mound (the door of kin_d) ----------------------
+# THAW: one fresh bunch on the door turf. RIME: one for every evening, heaped
+# to the height of the door beside it and spilling across its foot.
+KD_YAW = DOORS["kin_d"][0]
+_bx, _bz = door_front("kin_d", 0.55)
+prop("lw_heather_bunch", _bx, _bz, KD_YAW + 70, tag="thaw", collide=False)
+HEAP = barrow_at("kin_d", -1.7, BY["kin_d"][4] * 0.5 + 0.3)
+prop("lw_heather_heap", HEAP[0], HEAP[1], KD_YAW, tag="rime", collide=False)
+_hx, _hz = barrow_at("kin_d", -1.9, BY["kin_d"][4] * 0.5 + 0.55)
+BLOCKERS.append({"min": [r2(_hx - 0.6), g(_hx, _hz), r2(_hz - 0.6)], "max": [r2(_hx + 0.6), r2(g(_hx, _hz) + 1.2), r2(_hz + 0.6)], "tag": "rime"})
+_px, _pz = barrow_at("kin_d", 3.3, BY["kin_d"][4] * 0.5 + 3.4)
+PLAQUES_POI.append({"at": at(_px, _pz), "rot": r2(KD_YAW + 200), "tag": "rime",
+                    "text": "THE LAST MOUND\n\nHeather in bunches, one for every evening.\nThe ones at the bottom have gone to dust. All of it is purple."})
+_px, _pz = barrow_at("kin_d", 3.9, BY["kin_d"][4] * 0.5 + 0.9)
+prop("lw_kin_post", _px, _pz, KD_YAW + 15)
+
+# --- 3.3 lw_hesk_fire: Hesk's Fire (the peat cutting west of the road) ----------
+# His furnace dug into the peat wall behind him. RIME: cold, and the job Arne
+# was waiting on lies on the edging stone, one side done.
+HESK = (-58.0, -166.0)
+HESK_ROT = 238.0
+_hf = (-math.sin(math.radians(HESK_ROT)), -math.cos(math.radians(HESK_ROT)))     # the way he faces
+FURNACE = (HESK[0] - _hf[0] * 2.7, HESK[1] - _hf[1] * 2.7)
+prop("lw_bloomery", FURNACE[0], FURNACE[1], math.degrees(math.atan2(_hf[0], _hf[1])))
+EDGING = (HESK[0] + _hf[1] * 1.7 - _hf[0] * 0.6, HESK[1] - _hf[0] * 1.7 - _hf[1] * 0.6)      # at his right hand
+prop("lw_edging_stone", EDGING[0], EDGING[1], HESK_ROT + 90)
+SPADE_IRON = {"id": "spade_iron", "at": at(EDGING[0] + _hf[0] * 0.75, EDGING[1] + _hf[1] * 0.75), "item": "item_spade_iron",
+              "kit": "lw_spade_iron", "tag": "rime", "label": "Take the spade-iron", "lift": 0.41,
+              "show_at": [r2(-_hf[0] * 0.75), r2(-_hf[1] * 0.75)]}
+prop("lw_spade_rack", HESK[0] - _hf[1] * 2.9 - _hf[0] * 1.5, HESK[1] + _hf[0] * 2.9 - _hf[1] * 1.5, math.degrees(math.atan2(_hf[0], _hf[1])) + 25)
+# the peat wall along the cutting's lip, either side of the furnace
+for k in (-2, -1, 1, 2):
+    wx = FURNACE[0] - _hf[0] * 0.5 + _hf[1] * (k * 2.25 + (0.5 if k > 0 else -0.5))
+    wz = FURNACE[1] - _hf[1] * 0.5 - _hf[0] * (k * 2.25 + (0.5 if k > 0 else -0.5))
+    place.append({"kind": "peat_wall", "at": [r2(wx), r2(wz)], "rot": r2(math.degrees(math.atan2(_hf[0], _hf[1])) + 4 * k)})
+    POI_CLEAR.append([r2(wx), r2(wz), 2.0])
+prop("lw_peat_sled", HESK[0] + _hf[0] * 3.4 + _hf[1] * 3.0, HESK[1] + _hf[1] * 3.4 - _hf[0] * 3.0, 100)
+
+# --- 3.4 lw_cutters_bothy: the Cutter's Bothy (below the Drying Stacks hearth) --
+# On its pad cut into the slope (terrain_lowe.BOTHY). THAW: Arne's dinner
+# cloth on the bench, three spades by the door. RIME: the big one is gone.
+BX, BZ = L.BOTHY[0], L.BOTHY[1]
+BOTHY_ROT = 18.0
+BOTHY_LM = {"scene": "res://assets/models/landmarks/lm_cutters_bothy.glb", "at": at(BX, BZ - 0.4, -0.05), "rot": BOTHY_ROT,
+            "family": "M_turf", "blocker": [4.3, 2.6, 4.2]}
+POI_CLEAR.append([BX, BZ, 5.5])
+WAYSIDE_CLEAR.append([BX, BZ, 6.0])
+_dx, _dz = rot_off(BX, BZ - 0.4, BOTHY_ROT, 1.5, 2.55)           # by the door post
+prop("lw_three_spades", _dx, _dz, BOTHY_ROT + 180, tag="thaw", collide=False)
+SMALL_SPADES = {"id": "small_spades", "at": at(_dx, _dz + 0.55), "item": "item_small_spades", "kit": "lw_small_spades", "tag": "rime",
+                "label": "Take the small spades", "show_at": [0.0, -0.55], "rot": 0}
+_cx, _cz = rot_off(BX, BZ - 0.4, BOTHY_ROT, -1.45, 2.55)         # on the bench
+prop("lw_dinner_cloth", _cx, _cz, 30, tag="thaw", collide=False, lift=0.46)
+prop("lw_spade_rack", BX - 3.9, BZ + 1.2, 96)
+prop("lw_peat_sled", BX + 3.9, BZ + 2.2, 62)
+
+# --- 3.5 lw_the_rise: the Rise (the road's last crest before the hollow) --------
+# From here the stacks can be counted. Nothing is set on the sight-line.
+RISE = (39.2, -174.2)
+PLAQUES_POI.append({"at": at(RISE[0], RISE[1]), "rot": 215,
+                    "text": "THE DRYING STACKS\n\nTurf is cut at midsummer and laid by the Melt.\nThere is more turf cut here than the Lowe has barrows."})
+prop("lw_sod_row", 35.4, -174.9, 130, collide=False)
+WAYSIDE_CLEAR.append([42.0, -180.0, 11.0])
+
+# --- the Lowe's own prop set, where the work is done ------------------------
+for bid in ("kin_a", "kin_c"):
+    _px, _pz = barrow_at(bid, 3.9, BY[bid][4] * 0.5 + 0.9)
+    prop("lw_kin_post", _px, _pz, DOORS[bid][0] + 10)
+_px, _pz = barrow_at("kin_a", -4.4, BY["kin_a"][4] * 0.5 + 0.8)
+prop("lw_bier", _px, _pz, DOORS["kin_a"][0])                  # the bier that brought the last of the Holms up
+_px, _pz = barrow_at("kin_c", -4.6, BY["kin_c"][4] * 0.5 + 1.3)
+prop("lw_sod_row", _px, _pz, DOORS["kin_c"][0] + 90, collide=False)      # the closed barrow: the turf went back the same day
+for (x, z, r) in [(-65.0, -148.0, 12), (-62.5, -152.5, 30), (-66.5, -156.5, -8)]:
+    place.append({"kind": "peat_row", "at": [x, z], "rot": r})           # footed to dry beside the bog path
+    POI_CLEAR.append([x, z, 1.6])
+
+# cairns where a way leaves the road (were Wayside's, strewn; now two, set by hand):
+# at the fork of the bog path, and where the Kettle Road goes down off the moor
+CAIRNS = [{"scene": "res://assets/models/landmarks/lm_fold_cairn.glb", "at": at(x, z, -0.06), "rot": r, "scale": sc,
+           "blocker": [r2(2.0 * sc), r2(2.2 * sc), r2(2.0 * sc)]} for (x, z, r, sc) in [(-54.5, -110.0, 40, 0.9), (-66.0, -228.0, 15, 1.0)]]
+for c in CAIRNS:
+    POI_CLEAR.append([c["at"][0], c["at"][2], 2.6])
+
+# the Keener at the bend stands with its back to the heap (POI.md 3.2)
+for sp in spawners:
+    if sp["id"] == "keener_mounds":
+        vx, vz = sp["at"][0] - HEAP[0], sp["at"][2] - HEAP[1]
+        sp["face"] = r2(math.degrees(math.atan2(-vx, -vz)) % 360)
+pickups += [BREAD_CUP, SPADE_IRON, SMALL_SPADES]
+
 portals, bridge = seams("lowe_barrows")
 START = [PASS["x"], r2(L.sample(PASS["x"], PASS["z"] - 5.0) + 0.2), PASS["z"] - 5.0]
 
@@ -232,6 +368,9 @@ D = {
         {"name": "THE OPEN BARROW", "min": [24, -240], "max": [70, -176]},
     ],
     "houses": HOUSES,
+    "props": PROPS,
+    "landmarks": [BOTHY_LM] + CAIRNS,
+    "wayside": False,          # nothing strewn: the Lowe is dressed by hand above
     "boxes": BOXES,
     "blockers": BLOCKERS,
     "hearths": [
@@ -248,17 +387,17 @@ D = {
         {"id": "aud", "at": at(-34, -121), "rot": 200, "tag": "thaw"},
         # faces the bog path, with his back to the cutting (its floor is black water)
         {"id": "hesk", "at": at(-58, -166), "rot": 238, "tag": "thaw"},
-    ] + RELEASE_SCENE,
+    ] + RELEASE_SCENE + NPCS_POI,
     "plaques": [
         {"at": at(-84, -95), "rot": 20, "text": "THE LOWE\n\nThe barrow hills. Each neighbourhood has its kin-mounds.\nThe turf goes back the same day."},
-    ],
+    ] + PLAQUES_POI,
     "pickups": pickups,
     "portals": portals + [kettle_seam("lowe_barrows")],
     "scripted": [bridge],
     "scatter": {
         "seed": 5150,
         "clear": [[b["center"][0], b["center"][1], r2(math.hypot(*b["size"]) * 0.5 + 1)] for b in BUILDINGS]
-                 + [[CX, CZ, CR + 1.0], [L.BOG[0], L.BOG[1], L.BOG[2] + 3]],
+                 + [[CX, CZ, CR + 1.0], [L.BOG[0], L.BOG[1], L.BOG[2] + 3]] + POI_CLEAR,
         "rules": [
             {"kind": "rock", "count": 160, "region": [-98, -250, 62, -88], "slope": [0.8, 1.0], "scale": [0.3, 0.9], "path_max": 0.2},
             {"kind": "boulder", "count": 40, "region": [-98, -250, 62, -88], "slope": [0.8, 1.0], "scale": [0.9, 1.7], "path_max": 0.1},

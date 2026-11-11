@@ -32,6 +32,8 @@ const LM := "res://assets/models/landmarks/"
 
 static func build(area: Area, def: Dictionary) -> int:
 	var rec: Dictionary = RECIPES.get(area.area_id, {})
+	if not bool(def.get("wayside", true)):
+		return 0      # a region dressed wholly by hand in its generator (Saltfell, the Lowe, the Reach)
 	var t := area.terrain
 	if rec.is_empty() or t == null or not def.has("nav_bounds"):
 		return 0
@@ -261,6 +263,10 @@ static func _in_thicket(def: Dictionary, p: Vector3, r: float) -> bool:
 ## small prop may stand closer to those. Gates, hearths, portals, foes and
 ## veils always keep their full clearance.
 static func _free(def: Dictionary, p: Vector3, r: float, ks := 1.0) -> bool:
+	# ground an area keeps open on purpose: a view, a sight-line ("wayside_clear": [[x, z, r]])
+	for c in def.get("wayside_clear", []):
+		if Vector2(p.x - float(c[0]), p.z - float(c[1])).length() < r + float(c[2]):
+			return false
 	for key in KEEP_OUT:
 		for sp in def.get(key, []):
 			var at: Array = sp.get("at", [])
