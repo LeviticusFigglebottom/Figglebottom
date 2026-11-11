@@ -21,6 +21,12 @@ Format: worktree → branch.
   - Frost/melt wavefront in `hall`, `hall_ds` and `terrain` (`shaders/wavefront.gdshaderinc`), snow-crystal and pollen/steam/drip wave particles
   - The score (THAW, RIME, the Outsong, the Netmender, title), ambiences and the foley pass: `docs/audio/MUSIC.md`
 
+- `/home/user/fb-sfx` → `feat/sfx-redo` (ready for review; needs the owner's ears)
+  - Every sound effect replaced with CC0 recordings (footsteps on 8 surfaces, combat, foe families, Holdfast signatures, world, UI): `docs/audio/SFX.md`
+  - `AudioDirector.impact(surface, position)` for prop hit VFX
+  - Recorded ambience with region layers; the THAW/RIME handover is equal-power and follows the wave front
+  - Not wired yet: `world/ladder`, `world/door_open`, `world/door_close`, `world/water_splash`, `ui/tab`, `boss/sung_note`
+
 - `/home/user/fb-end` → `feat/reach-coldwell-endings` (ready for review)
   - Reach and Coldwell encounters and writing (`REACH.md`, `COLDWELL.md`)
   - Both endings, the credits, the world after each (ADR 0013)

@@ -34,6 +34,7 @@ The whole game is on main, in structure:
 | QA env (cloud) | `fix/qa-regions` | End-to-end walks for regions 2–5 (extend to Reach, Coldwell and the endings next); the bench flake |
 | World-fidelity env (cloud) | `art/world-fidelity` | Exposure per state, cliffs, snow, the Coldwell horizon, building construction detail, interiors |
 | Lead's agents (this box) | `feat/anims-4`, `art/look-pass-5` | See the task board |
+| Sound (this box) | `feat/sfx-redo` (ready for review) | Every sound effect and ambience bed rebuilt from CC0 recordings; the THAW/RIME bed handover follows the wave front. `docs/audio/SFX.md`. **Nobody has listened yet: the owner must.** Rebuild: `python3 tools/audio/build_sfx.py`; check: `tools/test.sh audio`. Hit-VFX sessions call `AudioDirector.impact(surface, position)`. |
 
 ## Open questions for the owner
 - **Tripo calls:** paid generation was blocked by this session's permission system on 2026-11-10. Eight prop references and the ewe rigs are waiting on it.
