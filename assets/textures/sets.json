@@ -10,6 +10,50 @@
   ],
   "rough_mean": 0.902
  },
+ "cw_cobble": {
+  "id": "river_small_rocks",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.2101,
+   0.1974,
+   0.184
+  ],
+  "rough_mean": 0.839
+ },
+ "cw_gravel": {
+  "id": "gravelly_sand",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.2407,
+   0.207,
+   0.1803
+  ],
+  "rough_mean": 0.788
+ },
+ "cw_moraine": {
+  "id": "dry_riverbed_rock",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1472,
+   0.1369,
+   0.1365
+  ],
+  "rough_mean": 0.606
+ },
+ "cw_moss": {
+  "id": "rock_pitted_mossy",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.3633,
+   0.354,
+   0.1556
+  ],
+  "rough_mean": 0.673
+ },
  "drystone": {
   "id": "stacked_stone_wall",
   "src": "polyhaven",
@@ -76,6 +120,28 @@
   ],
   "rough_mean": 0.777
  },
+ "kf_granite": {
+  "id": "cliff_side",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.2154,
+   0.1729,
+   0.1383
+  ],
+  "rough_mean": 0.861
+ },
+ "kf_shore": {
+  "id": "damp_sand",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1527,
+   0.1353,
+   0.1095
+  ],
+  "rough_mean": 0.897
+ },
  "leather": {
   "id": "fabric_leather_01",
   "src": "polyhaven",
@@ -86,6 +152,17 @@
    0.0467
   ],
   "rough_mean": 0.643
+ },
+ "lw_peat": {
+  "id": "brown_mud_03",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.0596,
+   0.0476,
+   0.0371
+  ],
+  "rough_mean": 0.524
  },
  "path": {
   "id": "rocky_trail",
@@ -153,6 +230,39 @@
   ],
   "rough_mean": 0.824
  },
+ "sf_shingle": {
+  "id": "large_pebbles",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.105,
+   0.0949,
+   0.0771
+  ],
+  "rough_mean": 0.908
+ },
+ "sf_turf": {
+  "id": "aerial_grass_rock",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1574,
+   0.146,
+   0.0585
+  ],
+  "rough_mean": 0.809
+ },
+ "sf_wrack": {
+  "id": "coast_sand_rocks_02",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.0826,
+   0.0645,
+   0.0412
+  ],
+  "rough_mean": 0.845
+ },
  "shingle": {
   "id": "ganges_river_pebbles",
   "src": "polyhaven",
@@ -186,6 +296,83 @@
   ],
   "rough_mean": 0.937
  },
+ "sr_rock": {
+  "id": "marble_rock_01",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.3956,
+   0.3778,
+   0.3353
+  ],
+  "rough_mean": 0.902
+ },
+ "sr_scree": {
+  "id": "rocky_gravel",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1762,
+   0.1497,
+   0.1208
+  ],
+  "rough_mean": 0.811
+ },
+ "sr_turf": {
+  "id": "sparse_grass",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1128,
+   0.1148,
+   0.0289
+  ],
+  "rough_mean": 0.943
+ },
+ "th_grass": {
+  "id": "grass_path_2",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.2475,
+   0.2359,
+   0.1228
+  ],
+  "rough_mean": 0.964
+ },
+ "th_mud": {
+  "id": "muddy_tracks",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.0743,
+   0.044,
+   0.0274
+  ],
+  "rough_mean": 0.828
+ },
+ "th_rock": {
+  "id": "rock_face_03",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.153,
+   0.1416,
+   0.1315
+  ],
+  "rough_mean": 0.818
+ },
+ "th_slate": {
+  "id": "slate_driveway",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.0878,
+   0.0927,
+   0.0986
+  ],
+  "rough_mean": 0.676
+ },
  "timber": {
   "id": "rough_wood",
   "src": "polyhaven",
@@ -207,6 +394,50 @@
    0.1027
   ],
   "rough_mean": 0.937
+ },
+ "tw_leaves": {
+  "id": "forest_leaves_02",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.2432,
+   0.1602,
+   0.0661
+  ],
+  "rough_mean": 0.933
+ },
+ "tw_mud": {
+  "id": "mud_forest",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.0475,
+   0.0312,
+   0.0173
+  ],
+  "rough_mean": 0.918
+ },
+ "tw_needles": {
+  "id": "forest_ground_04",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1795,
+   0.108,
+   0.0602
+  ],
+  "rough_mean": 0.901
+ },
+ "tw_rock": {
+  "id": "mossy_rock",
+  "src": "polyhaven",
+  "res": 1,
+  "mean_lin": [
+   0.1341,
+   0.1527,
+   0.0891
+  ],
+  "rough_mean": 0.806
  },
  "wool": {
   "id": "Fabric031",

@@ -1,0 +1,123 @@
+{
+ "_doc": "Feasting: blue slate cleaved flat, trodden mud, rushy grass. Flat white overcast in RIME, big flakes straight down.",
+ "terrain": {
+  "palette": {
+   "turf_a": [
+    0.143,
+    0.164,
+    0.043
+   ],
+   "turf_b": [
+    0.11,
+    0.124,
+    0.043
+   ],
+   "path_col": [
+    0.101,
+    0.066,
+    0.038
+   ],
+   "shingle_col": [
+    0.092,
+    0.117,
+    0.148
+   ],
+   "rock_col": [
+    0.101,
+    0.128,
+    0.163
+   ],
+   "snow_col": [
+    0.843,
+    0.851,
+    0.851
+   ]
+  },
+  "sets": {
+   "turf": "th_grass",
+   "path": "th_mud",
+   "shingle": "th_slate",
+   "rock": "th_rock"
+  },
+  "shader": {
+   "bed_thickness": 0.55,
+   "bed_strength": 1.0,
+   "joint_vertical": 0.35,
+   "joint_spacing": 1.6,
+   "streak_strength": 0.2,
+   "rock_moss": 0.2,
+   "rock_stain": [
+    0.9,
+    0.95,
+    1.08
+   ],
+   "puddle_amount": 0.7
+  }
+ },
+ "env": {
+  "thaw": {
+   "sun_rot": [
+    -18,
+    -110
+   ],
+   "sun_color": [
+    1.0,
+    0.82,
+    0.68
+   ],
+   "sun_energy": 2.1,
+   "fog_color": [
+    0.8,
+    0.64,
+    0.54
+   ]
+  },
+  "rime": {
+   "sun_rot": [
+    -40,
+    -70
+   ],
+   "sun_color": [
+    0.89,
+    0.91,
+    0.93
+   ],
+   "sun_energy": 1.1,
+   "ambient_energy": 1.0,
+   "fog_color": [
+    0.82,
+    0.84,
+    0.87
+   ],
+   "fog_density": 0.006
+  }
+ },
+ "weather": {
+  "gulls": false,
+  "pollen": 90,
+  "pollen_color": [
+   0.6,
+   0.6,
+   0.55,
+   0.4
+  ],
+  "snow": 520,
+  "snow_fall": [
+   0.0,
+   -1.0,
+   0.0
+  ],
+  "snow_size": 0.2,
+  "glitter": 0,
+  "spindrift": 0
+ },
+ "veg": {
+  "density": {
+   "heather": 0.0
+  },
+  "swap": {
+   "heather": "sedge"
+  },
+  "add": []
+ }
+}
