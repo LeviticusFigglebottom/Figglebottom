@@ -36,7 +36,7 @@ class Prep:
 	var world: Array = []
 	var wi := 0
 	var late: Array = []
-	## Scenes and scripts what acts will load (foe and soul models, finds):
+	## Scenes what acts will load (foe and soul models, finds):
 	## read on the worker and held until the crossing is over, so no _ready
 	## reads a GLB on the main thread.
 	var preloaded: Array = []
@@ -67,7 +67,7 @@ var _nav_area: Area = null
 var _held: Array = []          # resources read ahead for what acts (until settled)
 ## What raising one foe costs (its spawner defers it past our timer), learnt
 ## from the frames it happened in; ms.
-var _foe_est_ms := 6.0
+var _foe_est_ms := 12.0
 var _foes_this_frame := 0
 
 var _crossing := false
@@ -93,17 +93,56 @@ var last_report: Dictionary = {}
 ## Crossings so far, and how many found the neighbour ready.
 var crossings := 0
 var crossings_ready := 0
+## Freeing the last area left: {max_ms, frames, total_ms} of main-thread work.
+var last_free: Dictionary = {"max_ms": 0.0, "frames": 0, "total_ms": 0.0}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS    # a crossing ends even under the pause sheet
 	# old cache entries go, off the main thread (a directory listing)
 	WorkerThreadPool.add_task(StreamCache.prune, false, "cache prune")
+	_load_scripts.call_deferred()
+
+## Every game script is compiled here, on the main thread, at boot: a script
+## met for the first time inside a worker build would be compiled on that
+## worker while the main thread runs (and may be compiling) others.
+func _load_scripts() -> void:
+	if "--no-streaming" in OS.get_cmdline_user_args() or not bool(cfg("enabled", true)):
+		return
+	var t := Time.get_ticks_usec()
+	var n := _load_scripts_in("res://src")
+	BuildProf.add("boot", "scripts compiled ahead (%d)" % n, Time.get_ticks_usec() - t, true)
+
+func _load_scripts_in(dir: String) -> int:
+	var n := 0
+	var d := DirAccess.open(dir)
+	if d == null:
+		return 0
+	for f in d.get_files():
+		var p := dir.path_join(f)
+		# an exported build lists compiled scripts and remaps
+		if p.ends_with(".gd.remap"):
+			p = p.trim_suffix(".remap")
+		elif p.ends_with(".gdc"):
+			p = p.trim_suffix("c")
+		if p.ends_with(".gd") and ResourceLoader.exists(p):
+			load(p)
+			n += 1
+	for sub in d.get_directories():
+		if sub != "debug":
+			n += _load_scripts_in(dir.path_join(sub))
+	return n
 
 static func cfg(key: String, def: Variant) -> Variant:
 	return DB.tuning("streaming/" + key, def)
 
+## --no-streaming (a user argument) is the data switch from the command
+## line: the old synchronous area change, for an A/B on the same build.
+static var _arg_off := -1
+
 func enabled() -> bool:
-	return bool(cfg("enabled", true)) and Game.world_root != null
+	if _arg_off < 0:
+		_arg_off = 1 if "--no-streaming" in OS.get_cmdline_user_args() else 0
+	return _arg_off == 0 and bool(cfg("enabled", true)) and Game.world_root != null
 
 # ---------------------------------------------------------------- what stands
 
@@ -149,8 +188,35 @@ func foreign(n: Node) -> bool:
 
 # ---------------------------------------------------------------- the frame
 
+var _dbg_t := 0.0
+func _dbg(dt: float) -> void:
+	_dbg_t -= dt
+	if _dbg_t > 0.0:
+		return
+	_dbg_t = 2.0
+	var p = Game.player
+	var map := get_viewport().find_world_3d().navigation_map if get_viewport().find_world_3d() != null else RID()
+	var en := 0
+	for r in NavigationServer3D.map_get_regions(map):
+		if NavigationServer3D.region_get_enabled(r):
+			en += 1
+	var foes := 0
+	var awake := 0
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		foes += 1
+		if (e as Node).can_process():
+			awake += 1
+	print("[stream] area=%s crossing=%s cold=%s prep=%s/%s dying=%d garbage=%d late=%d/%d nav=%s regions=%d/%d foes=%d/%d player=%s input=%s dead=%s hp=%s" % [
+		Game.current_area_id, _crossing, _cold, pending_id(), str(_prep.stage) if _prep != null else "-", _dying.size(), _garbage.size(),
+		_late_i, _late.size(), str(_nav != null), en, NavigationServer3D.map_get_regions(map).size(), awake, foes,
+		str((p as Node3D).global_position.snapped(Vector3.ONE * 0.1)) if p != null and is_instance_valid(p) else "-",
+		str(p.input_enabled) if p != null and is_instance_valid(p) else "-", str(p.dead) if p != null and is_instance_valid(p) else "-",
+		str(p.hp) if p != null and is_instance_valid(p) else "-"])
+
 func _process(dt: float) -> void:
 	BuildProf.tick()
+	if OS.has_environment("STREAM_DBG"):
+		_dbg(dt)
 	var budget := int(float(cfg("cold_budget_ms" if _cold else "budget_ms", 4.0)) * 1000.0)
 	var t0 := Time.get_ticks_usec()
 	_poll_orphans()
@@ -201,8 +267,14 @@ func _scan(dt: float) -> void:
 		if d < want_d:
 			want_d = d
 			want = portal.to_area
+	if _prep != null and _prep.stage == St.FAILED:
+		# it would not build: leave it be for a while
+		_left_id = _prep.area_id
+		_left_until_us = Time.get_ticks_usec() + 10000000
+		_prep = null
+		return
 	if _prep != null:
-		var stale: bool = _prep.built and _prep.flag_sig != _flag_sig(_prep.area_id, _prep.flag_names)
+		var stale: bool = _prep.stage != St.BUILD and _prep.flag_sig != _flag_sig(_prep.area_id, _prep.flag_names)
 		if want == _prep.area_id and not stale:
 			_prep.far_s = 0.0
 			return
@@ -229,6 +301,7 @@ func _start_prep(area_id: String) -> void:
 	prep.area_id = area_id
 	prep.t0_us = Time.get_ticks_usec()
 	_prep = prep
+	AreaBuilder.cancel_worker = false
 	BuildLock.worker_busy = true
 	prep.task = WorkerThreadPool.add_task(_build_worker.bind(prep), false, "area build " + area_id)
 
@@ -240,7 +313,6 @@ func _build_worker(prep: Prep) -> void:
 	var sig := _flag_sig(prep.area_id, names)
 	var t := Time.get_ticks_usec()
 	var out := AreaBuilder.build_detached(prep.area_id)
-	BuildProf.add(prep.area_id, "worker build (whole)", Time.get_ticks_usec() - t)
 	t = Time.get_ticks_usec()
 	var held := _preload_actors(def)
 	BuildProf.add(prep.area_id, "worker: models read ahead", Time.get_ticks_usec() - t)
@@ -249,12 +321,12 @@ func _build_worker(prep: Prep) -> void:
 	prep.result = out
 	prep.flag_names = names
 	prep.flag_sig = sig
-	prep.built = true
 	prep.mx.unlock()
 
-## The scenes and scripts an area's foes, souls and finds will load when they
-## join the tree, loaded here (worker thread) so they are in the resource
-## cache by then. Paths come from the same tables the actors read.
+## The scenes an area's foes, souls and finds will load when they join the
+## tree, loaded here (worker thread) so they are in the resource cache by
+## then. Paths come from the same tables the actors read. (Scenes only: the
+## scripts are compiled at boot, _load_scripts.)
 static func _preload_actors(def: Dictionary) -> Array:
 	var paths := {}
 	var models := {}
@@ -264,8 +336,6 @@ static func _preload_actors(def: Dictionary) -> Array:
 		if not enemies.has(id) and sp.has("stand_in"):
 			id = String(sp["stand_in"])
 		var ecfg: Dictionary = enemies.get(id, {})
-		if ecfg.has("class"):
-			paths[String(ecfg["class"])] = true
 		if String(ecfg.get("model", "")) != "":
 			models[String(ecfg["model"])] = true
 	for n in def.get("npcs", []):
@@ -344,10 +414,14 @@ func _advance(prep: Prep, t0: int, budget: int) -> void:
 		St.BUILD:
 			if not _task_done(prep):
 				# the worker may be waiting on a RenderingServer read: answer it
-				# now and not at the end of the frame
+				# now and not at the end of the frame. What it has queued for
+				# the renderer (meshes, textures) is carried out here too.
+				var tp := Time.get_ticks_usec()
 				BuildLock.pump()
+				BuildProf.slice(prep.area_id, "flush: worker's render commands", tp)
 				return
 			BuildLock.worker_busy = not _orphans.is_empty()
+			prep.built = true     # (the worker's own flag, seen from here now)
 			var res := prep.result
 			if res.is_empty() or Game.world_root == null:
 				prep.stage = St.FAILED
@@ -423,7 +497,9 @@ func _drop_prep() -> void:
 		if is_instance_valid(h[0]):
 			(h[0] as Node).queue_free()
 	if prep.task >= 0:
-		_orphans.append(prep)     # the worker cannot be stopped: binned when it ends
+		# the worker gives up at its next phase; what it made is binned
+		AreaBuilder.cancel_worker = true
+		_orphans.append(prep)
 		return
 	for k in range(prep.wi, prep.world.size()):
 		_garbage.append(prep.world[k][1])
@@ -494,22 +570,25 @@ func prepare(area_id: String, fade := true) -> bool:
 	if fade:
 		await _fade_to(1.0, float(cfg("fade_out_s", 0.12)))
 	_cold = true     # behind the black the frame can carry more
-	if _prep != null and (_prep.area_id != area_id
-			or (_prep.built and _prep.flag_sig != _flag_sig(area_id, _prep.flag_names))):
-		_drop_prep()
-	# never three areas: what is still being freed goes first
-	_reap_first = true
-	while _prep == null and not (_dying.is_empty() and _garbage.is_empty() and _orphans.is_empty()):
-		await get_tree().process_frame
-	_reap_first = false
-	if _prep == null:
-		_start_prep(area_id)
-	while _prep != null and _prep.stage != St.READY and _prep.stage != St.FAILED:
-		await get_tree().process_frame
-	if _prep == null or _prep.stage == St.FAILED:
-		_prep = null
-		_end_crossing()
-		return false
+	for attempt in 3:
+		if _prep != null and (_prep.area_id != area_id
+				or (_prep.stage != St.BUILD and _prep.flag_sig != _flag_sig(area_id, _prep.flag_names))):
+			_drop_prep()     # another neighbour, or one the story has moved on from
+		# never three areas: what is still being freed goes first
+		_reap_first = true
+		while _prep == null and not (_dying.is_empty() and _garbage.is_empty() and _orphans.is_empty()):
+			await get_tree().process_frame
+		_reap_first = false
+		if _prep == null:
+			_start_prep(area_id)
+		while _prep != null and _prep.stage != St.READY and _prep.stage != St.FAILED:
+			await get_tree().process_frame
+		if _prep == null or _prep.stage == St.FAILED:
+			_prep = null
+			_end_crossing()
+			return false
+		if _prep.flag_sig == _flag_sig(area_id, _prep.flag_names):
+			break
 	if was_ready:
 		crossings_ready += 1
 	last_report["wait_ms"] = (Time.get_ticks_usec() - t_call) / 1000.0
@@ -563,6 +642,7 @@ func retire(old: Area) -> void:
 		_nav.cancel()
 		_nav = null
 	_dying.append({"root": old, "wait": int(cfg("free_wait_frames", 3)), "stack": []})
+	last_free = {"max_ms": 0.0, "frames": 0, "total_ms": 0.0}
 
 ## What acts in the new area joins it, a little a frame, and its navmeshes
 ## are read or baked; returns when the live state's navmesh is in the map.
@@ -630,8 +710,9 @@ func _graft_late(area: Area) -> void:
 		# a soul, a hearth, a veil: each builds a model in its _ready, and
 		# has a frame to itself
 		var heavy: bool = e[1] is NPC or e[1] is Hearthstone or e[1] is FrostVeil
-		if heavy and Time.get_ticks_usec() - t0 > 1000:
-			_late_i -= 1
+		var spent := Time.get_ticks_usec() - t0 + int(_foes_this_frame * _foe_est_ms * 1000.0)
+		if spent > 1000 and (heavy or (e[1] is Spawner and spent + int(_foe_est_ms * 1000.0) > budget)):
+			_late_i -= 1     # next frame, where it has the budget to itself
 			break
 		(e[0] as Node).add_child(e[1])
 		area.settle_new(e[1], "thaw" if e[0] == area.thaw_layer else ("rime" if e[0] == area.rime_layer else "base"))
@@ -649,7 +730,9 @@ func _stamp_close(scope: String) -> void:
 	var us := Time.get_ticks_usec() - _stamp_us
 	BuildProf.add(scope, "graft: deferred (foes raised)", us, false)
 	if _foes_this_frame > 0:
-		_foe_est_ms = lerpf(_foe_est_ms, us / 1000.0 / _foes_this_frame, 0.5)
+		# quick to believe a dear one (the first of a kind), slow to forget it
+		var each := us / 1000.0 / _foes_this_frame
+		_foe_est_ms = maxf(each, lerpf(_foe_est_ms, each, 0.25))
 
 # ---------------------------------------------------------------- freeing
 
@@ -681,6 +764,11 @@ func _reap(budget: int) -> void:
 			break
 		_dying.pop_front()
 	BuildProf.slice(scope, "free: old area", t0)
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0
+	if ms > 0.05:
+		last_free["max_ms"] = maxf(float(last_free["max_ms"]), ms)
+		last_free["frames"] = int(last_free["frames"]) + 1
+		last_free["total_ms"] = float(last_free["total_ms"]) + ms
 
 ## Free `root` from its leaves in, stopping when the budget is spent. A node
 ## with many children is entered and emptied; a small subtree goes whole.

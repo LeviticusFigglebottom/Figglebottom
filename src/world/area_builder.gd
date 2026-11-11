@@ -26,6 +26,9 @@ static func build(area_id: String) -> Area:
 ## No navmesh is baked (NavBaker does that once it stands in the tree).
 static func build_detached(area_id: String) -> Dictionary:
 	var area := _build(area_id)
+	if area != null and cancel_worker:
+		area.free()     # nobody is waiting for it any more
+		area = null
 	if area == null:
 		return {}
 	var late_set := {}
@@ -50,6 +53,14 @@ static func build_detached(area_id: String) -> Dictionary:
 			area.remove_child(c)
 			late.append([area, c])
 	return {"area": area, "world": world, "late": late}
+
+## Set (main thread) to have a worker's build_detached give up at its next
+## phase: the neighbour was let go, or the game is closing. Streamer clears
+## it before it starts another.
+static var cancel_worker := false
+
+static func _cancelled() -> bool:
+	return cancel_worker and not BuildProf.is_main()
 
 ## Children each layer holds now: _late_since marks what was added after.
 static func _counts(area: Area) -> Array:
@@ -111,6 +122,9 @@ static func _build(area_id: String) -> Area:
 		if _flag_ok(spec):
 			BuildingGen.build(area, spec)
 	BuildProf.lap("houses")
+	if _cancelled():
+		area.free()
+		return null
 	for spec in def.get("fills", []):
 		_fill(area, spec)
 	for spec in def.get("rows", []):
@@ -176,6 +190,9 @@ static func _build(area_id: String) -> Area:
 		_solid_box(area, spec)
 
 	BuildProf.lap("pieces, props, landmarks")
+	if _cancelled():
+		area.free()
+		return null
 	var before_entities := _counts(area)
 	for spec in def.get("hearths", []):
 		if not _flag_ok(spec):
@@ -323,9 +340,15 @@ static func _build(area_id: String) -> Area:
 	if area.terrain != null and def.has("scatter"):
 		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
 		BuildProf.lap("scatter stones, fences")
+		if _cancelled():
+			area.free()
+			return null
 		Scatter.build_veg(area, area.terrain, def["scatter"].get("veg", []),
 				int(def["scatter"].get("seed", 1)) + 7, _keep_clear(def))
 	BuildProf.lap("scatter ground cover")
+	if _cancelled():
+		area.free()
+		return null
 	if area.terrain != null and def.has("forest"):
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
 	BuildProf.lap("forest")

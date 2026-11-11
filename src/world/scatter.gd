@@ -517,6 +517,8 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 	var store: Array = []
 	var ri := -1
 	for rule in all_rules:
+		if AreaBuilder._cancelled():
+			return     # (a worker build nobody waits for; nothing is cached)
 		ri += 1
 		var kind := String(rule.get("kind", "grass"))
 		var tag := String(rule.get("tag", "base"))

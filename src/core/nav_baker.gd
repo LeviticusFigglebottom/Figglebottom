@@ -151,21 +151,52 @@ func _shape_hash(s: Shape3D) -> int:
 func _lookup() -> void:
 	for i in 2:
 		keys[i] = StreamCache.key(["nav", area.area_id, fingerprint, bodies, i, area.nav_aabb])
-	if StreamCache.has_res("nav", keys[0]) or StreamCache.has_res("nav", keys[1]):
+	if StreamCache.has_var("nav", keys[0]) or StreamCache.has_var("nav", keys[1]):
 		phase = P.LOADING
-		_load_task = WorkerThreadPool.add_task(_load_worker.bind(keys.duplicate()), false, "nav cache read")
+		_load_task = WorkerThreadPool.add_task(_load_worker.bind(keys.duplicate(), area.nav_aabb), false, "nav cache read")
 	else:
 		_begin_parse()
 
-func _load_worker(ks: Array) -> void:
+## Worker thread. An entry is the mesh's vertices and polygons, not a saved
+## Resource: ResourceLoader would not read the same user:// file twice in
+## one run (the second load of a path came back null).
+func _load_worker(ks: Array, nav_aabb: AABB) -> void:
 	var got: Array = [null, null]
 	for i in 2:
-		var r := StreamCache.load_res("nav", String(ks[i]))
-		if r is NavigationMesh and (r as NavigationMesh).get_polygon_count() > 0:
-			got[i] = r
+		got[i] = unpack(StreamCache.load_var("nav", String(ks[i])), nav_aabb, i == 1)
 	_mx.lock()
 	_loaded = got
 	_mx.unlock()
+
+## {v: vertices, p: [polygon index arrays]} of a baked mesh.
+static func pack(mesh: NavigationMesh) -> Dictionary:
+	var polys: Array = []
+	for i in mesh.get_polygon_count():
+		polys.append(mesh.get_polygon(i))
+	return {"v": mesh.get_vertices(), "p": polys}
+
+## The mesh a cache entry holds, with this build's bake settings; null when
+## the entry is not one (absent, corrupt, empty).
+static func unpack(entry: Variant, nav_aabb: AABB, rime_world: bool) -> NavigationMesh:
+	if not (entry is Dictionary) or not (entry.get("v") is PackedVector3Array) or not (entry.get("p") is Array):
+		return null
+	var verts: PackedVector3Array = entry["v"]
+	var polys: Array = entry["p"]
+	if verts.is_empty() or polys.is_empty():
+		return null
+	var mesh := make_mesh(nav_aabb, rime_world)
+	mesh.vertices = verts
+	for poly in polys:
+		if not (poly is PackedInt32Array):
+			return null
+		for idx in poly:
+			if idx < 0 or idx >= verts.size():
+				return null
+		mesh.add_polygon(poly)
+	return mesh
+
+static func _store_worker(k: String, mesh: NavigationMesh) -> void:
+	StreamCache.store_var("nav", k, pack(mesh))
 
 func _poll_load() -> void:
 	if not WorkerThreadPool.is_task_completed(_load_task):
@@ -265,7 +296,7 @@ func _baked(i: int, mesh: NavigationMesh, t0: int) -> void:
 	_bake_ms[i] = (Time.get_ticks_usec() - t0) / 1000.0
 	meshes[i] = mesh
 	# kept for the next visit; written off the main thread
-	WorkerThreadPool.add_task(StreamCache.store_res.bind("nav", String(keys[i]), mesh), false, "nav cache write")
+	WorkerThreadPool.add_task(_store_worker.bind(String(keys[i]), mesh), false, "nav cache write")
 	if _baking == 0:
 		phase = P.DONE
 

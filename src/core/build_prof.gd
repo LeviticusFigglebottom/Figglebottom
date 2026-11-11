@@ -11,8 +11,10 @@ static var enabled := true
 static var _mx := Mutex.new()
 ## scope -> phase -> [main_ms, worker_ms, calls]
 static var _phases: Dictionary = {}
-static var _scope := ""            # main thread's current scope (an area id, "flip:…")
-static var _lap_us := 0
+## Lap state per thread (thread id -> [scope, last lap usec]): the main
+## thread may be lapping a synchronous bake while a worker laps a build, and
+## a String shared between them unguarded is a crash waiting for its frame.
+static var _laps: Dictionary = {}
 
 ## the window (crossing / flip / respawn)
 static var _win := ""
@@ -36,23 +38,23 @@ static func now() -> int:
 
 ## Main-thread lap timing for the synchronous build: begin a scope, then
 ## lap(phase) books the time since the last lap to that phase.
-static func begin(scope: String) -> void:
-	_scope = scope
-	_lap_us = now()
-
-static func scope() -> String:
-	return _scope
+static func begin(scope_: String) -> void:
+	_mx.lock()
+	_laps[OS.get_thread_caller_id()] = [scope_, now()]
+	_mx.unlock()
 
 static func lap(phase: String) -> void:
 	if not enabled:
 		return
 	var t := now()
-	add(_scope, phase, t - _lap_us, true)
-	_lap_us = t
-
-## Skip the time since the last lap (work that belongs to nobody's phase).
-static func relap() -> void:
-	_lap_us = now()
+	var tid := OS.get_thread_caller_id()
+	_mx.lock()
+	var st: Array = _laps.get(tid, ["", t])
+	var sc := String(st[0])
+	var since := t - int(st[1])
+	_laps[tid] = [sc, t]
+	_mx.unlock()
+	add(sc, phase, since, true)
 
 ## Book `usec` of `phase` under `scope`. `sync` marks work that ran as one
 ## unsliced block (a synchronous build phase), as against a budgeted slice.

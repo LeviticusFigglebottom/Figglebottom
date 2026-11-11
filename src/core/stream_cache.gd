@@ -11,7 +11,7 @@ class_name StreamCache
 
 ## Bump when a cached layout changes shape (the content of an entry, not the
 ## builders: their source is hashed into every key already).
-const VERSION := 3
+const VERSION := 4
 ## The scripts whose output is cached, or feeds what is cached.
 const CODE := [
 	"res://src/world/scatter.gd", "res://src/world/terrain.gd", "res://src/world/area.gd",
@@ -154,47 +154,9 @@ static func store_var(kind: String, k: String, value: Variant) -> void:
 	else:
 		DirAccess.remove_absolute(tmp)
 
-## A cached Resource (a NavigationMesh), or null on a miss. A file that will
-## not load is removed so it is rebuilt.
-static func load_res(kind: String, k: String) -> Resource:
+static func has_var(kind: String, k: String) -> bool:
 	_setup()
-	if not enabled:
-		return null
-	var p := path_of(kind, k, "res")
-	var out: Resource = null
-	if FileAccess.file_exists(p):
-		# a binary resource opens with RSRC (RSCC compressed): anything else is
-		# not ours to hand to the loader
-		var f := FileAccess.open(p, FileAccess.READ)
-		var magic := f.get_buffer(4).get_string_from_ascii() if f != null and f.get_length() > 16 else ""
-		if f != null:
-			f.close()
-		if magic == "RSRC" or magic == "RSCC":
-			out = ResourceLoader.load(p, "", ResourceLoader.CACHE_MODE_IGNORE)
-		if out == null:
-			DirAccess.remove_absolute(p)
-	_mx.lock()
-	if out == null:
-		misses += 1
-	else:
-		hits += 1
-	_mx.unlock()
-	return out
-
-static func has_res(kind: String, k: String) -> bool:
-	_setup()
-	return enabled and FileAccess.file_exists(path_of(kind, k, "res"))
-
-static func store_res(kind: String, k: String, res: Resource) -> void:
-	_setup()
-	if not enabled or res == null:
-		return
-	var p := path_of(kind, k, "res")
-	var tmp := "%s.%d.part.res" % [p.get_basename(), OS.get_thread_caller_id()]
-	if ResourceSaver.save(res, tmp) == OK:
-		DirAccess.rename_absolute(tmp, p)
-	else:
-		DirAccess.remove_absolute(tmp)
+	return enabled and FileAccess.file_exists(path_of(kind, k))
 
 ## Drop the oldest entries past MAX_BYTES (and any stray .part files).
 ## Cheap enough for boot: a directory listing and a sort.
