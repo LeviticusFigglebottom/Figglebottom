@@ -129,7 +129,7 @@ func _on_talk(player) -> void:
 		if is_instance_valid(_vis) and not seated:
 			_vis.back_to_idle(0.4))
 	get_tree().root.add_child(ui)
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("ui/open")
 
 ## One of the dead the frost kept where they sat (npcs.json "frozen": Old
 ## Calder at the fold cairn, in RIME): rimed over, and still.

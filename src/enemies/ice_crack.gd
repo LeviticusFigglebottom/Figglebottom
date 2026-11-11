@@ -91,7 +91,7 @@ func _ready() -> void:
 	material_override = _mat
 	if shape != "ring":
 		scale = Vector3(0.15, 1.0, 0.15)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -12.0, 0.4)
+	AudioDirector.play("world/ice_break", global_position, -8.0)
 
 func _process(dt: float) -> void:
 	_t += dt

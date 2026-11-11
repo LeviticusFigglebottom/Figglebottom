@@ -50,7 +50,7 @@ func _ready() -> void:
 	var tw := create_tween()
 	tw.tween_property(_mat, "albedo_color:a", 0.92, 0.18)
 	_shards()
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -2.0, 0.55)
+	AudioDirector.play("world/ice_break", global_position)
 
 ## The thin volumes: one square inside a disc, or boxes round a ring.
 func _build_volumes() -> void:

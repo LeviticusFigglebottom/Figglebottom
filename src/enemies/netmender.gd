@@ -166,7 +166,7 @@ func _st_transition(dt: float) -> void:
 func _transition_event(ev: String) -> void:
 	match ev:
 		"bite":   # ties off the knot, cuts it with her teeth: heard, not seen
-			AudioDirector.sfx_at("res://assets/audio/parry.wav", global_position, -10.0, 0.45)
+			AudioDirector.play("boss/net_drag", global_position, -6.0)
 		"haul_floor":
 			_haul_floor(float(_d("floor_slide", 2.0)))
 		"slam_tables":
@@ -222,7 +222,7 @@ func _slam_furniture() -> void:
 		# over onto its side, about its long (local x) axis
 		tw.tween_property(nd, "rotation:x", nd.rotation.x + deg_to_rad(84.0 * (1.0 if randf() < 0.5 else -1.0)), 0.35) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, 0.0, 0.6)
+	AudioDirector.play("boss/bench_crash", global_position)
 
 # ---------------------------------------------------------------- combat
 func _st_extra(dt: float) -> void:
@@ -352,7 +352,7 @@ func _net_cast() -> void:
 		return
 	snare = GrabHold.start(self, p, float(_atk.get("snare", 1.5)), int(_atk.get("mash", 5)))
 	snare.released.connect(_on_snare_released.bind(p, float(_atk.get("haul_to", 2.2)), String(_atk.get("then", ""))))
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", p.global_position, -4.0, 0.7)
+	AudioDirector.play("foe/heavy_whoosh", p.global_position, -2.0)
 
 func _on_snare_released(broken: bool, p: Node3D, haul_to: float, then: String) -> void:
 	snare = null
@@ -388,7 +388,7 @@ func _haul() -> void:
 		net_floor.slide(dir, dist, secs)
 	if net_floor == null or net_floor.covers(p.global_position):
 		_start_pull(p, dir, dist, secs)
-	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -2.0, 0.5)
+	AudioDirector.play("boss/net_drag", global_position)
 	_queued = String(_atk.get("then", ""))
 
 func _physics_process(dt: float) -> void:
@@ -477,7 +477,7 @@ func _mend_floor() -> void:
 			(r as IceRidge).refreeze(ext)
 	if net_floor != null:
 		net_floor.pulse(0.6, 0.8)
-	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, -6.0, 1.8)
+	AudioDirector.play("boss/net_drag", global_position, -4.0)
 
 ## Hold: she curls around him and does not fight. She is open. If the Bearer
 ## does nothing for hold_quiet seconds she stands and goes on.

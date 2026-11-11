@@ -326,7 +326,7 @@ func _hearth_kept() -> void:
 	_hands_empty(p)
 	_play(p, "shut_clip", 0.2, float(_cfg("shut_at", 1.0)))   # the heel of his hand lands on shut_at
 	await _until(float(_cfg("shut_at", 1.0)))
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -4.0, 0.55)   # the stopper, pressed home
+	AudioDirector.play("world/stopper")   # the stopper, pressed home
 	AudioDirector.play_music("", 3.0)
 	_beat("shut")
 	await _until(float(_cfg("wave_at", 2.6)))

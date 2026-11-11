@@ -58,7 +58,7 @@
     "lunge": 1.0
    }
   ],
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "warmth": 21
  },
  "netmender": {
@@ -252,7 +252,7 @@
     "recover": 0.4,
     "cooldown": 9.0,
     "anim": "haul_lean",
-    "sfx_windup": "res://assets/audio/whoosh_l.wav",
+    "sfx_windup": "foe/heavy_whoosh",
     "track": 0.6
    },
    {
@@ -384,7 +384,7 @@
     "breath": "held"
    }
   ],
-  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "sfx_alert": "boss/net_drag",
   "warmth": 1200,
   "class": "res://src/enemies/netmender.gd",
   "bar_name": "THE NETMENDER",
@@ -536,7 +536,7 @@
     "kind": "frost"
    }
   ],
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "warmth": 28,
   "model": "oarsman",
   "class": "res://src/enemies/oarsman.gd",
@@ -608,7 +608,8 @@
     "breath": "up"
    }
   ],
-  "sfx_alert": "res://assets/audio/hound_bark.wav",
+  "sfx_alert": "foe/dog_alert",
+  "sfx_family": "dog",
   "warmth": 18,
   "model": "hearthhound",
   "class": "res://src/enemies/hearthhound.gd",
@@ -724,7 +725,7 @@
     }
    }
   ],
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "warmth": 34,
   "rise_time": 2.4,
   "_ai": "LOWE.md 5. Sits up in a barrow mouth facing the road (pose sit_up) and rises slowly when the Bearer comes into sight."
@@ -843,7 +844,7 @@
     "breath": "up"
    }
   ],
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "warmth": 26,
   "keep_range": 7.0,
   "_ai": "LOWE.md 5. Keeps its distance (keep_range) and breathes the tune at the Bearer; breathes out on anyone who closes in; now and then rouses the idle dead nearby."
@@ -952,7 +953,7 @@
     ]
    }
   ],
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "warmth": 44,
   "vis_scale": 1.1,
   "_ai": "LOWE.md 5. Carries its stones uphill; sets one down as a cairn in the Bearer's way; lobs one when kept at a distance."
@@ -1264,7 +1265,7 @@
     "breath": "held"
    }
   ],
-  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "sfx_alert": "boss/sod_thud",
   "warmth": 1500,
   "bar_name": "THE TURFWRIGHT",
   "class": "res://src/enemies/turfwright.gd",
@@ -1392,7 +1393,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.9,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Ice-fisher",
   "desc": "A fisher the frost took kneeling at a hole. Both hands have grown into ice-picks.",
   "model": "ice_fisher",
@@ -1492,7 +1493,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.9,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Sealer",
   "desc": "A sealer the frost took waiting at a breathing hole. The right arm has fused into a club, the left hand into a hook.",
   "model": "sealer",
@@ -1594,7 +1595,8 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.1,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/dog_alert",
+  "sfx_family": "dog",
   "name": "Sledge-dog",
   "desc": "A sledge-dog frozen in harness. They come in pairs.",
   "model": "sledge_dog",
@@ -1696,7 +1698,7 @@
   "col_r": 0.7,
   "stagger_time": 1.6,
   "stride": 2.0,
-  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "sfx_alert": "boss/ice_auger",
   "warmth": 1800,
   "_fight": "KETTLE.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: he kneels drilling at the rim until the Bearer is within wake_dist or strikes him. hole_ahead: metres from where he kneels to the hole's centre, along the way he first faces. guard_r: in phase 3 he keeps this close to the hole. ring_band: the phase-two band of broken ice round the arena (metres from the hole).",
   "phase_at": [
@@ -1990,7 +1992,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.9,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Feast-guest",
   "desc": "A guest the frost took in its seat at the feast. Both hands have grown into rounded fists of ice.",
   "model": "feast_guest",
@@ -2087,7 +2089,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 2.1,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Cupbearer",
   "desc": "A server the frost took between the benches. Both hands have grown into thin straight blades of ice.",
   "model": "cupbearer",
@@ -2207,7 +2209,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.8,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Hall-champion",
   "desc": "A hall guard the frost took at the door. A round board shield of ice has grown into the left forearm, and the right fist is a mace-head.",
   "model": "hall_champion",
@@ -2319,7 +2321,7 @@
   "col_r": 0.9,
   "stagger_time": 1.6,
   "stride": 2.2,
-  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "sfx_alert": "boss/bench_crash",
   "warmth": 2000,
   "_fight": "TARNHALL.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: he walks the table filling horns until the Bearer is within wake_dist or strikes him. The guests he raises are the seated feast-guest stills in the hall (seat_step: metres out from the bench; horn_ahead/horn_h: where the horn in front of a place is). guard_r: in phase 3 he keeps this close to where he stood.",
   "phase_at": [
@@ -2620,7 +2622,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.9,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Feast-guest",
   "desc": "A guest the frost took in its seat at the feast. Both hands have grown into rounded fists of ice.",
   "model": "feast_guest",
@@ -2718,7 +2720,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.9,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Collier",
   "desc": "A charcoal-burner the frost took at the clamps. Both hands have frozen black, with an ember's dark core in each.",
   "model": "collier",
@@ -2840,7 +2842,8 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 2.2,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/stag_alert",
+  "sfx_family": "stag",
   "name": "Rime-stag",
   "desc": "A red deer the frost took mid-bound. Thorn has grown through its antlers.",
   "model": "rime_stag",
@@ -2970,7 +2973,7 @@
   "col_r": 0.7,
   "stagger_time": 1.6,
   "stride": 2.2,
-  "sfx_alert": "res://assets/audio/holdfast_roar.wav",
+  "sfx_alert": "boss/thorn_growth",
   "warmth": 2200,
   "_fight": "THORNWOLD.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: laying a stem until the Bearer is within wake_dist or strikes him. grave_off: [dx, dz] from where he stands to the grave (the rings' centre). ring2/ring3: the phase rings round the grave.",
   "phase_at": [
@@ -3229,7 +3232,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 2.2,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Drover",
   "desc": "A herd the frost took on the drift down. A crook of ice has grown from both hands, one piece, and it will not put it down.",
   "model": "drover",
@@ -3332,7 +3335,8 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.3,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/ram_alert",
+  "sfx_family": "ram",
   "name": "Frost-ram",
   "desc": "A fell tup the frost took with its head down. The horns have gone on growing, in ice, a full turn more than a ram's should.",
   "model": "frost_ram",
@@ -3452,7 +3456,7 @@
   "col_r": 0.75,
   "stagger_time": 1.6,
   "stride": 2.3,
-  "sfx_alert": "res://assets/audio/horn_low.wav",
+  "sfx_alert": "boss/calling_horn",
   "warmth": 2600,
   "_fight": "REACH.md 6. Phases by HP fraction (phase_at). Each attack lists its phases; by_phase overrides a field per phase; phase_speed scales every timing. Intro: calling over the fold wall beside her father until the Bearer is within wake_dist or strikes her. father_off: [dx, dz] from where she stands to where he sits. guard_r: in phase 3 she will not go further than this from him.",
   "phase_at": [
@@ -3565,7 +3569,7 @@
     "anim": "call",
     "breath": "up",
     "track": 0.0,
-    "sfx_windup": "res://assets/audio/horn_low.wav",
+    "sfx_windup": "boss/horn_short",
     "telegraph": {
      "shape": "ring",
      "size": [
@@ -3722,7 +3726,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 1.6,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "Upwalker",
   "desc": "One of the dead of the lower steadings, on its way up the water to wait for a spring. It got this far. It is in no hurry, and it does not step aside.",
   "model": "upwalker",
@@ -3819,7 +3823,7 @@
   "anim_amp": 1.15,
   "anim_sway": 1.6,
   "stride": 2.1,
-  "sfx_alert": "res://assets/audio/rimewalker_moan.wav",
+  "sfx_alert": "foe/taken_alert",
   "name": "The Unsung",
   "desc": "Someone nobody sang for. The ice has gone clear, and there is very little left in it. Any song breaks it.",
   "model": "unsung",
@@ -3941,7 +3945,7 @@
   "stagger_time": 1.2,
   "stride": 2.2,
   "sfx_alert": "",
-  "sfx_cast": "res://assets/audio/whoosh_l.wav",
+  "sfx_cast": "foe/cast",
   "warmth": 0,
   "_fight": "COLDWELL.md 6. She has no strike: nothing here opens a hand volume. Phases by HP fraction (phase_at). Phases 1 and 2 she stays sat (seat_clip held at its first frame); in phase 3 she stands, and a blade no longer counts (p3_blade): the Bearer stands within sing_r and sings (verses, verse_time each, broken by a blow). After each verse she bows her head (verse_bow) and the Unsung near are broken.",
   "phase_at": [

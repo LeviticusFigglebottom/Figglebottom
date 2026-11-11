@@ -1,0 +1,2785 @@
+{
+ "_doc": "Sources (all CC0), one-shot recipes and ambience beds for tools/audio/build_sfx.py. See that file for the layer syntax.",
+ "sources": {
+  "kenney-impact-sounds": {
+   "page": "https://kenney.nl/assets/impact-sounds",
+   "author": "Kenney (kenney.nl), Impact Sounds 1.0",
+   "licence": "CC0",
+   "kenney": "impact-sounds"
+  },
+  "kenney-rpg-audio": {
+   "page": "https://kenney.nl/assets/rpg-audio",
+   "author": "Kenney (kenney.nl), RPG Audio",
+   "licence": "CC0",
+   "kenney": "rpg-audio"
+  },
+  "different-steps-on-wood-stone-leaves-gravel-and-mud": {
+   "page": "https://opengameart.org/content/different-steps-on-wood-stone-leaves-gravel-and-mud",
+   "author": "TinyWorlds",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/%5Bkdd%5DDifferentSteps_0.zip"
+   ]
+  },
+  "42-snow-and-gravel-footsteps": {
+   "page": "https://opengameart.org/content/42-snow-and-gravel-footsteps",
+   "author": "Corsica_S (recording), cut by Iwan Gabovitch",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/corsica_s-walking_in_snow.7z"
+   ]
+  },
+  "4-dry-snow-steps": {
+   "page": "https://opengameart.org/content/4-dry-snow-steps",
+   "author": "qubodup (Iwan Gabovitch)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/qubodup-snow_steps_dry_0.7z"
+   ]
+  },
+  "9-wet-snow-steps": {
+   "page": "https://opengameart.org/content/9-wet-snow-steps",
+   "author": "qubodup (Iwan Gabovitch)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/qubodup-wet_snow_steps.7z"
+   ]
+  },
+  "fantozzis-footsteps-grasssand-stone": {
+   "page": "https://opengameart.org/content/fantozzis-footsteps-grasssand-stone",
+   "author": "Fantozzi, submitted by Raassh",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/Fantozzi-footsteps.7z"
+   ]
+  },
+  "25-cc0-mud-sfx": {
+   "page": "https://opengameart.org/content/25-cc0-mud-sfx",
+   "author": "rubberduck",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/25-CC0-mud-sfx.zip"
+   ]
+  },
+  "6-short-water-splashes": {
+   "page": "https://opengameart.org/content/6-short-water-splashes",
+   "author": "ezwa, submitted by supergamez2014",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/ezwa-water_splash.7z"
+   ]
+  },
+  "40-cc0-water-splash-slime-sfx": {
+   "page": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+   "author": "rubberduck",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/water-splash-slime-sfx.zip"
+   ]
+  },
+  "water-splash-and-sand-footsteps": {
+   "page": "https://opengameart.org/content/water-splash-and-sand-footsteps",
+   "author": "Peludo",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/splash1_0.wav",
+    "https://opengameart.org/sites/default/files/splash2_0.wav"
+   ]
+  },
+  "swishes-sound-pack": {
+   "page": "https://opengameart.org/content/swishes-sound-pack",
+   "author": "artisticdude",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/swishes.zip"
+   ]
+  },
+  "20-sword-sound-effects-attacks-and-clashes": {
+   "page": "https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes",
+   "author": "StarNinjas",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/sword_-_starninjas_1.zip",
+    "https://opengameart.org/sites/default/files/sword_clash_-_starninjas_0.zip"
+   ]
+  },
+  "fantasy-weapons-and-apparel-sfx-library": {
+   "page": "https://opengameart.org/content/fantasy-weapons-and-apparel-sfx-library",
+   "author": "Vehicle (Jan Schupke)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/weapons-apparel.zip"
+   ]
+  },
+  "10-impactshield-blocks": {
+   "page": "https://opengameart.org/content/10-impactshield-blocks",
+   "author": "StarNinjas",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/impact_-_starninjas.zip"
+   ]
+  },
+  "battle-sound-effects": {
+   "page": "https://opengameart.org/content/battle-sound-effects",
+   "author": "remaxim (multi-licensed; taken under CC0)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/battle_sound_effects_0.zip"
+   ]
+  },
+  "rpg-sound-pack": {
+   "page": "https://opengameart.org/content/rpg-sound-pack",
+   "author": "artisticdude",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/rpg_sound_pack.zip"
+   ]
+  },
+  "liquid-bottle-drink-set": {
+   "page": "https://opengameart.org/content/liquid-bottle-drink-set",
+   "author": "qubodup (Iwan Gabovitch)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/qubodup-bottle-and-drink-sounds.7z"
+   ]
+  },
+  "12-wet-towel-hittingfallingpunching-floor-sounds": {
+   "page": "https://opengameart.org/content/12-wet-towel-hittingfallingpunching-floor-sounds",
+   "author": "qubodup (Iwan Gabovitch)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/wet_towel_on_floor.7z"
+   ]
+  },
+  "ice-breakingshattering": {
+   "page": "https://opengameart.org/content/ice-breakingshattering",
+   "author": "IgnasD",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/IceShatters_0.zip"
+   ]
+  },
+  "dog-snarl-grunt-grumble": {
+   "page": "https://opengameart.org/content/dog-snarl-grunt-grumble",
+   "author": "qubodup (Iwan Gabovitch)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/dog_0.7z"
+   ]
+  },
+  "dog-sounds": {
+   "page": "https://opengameart.org/content/dog-sounds",
+   "author": "pauliuw",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/dog.7z"
+   ]
+  },
+  "sheep-baa": {
+   "page": "https://opengameart.org/content/sheep-baa",
+   "author": "AntumDeluge",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/sheep_baa.flac"
+   ]
+  },
+  "camel-groan": {
+   "page": "https://opengameart.org/content/camel-groan",
+   "author": "AntumDeluge",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/camel.zip"
+   ]
+  },
+  "ghost-breath": {
+   "page": "https://opengameart.org/content/ghost-breath",
+   "author": "qubodup (Iwan Gabovitch)",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/ghostbreath.flac"
+   ]
+  },
+  "their-coming-generic-horn-sound": {
+   "page": "https://opengameart.org/content/their-coming-generic-horn-sound",
+   "author": "StumpyStrust",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/theircoming3_0.ogg",
+    "https://opengameart.org/sites/default/files/theircoming_0.ogg"
+   ]
+  },
+  "ghostly-humming": {
+   "page": "https://opengameart.org/content/ghostly-humming",
+   "author": "NocturnalVanguard",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/ghostly_humming.ogg"
+   ]
+  },
+  "tree-creaking": {
+   "page": "https://opengameart.org/content/tree-creaking",
+   "author": "AntumDeluge",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/tree_creak.flac"
+   ]
+  },
+  "100-cc0-metal-and-wood-sfx": {
+   "page": "https://opengameart.org/content/100-cc0-metal-and-wood-sfx",
+   "author": "rubberduck",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/100-CC0-wood-metal-SFX.zip"
+   ]
+  },
+  "75-cc0-breaking-falling-hit-sfx": {
+   "page": "https://opengameart.org/content/75-cc0-breaking-falling-hit-sfx",
+   "author": "rubberduck",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/sfx_breaking_and_falling.zip"
+   ]
+  },
+  "80-cc0-rpg-sfx": {
+   "page": "https://opengameart.org/content/80-cc0-rpg-sfx",
+   "author": "rubberduck",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/80-CC0-RPG-SFX_0.zip"
+   ]
+  },
+  "100-cc0-sfx": {
+   "page": "https://opengameart.org/content/100-cc0-sfx",
+   "author": "rubberduck",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/100-CC0-SFX_0.zip"
+   ]
+  },
+  "100-cc0-sfx-2": {
+   "page": "https://opengameart.org/content/100-cc0-sfx-2",
+   "author": "rubberduck",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/sfx_100_v2.zip"
+   ]
+  },
+  "fire-crackling": {
+   "page": "https://opengameart.org/content/fire-crackling",
+   "author": "AntumDeluge",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/fire-1.wav"
+   ]
+  },
+  "fireplace-sound-loop": {
+   "page": "https://opengameart.org/content/fireplace-sound-loop",
+   "author": "PagDev",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/fire.wav"
+   ]
+  },
+  "catching-fire": {
+   "page": "https://opengameart.org/content/catching-fire",
+   "author": "themightyglider",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/flame_0.ogg"
+   ]
+  },
+  "creaky-door-hinge-spooky": {
+   "page": "https://opengameart.org/content/creaky-door-hinge-spooky",
+   "author": "w.forster",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/creaky_door_hinge.wav"
+   ]
+  },
+  "steam-release-sounds": {
+   "page": "https://opengameart.org/content/steam-release-sounds",
+   "author": "bart",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/steam_hisses.zip"
+   ]
+  },
+  "boiling-water-loops": {
+   "page": "https://opengameart.org/content/boiling-water-loops",
+   "author": "TinyWorlds",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/cooking_without_cover_01_0.ogg"
+   ]
+  },
+  "beach-ocean-waves": {
+   "page": "https://opengameart.org/content/beach-ocean-waves",
+   "author": "jasinski (recording), submitted by Four Bidden",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/wave_01_cc0-18363__jasinski__alkaibeach.flac",
+    "https://opengameart.org/sites/default/files/wave_02_cc0-18363__jasinski__alkaibeach.flac",
+    "https://opengameart.org/sites/default/files/wave_03_cc0-18363__jasinski__alkaibeach.flac",
+    "https://opengameart.org/sites/default/files/wave_04_cc0-18363__jasinski__alkaibeach.flac"
+   ]
+  },
+  "water-waves": {
+   "page": "https://opengameart.org/content/water-waves",
+   "author": "transitking (recording), submitted by supergamez2014",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/wave_02_cc0-11505__transitking__wavesound.flac",
+    "https://opengameart.org/sites/default/files/wave_03_cc0-11505__transitking__wavesound.flac",
+    "https://opengameart.org/sites/default/files/wave_04_cc0-11505__transitking__wavesound.flac"
+   ]
+  },
+  "sea-and-river-wave-sounds": {
+   "page": "https://opengameart.org/content/sea-and-river-wave-sounds",
+   "author": "RandomMind",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/VistulaShort_0.mp3"
+   ]
+  },
+  "solo-seagull-sound-effects": {
+   "page": "https://opengameart.org/content/solo-seagull-sound-effects",
+   "author": "Rango Mango",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/Seagull%20Ambient%201.wav",
+    "https://opengameart.org/sites/default/files/Seagull%20Ambient%202.wav",
+    "https://opengameart.org/sites/default/files/Seagull%20Ambient%203.wav",
+    "https://opengameart.org/sites/default/files/Seagull%20Ambient%204.wav",
+    "https://opengameart.org/sites/default/files/Seagull%20Ambient%205.wav",
+    "https://opengameart.org/sites/default/files/Seagull%20Ambient%206.wav",
+    "https://opengameart.org/sites/default/files/Seagull%20Ambient%207.wav"
+   ]
+  },
+  "wind": {
+   "page": "https://opengameart.org/content/wind",
+   "author": "IgnasD",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/wind.zip"
+   ]
+  },
+  "wind1": {
+   "page": "https://opengameart.org/content/wind1",
+   "author": "Luke.RUSTLTD",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/wind1.wav",
+    "https://opengameart.org/sites/default/files/wind2.wav"
+   ]
+  },
+  "mild-wind-background-noise": {
+   "page": "https://opengameart.org/content/mild-wind-background-noise",
+   "author": "Bashar3A",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/wind%20background%20noise%202.wav"
+   ]
+  },
+  "windy-ambient-noise": {
+   "page": "https://opengameart.org/content/windy-ambient-noise",
+   "author": "Some Weirdo",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/windy_ambiance_0.ogg"
+   ]
+  },
+  "forest-bird-sounds": {
+   "page": "https://opengameart.org/content/forest-bird-sounds",
+   "author": "pauliuw",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/forest_birds.7z"
+   ]
+  },
+  "crow-caw": {
+   "page": "https://opengameart.org/content/crow-caw",
+   "author": "ZeroIsNotNull",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/crow_caw.wav"
+   ]
+  },
+  "scrapes": {
+   "page": "https://opengameart.org/content/scrapes",
+   "author": "AntumDeluge",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/scrapes.zip"
+   ]
+  },
+  "shovel-sound": {
+   "page": "https://opengameart.org/content/shovel-sound",
+   "author": "themightyglider",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/shovel_0.ogg"
+   ]
+  },
+  "metal-impact-sounds": {
+   "page": "https://opengameart.org/content/metal-impact-sounds",
+   "author": "bmaczero",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/bing1.wav"
+   ]
+  },
+  "blacksmiths-hammer": {
+   "page": "https://opengameart.org/content/blacksmiths-hammer",
+   "author": "vishwajai",
+   "licence": "CC0",
+   "files": [
+    "https://opengameart.org/sites/default/files/blacksmithhammer.wav"
+   ]
+  }
+ },
+ "sounds": {
+  "foot/turf_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "kenney-impact-sounds:footstep_grass_*.ogg",
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-SandL*.flac g-3"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "boot in short grass"
+  },
+  "foot/turf_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-SandR*.flac",
+    "kenney-impact-sounds:footstep_grass_*.ogg o2 g-2",
+    "different-steps-on-wood-stone-leaves-gravel-and-mud:leaves0*.ogg g-12 max0.2"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "boot in short grass (harder, for the run)"
+  },
+  "foot/shingle_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "42-snow-and-gravel-footsteps:*covered_gravel_??.flac hp220",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_rock_falling_*.ogg g-9 max0.22 hp800"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "loose stones underfoot"
+  },
+  "foot/shingle_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "42-snow-and-gravel-footsteps:*covered_gravel_??.flac o6 hp220",
+    "80-cc0-rpg-sfx:stones_0*.ogg g-6 max0.25 hp600",
+    "different-steps-on-wood-stone-leaves-gravel-and-mud:gravel.ogg g-8 max0.3"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "loose stones underfoot (harder, for the run)"
+  },
+  "foot/plank_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "100-cc0-sfx-2:sfx100v2_footstep_wood_*.ogg o1",
+    "different-steps-on-wood-stone-leaves-gravel-and-mud:wood0*.ogg g-2",
+    "kenney-impact-sounds:footstep_wood_*.ogg g-5 hp70"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "boot on boards"
+  },
+  "foot/plank_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "100-cc0-sfx-2:sfx100v2_footstep_wood_*.ogg",
+    "different-steps-on-wood-stone-leaves-gravel-and-mud:wood0*.ogg o1 g-1",
+    "kenney-impact-sounds:footstep_wood_*.ogg o2 g-3 hp70",
+    "kenney-impact-sounds:impactWood_light_*.ogg g-12 max0.15"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "boot on boards (harder, for the run)"
+  },
+  "foot/snow_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "9-wet-snow-steps:snow_step_wet-*.flac",
+    "4-dry-snow-steps:snow_step_dry-*.flac g-4"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "snow crust and squeak"
+  },
+  "foot/snow_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "kenney-impact-sounds:footstep_snow_*.ogg",
+    "9-wet-snow-steps:snow_step_wet-*.flac o5 g-2"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "snow crust and squeak (harder, for the run)"
+  },
+  "foot/ice_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "42-snow-and-gravel-footsteps:*gravel_and_ice_*.flac hp450"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "brittle ice over grit"
+  },
+  "foot/ice_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "42-snow-and-gravel-footsteps:*gravel_and_ice_*.flac o9 hp450",
+    "ice-breakingshattering:LedasLuzta*.ogg g-16 max0.12 p1.5"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "brittle ice over grit (harder, for the run)"
+  },
+  "foot/stone_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneL*.flac"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "boot on bare rock or flags"
+  },
+  "foot/stone_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneR*.flac",
+    "kenney-impact-sounds:footstep_concrete_*.ogg g-6"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "boot on bare rock or flags (harder, for the run)"
+  },
+  "foot/mud_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "25-cc0-mud-sfx:mud_*.ogg max0.45",
+    "kenney-impact-sounds:footstep_grass_*.ogg g-8"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "wet peat and trodden mud"
+  },
+  "foot/mud_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "25-cc0-mud-sfx:mud_*.ogg o11 max0.4",
+    "different-steps-on-wood-stone-leaves-gravel-and-mud:mud02.ogg g-6"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "wet peat and trodden mud (harder, for the run)"
+  },
+  "foot/water_walk": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -30,
+   "max": 0.5,
+   "layers": [
+    "40-cc0-water-splash-slime-sfx:splash_*.ogg max0.5 lp7500",
+    "100-cc0-sfx-2:sfx100v2_footstep_wet_*.ogg g-5"
+   ],
+   "mix": {
+    "db": -4,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "wading the shallows"
+  },
+  "foot/water_run": {
+   "family": "footsteps",
+   "n": 5,
+   "lufs": -28,
+   "max": 0.45,
+   "layers": [
+    "6-short-water-splashes:water_splash-*.flac max0.55",
+    "40-cc0-water-splash-slime-sfx:splash_*.ogg o7 max0.4 g-3"
+   ],
+   "mix": {
+    "db": -2,
+    "pitch": 0.07,
+    "vol": 2.0,
+    "dist": "near"
+   },
+   "what": "wading the shallows (harder, for the run)"
+  },
+  "foot/land": {
+   "family": "footsteps",
+   "n": 4,
+   "lufs": -25,
+   "layers": [
+    "fantasy-weapons-and-apparel-sfx-library:boots-leather-jump-*.wav",
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg g-5",
+    "kenney-rpg-audio:cloth?.ogg g-11 @0.03"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "both boots coming down, and the clothes after them"
+  },
+  "foley/roll": {
+   "family": "foley",
+   "n": 4,
+   "lufs": -27,
+   "layers": [
+    "kenney-rpg-audio:cloth?.ogg",
+    "fantasy-weapons-and-apparel-sfx-library:quiver-leather-squeeze-*.wav g-6 max0.5 @0.06",
+    "rpg-sound-pack:cloth-heavy.wav g-5 @0.12",
+    "kenney-impact-sounds:impactSoft_medium_*.ogg g-8 @0.1"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "wool and leather going over the ground",
+   "max": 0.8
+  },
+  "foley/cloth": {
+   "family": "foley",
+   "n": 4,
+   "lufs": -30,
+   "layers": [
+    "kenney-rpg-audio:cloth?.ogg",
+    "rpg-sound-pack:cloth.wav g-8 @0.05"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a cloak moved"
+  },
+  "foley/equip": {
+   "family": "foley",
+   "n": 3,
+   "lufs": -28,
+   "layers": [
+    "kenney-rpg-audio:beltHandle?.ogg",
+    "kenney-rpg-audio:clothBelt*.ogg g-8 max0.4"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.05,
+    "vol": 1.5,
+    "bus": "UI"
+   },
+   "what": "a buckle and strap"
+  },
+  "combat/swing_light": {
+   "family": "swings",
+   "n": 5,
+   "lufs": -27,
+   "layers": [
+    "swishes-sound-pack:swish-*.wav"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.08,
+    "vol": 1.5
+   },
+   "what": "a light blade through air"
+  },
+  "combat/swing_medium": {
+   "family": "swings",
+   "n": 4,
+   "lufs": -26,
+   "layers": [
+    "battle-sound-effects:swish_?.wav",
+    "swishes-sound-pack:swish-*.wav o5 g-7"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.07,
+    "vol": 1.5
+   },
+   "what": "a sword's weight through air"
+  },
+  "combat/swing_heavy": {
+   "family": "swings",
+   "n": 4,
+   "lufs": -25,
+   "layers": [
+    "battle-sound-effects:swish_?.wav p0.72",
+    "swishes-sound-pack:swish-*.wav o8 p0.55 g-3"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.06,
+    "vol": 1.5
+   },
+   "what": "a great blade, slower and lower"
+  },
+  "combat/hit_flesh": {
+   "family": "impacts",
+   "n": 5,
+   "lufs": -20,
+   "layers": [
+    "kenney-impact-sounds:impactPunch_heavy_*.ogg",
+    "12-wet-towel-hittingfallingpunching-floor-sounds:wet_towel* g-5 max0.3",
+    "kenney-rpg-audio:knifeSlice*.ogg g-11 max0.25"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "blade into a body under wool",
+   "max": 0.6
+  },
+  "combat/hit_cloth": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -22,
+   "layers": [
+    "kenney-impact-sounds:impactSoft_medium_*.ogg",
+    "kenney-rpg-audio:cloth?.ogg g-5",
+    "rpg-sound-pack:cloth-heavy.wav g-6"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a blow taken on padding",
+   "max": 0.5
+  },
+  "combat/hit_ice": {
+   "family": "impacts",
+   "n": 5,
+   "lufs": -20,
+   "layers": [
+    "ice-breakingshattering:LedasLuzta*.ogg max0.5",
+    "kenney-impact-sounds:impactGlass_medium_*.ogg g-7",
+    "kenney-impact-sounds:impactPunch_medium_*.ogg g-5 lp1600"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "rime crust breaking over a body",
+   "max": 0.7
+  },
+  "combat/hit_wood": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -20,
+   "layers": [
+    "kenney-impact-sounds:impactWood_heavy_*.ogg",
+    "100-cc0-metal-and-wood-sfx:wood_hit_*.ogg g-3"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge into timber"
+  },
+  "combat/hit_shield": {
+   "family": "impacts",
+   "n": 5,
+   "lufs": -19,
+   "layers": [
+    "10-impactshield-blocks:impact.*.ogg max0.6",
+    "kenney-impact-sounds:impactWood_medium_*.ogg g-6"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a blow stopped on a board shield"
+  },
+  "combat/block": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -20,
+   "layers": [
+    "kenney-impact-sounds:impactPlank_medium_*.ogg max0.4",
+    "kenney-impact-sounds:impactWood_medium_*.ogg g-3",
+    "kenney-impact-sounds:impactMetal_medium_*.ogg g-11"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "guard taking a hit: board, a little iron"
+  },
+  "combat/parry": {
+   "family": "impacts",
+   "n": 3,
+   "lufs": -17,
+   "layers": [
+    "20-sword-sound-effects-attacks-and-clashes:sword_clash.*.ogg max1.3",
+    "fantasy-weapons-and-apparel-sfx-library:sword-knife-clash-*.wav g-5 max0.9 st7",
+    "metal-impact-sounds:bing1.wav g-9 p0.8"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.02,
+    "vol": 1.5
+   },
+   "what": "iron on iron, left ringing",
+   "room": [
+    0.9,
+    0.12
+   ]
+  },
+  "combat/riposte": {
+   "family": "impacts",
+   "n": 3,
+   "lufs": -18,
+   "layers": [
+    "80-cc0-rpg-sfx:blade_0*.ogg",
+    "kenney-rpg-audio:knifeSlice*.ogg g-2",
+    "kenney-impact-sounds:impactPunch_heavy_*.ogg g-3 @0.06",
+    "ice-breakingshattering:LedasLuzta*.ogg g-9 @0.07 max0.4"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "the answer driven home"
+  },
+  "combat/shield_bash": {
+   "family": "impacts",
+   "n": 3,
+   "lufs": -19,
+   "layers": [
+    "kenney-impact-sounds:impactWood_heavy_*.ogg p0.8",
+    "kenney-impact-sounds:impactPunch_heavy_*.ogg g-3 o2",
+    "swishes-sound-pack:swish-*.wav g-12 p0.7"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "the board swung into someone"
+  },
+  "combat/guard_break": {
+   "family": "impacts",
+   "n": 2,
+   "lufs": -18,
+   "layers": [
+    "100-cc0-metal-and-wood-sfx:wood_breaking_*.ogg",
+    "kenney-impact-sounds:impactPlank_medium_*.ogg g-3 max0.4"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a guard knocked open"
+  },
+  "combat/bow_draw": {
+   "family": "foley",
+   "n": 3,
+   "lufs": -28,
+   "layers": [
+    "fantasy-weapons-and-apparel-sfx-library:quiver-leather-squeeze-*.wav max0.8 o3",
+    "kenney-rpg-audio:creak?.ogg g-9 p1.35 max0.6"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "limbs and string taking the strain"
+  },
+  "combat/bow_loose": {
+   "family": "swings",
+   "n": 3,
+   "lufs": -23,
+   "layers": [
+    "battle-sound-effects:Bow.wav",
+    "swishes-sound-pack:swish-*.wav g-7 p1.5 @0.02",
+    "fantasy-weapons-and-apparel-sfx-library:arrow-feathers-*.wav g-10 @0.03 max0.3"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.04,
+    "vol": 1.5
+   },
+   "what": "string, shaft and fletching"
+  },
+  "combat/arrow_hit": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -22,
+   "layers": [
+    "kenney-impact-sounds:impactWood_light_*.ogg",
+    "80-cc0-rpg-sfx:item_wood_*.ogg g-8 max0.2",
+    "swishes-sound-pack:swish-*.wav g-14 p1.8"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a shaft striking home"
+  },
+  "combat/gourd": {
+   "family": "foley",
+   "n": 3,
+   "lufs": -26,
+   "layers": [
+    "liquid-bottle-drink-set:bottle-open-*.flac max0.4 g-6",
+    "liquid-bottle-drink-set:swallow-*.flac @0.3",
+    "liquid-bottle-drink-set:swallow-*.flac o2 @0.75 g-2"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.03,
+    "vol": 1.5
+   },
+   "what": "stopper out, two swallows"
+  },
+  "combat/stagger": {
+   "family": "foley",
+   "n": 3,
+   "lufs": -24,
+   "layers": [
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg o1",
+    "kenney-rpg-audio:cloth?.ogg g-4 @0.04",
+    "fantasy-weapons-and-apparel-sfx-library:boots-leather-step-*.wav g-5 @0.16"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "knocked off balance: body, cloth, a caught step"
+  },
+  "player/hurt": {
+   "family": "player",
+   "n": 4,
+   "lufs": -24,
+   "layers": [
+    "kenney-impact-sounds:impactPunch_medium_*.ogg",
+    "kenney-rpg-audio:cloth?.ogg g-6 @0.02",
+    "ghost-breath:ghostbreath.flac s0.25 l0.4 sv0.5 p1.25 hp350 g-8 @0.05 raw fi0.03 fo0.15"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.04,
+    "vol": 1.5
+   },
+   "what": "the blow, and the air it knocks out. No voice."
+  },
+  "player/death": {
+   "family": "player",
+   "n": 1,
+   "lufs": -24,
+   "layers": [
+    "ghost-breath:ghostbreath.flac p0.82 lp3600 raw fi0.15 fo1.2",
+    "rpg-sound-pack:cloth-heavy.wav g-9 @0.5",
+    "ice-breakingshattering:LedasLuzta*.ogg i3 p0.55 g-18 @1.7"
+   ],
+   "mix": {
+    "bus": "UI"
+   },
+   "what": "one breath out into the cold",
+   "room": [
+    1.6,
+    0.2
+   ],
+   "raw": true
+  },
+  "foe/taken_alert": {
+   "family": "foe",
+   "n": 4,
+   "lufs": -24,
+   "layers": [
+    "tree-creaking:tree_creak.flac s0.4 sv1.4 l0.8 p1.35 hp250 raw fi0.05 fo0.25",
+    "kenney-rpg-audio:cloth?.ogg g-6 @0.1",
+    "ghost-breath:ghostbreath.flac s0.9 sv0.5 l0.7 p0.8 g-7 @0.2 raw fi0.1 fo0.3",
+    "ice-breakingshattering:LedasLuzta*.ogg g-12 max0.2 p0.8 @0.05"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a frozen body turning: ice creak, stiff cloth, a breath"
+  },
+  "foe/taken_attack": {
+   "family": "swings",
+   "n": 4,
+   "lufs": -25,
+   "layers": [
+    "swishes-sound-pack:swish-*.wav p0.75 o2",
+    "kenney-rpg-audio:cloth?.ogg g-8",
+    "ice-breakingshattering:LedasLuzta*.ogg g-17 max0.12 p1.2"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a stiff arm thrown"
+  },
+  "foe/taken_death": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -20,
+   "layers": [
+    "ice-breakingshattering:LedasLuzta*.ogg o1",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_glass_breaking_*.ogg g-5 p0.7 @0.04",
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg g-3 @0.28",
+    "ghost-breath:ghostbreath.flac s2.0 l0.9 p0.7 g-13 @0.2 raw fi0.1 fo0.5",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_glass_falling_*.ogg g-12 p0.8 @0.45"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "the crust gives all at once, and what wore it lies down",
+   "max": 1.8
+  },
+  "foe/dog_alert": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -22,
+   "layers": [
+    "dog-snarl-grunt-grumble:dog-*.flac",
+    "dog-sounds:Dog+Bark+?.wav @0.5 g-1",
+    "dog-sounds:Dog+Bark+?.wav o1 @0.78 g-3"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.06,
+    "vol": 1.5
+   },
+   "what": "growl, then two barks"
+  },
+  "foe/dog_attack": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -23,
+   "layers": [
+    "dog-snarl-grunt-grumble:dog-*.flac o2 p1.12 max0.5",
+    "swishes-sound-pack:swish-*.wav g-9 @0.1"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.06,
+    "vol": 1.5
+   },
+   "what": "snarl on the lunge"
+  },
+  "foe/dog_hit": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -22,
+   "layers": [
+    "kenney-impact-sounds:impactPunch_medium_*.ogg",
+    "dog-sounds:Dog+Bark+?.wav p1.4 g-3 max0.18 @0.02",
+    "ice-breakingshattering:LedasLuzta*.ogg g-12 max0.2"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.06,
+    "vol": 1.5
+   },
+   "what": "struck: a clipped yelp"
+  },
+  "foe/dog_death": {
+   "family": "foe",
+   "n": 2,
+   "lufs": -22,
+   "layers": [
+    "dog-sounds:Sad+Dog*.wav max1.1 p1.05",
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg g-4 @0.35",
+    "ice-breakingshattering:LedasLuzta*.ogg g-10 @0.3 max0.5"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a whine, and down"
+  },
+  "foe/stag_alert": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -21,
+   "layers": [
+    "camel-groan:camel* p1.22 max1.5 hp90",
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneL*.flac p0.8 g-8 @0.1",
+    "ghost-breath:ghostbreath.flac s0.3 l0.35 p1.5 hp500 g-10 raw fi0.02 fo0.15"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.05,
+    "vol": 1.0
+   },
+   "what": "a rutting bellow (a camel's groan, pitched up: no CC0 red deer was reachable) and a stamp"
+  },
+  "foe/stag_attack": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -23,
+   "layers": [
+    "swishes-sound-pack:swish-*.wav p0.6",
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneL*.flac p0.8 g-3",
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneR*.flac p0.8 g-3 @0.11",
+    "ghost-breath:ghostbreath.flac s1.2 l0.3 p1.6 hp500 g-8 raw fi0.02 fo0.1"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "antlers through air, hooves, a snort"
+  },
+  "foe/stag_hit": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -21,
+   "layers": [
+    "kenney-impact-sounds:impactPunch_heavy_*.ogg",
+    "camel-groan:camel* o1 p1.5 max0.35 g-7",
+    "ice-breakingshattering:LedasLuzta*.ogg g-10 max0.25"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "struck: a grunt"
+  },
+  "foe/stag_death": {
+   "family": "foe",
+   "n": 2,
+   "lufs": -21,
+   "layers": [
+    "camel-groan:camel* o2 p1.0 max1.6 lp2500",
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg p0.7 g-2 @0.6",
+    "ice-breakingshattering:LedasLuzta*.ogg g-9 @0.55"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a long groan, and the weight of it going down"
+  },
+  "foe/ram_alert": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -22,
+   "layers": [
+    "sheep-baa:sheep_baa.flac p0.62 fo0.2",
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneR*.flac p0.9 g-6 @0.5"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.08,
+    "vol": 1.5
+   },
+   "what": "a ram's low bleat (a sheep, pitched down) and a stamp"
+  },
+  "foe/ram_attack": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -23,
+   "layers": [
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneL*.flac g-2",
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneR*.flac @0.09 g-2",
+    "fantozzis-footsteps-grasssand-stone:Fantozzi-StoneL*.flac o2 @0.18 g-2",
+    "swishes-sound-pack:swish-*.wav p0.7 g-6 @0.2"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "hooves gathering into the charge"
+  },
+  "foe/ram_hit": {
+   "family": "foe",
+   "n": 3,
+   "lufs": -21,
+   "layers": [
+    "kenney-impact-sounds:impactWood_heavy_*.ogg",
+    "sheep-baa:sheep_baa.flac p0.85 max0.25 g-8 @0.02",
+    "ice-breakingshattering:LedasLuzta*.ogg g-11 max0.2"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "horn knock and a cut-off bleat"
+  },
+  "foe/ram_death": {
+   "family": "foe",
+   "n": 2,
+   "lufs": -22,
+   "layers": [
+    "sheep-baa:sheep_baa.flac p0.55 lp3000",
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg g-3 @0.5",
+    "ice-breakingshattering:LedasLuzta*.ogg g-10 @0.45 max0.4"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "down"
+  },
+  "foe/heavy_whoosh": {
+   "family": "swings",
+   "n": 3,
+   "lufs": -23,
+   "layers": [
+    "battle-sound-effects:swish_?.wav p0.6",
+    "swishes-sound-pack:swish-*.wav p0.45 g-3 o4"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "something large swung or thrown"
+  },
+  "foe/ground_slam": {
+   "family": "impacts",
+   "n": 3,
+   "lufs": -18,
+   "layers": [
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg p0.6",
+    "kenney-impact-sounds:impactPlank_medium_*.ogg p0.6 g-4 max0.5",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_rock_falling_*.ogg g-8 @0.05"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "weight into the ground"
+  },
+  "foe/cast": {
+   "family": "swings",
+   "n": 3,
+   "lufs": -25,
+   "layers": [
+    "wind:Wind3.ogg max0.9 p1.3",
+    "swishes-sound-pack:swish-*.wav g-6 o3",
+    "ice-breakingshattering:LedasLuzta*.ogg g-14 max0.2 p1.3"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "cold thrown: air and a tick of ice"
+  },
+  "foe/poof": {
+   "family": "impacts",
+   "n": 3,
+   "lufs": -26,
+   "layers": [
+    "kenney-impact-sounds:impactSoft_medium_*.ogg",
+    "4-dry-snow-steps:snow_step_dry-*.flac g-2"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a thrown thing breaking up in snow"
+  },
+  "boss/net_drag": {
+   "family": "boss",
+   "n": 3,
+   "lufs": -20,
+   "layers": [
+    "scrapes:scrape-*.ogg p0.62 lp2800 max1.5",
+    "12-wet-towel-hittingfallingpunching-floor-sounds:wet_towel* g-7 @0.15",
+    "kenney-rpg-audio:cloth?.ogg g-6 p0.8",
+    "kenney-rpg-audio:creak?.ogg g-10 p0.7 @0.3"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "the Netmender: wet net hauled over boards",
+   "room": [
+    1.2,
+    0.15
+   ]
+  },
+  "boss/sod_thud": {
+   "family": "boss",
+   "n": 3,
+   "lufs": -19,
+   "layers": [
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg p0.55",
+    "25-cc0-mud-sfx:mud_11.ogg g-3 p0.7",
+    "shovel-sound:shovel_0.ogg g-9 @0.02 max0.5",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_rock_falling_*.ogg g-13 @0.12"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "the Turfwright: a cut sod thrown down"
+  },
+  "boss/ice_auger": {
+   "family": "boss",
+   "n": 3,
+   "lufs": -20,
+   "layers": [
+    "scrapes:scrape-*.ogg o3 p1.5 hp700 max1.1",
+    "kenney-rpg-audio:creak?.ogg p0.7 g-6",
+    "ice-breakingshattering:LedasLuzta*.ogg g-4 @0.55",
+    "kenney-impact-sounds:impactGlass_heavy_*.ogg g-8 p0.6 @0.6"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "the Ice-Cutter: the auger biting, then the plug giving",
+   "room": [
+    1.4,
+    0.15
+   ]
+  },
+  "boss/bench_crash": {
+   "family": "boss",
+   "n": 3,
+   "lufs": -18,
+   "layers": [
+    "100-cc0-metal-and-wood-sfx:wood_falling_*.ogg",
+    "100-cc0-metal-and-wood-sfx:wood_breaking_*.ogg g-2 @0.05",
+    "kenney-impact-sounds:impactPlank_medium_*.ogg p0.8 g-2",
+    "100-cc0-sfx:dishes_0*.ogg g-11 @0.12"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "the Host: a feast bench going over",
+   "room": [
+    1.1,
+    0.18
+   ]
+  },
+  "boss/thorn_growth": {
+   "family": "boss",
+   "n": 3,
+   "lufs": -21,
+   "layers": [
+    "100-cc0-metal-and-wood-sfx:wood_cracking_*.ogg",
+    "100-cc0-metal-and-wood-sfx:wood_cracking_*.ogg o1 @0.13 g-2",
+    "100-cc0-metal-and-wood-sfx:wood_cracking_*.ogg o2 @0.31 g-3 p0.8",
+    "tree-creaking:tree_creak.flac s1.0 sv1.5 l0.9 p1.3 g-5 raw fi0.1 fo0.3",
+    "different-steps-on-wood-stone-leaves-gravel-and-mud:leaves0*.ogg g-9 @0.2"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "the Hedgelayer: stems splitting as they grow"
+  },
+  "boss/calling_horn": {
+   "family": "boss",
+   "n": 2,
+   "lufs": -19,
+   "layers": [
+    "their-coming-generic-horn-sound:theircoming*.ogg max3.2 lp3500 fo0.6 raw"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.0,
+    "vol": 0.5
+   },
+   "what": "the Fellcaller: a horn called down the fell",
+   "room": [
+    2.2,
+    0.25
+   ],
+   "raw": true
+  },
+  "boss/horn_short": {
+   "family": "boss",
+   "n": 2,
+   "lufs": -21,
+   "layers": [
+    "their-coming-generic-horn-sound:theircoming*.ogg max1.3 lp3200 fo0.4 raw"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.0,
+    "vol": 0.5
+   },
+   "what": "the same horn, one short call",
+   "room": [
+    2.0,
+    0.2
+   ],
+   "raw": true
+  },
+  "boss/sung_note": {
+   "family": "boss",
+   "n": 2,
+   "lufs": -24,
+   "layers": [
+    "ghostly-humming:ghostly_humming.ogg s6 sv14 l3.2 raw fi0.5 fo1.2 lp5000"
+   ],
+   "mix": {
+    "pitch": 0.0,
+    "vol": 0.0
+   },
+   "what": "the Leadvoice: one held, wordless note (not wired: her verses are music)",
+   "room": [
+    2.4,
+    0.3
+   ],
+   "raw": true
+  },
+  "world/hearth_catch": {
+   "family": "world",
+   "n": 1,
+   "lufs": -23,
+   "layers": [
+    "catching-fire:flame_0.ogg",
+    "fire-crackling:fire-1.wav @0.3 fi0.3 fo1.0 raw",
+    "ghost-breath:ghostbreath.flac s0.2 l0.5 p1.1 g-12 rev raw fi0.2 fo0.05"
+   ],
+   "mix": {},
+   "what": "a breath across the stone, the kindling takes, it settles to a crackle",
+   "raw": true
+  },
+  "world/fire_whoosh": {
+   "family": "world",
+   "n": 2,
+   "lufs": -21,
+   "layers": [
+    "catching-fire:flame_0.ogg p0.8",
+    "fire-crackling:fire-1.wav s0.5 l0.9 g-4 @0.15 raw fi0.05 fo0.5",
+    "swishes-sound-pack:swish-*.wav p0.5 g-8"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "flame thrown outward"
+  },
+  "world/door_open": {
+   "family": "world",
+   "n": 2,
+   "lufs": -24,
+   "layers": [
+    "kenney-rpg-audio:doorOpen*.ogg",
+    "kenney-rpg-audio:creak?.ogg g-8 @0.1"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a plank door on leather hinges"
+  },
+  "world/door_close": {
+   "family": "world",
+   "n": 3,
+   "lufs": -24,
+   "layers": [
+    "kenney-rpg-audio:doorClose*.ogg",
+    "kenney-impact-sounds:impactWood_medium_*.ogg g-8 @0.2"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "and shut"
+  },
+  "world/gate_open": {
+   "family": "world",
+   "n": 2,
+   "lufs": -22,
+   "layers": [
+    "creaky-door-hinge-spooky:creaky_door_hinge.wav s0.3 sv1.6 l1.7 p0.8 raw fi0.1 fo0.4",
+    "100-cc0-metal-and-wood-sfx:wood_slam_*.ogg g-3 @1.5",
+    "80-cc0-rpg-sfx:chain_*.ogg g-12 @0.1"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "a heavy gate swung on its pins, and fetching up"
+  },
+  "world/bar_lift": {
+   "family": "world",
+   "n": 2,
+   "lufs": -23,
+   "layers": [
+    "100-cc0-metal-and-wood-sfx:wood_squeak_*.ogg",
+    "100-cc0-metal-and-wood-sfx:wood_misc_*.ogg g-3 @0.25",
+    "kenney-rpg-audio:metalLatch.ogg g-10"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "the bar worked out of its brackets"
+  },
+  "world/bar_drop": {
+   "family": "world",
+   "n": 2,
+   "lufs": -20,
+   "layers": [
+    "100-cc0-metal-and-wood-sfx:wood_slam_*.ogg",
+    "kenney-impact-sounds:impactPlank_medium_*.ogg g-2 p0.8 @0.02 max0.6"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "the bar thrown down"
+  },
+  "world/ladder": {
+   "family": "world",
+   "n": 4,
+   "lufs": -27,
+   "layers": [
+    "kenney-impact-sounds:footstep_wood_*.ogg p1.25",
+    "kenney-rpg-audio:creak?.ogg g-8 max0.4",
+    "kenney-rpg-audio:handleSmallLeather*.ogg g-10"
+   ],
+   "mix": {
+    "dist": "near",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "a rung taken"
+  },
+  "world/bridge": {
+   "family": "world",
+   "n": 2,
+   "lufs": -21,
+   "layers": [
+    "creaky-door-hinge-spooky:creaky_door_hinge.wav s1.0 sv1.4 l2.2 p0.6 raw fi0.2 fo0.5",
+    "80-cc0-rpg-sfx:chain_*.ogg g-6 @0.2",
+    "100-cc0-metal-and-wood-sfx:wood_slam_*.ogg p0.7 g-1 @2.0"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "timber and chain: a bridge let down"
+  },
+  "world/pickup": {
+   "family": "world",
+   "n": 3,
+   "lufs": -27,
+   "layers": [
+    "kenney-rpg-audio:handleSmallLeather*.ogg",
+    "kenney-rpg-audio:cloth?.ogg g-9 @0.05",
+    "kenney-rpg-audio:dropLeather.ogg g-8 @0.18"
+   ],
+   "mix": {
+    "pitch": 0.04,
+    "vol": 1.0,
+    "db": -3
+   },
+   "what": "something taken up and put in the bag"
+  },
+  "world/plaque": {
+   "family": "world",
+   "n": 2,
+   "lufs": -27,
+   "layers": [
+    "80-cc0-rpg-sfx:item_stone_*.ogg",
+    "kenney-rpg-audio:bookPlace?.ogg g-8 @0.1"
+   ],
+   "mix": {
+    "pitch": 0.03,
+    "db": -3
+   },
+   "what": "a hand brushed over cut stone"
+  },
+  "world/veil_pass": {
+   "family": "world",
+   "n": 2,
+   "lufs": -23,
+   "layers": [
+    "wind:Wind.ogg s0.5 sv2.0 l1.6 p0.8 lp2600 raw fi0.3 fo0.8",
+    "ice-breakingshattering:LedasLuzta*.ogg g-9 max0.5 p0.9 @0.25",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_glass_falling_*.ogg g-13 p1.2 @0.5"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "stepping through hanging frost: cold air and a brush of crystals"
+  },
+  "world/veil_fall": {
+   "family": "world",
+   "n": 1,
+   "lufs": -20,
+   "layers": [
+    "75-cc0-breaking-falling-hit-sfx:bfh1_glass_breaking_*.ogg p0.7",
+    "ice-breakingshattering:LedasLuzta*.ogg i4 @0.1",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_glass_falling_*.ogg g-4 @0.4",
+    "wind:Wind2.ogg l1.8 p0.9 lp2500 g-6 @0.2 raw fi0.4 fo1.0"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "the veil lets go and comes down",
+   "room": [
+    1.5,
+    0.2
+   ]
+  },
+  "world/ice_break": {
+   "family": "world",
+   "n": 4,
+   "lufs": -19,
+   "layers": [
+    "ice-breakingshattering:LedasLuzta*.ogg",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_glass_breaking_*.ogg p0.65 g-4",
+    "kenney-impact-sounds:impactGlass_heavy_*.ogg p0.6 g-6",
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg g-8 p0.7"
+   ],
+   "mix": {
+    "dist": "far",
+    "pitch": 0.03,
+    "vol": 1.0
+   },
+   "what": "sheet ice cracking through"
+  },
+  "world/water_splash": {
+   "family": "world",
+   "n": 3,
+   "lufs": -22,
+   "layers": [
+    "water-splash-and-sand-footsteps:splash?_0.wav max1.0",
+    "6-short-water-splashes:water_splash-*.flac g-4 @0.05"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "something into water"
+  },
+  "world/bird_flush": {
+   "family": "world",
+   "n": 2,
+   "lufs": -27,
+   "layers": [
+    "kenney-rpg-audio:bookFlip?.ogg p0.9",
+    "kenney-rpg-audio:cloth?.ogg p1.6 max0.25 g-4 @0.08",
+    "kenney-rpg-audio:bookFlip?.ogg o1 p1.1 g-3 @0.2"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "wings off the ground"
+  },
+  "world/stopper": {
+   "family": "world",
+   "n": 1,
+   "lufs": -25,
+   "layers": [
+    "liquid-bottle-drink-set:bottle-close-*.flac max0.6"
+   ],
+   "mix": {
+    "bus": "UI"
+   },
+   "what": "a stopper pressed home"
+  },
+  "impact/wood": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -20,
+   "layers": [
+    "kenney-impact-sounds:impactWood_heavy_*.ogg o2",
+    "100-cc0-metal-and-wood-sfx:wood_hit_*.ogg o4 g-2",
+    "80-cc0-rpg-sfx:wood_0*.ogg g-10 max0.2"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge on timber"
+  },
+  "impact/stone": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -20,
+   "layers": [
+    "kenney-impact-sounds:impactMining_*.ogg max0.5",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_rock_hit_01.ogg g-3",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_rock_falling_*.ogg g-11 @0.06 max0.3"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge on rock: a crack and grit"
+  },
+  "impact/metal": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -19,
+   "layers": [
+    "kenney-impact-sounds:impactMetal_heavy_*.ogg",
+    "100-cc0-metal-and-wood-sfx:metal_hit_*.ogg g-4",
+    "fantasy-weapons-and-apparel-sfx-library:sword-knife-clash-*.wav g-9 max0.5 st5"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge on iron"
+  },
+  "impact/ice": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -20,
+   "layers": [
+    "kenney-impact-sounds:impactGlass_heavy_*.ogg",
+    "ice-breakingshattering:LedasLuzta*.ogg g-3 max0.45 o2",
+    "75-cc0-breaking-falling-hit-sfx:bfh1_glass_hit_*.ogg g-6"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge on ice"
+  },
+  "impact/cloth": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -24,
+   "layers": [
+    "kenney-impact-sounds:impactSoft_medium_*.ogg o1",
+    "kenney-rpg-audio:cloth?.ogg g-3",
+    "rpg-sound-pack:cloth.wav g-8"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge on hung cloth or sacking"
+  },
+  "impact/turf": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -23,
+   "layers": [
+    "kenney-impact-sounds:impactSoft_heavy_*.ogg o2",
+    "25-cc0-mud-sfx:mud_*.ogg o3 g-8 max0.25",
+    "kenney-impact-sounds:footstep_grass_*.ogg g-6"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge into sod"
+  },
+  "impact/snow": {
+   "family": "impacts",
+   "n": 4,
+   "lufs": -25,
+   "layers": [
+    "kenney-impact-sounds:footstep_snow_*.ogg",
+    "4-dry-snow-steps:snow_step_dry-*.flac g-2",
+    "kenney-impact-sounds:impactSoft_medium_*.ogg g-6"
+   ],
+   "mix": {
+    "dist": "mid",
+    "pitch": 0.05,
+    "vol": 1.5
+   },
+   "what": "edge into a drift"
+  },
+  "ui/move": {
+   "family": "ui",
+   "n": 3,
+   "lufs": -32,
+   "layers": [
+    "80-cc0-rpg-sfx:item_wood_*.ogg max0.09 hp250"
+   ],
+   "mix": {
+    "bus": "UI",
+    "pitch": 0.03,
+    "vol": 1.0,
+    "db": -4
+   },
+   "what": "a wood tick"
+  },
+  "ui/confirm": {
+   "family": "ui",
+   "n": 2,
+   "lufs": -29,
+   "layers": [
+    "kenney-impact-sounds:impactWood_medium_*.ogg max0.16",
+    "rpg-sound-pack:wood-small.wav g-5 max0.15"
+   ],
+   "mix": {
+    "bus": "UI",
+    "pitch": 0.03,
+    "vol": 1.0,
+    "db": -4
+   },
+   "what": "wood set down"
+  },
+  "ui/deny": {
+   "family": "ui",
+   "n": 2,
+   "lufs": -30,
+   "layers": [
+    "kenney-impact-sounds:impactGeneric_light_*.ogg p0.7 lp1800 max0.16"
+   ],
+   "mix": {
+    "bus": "UI",
+    "pitch": 0.03,
+    "vol": 1.0,
+    "db": -4
+   },
+   "what": "a dull knock"
+  },
+  "ui/open": {
+   "family": "ui",
+   "n": 2,
+   "lufs": -30,
+   "layers": [
+    "kenney-rpg-audio:handleSmallLeather*.ogg max0.28",
+    "80-cc0-rpg-sfx:item_wood_*.ogg g-6 max0.08 @0.02"
+   ],
+   "mix": {
+    "bus": "UI",
+    "pitch": 0.03,
+    "vol": 1.0,
+    "db": -4
+   },
+   "what": "a satchel flap, a tick"
+  },
+  "ui/close": {
+   "family": "ui",
+   "n": 2,
+   "lufs": -31,
+   "layers": [
+    "kenney-rpg-audio:bookClose.ogg",
+    "kenney-rpg-audio:dropLeather.ogg g-6 max0.25"
+   ],
+   "mix": {
+    "bus": "UI",
+    "pitch": 0.03,
+    "vol": 1.0,
+    "db": -4
+   },
+   "what": "flap closed"
+  },
+  "ui/tab": {
+   "family": "ui",
+   "n": 2,
+   "lufs": -31,
+   "layers": [
+    "rpg-sound-pack:beads.wav max0.14 lp6000",
+    "rpg-sound-pack:beads.wav s0.15 l0.14 lp6000 raw fi0.005 fo0.05 i0"
+   ],
+   "mix": {
+    "bus": "UI",
+    "pitch": 0.03,
+    "vol": 1.0,
+    "db": -4
+   },
+   "what": "bone beads"
+  },
+  "ui/ember": {
+   "family": "ui",
+   "n": 3,
+   "lufs": -31,
+   "layers": [
+    "100-cc0-metal-and-wood-sfx:wood_cracking_*.ogg max0.07 hp500"
+   ],
+   "mix": {
+    "bus": "UI",
+    "pitch": 0.03,
+    "vol": 1.0,
+    "db": -4
+   },
+   "what": "an ember tick"
+  }
+ },
+ "beds": {
+  "amb_thaw": {
+   "len": 64,
+   "lufs": -25,
+   "seed": 3,
+   "what": "base THAW bed for every region: open air and wind in grass",
+   "layers": [
+    {
+     "src": "windy-ambient-noise:windy_ambiance_0.ogg",
+     "s": 12,
+     "spread": 61,
+     "hp": 110,
+     "lp": 6500,
+     "swell": [
+      2.5,
+      16
+     ]
+    },
+    {
+     "src": "mild-wind-background-noise:wind*",
+     "s": 3,
+     "spread": 17,
+     "hp": 220,
+     "lp": 5000,
+     "g": -6,
+     "swell": [
+      3,
+      9
+     ]
+    }
+   ]
+  },
+  "amb_rime": {
+   "len": 64,
+   "lufs": -25,
+   "seed": 4,
+   "what": "base RIME bed: lower, colder wind, the odd creak of ice",
+   "layers": [
+    {
+     "src": "wind1:wind1.wav",
+     "s": 4,
+     "spread": 23,
+     "p": 0.8,
+     "hp": 70,
+     "lp": 1900,
+     "swell": [
+      4,
+      21
+     ]
+    },
+    {
+     "src": "wind1:wind2.wav",
+     "s": 9,
+     "spread": 19,
+     "p": 1.25,
+     "hp": 900,
+     "lp": 4200,
+     "g": -13,
+     "swell": [
+      5,
+      13
+     ]
+    },
+    {
+     "src": "tree-creaking:tree_creak.flac",
+     "mode": "scatter",
+     "count": 4,
+     "p": [
+      0.42,
+      0.65
+     ],
+     "max": 3.0,
+     "g": -9,
+     "far_lp": 700,
+     "near_lp": 1500,
+     "room": 0.5
+    },
+    {
+     "src": "ice-breakingshattering:LedasLuzta*.ogg",
+     "mode": "scatter",
+     "count": 4,
+     "p": [
+      0.5,
+      0.8
+     ],
+     "g": -15,
+     "far_lp": 1500,
+     "near_lp": 4000,
+     "room": 0.4
+    }
+   ]
+  },
+  "layer_sea": {
+   "len": 53,
+   "lufs": -26,
+   "seed": 5,
+   "what": "Saltfell THAW: surf on the strand",
+   "layers": [
+    {
+     "src": "sea-and-river-wave-sounds:VistulaShort_0.mp3",
+     "s": 40,
+     "spread": 97,
+     "hp": 150,
+     "lp": 5500,
+     "g": -5
+    },
+    {
+     "src": "beach-ocean-waves:wave_0*",
+     "mode": "scatter",
+     "count": 9,
+     "p": [
+      0.8,
+      1.0
+     ],
+     "g": 0,
+     "near_lp": 7000,
+     "far_lp": 3000,
+     "far_db": 5
+    },
+    {
+     "src": "water-waves:wave_0*",
+     "mode": "scatter",
+     "count": 5,
+     "p": [
+      0.75,
+      0.95
+     ],
+     "g": -3,
+     "near_lp": 6000,
+     "far_lp": 2500,
+     "far_db": 5
+    }
+   ]
+  },
+  "layer_sea_muffled": {
+   "len": 53,
+   "lufs": -29,
+   "seed": 6,
+   "what": "Saltfell RIME: the same sea, behind the ice",
+   "layers": [
+    {
+     "src": "sea-and-river-wave-sounds:VistulaShort_0.mp3",
+     "s": 40,
+     "spread": 97,
+     "hp": 40,
+     "lp": 380,
+     "lp_order": 4,
+     "g": -4
+    },
+    {
+     "src": "beach-ocean-waves:wave_0*",
+     "mode": "scatter",
+     "count": 7,
+     "p": [
+      0.55,
+      0.75
+     ],
+     "g": 0,
+     "near_lp": 420,
+     "far_lp": 260,
+     "far_db": 4
+    }
+   ]
+  },
+  "layer_gulls": {
+   "len": 61,
+   "lufs": -31,
+   "seed": 7,
+   "what": "Saltfell THAW: gulls, mostly far off",
+   "layers": [
+    {
+     "src": "solo-seagull-sound-effects:Seagull+Ambient+?.wav",
+     "mode": "scatter",
+     "count": 7,
+     "p": [
+      0.92,
+      1.06
+     ],
+     "near_lp": 7000,
+     "far_lp": 2400,
+     "far_db": 11,
+     "room": 0.3
+    }
+   ]
+  },
+  "layer_work": {
+   "len": 59,
+   "lufs": -33,
+   "seed": 8,
+   "what": "THAW steadings: somebody working, a long way off",
+   "layers": [
+    {
+     "src": "100-cc0-metal-and-wood-sfx:hammer_0*.ogg",
+     "mode": "scatter",
+     "count": 7,
+     "p": [
+      0.8,
+      1.0
+     ],
+     "near_lp": 2600,
+     "far_lp": 1200,
+     "far_db": 6,
+     "room": 0.7
+    },
+    {
+     "src": "100-cc0-metal-and-wood-sfx:wood_hit_*.ogg",
+     "mode": "scatter",
+     "count": 5,
+     "p": [
+      0.7,
+      0.9
+     ],
+     "near_lp": 2200,
+     "far_lp": 1100,
+     "far_db": 6,
+     "room": 0.7,
+     "g": -2
+    },
+    {
+     "src": "kenney-rpg-audio:chop.ogg",
+     "mode": "scatter",
+     "count": 3,
+     "p": [
+      0.7,
+      0.8
+     ],
+     "near_lp": 2000,
+     "far_lp": 1100,
+     "room": 0.7,
+     "g": -3
+    }
+   ]
+  },
+  "layer_steam": {
+   "len": 47,
+   "lufs": -28,
+   "seed": 9,
+   "what": "Kettle Fjord THAW: hot water working, steam let go, the fjord lapping",
+   "layers": [
+    {
+     "src": "boiling-water-loops:cooking_without*",
+     "lp": 2800,
+     "g": -3,
+     "spread": 3.1
+    },
+    {
+     "src": "40-cc0-water-splash-slime-sfx:loop_water_02.ogg",
+     "g": -8,
+     "lp": 5000,
+     "spread": 2.3
+    },
+    {
+     "src": "steam-release-sounds:steam*",
+     "mode": "scatter",
+     "count": 4,
+     "p": [
+      0.55,
+      0.8
+     ],
+     "g": -4,
+     "near_lp": 6000,
+     "far_lp": 2500,
+     "far_db": 8,
+     "room": 0.3
+    },
+    {
+     "src": "blacksmiths-hammer:blacksmithhammer.wav",
+     "mode": "scatter",
+     "count": 3,
+     "p": [
+      0.8,
+      0.95
+     ],
+     "g": -10,
+     "near_lp": 2500,
+     "far_lp": 1400,
+     "room": 0.8
+    }
+   ]
+  },
+  "layer_ice_floor": {
+   "len": 57,
+   "lufs": -29,
+   "seed": 10,
+   "what": "RIME over water (Kettle, Tarnhall, the Coldwell): the sheet groaning and ticking",
+   "layers": [
+    {
+     "src": "tree-creaking:tree_creak.flac",
+     "mode": "scatter",
+     "count": 6,
+     "p": [
+      0.28,
+      0.45
+     ],
+     "max": 3.5,
+     "near_lp": 900,
+     "far_lp": 450,
+     "far_db": 5,
+     "room": 0.8
+    },
+    {
+     "src": "ice-breakingshattering:LedasLuzta*.ogg",
+     "mode": "scatter",
+     "count": 5,
+     "p": [
+      0.4,
+      0.7
+     ],
+     "g": -8,
+     "near_lp": 3000,
+     "far_lp": 1200,
+     "room": 0.6
+    },
+    {
+     "src": "wind1:wind1.wav",
+     "s": 31,
+     "spread": 11,
+     "p": 0.6,
+     "lp": 420,
+     "g": -8
+    }
+   ]
+  },
+  "layer_trees": {
+   "len": 67,
+   "lufs": -28,
+   "seed": 11,
+   "what": "Thornwold THAW: birch wood, small birds, a trunk creaking",
+   "layers": [
+    {
+     "src": "forest-bird-sounds:Forest+1.wav",
+     "hp": 200,
+     "spread": 9.0
+    },
+    {
+     "src": "forest-bird-sounds:Forest+Birds*",
+     "mode": "scatter",
+     "count": 7,
+     "g": -6,
+     "near_lp": 9000,
+     "far_lp": 4000,
+     "far_db": 9,
+     "room": 0.3
+    },
+    {
+     "src": "tree-creaking:tree_creak.flac",
+     "mode": "scatter",
+     "count": 2,
+     "p": [
+      0.8,
+      1.0
+     ],
+     "max": 3.0,
+     "g": -10,
+     "near_lp": 3000,
+     "far_lp": 1500,
+     "room": 0.3
+    }
+   ]
+  },
+  "layer_charcoal": {
+   "len": 41,
+   "lufs": -32,
+   "seed": 12,
+   "what": "Thornwold: the clamps burning under their turf",
+   "layers": [
+    {
+     "src": "fireplace-sound-loop:fire.wav",
+     "lp": 4500,
+     "hp": 150,
+     "spread": 11
+    },
+    {
+     "src": "100-cc0-metal-and-wood-sfx:wood_cracking_*.ogg",
+     "mode": "scatter",
+     "count": 7,
+     "g": -6,
+     "near_lp": 6000,
+     "far_lp": 2500,
+     "far_db": 8
+    }
+   ]
+  },
+  "layer_trees_rime": {
+   "len": 67,
+   "lufs": -29,
+   "seed": 13,
+   "what": "Thornwold RIME: wind in bare tops, frozen trunks working",
+   "layers": [
+    {
+     "src": "wind1:wind2.wav",
+     "s": 21,
+     "spread": 13,
+     "hp": 300,
+     "lp": 2600,
+     "swell": [
+      5,
+      11
+     ]
+    },
+    {
+     "src": "tree-creaking:tree_creak.flac",
+     "mode": "scatter",
+     "count": 5,
+     "p": [
+      0.7,
+      1.0
+     ],
+     "max": 3.0,
+     "g": -5,
+     "near_lp": 3500,
+     "far_lp": 1400,
+     "room": 0.4
+    }
+   ]
+  },
+  "layer_sheep": {
+   "len": 71,
+   "lufs": -30,
+   "seed": 14,
+   "what": "Shepherd's Reach THAW: sheep across the hill and wind over the walls",
+   "layers": [
+    {
+     "src": "sheep-baa:sheep_baa.flac",
+     "mode": "scatter",
+     "count": 7,
+     "p": [
+      0.8,
+      1.18
+     ],
+     "near_lp": 5000,
+     "far_lp": 1700,
+     "far_db": 12,
+     "room": 0.3
+    },
+    {
+     "src": "wind1:wind1.wav",
+     "s": 36,
+     "spread": 14,
+     "hp": 500,
+     "lp": 5200,
+     "g": -4,
+     "swell": [
+      5,
+      12
+     ]
+    }
+   ]
+  },
+  "layer_high_wind": {
+   "len": 43,
+   "lufs": -27,
+   "seed": 15,
+   "what": "Shepherd's Reach RIME: nothing up here to stop the wind",
+   "layers": [
+    {
+     "src": "wind1:wind2.wav",
+     "s": 2,
+     "spread": 29,
+     "p": 1.15,
+     "hp": 350,
+     "lp": 6000,
+     "swell": [
+      6,
+      9
+     ]
+    },
+    {
+     "src": "wind1:wind1.wav",
+     "s": 15,
+     "spread": 26,
+     "p": 0.7,
+     "lp": 900,
+     "g": -5,
+     "swell": [
+      4,
+      14
+     ]
+    }
+   ]
+  },
+  "layer_bog": {
+   "len": 59,
+   "lufs": -31,
+   "seed": 16,
+   "what": "The Lowe THAW: bog water, a crow, wind low in the heather",
+   "layers": [
+    {
+     "src": "mild-wind-background-noise:wind*",
+     "s": 20,
+     "spread": 13,
+     "hp": 150,
+     "lp": 2400
+    },
+    {
+     "src": "crow-caw:crow_caw.wav",
+     "mode": "scatter",
+     "count": 3,
+     "p": [
+      0.9,
+      1.05
+     ],
+     "g": -4,
+     "near_lp": 5000,
+     "far_lp": 2000,
+     "far_db": 10,
+     "room": 0.4
+    },
+    {
+     "src": "40-cc0-water-splash-slime-sfx:bubble_0?.ogg",
+     "mode": "scatter",
+     "count": 6,
+     "p": [
+      0.6,
+      0.9
+     ],
+     "g": -10,
+     "near_lp": 3000,
+     "far_lp": 1500
+    }
+   ]
+  },
+  "layer_tarn": {
+   "len": 53,
+   "lufs": -30,
+   "seed": 17,
+   "what": "Tarnhall THAW: the tarn lapping at the rushes",
+   "layers": [
+    {
+     "src": "100-cc0-sfx-2:sfx100v2_loop_water_*.ogg",
+     "i": 1,
+     "lp": 4200,
+     "spread": 2.9
+    },
+    {
+     "src": "different-steps-on-wood-stone-leaves-gravel-and-mud:leaves0*.ogg",
+     "mode": "scatter",
+     "count": 9,
+     "p": [
+      0.7,
+      1.0
+     ],
+     "g": -9,
+     "near_lp": 7000,
+     "far_lp": 3500
+    }
+   ]
+  },
+  "layer_melt": {
+   "len": 49,
+   "lufs": -27,
+   "seed": 18,
+   "what": "The Coldwell THAW: meltwater running over gravel",
+   "layers": [
+    {
+     "src": "sea-and-river-wave-sounds:VistulaShort_0.mp3",
+     "s": 150,
+     "spread": 61,
+     "hp": 250,
+     "lp": 7000
+    },
+    {
+     "src": "40-cc0-water-splash-slime-sfx:loop_water_01.ogg",
+     "g": -6,
+     "spread": 1.3
+    },
+    {
+     "src": "100-cc0-sfx:plop_0*.ogg",
+     "mode": "scatter",
+     "count": 7,
+     "p": [
+      0.9,
+      1.3
+     ],
+     "g": -10,
+     "near_lp": 6000,
+     "far_lp": 3000
+    }
+   ]
+  },
+  "hearth_loop": {
+   "len": 24,
+   "lufs": -27,
+   "seed": 19,
+   "xfade": 2.0,
+   "what": "a lit hearth, close: plays at each Hearthstone that is lit",
+   "layers": [
+    {
+     "src": "fireplace-sound-loop:fire.wav",
+     "s": 2,
+     "spread": 13,
+     "hp": 90
+    }
+   ]
+  },
+  "veil_loop": {
+   "len": 17,
+   "lufs": -30,
+   "seed": 20,
+   "xfade": 2.0,
+   "what": "a frost veil: cold air drawn through hanging ice",
+   "layers": [
+    {
+     "src": "wind1:wind2.wav",
+     "s": 40,
+     "spread": 5,
+     "p": 1.5,
+     "hp": 1200,
+     "lp": 5000
+    },
+    {
+     "src": "ice-breakingshattering:LedasLuzta*.ogg",
+     "mode": "scatter",
+     "count": 5,
+     "p": [
+      1.2,
+      1.8
+     ],
+     "max": 0.3,
+     "g": -10,
+     "near_lp": 9000,
+     "far_lp": 6000
+    }
+   ]
+  },
+  "wave_to_rime": {
+   "len": 7.0,
+   "lufs": -29,
+   "seed": 21,
+   "once": true,
+   "fi": 0.8,
+   "fo": 2.5,
+   "q": 4,
+   "what": "the state wave to RIME: the wind turns cold and the ground tightens. No breath, no swell.",
+   "layers": [
+    {
+     "src": "wind1:wind1.wav",
+     "s": 8,
+     "spread": 5,
+     "p": 0.75,
+     "lp": 1700,
+     "hp": 90,
+     "fi": 2.5,
+     "fo": 3.0
+    },
+    {
+     "src": "tree-creaking:tree_creak.flac",
+     "s": 1.0,
+     "spread": 2.2,
+     "p": 0.45,
+     "lp": 900,
+     "g": -7,
+     "at": 1.0,
+     "dur": 4.0,
+     "fi": 1.0,
+     "fo": 2.0
+    },
+    {
+     "src": "ice-breakingshattering:LedasLuzta*.ogg",
+     "mode": "scatter",
+     "count": 6,
+     "from": 0.9,
+     "to": 5.2,
+     "p": [
+      0.5,
+      0.9
+     ],
+     "g": -9,
+     "near_lp": 3500,
+     "far_lp": 1400,
+     "room": 0.5
+    }
+   ]
+  },
+  "wave_to_thaw": {
+   "len": 7.0,
+   "lufs": -29,
+   "seed": 22,
+   "once": true,
+   "fi": 0.8,
+   "fo": 2.5,
+   "q": 4,
+   "what": "the state wave to THAW: the wind eases, the ice gives, water starts",
+   "layers": [
+    {
+     "src": "windy-ambient-noise:windy_ambiance_0.ogg",
+     "s": 30,
+     "spread": 21,
+     "hp": 200,
+     "lp": 3200,
+     "fi": 2.0,
+     "fo": 3.0
+    },
+    {
+     "src": "40-cc0-water-splash-slime-sfx:loop_water_02.ogg",
+     "g": -7,
+     "at": 1.4,
+     "dur": 5.6,
+     "fi": 2.5,
+     "fo": 2.5,
+     "spread": 1.7
+    },
+    {
+     "src": "100-cc0-sfx:plop_0*.ogg",
+     "mode": "scatter",
+     "count": 8,
+     "from": 1.2,
+     "to": 6.0,
+     "p": [
+      0.9,
+      1.4
+     ],
+     "g": -9,
+     "near_lp": 6000,
+     "far_lp": 3000
+    },
+    {
+     "src": "ice-breakingshattering:LedasLuzta*.ogg",
+     "mode": "scatter",
+     "count": 3,
+     "from": 0.6,
+     "to": 3.0,
+     "p": [
+      0.4,
+      0.6
+     ],
+     "g": -13,
+     "near_lp": 1500,
+     "far_lp": 900,
+     "room": 0.5
+    }
+   ]
+  }
+ }
+}

@@ -531,7 +531,7 @@ func locomotion(dt: float, ground_speed: float, accel_lean := Vector2.ZERO, grou
 		var idx := int(anim.current_animation_position / half)
 		if idx != _step_i:
 			_step_i = idx
-			AudioDirector.footstep(global_position, idx, step_volume)
+			AudioDirector.footstep(global_position, idx, step_volume, base == "run")
 
 func _humanoid_locomotion(dt: float, ground_speed: float, accel_lean: Vector2, grounded: bool) -> void:
 	var gait := rig.locomotion(dt, ground_speed, stride, run_stride, grounded)
@@ -545,7 +545,7 @@ func _humanoid_locomotion(dt: float, ground_speed: float, accel_lean: Vector2, g
 		var idx := int(cyc.x / maxf(cyc.y * 0.5, 0.01))
 		if idx != _step_i:
 			_step_i = idx
-			AudioDirector.footstep(global_position, idx, step_volume)
+			AudioDirector.footstep(global_position, idx, step_volume, gait == "run" or gait == "sprint")
 
 ## Quadruped clip vocabulary -> poses ("death" lies it on its side; an
 ## unknown clip, or "", releases every pose back to the stand).

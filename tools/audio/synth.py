@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Rimeholt foley and SFX, synthesized. Deterministic.
+"""Rimeholt's composed stingers, synthesized. Deterministic.
 
-The engine's generic set (swings, impacts, UI) keeps its names and its
-job, retuned for this world: iron and wool and ice, not polished steel.
-The world-specific foley (footsteps per surface, frost-taken hits, the
-parry ring, the coal catching, the last breath, the frost/melt wave) is
-built from the physical models in dsp.py.
+Only five files are still made here, and they are music rather than
+effects: the hum (A-D-F), the rest chime and level-up on the kantele, the
+warm swell under the Bearer's songs, and the breathmark. Every sound
+effect and ambience bed is now built from CC0 recordings by build_sfx.py
+(docs/audio/SFX.md).
 
-Music and ambience live in music.py and ambience.py.
+The older generators are left in place and still run, unwritten, because
+they share one random stream: taking them out would change the five that
+remain.
 
-Usage: python3 tools/audio/synth.py [name ...]
-Writes assets/audio/*.wav, assets/audio/foley/*.wav (44.1 kHz 16-bit) and
-the two long transition breaths as .ogg.
+Usage: python3 tools/audio/synth.py
+Writes assets/audio/{hum,rest_chime,levelup,swell_warm,breathmark}.wav.
 """
 import os
 import sys
@@ -26,7 +27,12 @@ FOLEY = os.path.join(OUT, "foley")
 rng = np.random.default_rng(7)
 
 
+KEEP = {"hum", "rest_chime", "levelup", "swell_warm", "breathmark"}
+
+
 def write(name, x, peak=0.9, folder=OUT):
+    if name not in KEEP:
+        return   # superseded by a recording (build_sfx.py); see the module note
     x = dsp.normalize(np.asarray(x, dtype=float), peak)
     path = os.path.join(folder, name + ".wav")
     dsp.write_wav(path, x)
@@ -262,7 +268,8 @@ def gen_wave():
         rime[:, ch] += cc
     held = np.exp(-np.maximum(t - dur * 0.92, 0) / 0.08)
     rime *= held[:, None]
-    dsp.write_ogg(os.path.join(OUT, "wave_to_rime.ogg"), dsp.normalize(rime, 0.8), 5)
+    pass  # superseded: ambience/wave_to_rime.ogg is built by build_sfx.py
+    # dsp.write_ogg(os.path.join(OUT, "wave_to_rime.ogg"), dsp.normalize(rime, 0.8), 5)
     # ---- to THAW
     r = np.random.default_rng(6100)
     br = _breath_long(r, dur, False)
@@ -280,7 +287,8 @@ def gen_wave():
     thaw = dsp.pan(br * 1.2 + warm, 0)
     thaw[:, 0] += give + drips
     thaw[:, 1] += np.roll(give, 900) + np.roll(drips, 3000)
-    dsp.write_ogg(os.path.join(OUT, "wave_to_thaw.ogg"), dsp.normalize(dsp.fade(thaw, 0, 1.2), 0.8), 5)
+    pass  # superseded: ambience/wave_to_thaw.ogg is built by build_sfx.py
+    # dsp.write_ogg(os.path.join(OUT, "wave_to_thaw.ogg"), dsp.normalize(dsp.fade(thaw, 0, 1.2), 0.8), 5)
 
 
 # --------------------------------------------- the engine set, retuned
@@ -491,7 +499,6 @@ ALL = {
 
 if __name__ == "__main__":
     only = set(sys.argv[1:])
-    os.makedirs(FOLEY, exist_ok=True)
     for name, fn in ALL.items():
         if only and name not in only:
             continue

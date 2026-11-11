@@ -6,7 +6,7 @@ extends Node3D
 var flag := ""
 var or_cleared := ""          # area id: the gate also opens once its holdfast rests
 var kit := "fence_iron_4m"
-var open_sfx := "res://assets/audio/swell_warm.wav"
+var open_sfx := "world/gate_open"
 var open_dir := "down"          # "down" sinks away; "up" hoists (portcullis)
 
 var _piece: Node3D

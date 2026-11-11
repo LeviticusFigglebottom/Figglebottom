@@ -184,7 +184,7 @@ func _st_transition(dt: float) -> void:
 func _transition_event(ev: String) -> void:
 	match ev:
 		"knock":   # the shavings knocked off the auger against his boot
-			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -10.0, 0.6)
+			AudioDirector.play("world/ice_break", global_position, -6.0)
 		"ring_band":
 			var rb: Dictionary = _d("ring_band", {})
 			band = BrokenIce.open(get_parent(), hole_point(), "ring", float(rb.get("outer", 10.5)),
@@ -273,7 +273,7 @@ func _st_hold(dt: float) -> void:
 	velocity.z = 0
 	_hold_quiet += dt
 	if fmod(state_t, 1.1) < dt:
-		AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -14.0, 0.45)
+		AudioDirector.play("world/ice_break", global_position, -10.0)
 	if _hold_quiet >= float(attack_by_id("cut_fresh").get("quiet", 5.0)):
 		_set_state(ES.COMBAT)
 		vis.idle(0.6)

@@ -121,7 +121,7 @@ func _ready() -> void:
 	panel.add_child(KnotFrame.new())
 
 	_show_tab(_first_leaf if not _leaf(_first_leaf).is_empty() else "pack")
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("ui/open")
 
 # ------------------------------------------------------------------ tabs
 
@@ -335,7 +335,7 @@ func _act_selected() -> void:
 	if r["kind"] == "song":
 		player.attune_song(r["id"])
 		Game.toast.emit("%s is attuned. Cast with X." % _name_of(r["id"]))
-		AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+		AudioDirector.play("ui/confirm")
 		_rebuild_list()
 	elif r["kind"] == "armour":
 		_toggle_armour(r["id"])
@@ -392,7 +392,7 @@ func _bind_hand(i: int, id: String) -> void:
 	player.set_hotbar_slot(i, id)
 	_refresh_hand()
 	Game.toast.emit("%s rides in slot %d." % [_name_of(id), i + 1])
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("foley/equip")
 
 # ------------------------------------------------------------------ attune slot
 
@@ -420,7 +420,7 @@ func _can_drop_attune(_at, data) -> bool:
 func _drop_attune(_at, data) -> void:
 	player.attune_song(data["id"])
 	Game.toast.emit("%s is attuned. Cast with X." % _name_of(data["id"]))
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("ui/deny")
 	_rebuild_list()
 
 # ------------------------------------------------------------------ armour leaf
@@ -521,7 +521,7 @@ func _wear(slot: String, id: String) -> void:
 		Game.toast.emit("That is not worn on the %s." % slot)
 		return
 	Game.toast.emit(("%s is worn." % _name_of(id)) if id != "" else ("The %s is bare." % slot))
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("foley/equip")
 	_refresh_armour()
 	var keep := _sel
 	_rebuild_list()
@@ -583,9 +583,9 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("move_right"):
 		_leaf_step(1); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("move_forward"):
-		_sel = maxi(_sel - 1, 0); _mark_selected(); _scroll.scroll_vertical -= 56; return
+		_sel = maxi(_sel - 1, 0); _mark_selected(); AudioDirector.play("ui/move"); _scroll.scroll_vertical -= 56; return
 	if event.is_action_pressed("move_back"):
-		_sel = clampi(_sel + 1, 0, maxi(_rows.size() - 1, 0)); _mark_selected(); _scroll.scroll_vertical += 56; return
+		_sel = clampi(_sel + 1, 0, maxi(_rows.size() - 1, 0)); _mark_selected(); AudioDirector.play("ui/move"); _scroll.scroll_vertical += 56; return
 	if event.is_action_pressed("interact") and _sel < _rows.size():
 		_act_selected(); get_viewport().set_input_as_handled(); return
 	if _tab == "armour":
@@ -651,7 +651,7 @@ func close() -> void:
 		player.lock_control(false)
 		player.suppress_interact(10)
 		Input.mouse_mode = Input.MOUSE_MODE_CONFINED_HIDDEN if player.look_compat else Input.MOUSE_MODE_CAPTURED
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -10.0)
+	AudioDirector.play("ui/close")
 	remove_from_group("inventory_ui")
 	if player != null and is_instance_valid(player) and player.has_method("refresh_outfit"):
 		player.refresh_outfit()   # the Pack is shut: he is wearing what was chosen

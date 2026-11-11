@@ -104,6 +104,7 @@ func _apply(down: bool, instant: bool) -> void:
 	if instant:
 		_deck.rotation.x = target
 	else:
+		AudioDirector.play("world/bridge", global_position)
 		create_tween().tween_property(_deck, "rotation:x", target, 2.4)\
 			.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 	_body.collision_layer = (1 << (RH.L_WORLD_BASE - 1)) if down else 0

@@ -101,7 +101,7 @@ func _ready() -> void:
 ## A heavy blow landed on it (player.gd, the heavy swing's contact).
 func chip(player) -> void:
 	if chip_heavy and is_inside_tree() and _shown:
-		AudioDirector.sfx(AudioDirector.foley("frost_hit"), -2.0)
+		AudioDirector.play("combat/hit_ice", global_position)
 		_on_take(player)
 
 func _on_take(player) -> void:
@@ -126,6 +126,6 @@ func _on_take(player) -> void:
 			DB.song(item_id).get("name", DB.item(item_id).get("name", item_id)))
 		what.append("%s ×%d" % [iname, item_count])
 	Game.toast.emit("Received: " + " · ".join(what))
-	AudioDirector.sfx("res://assets/audio/warmth.wav", -4.0)
+	AudioDirector.play("world/pickup")
 	World.save_game()
 	queue_free()

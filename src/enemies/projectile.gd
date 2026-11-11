@@ -188,5 +188,5 @@ func _poof(at: Vector3) -> void:
 	var btw := burst.create_tween()
 	btw.tween_interval(1.0)
 	btw.tween_callback(burst.queue_free)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", at, -14.0, 1.6)
+	AudioDirector.play("foe/poof", at)
 	queue_free()
