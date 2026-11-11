@@ -200,7 +200,7 @@ func _grant_gift(g: Dictionary) -> void:
 	var iname: String = DB.weapon(item).get("name",
 		DB.song(item).get("name", DB.item(item).get("name", item)))
 	Game.toast.emit(g.get("toast", "Received %s x%d" % [iname, count]))
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -6.0)
+	AudioDirector.play("world/pickup")
 
 func _show_line() -> void:
 	options_box.visible = false
@@ -422,7 +422,7 @@ func _activate(o: Dictionary) -> void:
 				World.set_flag(gflag)
 				p.give_item(gitem, int(o.get("count", 1)))
 				Game.toast.emit("Received: %s" % DB.item(gitem).get("name", gitem))
-				AudioDirector.sfx("res://assets/audio/ui_tick.wav", -6.0)
+				AudioDirector.play("ui/confirm")
 				World.save_game()
 				text_label.text = o.get("line_done", "")
 			_flash_line()

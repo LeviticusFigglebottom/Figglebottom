@@ -1,6 +1,6 @@
 # Rimeholt: music and sound
 
-Every sound in the game is made by committed scripts in `tools/audio/`. Run `tools/audio/build.sh` to rebuild them all. The spectrograms in this folder are for review, and `build.sh` re-renders them.
+Every sound in the game is made by committed scripts in `tools/audio/`. This file covers the music, which is synthesized; the sound effects and ambience are recordings and are covered in `SFX.md`. Run `tools/audio/build.sh` to rebuild them all. The spectrograms in this folder are for review, and `build.sh` re-renders them.
 
 - **Composition.** The music is composed as data in `music.py`: melodies, drones, harmony and the arrangement.
 - **Sampled voices.** The bowed, blown and sung voices are MIDI rendered through the FluidR3 GM soundfont (MIT licence) with fluidsynth: fiddle, cello, viola, flute, and the hummed and sung choir.
@@ -92,21 +92,9 @@ A low cello drone and a breath. A lone wooden flute plays the remembered tune on
 
 ## Ambiences
 
-### THAW (`ambience/amb_thaw.ogg`, 64 s loop)
-
-- **Surf on shingle.** Eight waves a loop, never evenly spaced. Each has a swell, a break and a wash, then the long rattling drag of stones going back down the strand. The drag is hundreds of clicks through pebble-sized resonances.
-- **Gulls.** Herring-gull long calls: drawn-out mews, then the laughing run.
-- **Wind in the grass.** A soft high hiss on slow, exactly periodic gusts.
-- **Voices.** People talking down by the boats: glottal pulses through moving vowel formants, in syllabic rhythm, with falling phrase pitch and pauses, and the odd laugh. They are filtered by distance so there are never words. Texture, not language.
+The ambience beds are no longer synthesized. They are built from CC0 recordings, with layers per region, and are described in [`SFX.md`](SFX.md) along with the change between THAW and RIME.
 
 ![amb THAW](amb_thaw.png)
-
-### RIME (`ambience/amb_rime.ogg`, 64 s loop)
-
-- **Wind.** Lower and longer gusts, with a whistle that rises in pitch and loudness with the gust, like air in a frozen net.
-- **Ice.** Stick-slip creaks through the low modes of a frozen sheet, and the long dispersive *pew-ow* a frozen strand sings. Fine crackle of rime growing.
-- **The sea.** The same surf, muffled to a thump behind the ice wall.
-
 ![amb RIME](amb_rime.png)
 
 ## Wiring
@@ -114,24 +102,11 @@ A low cello drone and a breath. A lone wooden flute plays the remembered tune on
 | What | Where |
 |---|---|
 | Per-state music, ambience and crossfades (`music_fade_in`, `ambience_fade`) | `data/state_profiles.json` |
-| Title, Outsong, holdfast themes (with loop flags), the wave, footsteps, foley | `data/audio.json` |
-| Crossfading music and ambience players, boss ducking, the Outsong, the surface probe | `src/core/audio_director.gd` |
+| Title, Outsong, holdfast themes (with loop flags), the wave, region ambience layers, the effect registry | `data/audio.json` |
+| Crossfading music, the ambience beds and their handover, boss ducking, the Outsong, effects, the surface probe | `src/core/audio_director.gd` |
 
-## Foley
+## Composed stingers
 
-All foley is in `synth.py`, with outputs in `assets/audio/` and `assets/audio/foley/`.
+Five short files are still synthesized by `synth.py`, because they are music rather than effects: the hum (`hum.wav`, A-D-F), the rest chime and level-up on the kantele, the warm swell under the Bearer's songs, and the breathmark.
 
-- **Footsteps,** four variants per surface, chosen by `AudioDirector.surface_at`. The terrain's painted shingle layer gives shingle and turf. House floors are plank. Outdoors in RIME everything is snow.
-  - **turf:** damp thud and a brush of grass
-  - **shingle:** a shower of pebble clicks
-  - **plank:** board modes, a heel tick, sometimes a creak
-  - **snow:** crust break and the dry squeak of packed crystals
-- **Frost-taken hits** (`hit_frost_1-3`): rime shattering, a stiff-wool thump, and skittering chips. **`frost_fall`** is the whole crust giving way when one falls.
-- **Parry:** a bog-iron bar's inharmonic free-free modes (darker than steel), an ice crack, and a hanging shimmer of ice pings.
-- **Coal catch** (`foley/coal_catch.wav`): a breath drawn across the hearthstone, the *whump* of the kindling catching, a crackle. It plays when a Hearthstone is rested at.
-- **Death (STILLED):** one long breath out into the cold, and frost ticking where it went.
-- **The state wave:**
-  - **To RIME** (`wave_to_rime.ogg`): the world draws one long breath in and holds it, while ice cracks race outward and the sheet tightens underneath.
-  - **To THAW** (`wave_to_thaw.ogg`): the breath lets go, the ice gives with duller cracks, and meltwater drips.
-  - Neither is a bell.
-- **The engine set:** swing, slash, block, shield, roll, UI and the rest keep their names and jobs, retuned. Iron and wool rather than steel, wooden ticks, and the kantele for rest and level-up.
+Every sound effect (footsteps, combat, foes, the Holdfasts, the world, the interface, the state wave) is built from CC0 recordings. See [`SFX.md`](SFX.md).

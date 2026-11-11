@@ -229,7 +229,7 @@ func _transition_event(ev: String) -> void:
 		"set_down":
 			sod_at = "threshold"
 			_set_sod_down(_threshold(), door_point() - home)
-			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -10.0, 0.5)
+			AudioDirector.play("boss/sod_thud", global_position, -6.0)
 		"raise_walls":
 			_raise_walls()
 		"take_turf":
@@ -277,7 +277,7 @@ func _raise_walls() -> void:
 		w.global_transform = Transform3D(Basis.looking_at(along.normalized(), Vector3.UP), pa)
 		walls.append(w)
 	Juice.shake(0.6, 0.6)
-	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, 0.0, 0.7)
+	AudioDirector.play("boss/sod_thud", global_position)
 
 ## The middle of the cross, where every bay opens (the mean of the walls'
 ## inner ends, in the same frame as _raise_walls).

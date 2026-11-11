@@ -367,7 +367,12 @@ func _physics_process(dt: float) -> void:
 		_interact_suppress -= 1
 	if not is_on_floor():
 		velocity.y -= 22.0 * dt
+		_air_t += dt
 	else:
+		# a real drop, not a step off a kerb, lands audibly
+		if _air_t > float(T["move"].get("land_sound_air", 0.3)) and not dead:
+			AudioDirector.land(global_position)
+		_air_t = 0.0
 		velocity.y = maxf(velocity.y, -0.5)
 		if state == S.MOVE and global_position.y > -20.0:
 			_last_ground = global_position
@@ -748,7 +753,7 @@ func _try_roll(dir: Vector3) -> bool:
 	vis.rotation.y = atan2(-_roll_dir.x, -_roll_dir.z)
 	vis.play("roll", 0.03, vis.clip_length("roll") / _roll_dur)
 	Juice.spawn_hit_fx(global_position + Vector3(0, 0.08, 0), -_roll_dir, "dust")
-	AudioDirector.sfx_at("res://assets/audio/roll.wav", global_position, -6.0, randf_range(0.95, 1.05))
+	AudioDirector.play("foley/roll", global_position)
 	return true
 
 func _st_roll(dt: float) -> void:
@@ -821,7 +826,7 @@ func equip_weapon(id: String) -> void:
 	cam.zoomed = false
 	_refresh_weapon_visual()
 	weapon_changed.emit(id)
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -12.0)
+	AudioDirector.play("foley/equip")
 
 ## How each arm rides the fist at rest. The spear is carried tip-skyward
 ## (relaxed arms ran it through the floor), the greatsword shoulders, the
@@ -1041,7 +1046,7 @@ func _bow_release() -> void:
 	var pr := Projectile.launch_arrow(get_parent(), from, aim, 26.0 + 16.0 * k, pk)
 	pr.team = "player"
 	vis.rotation.y = atan2(-aim.x, -aim.z)
-	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -6.0, 1.4)
+	AudioDirector.play("combat/bow_loose", global_position)
 
 # --- attacks ---------------------------------------------------------------
 func weapon_data() -> Dictionary:
@@ -1175,8 +1180,7 @@ func _st_attack(dt: float) -> void:
 		_atk_hit_open = true
 		_open_hitbox(_atk)
 		vis.trail.visible = true
-		AudioDirector.sfx_at("res://assets/audio/swing.wav", global_position, -9.0,
-				randf_range(0.94, 1.1) * (0.85 if _atk_is_heavy else 1.0))
+		AudioDirector.swing(String(DB.weapon(weapon_id).get("class", "")), _atk_is_heavy, global_position)
 	if _atk_hit_open and t >= wind + act and hitbox.monitoring:
 		hitbox.end_swing()
 		vis.trail.visible = false
@@ -1255,15 +1259,11 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 			Juice.shake(0.35 if _atk_is_heavy else 0.2, 0.18)
 			Juice.spawn_hit_fx(fx_pos, fx_dir, "heavy" if _atk_is_heavy else "blood")
 			# every foe is frost-taken: the edge meets rime and frozen wool
-			AudioDirector.sfx_at("res://assets/audio/slash.wav", global_position, -9.0, randf_range(0.9, 1.1))
-			AudioDirector.sfx_at(AudioDirector.foley("frost_hit"), fx_pos, -3.0,
-					randf_range(0.82, 0.92) if _atk_is_heavy else randf_range(0.95, 1.08))
+			AudioDirector.play("combat/hit_flesh", fx_pos, -4.0)   # the foe adds its own crust or cry (enemy.take_hit)
 		"blocked":
 			Juice.hitstop(0.05)
 			Juice.spawn_hit_fx(fx_pos, fx_dir, "spark")
-			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -4.0)
-			AudioDirector.sfx_at("res://assets/audio/shield_ding.wav", global_position, -5.0,
-					randf_range(0.95, 1.12))
+			AudioDirector.play("combat/hit_shield", fx_pos)
 		"parried":
 			pass  # on_parried() handles our stagger
 
@@ -1369,7 +1369,7 @@ func on_parry_success(enemy: Node3D) -> void:
 	Juice.shake(0.4, 0.2)
 	var ppos := (global_position + enemy.global_position) * 0.5 + Vector3(0, 1.15, 0) if enemy != null else (global_position + Vector3(0, 1.15, 0))
 	Juice.spawn_hit_fx(ppos, Vector3.UP, "parry")
-	AudioDirector.sfx_at("res://assets/audio/parry.wav", global_position, 0.0)
+	AudioDirector.play("combat/parry", global_position)
 
 ## Riposte / backstab entry (crit states).
 func try_riposte() -> bool:
@@ -1423,7 +1423,7 @@ func try_gourd() -> bool:
 	_show_gourd(true)
 	if vis.shield_mount != null:
 		vis.shield_mount.visible = false   # the gourd arm carries no shield
-	AudioDirector.sfx("res://assets/audio/gourd.wav", -6.0)
+	AudioDirector.play("combat/gourd", global_position)
 	return true
 
 func knows_any_song() -> bool:
@@ -1480,7 +1480,7 @@ func cast_song(id: String) -> void:
 			var pr := Projectile.launch(get_parent(), from, aim, 30.0, pk, Color(1.0, 0.88, 0.5))
 			pr.team = "player"
 			vis.rotation.y = atan2(-aim.x, -aim.z)
-			AudioDirector.sfx("res://assets/audio/whoosh_h.wav", -6.0, 1.2)
+			AudioDirector.play("foe/heavy_whoosh", global_position, -3.0)
 			_ember_flash(1.2, 3.0)
 		"lance":
 			vis.play("cast_lance", 0.08)
@@ -1505,7 +1505,7 @@ func cast_song(id: String) -> void:
 			_lance_beam(lfrom, lend)
 			vis.rotation.y = atan2(-laim.x, -laim.z)
 			Juice.shake(0.2, 0.18)
-			AudioDirector.sfx("res://assets/audio/whoosh_h.wav", -4.0, 1.5)
+			AudioDirector.play("foe/heavy_whoosh", global_position, -3.0)
 			_ember_flash(1.6, 4.0)
 		"ward":
 			vis.play("cast_ward", 0.1)
@@ -1833,7 +1833,7 @@ func take_hit(packet: DamagePacket) -> void:
 		_ward_hp -= soak
 		packet.amount = maxf(packet.amount - soak / maxf(Game.dmg_in_mult(), 0.001), 0.0)
 		_ember_flash(1.2, 2.6)
-		AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -8.0, 1.4)
+		AudioDirector.play("combat/block", global_position)
 		if _ward_hp <= 0.0:
 			Game.toast.emit("The Warding Hum fades.")
 		if packet.amount <= 0.0:
@@ -1850,7 +1850,7 @@ func take_hit(packet: DamagePacket) -> void:
 	vis.flinch(hdir, 1.15)
 	Juice.spawn_hit_fx(global_position + Vector3(0, 1.1, 0), -hdir, "blood")
 	Juice.shake(0.3, 0.2)
-	AudioDirector.sfx_at("res://assets/audio/impact_flesh.wav", global_position, -6.0, 0.85)
+	AudioDirector.play("player/hurt", global_position)
 	if hp <= 0.0:
 		_fell_to_land = packet.kind == "hazard"
 		_die()
@@ -1863,6 +1863,7 @@ var _hit_from_back := false
 ## is under water or out of reach; the warmth waits on the last ground stood
 ## on instead, so the one chance to take it back is a real one.
 var _fell_to_land := false
+var _air_t := 0.0
 func breathmark_spot() -> Vector3:
 	if _fell_to_land and _last_ground != Vector3.ZERO:
 		return _last_ground
@@ -1892,7 +1893,7 @@ func _die() -> void:
 	_set_state(S.DEAD)
 	hitbox.end_swing()
 	vis.play("death", 0.1)
-	AudioDirector.sfx("res://assets/audio/death.wav", 0.0, 1.0, "UI")
+	AudioDirector.play("player/death")
 	died.emit()
 
 ## External control (rest ceremony, dialogue, respawn)

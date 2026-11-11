@@ -230,7 +230,7 @@ func choose(idx: int) -> void:
 		_do_hearth("toggle")
 	elif id == "cold":
 		info_label.text = "The horn is empty."
-		AudioDirector.sfx("res://assets/audio/ui_tick.wav", -10.0, 0.7)
+		AudioDirector.play("ui/ember")
 	elif id == "level":
 		_enter_level()
 	elif id == "back":

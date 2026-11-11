@@ -36,7 +36,8 @@
    "strafe": 3.0,
    "step_height": 0.35,
    "step_probe": 0.12,
-   "snap_down": 0.35
+   "snap_down": 0.35,
+   "land_sound_air": 0.3
   },
   "gourd": {
    "charges": 3,

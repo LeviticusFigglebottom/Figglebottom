@@ -1,0 +1,7650 @@
+{
+ "beds": {
+  "amb_rime": {
+   "loop": true,
+   "row": {
+    "dc": 2.6976720177435246e-19,
+    "dur": 64.0,
+    "edge": 0.004530196656465745,
+    "jump": 1.8172812125954763,
+    "lufs": -25.000000000000004,
+    "onset": 0.0,
+    "peak": -8.200773261523112,
+    "seam": 0.38239710222221907
+   },
+   "target": -25,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "tree-creaking",
+     "tree_creak.flac"
+    ],
+    [
+     "wind1",
+     "wind1.wav"
+    ],
+    [
+     "wind1",
+     "wind2.wav"
+    ]
+   ],
+   "what": "base RIME bed: lower, colder wind, the odd creak of ice"
+  },
+  "amb_thaw": {
+   "loop": true,
+   "row": {
+    "dc": 7.017566170391437e-19,
+    "dur": 64.0,
+    "edge": 0.018950607499672097,
+    "jump": 2.20025757770734,
+    "lufs": -25.000000000000004,
+    "onset": 0.0,
+    "peak": -7.886097685551178,
+    "seam": 0.5774264159586171
+   },
+   "target": -25,
+   "used": [
+    [
+     "mild-wind-background-noise",
+     "wind background noise 2.wav"
+    ],
+    [
+     "windy-ambient-noise",
+     "windy_ambiance_0.ogg"
+    ]
+   ],
+   "what": "base THAW bed for every region: open air and wind in grass"
+  },
+  "hearth_loop": {
+   "loop": true,
+   "row": {
+    "dc": 2.046125224411386e-08,
+    "dur": 24.0,
+    "edge": 0.03596208125654497,
+    "jump": 3.6118309286343404,
+    "lufs": -27.00005618927885,
+    "onset": 0.0,
+    "peak": -4.164512297687851,
+    "seam": 0.2531636249825949
+   },
+   "target": -27,
+   "used": [
+    [
+     "fireplace-sound-loop",
+     "fire.wav"
+    ]
+   ],
+   "what": "a lit hearth, close: plays at each Hearthstone that is lit"
+  },
+  "layer_bog": {
+   "loop": true,
+   "row": {
+    "dc": 2.967251206135262e-19,
+    "dur": 59.0,
+    "edge": 0.018388951227071612,
+    "jump": 3.0959502539343586,
+    "lufs": -30.999999999999993,
+    "onset": 0.01596371882086168,
+    "peak": -8.18681627299471,
+    "seam": 0.3917125943198525
+   },
+   "target": -31,
+   "used": [
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "bubble_02.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "bubble_03.ogg"
+    ],
+    [
+     "crow-caw",
+     "crow_caw.wav"
+    ],
+    [
+     "mild-wind-background-noise",
+     "wind background noise 2.wav"
+    ]
+   ],
+   "what": "The Lowe THAW: bog water, a crow, wind low in the heather"
+  },
+  "layer_charcoal": {
+   "loop": true,
+   "row": {
+    "dc": 8.657786984798798e-20,
+    "dur": 41.0,
+    "edge": 0.018690412861330413,
+    "jump": 4.44556308816738,
+    "lufs": -32.0,
+    "onset": 0.0,
+    "peak": -7.870298923090799,
+    "seam": 0.045630501653475423
+   },
+   "target": -32,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_03.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_04.ogg"
+    ],
+    [
+     "fireplace-sound-loop",
+     "fire.wav"
+    ]
+   ],
+   "what": "Thornwold: the clamps burning under their turf"
+  },
+  "layer_gulls": {
+   "loop": true,
+   "row": {
+    "dc": 1.2312854559422012e-20,
+    "dur": 61.0,
+    "edge": 1.8524598179214602e-09,
+    "jump": 3.1546609891889537,
+    "lufs": -30.999999999999996,
+    "onset": 5.239002267573696,
+    "peak": -12.819587216724058,
+    "seam": 0.0
+   },
+   "target": -31,
+   "used": [
+    [
+     "solo-seagull-sound-effects",
+     "Seagull Ambient 2.wav"
+    ],
+    [
+     "solo-seagull-sound-effects",
+     "Seagull Ambient 4.wav"
+    ],
+    [
+     "solo-seagull-sound-effects",
+     "Seagull Ambient 6.wav"
+    ]
+   ],
+   "what": "Saltfell THAW: gulls, mostly far off"
+  },
+  "layer_high_wind": {
+   "loop": true,
+   "row": {
+    "dc": 9.270886249506594e-20,
+    "dur": 43.0,
+    "edge": 0.02129619162823346,
+    "jump": 1.8350229512493084,
+    "lufs": -27.0,
+    "onset": 0.0,
+    "peak": -11.73899459614433,
+    "seam": 0.33729485960028954
+   },
+   "target": -27,
+   "used": [
+    [
+     "wind1",
+     "wind1.wav"
+    ],
+    [
+     "wind1",
+     "wind2.wav"
+    ]
+   ],
+   "what": "Shepherd's Reach RIME: nothing up here to stop the wind"
+  },
+  "layer_ice_floor": {
+   "loop": true,
+   "row": {
+    "dc": 4.309503274342374e-08,
+    "dur": 57.0,
+    "edge": 0.013379214976726983,
+    "jump": 2.689646392162165,
+    "lufs": -29.00011193200393,
+    "onset": 0.058049886621315196,
+    "peak": -3.915447042972712,
+    "seam": 0.19256561769721572
+   },
+   "target": -29,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "tree-creaking",
+     "tree_creak.flac"
+    ],
+    [
+     "wind1",
+     "wind1.wav"
+    ]
+   ],
+   "what": "RIME over water (Kettle, Tarnhall, the Coldwell): the sheet groaning and ticking"
+  },
+  "layer_melt": {
+   "loop": true,
+   "row": {
+    "dc": 4.1004627514153245e-19,
+    "dur": 49.0,
+    "edge": 0.020310801615666844,
+    "jump": 2.4753788403718113,
+    "lufs": -27.0,
+    "onset": 0.0,
+    "peak": -11.92726744806853,
+    "seam": 0.2161761415042617
+   },
+   "target": -27,
+   "used": [
+    [
+     "100-cc0-sfx",
+     "plop_02.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "loop_water_01.ogg"
+    ],
+    [
+     "sea-and-river-wave-sounds",
+     "VistulaShort_0.mp3"
+    ]
+   ],
+   "what": "The Coldwell THAW: meltwater running over gravel"
+  },
+  "layer_sea": {
+   "loop": true,
+   "row": {
+    "dc": 1.4193070626705891e-19,
+    "dur": 53.0,
+    "edge": 0.01189873690107396,
+    "jump": 3.098505173961407,
+    "lufs": -25.999999999999996,
+    "onset": 0.0,
+    "peak": -6.896622972662398,
+    "seam": 0.6630605259572538
+   },
+   "target": -26,
+   "used": [
+    [
+     "beach-ocean-waves",
+     "wave_01_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "beach-ocean-waves",
+     "wave_02_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "beach-ocean-waves",
+     "wave_03_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "beach-ocean-waves",
+     "wave_04_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "sea-and-river-wave-sounds",
+     "VistulaShort_0.mp3"
+    ],
+    [
+     "water-waves",
+     "wave_02_cc0-11505__transitking__wavesound.flac"
+    ],
+    [
+     "water-waves",
+     "wave_03_cc0-11505__transitking__wavesound.flac"
+    ],
+    [
+     "water-waves",
+     "wave_04_cc0-11505__transitking__wavesound.flac"
+    ]
+   ],
+   "what": "Saltfell THAW: surf on the strand"
+  },
+  "layer_sea_muffled": {
+   "loop": true,
+   "row": {
+    "dc": 1.7480086983359328e-20,
+    "dur": 53.0,
+    "edge": 0.0038890187531395604,
+    "jump": 1.7827073011843013,
+    "lufs": -29.0,
+    "onset": 0.0,
+    "peak": -6.181310433485246,
+    "seam": 0.5388665710714967
+   },
+   "target": -29,
+   "used": [
+    [
+     "beach-ocean-waves",
+     "wave_01_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "beach-ocean-waves",
+     "wave_02_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "beach-ocean-waves",
+     "wave_03_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "beach-ocean-waves",
+     "wave_04_cc0-18363__jasinski__alkaibeach.flac"
+    ],
+    [
+     "sea-and-river-wave-sounds",
+     "VistulaShort_0.mp3"
+    ]
+   ],
+   "what": "Saltfell RIME: the same sea, behind the ice"
+  },
+  "layer_sheep": {
+   "loop": true,
+   "row": {
+    "dc": 1.4325000860673988e-19,
+    "dur": 71.0,
+    "edge": 0.013042062662980481,
+    "jump": 3.532689266273755,
+    "lufs": -29.999999999999996,
+    "onset": 0.0,
+    "peak": -13.023052807295004,
+    "seam": 0.44737830376794174
+   },
+   "target": -30,
+   "used": [
+    [
+     "sheep-baa",
+     "sheep_baa.flac"
+    ],
+    [
+     "wind1",
+     "wind1.wav"
+    ]
+   ],
+   "what": "Shepherd's Reach THAW: sheep across the hill and wind over the walls"
+  },
+  "layer_steam": {
+   "loop": true,
+   "row": {
+    "dc": 1.2908947215451474e-19,
+    "dur": 47.0,
+    "edge": 0.02546924665618011,
+    "jump": 2.3668103336246866,
+    "lufs": -28.0,
+    "onset": 0.0029024943310657597,
+    "peak": -7.073231328593451,
+    "seam": 0.2292014549085226
+   },
+   "target": -28,
+   "used": [
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "loop_water_02.ogg"
+    ],
+    [
+     "blacksmiths-hammer",
+     "blacksmithhammer.wav"
+    ],
+    [
+     "boiling-water-loops",
+     "cooking_without_cover_01_0.ogg"
+    ],
+    [
+     "steam-release-sounds",
+     "steam hisses - Marker #1.wav"
+    ],
+    [
+     "steam-release-sounds",
+     "steam hisses - Marker #4.wav"
+    ],
+    [
+     "steam-release-sounds",
+     "steam hisses - Marker #5.wav"
+    ]
+   ],
+   "what": "Kettle Fjord THAW: hot water working, steam let go, the fjord lapping"
+  },
+  "layer_tarn": {
+   "loop": true,
+   "row": {
+    "dc": 2.6828133500547143e-19,
+    "dur": 53.0,
+    "edge": 0.008276440281657284,
+    "jump": 2.8576511166293455,
+    "lufs": -30.000000000000004,
+    "onset": 0.0014512471655328798,
+    "peak": -16.417900267778688,
+    "seam": 0.32826217480224495
+   },
+   "target": -30,
+   "used": [
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_loop_water_02.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "leaves01.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "leaves02.ogg"
+    ]
+   ],
+   "what": "Tarnhall THAW: the tarn lapping at the rushes"
+  },
+  "layer_trees": {
+   "loop": true,
+   "row": {
+    "dc": 4.545128878362907e-06,
+    "dur": 67.0,
+    "edge": 0.004172297258792062,
+    "jump": 17.345236213474827,
+    "lufs": -28.321578058763837,
+    "onset": 0.19736961451247165,
+    "peak": -1.796235930901855,
+    "seam": 0.15812907080321587
+   },
+   "target": -28,
+   "used": [
+    [
+     "forest-bird-sounds",
+     "Forest 1.wav"
+    ],
+    [
+     "forest-bird-sounds",
+     "Forest Birds 2.wav"
+    ],
+    [
+     "forest-bird-sounds",
+     "Forest Birds 6.wav"
+    ],
+    [
+     "forest-bird-sounds",
+     "Forest Birds 9.wav"
+    ],
+    [
+     "tree-creaking",
+     "tree_creak.flac"
+    ]
+   ],
+   "what": "Thornwold THAW: birch wood, small birds, a trunk creaking"
+  },
+  "layer_trees_rime": {
+   "loop": true,
+   "row": {
+    "dc": 1.6183472322268078e-19,
+    "dur": 67.0,
+    "edge": 0.01659152983056307,
+    "jump": 3.275404270525259,
+    "lufs": -29.0,
+    "onset": 0.0,
+    "peak": -12.757769281701066,
+    "seam": 0.7408408048048029
+   },
+   "target": -29,
+   "used": [
+    [
+     "tree-creaking",
+     "tree_creak.flac"
+    ],
+    [
+     "wind1",
+     "wind2.wav"
+    ]
+   ],
+   "what": "Thornwold RIME: wind in bare tops, frozen trunks working"
+  },
+  "layer_work": {
+   "loop": true,
+   "row": {
+    "dc": 7.637876990195742e-21,
+    "dur": 59.0,
+    "edge": 5.560984504329301e-07,
+    "jump": 6.062726775815014,
+    "lufs": -33.0,
+    "onset": 2.8836281179138323,
+    "peak": -9.640835930665508,
+    "seam": 0.0
+   },
+   "target": -33,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "hammer_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "hammer_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "hammer_03.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "hammer_04.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_03.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_05.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_06.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_09.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "chop.ogg"
+    ]
+   ],
+   "what": "THAW steadings: somebody working, a long way off"
+  },
+  "veil_loop": {
+   "loop": true,
+   "row": {
+    "dc": 2.385713342231729e-19,
+    "dur": 17.0,
+    "edge": 0.006494715970173285,
+    "jump": 3.770652045378554,
+    "lufs": -30.000000000000004,
+    "onset": 0.0,
+    "peak": -16.9520997319023,
+    "seam": 0.20998306969464403
+   },
+   "target": -30,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "wind1",
+     "wind2.wav"
+    ]
+   ],
+   "what": "a frost veil: cold air drawn through hanging ice"
+  },
+  "wave_to_rime": {
+   "loop": false,
+   "row": {
+    "dc": 2.37477022893525e-08,
+    "dur": 7.0,
+    "edge": 5.092917215990759e-38,
+    "jump": 1.8394378780985379,
+    "lufs": -29.0,
+    "onset": 0.8010884353741496,
+    "peak": -14.143000497076015,
+    "seam": 8.043615164436969e-36
+   },
+   "target": -29,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "tree-creaking",
+     "tree_creak.flac"
+    ],
+    [
+     "wind1",
+     "wind1.wav"
+    ]
+   ],
+   "what": "the state wave to RIME: the wind turns cold and the ground tightens. No breath, no swell."
+  },
+  "wave_to_thaw": {
+   "loop": false,
+   "row": {
+    "dc": 9.095517653719242e-09,
+    "dur": 7.0,
+    "edge": 1.4544598485388333e-40,
+    "jump": 2.0097537225204167,
+    "lufs": -29.0,
+    "onset": 0.6182312925170068,
+    "peak": -17.71103137547071,
+    "seam": 1.2083056947465906e-38
+   },
+   "target": -29,
+   "used": [
+    [
+     "100-cc0-sfx",
+     "plop_01.ogg"
+    ],
+    [
+     "100-cc0-sfx",
+     "plop_02.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "loop_water_02.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "windy-ambient-noise",
+     "windy_ambiance_0.ogg"
+    ]
+   ],
+   "what": "the state wave to THAW: the wind eases, the ice gives, water starts"
+  }
+ },
+ "sounds": {
+  "boss/bench_crash": {
+   "ext": "wav",
+   "family": "boss",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 1.1227983663280304e-18,
+     "dur": 0.8968707482993197,
+     "edge": 0.0005627311217473508,
+     "jump": 1.9814086370204216,
+     "lufs": -18.313206418987075,
+     "onset": 0.0,
+     "peak": -1.0100057504391657
+    },
+    {
+     "dc": 1.5009254700631277e-19,
+     "dur": 0.8721995464852608,
+     "edge": 0.00010059168526913853,
+     "jump": 1.9609930687136168,
+     "lufs": -18.102189000307323,
+     "onset": 0.0,
+     "peak": -1.0973523961843086
+    },
+    {
+     "dc": 8.467802730191872e-19,
+     "dur": 0.8562358276643991,
+     "edge": 0.00019180262658825673,
+     "jump": 2.155831129585489,
+     "lufs": -18.401799043356068,
+     "onset": 0.0,
+     "peak": -0.9960691390156535
+    }
+   ],
+   "target": -18,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_breaking_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_breaking_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_falling_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_falling_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_falling_03.ogg"
+    ],
+    [
+     "100-cc0-sfx",
+     "dishes_01.ogg"
+    ],
+    [
+     "100-cc0-sfx",
+     "dishes_02.ogg"
+    ],
+    [
+     "100-cc0-sfx",
+     "dishes_03.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_002.ogg"
+    ]
+   ],
+   "what": "the Host: a feast bench going over"
+  },
+  "boss/calling_horn": {
+   "ext": "ogg",
+   "family": "boss",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 1.7863537736348433e-20,
+     "dur": 6.06,
+     "edge": 5.63638448748533e-06,
+     "jump": 1.7328237946804825,
+     "lufs": -18.999999999999993,
+     "onset": 0.004353741496598639,
+     "peak": -6.260470502866228
+    },
+    {
+     "dc": 2.783388437989174e-19,
+     "dur": 6.06,
+     "edge": 3.7520843181637426e-06,
+     "jump": 1.4295430350306992,
+     "lufs": -19.000000000000007,
+     "onset": 0.0014512471655328798,
+     "peak": -5.039262020184352
+    }
+   ],
+   "target": -19,
+   "used": [
+    [
+     "their-coming-generic-horn-sound",
+     "theircoming3_0.ogg"
+    ],
+    [
+     "their-coming-generic-horn-sound",
+     "theircoming_0.ogg"
+    ]
+   ],
+   "what": "the Fellcaller: a horn called down the fell"
+  },
+  "boss/horn_short": {
+   "ext": "ogg",
+   "family": "boss",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 2.446505763898682e-19,
+     "dur": 3.9,
+     "edge": 6.160143625942102e-06,
+     "jump": 1.7235080988206246,
+     "lufs": -21.000000000000018,
+     "onset": 0.004353741496598639,
+     "peak": -8.937369826951356
+    },
+    {
+     "dc": 2.6272502530521467e-19,
+     "dur": 3.9,
+     "edge": 4.450011950788659e-06,
+     "jump": 1.3888626979878913,
+     "lufs": -21.000000000000025,
+     "onset": 0.0014512471655328798,
+     "peak": -8.547447901265507
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "their-coming-generic-horn-sound",
+     "theircoming3_0.ogg"
+    ],
+    [
+     "their-coming-generic-horn-sound",
+     "theircoming_0.ogg"
+    ]
+   ],
+   "what": "the same horn, one short call"
+  },
+  "boss/ice_auger": {
+   "ext": "wav",
+   "family": "boss",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 0.0,
+     "dur": 1.5499319727891157,
+     "edge": 0.00015419980527951033,
+     "jump": 1.8666705464304936,
+     "lufs": -20.000000000000032,
+     "onset": 0.01886621315192744,
+     "peak": -2.8363827695969706
+    },
+    {
+     "dc": 2.1854783949314105e-19,
+     "dur": 1.6587755102040815,
+     "edge": 0.0001862595007645386,
+     "jump": 1.9009633906177168,
+     "lufs": -20.0,
+     "onset": 0.021768707482993196,
+     "peak": -2.258688456797431
+    },
+    {
+     "dc": 9.480982276901422e-20,
+     "dur": 1.6994104308390023,
+     "edge": 0.00020652950321853973,
+     "jump": 2.0289183061596665,
+     "lufs": -20.00000000000001,
+     "onset": 0.010158730158730159,
+     "peak": -2.2380221133094143
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_002.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak3.ogg"
+    ],
+    [
+     "scrapes",
+     "scrape-4.ogg"
+    ],
+    [
+     "scrapes",
+     "scrape-5.ogg"
+    ],
+    [
+     "scrapes",
+     "scrape-6.ogg"
+    ]
+   ],
+   "what": "the Ice-Cutter: the auger biting, then the plug giving"
+  },
+  "boss/net_drag": {
+   "ext": "ogg",
+   "family": "boss",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 1.3325481660061892e-18,
+     "dur": 2.297324263038549,
+     "edge": 3.6753284689428316e-07,
+     "jump": 2.613832810238769,
+     "lufs": -19.99999999999996,
+     "onset": 0.06675736961451247,
+     "peak": -4.071554771567163
+    },
+    {
+     "dc": 3.879637826296412e-19,
+     "dur": 2.4917913832199545,
+     "edge": 1.9026897312666821e-06,
+     "jump": 1.7836009247699542,
+     "lufs": -20.000000000000007,
+     "onset": 0.05514739229024943,
+     "peak": -4.985876686564682
+    },
+    {
+     "dc": 1.9743261660288522e-19,
+     "dur": 2.6267573696145123,
+     "edge": 4.033071654548988e-05,
+     "jump": 2.3820920662953875,
+     "lufs": -20.02641769381962,
+     "onset": 0.036281179138321996,
+     "peak": -1.4215488390754607
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-01.flac"
+    ],
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-02.flac"
+    ],
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-03.flac"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak3.ogg"
+    ],
+    [
+     "scrapes",
+     "scrape-1.ogg"
+    ],
+    [
+     "scrapes",
+     "scrape-2.ogg"
+    ],
+    [
+     "scrapes",
+     "scrape-3.ogg"
+    ]
+   ],
+   "what": "the Netmender: wet net hauled over boards"
+  },
+  "boss/sod_thud": {
+   "ext": "wav",
+   "family": "boss",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 3.4912673730350835e-18,
+     "dur": 0.9229931972789116,
+     "edge": 0.003069674074005989,
+     "jump": 1.5191056742886049,
+     "lufs": -19.623245427500382,
+     "onset": 0.0,
+     "peak": -0.9760771102506595
+    },
+    {
+     "dc": 2.901279681076193e-18,
+     "dur": 0.833015873015873,
+     "edge": 0.00257445197743617,
+     "jump": 1.501047925956232,
+     "lufs": -19.61317588699919,
+     "onset": 0.0,
+     "peak": -0.9995887046108433
+    },
+    {
+     "dc": 4.0128543058740596e-18,
+     "dur": 0.8431746031746031,
+     "edge": 0.0034297300299722237,
+     "jump": 1.6977372849177645,
+     "lufs": -19.675039324449614,
+     "onset": 0.0,
+     "peak": -0.9753957319958706
+    }
+   ],
+   "target": -19,
+   "used": [
+    [
+     "25-cc0-mud-sfx",
+     "mud_11.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_02.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_03.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_002.ogg"
+    ],
+    [
+     "shovel-sound",
+     "shovel_0.ogg"
+    ]
+   ],
+   "what": "the Turfwright: a cut sod thrown down"
+  },
+  "boss/sung_note": {
+   "ext": "ogg",
+   "family": "boss",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 2.006142795347328e-19,
+     "dur": 6.32,
+     "edge": 1.7256539149515124e-09,
+     "jump": 1.3693543023176016,
+     "lufs": -23.99999999999999,
+     "onset": 0.13931972789115646,
+     "peak": -12.452219079509794
+    },
+    {
+     "dc": 1.708881130213956e-19,
+     "dur": 6.32,
+     "edge": 1.8429734747296212e-08,
+     "jump": 1.233794621413668,
+     "lufs": -23.999999999999982,
+     "onset": 0.10594104308390023,
+     "peak": -14.117966002720992
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "ghostly-humming",
+     "ghostly_humming.ogg"
+    ]
+   ],
+   "what": "the Leadvoice: one held, wordless note (not wired: her verses are music)"
+  },
+  "boss/thorn_growth": {
+   "ext": "wav",
+   "family": "boss",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 3.1186040017560576e-19,
+     "dur": 0.6458049886621315,
+     "edge": 1.8112578777372192e-05,
+     "jump": 2.4224415133178803,
+     "lufs": -21.120465663803873,
+     "onset": 0.005804988662131519,
+     "peak": -1.1049862765022433
+    },
+    {
+     "dc": 1.518357528207271e-20,
+     "dur": 0.6632199546485261,
+     "edge": 4.813692965130082e-05,
+     "jump": 1.7611076526992744,
+     "lufs": -21.094033007795726,
+     "onset": 0.004353741496598639,
+     "peak": -1.176520912297609
+    },
+    {
+     "dc": 5.757160880971063e-19,
+     "dur": 0.6646712018140589,
+     "edge": 2.445298925638704e-05,
+     "jump": 2.1014283187704574,
+     "lufs": -21.090170743969214,
+     "onset": 0.005804988662131519,
+     "peak": -1.1269643162438765
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_03.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_04.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "leaves01.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "leaves02.ogg"
+    ],
+    [
+     "tree-creaking",
+     "tree_creak.flac"
+    ]
+   ],
+   "what": "the Hedgelayer: stems splitting as they grow"
+  },
+  "combat/arrow_hit": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 6.356238690602041e-19,
+     "dur": 0.19011337868480727,
+     "edge": 0.002635912044629874,
+     "jump": 1.5489975465779664,
+     "lufs": -22.000000000000004,
+     "onset": 0.0,
+     "peak": -2.6844217651486444
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.1785034013605442,
+     "edge": 0.004252723004349785,
+     "jump": 1.4005201013163022,
+     "lufs": -22.00000000000032,
+     "onset": 0.0,
+     "peak": -3.7581060612999044
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.18285714285714286,
+     "edge": 0.002684849954755921,
+     "jump": 1.5087088014996894,
+     "lufs": -21.999999999999563,
+     "onset": 0.0,
+     "peak": -2.3489272062852473
+    },
+    {
+     "dc": 2.1187462302006803e-19,
+     "dur": 0.19011337868480727,
+     "edge": 0.0037515151523416163,
+     "jump": 1.5483352163333468,
+     "lufs": -22.00000000000007,
+     "onset": 0.0,
+     "peak": -2.5511025718385794
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_02.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_03.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_003.ogg"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-4.wav"
+    ]
+   ],
+   "what": "a shaft striking home"
+  },
+  "combat/block": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 1.3164699896740986e-18,
+     "dur": 0.36716553287981857,
+     "edge": 0.002461962586473709,
+     "jump": 1.6479103762001113,
+     "lufs": -20.158048251808996,
+     "onset": 0.0,
+     "peak": -1.7156178152691406
+    },
+    {
+     "dc": 1.055345080442164e-19,
+     "dur": 0.3816780045351474,
+     "edge": 0.0015726561343407644,
+     "jump": 1.6095125826065917,
+     "lufs": -20.000000000000085,
+     "onset": 0.0,
+     "peak": -2.215412769685913
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.26848072562358277,
+     "edge": 0.0022423550379659673,
+     "jump": 1.961000305558522,
+     "lufs": -20.00000000000022,
+     "onset": 0.0,
+     "peak": -1.4434879253102002
+    },
+    {
+     "dc": 4.3595144946014e-19,
+     "dur": 0.27718820861678006,
+     "edge": 0.0015889744265556495,
+     "jump": 2.144128897770711,
+     "lufs": -19.99999999999988,
+     "onset": 0.0,
+     "peak": -1.8996369605845227
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "impactMetal_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMetal_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMetal_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMetal_medium_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_003.ogg"
+    ]
+   ],
+   "what": "guard taking a hit: board, a little iron"
+  },
+  "combat/bow_draw": {
+   "ext": "wav",
+   "family": "foley",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 3.2406922078687605e-19,
+     "dur": 0.7923809523809524,
+     "edge": 6.616118806164136e-07,
+     "jump": 2.316429044224967,
+     "lufs": -27.999999999999964,
+     "onset": 0.0783673469387755,
+     "peak": -9.701748923230845
+    },
+    {
+     "dc": 1.838117590439001e-19,
+     "dur": 0.4382766439909297,
+     "edge": 7.47407263616511e-06,
+     "jump": 1.93662497380526,
+     "lufs": -27.99999999999999,
+     "onset": 0.020317460317460317,
+     "peak": -6.7949905172618905
+    },
+    {
+     "dc": 1.8710911349658431e-19,
+     "dur": 0.7938321995464852,
+     "edge": 1.1523140163875909e-05,
+     "jump": 2.276400777586587,
+     "lufs": -27.999999999999986,
+     "onset": 0.046439909297052155,
+     "peak": -7.99778406864802
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "quiver-leather-squeeze-04.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "quiver-leather-squeeze-05.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "quiver-leather-squeeze-06.wav"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak3.ogg"
+    ]
+   ],
+   "what": "limbs and string taking the strain"
+  },
+  "combat/bow_loose": {
+   "ext": "wav",
+   "family": "swings",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 1.7506383702518238e-19,
+     "dur": 0.3163718820861678,
+     "edge": 4.1395166534188824e-06,
+     "jump": 2.629070311144066,
+     "lufs": -23.000000000000014,
+     "onset": 0.017414965986394557,
+     "peak": -3.665760037476204
+    },
+    {
+     "dc": 1.2093024231569088e-19,
+     "dur": 0.301859410430839,
+     "edge": 6.764506161303173e-06,
+     "jump": 2.526909458649536,
+     "lufs": -22.999999999999986,
+     "onset": 0.017414965986394557,
+     "peak": -3.8682998776386404
+    },
+    {
+     "dc": 2.43544921504133e-19,
+     "dur": 0.2946031746031746,
+     "edge": 3.642046003135699e-06,
+     "jump": 2.538987500239016,
+     "lufs": -23.00000000000001,
+     "onset": 0.017414965986394557,
+     "peak": -3.8468177984332157
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "battle-sound-effects",
+     "Bow.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "arrow-feathers-01.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "arrow-feathers-02.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "arrow-feathers-03.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ]
+   ],
+   "what": "string, shaft and fletching"
+  },
+  "combat/gourd": {
+   "ext": "wav",
+   "family": "foley",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 5.83801169799887e-20,
+     "dur": 1.207437641723356,
+     "edge": 5.282219993389664e-05,
+     "jump": 4.555179204718876,
+     "lufs": -26.000000000000068,
+     "onset": 0.24671201814058957,
+     "peak": -1.63561099798907
+    },
+    {
+     "dc": 6.561601800385086e-20,
+     "dur": 1.2277551020408164,
+     "edge": 7.108091401098713e-05,
+     "jump": 1.8563793948872442,
+     "lufs": -25.99999999999983,
+     "onset": 0.005804988662131519,
+     "peak": -2.714119996214936
+    },
+    {
+     "dc": 3.0760654987483022e-19,
+     "dur": 1.702312925170068,
+     "edge": 1.0867952795972672e-05,
+     "jump": 1.5874722880653311,
+     "lufs": -26.000000000000075,
+     "onset": 0.21623582766439908,
+     "peak": -1.2654466785427747
+    }
+   ],
+   "target": -26,
+   "used": [
+    [
+     "liquid-bottle-drink-set",
+     "bottle-open-01.flac"
+    ],
+    [
+     "liquid-bottle-drink-set",
+     "bottle-open-02.flac"
+    ],
+    [
+     "liquid-bottle-drink-set",
+     "bottle-open-03.flac"
+    ],
+    [
+     "liquid-bottle-drink-set",
+     "swallow-01.flac"
+    ],
+    [
+     "liquid-bottle-drink-set",
+     "swallow-02.flac"
+    ],
+    [
+     "liquid-bottle-drink-set",
+     "swallow-03.flac"
+    ],
+    [
+     "liquid-bottle-drink-set",
+     "swallow-04.flac"
+    ],
+    [
+     "liquid-bottle-drink-set",
+     "swallow-05.flac"
+    ]
+   ],
+   "what": "stopper out, two swallows"
+  },
+  "combat/guard_break": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 2.686023446673766e-19,
+     "dur": 0.44988662131519275,
+     "edge": 0.0009423749092186409,
+     "jump": 1.4669682788208296,
+     "lufs": -18.30067231095477,
+     "onset": 0.0,
+     "peak": -1.0426542279412003
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.4687528344671202,
+     "edge": 0.00032335276726522396,
+     "jump": 1.7622335587478257,
+     "lufs": -18.000000000000156,
+     "onset": 0.0,
+     "peak": -1.1096776300075701
+    }
+   ],
+   "target": -18,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_breaking_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_breaking_02.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_001.ogg"
+    ]
+   ],
+   "what": "a guard knocked open"
+  },
+  "combat/hit_cloth": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 6.051360962709792e-20,
+     "dur": 0.4992290249433107,
+     "edge": 0.00013833853746026995,
+     "jump": 2.3469741019267936,
+     "lufs": -21.9999999999999,
+     "onset": 0.0,
+     "peak": -3.4253677785700942
+    },
+    {
+     "dc": 5.430438707405657e-19,
+     "dur": 0.33378684807256237,
+     "edge": 0.000215628587225436,
+     "jump": 1.269966417696558,
+     "lufs": -22.00000000000033,
+     "onset": 0.0,
+     "peak": -5.507405078522307
+    },
+    {
+     "dc": 7.784015597331827e-19,
+     "dur": 0.4527891156462585,
+     "edge": 9.784336686628783e-05,
+     "jump": 1.6331952256367306,
+     "lufs": -22.00000000000002,
+     "onset": 0.0,
+     "peak": -3.7455499977294506
+    },
+    {
+     "dc": 4.785444071660157e-19,
+     "dur": 0.3787755102040816,
+     "edge": 0.00017049249648085042,
+     "jump": 1.9042092464275235,
+     "lufs": -21.999999999999915,
+     "onset": 0.0,
+     "peak": -5.314638022485641
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_003.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ],
+    [
+     "rpg-sound-pack",
+     "cloth-heavy.wav"
+    ]
+   ],
+   "what": "a blow taken on padding"
+  },
+  "combat/hit_flesh": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.279795993804215e-18,
+     "dur": 0.5035827664399093,
+     "edge": 0.000722311693963011,
+     "jump": 1.7624644908844618,
+     "lufs": -20.19509795640462,
+     "onset": 0.004353741496598639,
+     "peak": -1.1871228391358093
+    },
+    {
+     "dc": 3.8818986875005473e-19,
+     "dur": 0.41505668934240364,
+     "edge": 0.00014287957811233039,
+     "jump": 1.5141761750707707,
+     "lufs": -20.00000000000006,
+     "onset": 0.0,
+     "peak": -2.0220722974583683
+    },
+    {
+     "dc": 6.271692566993072e-19,
+     "dur": 0.37732426303854877,
+     "edge": 4.487994918430858e-05,
+     "jump": 1.5957855218361852,
+     "lufs": -19.99999999999995,
+     "onset": 0.0072562358276643995,
+     "peak": -2.2499779637556907
+    },
+    {
+     "dc": 8.117196642306569e-19,
+     "dur": 0.38458049886621315,
+     "edge": 7.038751718131171e-05,
+     "jump": 1.529702681797479,
+     "lufs": -20.000000000000178,
+     "onset": 0.005804988662131519,
+     "peak": -1.464383999011603
+    },
+    {
+     "dc": 1.0590943327016296e-18,
+     "dur": 0.41360544217687073,
+     "edge": 0.00010714450357699307,
+     "jump": 1.7388499135705457,
+     "lufs": -20.1576472921357,
+     "onset": 0.005804988662131519,
+     "peak": -1.186462896750842
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-01.flac"
+    ],
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-02.flac"
+    ],
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-03.flac"
+    ],
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-04.flac"
+    ],
+    [
+     "12-wet-towel-hittingfallingpunching-floor-sounds",
+     "wet_towel_on_floor-05.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_004.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "knifeSlice.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "knifeSlice2.ogg"
+    ]
+   ],
+   "what": "blade into a body under wool"
+  },
+  "combat/hit_ice": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.573190520723906e-18,
+     "dur": 0.35845804988662133,
+     "edge": 0.0009190963528791623,
+     "jump": 1.4379222304497772,
+     "lufs": -20.040119006225925,
+     "onset": 0.0,
+     "peak": -1.6078840421240974
+    },
+    {
+     "dc": 2.470822755100497e-19,
+     "dur": 0.4890702947845805,
+     "edge": 0.0006408389544392745,
+     "jump": 1.5798568662376173,
+     "lufs": -19.999999999999947,
+     "onset": 0.0,
+     "peak": -3.211777475226379
+    },
+    {
+     "dc": 2.441839496976151e-19,
+     "dur": 0.494875283446712,
+     "edge": 0.0006778351434120301,
+     "jump": 1.3799709673294307,
+     "lufs": -20.000000000000043,
+     "onset": 0.0,
+     "peak": -4.140756723523926
+    },
+    {
+     "dc": 5.001004615428633e-19,
+     "dur": 0.483265306122449,
+     "edge": 0.0006004540299452225,
+     "jump": 1.5388021362521358,
+     "lufs": -19.99999999999998,
+     "onset": 0.0,
+     "peak": -2.9714212335019545
+    },
+    {
+     "dc": 1.7027960500385837e-19,
+     "dur": 0.4731065759637188,
+     "edge": 0.0005676205956108857,
+     "jump": 1.8685667766948666,
+     "lufs": -20.000000000000018,
+     "onset": 0.0,
+     "peak": -1.8545035972243398
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_medium_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_medium_004.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_004.ogg"
+    ]
+   ],
+   "what": "rime crust breaking over a body"
+  },
+  "combat/hit_shield": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.4802973661668753e-19,
+     "dur": 0.54421768707483,
+     "edge": 0.0008719453691499267,
+     "jump": 1.933100613272572,
+     "lufs": -19.751277287305687,
+     "onset": 0.0,
+     "peak": -1.0176671978686336
+    },
+    {
+     "dc": 8.521448653921157e-19,
+     "dur": 0.3308843537414966,
+     "edge": 0.0007485618911240471,
+     "jump": 2.38855284616228,
+     "lufs": -20.20454002867506,
+     "onset": 0.0,
+     "peak": -0.9994374306983187
+    },
+    {
+     "dc": 1.4200527059158979e-18,
+     "dur": 0.31201814058956917,
+     "edge": 0.0009651041300998591,
+     "jump": 1.7359668922245233,
+     "lufs": -19.09015499845423,
+     "onset": 0.0,
+     "peak": -1.464315859404741
+    },
+    {
+     "dc": 3.7007434154171883e-20,
+     "dur": 0.54421768707483,
+     "edge": 0.0006371086177695795,
+     "jump": 2.322191432417933,
+     "lufs": -19.330170920578663,
+     "onset": 0.0,
+     "peak": -1.1561416253092756
+    },
+    {
+     "dc": 1.50030138462859e-19,
+     "dur": 0.26848072562358277,
+     "edge": 0.0014046969339187986,
+     "jump": 1.3690145937897298,
+     "lufs": -19.228385975319252,
+     "onset": 0.0,
+     "peak": -1.1116071140657093
+    }
+   ],
+   "target": -19,
+   "used": [
+    [
+     "10-impactshield-blocks",
+     "impact.1.ogg"
+    ],
+    [
+     "10-impactshield-blocks",
+     "impact.2.ogg"
+    ],
+    [
+     "10-impactshield-blocks",
+     "impact.3.ogg"
+    ],
+    [
+     "10-impactshield-blocks",
+     "impact.4.ogg"
+    ],
+    [
+     "10-impactshield-blocks",
+     "impact.5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_004.ogg"
+    ]
+   ],
+   "what": "a blow stopped on a board shield"
+  },
+  "combat/hit_wood": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 2.6574487291559598e-18,
+     "dur": 0.20462585034013606,
+     "edge": 0.0009825392206791969,
+     "jump": 1.4641773114138406,
+     "lufs": -20.483983534942265,
+     "onset": 0.0,
+     "peak": -1.1309924481405393
+    },
+    {
+     "dc": 1.807003620809174e-18,
+     "dur": 0.2786394557823129,
+     "edge": 0.0005157972167480022,
+     "jump": 2.1786956807241404,
+     "lufs": -20.718564772851252,
+     "onset": 0.0,
+     "peak": -1.0223430767189423
+    },
+    {
+     "dc": 2.4671622769447924e-18,
+     "dur": 0.2612244897959184,
+     "edge": 0.0008402326216701481,
+     "jump": 1.2099993080015496,
+     "lufs": -20.208597729384937,
+     "onset": 0.0,
+     "peak": -1.2511096403694153
+    },
+    {
+     "dc": 4.981769982292369e-19,
+     "dur": 0.2829931972789116,
+     "edge": 0.001297869854234761,
+     "jump": 1.6590115558605103,
+     "lufs": -20.077747165985805,
+     "onset": 0.0,
+     "peak": -1.8183190805433913
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_03.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_04.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_003.ogg"
+    ]
+   ],
+   "what": "edge into timber"
+  },
+  "combat/parry": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 2.8717691156926974e-19,
+     "dur": 0.8634920634920635,
+     "edge": 1.1260936624671096e-05,
+     "jump": 1.3625877068131058,
+     "lufs": -17.214121724164183,
+     "onset": 0.004353741496598639,
+     "peak": -1.060915028664101
+    },
+    {
+     "dc": 6.974240933981991e-19,
+     "dur": 0.9258956916099773,
+     "edge": 4.244197331497079e-06,
+     "jump": 1.7221539251960485,
+     "lufs": -17.047497202983024,
+     "onset": 0.005804988662131519,
+     "peak": -1.1613988264711457
+    },
+    {
+     "dc": 4.483937902363314e-20,
+     "dur": 0.8983219954648526,
+     "edge": 3.6014860261587857e-07,
+     "jump": 1.481495470010538,
+     "lufs": -17.054290275096776,
+     "onset": 0.004353741496598639,
+     "peak": -1.4111901024228435
+    }
+   ],
+   "target": -17,
+   "used": [
+    [
+     "20-sword-sound-effects-attacks-and-clashes",
+     "sword_clash.1.ogg"
+    ],
+    [
+     "20-sword-sound-effects-attacks-and-clashes",
+     "sword_clash.2.ogg"
+    ],
+    [
+     "20-sword-sound-effects-attacks-and-clashes",
+     "sword_clash.3.ogg"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "sword-knife-clash-01.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "sword-knife-clash-06.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "sword-knife-clash-08.wav"
+    ],
+    [
+     "metal-impact-sounds",
+     "bing1.wav"
+    ]
+   ],
+   "what": "iron on iron, left ringing"
+  },
+  "combat/riposte": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 2.047689051539633e-18,
+     "dur": 0.5630839002267574,
+     "edge": 0.00019124517253357964,
+     "jump": 1.729582659454559,
+     "lufs": -18.0805842593989,
+     "onset": 0.004353741496598639,
+     "peak": -1.1415350065655596
+    },
+    {
+     "dc": 1.1000685457413899e-18,
+     "dur": 0.47600907029478456,
+     "edge": 0.00011791626808512822,
+     "jump": 1.734458136268205,
+     "lufs": -17.999999999999975,
+     "onset": 0.004353741496598639,
+     "peak": -2.298219316309231
+    },
+    {
+     "dc": 3.054858951405698e-19,
+     "dur": 0.4614965986394558,
+     "edge": 2.3926237143569943e-05,
+     "jump": 1.6414520616192496,
+     "lufs": -17.99999999999997,
+     "onset": 0.004353741496598639,
+     "peak": -1.9416660644283539
+    }
+   ],
+   "target": -18,
+   "used": [
+    [
+     "80-cc0-rpg-sfx",
+     "blade_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "blade_02.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "blade_03.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_002.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "knifeSlice.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "knifeSlice2.ogg"
+    ]
+   ],
+   "what": "the answer driven home"
+  },
+  "combat/shield_bash": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 8.227937435463116e-19,
+     "dur": 0.36716553287981857,
+     "edge": 0.00028613028702313204,
+     "jump": 1.059688344879633,
+     "lufs": -19.28379597573466,
+     "onset": 0.0,
+     "peak": -1.424103503730605
+    },
+    {
+     "dc": 1.261617073437678e-18,
+     "dur": 0.36716553287981857,
+     "edge": 0.0005350425364934439,
+     "jump": 1.890910419130434,
+     "lufs": -19.15434855544344,
+     "onset": 0.0,
+     "peak": -1.6812865286456615
+    },
+    {
+     "dc": 4.525365589504714e-18,
+     "dur": 0.4005442176870748,
+     "edge": 0.0012693994160867298,
+     "jump": 1.2066501782669128,
+     "lufs": -19.699417040240856,
+     "onset": 0.0,
+     "peak": -1.0934113050729446
+    }
+   ],
+   "target": -19,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_004.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_002.ogg"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ]
+   ],
+   "what": "the board swung into someone"
+  },
+  "combat/stagger": {
+   "ext": "wav",
+   "family": "foley",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 6.263134640106287e-19,
+     "dur": 0.6109750566893424,
+     "edge": 0.00021977663347957043,
+     "jump": 2.7498085369119134,
+     "lufs": -24.000000000000004,
+     "onset": 0.0,
+     "peak": -5.116330791493833
+    },
+    {
+     "dc": 2.943773171354582e-19,
+     "dur": 0.47891156462585033,
+     "edge": 0.00020824596905084382,
+     "jump": 1.656273219739759,
+     "lufs": -23.999999999999975,
+     "onset": 0.0,
+     "peak": -7.743732426133264
+    },
+    {
+     "dc": 3.6843684445525106e-19,
+     "dur": 0.49197278911564624,
+     "edge": 0.00016891117585054923,
+     "jump": 1.7936600222365189,
+     "lufs": -23.99999999999971,
+     "onset": 0.0,
+     "peak": -7.182424129846259
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "boots-leather-step-01.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "boots-leather-step-02.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "boots-leather-step-03.wav"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_003.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ]
+   ],
+   "what": "knocked off balance: body, cloth, a caught step"
+  },
+  "combat/swing_heavy": {
+   "ext": "wav",
+   "family": "swings",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 2.147752875018904e-19,
+     "dur": 0.3047619047619048,
+     "edge": 2.76929324294704e-06,
+     "jump": 1.384725856795884,
+     "lufs": -24.999999999999968,
+     "onset": 0.023219954648526078,
+     "peak": -3.683870560495179
+    },
+    {
+     "dc": 6.776263578034403e-21,
+     "dur": 0.7430385487528345,
+     "edge": 1.1393629117750054e-06,
+     "jump": 1.4591882801640528,
+     "lufs": -25.000000000000032,
+     "onset": 0.01886621315192744,
+     "peak": -3.9815061736914097
+    },
+    {
+     "dc": 1.319181350552705e-19,
+     "dur": 0.3816780045351474,
+     "edge": 2.334804109481032e-06,
+     "jump": 1.5927630564477502,
+     "lufs": -25.00000000000031,
+     "onset": 0.014512471655328799,
+     "peak": -4.952277412776738
+    },
+    {
+     "dc": 2.8912057932946783e-19,
+     "dur": 0.3047619047619048,
+     "edge": 1.0084172142767721e-05,
+     "jump": 1.3969313594517512,
+     "lufs": -24.999999999999982,
+     "onset": 0.021768707482993196,
+     "peak": -4.303723309200579
+    }
+   ],
+   "target": -25,
+   "used": [
+    [
+     "battle-sound-effects",
+     "swish_2.wav"
+    ],
+    [
+     "battle-sound-effects",
+     "swish_3.wav"
+    ],
+    [
+     "battle-sound-effects",
+     "swish_4.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-10.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-11.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-12.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-9.wav"
+    ]
+   ],
+   "what": "a great blade, slower and lower"
+  },
+  "combat/swing_light": {
+   "ext": "wav",
+   "family": "swings",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 2.973811673103098e-19,
+     "dur": 0.10158730158730159,
+     "edge": 1.316851324602195e-05,
+     "jump": 1.2731540447085186,
+     "lufs": -27.000000000000043,
+     "onset": 0.008707482993197279,
+     "peak": -12.046073260367313
+    },
+    {
+     "dc": 2.6688053476566264e-19,
+     "dur": 0.07546485260770976,
+     "edge": 1.6818765553018812e-05,
+     "jump": 1.1117854806755518,
+     "lufs": -26.99999999999996,
+     "onset": 0.0072562358276643995,
+     "peak": -13.034991866322791
+    },
+    {
+     "dc": 3.750753461571475e-19,
+     "dur": 0.1073922902494331,
+     "edge": 3.412149307129914e-06,
+     "jump": 1.1341751131579305,
+     "lufs": -26.999999999999954,
+     "onset": 0.0072562358276643995,
+     "peak": -16.256127657390095
+    },
+    {
+     "dc": 6.319349805344083e-19,
+     "dur": 0.10158730158730159,
+     "edge": 9.995214875307404e-06,
+     "jump": 1.2556139569606681,
+     "lufs": -27.000000000000032,
+     "onset": 0.013061224489795919,
+     "peak": -13.31747577529946
+    },
+    {
+     "dc": 1.6012832085939759e-19,
+     "dur": 0.09433106575963719,
+     "edge": 1.4643255839148817e-05,
+     "jump": 1.058208659707805,
+     "lufs": -27.000000000000018,
+     "onset": 0.011609977324263039,
+     "peak": -13.405500208916637
+    }
+   ],
+   "target": -27,
+   "used": [
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-4.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-5.wav"
+    ]
+   ],
+   "what": "a light blade through air"
+  },
+  "combat/swing_medium": {
+   "ext": "wav",
+   "family": "swings",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 4.479466870532216e-19,
+     "dur": 0.22058956916099773,
+     "edge": 6.209055699200774e-06,
+     "jump": 1.2873137674161843,
+     "lufs": -26.000000000000174,
+     "onset": 0.017414965986394557,
+     "peak": -4.723050127050249
+    },
+    {
+     "dc": 1.1313413973761785e-19,
+     "dur": 0.5340589569160997,
+     "edge": 1.149018618935784e-06,
+     "jump": 1.4558566351348976,
+     "lufs": -26.000000000000032,
+     "onset": 0.013061224489795919,
+     "peak": -4.75609893056739
+    },
+    {
+     "dc": 2.20282346155785e-19,
+     "dur": 0.2742857142857143,
+     "edge": 7.982034923251539e-06,
+     "jump": 1.4997917859811216,
+     "lufs": -25.99999999999986,
+     "onset": 0.01596371882086168,
+     "peak": -6.2314253653301765
+    },
+    {
+     "dc": 2.08280943661689e-19,
+     "dur": 0.22058956916099773,
+     "edge": 5.258507827106751e-06,
+     "jump": 1.3648110856118356,
+     "lufs": -26.000000000000128,
+     "onset": 0.013061224489795919,
+     "peak": -5.293386110701124
+    }
+   ],
+   "target": -26,
+   "used": [
+    [
+     "battle-sound-effects",
+     "swish_2.wav"
+    ],
+    [
+     "battle-sound-effects",
+     "swish_3.wav"
+    ],
+    [
+     "battle-sound-effects",
+     "swish_4.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-6.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-7.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-8.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-9.wav"
+    ]
+   ],
+   "what": "a sword's weight through air"
+  },
+  "foe/cast": {
+   "ext": "wav",
+   "family": "swings",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 5.855606669963906e-19,
+     "dur": 0.687891156462585,
+     "edge": 1.2817213173369943e-06,
+     "jump": 2.070275609179508,
+     "lufs": -25.000000000000004,
+     "onset": 0.017414965986394557,
+     "peak": -12.22051321702059
+    },
+    {
+     "dc": 6.587557503709394e-19,
+     "dur": 0.687891156462585,
+     "edge": 4.442952287642179e-06,
+     "jump": 2.441841209749582,
+     "lufs": -24.999999999999996,
+     "onset": 0.023219954648526078,
+     "peak": -12.212802481214117
+    },
+    {
+     "dc": 1.1345237923055069e-19,
+     "dur": 0.687891156462585,
+     "edge": 4.274804047943479e-06,
+     "jump": 2.3180376823416746,
+     "lufs": -24.999999999999996,
+     "onset": 0.017414965986394557,
+     "peak": -12.224224837537971
+    }
+   ],
+   "target": -25,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-4.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-5.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-6.wav"
+    ],
+    [
+     "wind",
+     "Wind3.ogg"
+    ]
+   ],
+   "what": "cold thrown: air and a tick of ice"
+  },
+  "foe/dog_alert": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 5.00182391500521e-19,
+     "dur": 1.1073015873015872,
+     "edge": 6.806944951631014e-05,
+     "jump": 1.267981145125032,
+     "lufs": -21.999999999999996,
+     "onset": 0.013061224489795919,
+     "peak": -6.7439761907855855
+    },
+    {
+     "dc": 3.9924322260031496e-19,
+     "dur": 1.0782766439909297,
+     "edge": 4.560769980172297e-06,
+     "jump": 1.289870598117416,
+     "lufs": -22.00000000000001,
+     "onset": 0.013061224489795919,
+     "peak": -7.008912737634123
+    },
+    {
+     "dc": 1.0174331237400629e-18,
+     "dur": 0.989750566893424,
+     "edge": 1.1872153776547564e-05,
+     "jump": 1.3790972152098964,
+     "lufs": -22.0,
+     "onset": 0.010158730158730159,
+     "peak": -7.712274554593658
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "dog-snarl-grunt-grumble",
+     "dog-growl.flac"
+    ],
+    [
+     "dog-snarl-grunt-grumble",
+     "dog-grumble.flac"
+    ],
+    [
+     "dog-snarl-grunt-grumble",
+     "dog-snarl.flac"
+    ],
+    [
+     "dog-sounds",
+     "Dog Bark 1.wav"
+    ],
+    [
+     "dog-sounds",
+     "Dog Bark 2.wav"
+    ],
+    [
+     "dog-sounds",
+     "Dog Bark 3.wav"
+    ]
+   ],
+   "what": "growl, then two barks"
+  },
+  "foe/dog_attack": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 8.041764458170629e-19,
+     "dur": 0.4382766439909297,
+     "edge": 3.4029023756175902e-06,
+     "jump": 1.372064739445507,
+     "lufs": -23.00000000000005,
+     "onset": 0.010158730158730159,
+     "peak": -10.343676888590203
+    },
+    {
+     "dc": 1.1028705542634006e-18,
+     "dur": 0.4382766439909297,
+     "edge": 8.040254719359204e-06,
+     "jump": 1.2789965545822968,
+     "lufs": -23.0,
+     "onset": 0.010158730158730159,
+     "peak": -12.006005097290071
+    },
+    {
+     "dc": 2.552770332541121e-19,
+     "dur": 0.4339229024943311,
+     "edge": 7.85368905256986e-06,
+     "jump": 1.3348910851003737,
+     "lufs": -23.0,
+     "onset": 0.011609977324263039,
+     "peak": -8.740119785110814
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "dog-snarl-grunt-grumble",
+     "dog-growl.flac"
+    ],
+    [
+     "dog-snarl-grunt-grumble",
+     "dog-grumble.flac"
+    ],
+    [
+     "dog-snarl-grunt-grumble",
+     "dog-snarl.flac"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ]
+   ],
+   "what": "snarl on the lunge"
+  },
+  "foe/dog_death": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 4.642856349713148e-19,
+     "dur": 1.0410884353741496,
+     "edge": 6.95239444919292e-05,
+     "jump": 1.9788314093739254,
+     "lufs": -22.000000000000092,
+     "onset": 0.1291609977324263,
+     "peak": -3.6848896083067038
+    },
+    {
+     "dc": 7.012647611545901e-20,
+     "dur": 1.0410884353741496,
+     "edge": 7.505270314923217e-05,
+     "jump": 1.7216716258368556,
+     "lufs": -21.999999999999947,
+     "onset": 0.12045351473922902,
+     "peak": -5.446392824384272
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "dog-sounds",
+     "Sad Dog 1.wav"
+    ],
+    [
+     "dog-sounds",
+     "Sad Dog.wav"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ]
+   ],
+   "what": "a whine, and down"
+  },
+  "foe/dog_hit": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 2.966107497784178e-19,
+     "dur": 0.2800907029478458,
+     "edge": 1.1790442154857392e-05,
+     "jump": 1.433790430710829,
+     "lufs": -21.999999999999947,
+     "onset": 0.017414965986394557,
+     "peak": -5.127611708116053
+    },
+    {
+     "dc": 4.7920538010409034e-20,
+     "dur": 0.26267573696145124,
+     "edge": 2.8377726984688407e-05,
+     "jump": 1.7686638945105286,
+     "lufs": -22.000000000000036,
+     "onset": 0.017414965986394557,
+     "peak": -6.8510912746240855
+    },
+    {
+     "dc": 3.013714513349538e-19,
+     "dur": 0.34249433106575966,
+     "edge": 7.254216229598645e-06,
+     "jump": 1.5011780781124764,
+     "lufs": -21.99999999999994,
+     "onset": 0.023219954648526078,
+     "peak": -6.84294288664446
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "dog-sounds",
+     "Dog Bark 1.wav"
+    ],
+    [
+     "dog-sounds",
+     "Dog Bark 2.wav"
+    ],
+    [
+     "dog-sounds",
+     "Dog Bark 3.wav"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_002.ogg"
+    ]
+   ],
+   "what": "struck: a clipped yelp"
+  },
+  "foe/ground_slam": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 3.9439539063060625e-19,
+     "dur": 0.8170521541950113,
+     "edge": 0.0027689411351215806,
+     "jump": 1.7900908066512085,
+     "lufs": -18.85307177581223,
+     "onset": 0.0,
+     "peak": -0.9706601050739337
+    },
+    {
+     "dc": 2.110690160884328e-19,
+     "dur": 0.7633560090702948,
+     "edge": 0.002490487722271312,
+     "jump": 1.8101377352313868,
+     "lufs": -18.387740836103017,
+     "onset": 0.0,
+     "peak": -1.0415811087222429
+    },
+    {
+     "dc": 4.1659400548786366e-18,
+     "dur": 0.7735147392290249,
+     "edge": 0.002682370714736015,
+     "jump": 5.145601668680498,
+     "lufs": -19.868975821539852,
+     "onset": 0.0,
+     "peak": -1.0013653391613577
+    }
+   ],
+   "target": -18,
+   "used": [
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_02.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_03.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_002.ogg"
+    ]
+   ],
+   "what": "weight into the ground"
+  },
+  "foe/heavy_whoosh": {
+   "ext": "wav",
+   "family": "swings",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 1.3802065751323405e-18,
+     "dur": 0.3657142857142857,
+     "edge": 4.582160939748156e-05,
+     "jump": 1.4238552423380755,
+     "lufs": -23.046494558121925,
+     "onset": 0.029024943310657598,
+     "peak": -1.7580556881846798
+    },
+    {
+     "dc": 2.2565508630592613e-20,
+     "dur": 0.8925170068027211,
+     "edge": 3.2542479774889235e-06,
+     "jump": 1.5266585070101228,
+     "lufs": -23.000000000000018,
+     "onset": 0.023219954648526078,
+     "peak": -1.3101019751974978
+    },
+    {
+     "dc": 1.7566820009891717e-19,
+     "dur": 0.45859410430839004,
+     "edge": 1.1324887844147968e-05,
+     "jump": 1.6876212920809204,
+     "lufs": -22.999999999999925,
+     "onset": 0.026122448979591838,
+     "peak": -3.8125555045680777
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "battle-sound-effects",
+     "swish_2.wav"
+    ],
+    [
+     "battle-sound-effects",
+     "swish_3.wav"
+    ],
+    [
+     "battle-sound-effects",
+     "swish_4.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-5.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-6.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-7.wav"
+    ]
+   ],
+   "what": "something large swung or thrown"
+  },
+  "foe/poof": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 2.067882289243876e-19,
+     "dur": 0.4382766439909297,
+     "edge": 6.907883679455371e-05,
+     "jump": 1.353919178012037,
+     "lufs": -26.00000000000008,
+     "onset": 0.0,
+     "peak": -8.692314704168743
+    },
+    {
+     "dc": 9.699529112988599e-20,
+     "dur": 0.6748299319727891,
+     "edge": 8.271014850874091e-05,
+     "jump": 1.4257439574205992,
+     "lufs": -26.000000000000075,
+     "onset": 0.0,
+     "peak": -4.185077092767001
+    },
+    {
+     "dc": 7.998724961276343e-20,
+     "dur": 0.5035827664399093,
+     "edge": 4.457037467342569e-05,
+     "jump": 1.3189772364882248,
+     "lufs": -26.000000000000117,
+     "onset": 0.0,
+     "peak": -4.952848627295933
+    }
+   ],
+   "target": -26,
+   "used": [
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-01.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-02.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-03.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_002.ogg"
+    ]
+   ],
+   "what": "a thrown thing breaking up in snow"
+  },
+  "foe/ram_alert": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 3.607610768624333e-19,
+     "dur": 1.3119274376417234,
+     "edge": 1.4892570834281787e-06,
+     "jump": 1.724036896781666,
+     "lufs": -22.000000000000004,
+     "onset": 0.18140589569160998,
+     "peak": -4.665656337273562
+    },
+    {
+     "dc": 1.1513651389226596e-20,
+     "dur": 1.3119274376417234,
+     "edge": 7.368681781667335e-07,
+     "jump": 1.3965712727836936,
+     "lufs": -21.999999999999996,
+     "onset": 0.18140589569160998,
+     "peak": -5.95898682007909
+    },
+    {
+     "dc": 2.9743599422168704e-19,
+     "dur": 1.3119274376417234,
+     "edge": 2.2355029224617696e-06,
+     "jump": 1.7823402129027692,
+     "lufs": -22.0,
+     "onset": 0.18140589569160998,
+     "peak": -5.892462741107018
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR3.flac"
+    ],
+    [
+     "sheep-baa",
+     "sheep_baa.flac"
+    ]
+   ],
+   "what": "a ram's low bleat (a sheep, pitched down) and a stamp"
+  },
+  "foe/ram_attack": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 3.406594652099382e-19,
+     "dur": 0.5006802721088436,
+     "edge": 3.5578142612831784e-06,
+     "jump": 1.7186983585302962,
+     "lufs": -22.99999999999998,
+     "onset": 0.0029024943310657597,
+     "peak": -7.671596749476901
+    },
+    {
+     "dc": 5.453331252393215e-19,
+     "dur": 0.5355102040816326,
+     "edge": 5.0172485847648556e-06,
+     "jump": 1.843399748686054,
+     "lufs": -22.999999999999968,
+     "onset": 0.0072562358276643995,
+     "peak": -8.252534986378512
+    },
+    {
+     "dc": 3.349466077534469e-19,
+     "dur": 0.5035827664399093,
+     "edge": 1.3015936772242094e-06,
+     "jump": 1.7384574502123882,
+     "lufs": -23.00000000000001,
+     "onset": 0.004353741496598639,
+     "peak": -8.682500848773385
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL3.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR3.flac"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ]
+   ],
+   "what": "hooves gathering into the charge"
+  },
+  "foe/ram_death": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 2.364692278221846e-19,
+     "dur": 1.5330612244897959,
+     "edge": 5.797096470164368e-05,
+     "jump": 2.357752392998168,
+     "lufs": -22.000000000000046,
+     "onset": 0.20462585034013606,
+     "peak": -5.996830748029758
+    },
+    {
+     "dc": 2.4303781748391194e-19,
+     "dur": 1.5330612244897959,
+     "edge": 5.735367194109025e-05,
+     "jump": 2.209194980823117,
+     "lufs": -21.999999999999975,
+     "onset": 0.20462585034013606,
+     "peak": -5.431936352853412
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ],
+    [
+     "sheep-baa",
+     "sheep_baa.flac"
+    ]
+   ],
+   "what": "down"
+  },
+  "foe/ram_hit": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 6.769652589177784e-19,
+     "dur": 0.29750566893424035,
+     "edge": 0.0012027987439235921,
+     "jump": 1.4814614575270013,
+     "lufs": -20.99999999999956,
+     "onset": 0.0,
+     "peak": -1.5389615329215918
+    },
+    {
+     "dc": 9.477513624848898e-19,
+     "dur": 0.29750566893424035,
+     "edge": 0.0011896883486071166,
+     "jump": 1.80044212946985,
+     "lufs": -20.99999999999992,
+     "onset": 0.0,
+     "peak": -1.2698527062053209
+    },
+    {
+     "dc": 5.415722071342227e-19,
+     "dur": 0.29750566893424035,
+     "edge": 0.0011393782796810603,
+     "jump": 1.3692458620945953,
+     "lufs": -21.00000000000017,
+     "onset": 0.0,
+     "peak": -1.462949176049666
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_002.ogg"
+    ],
+    [
+     "sheep-baa",
+     "sheep_baa.flac"
+    ]
+   ],
+   "what": "horn knock and a cut-off bleat"
+  },
+  "foe/stag_alert": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 1.2851324212561908e-18,
+     "dur": 1.2263038548752834,
+     "edge": 8.034432110591836e-07,
+     "jump": 1.936670243894842,
+     "lufs": -21.000000000000004,
+     "onset": 0.03337868480725623,
+     "peak": -8.419183556853243
+    },
+    {
+     "dc": 1.100368974110732e-18,
+     "dur": 1.2263038548752834,
+     "edge": 4.868558030987398e-07,
+     "jump": 1.796013137955852,
+     "lufs": -20.999999999999996,
+     "onset": 0.03337868480725623,
+     "peak": -10.10672213017552
+    },
+    {
+     "dc": 1.6812841271907916e-18,
+     "dur": 1.2248526077097506,
+     "edge": 1.115120612254776e-06,
+     "jump": 1.7515105918615612,
+     "lufs": -21.000000000000004,
+     "onset": 0.017414965986394557,
+     "peak": -11.341306428994276
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "camel-groan",
+     "camel_01.flac"
+    ],
+    [
+     "camel-groan",
+     "camel_01.ogg"
+    ],
+    [
+     "camel-groan",
+     "camel_02.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL3.flac"
+    ],
+    [
+     "ghost-breath",
+     "ghostbreath.flac"
+    ]
+   ],
+   "what": "a rutting bellow (a camel's groan, pitched up: no CC0 red deer was reachable) and a stamp"
+  },
+  "foe/stag_attack": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 9.76653967708122e-20,
+     "dur": 0.5413151927437642,
+     "edge": 2.1124579210556346e-06,
+     "jump": 1.800668195490695,
+     "lufs": -22.99999999999999,
+     "onset": 0.004353741496598639,
+     "peak": -6.393706953718608
+    },
+    {
+     "dc": 1.94584084915287e-19,
+     "dur": 0.494875283446712,
+     "edge": 1.4169384671036775e-05,
+     "jump": 1.40486606030825,
+     "lufs": -22.999999999999982,
+     "onset": 0.010158730158730159,
+     "peak": -7.534124862454814
+    },
+    {
+     "dc": 6.083413833562502e-19,
+     "dur": 0.5297052154195011,
+     "edge": 4.77690832410519e-06,
+     "jump": 1.9418552131476112,
+     "lufs": -23.000000000000025,
+     "onset": 0.005804988662131519,
+     "peak": -9.420173002017489
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL3.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR3.flac"
+    ],
+    [
+     "ghost-breath",
+     "ghostbreath.flac"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ]
+   ],
+   "what": "antlers through air, hooves, a snort"
+  },
+  "foe/stag_death": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 6.319575504469243e-20,
+     "dur": 1.593469387755102,
+     "edge": 5.8236601478694226e-05,
+     "jump": 2.3418667460060085,
+     "lufs": -20.999999999999947,
+     "onset": 0.05950113378684807,
+     "peak": -2.7529811619380293
+    },
+    {
+     "dc": 1.276554251902787e-18,
+     "dur": 1.593469387755102,
+     "edge": 6.017296231602692e-05,
+     "jump": 2.1385619954110155,
+     "lufs": -20.999999999999936,
+     "onset": 0.06095238095238095,
+     "peak": -1.9661155235388252
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "camel-groan",
+     "camel_02.flac"
+    ],
+    [
+     "camel-groan",
+     "camel_02.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ]
+   ],
+   "what": "a long groan, and the weight of it going down"
+  },
+  "foe/stag_hit": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 5.199171224829623e-19,
+     "dur": 0.5035827664399093,
+     "edge": 0.0005082989352855823,
+     "jump": 1.5376156854201812,
+     "lufs": -21.14067226094449,
+     "onset": 0.005804988662131519,
+     "peak": -1.3446603337072989
+    },
+    {
+     "dc": 4.6097546914069e-19,
+     "dur": 0.41505668934240364,
+     "edge": 0.00017801399238482132,
+     "jump": 1.9418877081377786,
+     "lufs": -21.000000000000092,
+     "onset": 0.004353741496598639,
+     "peak": -2.671937133721136
+    },
+    {
+     "dc": 2.5064445660501393e-19,
+     "dur": 0.3816780045351474,
+     "edge": 4.087940335219057e-05,
+     "jump": 1.4623295743958538,
+     "lufs": -21.00000000000011,
+     "onset": 0.014512471655328799,
+     "peak": -4.567876015585696
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "camel-groan",
+     "camel_01.ogg"
+    ],
+    [
+     "camel-groan",
+     "camel_02.flac"
+    ],
+    [
+     "camel-groan",
+     "camel_02.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_heavy_002.ogg"
+    ]
+   ],
+   "what": "struck: a grunt"
+  },
+  "foe/taken_alert": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 1.4067762723222071e-19,
+     "dur": 1.0468934240362813,
+     "edge": 6.837814702994929e-06,
+     "jump": 1.8704628817484066,
+     "lufs": -24.11092972093868,
+     "onset": 0.05369614512471655,
+     "peak": -1.462826297765953
+    },
+    {
+     "dc": 4.041609752749687e-19,
+     "dur": 1.0526984126984127,
+     "edge": 9.984508434578118e-06,
+     "jump": 2.2134587977659987,
+     "lufs": -23.999999999999996,
+     "onset": 0.01596371882086168,
+     "peak": -3.7124770866780983
+    },
+    {
+     "dc": 4.128125857092664e-19,
+     "dur": 1.036734693877551,
+     "edge": 6.362196370151531e-05,
+     "jump": 2.7636025939240336,
+     "lufs": -24.815819136964546,
+     "onset": 0.10303854875283447,
+     "peak": -1.0079533618418888
+    },
+    {
+     "dc": 4.1884181486999237e-19,
+     "dur": 1.0338321995464852,
+     "edge": 8.41243861331477e-07,
+     "jump": 2.3632935063667175,
+     "lufs": -24.000000000000004,
+     "onset": 0.021768707482993196,
+     "peak": -2.150685581782475
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "ghost-breath",
+     "ghostbreath.flac"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ],
+    [
+     "tree-creaking",
+     "tree_creak.flac"
+    ]
+   ],
+   "what": "a frozen body turning: ice creak, stiff cloth, a breath"
+  },
+  "foe/taken_attack": {
+   "ext": "wav",
+   "family": "swings",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 2.9129441827179466e-19,
+     "dur": 0.579047619047619,
+     "edge": 1.2649945402776022e-06,
+     "jump": 1.9525934433939036,
+     "lufs": -24.999999999999865,
+     "onset": 0.010158730158730159,
+     "peak": -6.720943929122481
+    },
+    {
+     "dc": 9.050731179009428e-20,
+     "dur": 0.33378684807256237,
+     "edge": 1.4778002716746705e-05,
+     "jump": 1.7052327009399486,
+     "lufs": -25.00000000000006,
+     "onset": 0.020317460317460317,
+     "peak": -6.966304220737078
+    },
+    {
+     "dc": 3.2804065731612697e-19,
+     "dur": 0.4527891156462585,
+     "edge": 2.4635228672446576e-05,
+     "jump": 1.711819285581144,
+     "lufs": -24.9999999999998,
+     "onset": 0.01886621315192744,
+     "peak": -7.410944325878988
+    },
+    {
+     "dc": 2.6585800398111984e-19,
+     "dur": 0.3787755102040816,
+     "edge": 1.8786892056464537e-06,
+     "jump": 1.9097768678661207,
+     "lufs": -24.999999999999982,
+     "onset": 0.014512471655328799,
+     "peak": -6.971212767813525
+    }
+   ],
+   "target": -25,
+   "used": [
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-3.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-4.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-5.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-6.wav"
+    ]
+   ],
+   "what": "a stiff arm thrown"
+  },
+  "foe/taken_death": {
+   "ext": "wav",
+   "family": "foe",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 8.575358068680406e-20,
+     "dur": 1.4091609977324262,
+     "edge": 7.64523548358689e-05,
+     "jump": 2.0042754183117597,
+     "lufs": -20.000000000000036,
+     "onset": 0.04498866213151927,
+     "peak": -1.2559837135222687
+    },
+    {
+     "dc": 3.8079295814125034e-19,
+     "dur": 1.4280272108843537,
+     "edge": 7.986565643364226e-05,
+     "jump": 1.786281744242612,
+     "lufs": -19.99999999999997,
+     "onset": 0.04208616780045352,
+     "peak": -3.6812562695140705
+    },
+    {
+     "dc": 9.71873914450446e-19,
+     "dur": 1.4091609977324262,
+     "edge": 7.82687341669571e-05,
+     "jump": 1.8566500941290203,
+     "lufs": -20.037472578271842,
+     "onset": 0.03773242630385488,
+     "peak": -1.1602508612565818
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_02.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_03.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_falling_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_falling_02.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_falling_03.ogg"
+    ],
+    [
+     "ghost-breath",
+     "ghostbreath.flac"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_002.ogg"
+    ]
+   ],
+   "what": "the crust gives all at once, and what wore it lies down"
+  },
+  "foley/cloth": {
+   "ext": "wav",
+   "family": "foley",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 1.5651640384753146e-19,
+     "dur": 0.579047619047619,
+     "edge": 3.1551909084327973e-07,
+     "jump": 2.8680662933806724,
+     "lufs": -29.99999999999996,
+     "onset": 0.06965986394557823,
+     "peak": -8.098046923364649
+    },
+    {
+     "dc": 2.855511894612028e-19,
+     "dur": 0.3526530612244898,
+     "edge": 1.4397949089731684e-05,
+     "jump": 1.3420331706310238,
+     "lufs": -30.000000000000096,
+     "onset": 0.04353741496598639,
+     "peak": -10.47883258564094
+    },
+    {
+     "dc": 5.0040100268561746e-20,
+     "dur": 0.4527891156462585,
+     "edge": 2.7657694683063894e-05,
+     "jump": 1.4511351013431955,
+     "lufs": -30.000000000000064,
+     "onset": 0.034829931972789115,
+     "peak": -9.366853262778198
+    },
+    {
+     "dc": 2.3835895089757656e-19,
+     "dur": 0.38022675736961453,
+     "edge": 1.0185879032561851e-08,
+     "jump": 1.9190750368834197,
+     "lufs": -30.000000000000032,
+     "onset": 0.030476190476190476,
+     "peak": -11.16699098713806
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ],
+    [
+     "rpg-sound-pack",
+     "cloth.wav"
+    ]
+   ],
+   "what": "a cloak moved"
+  },
+  "foley/equip": {
+   "ext": "wav",
+   "family": "foley",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 6.12634684824523e-20,
+     "dur": 0.3903854875283447,
+     "edge": 3.276874443720227e-06,
+     "jump": 1.801892690559302,
+     "lufs": -28.0,
+     "onset": 0.004353741496598639,
+     "peak": -5.40660626672285
+    },
+    {
+     "dc": 6.264279218805136e-20,
+     "dur": 0.39183673469387753,
+     "edge": 2.4578374372109126e-06,
+     "jump": 1.4712852007115722,
+     "lufs": -28.0,
+     "onset": 0.017414965986394557,
+     "peak": -4.646940489274233
+    },
+    {
+     "dc": 6.12634684824523e-20,
+     "dur": 0.3903854875283447,
+     "edge": 3.276874443720227e-06,
+     "jump": 1.801892690559302,
+     "lufs": -28.0,
+     "onset": 0.004353741496598639,
+     "peak": -5.40660626672285
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "kenney-rpg-audio",
+     "beltHandle1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "beltHandle2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "clothBelt.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "clothBelt2.ogg"
+    ]
+   ],
+   "what": "a buckle and strap"
+  },
+  "foley/roll": {
+   "ext": "wav",
+   "family": "foley",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 2.86946740387141e-19,
+     "dur": 0.579047619047619,
+     "edge": 1.7784385824912768e-05,
+     "jump": 2.4626990929883505,
+     "lufs": -26.99999999999996,
+     "onset": 0.06965986394557823,
+     "peak": -6.615218871366065
+    },
+    {
+     "dc": 3.6616854374180626e-19,
+     "dur": 0.5500226757369614,
+     "edge": 3.697437908034403e-05,
+     "jump": 1.3421099644726193,
+     "lufs": -26.999999999999986,
+     "onset": 0.04353741496598639,
+     "peak": -7.6920543190288715
+    },
+    {
+     "dc": 4.0278539811598687e-19,
+     "dur": 0.5500226757369614,
+     "edge": 6.192854383049804e-05,
+     "jump": 1.4215708363513,
+     "lufs": -27.00000000000006,
+     "onset": 0.034829931972789115,
+     "peak": -6.705777845268166
+    },
+    {
+     "dc": 2.0139269905799343e-19,
+     "dur": 0.5500226757369614,
+     "edge": 2.535335615189964e-05,
+     "jump": 2.0797564074021597,
+     "lufs": -27.00000000000007,
+     "onset": 0.030476190476190476,
+     "peak": -8.162774137470244
+    }
+   ],
+   "target": -27,
+   "used": [
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "quiver-leather-squeeze-01.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "quiver-leather-squeeze-02.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "quiver-leather-squeeze-03.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "quiver-leather-squeeze-04.wav"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_003.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ],
+    [
+     "rpg-sound-pack",
+     "cloth-heavy.wav"
+    ]
+   ],
+   "what": "wool and leather going over the ground"
+  },
+  "foot/ice_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.531872746931132e-19,
+     "dur": 0.44988662131519275,
+     "edge": 7.724928945707132e-07,
+     "jump": 1.5929183267989584,
+     "lufs": -28.0,
+     "onset": 0.01596371882086168,
+     "peak": -9.479468102262562
+    },
+    {
+     "dc": 1.3687602177557863e-20,
+     "dur": 0.43682539682539684,
+     "edge": 1.3474727296632898e-07,
+     "jump": 1.4012476234485314,
+     "lufs": -28.000000000000004,
+     "onset": 0.030476190476190476,
+     "peak": -9.369395646933295
+    },
+    {
+     "dc": 9.792793815998104e-20,
+     "dur": 0.44988662131519275,
+     "edge": 4.43091707978957e-07,
+     "jump": 1.8007786120952856,
+     "lufs": -27.999999999999996,
+     "onset": 0.017414965986394557,
+     "peak": -4.427335954521264
+    },
+    {
+     "dc": 1.028243350679801e-19,
+     "dur": 0.44988662131519275,
+     "edge": 4.4057243609608427e-07,
+     "jump": 1.4121406205638602,
+     "lufs": -28.000000000000004,
+     "onset": 0.020317460317460317,
+     "peak": -9.434638894051858
+    },
+    {
+     "dc": 7.484492416512837e-20,
+     "dur": 0.44988662131519275,
+     "edge": 9.491517358416677e-07,
+     "jump": 1.4310709134065875,
+     "lufs": -28.000000000000004,
+     "onset": 0.014512471655328799,
+     "peak": -7.439095612248787
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_01.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_02.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_03.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_04.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_14.flac"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ]
+   ],
+   "what": "brittle ice over grit (harder, for the run)"
+  },
+  "foot/ice_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 5.619120893944807e-20,
+     "dur": 0.43682539682539684,
+     "edge": 2.2337715129456747e-08,
+     "jump": 1.4773787178214617,
+     "lufs": -29.999999999999996,
+     "onset": 0.030476190476190476,
+     "peak": -11.346805636699306
+    },
+    {
+     "dc": 8.131516293641283e-20,
+     "dur": 0.4992290249433107,
+     "edge": 1.4184234969480842e-07,
+     "jump": 1.8548673857200182,
+     "lufs": -30.00000000000001,
+     "onset": 0.017414965986394557,
+     "peak": -6.443109156508014
+    },
+    {
+     "dc": 8.48608822505006e-20,
+     "dur": 0.4992290249433107,
+     "edge": 1.2116578498878234e-08,
+     "jump": 1.445518493697982,
+     "lufs": -29.999999999999993,
+     "onset": 0.020317460317460317,
+     "peak": -11.425828144812389
+    },
+    {
+     "dc": 1.9225678058609237e-20,
+     "dur": 0.4992290249433107,
+     "edge": 9.170007938657376e-09,
+     "jump": 1.47175612110422,
+     "lufs": -30.000000000000007,
+     "onset": 0.014512471655328799,
+     "peak": -9.420427505518699
+    },
+    {
+     "dc": 1.3111282085871216e-19,
+     "dur": 0.4992290249433107,
+     "edge": 4.9769847315552876e-08,
+     "jump": 1.452837667218462,
+     "lufs": -30.000000000000007,
+     "onset": 0.004353741496598639,
+     "peak": -11.601995032389965
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_01.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_02.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_03.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_04.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_and_ice_05.flac"
+    ]
+   ],
+   "what": "brittle ice over grit"
+  },
+  "foot/land": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 4.0763737033397557e-19,
+     "dur": 0.5558276643990929,
+     "edge": 0.00015709822699899221,
+     "jump": 1.991317214771069,
+     "lufs": -25.000000000000018,
+     "onset": 0.0014512471655328798,
+     "peak": -2.3339840095530944
+    },
+    {
+     "dc": 2.4781763942525814e-19,
+     "dur": 0.5282539682539683,
+     "edge": 0.00010350850377881437,
+     "jump": 2.385004699387655,
+     "lufs": -24.999999999999932,
+     "onset": 0.0014512471655328798,
+     "peak": -3.6945383289611216
+    },
+    {
+     "dc": 1.471886585677291e-19,
+     "dur": 0.47891156462585033,
+     "edge": 0.00010946265678104039,
+     "jump": 2.782524881720112,
+     "lufs": -25.00000000000022,
+     "onset": 0.0014512471655328798,
+     "peak": -1.1659794842572626
+    },
+    {
+     "dc": 9.537998493343269e-20,
+     "dur": 0.422312925170068,
+     "edge": 0.00015333993003425155,
+     "jump": 1.834107494921373,
+     "lufs": -24.999999999999883,
+     "onset": 0.0014512471655328798,
+     "peak": -4.5745051985824245
+    }
+   ],
+   "target": -25,
+   "used": [
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "boots-leather-jump-01.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "boots-leather-jump-02.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "boots-leather-jump-03.wav"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_003.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ]
+   ],
+   "what": "both boots coming down, and the clothes after them"
+  },
+  "foot/mud_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.2317563143030583e-19,
+     "dur": 0.2452607709750567,
+     "edge": 1.4274183059753497e-05,
+     "jump": 2.4888913233632306,
+     "lufs": -27.999999999999996,
+     "onset": 0.0072562358276643995,
+     "peak": -5.787941253253112
+    },
+    {
+     "dc": 1.5605940361533777e-20,
+     "dur": 0.3831292517006803,
+     "edge": 1.1912051458014453e-05,
+     "jump": 1.9064806314484746,
+     "lufs": -28.0,
+     "onset": 0.004353741496598639,
+     "peak": -8.531945202610418
+    },
+    {
+     "dc": 1.2544487946113275e-20,
+     "dur": 0.3512018140589569,
+     "edge": 1.0893126257509236e-05,
+     "jump": 1.424750951791961,
+     "lufs": -27.99999999999999,
+     "onset": 0.014512471655328799,
+     "peak": -8.771452967414714
+    },
+    {
+     "dc": 9.049246479012871e-20,
+     "dur": 0.3686167800453515,
+     "edge": 1.0204231232090635e-05,
+     "jump": 1.8499947116891646,
+     "lufs": -28.0,
+     "onset": 0.0014512471655328798,
+     "peak": -12.695113812264387
+    },
+    {
+     "dc": 8.496604780294565e-20,
+     "dur": 0.35555555555555557,
+     "edge": 1.2633463933847843e-05,
+     "jump": 2.1546135871133516,
+     "lufs": -28.000000000000032,
+     "onset": 0.014512471655328799,
+     "peak": -6.5341485586169465
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "25-cc0-mud-sfx",
+     "mud_01.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_02.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_03.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_15.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_16.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "mud02.ogg"
+    ]
+   ],
+   "what": "wet peat and trodden mud (harder, for the run)"
+  },
+  "foot/mud_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 8.601934591620531e-20,
+     "dur": 0.3512018140589569,
+     "edge": 0.0003152387299631349,
+     "jump": 1.303183643154762,
+     "lufs": -30.000000000000007,
+     "onset": 0.0,
+     "peak": -10.19433773322973
+    },
+    {
+     "dc": 1.1681639568867388e-19,
+     "dur": 0.4310204081632653,
+     "edge": 0.00019918429866129978,
+     "jump": 1.3836330243773578,
+     "lufs": -30.000000000000004,
+     "onset": 0.0,
+     "peak": -14.313457033691993
+    },
+    {
+     "dc": 2.4781763942525815e-20,
+     "dur": 0.40634920634920635,
+     "edge": 0.0002191914811657974,
+     "jump": 1.3017207457874027,
+     "lufs": -29.99999999999997,
+     "onset": 0.0,
+     "peak": -7.496396558401352
+    },
+    {
+     "dc": 1.9615247784896758e-19,
+     "dur": 0.41070294784580497,
+     "edge": 0.00025530702395013476,
+     "jump": 1.4602365387561396,
+     "lufs": -29.999999999999982,
+     "onset": 0.0,
+     "peak": -13.674358336147087
+    },
+    {
+     "dc": 2.598836668130048e-20,
+     "dur": 0.3874829931972789,
+     "edge": 0.0002337639147653797,
+     "jump": 1.9057286464762744,
+     "lufs": -29.999999999999982,
+     "onset": 0.0,
+     "peak": -6.754242984819131
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "25-cc0-mud-sfx",
+     "mud_01.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_02.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_03.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_04.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_05.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_004.ogg"
+    ]
+   ],
+   "what": "wet peat and trodden mud"
+  },
+  "foot/plank_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.3970927323303143e-19,
+     "dur": 0.21623582766439908,
+     "edge": 0.0003119411689545436,
+     "jump": 1.1281624849649095,
+     "lufs": -28.000000000000167,
+     "onset": 0.0,
+     "peak": -13.710201311657702
+    },
+    {
+     "dc": 3.4014185803466805e-19,
+     "dur": 0.2960544217687075,
+     "edge": 0.0003095498925286336,
+     "jump": 2.036919647265594,
+     "lufs": -27.999999999999805,
+     "onset": 0.0,
+     "peak": -9.917689094453047
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.22639455782312926,
+     "edge": 0.00023984540034247492,
+     "jump": 2.330258200783592,
+     "lufs": -28.000000000000234,
+     "onset": 0.0,
+     "peak": -7.5696390665909625
+    },
+    {
+     "dc": 5.551115123125783e-19,
+     "dur": 0.21768707482993196,
+     "edge": 0.0005135776886870967,
+     "jump": 1.4602884621016086,
+     "lufs": -27.99999999999975,
+     "onset": 0.0,
+     "peak": -6.087220600822558
+    },
+    {
+     "dc": 6.462695302658693e-19,
+     "dur": 0.2960544217687075,
+     "edge": 0.0002770546584597559,
+     "jump": 1.8385081574635433,
+     "lufs": -28.000000000000014,
+     "onset": 0.0,
+     "peak": -9.683774387602881
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_01.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_02.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_03.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_04.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "wood01.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "wood02.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "wood03.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_004.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_light_004.ogg"
+    ]
+   ],
+   "what": "boot on boards (harder, for the run)"
+  },
+  "foot/plank_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.7792035651044175e-19,
+     "dur": 0.22639455782312926,
+     "edge": 0.00015072060161543365,
+     "jump": 1.6906824206138549,
+     "lufs": -30.000000000000014,
+     "onset": 0.0,
+     "peak": -13.107794721662597
+    },
+    {
+     "dc": 1.8753767307857375e-19,
+     "dur": 0.2147845804988662,
+     "edge": 0.00012605253591439308,
+     "jump": 1.3553240378610485,
+     "lufs": -29.999999999999886,
+     "onset": 0.0029024943310657597,
+     "peak": -7.055932823954242
+    },
+    {
+     "dc": 1.3605674321386722e-19,
+     "dur": 0.2960544217687075,
+     "edge": 8.415331029972682e-05,
+     "jump": 1.482363558457463,
+     "lufs": -30.000000000000277,
+     "onset": 0.0014512471655328798,
+     "peak": -9.898255899374536
+    },
+    {
+     "dc": 5.337610695313253e-19,
+     "dur": 0.22639455782312926,
+     "edge": 5.578589800449097e-05,
+     "jump": 2.3729554322725144,
+     "lufs": -30.000000000000227,
+     "onset": 0.0,
+     "peak": -14.157299730529644
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.2147845804988662,
+     "edge": 0.00011295747844577552,
+     "jump": 1.9335001796817797,
+     "lufs": -29.99999999999997,
+     "onset": 0.0014512471655328798,
+     "peak": -14.991253567951246
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_01.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_02.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_03.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wood_04.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "wood01.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "wood02.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "wood03.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_004.ogg"
+    ]
+   ],
+   "what": "boot on boards"
+  },
+  "foot/shingle_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.3150323124340312e-19,
+     "dur": 0.44988662131519275,
+     "edge": 7.627714153085162e-06,
+     "jump": 1.8638959032324975,
+     "lufs": -28.000000000000025,
+     "onset": 0.004353741496598639,
+     "peak": -7.409416753920058
+    },
+    {
+     "dc": 7.27464683474145e-20,
+     "dur": 0.44988662131519275,
+     "edge": 9.350709098542419e-06,
+     "jump": 1.817663410358615,
+     "lufs": -27.99999999999998,
+     "onset": 0.023219954648526078,
+     "peak": -4.60983455871259
+    },
+    {
+     "dc": 5.595882180570345e-20,
+     "dur": 0.44988662131519275,
+     "edge": 8.111607754230714e-06,
+     "jump": 1.547507011072501,
+     "lufs": -27.99999999999999,
+     "onset": 0.014512471655328799,
+     "peak": -5.418144380875665
+    },
+    {
+     "dc": 1.9865381741024727e-19,
+     "dur": 0.44988662131519275,
+     "edge": 8.58285791526605e-06,
+     "jump": 1.573503541424794,
+     "lufs": -28.0,
+     "onset": 0.005804988662131519,
+     "peak": -9.547447747440629
+    },
+    {
+     "dc": 5.1761910170275695e-20,
+     "dur": 0.44988662131519275,
+     "edge": 1.1506314081350515e-05,
+     "jump": 1.746317263127828,
+     "lufs": -28.000000000000004,
+     "onset": 0.004353741496598639,
+     "peak": -8.249863983512546
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_01.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_08.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_09.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_10.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_11.flac"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "stones_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "stones_02.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "stones_03.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "stones_04.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "gravel.ogg"
+    ]
+   ],
+   "what": "loose stones underfoot (harder, for the run)"
+  },
+  "foot/shingle_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.8761115962758571e-19,
+     "dur": 0.46294784580498866,
+     "edge": 1.4507425707254525e-07,
+     "jump": 1.495687916068762,
+     "lufs": -29.999999999999993,
+     "onset": 0.004353741496598639,
+     "peak": -9.586436343018983
+    },
+    {
+     "dc": 9.707391544346959e-20,
+     "dur": 0.4992290249433107,
+     "edge": 8.09393644299225e-07,
+     "jump": 1.4323466522121742,
+     "lufs": -30.000000000000007,
+     "onset": 0.004353741496598639,
+     "peak": -15.597724883892708
+    },
+    {
+     "dc": 1.9919063168919732e-19,
+     "dur": 0.4992290249433107,
+     "edge": 4.5723326746084423e-07,
+     "jump": 2.1063415983046827,
+     "lufs": -30.000000000000004,
+     "onset": 0.01596371882086168,
+     "peak": -13.242603886098795
+    },
+    {
+     "dc": 6.366536012850928e-20,
+     "dur": 0.4992290249433107,
+     "edge": 8.368001018424603e-07,
+     "jump": 1.9686139681824752,
+     "lufs": -30.00000000000001,
+     "onset": 0.004353741496598639,
+     "peak": -5.791748153780473
+    },
+    {
+     "dc": 2.899610461298442e-20,
+     "dur": 0.4992290249433107,
+     "edge": 7.351734869975847e-07,
+     "jump": 1.7094803556884341,
+     "lufs": -29.999999999999982,
+     "onset": 0.004353741496598639,
+     "peak": -6.939665025511753
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_01.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_02.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_03.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_04.flac"
+    ],
+    [
+     "42-snow-and-gravel-footsteps",
+     "Corsica_S-Walking_on_snow_covered_gravel_05.flac"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_02.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_03.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_04.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_05.ogg"
+    ]
+   ],
+   "what": "loose stones underfoot"
+  },
+  "foot/snow_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 2.1609012157496558e-19,
+     "dur": 0.41941043083900226,
+     "edge": 9.172587168525113e-06,
+     "jump": 1.464184324981031,
+     "lufs": -28.00000000000001,
+     "onset": 0.0014512471655328798,
+     "peak": -8.03884341990061
+    },
+    {
+     "dc": 2.2449362630288094e-19,
+     "dur": 0.24671201814058957,
+     "edge": 2.2724006903266297e-05,
+     "jump": 1.5220095617925364,
+     "lufs": -27.999999999999996,
+     "onset": 0.0014512471655328798,
+     "peak": -11.312691680272547
+    },
+    {
+     "dc": 2.462188159450952e-19,
+     "dur": 0.44988662131519275,
+     "edge": 3.497164694173723e-05,
+     "jump": 1.451099260762521,
+     "lufs": -27.99999999999984,
+     "onset": 0.0014512471655328798,
+     "peak": -11.279654366059608
+    },
+    {
+     "dc": 7.834235052798483e-20,
+     "dur": 0.44988662131519275,
+     "edge": 4.794160556212748e-06,
+     "jump": 1.6022304987898193,
+     "lufs": -28.000000000000075,
+     "onset": 0.0014512471655328798,
+     "peak": -9.709269675264515
+    },
+    {
+     "dc": 8.553567312342388e-20,
+     "dur": 0.41941043083900226,
+     "edge": 1.0238275779581267e-05,
+     "jump": 1.3068975990465095,
+     "lufs": -28.000000000000046,
+     "onset": 0.0029024943310657597,
+     "peak": -7.680598382148638
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-01.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-06.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-07.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-08.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-09.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_004.ogg"
+    ]
+   ],
+   "what": "snow crust and squeak (harder, for the run)"
+  },
+  "foot/snow_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.1488234940243756e-20,
+     "dur": 0.4382766439909297,
+     "edge": 2.649710832343964e-05,
+     "jump": 1.3687324657972675,
+     "lufs": -29.999999999999968,
+     "onset": 0.0029024943310657597,
+     "peak": -12.964740363029556
+    },
+    {
+     "dc": 2.82396844926457e-19,
+     "dur": 0.4992290249433107,
+     "edge": 1.1231582252214231e-05,
+     "jump": 1.5929457189151732,
+     "lufs": -29.999999999999975,
+     "onset": 0.01596371882086168,
+     "peak": -12.995875646197792
+    },
+    {
+     "dc": 4.034240641806528e-20,
+     "dur": 0.4992290249433107,
+     "edge": 2.4336810471411773e-05,
+     "jump": 1.4583637200783572,
+     "lufs": -30.000000000000053,
+     "onset": 0.004353741496598639,
+     "peak": -12.076367973009408
+    },
+    {
+     "dc": 8.335007692381055e-20,
+     "dur": 0.483265306122449,
+     "edge": 9.34827643220059e-06,
+     "jump": 1.6492046207662465,
+     "lufs": -29.999999999999904,
+     "onset": 0.0029024943310657597,
+     "peak": -13.6793719311075
+    },
+    {
+     "dc": 1.0913823193231568e-19,
+     "dur": 0.4382766439909297,
+     "edge": 3.8802284980199565e-06,
+     "jump": 1.6325692412741237,
+     "lufs": -29.99999999999996,
+     "onset": 0.004353741496598639,
+     "peak": -11.728470112832404
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-01.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-02.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-03.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-04.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-01.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-02.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-03.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-04.flac"
+    ],
+    [
+     "9-wet-snow-steps",
+     "snow_step_wet-05.flac"
+    ]
+   ],
+   "what": "snow crust and squeak"
+  },
+  "foot/stone_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.5968165887652618e-19,
+     "dur": 0.3468480725623583,
+     "edge": 0.0002537785130707263,
+     "jump": 2.009223343746826,
+     "lufs": -28.000000000000018,
+     "onset": 0.0,
+     "peak": -8.989037122655256
+    },
+    {
+     "dc": 3.2730631622203906e-20,
+     "dur": 0.3076643990929705,
+     "edge": 0.00037717335805643917,
+     "jump": 1.6471943941199618,
+     "lufs": -27.999999999999986,
+     "onset": 0.0,
+     "peak": -11.140643352713324
+    },
+    {
+     "dc": 1.794541526872559e-19,
+     "dur": 0.33668934240362813,
+     "edge": 0.00034804753190087007,
+     "jump": 2.1204266568072763,
+     "lufs": -28.000000000000014,
+     "onset": 0.0,
+     "peak": -10.754426767326649
+    },
+    {
+     "dc": 1.1613211554656448e-19,
+     "dur": 0.3468480725623583,
+     "edge": 0.0002775175455598906,
+     "jump": 2.009499575303616,
+     "lufs": -27.999999999999982,
+     "onset": 0.0,
+     "peak": -9.011532565316765
+    },
+    {
+     "dc": 3.109410004109371e-19,
+     "dur": 0.3076643990929705,
+     "edge": 0.0003143270360012579,
+     "jump": 1.6541229990980504,
+     "lufs": -28.000000000000004,
+     "onset": 0.0,
+     "peak": -11.170678915058872
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneR3.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_concrete_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_concrete_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_concrete_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_concrete_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_concrete_004.ogg"
+    ]
+   ],
+   "what": "boot on bare rock or flags (harder, for the run)"
+  },
+  "foot/stone_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 4.093416365506496e-20,
+     "dur": 0.35555555555555557,
+     "edge": 4.891061447819033e-07,
+     "jump": 1.8208804298289245,
+     "lufs": -30.000000000000064,
+     "onset": 0.0029024943310657597,
+     "peak": -11.249695628071132
+    },
+    {
+     "dc": 1.5391798698678144e-19,
+     "dur": 0.3250793650793651,
+     "edge": 2.6725537313960625e-07,
+     "jump": 1.4204607345590547,
+     "lufs": -29.999999999999993,
+     "onset": 0.0072562358276643995,
+     "peak": -12.410844146545523
+    },
+    {
+     "dc": 1.5383949744726751e-19,
+     "dur": 0.3221768707482993,
+     "edge": 1.33488555166378e-07,
+     "jump": 1.3871076459459422,
+     "lufs": -30.000000000000004,
+     "onset": 0.004353741496598639,
+     "peak": -13.407405946298896
+    },
+    {
+     "dc": 4.093416365506496e-20,
+     "dur": 0.35555555555555557,
+     "edge": 4.891061447819033e-07,
+     "jump": 1.8208804298289245,
+     "lufs": -30.000000000000064,
+     "onset": 0.0029024943310657597,
+     "peak": -11.249695628071132
+    },
+    {
+     "dc": 1.5391798698678144e-19,
+     "dur": 0.3250793650793651,
+     "edge": 2.6725537313960625e-07,
+     "jump": 1.4204607345590547,
+     "lufs": -29.999999999999993,
+     "onset": 0.0072562358276643995,
+     "peak": -12.410844146545523
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-StoneL3.flac"
+    ]
+   ],
+   "what": "boot on bare rock or flags"
+  },
+  "foot/turf_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.525031627232358e-19,
+     "dur": 0.3961904761904762,
+     "edge": 0.000528182583767633,
+     "jump": 2.3676713679258703,
+     "lufs": -27.999999999999986,
+     "onset": 0.0,
+     "peak": -5.639584891338504
+    },
+    {
+     "dc": 1.8669669696611378e-19,
+     "dur": 0.3236281179138322,
+     "edge": 0.0007669860941615748,
+     "jump": 1.9116944444593489,
+     "lufs": -27.999999999999982,
+     "onset": 0.0,
+     "peak": -5.356872012669724
+    },
+    {
+     "dc": 2.4781763942525814e-19,
+     "dur": 0.3250793650793651,
+     "edge": 0.000656780043128889,
+     "jump": 1.6179047167415408,
+     "lufs": -28.00000000000001,
+     "onset": 0.0,
+     "peak": -9.226067573446585
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.3961904761904762,
+     "edge": 0.0006792878250553487,
+     "jump": 2.346273575161812,
+     "lufs": -27.999999999999982,
+     "onset": 0.0,
+     "peak": -5.495688327556621
+    },
+    {
+     "dc": 6.223223232203792e-20,
+     "dur": 0.3236281179138322,
+     "edge": 0.000614962208477578,
+     "jump": 1.8981266942316226,
+     "lufs": -28.00000000000005,
+     "onset": 0.0,
+     "peak": -5.758216622761382
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "leaves01.ogg"
+    ],
+    [
+     "different-steps-on-wood-stone-leaves-gravel-and-mud",
+     "leaves02.ogg"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-SandR1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-SandR2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-SandR3.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_004.ogg"
+    ]
+   ],
+   "what": "boot in short grass (harder, for the run)"
+  },
+  "foot/turf_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 9.440671978105072e-20,
+     "dur": 0.4266666666666667,
+     "edge": 0.0008175890493670499,
+     "jump": 1.4852549860220758,
+     "lufs": -29.999999999999957,
+     "onset": 0.0,
+     "peak": -9.947017472455263
+    },
+    {
+     "dc": 1.290957005378089e-19,
+     "dur": 0.31201814058956917,
+     "edge": 0.000810285084949971,
+     "jump": 1.6472594068921829,
+     "lufs": -30.000000000000007,
+     "onset": 0.0,
+     "peak": -11.29834341704254
+    },
+    {
+     "dc": 6.769652589177784e-20,
+     "dur": 0.29750566893424035,
+     "edge": 0.0008734401741555048,
+     "jump": 1.883490675428704,
+     "lufs": -30.00000000000001,
+     "onset": 0.0,
+     "peak": -9.388109608716977
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.4266666666666667,
+     "edge": 0.0007830993885284888,
+     "jump": 1.5223638002255817,
+     "lufs": -29.999999999999975,
+     "onset": 0.0,
+     "peak": -9.642934019200794
+    },
+    {
+     "dc": 6.454785026890445e-20,
+     "dur": 0.31201814058956917,
+     "edge": 0.0008884929739252885,
+     "jump": 1.6556396674364173,
+     "lufs": -30.000000000000032,
+     "onset": 0.0,
+     "peak": -10.181098269022844
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-SandL1.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-SandL2.flac"
+    ],
+    [
+     "fantozzis-footsteps-grasssand-stone",
+     "Fantozzi-SandL3.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_004.ogg"
+    ]
+   ],
+   "what": "boot in short grass"
+  },
+  "foot/water_run": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.0772073197597915e-19,
+     "dur": 0.44988662131519275,
+     "edge": 1.142446541122924e-05,
+     "jump": 2.7385162061020516,
+     "lufs": -28.000000000000014,
+     "onset": 0.014512471655328799,
+     "peak": -8.918473137291365
+    },
+    {
+     "dc": 4.030491347529756e-20,
+     "dur": 0.3903854875283447,
+     "edge": 1.0807714690451499e-05,
+     "jump": 2.6717681743612074,
+     "lufs": -28.000000000000004,
+     "onset": 0.004353741496598639,
+     "peak": -9.383753456889863
+    },
+    {
+     "dc": 1.5668470105596966e-19,
+     "dur": 0.44988662131519275,
+     "edge": 6.349561613286592e-06,
+     "jump": 1.7963425282506984,
+     "lufs": -28.000000000000018,
+     "onset": 0.010158730158730159,
+     "peak": -7.953849322366823
+    },
+    {
+     "dc": 8.393823270855519e-21,
+     "dur": 0.44988662131519275,
+     "edge": 1.6972589498272392e-06,
+     "jump": 1.4698181659198475,
+     "lufs": -28.00000000000001,
+     "onset": 0.027573696145124716,
+     "peak": -7.70295141678058
+    },
+    {
+     "dc": 1.802942938515221e-19,
+     "dur": 0.3874829931972789,
+     "edge": 5.39437992902192e-06,
+     "jump": 1.4378959292320463,
+     "lufs": -28.0,
+     "onset": 0.017414965986394557,
+     "peak": -8.535875889030443
+    }
+   ],
+   "target": -28,
+   "used": [
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_01.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_02.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_10.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_11.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_12.ogg"
+    ],
+    [
+     "6-short-water-splashes",
+     "water_splash-01.flac"
+    ],
+    [
+     "6-short-water-splashes",
+     "water_splash-02.flac"
+    ],
+    [
+     "6-short-water-splashes",
+     "water_splash-03.flac"
+    ],
+    [
+     "6-short-water-splashes",
+     "water_splash-04.flac"
+    ],
+    [
+     "6-short-water-splashes",
+     "water_splash-05.flac"
+    ]
+   ],
+   "what": "wading the shallows (harder, for the run)"
+  },
+  "foot/water_walk": {
+   "ext": "wav",
+   "family": "footsteps",
+   "n": 5,
+   "rows": [
+    {
+     "dc": 1.0990316854830265e-19,
+     "dur": 0.4774603174603175,
+     "edge": 8.426781959751666e-07,
+     "jump": 2.05238703374991,
+     "lufs": -30.000000000000004,
+     "onset": 0.04208616780045352,
+     "peak": -4.609815806245624
+    },
+    {
+     "dc": 4.9340937190957086e-20,
+     "dur": 0.48471655328798186,
+     "edge": 5.663787560841473e-07,
+     "jump": 1.7234531400592854,
+     "lufs": -29.999999999999996,
+     "onset": 0.01886621315192744,
+     "peak": -8.519181261906493
+    },
+    {
+     "dc": 2.6618137168805797e-20,
+     "dur": 0.48471655328798186,
+     "edge": 4.5680581185535185e-06,
+     "jump": 1.588401212927059,
+     "lufs": -30.000000000000004,
+     "onset": 0.011609977324263039,
+     "peak": -7.100919279350145
+    },
+    {
+     "dc": 3.304235192336775e-19,
+     "dur": 0.4876190476190476,
+     "edge": 8.729798151375674e-07,
+     "jump": 1.8163461226074207,
+     "lufs": -29.999999999999897,
+     "onset": 0.004353741496598639,
+     "peak": -11.689569960568686
+    },
+    {
+     "dc": 6.10863170928411e-20,
+     "dur": 0.49197278911564624,
+     "edge": 1.0046453878927074e-06,
+     "jump": 1.9802130718724118,
+     "lufs": -30.000000000000004,
+     "onset": 0.0072562358276643995,
+     "peak": -6.942784586547782
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wet_01.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wet_02.ogg"
+    ],
+    [
+     "100-cc0-sfx-2",
+     "sfx100v2_footstep_wet_03.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_01.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_02.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_03.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_04.ogg"
+    ],
+    [
+     "40-cc0-water-splash-slime-sfx",
+     "splash_05.ogg"
+    ]
+   ],
+   "what": "wading the shallows"
+  },
+  "impact/cloth": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 2.782513846178337e-19,
+     "dur": 0.579047619047619,
+     "edge": 9.831147080642121e-05,
+     "jump": 2.598846350177673,
+     "lufs": -24.00000000000004,
+     "onset": 0.0,
+     "peak": -4.3774289239315864
+    },
+    {
+     "dc": 2.4135283144025142e-19,
+     "dur": 0.33378684807256237,
+     "edge": 0.00016816817685374422,
+     "jump": 1.2662056428871702,
+     "lufs": -23.99999999999975,
+     "onset": 0.0,
+     "peak": -7.6823626961907525
+    },
+    {
+     "dc": 5.337610695313253e-19,
+     "dur": 0.4527891156462585,
+     "edge": 6.282433081501661e-05,
+     "jump": 1.4914053941345806,
+     "lufs": -24.000000000000217,
+     "onset": 0.0,
+     "peak": -5.071716596808855
+    },
+    {
+     "dc": 6.912308103509116e-19,
+     "dur": 0.3787755102040816,
+     "edge": 0.00013317297014745416,
+     "jump": 1.9093989898916415,
+     "lufs": -23.99999999999996,
+     "onset": 0.0,
+     "peak": -6.837175596534005
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_004.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ],
+    [
+     "rpg-sound-pack",
+     "cloth.wav"
+    ]
+   ],
+   "what": "edge on hung cloth or sacking"
+  },
+  "impact/ice": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 1.0884539457109378e-18,
+     "dur": 0.4440816326530612,
+     "edge": 0.0020553524536054604,
+     "jump": 1.3722607700295315,
+     "lufs": -20.221054040244645,
+     "onset": 0.0,
+     "peak": -1.291874943489715
+    },
+    {
+     "dc": 2.47987960826925e-18,
+     "dur": 0.422312925170068,
+     "edge": 0.002382739932744637,
+     "jump": 1.5222381096930844,
+     "lufs": -20.255998153529287,
+     "onset": 0.0,
+     "peak": -1.0788672120187928
+    },
+    {
+     "dc": 3.8818986875005473e-19,
+     "dur": 0.41505668934240364,
+     "edge": 0.0025475843469673146,
+     "jump": 1.6237215156568954,
+     "lufs": -20.13006115603916,
+     "onset": 0.0,
+     "peak": -1.4588418714855609
+    },
+    {
+     "dc": 3.37112254440837e-19,
+     "dur": 0.35845804988662133,
+     "edge": 0.001891865618669533,
+     "jump": 1.4787719384465614,
+     "lufs": -19.999999999999943,
+     "onset": 0.0,
+     "peak": -1.3817099551120995
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_hit_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_hit_02.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_003.ogg"
+    ]
+   ],
+   "what": "edge on ice"
+  },
+  "impact/metal": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 5.372046893347532e-19,
+     "dur": 0.44988662131519275,
+     "edge": 0.001814809274771791,
+     "jump": 1.5917246114376162,
+     "lufs": -19.485587615891333,
+     "onset": 0.0,
+     "peak": -1.045007845355312
+    },
+    {
+     "dc": 2.5581175682607294e-19,
+     "dur": 0.31492063492063493,
+     "edge": 0.0026834625008225377,
+     "jump": 1.4199391433698625,
+     "lufs": -19.318347045511135,
+     "onset": 0.0,
+     "peak": -1.2922724251226647
+    },
+    {
+     "dc": 5.212314669601674e-19,
+     "dur": 0.3091156462585034,
+     "edge": 0.001729777669721245,
+     "jump": 1.2783109209525256,
+     "lufs": -19.000000000000053,
+     "onset": 0.0,
+     "peak": -2.0530809973785806
+    },
+    {
+     "dc": 8.335007692381055e-19,
+     "dur": 0.483265306122449,
+     "edge": 0.001639909258390484,
+     "jump": 1.5851606143024177,
+     "lufs": -19.247794711299907,
+     "onset": 0.0,
+     "peak": -1.2269332521029346
+    }
+   ],
+   "target": -19,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "metal_hit_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "metal_hit_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "metal_hit_03.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "metal_hit_04.ogg"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "sword-knife-clash-01.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "sword-knife-clash-11.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "sword-knife-clash-15.wav"
+    ],
+    [
+     "fantasy-weapons-and-apparel-sfx-library",
+     "sword-knife-clash-16.wav"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMetal_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMetal_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMetal_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMetal_heavy_003.ogg"
+    ]
+   ],
+   "what": "edge on iron"
+  },
+  "impact/snow": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 2.527411686853626e-19,
+     "dur": 0.4382766439909297,
+     "edge": 4.091681017914489e-05,
+     "jump": 1.3849286374777772,
+     "lufs": -25.000000000000085,
+     "onset": 0.0014512471655328798,
+     "peak": -4.176629241371622
+    },
+    {
+     "dc": 1.343011723336883e-19,
+     "dur": 0.6748299319727891,
+     "edge": 5.368795176844115e-05,
+     "jump": 1.3300407451221066,
+     "lufs": -25.000000000000053,
+     "onset": 0.0014512471655328798,
+     "peak": -5.56667638808849
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.5035827664399093,
+     "edge": 1.757451361210233e-05,
+     "jump": 1.4997071261191832,
+     "lufs": -24.999999999999922,
+     "onset": 0.0014512471655328798,
+     "peak": -3.4077344808721617
+    },
+    {
+     "dc": 3.34404525489505e-19,
+     "dur": 0.4818140589569161,
+     "edge": 1.690403367238944e-05,
+     "jump": 1.670697451667504,
+     "lufs": -24.999999999999925,
+     "onset": 0.0014512471655328798,
+     "peak": -4.728562603099843
+    }
+   ],
+   "target": -25,
+   "used": [
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-01.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-02.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-03.flac"
+    ],
+    [
+     "4-dry-snow-steps",
+     "snow_step_dry-04.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_snow_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_medium_003.ogg"
+    ]
+   ],
+   "what": "edge into a drift"
+  },
+  "impact/stone": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 8.3601131372376245e-19,
+     "dur": 0.4818140589569161,
+     "edge": 0.0006630357073633324,
+     "jump": 1.8873669727875335,
+     "lufs": -19.99999999999996,
+     "onset": 0.0,
+     "peak": -1.9360648614351303
+    },
+    {
+     "dc": 2.6154292407034937e-19,
+     "dur": 0.47165532879818595,
+     "edge": 2.6104798305820455e-05,
+     "jump": 1.6872263715695672,
+     "lufs": -19.999999999999883,
+     "onset": 0.0,
+     "peak": -1.4528215638198718
+    },
+    {
+     "dc": 1.5372318802502168e-18,
+     "dur": 0.47165532879818595,
+     "edge": 0.0007403316380931995,
+     "jump": 2.532569142002412,
+     "lufs": -20.207361691807318,
+     "onset": 0.0,
+     "peak": -1.2746553332909198
+    },
+    {
+     "dc": 7.192755876001395e-19,
+     "dur": 0.47600907029478456,
+     "edge": 0.0005002002290483703,
+     "jump": 1.355533313045238,
+     "lufs": -20.145281676542254,
+     "onset": 0.0,
+     "peak": -1.2844521535120446
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_02.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_03.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_falling_04.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_rock_hit_01.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMining_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMining_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMining_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactMining_003.ogg"
+    ]
+   ],
+   "what": "edge on rock: a crack and grit"
+  },
+  "impact/turf": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 4.350403701509234e-19,
+     "dur": 0.46294784580498866,
+     "edge": 0.0009305633111882566,
+     "jump": 1.528026124795393,
+     "lufs": -23.000000000000377,
+     "onset": 0.0,
+     "peak": -5.030514228885284
+    },
+    {
+     "dc": 2.8613995480029807e-19,
+     "dur": 0.422312925170068,
+     "edge": 0.000865065556835378,
+     "jump": 1.8532270476084185,
+     "lufs": -23.000000000000696,
+     "onset": 0.0,
+     "peak": -3.440681687961265
+    },
+    {
+     "dc": 3.106967419659953e-19,
+     "dur": 0.38893424036281177,
+     "edge": 0.0009659434441253883,
+     "jump": 1.4323094201858693,
+     "lufs": -22.999999999999904,
+     "onset": 0.0,
+     "peak": -4.457769259612862
+    },
+    {
+     "dc": 7.11681426041767e-19,
+     "dur": 0.4527891156462585,
+     "edge": 0.0009341762820959911,
+     "jump": 1.6849180429409054,
+     "lufs": -23.000000000000274,
+     "onset": 0.0,
+     "peak": -4.561427239209107
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "25-cc0-mud-sfx",
+     "mud_04.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_05.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_06.ogg"
+    ],
+    [
+     "25-cc0-mud-sfx",
+     "mud_07.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_grass_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_004.ogg"
+    ]
+   ],
+   "what": "edge into sod"
+  },
+  "impact/wood": {
+   "ext": "wav",
+   "family": "impacts",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 3.935492064902607e-18,
+     "dur": 0.19446712018140588,
+     "edge": 0.0008273632559223736,
+     "jump": 2.2894422736821225,
+     "lufs": -20.345302204593928,
+     "onset": 0.0,
+     "peak": -1.2127770456978715
+    },
+    {
+     "dc": 1.8881343956210147e-18,
+     "dur": 0.21333333333333335,
+     "edge": 0.0013942820581607943,
+     "jump": 1.6921267943876601,
+     "lufs": -20.136171427148792,
+     "onset": 0.0,
+     "peak": -1.3568217853469642
+    },
+    {
+     "dc": 2.7034651573664526e-19,
+     "dur": 0.2234920634920635,
+     "edge": 0.0011979557908141526,
+     "jump": 1.3731187063611456,
+     "lufs": -20.086984276769215,
+     "onset": 0.0,
+     "peak": -1.7329241297668947
+    },
+    {
+     "dc": 1.7515654514717275e-18,
+     "dur": 0.29895691609977326,
+     "edge": 0.0009337746242019025,
+     "jump": 1.977182213876719,
+     "lufs": -20.054144378431047,
+     "onset": 0.0,
+     "peak": -1.6707783158209586
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_05.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_06.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_07.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_hit_08.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "wood_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "wood_02.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "wood_03.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "wood_04.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_heavy_004.ogg"
+    ]
+   ],
+   "what": "edge on timber"
+  },
+  "player/death": {
+   "ext": "ogg",
+   "family": "player",
+   "n": 1,
+   "rows": [
+    {
+     "dc": 7.951010130028107e-20,
+     "dur": 6.245487528344671,
+     "edge": 9.290455442899035e-07,
+     "jump": 1.5986209291611406,
+     "lufs": -24.0,
+     "onset": 0.20462585034013606,
+     "peak": -9.50059067284174
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "ghost-breath",
+     "ghostbreath.flac"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "rpg-sound-pack",
+     "cloth-heavy.wav"
+    ]
+   ],
+   "what": "one breath out into the cold"
+  },
+  "player/hurt": {
+   "ext": "wav",
+   "family": "player",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 2.863135834136478e-19,
+     "dur": 0.5979138321995465,
+     "edge": 1.0377593235539303e-05,
+     "jump": 2.926178305393871,
+     "lufs": -23.999999999999982,
+     "onset": 0.017414965986394557,
+     "peak": -5.553690965867632
+    },
+    {
+     "dc": 3.8079295814125034e-19,
+     "dur": 0.3570068027210884,
+     "edge": 2.59180907444851e-05,
+     "jump": 1.357429978297119,
+     "lufs": -24.000000000000018,
+     "onset": 0.017414965986394557,
+     "peak": -8.02840748596359
+    },
+    {
+     "dc": 1.3303094140926435e-19,
+     "dur": 0.4731065759637188,
+     "edge": 1.911182863422627e-05,
+     "jump": 1.4144012090098979,
+     "lufs": -23.999999999999897,
+     "onset": 0.023219954648526078,
+     "peak": -8.420448009150878
+    },
+    {
+     "dc": 4.938263909714998e-19,
+     "dur": 0.39764172335600906,
+     "edge": 9.108587372997573e-06,
+     "jump": 1.96581998618288,
+     "lufs": -23.999999999999932,
+     "onset": 0.01886621315192744,
+     "peak": -8.087532058132238
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "ghost-breath",
+     "ghostbreath.flac"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPunch_medium_003.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth4.ogg"
+    ]
+   ],
+   "what": "the blow, and the air it knocks out. No voice."
+  },
+  "ui/close": {
+   "ext": "wav",
+   "family": "ui",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 1.7347234759768072e-19,
+     "dur": 0.23219954648526078,
+     "edge": 5.617721954214642e-06,
+     "jump": 1.7907920052677986,
+     "lufs": -31.000000000000064,
+     "onset": 0.01886621315192744,
+     "peak": -12.247091969127501
+    },
+    {
+     "dc": 1.7347234759768072e-19,
+     "dur": 0.23219954648526078,
+     "edge": 5.617721954214642e-06,
+     "jump": 1.7907920052677986,
+     "lufs": -31.000000000000064,
+     "onset": 0.01886621315192744,
+     "peak": -12.247091969127501
+    }
+   ],
+   "target": -31,
+   "used": [
+    [
+     "kenney-rpg-audio",
+     "bookClose.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "dropLeather.ogg"
+    ]
+   ],
+   "what": "flap closed"
+  },
+  "ui/confirm": {
+   "ext": "wav",
+   "family": "ui",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 2.1241511950736413e-19,
+     "dur": 0.14222222222222222,
+     "edge": 0.001093166356701328,
+     "jump": 1.4615698450655141,
+     "lufs": -29.000000000000135,
+     "onset": 0.0,
+     "peak": -11.387897947843715
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.14222222222222222,
+     "edge": 0.0010694442574501872,
+     "jump": 1.4770393080399877,
+     "lufs": -29.000000000000068,
+     "onset": 0.0,
+     "peak": -11.08392470380734
+    }
+   ],
+   "target": -29,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_001.ogg"
+    ],
+    [
+     "rpg-sound-pack",
+     "wood-small.wav"
+    ]
+   ],
+   "what": "wood set down"
+  },
+  "ui/deny": {
+   "ext": "wav",
+   "family": "ui",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 1.9825411154020652e-19,
+     "dur": 0.20317460317460317,
+     "edge": 0.0009260574561687965,
+     "jump": 1.2451205693961769,
+     "lufs": -30.000000000000124,
+     "onset": 0.0,
+     "peak": -10.560692934217276
+    },
+    {
+     "dc": 0.0,
+     "dur": 0.08417233560090703,
+     "edge": 0.0014342529532059812,
+     "jump": 1.0816992400288612,
+     "lufs": -30.000000000000103,
+     "onset": 0.0,
+     "peak": -12.589737614754098
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "impactGeneric_light_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGeneric_light_001.ogg"
+    ]
+   ],
+   "what": "a dull knock"
+  },
+  "ui/ember": {
+   "ext": "wav",
+   "family": "ui",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 7.83689613807457e-20,
+     "dur": 0.06675736961451247,
+     "edge": 1.069813694419148e-07,
+     "jump": 2.0175181374995845,
+     "lufs": -31.000000000000004,
+     "onset": 0.005804988662131519,
+     "peak": -10.936897747793633
+    },
+    {
+     "dc": 2.4093381610788986e-20,
+     "dur": 0.0653061224489796,
+     "edge": 3.6527197236276234e-07,
+     "jump": 1.1904023466828308,
+     "lufs": -30.999999999999996,
+     "onset": 0.004353741496598639,
+     "peak": -12.779861822504516
+    },
+    {
+     "dc": 1.095736238150244e-19,
+     "dur": 0.06820861678004535,
+     "edge": 8.804072299128869e-07,
+     "jump": 1.2521013477114131,
+     "lufs": -31.000000000000004,
+     "onset": 0.005804988662131519,
+     "peak": -12.89282794147567
+    }
+   ],
+   "target": -31,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_cracking_03.ogg"
+    ]
+   ],
+   "what": "an ember tick"
+  },
+  "ui/move": {
+   "ext": "wav",
+   "family": "ui",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 2.9815559743351374e-20,
+     "dur": 0.08707482993197278,
+     "edge": 8.933862622683583e-08,
+     "jump": 1.0655334608785023,
+     "lufs": -31.999999999999986,
+     "onset": 0.004353741496598639,
+     "peak": -15.23916059119896
+    },
+    {
+     "dc": 7.180772558509659e-20,
+     "dur": 0.08326530612244898,
+     "edge": 7.972667698766761e-08,
+     "jump": 1.1917379104931358,
+     "lufs": -32.00000000000001,
+     "onset": 0.0029024943310657597,
+     "peak": -16.445235187395685
+    },
+    {
+     "dc": 2.191620665580977e-19,
+     "dur": 0.08471655328798186,
+     "edge": 1.4853189234140587e-07,
+     "jump": 1.125679047350694,
+     "lufs": -32.0,
+     "onset": 0.0029024943310657597,
+     "peak": -18.038559905787324
+    }
+   ],
+   "target": -32,
+   "used": [
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_02.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_03.ogg"
+    ]
+   ],
+   "what": "a wood tick"
+  },
+  "ui/open": {
+   "ext": "wav",
+   "family": "ui",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 7.713116126406944e-20,
+     "dur": 0.21623582766439908,
+     "edge": 2.4436042569834298e-06,
+     "jump": 1.6524159127697091,
+     "lufs": -30.000000000000007,
+     "onset": 0.024671201814058956,
+     "peak": -10.508656376225574
+    },
+    {
+     "dc": 3.3730734255104583e-19,
+     "dur": 0.2089795918367347,
+     "edge": 1.0310862118155435e-06,
+     "jump": 1.5751640547435446,
+     "lufs": -29.99999999999986,
+     "onset": 0.024671201814058956,
+     "peak": -9.036535757477237
+    }
+   ],
+   "target": -30,
+   "used": [
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "item_wood_02.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "handleSmallLeather.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "handleSmallLeather2.ogg"
+    ]
+   ],
+   "what": "a satchel flap, a tick"
+  },
+  "ui/tab": {
+   "ext": "wav",
+   "family": "ui",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 9.326470300950576e-20,
+     "dur": 0.1349659863945578,
+     "edge": 3.123950646516974e-05,
+     "jump": 1.630432765038382,
+     "lufs": -30.99999999999999,
+     "onset": 0.0029024943310657597,
+     "peak": -11.561636918084305
+    },
+    {
+     "dc": 9.326470300950576e-20,
+     "dur": 0.1349659863945578,
+     "edge": 3.123950646516974e-05,
+     "jump": 1.630432765038382,
+     "lufs": -30.99999999999999,
+     "onset": 0.0029024943310657597,
+     "peak": -11.561636918084305
+    }
+   ],
+   "target": -31,
+   "used": [
+    [
+     "rpg-sound-pack",
+     "beads.wav"
+    ]
+   ],
+   "what": "bone beads"
+  },
+  "world/bar_drop": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 7.050213057445847e-19,
+     "dur": 0.5427664399092971,
+     "edge": 0.000509443308567855,
+     "jump": 3.8529027529468394,
+     "lufs": -20.09866283298828,
+     "onset": 0.020317460317460317,
+     "peak": -1.2226588070929558
+    },
+    {
+     "dc": 5.782411586589357e-19,
+     "dur": 0.592108843537415,
+     "edge": 0.00019360717775422775,
+     "jump": 1.5827189349840554,
+     "lufs": -20.02847430503154,
+     "onset": 0.004353741496598639,
+     "peak": -1.5397905678410875
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_slam_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_slam_02.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactPlank_medium_001.ogg"
+    ]
+   ],
+   "what": "the bar thrown down"
+  },
+  "world/bar_lift": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 4.5279905115403896e-21,
+     "dur": 0.6254875283446713,
+     "edge": 4.182071224886754e-06,
+     "jump": 1.7411289081366033,
+     "lufs": -23.027274993374622,
+     "onset": 0.03337868480725623,
+     "peak": -1.812866467426343
+    },
+    {
+     "dc": 1.5683801289653325e-19,
+     "dur": 0.5297052154195011,
+     "edge": 1.039771866708885e-05,
+     "jump": 1.537458152894634,
+     "lufs": -23.057276705714454,
+     "onset": 0.013061224489795919,
+     "peak": -1.7866357419309697
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_misc_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_misc_02.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_squeak_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_squeak_02.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "metalLatch.ogg"
+    ]
+   ],
+   "what": "the bar worked out of its brackets"
+  },
+  "world/bird_flush": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 5.398517041421599e-20,
+     "dur": 0.6995011337868481,
+     "edge": 2.0846119489251938e-05,
+     "jump": 2.447803436606081,
+     "lufs": -26.99999999999996,
+     "onset": 0.1306122448979592,
+     "peak": -1.2469320551464986
+    },
+    {
+     "dc": 2.8505182945479817e-19,
+     "dur": 0.4382766439909297,
+     "edge": 1.528216686815397e-05,
+     "jump": 1.5968495301125811,
+     "lufs": -26.999999999999996,
+     "onset": 0.040634920634920635,
+     "peak": -4.047038670529662
+    }
+   ],
+   "target": -27,
+   "used": [
+    [
+     "kenney-rpg-audio",
+     "bookFlip1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "bookFlip2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "bookFlip3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ]
+   ],
+   "what": "wings off the ground"
+  },
+  "world/bridge": {
+   "ext": "ogg",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 8.823336616864063e-19,
+     "dur": 3.583673469387755,
+     "edge": 2.0420914938311133e-05,
+     "jump": 3.0923078016355277,
+     "lufs": -21.268263915163953,
+     "onset": 0.09142857142857143,
+     "peak": -1.0069620675224442
+    },
+    {
+     "dc": 3.917742838176169e-20,
+     "dur": 3.0844444444444443,
+     "edge": 2.500509404459401e-05,
+     "jump": 2.7735835379361182,
+     "lufs": -21.410906801889237,
+     "onset": 0.04208616780045352,
+     "peak": -1.0079684921341239
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_slam_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_slam_02.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "chain_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "chain_02.ogg"
+    ],
+    [
+     "creaky-door-hinge-spooky",
+     "creaky_door_hinge.wav"
+    ]
+   ],
+   "what": "timber and chain: a bridge let down"
+  },
+  "world/door_close": {
+   "ext": "wav",
+   "family": "world",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 1.2761184191093753e-19,
+     "dur": 0.6312925170068027,
+     "edge": 0.00019167449860181285,
+     "jump": 1.802054832901886,
+     "lufs": -24.00000000000001,
+     "onset": 0.008707482993197279,
+     "peak": -6.058918753369688
+    },
+    {
+     "dc": 3.6140072416183483e-19,
+     "dur": 0.5572789115646258,
+     "edge": 0.00020255505333011443,
+     "jump": 1.1827065783569093,
+     "lufs": -24.000000000000014,
+     "onset": 0.010158730158730159,
+     "peak": -8.331825047398818
+    },
+    {
+     "dc": 5.892903527734376e-20,
+     "dur": 0.6835374149659864,
+     "edge": 0.00018952597155841026,
+     "jump": 1.5844255156541454,
+     "lufs": -23.999999999999993,
+     "onset": 0.004353741496598639,
+     "peak": -12.137254699778449
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactWood_medium_002.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "doorClose_1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "doorClose_2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "doorClose_3.ogg"
+    ]
+   ],
+   "what": "and shut"
+  },
+  "world/door_open": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 6.825141544826783e-20,
+     "dur": 0.8852607709750567,
+     "edge": 1.6819406685064106e-06,
+     "jump": 1.9007876223011066,
+     "lufs": -24.00000000000003,
+     "onset": 0.024671201814058956,
+     "peak": -3.1173017256786095
+    },
+    {
+     "dc": 1.6379363292484875e-19,
+     "dur": 1.352562358276644,
+     "edge": 9.224001551651365e-06,
+     "jump": 2.673215622706941,
+     "lufs": -23.99999999999998,
+     "onset": 0.005804988662131519,
+     "peak": -1.0025018993534722
+    }
+   ],
+   "target": -24,
+   "used": [
+    [
+     "kenney-rpg-audio",
+     "creak1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "doorOpen_1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "doorOpen_2.ogg"
+    ]
+   ],
+   "what": "a plank door on leather hinges"
+  },
+  "world/fire_whoosh": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 1.3255195301241015e-18,
+     "dur": 1.00281179138322,
+     "edge": 3.0247431044446078e-05,
+     "jump": 2.3623314126797457,
+     "lufs": -21.018871785563515,
+     "onset": 0.03773242630385488,
+     "peak": -1.6690352129085286
+    },
+    {
+     "dc": 1.1246832376810558e-18,
+     "dur": 1.00281179138322,
+     "edge": 3.749523582620544e-05,
+     "jump": 2.362331412724324,
+     "lufs": -21.019136165608174,
+     "onset": 0.036281179138321996,
+     "peak": -1.6635550607327263
+    }
+   ],
+   "target": -21,
+   "used": [
+    [
+     "catching-fire",
+     "flame_0.ogg"
+    ],
+    [
+     "fire-crackling",
+     "fire-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-1.wav"
+    ],
+    [
+     "swishes-sound-pack",
+     "swish-2.wav"
+    ]
+   ],
+   "what": "flame thrown outward"
+  },
+  "world/gate_open": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 9.905869228336526e-19,
+     "dur": 2.1043083900226756,
+     "edge": 6.480108157727807e-06,
+     "jump": 5.344747629194492,
+     "lufs": -22.0,
+     "onset": 0.020317460317460317,
+     "peak": -4.410351601490052
+    },
+    {
+     "dc": 5.933319807384821e-20,
+     "dur": 2.036643990929705,
+     "edge": 1.786009470547657e-05,
+     "jump": 2.756148841372967,
+     "lufs": -22.197378661860316,
+     "onset": 0.062403628117913834,
+     "peak": -1.0460215557376564
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_slam_01.ogg"
+    ],
+    [
+     "100-cc0-metal-and-wood-sfx",
+     "wood_slam_02.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "chain_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "chain_02.ogg"
+    ],
+    [
+     "creaky-door-hinge-spooky",
+     "creaky_door_hinge.wav"
+    ]
+   ],
+   "what": "a heavy gate swung on its pins, and fetching up"
+  },
+  "world/hearth_catch": {
+   "ext": "ogg",
+   "family": "world",
+   "n": 1,
+   "rows": [
+    {
+     "dc": 6.352117087911411e-20,
+     "dur": 3.170612244897959,
+     "edge": 5.789048244269327e-06,
+     "jump": 2.6521591428513362,
+     "lufs": -23.061021052221207,
+     "onset": 0.030476190476190476,
+     "peak": -1.1784723348930135
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "catching-fire",
+     "flame_0.ogg"
+    ],
+    [
+     "fire-crackling",
+     "fire-1.wav"
+    ],
+    [
+     "ghost-breath",
+     "ghostbreath.flac"
+    ]
+   ],
+   "what": "a breath across the stone, the kindling takes, it settles to a crackle"
+  },
+  "world/ice_break": {
+   "ext": "wav",
+   "family": "world",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 1.1126956816955913e-18,
+     "dur": 0.6516099773242631,
+     "edge": 0.000618477768890838,
+     "jump": 1.5481327546754111,
+     "lufs": -19.058452096950827,
+     "onset": 0.0,
+     "peak": -1.5491906054885933
+    },
+    {
+     "dc": 4.135764578487752e-19,
+     "dur": 0.8765532879818594,
+     "edge": 0.0004731841438898539,
+     "jump": 1.8239472268614145,
+     "lufs": -19.056046122257058,
+     "onset": 0.0,
+     "peak": -1.447709068379407
+    },
+    {
+     "dc": 7.192755876001395e-19,
+     "dur": 0.9520181405895691,
+     "edge": 0.0006224285391856327,
+     "jump": 1.729821236714715,
+     "lufs": -19.139044616540033,
+     "onset": 0.0,
+     "peak": -1.0294542255052255
+    },
+    {
+     "dc": 4.022547190670857e-19,
+     "dur": 1.1014965986394558,
+     "edge": 0.0002975073237137367,
+     "jump": 2.0054580408857463,
+     "lufs": -19.05713813340873,
+     "onset": 0.0,
+     "peak": -1.082029942751073
+    }
+   ],
+   "target": -19,
+   "used": [
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_02.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_03.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_04.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta33.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta5.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactGlass_heavy_003.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "impactSoft_heavy_003.ogg"
+    ]
+   ],
+   "what": "sheet ice cracking through"
+  },
+  "world/ladder": {
+   "ext": "wav",
+   "family": "world",
+   "n": 4,
+   "rows": [
+    {
+     "dc": 1.5419764230904953e-19,
+     "dur": 0.39183673469387753,
+     "edge": 0.000640330749317734,
+     "jump": 1.8062461334356754,
+     "lufs": -26.99999999999968,
+     "onset": 0.0,
+     "peak": -5.818388043369728
+    },
+    {
+     "dc": 2.579514462419044e-20,
+     "dur": 0.3903854875283447,
+     "edge": 0.00046403063296689904,
+     "jump": 1.4718949563102248,
+     "lufs": -27.000000000000004,
+     "onset": 0.0,
+     "peak": -7.98907466869248
+    },
+    {
+     "dc": 3.67137243592975e-20,
+     "dur": 0.2742857142857143,
+     "edge": 0.0004535884349075198,
+     "jump": 1.640234208403131,
+     "lufs": -27.000000000000444,
+     "onset": 0.0,
+     "peak": -9.430334380968619
+    },
+    {
+     "dc": 1.0241909821265281e-19,
+     "dur": 0.39328798185941044,
+     "edge": 0.0005453533167917003,
+     "jump": 1.3221141478670932,
+     "lufs": -27.000000000000078,
+     "onset": 0.0,
+     "peak": -7.885235837780719
+    }
+   ],
+   "target": -27,
+   "used": [
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_000.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_001.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_002.ogg"
+    ],
+    [
+     "kenney-impact-sounds",
+     "footstep_wood_003.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "creak3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "handleSmallLeather.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "handleSmallLeather2.ogg"
+    ]
+   ],
+   "what": "a rung taken"
+  },
+  "world/pickup": {
+   "ext": "wav",
+   "family": "world",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 8.413208543998372e-20,
+     "dur": 0.628390022675737,
+     "edge": 5.003443120147068e-06,
+     "jump": 1.8786686643479324,
+     "lufs": -26.999999999999954,
+     "onset": 0.04208616780045352,
+     "peak": -4.197094577300847
+    },
+    {
+     "dc": 2.365532012695646e-19,
+     "dur": 0.47891156462585033,
+     "edge": 1.0304527578929279e-05,
+     "jump": 1.9071674176145907,
+     "lufs": -26.999999999999936,
+     "onset": 0.04353741496598639,
+     "peak": -4.328485543578823
+    },
+    {
+     "dc": 2.6070988656298836e-19,
+     "dur": 0.5021315192743764,
+     "edge": 1.901360002966012e-05,
+     "jump": 1.839594223356362,
+     "lufs": -27.00000000000001,
+     "onset": 0.04208616780045352,
+     "peak": -5.582143861202641
+    }
+   ],
+   "target": -27,
+   "used": [
+    [
+     "kenney-rpg-audio",
+     "cloth1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth2.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "cloth3.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "dropLeather.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "handleSmallLeather.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "handleSmallLeather2.ogg"
+    ]
+   ],
+   "what": "something taken up and put in the bag"
+  },
+  "world/plaque": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 1.3301394064997881e-19,
+     "dur": 0.45424036281179136,
+     "edge": 2.88715606461438e-07,
+     "jump": 1.7851382732253227,
+     "lufs": -27.000000000000167,
+     "onset": 0.04498866213151927,
+     "peak": -6.232288652372473
+    },
+    {
+     "dc": 6.565482108960122e-20,
+     "dur": 0.3067573696145125,
+     "edge": 6.100363097140392e-08,
+     "jump": 1.8064484330986696,
+     "lufs": -26.999999999999996,
+     "onset": 0.008707482993197279,
+     "peak": -2.1036030641576478
+    }
+   ],
+   "target": -27,
+   "used": [
+    [
+     "80-cc0-rpg-sfx",
+     "item_stone_01.ogg"
+    ],
+    [
+     "80-cc0-rpg-sfx",
+     "item_stone_02.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "bookPlace1.ogg"
+    ],
+    [
+     "kenney-rpg-audio",
+     "bookPlace2.ogg"
+    ]
+   ],
+   "what": "a hand brushed over cut stone"
+  },
+  "world/stopper": {
+   "ext": "wav",
+   "family": "world",
+   "n": 1,
+   "rows": [
+    {
+     "dc": 3.7141434624188566e-20,
+     "dur": 0.5761451247165533,
+     "edge": 4.041542752503413e-05,
+     "jump": 2.656793570251398,
+     "lufs": -25.134587513840827,
+     "onset": 0.0,
+     "peak": -1.4584416210122642
+    }
+   ],
+   "target": -25,
+   "used": [
+    [
+     "liquid-bottle-drink-set",
+     "bottle-close-01.flac"
+    ]
+   ],
+   "what": "a stopper pressed home"
+  },
+  "world/veil_fall": {
+   "ext": "ogg",
+   "family": "world",
+   "n": 1,
+   "rows": [
+    {
+     "dc": 1.4570939802466188e-18,
+     "dur": 2.5605442176870747,
+     "edge": 8.368119393912098e-07,
+     "jump": 2.871125307042118,
+     "lufs": -20.104976900520555,
+     "onset": 0.005804988662131519,
+     "peak": -1.047092474603475
+    }
+   ],
+   "target": -20,
+   "used": [
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_breaking_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_falling_01.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta.ogg"
+    ],
+    [
+     "wind",
+     "Wind2.ogg"
+    ]
+   ],
+   "what": "the veil lets go and comes down"
+  },
+  "world/veil_pass": {
+   "ext": "wav",
+   "family": "world",
+   "n": 2,
+   "rows": [
+    {
+     "dc": 6.828321649917093e-19,
+     "dur": 1.9466666666666668,
+     "edge": 3.1951872194918316e-06,
+     "jump": 2.544551348735175,
+     "lufs": -22.999999999999996,
+     "onset": 0.16979591836734695,
+     "peak": -8.47044143519798
+    },
+    {
+     "dc": 5.698764942079666e-20,
+     "dur": 1.943764172335601,
+     "edge": 2.125941114938747e-06,
+     "jump": 1.7962019110413094,
+     "lufs": -23.0,
+     "onset": 0.0653061224489796,
+     "peak": -9.001552728601972
+    }
+   ],
+   "target": -23,
+   "used": [
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_falling_01.ogg"
+    ],
+    [
+     "75-cc0-breaking-falling-hit-sfx",
+     "bfh1_glass_falling_02.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta2.ogg"
+    ],
+    [
+     "ice-breakingshattering",
+     "LedasLuzta4.ogg"
+    ],
+    [
+     "wind",
+     "Wind.ogg"
+    ]
+   ],
+   "what": "stepping through hanging frost: cold air and a brush of crystals"
+  },
+  "world/water_splash": {
+   "ext": "wav",
+   "family": "world",
+   "n": 3,
+   "rows": [
+    {
+     "dc": 4.2749346359999136e-20,
+     "dur": 1.1189115646258503,
+     "edge": 6.400448603211242e-06,
+     "jump": 3.3190287207150764,
+     "lufs": -22.072290201418337,
+     "onset": 0.0072562358276643995,
+     "peak": -1.2710037158575604
+    },
+    {
+     "dc": 3.6032831845215576e-20,
+     "dur": 0.978140589569161,
+     "edge": 5.442633144692492e-05,
+     "jump": 2.537509507340302,
+     "lufs": -22.568781477841117,
+     "onset": 0.005804988662131519,
+     "peak": -1.0265962057782092
+    },
+    {
+     "dc": 2.0264026445038808e-19,
+     "dur": 0.8199546485260771,
+     "edge": 5.156829345633668e-06,
+     "jump": 2.197084617531799,
+     "lufs": -22.113051576890687,
+     "onset": 0.0072562358276643995,
+     "peak": -1.1046986029736694
+    }
+   ],
+   "target": -22,
+   "used": [
+    [
+     "6-short-water-splashes",
+     "water_splash-01.flac"
+    ],
+    [
+     "6-short-water-splashes",
+     "water_splash-02.flac"
+    ],
+    [
+     "6-short-water-splashes",
+     "water_splash-03.flac"
+    ],
+    [
+     "water-splash-and-sand-footsteps",
+     "splash1_0.wav"
+    ],
+    [
+     "water-splash-and-sand-footsteps",
+     "splash2_0.wav"
+    ]
+   ],
+   "what": "something into water"
+  }
+ }
+}

@@ -832,7 +832,7 @@ func show_lore(text: String) -> void:
 	_lore_opened_at = Time.get_ticks_msec() * 0.001
 	if Game.player:
 		Game.player.lock_control(true)
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -6.0)
+	AudioDirector.play("world/plaque")
 
 func _input(event: InputEvent) -> void:
 	if lore_root != null and lore_root.visible:

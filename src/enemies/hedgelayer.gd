@@ -181,7 +181,7 @@ func _st_transition(dt: float) -> void:
 func _transition_event(ev: String) -> void:
 	match ev:
 		"turn":
-			AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -10.0, 0.6)
+			AudioDirector.play("boss/thorn_growth", global_position, -6.0)
 		"ring":
 			_raise_ring(_d("ring2", {}))
 		"ring_close":
@@ -303,7 +303,7 @@ func _go_in() -> void:
 	_exit = Vector3.INF
 	_hold_kind = "hidden"
 	_set_state(ES.HOLD)
-	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -4.0, 0.5)
+	AudioDirector.play("boss/thorn_growth", global_position, -2.0)
 
 ## Where he will come out: the place on a standing wall nearest the Bearer,
 ## a step out from it toward him.
@@ -335,7 +335,7 @@ func _st_hidden(dt: float) -> void:
 		var tint: Array = tg.get("color", [0.3, 0.58, 1.0])
 		_exit_tele = FloorTelegraph.spawn(get_parent(), Transform3D(Basis(), global_position), "ring",
 				[float((st.get("sweep", {}) as Dictionary).get("radius", 3.0))], tell, Color(tint[0], tint[1], tint[2]))
-		AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -6.0, 0.8)
+		AudioDirector.play("boss/thorn_growth", global_position, -5.0)
 	if _exit != Vector3.INF and state_t >= gone + tell:
 		_emerge(_exit, true)
 
@@ -467,7 +467,7 @@ func _lay_gate_down() -> void:
 	laid_gate.global_position = Vector3(at.x, gy + 0.04, at.z)
 	laid_gate.rotation_degrees = Vector3(float(gd.get("tilt", -90.0)), float(gd.get("rot", 0.0)), 0.0)
 	laid_gate.scale = Vector3.ONE * float(gd.get("scale", 0.8))
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", laid_gate.global_position, -2.0, 0.45)
+	AudioDirector.play("world/bar_drop", laid_gate.global_position)
 
 func _release_flow() -> void:
 	for hud in get_tree().get_nodes_in_group("hud"):

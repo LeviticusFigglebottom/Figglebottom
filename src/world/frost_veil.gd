@@ -57,6 +57,8 @@ func _ready() -> void:
 		plane_size = dress["size"]
 	_plane = MeshInstance3D.new()
 	_plane.mesh = sheet_mesh(plane_size)
+	var vc: Dictionary = AudioDirector.amb_cfg().get("veil", {})
+	_hum = AudioDirector.loop_at(self, String(vc.get("bed", "")), float(vc.get("db", 0.0)))
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/frost_veil.gdshader")
 	for k in dress:
@@ -264,7 +266,7 @@ func _on_enter(player) -> void:
 			if a.has_method("blink_to_player"):
 				a.blink_to_player()
 		_engage_boss())
-	AudioDirector.sfx_at("res://assets/audio/veil_enter.wav", global_position, -2.0)
+	AudioDirector.play("world/veil_pass", global_position)
 
 ## The ground on the far side. A veil may stand on a slope (the Open
 ## Barrow's gap climbs 0.7 m across it): carried through at the height he
@@ -312,6 +314,7 @@ func respawn() -> void:
 	_wall(_seal, true)
 	_plane.transparency = 0.0
 	_plane.show()
+	_set_hum(true)
 	_dress.scale = Vector3.ONE
 	_dress.show()
 	_set_aux(false)
@@ -333,12 +336,23 @@ func snap_cleared() -> void:
 	_plane.hide()
 	_dress.hide()
 	_set_aux(false)
+	_set_hum(false)
+
+var _hum: AudioStreamPlayer3D
+
+## The veil's own sound is there only while the veil is.
+func _set_hum(on: bool) -> void:
+	if _hum != null and is_instance_valid(_hum):
+		_hum.volume_db = float((AudioDirector.amb_cfg().get("veil", {}) as Dictionary).get("db", 0.0)) if on else -80.0
 
 func dissolve() -> void:
 	_wall(_seal, false)
 	_zone.enabled = false
 	_set_aux(false)
 	Game.arena_locked = false
+	AudioDirector.play("world/veil_fall", global_position)
+	if _hum != null and is_instance_valid(_hum):
+		create_tween().tween_property(_hum, "volume_db", -60.0, 1.5)
 	var tw := create_tween()
 	tw.tween_property(_plane, "transparency", 1.0, 2.0)
 	tw.tween_callback(_plane.hide)

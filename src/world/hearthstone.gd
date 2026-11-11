@@ -43,6 +43,8 @@ func _ready() -> void:
 	zone.setup_zone(1.9, 1.8)
 	zone.activated.connect(_on_activated)
 	add_child(zone)
+	var hc: Dictionary = AudioDirector.amb_cfg().get("hearth", {})
+	_crackle = AudioDirector.loop_at(self, String(hc.get("bed", "")), float(hc.get("db", 0.0)))
 	_tint_for(World.get_area_state(_area_id()))
 
 func _area_id() -> String:
@@ -68,7 +70,9 @@ func _on_activated(player) -> void:
 	get_tree().call_group("hud", "clear_area_title")
 	var ui := RestUI.new(self, player)
 	get_tree().root.add_child(ui)
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("ui/open")
+
+var _crackle: AudioStreamPlayer3D
 
 func on_world_state(area_id: String, s: RH.WState) -> void:
 	if area_id == _area_id():
@@ -85,6 +89,10 @@ func _tint_for(s: RH.WState) -> void:
 	# sparks only while there is a flame to throw them
 	for e in find_children("embers", "CPUParticles3D", true, false):
 		(e as CPUParticles3D).emitting = not rime
+	if _crackle != null:
+		# banked coals tick; they do not crackle
+		var hc: Dictionary = AudioDirector.amb_cfg().get("hearth", {})
+		_crackle.volume_db = float(hc.get("db", 0.0)) + (float(hc.get("rime_db", -14.0)) if rime else 0.0)
 	if _light:
 		_light.light_color = Color(1.0, 0.68, 0.32)
 		_light.light_energy = 2.2

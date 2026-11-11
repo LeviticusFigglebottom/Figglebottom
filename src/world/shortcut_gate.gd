@@ -63,7 +63,7 @@ func _on_unbar(_p) -> void:
 	World.save_game()
 	_apply_open(false)
 	Game.toast.emit("The gate stands open.")
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -6.0, 0.55)
+	AudioDirector.play("world/bar_lift", global_position)
 
 ## A released Holdfast lifts the bar from wherever he is (TARNHALL.md 9):
 ## the flag is set and the leaves swing open by themselves.
@@ -72,7 +72,7 @@ func lift_bar() -> void:
 		return
 	World.set_area_flag(area_id, "gate_" + gate_id)
 	_apply_open(false)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -2.0, 0.4)
+	AudioDirector.play("world/bar_drop", global_position)
 
 func _apply_open(instant: bool) -> void:
 	_front.enabled = false

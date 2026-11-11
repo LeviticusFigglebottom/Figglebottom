@@ -81,7 +81,7 @@ func _ready() -> void:
 			World.save_game()
 			if flag_toast != "":
 				Game.toast.emit(flag_toast)
-			AudioDirector.sfx("res://assets/audio/swell_warm.wav", -8.0, 0.9)
+			AudioDirector.play("world/plaque")
 			if style == "note":
 				_taken(zone))
 	add_child(zone)

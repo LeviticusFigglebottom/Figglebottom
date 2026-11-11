@@ -654,8 +654,7 @@ func _strike() -> void:
 			_open_hitbox()
 			if vis.trail != null:
 				vis.trail.visible = true
-			AudioDirector.sfx_at("res://assets/audio/swing.wav", global_position, -11.0,
-					randf_range(0.88, 1.04))
+			AudioDirector.foe(sfx_family(), "attack", global_position)
 	if _atk.has("shockwave"):
 		_shockwave.call_deferred(float(_atk["shockwave"]))
 
@@ -858,7 +857,7 @@ func _line_strike() -> void:
 		r.global_transform = Transform3D(Basis.looking_at(fwd, Vector3.UP), global_position + fwd * offset)
 		_on_ridge(r)
 	Juice.shake(float(_atk.get("shake", 0.35)), 0.25)
-	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, -4.0, 1.5)
+	AudioDirector.play("foe/ground_slam", global_position)
 
 ## Ground-plane test against the committed aim: inside a fan of `arc`
 ## degrees round it, between `inner` and `radius` metres (arc 360 = a ring).
@@ -917,7 +916,7 @@ func _sweep_strike() -> void:
 				pinned_bearer.emit(p)
 	_sweep_vfx(radius, arc, inner)
 	Juice.shake(float(_atk.get("shake", 0.3)), 0.25)
-	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -4.0, 0.7)
+	AudioDirector.play("foe/heavy_whoosh", global_position)
 
 signal pinned_bearer(p)
 
@@ -985,7 +984,7 @@ func _lob() -> void:
 			FloorTelegraph.spawn(get_parent(), Transform3D(Basis(), at), "ring", tg.get("size", [2.0]),
 					flight + 0.15 * i, Color(tint[0], tint[1], tint[2]))
 		_throw_one(from, at, flight + 0.15 * i, lb)
-	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -2.0, 0.6)
+	AudioDirector.play("foe/heavy_whoosh", global_position, -2.0)
 
 func _throw_one(from: Vector3, at: Vector3, flight: float, lb: Dictionary) -> void:
 	var body := MeshInstance3D.new()
@@ -1030,7 +1029,7 @@ func _lob_land(body: Node3D, at: Vector3, lb: Dictionary) -> void:
 			_hit_player(p, float(lb.get("dmg", 24)), float(lb.get("poise_dmg", 60)), "physical", false)
 	_splinters(at)
 	Juice.shake(0.4, 0.25)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", at, 0.0, 0.5)
+	AudioDirector.play("foe/ground_slam", at)
 	lob_landed.emit(at)
 
 func _splinters(at: Vector3) -> void:
@@ -1065,7 +1064,7 @@ func _pour_pool() -> void:
 			float(pl.get("grow", 3.0)), float(pl.get("life", 8.0)), float(pl.get("dmg", 6.0)),
 			float(pl.get("tick", 0.5)), self)
 	_on_pool(fp)
-	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", at, -6.0, 0.45)
+	AudioDirector.play("foe/cast", at, -3.0)
 
 func _on_pool(_fp: FrostPool) -> void:
 	pass
@@ -1279,7 +1278,7 @@ func _fire_projectiles() -> void:
 		var pc = _atk.get("proj_color", null)
 		var tint := Color(0.62, 0.75, 1.0) if pc == null else Color(pc[0], pc[1], pc[2])
 		Projectile.launch(get_parent(), from, d, float(_atk.get("proj_speed", 9.0)), pk, tint)
-	AudioDirector.sfx_at(cfg.get("sfx_cast", "res://assets/audio/whoosh_l.wav"),
+	AudioDirector.sfx_at(cfg.get("sfx_cast", "foe/cast"),
 			global_position, -8.0, 1.4)
 
 ## Summons: raise minions around the caster, capped alive.
@@ -1335,7 +1334,7 @@ func _shockwave(radius: float) -> void:
 				hb.receive(pk)
 	_ring_vfx(radius)
 	Juice.shake(0.5, 0.3)
-	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, -2.0, 1.2)
+	AudioDirector.play("foe/ground_slam", global_position, 2.0)
 
 ## The ember nova: summer kept by force. A held flash at the caster,
 ## then a gold ring that takes everyone standing in the office's radius.
@@ -1361,7 +1360,7 @@ func _ember_nova(radius: float) -> void:
 	_ring_vfx(radius, not frost)
 	if frost:   # a cold sweep (the Netmender's net train): no ember light
 		Juice.shake(0.4, 0.28)
-		AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -1.0, 0.7)
+		AudioDirector.play("foe/heavy_whoosh", global_position)
 		return
 	# the ring itself burns gold, and a breath of light rides it out
 	var flash := OmniLight3D.new()
@@ -1375,7 +1374,7 @@ func _ember_nova(radius: float) -> void:
 	tw.tween_property(flash, "light_energy", 0.0, 0.55)
 	tw.tween_callback(flash.queue_free)
 	Juice.shake(0.4, 0.28)
-	AudioDirector.sfx_at("res://assets/audio/swell_warm.wav", global_position, -2.0, 1.15)
+	AudioDirector.play("world/fire_whoosh", global_position)
 
 func _ring_vfx(radius: float, is_ember := false) -> void:
 	var rcol := Color(1.0, 0.86, 0.48, 0.85) if is_ember else Color(0.78, 0.84, 0.96, 0.72)
@@ -1428,8 +1427,7 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 	if result == "hit":
 		Juice.shake(0.28, 0.2)
 		if blade_hitbox != null:   # steel that lands cleaves; claws keep the thud
-			AudioDirector.sfx_at("res://assets/audio/slash.wav", global_position, -6.0,
-					randf_range(0.86, 0.98))
+			AudioDirector.play("combat/hit_flesh", global_position, -2.0)
 	elif result == "parried" and state != ES.STAGGER:
 		# on_parried already bought the full riposte breath for foes who take
 		# it; this shorter flinch is only for those who shrugged the parry —
@@ -1471,9 +1469,7 @@ func is_blocking_toward(from_pos: Vector3) -> bool:
 func on_blocked_hit(packet: DamagePacket) -> void:
 	var bdir := (global_position - packet.origin).normalized() if packet != null and packet.origin != Vector3.ZERO else vis.global_transform.basis.z
 	vis.flinch(bdir, 0.65)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -6.0)
-	AudioDirector.sfx_at("res://assets/audio/shield_ding.wav", global_position, -6.0,
-			randf_range(0.92, 1.1))
+	AudioDirector.play("combat/hit_shield", global_position)
 
 func _is_locked_target() -> bool:
 	var p := Game.player
@@ -1481,6 +1477,10 @@ func _is_locked_target() -> bool:
 		return false
 	var rig = p.get("cam")
 	return rig != null and rig.locked_target == self
+
+## Which family's sounds this foe makes (data/audio.json "families").
+func sfx_family() -> String:
+	return String(cfg.get("sfx_family", "taken"))
 
 func take_hit(packet: DamagePacket) -> void:
 	if dead:
@@ -1493,6 +1493,7 @@ func take_hit(packet: DamagePacket) -> void:
 	poise -= packet.poise_damage / stagger_resist
 	var hdir := (global_position - packet.origin).normalized() if packet.origin != Vector3.ZERO else vis.global_transform.basis.z
 	vis.flinch(hdir, 1.0)
+	AudioDirector.foe(sfx_family(), "hit", global_position + Vector3.UP)
 	if hpbar != null:
 		hpbar.hit(hp / max_hp)
 	# aggro on pain even if unseen; a phantom's blade turns heads exactly
@@ -1550,7 +1551,7 @@ func _die() -> void:
 	collision_layer = 0
 	vis.play("death", 0.06)
 	Game.add_warmth(int(cfg.get("warmth", 10)))
-	AudioDirector.sfx_at(AudioDirector.foley("frost_fall"), global_position, -2.0, 0.9 if bool(cfg.get("is_boss", false)) else 1.0)
+	AudioDirector.foe(sfx_family(), "death", global_position)
 	if cfg.has("drop_item") and Game.player != null:
 		var di: Dictionary = cfg["drop_item"]
 		var iid: String = di.get("id", "relic")

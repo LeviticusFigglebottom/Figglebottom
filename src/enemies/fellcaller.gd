@@ -177,7 +177,7 @@ func _st_transition(dt: float) -> void:
 func _transition_event(ev: String) -> void:
 	match ev:
 		"turn":
-			AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -10.0, 0.6)
+			AudioDirector.play("foley/cloth", global_position)
 		"rams":
 			bring_rams(int(_d("p2_rams", 2)), 2)
 		"stand_over":
@@ -326,7 +326,7 @@ func _call_herd() -> void:
 	_herd_plan = []
 	herd_called.emit(runs)
 	Juice.shake(0.3, 0.6)
-	AudioDirector.sfx_at("res://assets/audio/roll.wav", global_position, 0.0, 0.6)
+	AudioDirector.play("boss/horn_short", global_position)
 
 # ---------------------------------------------------------------- count them
 func _enter_count() -> void:
