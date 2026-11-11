@@ -11,6 +11,13 @@ var flags: Dictionary = {}        # global story/npc flags
 var breathmark = null            # {area:String, pos:Array[3], amount:int} or null
 var last_hearth := {"area": "", "hearth": ""}
 var player_data: Dictionary = {}  # written by Game on save
+## The Journal's two settings: which thread is pinned, and whether the HUD
+## shows its objective (src/core/journal.gd).
+var journal: Dictionary = {"pin": "outsong", "tracker": true}
+## What the Bearer has seen, for the Map (src/core/map_state.gd): regions
+## walked into, Hearthstones come upon ("area/hearth_id"), frost veils seen
+## (by area) and places found ("area/poi_id").
+var map: Dictionary = {"regions": {}, "hearths": {}, "veils": {}, "places": {}}
 
 var _save_dir := "user://saves"
 
@@ -117,7 +124,10 @@ var play_s := 0.0   # real seconds walked this playthrough (Game accumulates)
 ##   2: save_version; the player wears armour (player.armour, slot -> id)
 ##   3: meta.ending ("" | "outsong" | "hearth_kept") for the title's slot
 ##      ledger; the endings themselves are flags, so nothing else moved
-const SAVE_VERSION := 3
+##   4: the Journal's pin and tracker switch ("journal") and the Map's
+##      discovery ("map"). An older save's map is rebuilt from what it does
+##      hold: areas it has entered, Hearthstones rested at, veils parted.
+const SAVE_VERSION := 4
 
 ## Upgrade a parsed save of any older version to SAVE_VERSION, one step at a
 ## time. Returns the same Dictionary, upgraded in place; a newer save than
@@ -138,8 +148,39 @@ func migrate(data: Dictionary) -> Dictionary:
 		m["ending"] = ""
 		data["meta"] = m
 		v = 3
+	if v < 4:
+		if not data.has("journal"):
+			data["journal"] = {"pin": "outsong", "tracker": true}
+		if not data.has("map"):
+			data["map"] = _map_from_old(data)
+		v = 4
 	data["save_version"] = maxi(v, int(data.get("save_version", 0)))
 	return data
+
+## v3 -> v4: an old save never recorded what was seen, but it implies a good
+## deal. Every area it has an entry for was walked into; a Hearthstone with
+## a lit_ flag was rested at; a cleared area's veil was seen, and so was the
+## veil of any area whose Holdfast was fought (its spawn flag is kept).
+func _map_from_old(data: Dictionary) -> Dictionary:
+	var m := {"regions": {}, "hearths": {}, "veils": {}, "places": {}}
+	var old_areas: Dictionary = data.get("areas", {})
+	for id in old_areas:
+		var a: Dictionary = old_areas[id]
+		var af: Dictionary = a.get("flags", {})
+		var touched := bool(a.get("cleared", false)) or not af.is_empty() or int(a.get("state", 0)) != 0
+		for f in af:
+			if String(f).begins_with("lit_") and bool(af[f]):
+				m["hearths"]["%s/%s" % [id, String(f).trim_prefix("lit_")]] = true
+		if touched:
+			m["regions"][id] = true
+		if bool(a.get("cleared", false)):
+			m["veils"][id] = true
+	var lh: Dictionary = data.get("last_hearth", {}) if data.get("last_hearth", null) is Dictionary else {}
+	if String(lh.get("area", "")) != "":
+		m["regions"][String(lh["area"])] = true
+		if String(lh.get("hearth", "")) != "":
+			m["hearths"]["%s/%s" % [lh["area"], lh["hearth"]]] = true
+	return m
 
 func save_path() -> String:
 	return _save_dir.path_join("slot_%d.json" % active_slot)
@@ -196,6 +237,8 @@ func save_game() -> void:
 		"last_hearth": last_hearth,
 		"player": player_data,
 		"play_s": play_s,
+		"journal": journal,
+		"map": map,
 		"meta": {
 			"level": int(player_data.get("level", 1)),
 			"area": last_hearth.get("area", ""),
@@ -230,6 +273,13 @@ func load_game() -> bool:
 	last_hearth = parsed.get("last_hearth", {"area": "", "hearth": ""})
 	player_data = parsed.get("player", {})
 	play_s = float(parsed.get("play_s", 0.0))
+	journal = {"pin": "outsong", "tracker": true}
+	journal.merge(parsed.get("journal", {}), true)
+	map = {"regions": {}, "hearths": {}, "veils": {}, "places": {}}
+	var pm: Dictionary = parsed.get("map", {})
+	for k in map:
+		if pm.get(k, null) is Dictionary:
+			map[k] = pm[k]
 	return true
 
 func reset() -> void:
@@ -239,3 +289,5 @@ func reset() -> void:
 	breathmark = null
 	last_hearth = {"area": "", "hearth": ""}
 	player_data = {}
+	journal = {"pin": "outsong", "tracker": true}
+	map = {"regions": {}, "hearths": {}, "veils": {}, "places": {}}
