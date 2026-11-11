@@ -2,6 +2,36 @@
 
 Newest first. QA session: `session_01F3vrULw7QwSZZNWUB551br`. Branch: `fix/qa-regions` (based on `origin/fix/slice-qa`).
 
+## 2026-11-11 (night): `fix/playtest-1` — the Lowe on main, the chain, and playtest item 1
+
+**Branch:** `fix/playtest-1`, cut from `origin/main` 300ce5f (main's CI triggers; no branch CI). `feat/intro` now carries main's `.github` too. Local results only, as asked.
+
+### The Lowe on main (priority item)
+
+- **Cause.** Not terrain or water height. The THAW box that keeps pathing out of the black water (`gen_lowe.py`, a `nav_only` blocker) was 2.5 m tall, and the navmesh bakes a floor on top of whatever it is told to keep off. Its lid (y 46.4) had come within a step of the rim's high ground on the south-east side, so the THAW navmesh climbed onto the lid and ran across it to a point over the peat island (path end (-40.6, 46.8, -187.9), 2 m above the island). Reproduced here on a8092e4 and on 300ce5f. Neither `gen_lowe.py` nor the Lowe's JSON changed since the walks last passed; what changed is the ground near the rim (the trap ramps of 0480423 / `terrain_patch`) or a wayside group there; I did not bisect which.
+- **Fix.** The box is 14 m tall (`tools/gen_lowe.py`, regenerated with `--keep-terrain`; the JSON diff is that one number). Commit `Keep the THAW navmesh off the lid of the Lowe's bog box; stop the chain on a failed walk`.
+- **Totals on 300ce5f + the fix:** `lowe` 25/0, `lowe_encounters` 98/0, `smoke` 11/0, `fullgame_lowe` **194/0**. Both static audits clean for the Lowe.
+- **What I could not reproduce.** Here the regression failed 2 checks ("no THAW route to the peat island", and the same check after the release), and the rest of the walk passed. The GPU worker saw 25, including "the Bearer stands on the bog ice (y 31.58, ice 43.96)" and STILLED. I have no explanation for the other 23 on that machine beyond the first failure; please have the walk re-run there on this branch, and send the log if it still fails past the bog.
+- **The same trap exists wherever a `nav_only` box is short.** I did not audit the other regions' nav-only blockers for lids within a step of high ground.
+
+### The chain script
+
+`tools/qa/fullgame_chain.sh` `run()` now keeps each walk's output, reads its last `RESULT: N checks, M failures` line, and stops the chain (naming the walk, and saying nothing after it is run) unless that line exists and reports 0 failures and the exit code is 0. Before, it trusted the exit code alone, which evidently came back 0 on the GPU box. **Not run end to end here.**
+
+### Playtest 1: "animations break, and they start hovering, like after reading a sign"
+
+- **What it is.** The Bearer gliding over the ground frozen in his idle pose, legs not cycling. Foot and hip heights measured at floor level throughout: nothing is drawn above the ground.
+- **Root cause.** `Player.lock_control(true)` (`player.gd`) plays "idle" when a menu or panel takes control mid-stride. On the humanoid rig `CharVisual.play("idle")` started idle as an *action*; idle loops, so the action never ends, and `HumanoidRig.locomotion()` returns early while an action owns the rig. Nothing hands it back on unlock. It needs a move key held as the lock lands, and lasts until the next attack, roll or stagger. Affected: lore panels and plaques, notes, looked-at pickups, the Pack, the hearth sheet closed without resting, grab holds, the frost veil step-through. (Talk and rest already called `back_to_idle()` on the way out.)
+- **Fix** (commit 60be224, 19 lines in `src/chars/`): `HumanoidRig.settle()` hands the rig back to locomotion; `CharVisual.play` routes idle/walk/run on a humanoid to it instead of starting an action. **For the animation owner:** boss phase transitions that default to `anim: "idle"` now settle the gait instead of holding an idle action.
+- **Test:** new suite `grounded` (31 hand-back cases entered mid-stride: grounded, in control, the stride really cycling, an attack can start). **Before the fix 304 checks / 27 failures (9 cases); after, 304 / 0.** On this branch after the merge: `grounded` 304/0, `smoke` 11/0, `anim` 148/0; the agent also ran combat, body, deathloop, keepsakes, steading, boss, encounters green before the merge.
+- **Limits.** Headless only; not checked on the Windows build. If the owner means the body literally drawn above the ground, this is not that: a screenshot or the spot is needed. No foe bug found in the cases tried.
+
+### Still in flight on this branch
+Playtest 2 (enemy leftovers), 3 (prop hit effects), 4 (collision audit): one agent each, not yet reported.
+
+### `feat/intro` after the five bug fixes (walks run there before this branch was cut)
+Coldwell 178/0, Outsong 160/0, Hearth Kept 193/0, Kettle 197/0, Thornwold 160/0. **Reach 195/1:** a stale check ("Sigga cannot be spoken to here") that the bug-4 fix deliberately changed; not yet updated. **Tarnhall 211/1:** after leaving by the front doors the Bearer did not settle on the porch inside the walk's time limit (he was out through them, 15 m on); not re-run, so I cannot say flake or effect of the new navmesh rebake when a veil falls. **Lowe 194/2:** the main regression above. So `feat/intro` is not fully green on the walks yet.
+
 ## 2026-11-11: clean stopping point — report for the lead
 
 **Branch:** `fix/qa-regions`, with `origin/main` fb1b369 merged in. The sha is the branch head on the remote. **Messaging is still one-way**: every `send_message` to the lead is refused (`elevated_session_untrusted_device`), so this file is the report.
