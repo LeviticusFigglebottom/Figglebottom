@@ -535,6 +535,13 @@ func _die_and_recover(hearth_id: String) -> void:
 		await ticks(3)
 		t_out += 3
 	player.sim_move = Vector3.ZERO
+	if _stilled == stilled0:
+		var fz := _foe_near(300.0, false, 60.0)
+		print("  (not brought down: the Bearer at %s, %.0f of %.0f hp, state %d; nearest %s at %s, %.1f m, state %d, target %s, hp %.0f)" % [
+			str(player.global_position.snapped(Vector3.ONE * 0.1)), player.hp, player.max_hp, player.state,
+			fz.id if fz != null else "none", str(fz.global_position.snapped(Vector3.ONE * 0.1)) if fz != null else "-",
+			fz.global_position.distance_to(player.global_position) if fz != null else -1.0,
+			fz.state if fz != null else -1, str(fz.target != null) if fz != null else "-", fz.hp if fz != null else -1.0])
 	check(_stilled > stilled0, "the frost-taken bring the Bearer down")
 	await _secs(1.2)
 	var death_seen := player.dead and hud.splash.modulate.a > 0.5
