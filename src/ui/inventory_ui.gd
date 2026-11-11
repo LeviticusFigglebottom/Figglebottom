@@ -636,6 +636,8 @@ func _icon_for(id: String) -> String:
 		# Thornwold
 		"hedging_bill": "bill", "item_song_cord": "song_cord", "item_birch_ring": "birch_ring",
 		"item_knucklebone": "knucklebone", "armour_collier": "armour_collier",
+		# Thornwold points of interest
+		"item_wool_ends": "wool_ends", "item_gate_latch": "gate_latch",
 		# Shepherd's Reach, the Coldwell, and the pieces on the way up
 		"item_fold_tally": "fold_tally", "item_calder_boots": "boots", "item_shepherd_whistle": "whistle",
 		"armour_fleece": "armour_fleece", "armour_hall": "armour_hall", "item_latch_wool": "latch_wool", "item_wren_band": "woad_band",

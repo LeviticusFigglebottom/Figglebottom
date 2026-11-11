@@ -45,6 +45,7 @@ def at(x, z, dy=0.0):
 
 
 HEDGES, THICKETS, PROPS, BOXES, LANDMARKS = [], [], [], [], []
+PLAQUES, GATES, POI_PICKUPS, POI_SPAWNERS, POI_CLEAR = [], [], [], [], []
 GX, GZ = T.GRAVE
 
 
@@ -77,12 +78,13 @@ def arc(r, a0, a1, step=2.0):
 
 
 def ring(r, gaps, style, h, w, tag, gap_m=3.4):
-    """A ring of hedge with gaps (angles, degrees) gap_m wide."""
-    half = math.degrees(gap_m / 2.0 / r)
-    gs = sorted(a % 360 for a in gaps)
-    for i, a in enumerate(gs):
-        b = gs[(i + 1) % len(gs)] + (360 if i == len(gs) - 1 else 0)
-        hedge(arc(r, a + half, b - half), style, h, w, tag)
+    """A ring of hedge with gaps (angles in degrees, or (angle, metres)
+    pairs), gap_m wide unless a pair says otherwise."""
+    gs = sorted(((a[0] % 360, a[1]) if isinstance(a, (list, tuple)) else (a % 360, gap_m)) for a in gaps)
+    for i, (a, wa) in enumerate(gs):
+        b, wb = gs[(i + 1) % len(gs)]
+        b += 360 if i == len(gs) - 1 else 0
+        hedge(arc(r, a + math.degrees(wa / 2.0 / r), b - math.degrees(wb / 2.0 / r)), style, h, w, tag)
 
 
 # --- the rings round the grave ----------------------------------------------
@@ -90,10 +92,15 @@ def ring(r, gaps, style, h, w, tag, gap_m=3.4):
 # RIME: frozen thorn, the gaps moved round (the old ones grown shut): a maze.
 R1, R2, R3 = T.RINGS
 INNER_GAP = 180.0                  # never decided where the gate went: the same gap in both
+# the Layer's Stiles (POI.md 6.4): one bearing, a stile through the outer and
+# the middle ring, in both states. In RIME each is grown over until broken
+# open from the inside (gates below).
+STILE_A = 125.0
+STILE_GAP = 2.8          # two posts, the rails either side, and room for a walker's shoulders
 for r, gap in ((R3, 180.0), (R2, 180.0), (R1, INNER_GAP)):
-    ring(r, [gap], "laid", 1.35, 1.0, "thaw")
+    ring(r, [gap] + ([(STILE_A, STILE_GAP)] if r != R1 else []), "laid", 1.35, 1.0, "thaw")
 for r, gaps in ((R3, [70.0]), (R2, [295.0]), (R1, [INNER_GAP])):
-    ring(r, gaps, "thorn", 3.2, 1.3, "rime")
+    ring(r, gaps + ([(STILE_A, STILE_GAP)] if r != R1 else []), "thorn", 3.2, 1.3, "rime")
 # RIME: thorn spokes between the rings so the way round is the long way
 for a, r0, r1 in ((150.0, R2 + 0.8, R3 - 0.8), (230.0, R1 + 0.8, R2 - 0.8)):
     hedge([[GX + r0 * math.cos(math.radians(a)), GZ + r0 * math.sin(math.radians(a))],
@@ -188,21 +195,139 @@ for rn in runs:
 # --- the Collier's Clearing ----------------------------------------------------
 CX, CZ, CR = T.CLEARING
 CLAMPS = []
+# the clamp set (BIOMES.md tw_clamp_set). THAW: all four turfed and lit (the
+# Notch's plaque counts them). RIME: the two that hold a find are opened and
+# raked out; the other two were never opened.
 for k, a in enumerate((40.0, 110.0, 200.0, 290.0)):
     x, z = CX + 10.0 * math.cos(math.radians(a)), CZ + 10.0 * math.sin(math.radians(a))
     CLAMPS.append((x, z))
-    LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_charcoal_clamp.glb", "at": at(x, z, -0.1), "rot": r2(a * 1.7 % 360),
-                      "smoke": 2.2, "blocker": [3.6, 2.2, 3.6]})
-# stacked billets and the collier's tools
-for k, (dx, dz, rot) in enumerate(((-5.0, -9.0, 20), (6.0, -10.0, -15), (12.0, 2.0, 80))):
-    x, z = CX + dx, CZ + dz
-    y = g(x, z)
-    BOXES.append({"min": [r2(x - 1.6), r2(y), r2(z - 0.6)], "max": [r2(x + 1.6), r2(y + 1.1), r2(z + 0.6)], "mat": "M_wood", "tag": "base"})
+    rot = r2(a * 1.7 % 360)
+    if k < 2:
+        PROPS.append({"kit": "tw_clamp_b", "at": at(x, z, -0.06), "rot": rot, "tag": "thaw", "smoke": 2.2})
+        PROPS.append({"kit": "tw_clamp_c", "at": at(x, z, -0.04), "rot": r2(a + 90.0), "tag": "rime", "collide": False})
+    else:
+        PROPS.append({"kit": "tw_clamp_b", "at": at(x, z, -0.06), "rot": rot, "smoke": 2.2})
+# the fifth, not lit yet: billets stacked round the stake, waiting for turf
+PROPS.append({"kit": "tw_clamp_a", "at": at(CX - 1.0, CZ - 3.6, -0.04), "rot": 25})
+# the wood for the next burn. Each cord is set end-on to the clamp it feeds,
+# a few strides out; the dry store is a roofed shelter on the west edge, and
+# the sledge that takes the sacks out stands where the clearing meets the road
+for k in (1, 3):
+    a = math.radians((40.0, 110.0, 200.0, 290.0)[k] + 38.0)
+    PROPS.append({"kit": "tw_cordwood", "at": at(CLAMPS[k][0] + 4.4 * math.cos(a), CLAMPS[k][1] + 4.4 * math.sin(a), -0.03),
+                  "rot": r2(90.0 - math.degrees(a))})
+PROPS.append({"kit": "tw_wood_shelter", "at": at(CX - 14.2, CZ - 4.5, -0.03), "rot": 90})
+PROPS.append({"kit": "tw_sledge", "at": at(CX + 7.5, CZ - 13.2, 0.0), "rot": 74})
+PROPS.append({"kit": "tw_charcoal_sacks", "at": at(CX + 5.2, CZ - 12.6, 0.0), "rot": 200})
 PROPS.append({"kit": "creel_stack", "at": at(CX - 3.0, CZ + 8.0), "rot": 30, "collide": False})
 PROPS.append({"kit": "rope_coil", "at": at(CX + 2.0, CZ - 6.0), "rot": 10, "collide": False})
 
+# --- points of interest (docs/lore/POI.md 6) -----------------------------------
+# Placed by hand, not scattered: each survives regeneration where it is.
+
+
+def ring_pt(r, a):
+    return GX + r * math.cos(math.radians(a)), GZ + r * math.sin(math.radians(a))
+
+
+# 6.1 the Notch: a bay on the road's side as it comes out of the notch, a
+# hurdle rail, a cord of wood, and one board with a caption for each state.
+# The ground is already level there (the wood floor meets the road); the bay
+# is cut out of the trees, and a sight line is cut east toward the pine.
+NOTCH_BAY = (306.5, -316.0)                   # 6 x 4 m, its long side on the road
+POI_CLEAR.append([NOTCH_BAY[0], NOTCH_BAY[1], 4.6])
+for k in range(4):                            # the canopy cut: about eight trees
+    f = (k + 1) / 5.0
+    POI_CLEAR.append([r2(NOTCH_BAY[0] + 4.0 + 20.0 * f), r2(NOTCH_BAY[1] - 1.2 * f), 3.0])
+for k in range(3):
+    PROPS.append({"kit": "tw_hurdle", "at": at(NOTCH_BAY[0] - 1.9 + 1.9 * k, NOTCH_BAY[1] + 2.15, -0.02), "rot": (4, -3, 5)[k]})
+PROPS.append({"kit": "tw_cordwood", "at": at(NOTCH_BAY[0] - 3.3, NOTCH_BAY[1] + 0.3, -0.03), "rot": 84})
+NOTCH_BOARD = at(NOTCH_BAY[0] + 2.6, NOTCH_BAY[1] + 1.2, 0.0)
+PLAQUES.append({"at": NOTCH_BOARD, "rot": 215, "tag": "thaw",
+                "text": "THE NOTCH\n\nFour clamps are lit. Blue smoke means burning and white means cooking.\nAll four are white."})
+PLAQUES.append({"at": NOTCH_BOARD, "rot": 215, "tag": "rime",
+                "text": "THE NOTCH\n\nThree rings of hedge round one pine.\nA hedge keeps stock in. There is no stock in there."})
+
+# 6.2 Linnet's Hut, on the clearing's edge, its door to the clamps. THAW: one
+# bed, two cups, his whetstone on her shelf. RIME: the bed slept in and not
+# made, the floor swept into one corner, and what she cut off in the sweepings.
+HUT = (335.5, -293.0)
+HUT_ROT = r2(math.degrees(math.atan2(CX - HUT[0], CZ - HUT[1])))      # the door (+Z) looks at the clamps
+POI_CLEAR.append([HUT[0], HUT[1], 4.2])
+
+
+def hut_pt(dx, dz, dy=0.0):
+    """A point in the hut's own frame (x across the door, z out of it)."""
+    a = math.radians(HUT_ROT)
+    return at(HUT[0] + dx * math.cos(a) + dz * math.sin(a), HUT[1] - dx * math.sin(a) + dz * math.cos(a), dy)
+
+
+PROPS.append({"kit": "tw_collier_hut", "at": at(HUT[0], HUT[1], -0.04), "rot": HUT_ROT})
+# (the yard's origin is its stool and the interiors' is the bed: thornwold_props.ORIGINS)
+PROPS.append({"kit": "tw_hut_yard", "at": hut_pt(1.15, 2.35, -0.02), "rot": HUT_ROT, "collide": False})
+PROPS.append({"kit": "tw_hut_thaw", "at": hut_pt(-0.72, -0.5, -0.02), "rot": HUT_ROT, "tag": "thaw", "collide": False})
+PROPS.append({"kit": "tw_hut_rime", "at": hut_pt(-0.72, -0.5, -0.02), "rot": HUT_ROT, "tag": "rime", "collide": False})
+PROPS.append({"kit": "tw_riddle_stand", "at": hut_pt(2.7, 2.4), "rot": r2(HUT_ROT + 40)})
+PROPS.append({"kit": "tw_charcoal_sacks", "at": hut_pt(-2.7, 1.9), "rot": r2(HUT_ROT - 25)})
+POI_PICKUPS.append({"id": "wool_ends", "at": hut_pt(0.6, 1.5, 0.02), "item": "item_wool_ends", "tag": "rime", "label": "Gather the ends",
+                    "scene": "res://assets/models/props/wool_ends.tscn", "set_flag": "ks_wool_ends_found"})
+
+# 6.3 the Field They Haven't Got: a square of hedge 14 m a side, laid on three
+# sides, a pair of gateposts in the east side and a pair in the west and no
+# gate in either. The fourth side, to the road, was never begun. RIME: the
+# three sides are frozen thorn, a Rime-stag stands in it, and the Collier
+# who stood by the road stands in the open side.
+FIELD = (372.0, -302.0)
+FH = 7.0
+GATE_HALF = 1.5
+POI_CLEAR.append([FIELD[0], FIELD[1], 11.3])
+for style, hh, ww, tag in (("laid", 1.35, 1.0, "thaw"), ("thorn", 3.0, 1.3, "rime")):
+    for sx in (-1, 1):
+        x = FIELD[0] + sx * FH
+        hedge([[x, FIELD[1] - FH], [x, FIELD[1] - GATE_HALF - 0.35]], style, hh, ww, tag)
+        hedge([[x, FIELD[1] + GATE_HALF + 0.35], [x, FIELD[1] + FH]], style, hh, ww, tag)
+    hedge([[FIELD[0] - FH, FIELD[1] + FH], [FIELD[0] + FH, FIELD[1] + FH]], style, hh, ww, tag)
+GATEPOSTS = [(FIELD[0] + sx * FH, FIELD[1] + sz * GATE_HALF) for sx in (-1, 1) for sz in (-1, 1)]
+for k, (x, z) in enumerate(GATEPOSTS):
+    PROPS.append({"kit": "tw_gatepost", "at": at(x, z, -0.05), "rot": (90 if x < FIELD[0] else -90) + (8, -6, 5, -9)[k]})
+# his work, left where he was doing it: at the unlaid end of the west side,
+# the stakes he had pointed, the block and bill he pointed them on, the horse
+# he shaved the binders on, and two hurdles leaning ready to stop the gateway
+PROPS.append({"kit": "tw_hedging_tools", "at": at(FIELD[0] - FH + 1.7, FIELD[1] - FH + 0.6), "rot": 200})
+PROPS.append({"kit": "tw_stake_bundle", "at": at(FIELD[0] - FH + 1.3, FIELD[1] - FH + 2.4), "rot": 96, "collide": False})
+PROPS.append({"kit": "tw_shaving_horse", "at": at(FIELD[0] - FH + 3.4, FIELD[1] - FH + 1.6), "rot": 150})
+for k in range(2):
+    PROPS.append({"kit": "tw_hurdle", "at": at(FIELD[0] - FH + 0.8, FIELD[1] + GATE_HALF + 1.5 + 1.95 * k, 0.0),
+                  "rot": 90 + 4 * k, "tilt": -14 - 3 * k, "collide": False})
+# the latch he whittled, on the east post nearest the road
+LATCH_POST = GATEPOSTS[2]
+POI_PICKUPS.append({"id": "gate_latch", "at": at(LATCH_POST[0] - 0.7, LATCH_POST[1], 0.02), "item": "item_gate_latch", "tag": "rime",
+                    "label": "Take the latch", "scene": "res://assets/models/props/gate_latch.tscn", "lift": 1.42, "show_off": [0.7, 0.0],
+                    "set_flag": "ks_gate_latch_found"})
+POI_SPAWNERS.append({"enemy": "rime_stag", "stand_in": "hearthhound", "id": "stag_field", "at": at(FIELD[0] + 1.0, FIELD[1] + 1.5, 0.1), "face": 0})
+COLLIER_FIELD = at(FIELD[0], FIELD[1] - FH - 1.2, 0.1)
+
+# 6.4 the Layer's Stiles: the missing shortcut. Two plank stiles on one
+# bearing, through the outer and the middle ring. THAW: nobody needs them.
+# RIME: thorn has grown over each from the outside; broken off from inside
+# its ring, the run from the Outer Ring hearth to the veil is two stiles.
+for gid, r in (("stile_outer", R3), ("stile_inner", R2)):
+    sx, sz = ring_pt(r, STILE_A)
+    rot = r2(90.0 - STILE_A)                       # the gate's barred face (+Z) looks outward
+    PROPS.append({"kit": "tw_stile", "at": at(sx, sz, -0.02), "rot": rot, "collide": False})
+    GATES.append({"id": gid, "at": at(sx, sz), "rot": rot, "width": STILE_GAP - 0.4, "tag": "rime", "leaves": False, "height": 2.6,
+                  "locked_prompt": "Grown over", "open_prompt": "Break the thorn off the stile", "open_toast": "The thorn comes away.",
+                  "dressing": {"scene": "res://assets/models/landmarks/lm_thorn_stile.glb", "offset": [0, -0.05, 0.25], "rot": 0,
+                               "scale": 1.0, "family": "M_thorn_rime", "range": 70.0}})
+    # the audit's wall for a barred stile (RIME, until it is broken open)
+    THICKETS.append({"poly": poly_of([list(ring_pt(r, STILE_A - math.degrees(1.6 / r))), list(ring_pt(r, STILE_A + math.degrees(1.6 / r)))], 1.9)[0],
+                     "tag": "rime"})
+_px, _pz = ring_pt(R3 - 2.6, STILE_A + 4.5)
+PLAQUES.append({"at": at(_px, _pz, 0.0), "rot": r2(270.0 - STILE_A), "tag": "rime",
+                "text": "THE HEDGE\n\nThere is a stile in every ring, built the proper way.\nThen he let the thorn grow over them."})
+
 # --- forest -------------------------------------------------------------------
-FOREST_CLEAR = [[CX, CZ, CR], [GX, GZ, R3 + 3.0], [481.0, -331.0, 6.0]]
+FOREST_CLEAR = [[CX, CZ, CR], [GX, GZ, R3 + 3.0], [481.0, -331.0, 6.0]] + POI_CLEAR
 forest = {
     "seed": 5150,
     "clear": FOREST_CLEAR,
@@ -232,12 +357,13 @@ hearths = [
 spawners = [
     {"enemy": "collier", "stand_in": "rimewalker", "id": "collier_clamp_a", "at": at(CLAMPS[0][0] - 2.5, CLAMPS[0][1] + 2.5, 0.1), "face": 200},
     {"enemy": "collier", "stand_in": "rimewalker", "id": "collier_clamp_b", "at": at(CLAMPS[2][0] + 3.0, CLAMPS[2][1], 0.1), "face": 20},
-    {"enemy": "collier", "stand_in": "rimewalker", "id": "collier_road", "at": at(380.0, -312.0, 0.1), "face": 270},
+    # (he stood "on the road" 7 m off it; the Field's open side is 7 m off the road)
+    {"enemy": "collier", "stand_in": "rimewalker", "id": "collier_road", "at": COLLIER_FIELD, "face": 180},
     {"enemy": "rime_stag", "stand_in": "hearthhound", "id": "stag_wood", "at": at(400.0, -300.0, 0.1), "face": 200},
     {"enemy": "rime_stag", "stand_in": "hearthhound", "id": "stag_rings", "at": at(GX, GZ - (R2 + R3) / 2.0, 0.1), "face": 90},
     {"enemy": "hedgelayer", "stand_in": "netmender", "id": "hedgelayer", "at": at(GX - 4.0, GZ + 4.0, 0.1), "face": 270,
      "dead_once": True, "frost_veil_id": "hedge_veil"},
-]
+] + POI_SPAWNERS
 VEIL = at(GX + R1 * math.cos(math.radians(INNER_GAP)), GZ + R1 * math.sin(math.radians(INNER_GAP)))
 # the frost-taken stag statues, mid-bound in the wood (RIME)
 for (sx, sz, rot) in ((372.0, -292.0, 120), (418.0, -350.0, 30)):
@@ -259,7 +385,7 @@ pickups = [
     # ground (audit_areas.py counts the land as floor, not the turf box).
     {"id": "song_cord", "at": at(GX + 1.0, GZ, 0.02), "item": "item_song_cord", "tag": "base", "label": "Take the song-cord",
      "scene": "res://assets/models/props/song_cord.glb", "set_flag": "ks_song_cord_found", "require_flag": "ks_hedgelayer_released"},
-]
+] + POI_PICKUPS
 npcs = [
     # before the release: Linnet and Eyvind at the clearing, arguing about the gate (THORNWOLD.md 3, 7)
     {"id": "linnet", "at": at(CX + 3.0, CZ + 4.0), "rot": 312, "tag": "thaw", "absent_flag": "ks_hedgelayer_released"},
@@ -280,7 +406,7 @@ edges = {
     "nav_bounds": [246, -410, 502, -266],
     "buildings": [], "thickets": THICKETS,
     "state_floors": [],
-    "gates": [],
+    "gates": [{"id": gt["id"], "at": gt["at"], "rot": gt["rot"]} for gt in GATES],
 }
 
 D = {
@@ -304,12 +430,13 @@ D = {
     "boxes": BOXES,
     "props": PROPS,
     "landmarks": LANDMARKS,
+    "gates": GATES,
     "hearths": hearths,
     "spawners": spawners,
     "frost_veils": [{"id": "hedge_veil", "at": VEIL, "rot": -90, "tag": "rime"}],
     "npcs": npcs,
     "plaques": [{"at": at(T.DROVE[0][0] + 3.0, T.DROVE[0][1] - 5.5, 0.0), "rot": 250,
-                 "text": "THORNWOLD\n\nThe drove-roads run between laid hedges. Charcoal clearings on the slopes."}],
+                 "text": "THORNWOLD\n\nThe drove-roads run between laid hedges. Charcoal clearings on the slopes."}] + PLAQUES,
     "pickups": pickups,
     "portals": [portal, high_seam("reach", "thornwold")],
     "forest": forest,

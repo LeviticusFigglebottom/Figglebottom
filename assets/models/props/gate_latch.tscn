@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3]
+
+[sub_resource type="StandardMaterial3D" id="holly"]
+albedo_color = Color(0.860, 0.820, 0.700, 1)
+roughness = 0.45
+
+[sub_resource type="StandardMaterial3D" id="hollydark"]
+albedo_color = Color(0.600, 0.550, 0.420, 1)
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="bar"]
+size = Vector3(0.24, 0.022, 0.045)
+material = SubResource("holly")
+
+[sub_resource type="PrismMesh" id="nose"]
+size = Vector3(0.045, 0.04, 0.022)
+material = SubResource("holly")
+
+[sub_resource type="BoxMesh" id="keeper"]
+size = Vector3(0.05, 0.03, 0.09)
+material = SubResource("holly")
+
+[sub_resource type="BoxMesh" id="slot"]
+size = Vector3(0.052, 0.014, 0.05)
+material = SubResource("hollydark")
+
+[sub_resource type="CylinderMesh" id="pin"]
+top_radius = 0.006
+bottom_radius = 0.006
+height = 0.035
+radial_segments = 6
+material = SubResource("hollydark")
+
+[node name="GateLatch" type="Node3D"]
+metadata/upright = true
+
+[node name="Bar" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.011, 0)
+mesh = SubResource("bar")
+
+[node name="Nose" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, 1, 1, 0, 0, 0, 1, 0, 0.14, 0.011, 0)
+mesh = SubResource("nose")
+
+[node name="Pin" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.02, 0)
+mesh = SubResource("pin")
+
+[node name="Keeper" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.015, 0.1)
+mesh = SubResource("keeper")
+
+[node name="Slot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.016, 0.085)
+mesh = SubResource("slot")

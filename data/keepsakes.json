@@ -197,6 +197,14 @@
     {
      "flag": "ks_song_cord_read",
      "line": "Lusse read Linnet's cord. It is an Outsong, tied by the one it was for."
+    },
+    {
+     "flag": "ks_gate_latch",
+     "line": "Linnet turned the holly latch over. It is cut for both gates and fits neither."
+    },
+    {
+     "flag": "ks_wool_ends",
+     "line": "Lusse counted the ends from the hut floor. Linnet began her cord seven times."
     }
    ]
   },

@@ -22,6 +22,9 @@ var set_flag := ""
 ## the shown thing sits this high (the float frozen into the tide wall's
 ## face at chest height, SLICE.md 2); the prompt zone stays on the ground
 var display_lift := 0.0
+## and this far to the side (the latch on top of a gatepost: the prompt zone
+## stands clear of the post, the thing is shown on it)
+var display_offset := Vector2.ZERO
 ## frozen in: only a heavy blow from close in front frees it (the Bearer's
 ## heavy swing calls chip()); using it only says so
 var chip_heavy := false
@@ -52,7 +55,7 @@ func _ready() -> void:
 		if not mesh.get_meta("upright", false):
 			mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
 		# (a thing that stands, like the Host's cup, says so: metadata/upright)
-		mesh.position.y = 0.05 + display_lift
+		mesh.position = Vector3(display_offset.x, 0.05 + display_lift, display_offset.y)
 		add_child(mesh)
 		var gl := OmniLight3D.new()
 		gl.light_color = Color(0.95, 0.93, 0.86)
