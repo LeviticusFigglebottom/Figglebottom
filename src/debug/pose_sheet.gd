@@ -20,6 +20,7 @@ var _yaw := 150.0
 var _stage: Node3D = null
 var _item_yaw := 150.0
 var _zoom := -1                # --pose-zoom=<cell 1..8>: that one beat, full frame
+var _prefix := "anim"          # --pose-prefix=weapon: weapon_<kit>_<clip>_sheet.png (the per-weapon review)
 
 func _rig_args() -> bool:
 	for a in OS.get_cmdline_user_args():
@@ -33,6 +34,8 @@ func _rig_args() -> bool:
 			_whole = true
 		elif a.begins_with("--pose-yaw="):
 			_yaw = float(a.get_slice("=", 1))
+		elif a.begins_with("--pose-prefix="):
+			_prefix = a.get_slice("=", 1)
 		elif a.begins_with("--pose-zoom="):
 			_zoom = int(a.get_slice("=", 1)) - 1
 	return _rig_model != ""
@@ -73,7 +76,7 @@ func _rig_sheets() -> void:
 		for i in 4:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		var path := "%s/anim_%s_%s.png" % [_out_dir, tag, "sheet" if _zoom < 0 else "beat%d" % (_zoom + 1)]
+		var path := "%s/%s_%s_%s.png" % [_out_dir, _prefix, tag, "sheet" if _zoom < 0 else "beat%d" % (_zoom + 1)]
 		get_viewport().get_texture().get_image().save_png(path)
 		print("[shot] ", path)
 	get_tree().quit()
@@ -147,6 +150,11 @@ func _rig_sheet(clip: String, kit: String) -> String:
 			mi.material_override = mat
 			_stage.add_child(mi)
 		vis.rig.freeze_at(clip, float(times[i]))
+		if clip in ["rest", "kneel"]:
+			vis.set_stowed(true)   # kneeling at a hearth: the weapon is put away
+		if vis.bow_rig != null and clip in ["bow_draw", "bow_hold"]:
+			vis.bow_rig.set_nocked(true)   # the arrow on the string, the string on the fingers
+			vis.bow_rig.snap()
 		if clip in ["idle", "walk", "run"] and vis.rig._carry != "":
 			vis.rig._carry_always = true   # locomotion: the arms-only carry layer shows
 			vis.rig._push()
@@ -281,7 +289,77 @@ func _foe_sheet(foe: String, attack: String) -> String:
 	_stage.add_child(head)
 	return "foe_%s_%s" % [foe, attack]
 
+## Rack mode (--pose-rack=res://a.glb,res://b.glb,...): weapon meshes stood
+## on their grip origins, flat side and edge-on, with a line at the grip and
+## a 0.5 m scale tick, to check length, which end is up and where the hand
+## closes before judging them in the fist. Writes <out>/weapon_rack.png.
+func _rack(paths: Array) -> void:
+	var env := Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color(0.30, 0.32, 0.36)
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.8, 0.8, 0.85)
+	env.ambient_light_energy = 0.9
+	var we := WorldEnvironment.new()
+	we.environment = env
+	add_child(we)
+	var sun := DirectionalLight3D.new()
+	sun.rotation_degrees = Vector3(-30, -20, 0)
+	add_child(sun)
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.current = true
+	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
+	var n := paths.size()
+	var step := 0.62
+	cam.size = maxf(2.9, n * step * 2.0 * 720.0 / 1280.0 + 0.2)
+	cam.position = Vector3(0, 0.75, 10.0)
+	var bar := StandardMaterial3D.new()
+	bar.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	bar.albedo_color = Color(1.0, 0.75, 0.2)
+	for i in n:
+		for side in 2:
+			var x := ((i * 2 + side) - (n * 2 - 1) * 0.5) * step
+			var inst := (load(String(paths[i])) as PackedScene).instantiate() as Node3D
+			add_child(inst)
+			inst.position = Vector3(x, 0, 0)
+			inst.rotation_degrees.y = 90.0 if side == 0 else 0.0   # flat side (edge +Z turned to +X), then edge-on
+			var mk := MeshInstance3D.new()
+			var bm := BoxMesh.new()
+			bm.size = Vector3(0.3, 0.006, 0.006)
+			bm.material = bar
+			mk.mesh = bm
+			mk.position = Vector3(x, 0, 0.4)
+			add_child(mk)
+		var lbl := Label3D.new()
+		lbl.text = String(paths[i]).get_file().get_basename()
+		lbl.pixel_size = 0.003
+		lbl.position = Vector3(((i * 2 + 0.5) - (n * 2 - 1) * 0.5) * step, -0.85, 0.5)
+		add_child(lbl)
+	for k in 5:   # height ticks every 0.5 m at the left edge
+		var tk := MeshInstance3D.new()
+		var tb := BoxMesh.new()
+		tb.size = Vector3(n * step * 2.0, 0.003, 0.003)
+		tb.material = bar
+		tk.mesh = tb
+		tk.position = Vector3(0, -0.5 + k * 0.5, -0.5)
+		add_child(tk)
+	for i in 4:
+		await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	var path := "%s/weapon_rack.png" % _out_dir
+	get_viewport().get_texture().get_image().save_png(path)
+	print("[shot] ", path)
+	get_tree().quit()
+
 func _ready() -> void:
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--pose-out="):
+			_out_dir = a.get_slice("=", 1)
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--pose-rack="):
+			_rack(Array(a.get_slice("=", 1).split(",")))
+			return
 	if _rig_args():
 		_rig_sheets()
 		return

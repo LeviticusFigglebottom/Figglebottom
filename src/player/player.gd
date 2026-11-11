@@ -460,6 +460,9 @@ func _set_state(s: S) -> void:
 		_show_gourd(false)   # a stagger or a death mid-drink drops the gourd
 		if vis.shield_mount != null:
 			vis.shield_mount.visible = not bool(weapon_data().get("two_handed", false))
+	# kneeling at a hearth the weapon is put away (a brand dies to a coal)
+	if (s == S.REST) != (state == S.REST) and vis != null:
+		vis.set_stowed(s == S.REST)
 	state = s
 	state_t = 0.0
 	if s != S.MOVE:
@@ -840,11 +843,17 @@ func _refresh_weapon_visual() -> void:
 	if _torch_light != null:
 		_torch_light.queue_free()
 		_torch_light = null
-	if weapon_id == "torch":
+	var lg: Dictionary = w.get("light", {})
+	if vis.brand != null:
+		vis.brand.set_lit(false, true)
+		vis.brand.set_lit(true)   # drawn: it catches, flares and settles
+	elif not lg.is_empty():
+		# a body with no model for the brand (the mannequin): the light alone
 		_torch_light = OmniLight3D.new()
-		_torch_light.light_color = Color(1.0, 0.72, 0.38)
-		_torch_light.omni_range = 8.0
-		_torch_light.light_energy = 1.8
+		var lc: Array = lg.get("light_color", [1.0, 0.72, 0.38])
+		_torch_light.light_color = Color(lc[0], lc[1], lc[2])
+		_torch_light.omni_range = float(lg.get("light_range", 8.0))
+		_torch_light.light_energy = float(lg.get("light_energy", 1.8))
 		_torch_light.position = Vector3(0, 0.8, 0)
 		vis.weapon_mount.add_child(_torch_light)
 
@@ -1002,6 +1011,9 @@ func _set_crosshair(on: bool) -> void:
 var _nock: Node3D = null
 
 func _nock_arrow(on: bool) -> void:
+	if vis.bow_rig != null:
+		vis.bow_rig.set_nocked(on)   # the modelled bow: arrow on the string, string to the hand
+		return
 	if _nock != null and is_instance_valid(_nock):
 		_nock.queue_free()
 	_nock = null
@@ -1015,6 +1027,8 @@ func _nock_arrow(on: bool) -> void:
 
 func _bow_release() -> void:
 	_bow_drawing = false
+	if vis.bow_rig != null and _bow_t >= 0.45:
+		vis.bow_rig.loose()   # the string snaps forward and rings
 	_nock_arrow(false)
 	vis.back_to_idle(0.2)
 	if _bow_t < 0.45:
@@ -1253,7 +1267,12 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 			Juice.hitstop(0.09 if _atk_is_heavy else 0.06)
 			vis.impact_dig(1.5 if _atk_is_heavy else 1.0)   # held on the impact pose by the hit-stop
 			Juice.shake(0.35 if _atk_is_heavy else 0.2, 0.18)
-			Juice.spawn_hit_fx(fx_pos, fx_dir, "heavy" if _atk_is_heavy else "blood")
+			if vis.brand != null and vis.brand.is_lit():
+				# a brand does not cut: it throws fire off the foe and itself
+				Juice.spawn_hit_fx(fx_pos, fx_dir, "ember")
+				vis.brand.burst(34 if _atk_is_heavy else 22, 4.2 if _atk_is_heavy else 3.0)
+			else:
+				Juice.spawn_hit_fx(fx_pos, fx_dir, "heavy" if _atk_is_heavy else "blood")
 			# every foe is frost-taken: the edge meets rime and frozen wool
 			AudioDirector.sfx_at("res://assets/audio/slash.wav", global_position, -9.0, randf_range(0.9, 1.1))
 			AudioDirector.sfx_at(AudioDirector.foley("frost_hit"), fx_pos, -3.0,
@@ -1261,6 +1280,8 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 		"blocked":
 			Juice.hitstop(0.05)
 			Juice.spawn_hit_fx(fx_pos, fx_dir, "spark")
+			if vis.brand != null and vis.brand.is_lit():
+				vis.brand.burst(16, 2.6)
 			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -4.0)
 			AudioDirector.sfx_at("res://assets/audio/shield_ding.wav", global_position, -5.0,
 					randf_range(0.95, 1.12))
