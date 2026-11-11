@@ -468,9 +468,15 @@ func _leg_to_outer_ring() -> bool:
 	print("== RIME: the road plugged, round through the wood to the Outer Ring")
 	rime_plug = _reach_len(plug_a, plug_b)
 	check(rime_plug > plug_a.distance_to(plug_b) * 2.5, "thorn plugs the road past the clearing (%.0f m round for %.0f m)" % [rime_plug, plug_a.distance_to(plug_b)])
+	var slot_free: bool = player.hotbar.has("")
+	var bar_before: Array = player.hotbar.duplicate()
 	took = await _take("hedging_bill", "Take the hedging bill")
 	check(took and int(player.inventory.get("hedging_bill", 0)) == 1, "the hedging bill is taken from the road's end (%s)" % str(player.global_position.snapped(Vector3.ONE)))
-	check(player.hotbar.has("hedging_bill"), "and seats itself in a free hand-slot")
+	if slot_free:
+		check(player.hotbar.has("hedging_bill"), "and seats itself in a free hand-slot")
+	else:
+		# five regions in, both spare slots hold the spade and the harpoon
+		check(player.hotbar == bar_before, "with every hand-slot full it goes to the Pack and unseats nothing")
 	check(_titles.has("THE HEDGE"), "THE HEDGE is named on the way (%s)" % str(_titles.slice(_n0)))
 	rime_in = _reach_len(road_end, mouth, 3.0)
 	check(rime_in > road_end.distance_to(mouth) * 4.0, "the gaps have moved: from the road's end the veil is the long way round (%.0f m for %.0f m)" % [rime_in, road_end.distance_to(mouth)])

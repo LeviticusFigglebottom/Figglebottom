@@ -7,8 +7,11 @@
 				"lit_hs_landing_ice": true,
 				"slain_ice_cutter": true,
 				"took_halla_cord": true,
+				"took_ice_auger": true,
 				"took_ivo_mitten": true,
-				"took_kettle_ladle": true
+				"took_kettle_ladle": true,
+				"took_north_shore_cache": true,
+				"took_sealer_harpoon": true
 			},
 			"state": 0
 		},
@@ -20,8 +23,13 @@
 				"lit_hs_open_barrow": true,
 				"slain_turfwright": true,
 				"took_hesk_tongs": true,
+				"took_kin_a_grave_goods": true,
 				"took_orm_cord": true,
-				"took_tally_stick": true
+				"took_peat_island_iron": true,
+				"took_tally_stick": true,
+				"took_turf_spade": true,
+				"took_twin_spindles": true,
+				"took_woad_thread": true
 			},
 			"state": 0
 		},
@@ -47,10 +55,15 @@
 				"lit_hs_long_table": true,
 				"lit_hs_tarn_causeway": true,
 				"lit_hs_tarn_steps": true,
+				"slain_champion_bridge": true,
 				"slain_host": true,
+				"took_barrel_head": true,
+				"took_byre_cache": true,
+				"took_feast_cleaver": true,
 				"took_guest_tally": true,
 				"took_host_cup": true,
-				"took_ottar_staff": true
+				"took_ottar_staff": true,
+				"took_tarn_horn": true
 			},
 			"state": 0
 		},
@@ -73,8 +86,13 @@
 	},
 	"breathmark": null,
 	"flags": {
+		"bought_halla_flask": true,
+		"bought_long_note": true,
+		"bought_turf_song": true,
 		"difficulty": "gentle",
+		"got_barrow_cloak": true,
 		"got_collier_leathers": true,
+		"got_sten_icefur": true,
 		"ks_aud_cord": true,
 		"ks_aud_cord_found": true,
 		"ks_aud_heather": true,
@@ -117,6 +135,7 @@
 		"ks_song_cord_found": true,
 		"ks_song_cord_read": true,
 		"ks_turfwright_released": true,
+		"lowe_bridge_down": true,
 		"met_aud": true,
 		"met_brede": true,
 		"met_halla": true,
@@ -135,55 +154,68 @@
 	"meta": {
 		"area": "thornwold",
 		"difficulty": "gentle",
-		"level": 10,
-		"play_s": 969.455975532058,
-		"saved_at": 1794342512.42941
+		"ending": "",
+		"level": 14,
+		"play_s": 2752.93517404771,
+		"saved_at": 1794358839.89292
 	},
-	"play_s": 969.455975532058,
+	"play_s": 2752.93517404771,
 	"player": {
 		"armour": {
-			"body": "armour_traveller_coat",
+			"body": "armour_icefur",
 			"hands": "",
 			"head": "",
 			"legs": ""
 		},
 		"attributes": {
 			"craft": 8,
-			"heart": 13,
+			"heart": 17,
 			"kinship": 8,
 			"lungs": 8,
-			"might": 10,
-			"wind": 10
+			"might": 12,
+			"wind": 8
 		},
-		"attuned_song": "goat_song",
-		"gourd_max": 3,
+		"attuned_song": "turf_song",
+		"gourd_max": 4,
 		"hotbar": [
 			"hewing_blade",
 			"torch",
-			"hedging_bill",
-			"",
+			"turf_spade",
+			"sealer_harpoon",
 			"gourd"
 		],
 		"inventory": {
+			"armour_barrow_cloak": 1.0,
 			"armour_collier": 1.0,
-			"bog_iron": 3.0,
+			"armour_icefur": 1.0,
+			"bog_iron": 9.0,
+			"feast_cleaver": 1.0,
 			"goat_song": 1.0,
 			"hedging_bill": 1.0,
+			"ice_auger": 1.0,
+			"item_barrel_head": 1.0,
 			"item_host_cup": 1.0,
+			"item_kettle_ladle": 1.0,
 			"item_knucklebone": 1.0,
 			"item_mending_needle": 1.0,
 			"item_song_cord": 1.0,
-			"item_tally_stick": 1.0
+			"item_tally_stick": 1.0,
+			"item_twin_spindles": 1.0,
+			"ks_woad_thread": 1.0,
+			"long_note": 1.0,
+			"sealer_harpoon": 1.0,
+			"turf_song": 1.0,
+			"turf_spade": 1.0
 		},
-		"level": 10,
+		"level": 14,
 		"pos": [
 			460.7744140625,
-			37.6430854797363,
+			37.6430702209473,
 			-297.758819580078
 		],
-		"warmth": 2722,
+		"warmth": 6161,
 		"weapon": "hewing_blade",
-		"weapon_level": 0
+		"weapon_level": 1
 	},
-	"save_version": 2
+	"save_version": 3
 }

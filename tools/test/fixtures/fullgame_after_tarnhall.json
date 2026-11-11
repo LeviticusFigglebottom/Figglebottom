@@ -70,7 +70,9 @@
 	},
 	"breathmark": null,
 	"flags": {
+		"bought_halla_flask": true,
 		"bought_long_note": true,
+		"bought_turf_song": true,
 		"difficulty": "gentle",
 		"got_barrow_cloak": true,
 		"got_sten_icefur": true,
@@ -110,6 +112,7 @@
 		"ks_ottar_staff": true,
 		"ks_ottar_staff_found": true,
 		"ks_turfwright_released": true,
+		"lowe_bridge_down": true,
 		"met_aud": true,
 		"met_brede": true,
 		"met_halla": true,
@@ -127,39 +130,40 @@
 	"meta": {
 		"area": "tarnhall",
 		"difficulty": "gentle",
-		"level": 8,
-		"play_s": 4350.33886009528,
-		"saved_at": 1794348099.55012
+		"ending": "",
+		"level": 13,
+		"play_s": 2280.0703086785,
+		"saved_at": 1794357794.80434
 	},
-	"play_s": 4350.33886009528,
+	"play_s": 2280.0703086785,
 	"player": {
 		"armour": {
-			"body": "armour_traveller_coat",
+			"body": "armour_icefur",
 			"hands": "",
 			"head": "",
 			"legs": ""
 		},
 		"attributes": {
 			"craft": 8,
-			"heart": 11,
+			"heart": 16,
 			"kinship": 8,
 			"lungs": 8,
-			"might": 10,
-			"wind": 10
+			"might": 12,
+			"wind": 8
 		},
-		"attuned_song": "goat_song",
-		"gourd_max": 3,
+		"attuned_song": "turf_song",
+		"gourd_max": 4,
 		"hotbar": [
 			"hewing_blade",
 			"torch",
 			"turf_spade",
-			"ice_auger",
+			"sealer_harpoon",
 			"gourd"
 		],
 		"inventory": {
 			"armour_barrow_cloak": 1.0,
 			"armour_icefur": 1.0,
-			"bog_iron": 8.0,
+			"bog_iron": 7.0,
 			"feast_cleaver": 1.0,
 			"goat_song": 1.0,
 			"ice_auger": 1.0,
@@ -172,17 +176,18 @@
 			"ks_woad_thread": 1.0,
 			"long_note": 1.0,
 			"sealer_harpoon": 1.0,
+			"turf_song": 1.0,
 			"turf_spade": 1.0
 		},
-		"level": 8,
+		"level": 13,
 		"pos": [
 			219.600006103516,
 			24.2751483917236,
 			-323.399993896484
 		],
-		"warmth": 4016,
+		"warmth": 4469,
 		"weapon": "hewing_blade",
-		"weapon_level": 0
+		"weapon_level": 1
 	},
-	"save_version": 2
+	"save_version": 3
 }
