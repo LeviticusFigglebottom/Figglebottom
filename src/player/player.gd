@@ -409,6 +409,7 @@ func _physics_process(dt: float) -> void:
 	if state == S.MOVE:
 		var lv := vis.global_transform.basis.inverse() * velocity
 		lean = Vector2(lv.x, -lv.z) * 0.12
+	_apply_outfit()
 	# held poses (kneel at rest, death) must not blend back to idle
 	if state != S.DEAD and state != S.REST and state != S.TALK:
 		vis.locomotion(dt, gs, lean, is_on_floor())
@@ -910,6 +911,8 @@ func equip_armour(slot: String, id: String) -> bool:
 	armour[slot] = id
 	recompute_derived()
 	armour_changed.emit()
+	if slot == "body":
+		refresh_outfit()
 	return true
 
 func _worn() -> Array:
@@ -1900,7 +1903,32 @@ func body_model() -> String:
 	var o := String(T.get("model_outsong", ""))
 	if World.spring() and o != "" and HumanoidLib.has_model(o):
 		return o
+	# the body armour he wears is the body he is seen in (items.json
+	# armour.model); bare, or a piece with no model of its own, is the
+	# traveller he arrived as
+	var worn := String(armour_data(String(armour.get("body", ""))).get("model", ""))
+	if worn != "" and HumanoidLib.has_model(worn):
+		return worn
 	return m
+
+## The worn outfit has changed (an equip, a load): the body follows when it
+## can. Not while the Pack is open (he changes when it closes, not once per
+## row tried on), and not in the middle of a swing, a roll or a drink.
+var _outfit_dirty := false
+
+func refresh_outfit() -> void:
+	_outfit_dirty = true
+	_apply_outfit()
+
+func _apply_outfit() -> void:
+	if not _outfit_dirty or vis == null or dead:
+		return
+	if not (state == S.MOVE or state == S.REST or state == S.TALK):
+		return
+	if is_inside_tree() and not get_tree().get_nodes_in_group("inventory_ui").is_empty():
+		return
+	_outfit_dirty = false
+	set_model(body_model())
 
 ## Change bodies in place (the Outsong: the Bearer puts the mask on). The
 ## swing volume rides the visual, so it moves across.
@@ -1910,14 +1938,27 @@ func set_model(model: String) -> void:
 	var old := vis
 	if hitbox != null and hitbox.get_parent() == old:
 		old.remove_child(hitbox)
+	# what the old body had in its hands does not cross over: the new one
+	# mounts its own (weapon, shield and, on the next drink, the gourd)
+	if _gourd_mount != null and is_instance_valid(_gourd_mount):
+		old.unmount_gourd(_gourd_mount)
+	_gourd_mount = null
+	if _torch_light != null:
+		_torch_light.queue_free()
+		_torch_light = null
+	old.name = "VisOld"
 	vis = PlayerVisual.new()
-	vis.name = "VisOutsong"
+	vis.name = "Vis"
 	add_child(vis)
 	vis.build(DB.weapon(weapon_id).get("kit", "hewing_blade"), model)
 	vis.rotation = old.rotation
 	if hitbox != null:
 		vis.add_child(hitbox)
 	old.queue_free()
+	# the same arms in the same hands: bow, two-handed carry, shield, torch
+	_refresh_weapon_visual()
+	if state == S.REST:
+		vis.play("kneel", 0.0)
 
 func lock_control(on: bool) -> void:
 	input_enabled = not on
@@ -2048,6 +2089,7 @@ func from_save(d: Dictionary) -> void:
 	armour_changed.emit()
 	recompute_derived()
 	heal_full()
+	refresh_outfit()   # a loaded Bearer stands up in what he was wearing
 	_refresh_weapon_visual()
 	weapon_changed.emit(weapon_id)
 	inventory_changed.emit()

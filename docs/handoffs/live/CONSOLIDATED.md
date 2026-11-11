@@ -43,8 +43,11 @@ The whole game is on main, in structure:
 ## Known gaps
 - Real-GPU look: THAW exposure blow-out and faceted cliffs (world-fidelity env).
 - RIME constructs: frozen thorn, frost veils as flat cards.
-- Armour does not change the Bearer's model yet. Six `bearer_*.glb` outfits are unused.
-- New-region foes (drover, frost_ram, upwalker, unsung, fellcaller, leadvoice) lack their own attack clips.
+- `feat/anims-4` (not merged): body armour swaps the Bearer's model (`items.json` `armour.model`); the new-region foes, the Leadvoice and the ending beats have their own clips (ADR 0012 pass 4). Left over from it:
+  - `bearer_hall` (guest-garb) is a registered outfit that no item names. It needs an item (lore, where it is found): the lead's call.
+  - Model faults for the art pass: the Fellcaller's horn is skinned to her belt, not her hand; the Host has a stray rigid left arm and his table crumples when his arms go up; the Leadvoice's cloak ice is skinned to her arms and fingers, so she cannot put her arms round the child.
+  - Old Calder has no seated placement, so no sit was keyed for him.
+  - None of it has been seen on a real GPU or in a fight: sheets only (`docs/screens/anim_*`). Rebuild: `$BPY tools/anim/build_combat_lib.py && python3 tools/anim/quad_poses.py && godot --headless --path . --import`.
 - Ottar has no model.
 
 ## Tripo access (for future sessions)
