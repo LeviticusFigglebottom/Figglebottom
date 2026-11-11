@@ -29,6 +29,7 @@ func _ready() -> void:
 	add_to_group("ice_ridges")
 	collision_layer = 1 << (RH.L_WORLD_BASE - 1)
 	collision_mask = 0
+	Surfaces.stamp_kind(self, "sod_ridge" if style == "sod" else ("stone_ridge" if style == "stone" else "ice_ridge"))
 	var cs := CollisionShape3D.new()
 	var box := BoxShape3D.new()
 	box.size = Vector3(0.9, height, length)

@@ -144,6 +144,7 @@ static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
 		cs.position = Vector3(0, 2.0, 0)
 		body.add_child(cs)
 		body.position = xf.origin
+		Surfaces.stamp_kind(body, "tree")
 		area.attach(body, "base")
 
 ## Chunked MultiMeshes of one mesh.
@@ -395,6 +396,7 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			cs.shape = bx
 			body.add_child(cs)
 			body.transform = Transform3D(cb, Vector3(p0.x, y0 + h * 0.5, p0.y))
+			Surfaces.stamp_kind(body, "hedge")
 			area.attach(body, tag)
 	if hero_ok:
 		var names: Array = [hh[0]]

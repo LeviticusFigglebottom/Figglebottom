@@ -14,6 +14,7 @@ func _enter_tree() -> void:
 	_load_table("keepsakes", "res://data/keepsakes.json")
 	_load_table("areas", "res://data/areas/index.json")
 	_load_table("audio", "res://data/audio.json")
+	_load_table("surfaces", "res://data/surfaces.json")
 
 func _load_table(key: String, path: String) -> void:
 	if not FileAccess.file_exists(path):

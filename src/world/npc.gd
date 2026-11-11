@@ -61,6 +61,7 @@ func _ready() -> void:
 	bcs.shape = bcap
 	bcs.position.y = 0.85
 	body.add_child(bcs)
+	Surfaces.stamp_kind(body, "npc")   # a blade raises no chips from a living soul
 	add_child(body)
 	if pose == "lie":
 		body.rotation.x = deg_to_rad(88.0)

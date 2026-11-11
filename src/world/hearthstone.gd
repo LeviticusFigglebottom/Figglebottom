@@ -33,6 +33,7 @@ func _ready() -> void:
 	lcs.shape = lcyl
 	lcs.position.y = 0.475
 	lbody.add_child(lcs)
+	Surfaces.stamp_kind(lbody, "hearth")
 	vis.add_child(lbody)
 	_flames = _find_flames(vis)
 	var lights := KitLib.add_flame_lights(vis, 2.2, 8.8)

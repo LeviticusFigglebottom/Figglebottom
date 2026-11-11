@@ -24,6 +24,7 @@ func _ready() -> void:
 	var body := StaticBody3D.new()
 	body.collision_layer = 1 << (RH.L_WORLD_RIME - 1)
 	body.collision_mask = 0
+	Surfaces.stamp_kind(body, "tide_wall")
 	add_child(body)
 	for i in range(points.size() - 1):
 		var a := Vector3(float(points[i][0]), 0.0, float(points[i][1]))

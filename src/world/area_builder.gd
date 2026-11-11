@@ -91,6 +91,7 @@ static func build(area_id: String) -> Area:
 				bcs.shape = bsh
 				bcs.position = Vector3(0, bsh.size.y * 0.5, 0)
 				bb.add_child(bcs)
+				Surfaces.stamp(bb, String(spec.get("surface", Surfaces.for_landmark(String(spec["scene"]), String(spec.get("family", ""))))))
 				area.attach(bb, String(spec.get("tag", "base")))
 				_place(bb, spec)
 			if spec.has("smoke"):
@@ -658,7 +659,7 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 			# architecture (walls, arcades, portals, windows) keeps its exact
 			# hollow shell so you can pass through openings; everything else
 			# is a solid convex blocker so the capsule never wedges inside it
-			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]))
+			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]), String(spec.get("surface", "")))
 	_range_by_size(piece, String(spec["kit"]), spec)
 	if spec.get("flames", true) and (tag != "rime"):
 		KitLib.add_flame_lights(piece)
@@ -717,6 +718,7 @@ static func _stair_ramp(piece: Node3D, tag: String, kit := "stair_4m") -> void:
 		# floor in front of every open flight.
 		fs.position = Vector3(sx, -0.57, -2.35)
 		body.add_child(fs)
+	Surfaces.stamp(body, Surfaces.for_kit(kit))
 	piece.add_child(body)
 
 static func _row(area: Area, spec: Dictionary) -> void:
@@ -956,6 +958,7 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 		cs.shape = cb
 		body.add_child(cs)
 		body.position = center
+		Surfaces.stamp(body, String(spec.get("surface", Surfaces.for_family(fam))))
 		area.attach(body, tag)
 
 ## A deck in place of a box of the same size: boards of uneven width laid
@@ -1024,6 +1027,7 @@ static func _blocker(area: Area, spec: Dictionary) -> void:
 		cyl.height = float(spec.get("height", 0.6))
 		ccs.shape = cyl
 		cb.add_child(ccs)
+		Surfaces.stamp(cb, String(spec.get("surface", Surfaces.lookup("kinds", "blocker"))))
 		area.attach(cb, tag)
 		cb.position = _v3(spec["at"])
 		return
@@ -1039,6 +1043,7 @@ static func _blocker(area: Area, spec: Dictionary) -> void:
 	box.size = mx - mn
 	cs.shape = box
 	body.add_child(cs)
+	Surfaces.stamp(body, String(spec.get("surface", Surfaces.lookup("kinds", "blocker"))))
 	area.attach(body, tag)
 	body.position = (mn + mx) * 0.5
 	cs.position = Vector3.ZERO
