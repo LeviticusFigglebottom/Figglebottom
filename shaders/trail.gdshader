@@ -40,7 +40,9 @@ void fragment() {
 	float tip_trace = smoothstep(0.82, 0.95, UV.y) * smoothstep(1.0, 0.93, UV.y) * pow(along, 1.15) * 0.9;
 
 	vec3 wake_col = mix(tint * vec3(1.0, 0.72, 0.42), tint, along);
-	vec3 col = mix(wake_col, vec3(1.0, 0.99, 0.95), clamp(lead_edge, 0.0, 1.0));
+	// how white the leading edge flashes follows `energy`: steel catches the
+	// light (0.6 and up is the full flash), a wooden maul head only smears
+	vec3 col = mix(wake_col, vec3(1.0, 0.99, 0.95), clamp(lead_edge, 0.0, 1.0) * clamp(energy * 1.7, 0.0, 1.0));
 	// unshaded materials output ALBEDO only (EMISSION is dropped): the glow
 	// rides the albedo, a little over 1 at the leading edge so it blooms
 	ALBEDO = col * (1.0 + energy * lead_edge * tip_weight);

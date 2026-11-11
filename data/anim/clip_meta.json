@@ -5358,7 +5358,7 @@
   "hewing_blade": {
    "scene": "res://assets/models/weapons/hewing_blade.glb",
    "trail": [
-    0.16,
+    0.42,
     0.86
    ]
   },
@@ -5429,7 +5429,7 @@
   "feast_cleaver": {
    "scene": "res://assets/models/weapons/feast_cleaver.glb",
    "trail": [
-    0.22,
+    0.3,
     0.58
    ],
    "_note": "the Host's carving cleaver (TARNHALL.md 8): grip at origin, blade +Y",
@@ -5479,7 +5479,7 @@
   "greatblade": {
    "scene": "res://assets/models/weapons/greatblade.glb",
    "trail": [
-    0.28,
+    0.72,
     1.22
    ],
    "_note": "the long war-knife: right hand at origin high on the two-hand grip, blade +Y, edge +Z",

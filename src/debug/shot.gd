@@ -465,11 +465,12 @@ func _bearer_stage(p: Player, foe: Enemy) -> void:
 		_frame_char_cam(p, foe)
 		if _stage == "bearer_bow" and _stage_frame > 30 and p.vis.rig.action_time() > 0.74 and p.vis.current_clip() != "bow_hold":
 			p.vis.play("bow_hold", 0.08)
-		var settled := _stage_frame > (150 if _stage == "bearer_hold" else 30) and \
-				(_stage == "bearer_hold" or p.vis.current_clip() == "bow_hold")
-		if settled and not get_tree().paused and _stage_frame > 60:
+		# (software frames in a full area take seconds each: wait on game time, not on many frames)
+		var settled := (_stage == "bearer_hold" and p.vis.brand != null and p.vis.brand.lit > 0.98) \
+				or (_stage == "bearer_bow" and p.vis.current_clip() == "bow_hold")
+		if settled and not get_tree().paused and _stage_frame > 40:
 			_hold_frames += 1
-			if _hold_frames > 20:   # a few drawn frames so the string, flame and smoke are all up
+			if _hold_frames > 8:   # a few drawn frames so the string, flame and smoke are all up
 				get_tree().paused = true
 				_frames_left = mini(_frames_left, 4)
 		return
@@ -511,7 +512,7 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 		cam.global_position = tgt + axis.normalized() * 2.9 + side * 2.2 + Vector3.UP * 0.25
 	elif _stage == "bearer_bow":  # from ahead on his open side: stave, string, shaft and the drawing hand
 		tgt = p.global_position + Vector3.UP * 1.3
-		cam.global_position = tgt - side * 3.0 + axis.normalized() * 1.9 + Vector3.UP * 0.15
+		cam.global_position = tgt + side * 3.0 + axis.normalized() * 1.3 + Vector3.UP * 0.15
 	cam.look_at(tgt, Vector3.UP)
 	cam.fov = 48.0
 

@@ -26,4 +26,4 @@ tools/anim/weapon_sheets.sh --rack
 
 **Tripo.** 925 credits (ledger): 380 kept (torch, greatblade, quiver, arrow), 545 lost on the spear, the bow and two arrow rolls. No call was denied. The spear and the bow are modelled in Blender instead.
 
-**Known gaps.** See the final report in the session; anything not listed there is in ADR 0014 "Consequences".
+**Known gaps.** The six in-game shots (`docs/screens/weapons_*.png`) are in the arena sandbox in RIME dusk mode, not in a full area: software rendering of an area would not fit in memory beside the other sessions (ADR 0014, Verification). Nothing here has been seen on a real GPU. The Tarnhall shield is not mounted by any loadout.

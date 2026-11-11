@@ -68,3 +68,12 @@ Carries are keyed on the Bearer's own idle, because that is the body they play o
 - The torch's fire is three CPU particle systems and one unshadowed light per Bearer: nothing on foes or NPCs carries one yet. An NPC torch would reuse `BrandFire`.
 - Weapons the Bearer cannot find yet (spear, greatblade, bow have no pickup or seller in the area data) are ready when they are placed.
 - New Pack and Belt icons can be rendered from: `torch`, `greatblade`, `spear`, `bow`, `arrow`, `quiver` and the corrected `turf_spade` (`assets/models/weapons/*.glb`, grip at origin, head +Y).
+
+## Verification
+
+- **Suites:** `anim` (229 checks; it now checks every per-weapon strike against its data strike time, the torch's light, gutter, stow and strikes, the bow string and the quiver), `combat`, `deltas`, `smoke`, `body`, `encounters`: all pass.
+- **Contact sheets:** `docs/screens/weapon_<kit>_<clip>_sheet.png` for all eleven weapons (72 sheets) and `weapon_rack.png`. Re-render: `tools/anim/weapon_sheets.sh`, `tools/anim/weapon_sheets.sh --rack`.
+- **In-game shots:** `docs/screens/weapons_{torch_rime,torch_strike,greatblade_heavy,spear_thrust,bow_draw,maul_smash}.png`, taken with the real Player and a real foe through `tools/shot.sh` stages (`bearer_hold`, `bearer_bow`, `bearer_light1/2`, `bearer_heavy`).
+  - They are in the **arena sandbox in its RIME dusk mode** (`--sandbox=arena --state=rime`: frosted kit, low blue sun, snowfall), not on the Strand. A full area needs about 5 GB to render in software and this box was shared with other sessions' renders; it was killed for memory or timed out on most tries.
+  - Two full-area shots did finish during the work (a torch heavy and a greatblade heavy on the Strand in RIME) and were looked at: the light pool on snow and the blade read as in the arena. They were taken before the last fixes and are not committed. **Not yet seen on a real GPU.**
+  - Command: `SHOT_RES=1280x720 tools/shot.sh OUT.png --area=saltfell_steading --state=rime --shot-nohud --shot-stage=bearer_heavy --shot-weapon=torch --shot-beat=0.06 --shot-frames=300`.
