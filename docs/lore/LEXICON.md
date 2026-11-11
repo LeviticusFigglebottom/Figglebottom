@@ -115,3 +115,18 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | spring | world state after The Outsong | `World.spring()`: unfrozen ground, grey light, nobody remembered; hearths rest but do not warm |
 | Upwalker / the Unsung | enemies (the Coldwell) | |
 | The Outsong / The Hearth Kept | endings | |
+| the Drag-Mark / the Lookout Stone | places (Saltfell) | points of interest, `docs/lore/POI.md` §2 |
+| the Bread Mound / the Last Mound / the Cutter's Bothy / the Rise | places (the Lowe) | `POI.md` §3 |
+| the Turn in the Road / the Dog Lines / the Net-Cleft / the Ice Camp / the Far Landing | places (Kettle Fjord) | `POI.md` §4; the Net-Cleft is the region's shortcut (`gate_net_cleft`) |
+| the Seven Landings / the Cook-Yard / the South Window | places (Tarnhall) | `POI.md` §5 |
+| the Notch / Linnet's Hut / the Field They Haven't Got / the Layer's Stiles | places (Thornwold) | `POI.md` §6; the stiles are the region's shortcut |
+| the Counting Stone / the Drift Lane | places (Shepherd's Reach) | `POI.md` §7; the lane is the region's shortcut (`gate_drift_lane`) |
+| the Flower Bank / the Sitting Place / the Thread-Post | places (the Coldwell) | `POI.md` §8; a thread is tied on the post for each of the year's dead |
+| Thole Pin / Cake of Pan Salt / Three Bowls | keepsake items (Saltfell) | `item_thole_pin`, `item_pan_salt`, `item_three_bowls` |
+| Birch Cup / Spade-Iron / Two Small Spades | keepsake items (the Lowe) | `item_birch_cup`, `item_spade_iron`, `item_small_spades` |
+| Sounding Pole / Line-Winder / Healer's Pack | keepsake items (Kettle Fjord) | `item_sounding_pole`, `item_line_winder`, `item_healer_pack` |
+| Rowan Stick / Vat Dipper | keepsake items (Tarnhall) | `item_rowan_stick`, `item_vat_dipper` |
+| Ends of Wool / Gate Latch | keepsake items (Thornwold) | `item_wool_ends`, `item_gate_latch` |
+| Calder's Blanket | keepsake item (Shepherd's Reach) | `item_calder_blanket` |
+| Melt Flowers | keepsake item (the Coldwell) | `item_melt_flowers`, thrown in at the wellhead |
+| Smudge (thread) | Keepsakes thread (Shepherd's Reach) | the one ewe not facing the fold; `ks_smudge_*` |
