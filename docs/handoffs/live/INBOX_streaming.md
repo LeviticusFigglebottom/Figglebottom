@@ -2,6 +2,17 @@
 
 Newest entry at the top. Branch `feat/streaming`.
 
+## 2026-11-11: owner correction to Job 2 received
+
+- Got the lead's message. Job 2 now follows **hint, then reveal** for every region's exit:
+  - **Gate:** the onward route opens only on that region's release (unchanged).
+  - **Before the release:** the way on is hinted only: the Lowe seen across the ravine, the raised bridge, a blocked pass that reads as a way later.
+  - **After the release:** the way on reads without UI markers: the blockage visibly gone, a worn path, a landmark at the turn, light and composition toward it.
+  - **Data:** each area def gets a "way on" entry (place, opening flag, short name) for the journal and map on `feat/ui-map-log-icons`. No journal UI is built here.
+- The earlier instruction to soften paths and markers toward seams is withdrawn; the Job 2 agent has been told.
+- NPC or scene lines pointing the way: only if they meet `WRITING.md`; otherwise the ADR lists where a line would go and the text is left to the lead.
+- ADR 0015 will record both readings.
+
 ## 2026-11-11: both jobs started
 
 - Two agents run in parallel on this box, each in its own worktree. Their work lands on `feat/streaming` once each is green here; nothing is merged yet.
