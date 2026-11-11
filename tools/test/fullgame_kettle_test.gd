@@ -601,7 +601,8 @@ func _region() -> void:
 	await _shot("landing_thaw")
 	var plaque: LorePlaque = null
 	for pl in area.find_children("*", "LorePlaque", true, false):
-		plaque = pl
+		if (pl as LorePlaque).text.begins_with("KETTLE FJORD\n"):      # (the points of interest have boards of their own)
+			plaque = pl
 	check(plaque != null and plaque.text.begins_with("KETTLE FJORD\n"), "the plaque at the road's foot reads KETTLE FJORD")
 	if plaque != null:
 		await _walk_path(plaque.global_position, 1200, false)
@@ -704,7 +705,8 @@ func _region() -> void:
 	var kinds := {}
 	for e in foes:
 		kinds[(e as Enemy).id] = int(kinds.get((e as Enemy).id, 0)) + 1
-	check(foes.size() == 9 and int(kinds.get("ice_fisher", 0)) == 4 and int(kinds.get("sealer", 0)) == 2
+	# (nine on the road and the ice, and the Ice Camp's three: POI.md 4.4)
+	check(foes.size() == 12 and int(kinds.get("ice_fisher", 0)) == 6 and int(kinds.get("sealer", 0)) == 3
 		and int(kinds.get("sledge_dog", 0)) == 2 and int(kinds.get(BOSS, 0)) == 1, "the frost-taken stand where they froze (%s)" % str(kinds))
 	check(_thin_volumes().size() == 7, "RIME: crevasses, cut holes and the Breathing Hole give underfoot (%d thin volumes)" % _thin_volumes().size())
 	var boss0 := _foe(BOSS) as IceCutter

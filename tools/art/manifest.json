@@ -3653,6 +3653,420 @@
    "grip_from_pommel": 0.0,
    "keep_one": true,
    "_note": "origin at the nock, head +Y. The roll came back as two arrows side by side; keep_one deletes the second"
+  },
+  {
+   "name": "kf_ice_hut",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "8f61b98b-e6c4-451f-bf01-d99a3b53b5c5",
+    "task_id": "b5519b9f-13f7-44a7-83f3-e4c5727f468c",
+    "remesh_operator": "7aec64b0-2413-479a-9819-d0b36e28de57",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kf_ice_hut/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 2.3
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_ice_hut.glb"
+  },
+  {
+   "name": "kf_tool_rack",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "63a9d8df-5bcc-443f-bbc3-96cabd101a38",
+    "task_id": "95943c3c-143e-4fe5-b02d-adcd1c3685ee",
+    "remesh_operator": "863061c2-f409-49aa-852b-e5bce9f7132d",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kf_tool_rack/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.75
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_tool_rack.glb"
+  },
+  {
+   "name": "kf_windbreak",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "e8144916-ed8e-4938-b4d1-e2f925917f33",
+    "task_id": "13486459-8961-4a3e-8687-9b2278dbc762",
+    "remesh_operator": "1e25c771-bc82-41cf-9496-689ba2d5e8d9",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kf_windbreak/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.7
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_windbreak.glb"
+  },
+  {
+   "name": "kf_dog_picket",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "2e2a4ccf-3630-44b7-ac2f-256de785f88e",
+    "task_id": "c086d9f0-2ab7-47ce-a92e-acb1408e33ab",
+    "remesh_operator": "e70aeab0-3d71-4b14-afe0-cf67dbfb0f2e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kf_dog_picket/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 3.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_dog_picket.glb"
+  },
+  {
+   "name": "lm_healer_sledge",
+   "category": "landmarks",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "3c4e7229-914d-4260-8f96-0aebb288d15d",
+    "task_id": "0ca8e8f6-5a55-4bab-a5de-a53b64d8671b",
+    "remesh_operator": "26d10c9e-66c3-464d-803d-d7e3cc21b910",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/lm_healer_sledge/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.7
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/landmarks/lm_healer_sledge.glb"
+  },
+  {
+   "name": "th_bake_oven",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "bffcd009-a82c-4794-a953-d80fdf2b234c",
+    "task_id": "094369b5-fb53-4f3a-abc1-03d7748124bc",
+    "remesh_operator": "27c1038d-d7b2-4ebc-a693-039569792525",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/th_bake_oven/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_bake_oven.glb"
+  },
+  {
+   "name": "th_carving_frame",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "fe6bbdff-2a32-4838-a8c9-9dc86a2fa6e6",
+    "task_id": "2b3d68a2-0ff2-4b08-a198-c58ca3ea9fe3",
+    "remesh_operator": "0b640c71-3369-40dc-9fd9-778017a4e24b",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/th_carving_frame/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 2.2
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_carving_frame.glb"
+  },
+  {
+   "name": "cw_flower_basket",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "860b55ce-01ee-4f15-8f7a-682bc507357e",
+    "task_id": "01ea8be2-ff50-424c-99ae-dc544e618305",
+    "remesh_operator": "e578b152-5281-4918-b736-28eb9b069b66",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/cw_flower_basket/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 0.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 512,
+   "collision": null,
+   "output": "assets/models/kit/cw_flower_basket.glb"
+  },
+  {
+   "name": "th_spit",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "aff8e2af-8986-48e4-adf2-e0625970948c",
+    "task_id": "2d69aa3f-3e5b-48a8-b41e-2b4685f56e47",
+    "remesh_operator": "776905cb-e38b-4808-ae3a-27356ff8b469",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/th_spit/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 3.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_spit.glb"
+  },
+  {
+   "name": "th_ale_vat",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "e1b95229-327a-4e31-8603-4dd935deb261",
+    "task_id": "8a7267c1-3968-4b4d-a6f7-2571fcad68b3",
+    "remesh_operator": "45de753b-b073-4756-b401-2232cfad6c76",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/th_ale_vat/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.35
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_ale_vat.glb"
+  },
+  {
+   "name": "cw_thread_post",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "8a1fdf45-7e31-4f86-9de4-87a1da720b84",
+    "task_id": "1511967d-36b9-48f1-89fc-6667f7a6c170",
+    "remesh_operator": "7020016c-9d67-4152-9140-bb1ac5c1fe52",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/cw_thread_post/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 2.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/cw_thread_post.glb"
+  },
+  {
+   "name": "cw_dipper_trough",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "f57558a7-da9f-421b-8748-07a6b8bede66",
+    "task_id": "f0f9a6af-c807-4b71-a81f-dd8f5efe6b68",
+    "remesh_operator": "032b4e3d-057b-4a8d-83b4-bf691f59cb92",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/cw_dipper_trough/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/cw_dipper_trough.glb"
+  },
+  {
+   "name": "kf_ice_hut_b",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "3afb1183-0332-4cfe-a068-1458313f68b2",
+    "task_id": "5bd21f41-dc64-43a1-879c-e2679fae8fa6",
+    "remesh_operator": "30711c3a-67ad-4621-835d-80954fbcec54",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kf_ice_hut_b/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_ice_hut_b.glb"
+  },
+  {
+   "name": "kf_kettle_tripod",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "a4b63032-be12-44bd-9b58-c9d16122691a",
+    "task_id": "3e354e35-dc3e-4c1c-9e7e-8c1b0def23a6",
+    "remesh_operator": "ce3fb8bc-5930-40ed-acdb-bb8b10d2a77e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kf_kettle_tripod/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.8
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_kettle_tripod.glb"
+  },
+  {
+   "name": "th_ale_tub",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "81329fc2-b754-4410-9c68-b74c5cd6e1c2",
+    "task_id": "7d929e41-f58a-499b-b7b3-1817a90704cd",
+    "remesh_operator": "80e9af6d-8282-4b55-a21a-ee1c69402167",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/th_ale_tub/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.75
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_ale_tub.glb"
+  },
+  {
+   "name": "th_hanging",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "94657936-c840-49e3-ab0e-0e8ad219d4f5",
+    "task_id": "4e2c921b-6593-4c7d-b601-1e92c785a5ae",
+    "remesh_operator": "2b4a79e6-1ef2-4948-b2db-06b336ae5fee",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 3000
+   },
+   "input": "raw/th_hanging/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_hanging.glb"
+  },
+  {
+   "name": "cw_offering_cairn",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "42d67fa3-525b-4fc3-9729-cd768abb0f2b",
+    "task_id": "8dccdbd6-0e7f-4b6e-bdfb-18ff8e63ca76",
+    "remesh_operator": "5711eb5b-c85e-4de2-b2c7-ea6cd5de623d",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/cw_offering_cairn/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.2
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/cw_offering_cairn.glb"
+  },
+  {
+   "name": "cw_water_yoke",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "e39dcd9d-c3fa-4041-a02f-dbb08bc26593",
+    "task_id": "db33a00c-f3b7-44a5-943f-4dea41e5314e",
+    "remesh_operator": "bac57a3b-0963-4d2d-943d-b9f220e1c9c3",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/cw_water_yoke/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.5
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/cw_water_yoke.glb"
   }
  ]
 }

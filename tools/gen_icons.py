@@ -638,6 +638,63 @@ def icon_bare_mask():
     return im
 
 
+# --- Kettle Fjord's points of interest (docs/lore/POI.md 4)
+def icon_sounding_pole():
+    """An ash pole, iron-shod at the foot."""
+    im, d = canvas()
+    d.polygon(rot([(61, 8), (67, 8), (67, 104), (61, 104)], 24), fill=INK)
+    d.polygon(rot([(60, 100), (68, 100), (65, 122), (63, 122)], 24), fill=DARK)
+    d.polygon(rot([(60, 36), (68, 36), (68, 50), (60, 50)], 24), fill=DARK)
+    return im
+
+
+def icon_line_winder():
+    """A notched board with line wound round its waist."""
+    im, d = canvas()
+    d.polygon(rot([(46, 14), (82, 14), (82, 30), (74, 36), (74, 92), (82, 98), (82, 114), (46, 114), (46, 98), (54, 92),
+                   (54, 36), (46, 30)], 18), fill=INK)
+    for y in range(40, 90, 7):
+        d.line(rot([(50, y), (78, y + 4)], 18), fill=DARK, width=4)
+    d.line(rot([(78, 88), (96, 104), (92, 112)], 18), fill=DARK, width=3)
+    return im
+
+
+def icon_healer_pack():
+    """A rolled pack done up with three straps."""
+    im, d = canvas()
+    d.rounded_rectangle((16, 42, 112, 96), radius=26, fill=INK)
+    for x in (38, 60, 82):
+        d.rectangle((x, 40, x + 8, 98), fill=DARK)
+    d.rounded_rectangle((34, 28, 94, 44), radius=7, fill=(196, 184, 160, 255))
+    return im
+
+
+# --- Tarnhall's and the Coldwell's points of interest (docs/lore/POI.md 5, 8)
+def icon_vat_dipper():
+    """A long-handled dipper, the bowl's lip worn flat."""
+    im, d = canvas()
+    d.polygon(rot([(61, 6), (67, 6), (67, 86), (61, 86)], -32), fill=INK)
+    c = rot([(64, 98)], -32)[0]
+    d.chord((c[0] - 22, c[1] - 20, c[0] + 22, c[1] + 20), 20, 200, fill=INK)
+    d.chord((c[0] - 14, c[1] - 12, c[0] + 14, c[1] + 12), 20, 200, fill=DARK)
+    return im
+
+
+def icon_melt_flowers():
+    """A tied bunch: five-petalled heads on stems, a turn of grass round them."""
+    im, d = canvas()
+    for (x, y) in ((40, 34), (64, 22), (88, 34), (52, 52), (78, 54)):
+        d.line([(64, 116), (x, y)], fill=DARK, width=3)
+    for (x, y, r) in ((40, 34, 13), (64, 22, 14), (88, 34, 13), (52, 52, 10), (78, 54, 10)):
+        for k in range(5):
+            a = math.radians(72 * k - 90)
+            d.ellipse((x + math.cos(a) * r * 0.6 - r * 0.5, y + math.sin(a) * r * 0.6 - r * 0.5,
+                       x + math.cos(a) * r * 0.6 + r * 0.5, y + math.sin(a) * r * 0.6 + r * 0.5), fill=INK)
+        d.ellipse((x - 4, y - 4, x + 4, y + 4), fill=EMBER)
+    d.line([(54, 92), (74, 96)], fill=INK, width=5)
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     import json

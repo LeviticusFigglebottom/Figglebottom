@@ -240,10 +240,18 @@
      "at": "npc:ivo"
     },
     {
+     "flag": "ks_ivo_pole",
+     "line": "Ivo says he can hear the ice through his feet."
+    },
+    {
      "flag": "ks_ivo_supper",
      "objective": "Look for Ivo's supper in the westmost fish-house, in RIME.",
      "line": "Took the ladle out of Ivo's supper pot in the westmost fish-house. The pot was still on its hook, frozen, with the ladle standing up in it.",
      "at": "pickup:kettle_ladle"
+    },
+    {
+     "flag": "ks_ivo_line",
+     "line": "Ivo says the line holds either way round."
     },
     {
      "flag": "ks_ivo_mitten_found",
@@ -357,6 +365,10 @@
      "objective": "Fetch Ottar's stick from just inside the hall's front doors. In RIME the doors are barred from the inside: the only way into the hall is the frost veil at the Byres.",
      "line": "Took Ottar's stick from inside the barred doors of the hall.",
      "at": "pickup:ottar_staff"
+    },
+    {
+     "flag": "ks_ottar_pair",
+     "line": "Ottar says the other stick is his wife's, and that she is at home."
     },
     {
      "flag": "ks_ottar_staff",
@@ -538,6 +550,16 @@
      "flag": "ks_melt_flowers",
      "objective": "Pick a bunch of flowers at the Flower Bank on the Upwater, in THAW, and throw them in at the water's edge at the Wellhead.",
      "line": "Threw a bunch of Melt flowers into the water at the Wellhead. Wren watched them out of sight."
+    }
+   ]
+  },
+  {
+   "id": "melt_flowers",
+   "title": "Melt flowers",
+   "steps": [
+    {
+     "flag": "ks_melt_flowers",
+     "line": "The flowers went down the water. Wren watched them out of sight."
     }
    ]
   }

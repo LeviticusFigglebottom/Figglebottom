@@ -308,7 +308,8 @@ def audit(area_id):
              "root_tangle", "duckboard_4m", "reed_clump"}
     manifest = json.load(open("assets/kit/manifest.json")) if os.path.exists("assets/kit/manifest.json") else {}
     ground = [p for p in placed if p.get("kit", "") not in ARCH
-              and p.get("kit", "") not in MOUNTED and p.get("kit", "") not in DECAL]
+              and p.get("kit", "") not in MOUNTED and p.get("kit", "") not in DECAL
+              and not p.get("on")]      # (set down on or in another thing on purpose: oars in a boat)
     for i in range(len(ground)):
         ka = ground[i].get("kit", ""); ta = ground[i].get("tag", "base"); pa = v3(ground[i]["at"])
         for j in range(i + 1, len(ground)):

@@ -19,6 +19,13 @@ var stand_in_for := ""
 ## builder leaves such a spawner out of a rebuilt area; this keeps a rest in
 ## the same visit from seating them again.
 var absent_flag := ""
+## the area spec's own id for this foe, and the ids of the foes it waits on
+## ("wakes_with"): its sight and hearing are data, and they are nought until
+## one of those is struck (or it is)
+var spawn_id := ""
+var wakes_with: Array = []
+## enemy data set for this place only (the area spec's "rise_time")
+var cfg_over := {}
 
 var current: Enemy = null
 
@@ -49,12 +56,38 @@ func respawn() -> void:
 		c["name"] = stand_in_for.capitalize()
 		current.cfg = c
 		current.set_meta("roster_id", stand_in_for)
+	if not cfg_over.is_empty():
+		var oc: Dictionary = current.cfg.duplicate(true)
+		oc.merge(cfg_over, true)
+		current.cfg = oc
 	current.idle_pose = pose
 	add_child(current)
+	if not wakes_with.is_empty():
+		var woken: Dictionary = current.cfg
+		var deaf: Dictionary = woken.duplicate(true)
+		deaf.merge({"aggro_sight": 0.0, "aggro_hear": 0.0}, true)
+		current.cfg = deaf
+		_bind_wakes.call_deferred(current, woken)
 	current.global_position = global_position
 	current.vis.rotation.y = deg_to_rad(face_deg)
 	if dead_once:
 		current.died.connect(func(_e): World.set_area_flag(area_id, spawn_flag))
+
+## The foes this one waits on are spawned by now: the first of them struck
+## rouses it.
+func _bind_wakes(mine: Enemy, woken: Dictionary) -> void:
+	if mine == null or not is_instance_valid(mine):
+		return
+	var wake := func(_e):
+		if is_instance_valid(mine) and mine.cfg != woken:
+			mine.cfg = woken
+			mine.rouse()
+	mine.struck.connect(wake)
+	for n in get_tree().get_nodes_in_group(RH.GROUP_RESPAWN_ON_REST):
+		var sp := n as Spawner
+		if sp == null or not (sp.spawn_id in wakes_with) or sp.current == null or not is_instance_valid(sp.current):
+			continue
+		sp.current.struck.connect(wake)
 
 ## A released Holdfast that stays where it sat (data "release_stays": the
 ## Leadvoice, COLDWELL.md 6 and 9) is still there in a rebuilt area. Without

@@ -341,6 +341,19 @@
     "take_item": true,
     "set_flag": "ks_ivo_mitten",
     "toast": "Ivo takes the mitten."
+   },
+   {
+    "needs_item": "item_sounding_pole",
+    "absent_flag": "ks_ivo_pole",
+    "take_item": false,
+    "set_flag": "ks_ivo_pole"
+   },
+   {
+    "needs_item": "item_line_winder",
+    "absent_flag": "ks_ivo_line",
+    "take_item": true,
+    "set_flag": "ks_ivo_line",
+    "toast": "Ivo takes the winder."
    }
   ],
   "lines_when": [
@@ -355,6 +368,19 @@
     "flag": "ks_ivo_supper",
     "lines": [
      "Fish again. He only knows the one way. You'd think in sixty years."
+    ]
+   },
+   {
+    "flag": "ks_ivo_pole",
+    "lines": [
+     "That's Grandfather's. He knocks on everything.",
+     "You don't need it. You can hear ice through your feet, if you're any good."
+    ]
+   },
+   {
+    "flag": "ks_ivo_line",
+    "lines": [
+     "That's mine. He says I wind it backwards. It holds, doesn't it?"
     ]
    }
   ],
@@ -514,6 +540,12 @@
     "take_item": true,
     "set_flag": "ks_guest_tally",
     "toast": "Lusse takes the tally."
+   },
+   {
+    "needs_item": "item_vat_dipper",
+    "absent_flag": "ks_vat_dipper_shown",
+    "take_item": false,
+    "set_flag": "ks_vat_dipper_shown"
    }
   ],
   "lines_when": [
@@ -541,6 +573,12 @@
     "flag": "ks_goat_song",
     "lines": [
      "There. Now you'll have it in your head till the Melt. I'm not sorry."
+    ]
+   },
+   {
+    "flag": "ks_vat_dipper_shown",
+    "lines": [
+     "He's had that vat filled twice since noon. He counts the horns, not the guests."
     ]
    }
   ]
@@ -570,6 +608,12 @@
     "take_item": true,
     "set_flag": "ks_ottar_staff",
     "toast": "Ottar takes his stick."
+   },
+   {
+    "needs_item": "item_rowan_stick",
+    "absent_flag": "ks_ottar_pair",
+    "take_item": false,
+    "set_flag": "ks_ottar_pair"
    }
   ],
   "lines_when": [
@@ -585,6 +629,13 @@
     "lines": [
      "That's my stick. Where was that? I left it by the door.",
      "Well. I'll sit for the end of the song, then."
+    ]
+   },
+   {
+    "flag": "ks_ottar_pair",
+    "lines": [
+     "That's hers. What's that doing up here?",
+     "She's at home. She's got the calving. She'd not leave the calving."
     ]
    }
   ],
@@ -1073,5 +1124,77 @@
   "frozen": true,
   "pose": "lie",
   "_scene": "REACH.md 4: RIME. Laid out at the foot of the fold cairn where she found him, on his back, rimed over. Not a foe; nothing to say."
+ },
+ "landing_guest_a": {
+  "name": "A late guest",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true,
+  "_scene": "POI.md 5.1: two late guests at the boat with its oars left in, THAW. Overheard only.",
+  "overhear": [
+   [
+    "",
+    "Is that the goat one? They've not got far."
+   ],
+   [
+    "",
+    "Ninth verse. I counted from the steps."
+   ],
+   [
+    "",
+    "Then there's time. Leave the oars in, we're not stopping long."
+   ],
+   [
+    "",
+    "You said that last year."
+   ],
+   [
+    "",
+    "Last year there was no fish."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "landing_guest_b": {
+  "name": "A late guest",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true
+ },
+ "cook_a": {
+  "name": "A cook",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true,
+  "_scene": "POI.md 5.3: two cooks at the vat behind the hall, THAW. Overheard only.",
+  "overhear": [
+   [
+    "",
+    "He's sent back for more. Again."
+   ],
+   [
+    "",
+    "There's the forty barrels and that's the lot. I told him."
+   ],
+   [
+    "",
+    "He said open another."
+   ],
+   [
+    "",
+    "Half the far bench isn't eating. They're sat there coughing."
+   ],
+   [
+    "",
+    "Then he'll want it kept hot for them."
+   ]
+  ],
+  "overhear_r": 8.0
+ },
+ "cook_b": {
+  "name": "A cook",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true
  }
 }

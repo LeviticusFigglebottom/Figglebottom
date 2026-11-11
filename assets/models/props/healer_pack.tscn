@@ -1,0 +1,72 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="sealskin"]
+albedo_color = Color(0.460, 0.430, 0.380, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="strap"]
+albedo_color = Color(0.300, 0.200, 0.120, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="linen"]
+albedo_color = Color(0.780, 0.740, 0.640, 1)
+roughness = 0.95
+
+[sub_resource type="CapsuleMesh" id="m0"]
+radius = 0.17
+height = 0.52
+radial_segments = 10
+material = SubResource("sealskin")
+
+[sub_resource type="CylinderMesh" id="m1"]
+top_radius = 0.176
+bottom_radius = 0.176
+height = 0.035
+radial_segments = 8
+material = SubResource("strap")
+
+[sub_resource type="CylinderMesh" id="m2"]
+top_radius = 0.176
+bottom_radius = 0.176
+height = 0.035
+radial_segments = 8
+material = SubResource("strap")
+
+[sub_resource type="CylinderMesh" id="m3"]
+top_radius = 0.176
+bottom_radius = 0.176
+height = 0.035
+radial_segments = 8
+material = SubResource("strap")
+
+[sub_resource type="CylinderMesh" id="m4"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 0.3
+radial_segments = 8
+material = SubResource("linen")
+
+[node name="HealerPack" type="Node3D"]
+
+[node name="Body" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Part0" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0.17, 0)
+mesh = SubResource("m0")
+
+[node name="Part1" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.15, 0.17, 0)
+mesh = SubResource("m1")
+
+[node name="Part2" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0.17, 0)
+mesh = SubResource("m2")
+
+[node name="Part3" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.15, 0.17, 0)
+mesh = SubResource("m3")
+
+[node name="Part4" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0.35, 0.02)
+mesh = SubResource("m4")

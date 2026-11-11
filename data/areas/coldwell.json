@@ -140,22 +140,22 @@
     ],
     [
      898.39,
-     155.21,
+     155.07,
      -469.29
     ],
     [
      896.4,
-     153.97,
+     154.35,
      -469.18
     ],
     [
      894.4,
-     152.83,
+     153.69,
      -469.07
     ],
     [
      892.4,
-     152.17,
+     153.17,
      -468.96
     ],
     [
@@ -781,22 +781,22 @@
     ],
     [
      898.39,
-     155.33,
+     155.19,
      -469.29
     ],
     [
      896.4,
-     154.09,
+     154.47,
      -469.18
     ],
     [
      894.4,
-     152.95000000000002,
+     153.81,
      -469.07
     ],
     [
      892.4,
-     152.29,
+     153.29,
      -468.96
     ],
     [
@@ -1491,7 +1491,322 @@
   }
  ],
  "boxes": [],
- "props": [],
+ "props": [
+  {
+   "kit": "cw_flower_basket",
+   "at": [
+    734.28,
+    89.53,
+    -404.85
+   ],
+   "rot": 35,
+   "tag": "thaw",
+   "collide": false
+  },
+  {
+   "kit": "cw_flower_bunch",
+   "at": [
+    732.09,
+    89.47,
+    -405.51
+   ],
+   "rot": 0,
+   "tag": "thaw",
+   "collide": false,
+   "scale": 1.5
+  },
+  {
+   "kit": "cw_flower_bunch",
+   "at": [
+    733.01,
+    89.82,
+    -406.19
+   ],
+   "rot": 55,
+   "tag": "thaw",
+   "collide": false,
+   "scale": 1.5
+  },
+  {
+   "kit": "cw_flower_bunch",
+   "at": [
+    734.36,
+    89.53,
+    -406.6
+   ],
+   "rot": 110,
+   "tag": "thaw",
+   "collide": false,
+   "scale": 1.5
+  },
+  {
+   "kit": "cw_flower_bunch",
+   "at": [
+    735.53,
+    89.88,
+    -407.16
+   ],
+   "rot": 165,
+   "tag": "thaw",
+   "collide": false,
+   "scale": 1.5
+  },
+  {
+   "kit": "cw_flower_bunch",
+   "at": [
+    736.61,
+    89.57,
+    -407.14
+   ],
+   "rot": 220,
+   "tag": "thaw",
+   "collide": false,
+   "scale": 1.5
+  },
+  {
+   "kit": "cw_flower_bunch",
+   "at": [
+    736.5,
+    89.47,
+    -406.03
+   ],
+   "rot": 275,
+   "tag": "thaw",
+   "collide": false,
+   "scale": 1.5
+  },
+  {
+   "kit": "cw_flower_bunch",
+   "at": [
+    740.44,
+    89.26,
+    -392.33
+   ],
+   "rot": 0,
+   "tag": "rime",
+   "collide": false,
+   "on": "hands"
+  },
+  {
+   "kit": "cw_shelter",
+   "at": [
+    802.08,
+    117.99,
+    -457.34
+   ],
+   "rot": 39.29,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_staff_rack",
+   "at": [
+    802.18,
+    118.02,
+    -454.06
+   ],
+   "rot": 39.29,
+   "tag": "thaw"
+  },
+  {
+   "kit": "cw_staff_rack_full",
+   "at": [
+    802.18,
+    118.02,
+    -454.06
+   ],
+   "rot": 39.29,
+   "tag": "rime"
+  },
+  {
+   "kit": "cw_staff_heap",
+   "at": [
+    799.15,
+    118.05,
+    -456.49
+   ],
+   "rot": 39.29,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "cw_staff_heap",
+   "at": [
+    803.33,
+    118.02,
+    -459.91
+   ],
+   "rot": 39.29,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "cw_staff_heap",
+   "at": [
+    805.43,
+    118.1,
+    -458.21
+   ],
+   "rot": -50.71,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "cw_rope_rail",
+   "at": [
+    814.63,
+    121.48,
+    -455.13
+   ],
+   "rot": 26.57,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_rope_rail",
+   "at": [
+    817.51,
+    122.78,
+    -456.57
+   ],
+   "rot": 26.57,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_rope_rail",
+   "at": [
+    820.39,
+    124.18,
+    -458.01
+   ],
+   "rot": 26.57,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_ice_column_b",
+   "at": [
+    794.07,
+    115.62,
+    -449.43
+   ],
+   "rot": 39.29,
+   "tag": "rime",
+   "collide": false,
+   "embed": true
+  },
+  {
+   "kit": "cw_ice_column_c",
+   "at": [
+    812.43,
+    124.4,
+    -463.14
+   ],
+   "rot": 39.29,
+   "tag": "rime",
+   "collide": false,
+   "embed": true
+  },
+  {
+   "kit": "cw_ice_column_a",
+   "at": [
+    820.24,
+    127.55,
+    -466.71
+   ],
+   "rot": 39.29,
+   "tag": "rime",
+   "collide": false,
+   "embed": true
+  },
+  {
+   "kit": "cw_slab_bench",
+   "at": [
+    895.93,
+    154.76,
+    -471.35
+   ],
+   "rot": 3.18,
+   "tag": "thaw"
+  },
+  {
+   "kit": "cw_slab_bench_snow",
+   "at": [
+    895.93,
+    154.76,
+    -471.35
+   ],
+   "rot": 3.18,
+   "tag": "rime"
+  },
+  {
+   "kit": "cw_rope_rail",
+   "at": [
+    894.22,
+    154.35,
+    -469.71
+   ],
+   "rot": 3.18,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_rope_rail",
+   "at": [
+    897.22,
+    154.67,
+    -469.87
+   ],
+   "rot": 3.18,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_rope_rail",
+   "at": [
+    892.79,
+    154.56,
+    -471.08
+   ],
+   "rot": 93.18,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_thread_post",
+   "at": [
+    903.5,
+    156.99,
+    -484.0
+   ],
+   "rot": 200,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_dipper_trough",
+   "at": [
+    908.4,
+    156.88,
+    -472.6
+   ],
+   "rot": 110,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_offering_cairn",
+   "at": [
+    905.2,
+    157.04,
+    -487.4
+   ],
+   "rot": 20,
+   "tag": "base"
+  },
+  {
+   "kit": "cw_water_yoke",
+   "at": [
+    906.3,
+    156.95,
+    -471.5
+   ],
+   "rot": 110,
+   "tag": "base"
+  }
+ ],
  "landmarks": [
   {
    "scene": "res://assets/models/enemies/upwalker.glb",
@@ -1706,7 +2021,7 @@
    "scene": "res://assets/models/enemies/unsung.glb",
    "at": [
     896.7989705231171,
-    153.72,
+    154.1,
     -469.18
    ],
    "rot": 93.16,
@@ -1964,6 +2279,18 @@
     3.0,
     1.6
    ]
+  },
+  {
+   "scene": "res://assets/models/enemies/upwalker.glb",
+   "at": [
+    740.2,
+    88.28,
+    -392.24
+   ],
+   "rot": 111.04,
+   "tag": "rime",
+   "pose": "idle@0.55",
+   "scale": 0.86
   }
  ],
  "hearths": [
@@ -1982,7 +2309,7 @@
    "name": "the Ice-Falls",
    "at": [
     799.81,
-    115.94,
+    116.0,
     -450.5
    ],
    "rot": 230
@@ -2011,16 +2338,6 @@
   },
   {
    "enemy": "upwalker",
-   "id": "upwalker_falls",
-   "at": [
-    819.6,
-    124.55,
-    -460.8
-   ],
-   "face": 230
-  },
-  {
-   "enemy": "upwalker",
    "id": "upwalker_high",
    "at": [
     872.0,
@@ -2033,9 +2350,9 @@
    "enemy": "unsung",
    "id": "unsung_level_a",
    "at": [
-    906.0,
+    907.5,
     157.12,
-    -484.0
+    -482.4
    ],
    "face": 270
   },
@@ -2060,6 +2377,18 @@
    "face": 270,
    "dead_once": true,
    "frost_veil_id": "wellhead_veil"
+  },
+  {
+   "enemy": "upwalker",
+   "id": "upwalker_falls",
+   "at": [
+    802.57,
+    118.09,
+    -458.32
+   ],
+   "face": 219.29,
+   "pose": "sit",
+   "rise_time": 2.4
   }
  ],
  "frost_veils": [
@@ -2109,7 +2438,50 @@
    "params": {
     "release_flag": "ks_leadvoice_released"
    }
+  },
+  {
+   "script": "res://src/world/offering.gd",
+   "at": [
+    909.6,
+    156.86,
+    -470.0
+   ],
+   "tag": "thaw",
+   "params": {
+    "item": "item_melt_flowers",
+    "set_flag": "ks_melt_flowers",
+    "prompt": "Throw them in",
+    "speaker": "wren",
+    "line": "And that one."
+   }
   }
+ ],
+ "wayside_clear": [
+  [
+   734.56,
+   -405.5,
+   6.5
+  ],
+  [
+   802.12,
+   -456.66,
+   7.5
+  ],
+  [
+   895.62,
+   -471.64,
+   6.5
+  ],
+  [
+   903.5,
+   -485.0,
+   6.0
+  ],
+  [
+   908.4,
+   -471.5,
+   5.0
+  ]
  ],
  "plaques": [
   {
@@ -2120,6 +2492,72 @@
    ],
    "rot": 240,
    "text": "THE COLDWELL\n\nThe river's source, under the glacier's lip."
+  },
+  {
+   "wayside": false,
+   "at": [
+    800.42,
+    117.99,
+    -453.2
+   ],
+   "rot": 39.29,
+   "tag": "thaw",
+   "text": "THE ICE-FALLS\n\nYou cut a stick to come up, and leave it here for someone going down.\nThe rack is nearly empty. Everyone is up at the water."
+  },
+  {
+   "wayside": false,
+   "at": [
+    800.42,
+    117.99,
+    -453.2
+   ],
+   "rot": 39.29,
+   "tag": "rime",
+   "text": "THE ICE-FALLS\n\nThe rack is full. There are more against the wall, and more on the ground.\nNobody has wanted one going down."
+  },
+  {
+   "wayside": false,
+   "at": [
+    893.25,
+    154.77,
+    -472.71
+   ],
+   "rot": 3.18,
+   "tag": "thaw",
+   "text": "THE WELLHEAD STEPS\n\nYou can hear it from here.\nChildren are carried the last part, so they see it all at once."
+  },
+  {
+   "wayside": false,
+   "at": [
+    893.25,
+    154.77,
+    -472.71
+   ],
+   "rot": 3.18,
+   "tag": "rime",
+   "text": "THE WELLHEAD STEPS\n\nThe snow on this bench has been sat in, at the left end only.\nSomething was put down at the right end, and picked up again."
+  },
+  {
+   "wayside": false,
+   "at": [
+    901.7,
+    157.15,
+    -483.0
+   ],
+   "rot": 250,
+   "tag": "thaw",
+   "text": "THE WELLHEAD\n\nA thread on the post for each one going down the water this year.\nBlue, red and yellow. Eleven. It was a mild winter."
+  },
+  {
+   "wayside": false,
+   "at": [
+    901.7,
+    157.15,
+    -483.0
+   ],
+   "rot": 250,
+   "tag": "rime",
+   "text": "THE WELLHEAD\n\nThe same eleven threads, white with frost.\nNobody came up to tie the next year's."
   }
  ],
  "pickups": [
@@ -2134,6 +2572,19 @@
    "count": 2,
    "tag": "rime",
    "label": "Pry up what the ice holds"
+  },
+  {
+   "wayside": false,
+   "id": "melt_flowers",
+   "at": [
+    735.02,
+    89.54,
+    -406.0
+   ],
+   "item": "item_melt_flowers",
+   "tag": "thaw",
+   "label": "Pick a bunch",
+   "scene": "res://assets/models/props/melt_flowers.tscn"
   }
  ],
  "portals": [
@@ -2166,6 +2617,31 @@
     922.0,
     -478.0,
     14.0
+   ],
+   [
+    734.56,
+    -405.5,
+    6.5
+   ],
+   [
+    802.12,
+    -456.66,
+    7.5
+   ],
+   [
+    895.62,
+    -471.64,
+    6.5
+   ],
+   [
+    903.5,
+    -485.0,
+    6.0
+   ],
+   [
+    908.4,
+    -471.5,
+    5.0
    ]
   ],
   "rules": [

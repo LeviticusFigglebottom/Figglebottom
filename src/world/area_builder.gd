@@ -124,6 +124,9 @@ static func build(area_id: String) -> Area:
 		g.area_id = area_id
 		g.locked_prompt = spec.get("locked_prompt", "Barred from the other side")
 		g.door_width = float(spec.get("width", 3.6))
+		g.open_prompt = spec.get("open_prompt", g.open_prompt)
+		g.open_toast = spec.get("open_toast", g.open_toast)
+		g.leaf_kit = spec.get("leaf", g.leaf_kit)
 		if spec.has("tag"):
 			g.layer_bit = _tag_bit(String(spec["tag"]))
 			area.attach(g, String(spec["tag"]))    # (Tarnhall's doors: barred in RIME only)
@@ -155,6 +158,10 @@ static func build(area_id: String) -> Area:
 		s.pose = String(spec.get("pose", ""))
 		s.absent_flag = String(spec.get("absent_flag", ""))
 		s.spawn_flag = "slain_" + spec.get("id", spec.get("enemy", "e"))
+		s.spawn_id = String(spec.get("id", ""))
+		s.wakes_with = spec.get("wakes_with", [])
+		if spec.has("rise_time"):
+			s.cfg_over["rise_time"] = float(spec["rise_time"])
 		s.area_id = area_id
 		var tag: String = spec.get("tag", "rime")
 		area.attach(s, tag)
@@ -520,7 +527,7 @@ static func _prop_collides(spec: Dictionary) -> bool:
 ## Kits that are walls/openings you must pass through — these keep exact
 ## trimesh collision. Anything NOT here gets a solid convex blocker.
 const STRUCTURAL_KITS := ["wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "floor_4x4",
-	"fence_iron_4m", "gate_iron", "roof_slab_4m", "frost_veil_frame"]
+	"fence_iron_4m", "gate_iron", "roof_slab_4m", "frost_veil_frame", "cw_shelter"]
 
 static func _is_structural(kit) -> bool:
 	return String(kit) in STRUCTURAL_KITS

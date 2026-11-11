@@ -182,7 +182,7 @@
    "at": [
     -57.0,
     0.08,
-    -330.15
+    -331.65
    ],
    "size": [
     14.0,
@@ -2387,12 +2387,12 @@
    "min": [
     -64.0,
     -1.0,
-    -330.75
+    -332.25
    ],
    "max": [
     -50.0,
     0.8,
-    -329.55
+    -331.05
    ],
    "kind": "thin",
    "tag": "rime"
@@ -2555,6 +2555,23 @@
    "gate_doors": [],
    "open": [],
    "wall_h": 2.8
+  },
+  {
+   "id": "healer_house",
+   "center": [
+    -55.5,
+    -346.66
+   ],
+   "size": [
+    6,
+    6
+   ],
+   "yaw": 0,
+   "y": 1.78,
+   "doors": [],
+   "gate_doors": [],
+   "open": [],
+   "wall_h": 2.6
   }
  ],
  "boxes": [
@@ -2895,7 +2912,7 @@
    "max": [
     -59.8,
     2.12,
-    -315.26
+    -321.26
    ],
    "mat": "M_wood",
    "tag": "base"
@@ -2919,12 +2936,12 @@
    "min": [
     -62.02,
     -4.0,
-    -315.58
+    -321.58
    ],
    "max": [
     -61.78,
     1.9200000000000002,
-    -315.34
+    -321.34
    ],
    "mat": "M_wood_dark",
    "collide": false,
@@ -4396,7 +4413,7 @@
    "max": [
     -58,
     8.0,
-    -319.91
+    -325.91
    ],
    "tag": "thaw",
    "nav_only": true
@@ -4410,7 +4427,7 @@
    "max": [
     -56,
     8.0,
-    -319.89
+    -325.89
    ],
    "tag": "thaw",
    "nav_only": true
@@ -4424,7 +4441,7 @@
    "max": [
     -54,
     8.0,
-    -319.77
+    -325.77
    ],
    "tag": "thaw",
    "nav_only": true
@@ -4438,7 +4455,7 @@
    "max": [
     -52.6,
     8.0,
-    -319.54
+    -325.54
    ],
    "tag": "thaw",
    "nav_only": true
@@ -5371,12 +5388,12 @@
    "min": [
     -64.3,
     -1.0,
-    -331.05
+    -332.55
    ],
    "max": [
     -49.7,
     8.0,
-    -329.25
+    -330.75
    ],
    "tag": "rime",
    "nav_only": true
@@ -5448,11 +5465,7 @@
    ],
    "rot": 84,
    "tag": "thaw",
-   "scale": [
-    1.5,
-    1.4,
-    1.6
-   ],
+   "scale": 1.5,
    "embed": true
   },
   {
@@ -5481,9 +5494,9 @@
   {
    "kit": "boat",
    "at": [
-    -60,
+    -70,
     0.05,
-    -336.89
+    -334.95
    ],
    "rot": 100,
    "tag": "thaw",
@@ -5492,9 +5505,9 @@
   {
    "kit": "boat",
    "at": [
-    -57,
+    -67,
     -1.0,
-    -342.89
+    -340.95
    ],
    "rot": 125,
    "tag": "rime",
@@ -5582,79 +5595,49 @@
   {
    "kit": "fish_kettle",
    "at": [
-    -22,
-    -7.3,
-    -309.49
+    -26.5,
+    1.84,
+    -310.44
    ],
-   "rot": 206
+   "rot": 174.5
   },
   {
    "kit": "fish_kettle",
    "at": [
-    -17,
-    -4.59,
-    -307.28
-   ],
-   "rot": 241
-  },
-  {
-   "kit": "net_frame",
-   "at": [
-    -124.0,
+    -9.5,
     1.82,
-    -295.43
+    -304.16
    ],
-   "rot": -4,
-   "collide": false
+   "rot": 293.5
   },
   {
    "kit": "drying_rack",
-   "at": [
-    -117.5,
-    1.77,
-    -297.52
-   ],
-   "rot": 0,
-   "collide": false
-  },
-  {
-   "kit": "creel_stack",
    "at": [
     -98.0,
     1.79,
     -302.85
    ],
-   "rot": -1,
+   "rot": 0,
    "collide": false
   },
   {
-   "kit": "rope_coil",
-   "at": [
-    -96.6,
-    1.77,
-    -302.65
-   ],
-   "rot": 120,
-   "collide": false
-  },
-  {
-   "kit": "net_frame",
+   "kit": "boat_upturned",
    "at": [
     -0.5,
-    1.79,
-    -296.68
+    1.78,
+    -297.68
    ],
-   "rot": 3,
-   "collide": false
+   "rot": 90,
+   "collide": true
   },
   {
-   "kit": "rope_coil",
+   "kit": "creel_stack",
    "at": [
     6.0,
     1.77,
     -295.33
    ],
-   "rot": -2,
+   "rot": -1,
    "collide": false
   },
   {
@@ -5664,27 +5647,27 @@
     1.77,
     -295.13
    ],
-   "rot": 200,
+   "rot": 120,
    "collide": false
   },
   {
-   "kit": "drying_rack",
+   "kit": "net_frame",
    "at": [
     12.5,
     1.81,
     -293.3
    ],
-   "rot": 2,
+   "rot": 3,
    "collide": false
   },
   {
-   "kit": "creel_stack",
+   "kit": "rope_coil",
    "at": [
     19.0,
     1.84,
     -292.65
    ],
-   "rot": -3,
+   "rot": -2,
    "collide": false
   },
   {
@@ -5694,17 +5677,17 @@
     1.84,
     -292.45
    ],
-   "rot": 280,
+   "rot": 200,
    "collide": false
   },
   {
-   "kit": "net_frame",
+   "kit": "drying_rack",
    "at": [
     25.5,
     1.8,
     -291.9
    ],
-   "rot": 1,
+   "rot": 2,
    "collide": false
   },
   {
@@ -5722,7 +5705,7 @@
    "at": [
     -61.75,
     2.12,
-    -316.46
+    -322.46
    ],
    "rot": 30,
    "collide": false
@@ -5776,7 +5759,551 @@
    ],
    "rot": 30,
    "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -112.83,
+    7.09,
+    -287.05
+   ],
+   "rot": 90.0,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -113.58,
+    5.27,
+    -291.3
+   ],
+   "rot": 165.0,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -114.33,
+    3.19,
+    -295.55
+   ],
+   "rot": 240.0,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "kf_dog_picket",
+   "at": [
+    -57.0,
+    1.81,
+    -320.34
+   ],
+   "rot": 0,
+   "tag": "base"
+  },
+  {
+   "kit": "kf_fish_cord",
+   "at": [
+    -63.1,
+    1.74,
+    -319.65
+   ],
+   "rot": 90,
+   "tag": "base"
+  },
+  {
+   "kit": "net_frame",
+   "at": [
+    -19.6,
+    2.5,
+    -303.85
+   ],
+   "rot": 0,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "net_frame",
+   "at": [
+    -16.8,
+    2.36,
+    -307.15
+   ],
+   "rot": 180,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "rope_coil",
+   "at": [
+    -21.0,
+    1.77,
+    -306.55
+   ],
+   "rot": 30,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "kf_tool_rack",
+   "at": [
+    -24.6,
+    1.97,
+    -303.65
+   ],
+   "rot": 0,
+   "tag": "base"
+  },
+  {
+   "kit": "kf_ice_hut",
+   "at": [
+    -126.2,
+    1.87,
+    -294.65
+   ],
+   "rot": 4.0,
+   "tag": "thaw"
+  },
+  {
+   "kit": "kf_ice_hut_b",
+   "at": [
+    -123.2,
+    1.8,
+    -295.81
+   ],
+   "rot": 87.0,
+   "tag": "thaw"
+  },
+  {
+   "kit": "kf_ice_hut",
+   "at": [
+    -120.2,
+    1.76,
+    -296.03
+   ],
+   "rot": 2.0,
+   "tag": "thaw"
+  },
+  {
+   "kit": "kf_ice_hut_b",
+   "at": [
+    -117.2,
+    1.77,
+    -297.3
+   ],
+   "rot": 85.0,
+   "tag": "thaw"
+  },
+  {
+   "kit": "kf_ice_hut",
+   "at": [
+    -110.02,
+    0.07,
+    -324.53
+   ],
+   "rot": 215.0,
+   "tag": "rime"
+  },
+  {
+   "kit": "kf_ice_hut_b",
+   "at": [
+    -108.74,
+    0.07,
+    -331.77
+   ],
+   "rot": 395.0,
+   "tag": "rime"
+  },
+  {
+   "kit": "kf_ice_hut",
+   "at": [
+    -115.98,
+    0.07,
+    -333.05
+   ],
+   "rot": 395.0,
+   "tag": "rime"
+  },
+  {
+   "kit": "kf_ice_hut_b",
+   "at": [
+    -117.26,
+    0.07,
+    -325.81
+   ],
+   "rot": 575.0,
+   "tag": "rime"
+  },
+  {
+   "kit": "kf_kettle_tripod",
+   "at": [
+    -113.0,
+    0.07,
+    -328.79
+   ],
+   "rot": 40,
+   "tag": "rime"
+  },
+  {
+   "kit": "kf_door_band",
+   "at": [
+    -109.48,
+    0.82,
+    -331.26
+   ],
+   "rot": 305.0,
+   "tag": "rime",
+   "collide": false,
+   "on": true
+  },
+  {
+   "kit": "kf_jig_frame",
+   "at": [
+    -110.83,
+    0.07,
+    -328.41
+   ],
+   "rot": 170.0,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -109.98,
+    0.07,
+    -328.44
+   ],
+   "rot": 0,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -111.68,
+    0.07,
+    -328.38
+   ],
+   "rot": 70,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_jig_frame",
+   "at": [
+    -112.55,
+    0.07,
+    -331.35
+   ],
+   "rot": 290.0,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -112.58,
+    0.07,
+    -332.2
+   ],
+   "rot": 30,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -112.52,
+    0.07,
+    -330.5
+   ],
+   "rot": 100,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_jig_frame",
+   "at": [
+    -114.97,
+    0.07,
+    -329.14
+   ],
+   "rot": 410.0,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -115.82,
+    0.07,
+    -329.11
+   ],
+   "rot": 60,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -114.12,
+    0.07,
+    -329.17
+   ],
+   "rot": 130,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_jig_frame",
+   "at": [
+    -113.49,
+    0.07,
+    -326.03
+   ],
+   "rot": 530.0,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -113.46,
+    0.07,
+    -325.18
+   ],
+   "rot": 90,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -113.52,
+    0.07,
+    -326.88
+   ],
+   "rot": 160,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_jig_frame",
+   "at": [
+    -117.93,
+    0.07,
+    -335.83
+   ],
+   "rot": 425.0,
+   "tag": "rime",
+   "collide": false
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -118.55,
+    0.07,
+    -336.41
+   ],
+   "rot": 120,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_bough_markers",
+   "at": [
+    -117.31,
+    0.07,
+    -335.25
+   ],
+   "rot": 190,
+   "tag": "rime",
+   "collide": false,
+   "scale": 0.8
+  },
+  {
+   "kit": "kf_windbreak",
+   "at": [
+    -107.29,
+    0.07,
+    -327.78
+   ],
+   "rot": 260.0,
+   "tag": "rime"
+  },
+  {
+   "kit": "kf_ice_blocks",
+   "at": [
+    -111.92,
+    0.07,
+    -334.9
+   ],
+   "rot": 20,
+   "tag": "rime"
+  },
+  {
+   "kit": "kf_ice_blocks",
+   "at": [
+    -118.55,
+    0.07,
+    -329.57
+   ],
+   "rot": 110,
+   "tag": "rime"
+  },
+  {
+   "kit": "door_leaf",
+   "at": [
+    -54.9,
+    1.77,
+    -343.42
+   ],
+   "rot": 0,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "plaque",
+   "at": [
+    -48.4,
+    1.8,
+    -343.81
+   ],
+   "rot": 200,
+   "tag": "thaw",
+   "collide": false
   }
+ ],
+ "landmarks": [
+  {
+   "scene": "res://assets/models/landmarks/lm_sledge.glb",
+   "at": [
+    -55.4,
+    1.81,
+    -317.31
+   ],
+   "rot": 70,
+   "family": "M_wood",
+   "blocker": [
+    1.0,
+    0.8,
+    2.2
+   ]
+  },
+  {
+   "scene": "res://assets/models/enemies/sledge_dog.glb",
+   "at": [
+    -58.5,
+    1.82,
+    -321.3
+   ],
+   "rot": 200,
+   "tag": "thaw",
+   "pose": "walk@0.10"
+  },
+  {
+   "scene": "res://assets/models/enemies/sledge_dog.glb",
+   "at": [
+    -57.5,
+    1.82,
+    -319.17
+   ],
+   "rot": 20,
+   "tag": "thaw",
+   "pose": "walk@0.30"
+  },
+  {
+   "scene": "res://assets/models/enemies/sledge_dog.glb",
+   "at": [
+    -56.4,
+    1.79,
+    -321.3
+   ],
+   "rot": 160,
+   "tag": "thaw",
+   "pose": "walk@0.50"
+  },
+  {
+   "scene": "res://assets/models/enemies/sledge_dog.glb",
+   "at": [
+    -55.5,
+    1.81,
+    -319.12
+   ],
+   "rot": -30,
+   "tag": "thaw",
+   "pose": "walk@0.70"
+  },
+  {
+   "scene": "res://assets/models/landmarks/lm_healer_sledge.glb",
+   "at": [
+    -50.6,
+    1.83,
+    -344.73
+   ],
+   "rot": 25,
+   "family": "M_wood",
+   "blocker": [
+    0.8,
+    0.7,
+    1.7
+   ]
+  }
+ ],
+ "gates": [
+  {
+   "id": "net_cleft",
+   "at": [
+    -14.5,
+    1.81,
+    -305.5
+   ],
+   "rot": -90,
+   "width": 3.0,
+   "leaf": "kf_net_hurdle",
+   "locked_prompt": "Lashed from the other side",
+   "open_prompt": "Cut the lashing",
+   "open_toast": "The hurdle swings in."
+  }
+ ],
+ "wayside_clear": [
+  [
+   -113.86,
+   -280.9,
+   6.0
+  ],
+  [
+   -59.0,
+   -318.91,
+   8.0
+  ],
+  [
+   -18.0,
+   -305.5,
+   9.0
+  ],
+  [
+   -121.7,
+   -296.46,
+   8.0
+  ],
+  [
+   -53.0,
+   -346.86,
+   11.0
+  ]
  ],
  "hearths": [
   {
@@ -5854,7 +6381,7 @@
    "at": [
     -58.0,
     0.15,
-    -323.81
+    -328.49
    ],
    "face": 60
   },
@@ -5863,9 +6390,9 @@
    "stand_in": "hearthhound",
    "id": "dogs_b",
    "at": [
-    -56.5,
+    -56.4,
     0.15,
-    -322.31
+    -327.7
    ],
    "face": 60
   },
@@ -5903,6 +6430,45 @@
    "face": 180,
    "dead_once": true,
    "frost_veil_id": "breathing_hole_veil"
+  },
+  {
+   "enemy": "ice_fisher",
+   "stand_in": "rimewalker",
+   "id": "camp_fisher_a",
+   "at": [
+    -110.91,
+    0.15,
+    -329.47
+   ],
+   "face": 18.0,
+   "pose": "kneel_fish"
+  },
+  {
+   "enemy": "ice_fisher",
+   "stand_in": "rimewalker",
+   "id": "camp_fisher_b",
+   "at": [
+    -114.53,
+    0.15,
+    -330.08
+   ],
+   "face": 320.0,
+   "pose": "kneel_fish"
+  },
+  {
+   "enemy": "sealer",
+   "stand_in": "oarsman",
+   "id": "camp_sealer",
+   "at": [
+    -106.2,
+    0.15,
+    -327.59
+   ],
+   "face": 260.0,
+   "wakes_with": [
+    "camp_fisher_a",
+    "camp_fisher_b"
+   ]
   }
  ],
  "frost_veils": [
@@ -5983,6 +6549,39 @@
    ],
    "rot": 160,
    "text": "KETTLE FJORD\n\nThe ice comes in the Hearth-months, and the fishing moves out onto it."
+  },
+  {
+   "wayside": false,
+   "at": [
+    -114.22,
+    9.11,
+    -279.68
+   ],
+   "rot": -61.44,
+   "tag": "thaw",
+   "text": "THE KETTLE ROAD\n\nYou can smell the kettles from here.\nEvery boat on the water is coming in."
+  },
+  {
+   "wayside": false,
+   "at": [
+    -114.22,
+    9.11,
+    -279.68
+   ],
+   "rot": -61.44,
+   "tag": "rime",
+   "text": "THE KETTLE ROAD\n\nAt the fjord head there is one round of black water with white round its edge.\nEverything else has skinned over."
+  },
+  {
+   "wayside": false,
+   "at": [
+    -48.4,
+    1.8,
+    -343.81
+   ],
+   "rot": 200,
+   "tag": "rime",
+   "text": "THE FAR LANDING\n\nThe healer's sledge is packed and the door is shut behind it.\nShe was waiting for the ice to be made."
   }
  ],
  "pickups": [
@@ -6001,14 +6600,15 @@
   {
    "id": "north_shore_cache",
    "at": [
-    -60.0,
-    0.06,
-    -343.34
+    -48.6,
+    1.81,
+    -348.4
    ],
    "item": "bog_iron",
    "count": 2,
    "tag": "rime",
-   "label": "Pry up what the ice holds"
+   "label": "Pry up what the ice holds",
+   "wayside": false
   },
   {
    "id": "halla_cord",
@@ -6074,6 +6674,58 @@
    "label": "Look at the tracks",
    "set_flag": "ks_ice_tracks_seen",
    "look": "One set of footprints, frozen in, going up the fjord by the thin ice in the middle where nobody walks.\n\nThe left stride is longer than the right. They do not go round anything."
+  },
+  {
+   "wayside": false,
+   "id": "sounding_pole",
+   "at": [
+    -59.2,
+    1.84,
+    -320.01
+   ],
+   "item": "item_sounding_pole",
+   "tag": "rime",
+   "label": "Take the sounding pole",
+   "scene": "res://assets/models/props/sounding_pole.tscn"
+  },
+  {
+   "wayside": false,
+   "id": "cleft_cache",
+   "at": [
+    -18.5,
+    1.77,
+    -304.45
+   ],
+   "item": "bog_iron",
+   "count": 2,
+   "tag": "rime",
+   "label": "Take the net-weights"
+  },
+  {
+   "wayside": false,
+   "id": "line_winder",
+   "at": [
+    -109.97,
+    0.07,
+    -330.91
+   ],
+   "item": "item_line_winder",
+   "tag": "rime",
+   "label": "Take the line-winder",
+   "scene": "res://assets/models/props/line_winder.tscn"
+  },
+  {
+   "wayside": false,
+   "id": "healer_pack",
+   "at": [
+    -51.5,
+    1.83,
+    -344.23
+   ],
+   "item": "item_healer_pack",
+   "tag": "rime",
+   "label": "Unstrap the pack",
+   "scene": "res://assets/models/props/healer_pack.tscn"
   }
  ],
  "portals": [
@@ -6136,6 +6788,11 @@
    [
     -29.0,
     -322.8,
+    7.0
+   ],
+   [
+    -55.5,
+    -346.66,
     7.0
    ],
    [
@@ -6952,21 +7609,6 @@
    {
     "kind": "ice_floe",
     "at": [
-     -104.8,
-     -321.27
-    ],
-    "y": -0.15,
-    "rot": 244,
-    "scale": [
-     2.01,
-     0.6,
-     1.6
-    ],
-    "tag": "rime"
-   },
-   {
-    "kind": "ice_floe",
-    "at": [
      -98.5,
      -336.63
     ],
@@ -7233,6 +7875,24 @@
      1.6
     ],
     "tag": "rime"
+   },
+   {
+    "kind": "boulder",
+    "at": [
+     -115.76,
+     -281.23
+    ],
+    "rot": 40,
+    "scale": 0.8
+   },
+   {
+    "kind": "stone_fence",
+    "at": [
+     -112.96,
+     -283.21
+    ],
+    "rot": 28.56,
+    "scale": 0.45
    }
   ],
   "veg": [
@@ -7339,6 +7999,21 @@
      ]
     ],
     "open": []
+   },
+   {
+    "id": "healer_house",
+    "center": [
+     -55.5,
+     -346.66
+    ],
+    "size": [
+     6,
+     6
+    ],
+    "yaw": 0,
+    "y": 1.8,
+    "doors": [],
+    "open": []
    }
   ],
   "thickets": [],
@@ -7375,7 +8050,7 @@
     ],
     "max": [
      -59.8,
-     -315.26
+     -321.26
     ],
     "y": 2.12
    },
@@ -7500,6 +8175,16 @@
     "y": 0.05
    }
   ],
-  "gates": []
+  "gates": [
+   {
+    "id": "net_cleft",
+    "at": [
+     -14.5,
+     1.81,
+     -305.5
+    ],
+    "span": "z"
+   }
+  ]
  }
 }
