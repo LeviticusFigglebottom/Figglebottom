@@ -2,6 +2,42 @@
 
 Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based on `origin/fix/slice-qa`). Newest entry at the top.
 
+## 2026-11-11 (8): clean stopping point, ready to merge
+
+**Branch `art/world-fidelity`, head: the commit that adds this entry (on top of `844c9ad`, which merges `main` at `103a252` with no conflicts).** I still cannot message you (trusted-device refusal), so this is the report you asked for.
+
+**Nothing is half-built.** Every piece is live and complete; nothing needed gating or reverting. One switch is deliberately off: `render/exposure/auto` (auto-exposure), untested on hardware.
+
+**What changed**
+
+| Area | Change |
+|---|---|
+| Buildings | Real construction detail inside 70 m (`HouseDetail`, `MeshBuf`); barrow facades and kerbs; barrow mounds collide as the visible mound; plain slabs past 70 m. Collision and the `houses` API unchanged. |
+| Interiors | Trusses, benches, kerbed hearths, hung goods; one `HouseProbe` per house (warm THAW, cold RIME ambient). |
+| Ground at buildings | Footprints in the terrain shader: contact shadow, bare earth, drip line, worn doorways, no snow under roofs; RIME drifts as geometry. |
+| Exposure | THAW scatters and blooms less, shade lifted; Kettle toned down in `gen_kettle.py`; tier 2 eases SSAO and starts bloom later. |
+| Cliffs | Uneven beds, ledges, joints, macro normal in `terrain.gdshader`. |
+| Snow | Drift shading, wind ripple, sparkle. |
+| Horizon | Horizon mesh and ground past 120 m break up into patches and outcrops. |
+| Owner's report | Trap audit + `TrapWarden` (five regions), Netmender welded, boss LODs off, dissolve double-sided, `HouseYard` props, `Wayside` groups. |
+
+**Verified on the merged state (local, lavapipe):** smoke, houses, traps, steading, lowe, kettle, tarnhall, thornwold, reach, coldwell, boss, encounters, and the lowe, kettle, thornwold, reach and coldwell encounter suites: 0 failures. Edge and placement audits clean. Originality OK.
+
+- **`tarnhall_encounters`: 1 failure, "two benches".** The same timing flake as before (it failed 2 of 4 runs on untouched base, and passed here earlier today). Not from this branch.
+- **CI:** at `3ca9229` only `deltas` (`saves carry save_version 3`) and `fullgame_lowe` (`lowe_barrows cleared, its memory as it was left`) failed, the same two checks that were failing on `main` then. The run at `2b18dcd` failed all five jobs in 3 seconds with no logs: the suites never started. Runs for `0480423` and `57eed4b` were still going when I looked.
+- **Not run here:** `fullslice`, `fullgame_*`, `endings`, `deltas`, `anim` on the final merged state.
+
+**Perf impact** (lavapipe frame counters, tier 1, first pass only): 0 % to +22 % draw calls and +3 % to +35 % triangles per frame at the 25 cameras; a house is 19k to 74k triangles (was 5k to 13k) and five plain meshes past 70 m. Area build +0.2 to +0.8 s. The terrain shader grew (footprint loop near houses, cliff relief, snow, far breakup) and yard and wayside props add colliding pieces; **neither has been measured on a GPU.**
+
+**What is left**
+
+1. A real-GPU re-shoot of this branch (questions listed in entry 5).
+2. Kettle's spire silhouettes and straight horizon edges (heightfield and far-grid work).
+3. Kettle, Thornwold and Tarnhall got almost no wayside groups; they need hand-authored ones. New distinct props need Tripo.
+4. Other clip-through spots: only the barrow mounds were found. The owner has not said where else.
+5. Boss gaps were checked in a still only.
+6. Door leaves and benches do not collide (entry 2, item 3).
+
 ## 2026-11-10 (7): the owner's report, directly to this session
 
 The owner wrote to me: terrain you can clip through, ditches you cannot get out of, bosses with gaps in their models, and areas that want more props and points of interest. This crosses lanes (boss assets, terrain tools, area_builder, test tools); I took it because the owner asked.
