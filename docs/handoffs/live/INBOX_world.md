@@ -40,7 +40,7 @@ Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based o
 
 **Shots.** `docs/screens/biome_before_<area>_<state>.png` and `biome_after_...`, one framing per region, HUD off. `docs/screens/biome_sheet_thaw.png` and `_rime.png`: top row before, bottom row after, regions in route order. The RIME after shots predate the last small change (RIME sun 1.55 to 1.5).
 
-**Tests (local, lavapipe).** SUITES_PLACEHOLDER
+**Tests (local, lavapipe).** All exit 0 on the final data: `smoke`, `houses`, `traps`, the seven area suites (`steading`, `lowe`, `kettle`, `tarnhall`, `thornwold`, `reach`, `coldwell`) and the seven encounter suites (`tarnhall_encounters` included, no flake this run). `tools/audit_edges.py` and `tools/audit_areas.py` clean in every area and both states. `check_originality.sh --all` OK. Not run: `fullslice`, `fullgame_*`, and the suites this work does not touch.
 
 **Not done**
 
