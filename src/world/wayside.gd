@@ -46,7 +46,8 @@ static func build(area: Area, def: Dictionary) -> int:
 	for key in ["hearths", "spawners", "pickups", "plaques", "npcs", "frost_veils"]:
 		for sp in def.get(key, []):
 			var at: Array = sp.get("at", [])
-			if at.size() >= 3:
+			# ("wayside": false: an authored place brings its own things)
+			if at.size() >= 3 and sp.get("wayside", true):
 				anchors.append(Vector3(float(at[0]), float(at[1]), float(at[2])))
 	var warden := area.get_node_or_null("TrapWarden") as TrapWarden
 	var n := 0
@@ -93,7 +94,7 @@ static func build(area: Area, def: Dictionary) -> int:
 	for key in ["hearths", "plaques", "pickups"]:
 		for sp in def.get(key, []):
 			var at: Array = sp.get("at", [])
-			if at.size() >= 3:
+			if at.size() >= 3 and sp.get("wayside", true):
 				seeds.append(Vector3(float(at[0]), float(at[1]), float(at[2])))
 	var put: Array = []
 	for sd in seeds:
@@ -261,6 +262,10 @@ static func _in_thicket(def: Dictionary, p: Vector3, r: float) -> bool:
 ## small prop may stand closer to those. Gates, hearths, portals, foes and
 ## veils always keep their full clearance.
 static func _free(def: Dictionary, p: Vector3, r: float, ks := 1.0) -> bool:
+	# ground an area keeps for its authored places ("wayside_clear": [[x, z, r], ...])
+	for c in def.get("wayside_clear", []):
+		if Vector2(p.x - float(c[0]), p.z - float(c[1])).length() < r + float(c[2]):
+			return false
 	for key in KEEP_OUT:
 		for sp in def.get(key, []):
 			var at: Array = sp.get("at", [])

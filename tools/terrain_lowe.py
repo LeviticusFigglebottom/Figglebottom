@@ -181,6 +181,28 @@ SHELF_SPURS = [(-72.0, 7.0), (-18.0, 6.0)]
 KETTLE_ROAD = [(-70, -232), (-62, -250), (-74, -262), (-96, -270), (-110, -283), (-113, -300)]
 KETTLE_ROAD_END_Y = SHELF_Y + 0.3
 
+# --- ground widened for the fjord's points of interest (docs/lore/POI.md 4, 9)
+# the Dog Lines: a shingle spit built out from the south shelf, x0..x1, this
+# far beyond the shelf's own level ground
+DOG_SPIT = (-64.0, -54.0, 6.0)
+# the Far Landing: level shingle on the north shore, x0..x1; 12 x 7 m, of
+# which the back RECESS metres are cut into the wall foot and the rest stands
+# out into the fjord (the fjord is at its narrowest here: see POI.md 4.5)
+FAR_LANDING = (-59.0, -47.0)
+FAR_LANDING_OUT, FAR_LANDING_RECESS = 4.0, 3.0
+SPIT_LIP = 5.0                  # every spit shelves into the water like the shelf's own lip
+# the Net-Cleft: a notch through the east spur at shelf height, on whole
+# grid rows so its floor is level from wall to wall (z0..z1, 3 m between the
+# rock faces), about 9 m long between cheeks of rock CLEFT_WALL high
+CLEFT_SPUR = 1                  # index into SHELF_SPURS
+CLEFT_Z = (-307.0, -304.0)
+CLEFT_WALL = 4.0
+CLEFT_CHEEK = 3.0               # how thick the seaward cheek stands before it drops to the water
+# the Turn in the Road: a bay on the outside of the Kettle Road's last bend
+ROAD_BAY_AT = 4                 # index of the bend in KETTLE_ROAD
+ROAD_BAY = (5.0, 4.0)           # along the road, and out from its edge
+ROAD_HALF = 2.4
+
 
 def _road_t(x, z):
     """Distance to the Kettle Road and how far along it (0..1)."""
@@ -257,9 +279,17 @@ def _kettle_carve(x, z, h):
                     floor = max(floor, _lerp(-0.6, SHELF_Y + 0.08 * fbm(x * 0.3, z * 0.3, 1, 93), lip))
                 # rock ribs run down from the wall into the water, cutting the shelf
                 floor = max(floor, 10.0 * sp - (hw - d) * 2.2)
+                floor = _dog_spit(x, d, hw, shelf_w, floor)
+                floor = _net_cleft(x, z, floor)
+            else:
+                floor = _far_landing(x, hw - d, floor)
             h = min(h, floor)
         else:
             h = min(h, fjord_wall(x, z, d - hw, south))
+            if south and z > CLEFT_Z[1] and d - hw < 6.0:
+                h = max(h, _lerp(min(h, SHELF_Y), SHELF_Y + CLEFT_WALL, cleft_env(x)))   # the landward cheek runs into the wall
+            if not south and FAR_LANDING[0] <= x <= FAR_LANDING[1] and d - hw <= FAR_LANDING_RECESS:
+                h = min(h, _shingle(x, z))       # the landing's back, cut into the wall foot
     # the Kettle Road: down through a cleft in the wall to the shelf
     rd, rt = _road_t(x, z)
     if rd < 14:
@@ -270,7 +300,104 @@ def _kettle_carve(x, z, h):
         h = min(h, cut) if rt > 0.02 else h
         if rd < 2.4:
             h = ry + 0.1 * fbm(x * 0.4, z * 0.4, 1, 98)
+        h = _road_bay(x, z, h)
     return h
+
+
+def _shingle(x, z):
+    return SHELF_Y + 0.08 * fbm(x * 0.3, z * 0.3, 1, 93)
+
+
+def _spit(x, z, ex, ez, floor):
+    """Level shingle that shelves into the water over SPIT_LIP metres; ex, ez
+    are how far (x, z) lies outside the spit's level ground."""
+    e = math.hypot(ex, ez)
+    if e >= SPIT_LIP:
+        return floor
+    return max(floor, _lerp(_shingle(x, z), -0.6, smooth(0.0, SPIT_LIP, e)))
+
+
+def dog_spit_lip(x):
+    """How far north of the shelf's own waterline the Dog Lines' level ground
+    reaches at x (0 off the spit)."""
+    x0, x1, out = DOG_SPIT
+    return out - 5.0 if x0 <= x <= x1 else 0.0
+
+
+def _dog_spit(x, d, hw, shelf_w, floor):
+    x0, x1, out = DOG_SPIT
+    if x < x0 - SPIT_LIP or x > x1 + SPIT_LIP:
+        return floor
+    flat_to = hw - shelf_w + 5.0 - out          # (the shelf is level from 5 m inside its waterline)
+    return _spit(x, fjord_z(x) + d, max(0.0, x0 - x, x - x1), max(0.0, flat_to - d), floor)
+
+
+def _far_landing(x, from_wall, floor):
+    x0, x1 = FAR_LANDING
+    if x < x0 - SPIT_LIP or x > x1 + SPIT_LIP:
+        return floor
+    return _spit(x, fjord_z(x) - fjord_half(x) + from_wall, max(0.0, x0 - x, x - x1),
+                 max(0.0, from_wall - FAR_LANDING_OUT), floor)
+
+
+def cleft_env(x):
+    """1 where the Net-Cleft's rock stands at full height, 0 clear of it."""
+    spx, _spw = SHELF_SPURS[CLEFT_SPUR]
+    return 1.0 - smooth(3.6, 5.2, abs(x - spx))
+
+
+def _net_cleft(x, z, floor):
+    env = cleft_env(x)
+    if env <= 0.0:
+        return floor
+    z0, z1 = CLEFT_Z
+    if z0 - 0.01 <= z <= z1 + 0.01:
+        return _shingle(x, z)                    # the way through, at shelf height
+    # the rock grows out of whatever lies there (shelf, lip or water), so its
+    # ends do not leave a step across the shelf's own lip
+    top = _lerp(min(floor, SHELF_Y), SHELF_Y + CLEFT_WALL, env)
+    if z > z1:
+        return max(floor, top)                   # solid to the wall: no pocket behind the cleft
+    return max(floor, top - max(0.0, (z0 - CLEFT_CHEEK) - z) * 7.0)   # sheer into the water: no ledge round it
+
+
+def road_bay():
+    """The Turn in the Road: (centre x, centre z, along (x, z), out (x, z), y)."""
+    global _ROAD_Y0
+    i = ROAD_BAY_AT
+    (ax, az), (bx, bz), (cx, cz) = KETTLE_ROAD[i - 1], KETTLE_ROAD[i], KETTLE_ROAD[i + 1]
+    d1 = (bx - ax, bz - az)
+    d2 = (cx - bx, cz - bz)
+    n1, n2 = math.hypot(*d1), math.hypot(*d2)
+    d1, d2 = (d1[0] / n1, d1[1] / n1), (d2[0] / n2, d2[1] / n2)
+    out = (d1[0] - d2[0], d1[1] - d2[1])          # away from the inside of the bend
+    no = math.hypot(*out)
+    out = (out[0] / no, out[1] / no)
+    along = (-out[1], out[0])
+    if _ROAD_Y0 is None:
+        _ROAD_Y0 = height_no_road(KETTLE_ROAD[0][0], KETTLE_ROAD[0][1])
+    _rd, rt = _road_t(bx, bz)
+    y = _lerp(_ROAD_Y0, KETTLE_ROAD_END_Y, smooth(0.0, 1.0, rt) * 0.3 + rt * 0.7)
+    mid = ROAD_HALF + ROAD_BAY[1] * 0.5
+    return bx + out[0] * mid, bz + out[1] * mid, along, out, y
+
+
+_BAY = None
+
+
+def _road_bay(x, z, h):
+    global _BAY
+    if _BAY is None:
+        _BAY = road_bay()
+    cx, cz, along, out, y = _BAY
+    u = (x - cx) * along[0] + (z - cz) * along[1]
+    v = (x - cx) * out[0] + (z - cz) * out[1]
+    hu, hv = ROAD_BAY[0] * 0.5, ROAD_BAY[1] * 0.5
+    if abs(u) > hu + 1.0 or v > hv + 1.0 or v < -hv - 1.5:
+        return h
+    # level over the bay, eased into the road's own fall along its mouth
+    w = (1.0 - smooth(hu, hu + 1.0, abs(u))) * (1.0 - smooth(hv, hv + 1.0, v)) * smooth(-hv - 1.5, -hv + 0.5, v)
+    return _lerp(h, y + 0.06 * fbm(x * 0.4, z * 0.4, 1, 98), w)
 
 
 def height_no_road(x, z):

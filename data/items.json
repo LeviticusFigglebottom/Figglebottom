@@ -266,5 +266,29 @@
  "item_maren_mask": {
   "name": "Maren's Mask",
   "desc": "A mourning mask of pale birch, smooth, the brow cut the Saltfell way. The band is gone and the wood is darker where it sat. A mask is carved for one burial and burned on the hearth before morning. This one is fifteen winters old."
+ },
+ "item_sounding_pole": {
+  "name": "Sounding Pole",
+  "desc": "An ash pole shod with iron, for knocking on new ice ahead of the sledge. You knock three times and listen. It was leaning at the dog lines, where a boy in a hurry would walk straight past it."
+ },
+ "item_line_winder": {
+  "name": "Line-Winder",
+  "desc": "A notched board wound with forty fathoms of tarred jigging line, the hook bent out of a nail. Old Pell cut the notches for a smaller hand than his. The line is wound on the way he showed, and then a few turns the other way."
+ },
+ "item_healer_pack": {
+  "name": "Healer's Pack",
+  "desc": "A sealskin pack of dried coltsfoot, a horn spoon and clean linen, strapped to a hand-sledge at the far landing. The straps are done up for travelling. Whoever packed it meant to cross as soon as the ice would bear a grown woman."
+ },
+ "item_rowan_stick": {
+  "name": "Rowan Stick",
+  "desc": "A rowan walking stick with a horn cap, the pair of the one inside the door. It was leaning on the porch against the barred doors, where you put a thing down to knock with both hands. The cap is worn on the other side."
+ },
+ "item_vat_dipper": {
+  "name": "Vat Dipper",
+  "desc": "A long-handled sycamore dipper for the ale vat behind the hall. The vat is dry to the wood. The dipper's lip is worn flat on one side from being scraped along the bottom."
+ },
+ "item_melt_flowers": {
+  "name": "Melt Flowers",
+  "desc": "Marsh marigold and lady's smock, picked on the way up and tied with a stem of grass. They are thrown in at the wellhead for the year's dead. You are meant to turn round before they are out of sight."
  }
 }

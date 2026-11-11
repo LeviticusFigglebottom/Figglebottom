@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=3]
+
+[sub_resource type="StandardMaterial3D" id="stem"]
+albedo_color = Color(0.300, 0.420, 0.180, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="marigold"]
+albedo_color = Color(0.890, 0.730, 0.230, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="smock"]
+albedo_color = Color(0.780, 0.680, 0.860, 1)
+roughness = 0.7
+
+[sub_resource type="CylinderMesh" id="m0"]
+top_radius = 0.03
+bottom_radius = 0.012
+height = 0.24
+radial_segments = 8
+material = SubResource("stem")
+
+[sub_resource type="SphereMesh" id="m1"]
+radius = 0.045
+height = 0.09
+radial_segments = 8
+rings = 4
+material = SubResource("marigold")
+
+[sub_resource type="SphereMesh" id="m2"]
+radius = 0.035
+height = 0.07
+radial_segments = 8
+rings = 4
+material = SubResource("marigold")
+
+[sub_resource type="SphereMesh" id="m3"]
+radius = 0.03
+height = 0.06
+radial_segments = 8
+rings = 4
+material = SubResource("smock")
+
+[node name="MeltFlowers" type="Node3D"]
+
+[node name="Body" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Part0" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.20791, -0.97815, 0, 0.97815, 0.20791, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("m0")
+
+[node name="Part1" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13, 0.06, 0)
+mesh = SubResource("m1")
+
+[node name="Part2" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11, 0.05, 0.05)
+mesh = SubResource("m2")
+
+[node name="Part3" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, -0.05)
+mesh = SubResource("m3")

@@ -172,7 +172,10 @@ func _in_hall(e: Enemy) -> bool:
 func _expected(thread_id: String, n: int) -> Array:
 	for t in Keepsakes.threads_def():
 		if t["id"] == thread_id:
-			return (t["steps"] as Array).slice(0, n).map(func(s): return String(s["line"]))
+			# (the steps a point of interest adds are off this suite's road: POI.md,
+			# tools/test/poi_*_test.gd walk those)
+			return (t["steps"] as Array).filter(func(s): return not (String(s["flag"]) in ["ks_ivo_pole", "ks_ivo_line", "ks_ottar_pair"])) \
+				.slice(0, n).map(func(s): return String(s["line"]))
 	return []
 
 func _has(item: String) -> bool:

@@ -99,8 +99,16 @@
      "line": "Ivo is harnessing the dogs and says he is not going anywhere."
     },
     {
+     "flag": "ks_ivo_pole",
+     "line": "Ivo says he can hear the ice through his feet."
+    },
+    {
      "flag": "ks_ivo_supper",
      "line": "The supper was still on the hook. The ladle was frozen standing up in it."
+    },
+    {
+     "flag": "ks_ivo_line",
+     "line": "Ivo says the line holds either way round."
     },
     {
      "flag": "ks_ivo_mitten_found",
@@ -167,6 +175,10 @@
     {
      "flag": "ks_ottar_staff_found",
      "line": "Ottar's stick was leaning inside the barred door, where he left it so as not to forget it."
+    },
+    {
+     "flag": "ks_ottar_pair",
+     "line": "Ottar says the other stick is his wife's, and that she is at home."
     },
     {
      "flag": "ks_ottar_staff",
@@ -247,6 +259,16 @@
     {
      "flag": "ks_horn_wellhead",
      "line": "The coal is still alight."
+    }
+   ]
+  },
+  {
+   "id": "melt_flowers",
+   "title": "Melt flowers",
+   "steps": [
+    {
+     "flag": "ks_melt_flowers",
+     "line": "The flowers went down the water. Wren watched them out of sight."
     }
    ]
   }

@@ -121,7 +121,10 @@ def audit(area_id):
     for gt in E.get("gates", []):
         gx, _, gz = gt["at"]
         for dx in range(-2, 3):
-            gate_cells.add((int(round(gx - X0)) + dx, int(round(gz - Z0))))
+            if gt.get("span") == "z":      # a gate across a way that runs east-west
+                gate_cells.add((int(round(gx - X0)), int(round(gz - Z0)) + dx))
+            else:
+                gate_cells.add((int(round(gx - X0)) + dx, int(round(gz - Z0))))
 
     def H(i, j):
         return g[j * NX + i]

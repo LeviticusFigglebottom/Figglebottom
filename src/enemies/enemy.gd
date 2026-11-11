@@ -4,6 +4,7 @@ extends CharacterBody3D
 ## layer; navigates the active navmesh; drops warmth.
 
 signal died(enemy)
+signal struck(enemy)
 
 ## RETURN, GRAB, INTRO, TRANSITION and HOLD belong to the slice's special
 ## foes (a hound walking back to its threshold, a hound's grab, a holdfast's
@@ -1105,6 +1106,15 @@ func _net_cast() -> void:
 func _haul() -> void:
 	pass
 
+## What it was waiting on has happened: it turns to the Bearer and comes.
+func rouse() -> void:
+	if dead:
+		return
+	var p := _player()
+	if state == ES.IDLE and p != null:
+		target = p
+		_set_state(ES.ALERT)
+
 ## A warning to every frost-taken within `radius` (the Hearthhound's bark):
 ## each one idle turns toward the Bearer and comes.
 func _alert_others(radius: float) -> int:
@@ -1485,6 +1495,7 @@ func _is_locked_target() -> bool:
 func take_hit(packet: DamagePacket) -> void:
 	if dead:
 		return
+	struck.emit(self)
 	hp -= packet.amount
 	# "breaks_to": damage kinds that end it outright (the Unsung break when
 	# sung at: every Song the Bearer has is one of these)

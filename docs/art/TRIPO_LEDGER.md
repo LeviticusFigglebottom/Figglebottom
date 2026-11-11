@@ -335,3 +335,8 @@ Budget for the batch: about 2,500 credits, stop below 11,000. Balance at start: 
 | 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 6k | kit_creel_stack_hero | f6186aee-1bdf-44b0-a357-15ddd2d858bf | 95 | — | ops 095be500, d5707f84 (look pass 3) |
 | 2026-11-10 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 6k | kit_well_hero | fb1bac98-2f78-4920-be22-cf40879861d2 | 95 | — | ops d3274eef, e291ea6d (look pass 3) |
 | 2026-11-10 | **Look pass 3 total** (6 × image_to_model at 55, 6 × remesh at 40) | | | **570** | **10,590** | reconciled with `tripo_status`: 11,160 before, 10,590 after. Passes 2 + 3 together: 1,330 |
+| 2026-11-11 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 6k | kf_ice_hut | 8f61b98b-e6c4-451f-bf01-d99a3b53b5c5 | 95 | — | ops b5519b9f, 7aec64b0 (points of interest, Kettle Fjord) |
+| 2026-11-11 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 5k | kf_tool_rack | 63a9d8df-5bcc-443f-bbc3-96cabd101a38 | 95 | — | ops 95943c3c, 863061c2 (points of interest, Kettle Fjord) |
+| 2026-11-11 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 5k | kf_dog_picket | 2e2a4ccf-3630-44b7-ac2f-256de785f88e | 95 | — | ops c086d9f0, e70aeab0 (points of interest, Kettle Fjord) |
+| 2026-11-11 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 5k | kf_windbreak | e8144916-ed8e-4938-b4d1-e2f925917f33 | 95 | — | ops 13486459, 1e25c771 (points of interest, Kettle Fjord) |
+| 2026-11-11 | tripo_image (free) + image_to_model (v3.1, detailed) + quad remesh 5k | lm_healer_sledge | 3c4e7229-914d-4260-8f96-0aebb288d15d | 95 | — | ops 0ca8e8f6, 26d10c9e (points of interest, Kettle Fjord (POI.md 4.5)) |

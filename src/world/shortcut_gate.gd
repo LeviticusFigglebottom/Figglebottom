@@ -7,6 +7,11 @@ var gate_id := "gate"
 var layer_bit := RH.L_WORLD_BASE   # a gate that stands in one state only takes that state's layer
 var area_id := ""
 var locked_prompt := "Barred from the other side"
+## A gate that is not a barred door (a lashed hurdle): its own prompt, its
+## own word when it opens, its own leaf from the kit.
+var open_prompt := "Unbar the gate"
+var open_toast := "The gate stands open."
+var leaf_kit := "door_leaf"
 ## Width of the opening the leaves fill (a house door is 1.9 m; the old
 ## yard gate 3.6 m). The leaves hinge at the jambs and swing to the far side.
 var door_width := 3.6
@@ -23,7 +28,7 @@ func _ready() -> void:
 		pivot.name = "gate_leaf_%s" % ("l" if side < 0 else "r")
 		pivot.position = Vector3(side * door_width * 0.5, 0, 0)
 		add_child(pivot)
-		var leaf := KitLib.instance("door_leaf")
+		var leaf := KitLib.instance(leaf_kit if KitLib.has_piece(leaf_kit) else "door_leaf")
 		leaf.scale = Vector3(door_width * 0.5 / 0.95, door_height / 2.5, 1.0)
 		leaf.position = Vector3(-side * door_width * 0.25, 0, 0)
 		pivot.add_child(leaf)
@@ -47,7 +52,7 @@ func _ready() -> void:
 	_front.activated.connect(func(_p): Game.toast.emit(locked_prompt + "."))
 	add_child(_front)
 	_back = Interactable.new()
-	_back.prompt = "Unbar the gate"
+	_back.prompt = open_prompt
 	_back.setup_zone(1.2, 1.6, Vector3(0, 0, -1.1))
 	_back.activated.connect(_on_unbar)
 	add_child(_back)
@@ -62,7 +67,7 @@ func _on_unbar(_p) -> void:
 	World.set_area_flag(area_id, "gate_" + gate_id)
 	World.save_game()
 	_apply_open(false)
-	Game.toast.emit("The gate stands open.")
+	Game.toast.emit(open_toast)
 	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -6.0, 0.55)
 
 ## A released Holdfast lifts the bar from wherever he is (TARNHALL.md 9):

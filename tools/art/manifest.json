@@ -3562,6 +3562,190 @@
    "texture_max": 1024,
    "collision": null,
    "output": "assets/models/kit/kit_well_hero.glb"
+  },
+  {
+   "name": "kf_ice_hut",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "8f61b98b-e6c4-451f-bf01-d99a3b53b5c5",
+    "task_id": "b5519b9f-13f7-44a7-83f3-e4c5727f468c",
+    "remesh_operator": "7aec64b0-2413-479a-9819-d0b36e28de57",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/kf_ice_hut/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 2.3
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_ice_hut.glb"
+  },
+  {
+   "name": "kf_tool_rack",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "63a9d8df-5bcc-443f-bbc3-96cabd101a38",
+    "task_id": "95943c3c-143e-4fe5-b02d-adcd1c3685ee",
+    "remesh_operator": "863061c2-f409-49aa-852b-e5bce9f7132d",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kf_tool_rack/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.75
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_tool_rack.glb"
+  },
+  {
+   "name": "kf_windbreak",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "e8144916-ed8e-4938-b4d1-e2f925917f33",
+    "task_id": "13486459-8961-4a3e-8687-9b2278dbc762",
+    "remesh_operator": "1e25c771-bc82-41cf-9496-689ba2d5e8d9",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kf_windbreak/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.7
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_windbreak.glb"
+  },
+  {
+   "name": "kf_dog_picket",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "2e2a4ccf-3630-44b7-ac2f-256de785f88e",
+    "task_id": "c086d9f0-2ab7-47ce-a92e-acb1408e33ab",
+    "remesh_operator": "e70aeab0-3d71-4b14-afe0-cf67dbfb0f2e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/kf_dog_picket/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 3.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kf_dog_picket.glb"
+  },
+  {
+   "name": "lm_healer_sledge",
+   "category": "landmarks",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "3c4e7229-914d-4260-8f96-0aebb288d15d",
+    "task_id": "0ca8e8f6-5a55-4bab-a5de-a53b64d8671b",
+    "remesh_operator": "26d10c9e-66c3-464d-803d-d7e3cc21b910",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/lm_healer_sledge/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.7
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/landmarks/lm_healer_sledge.glb"
+  },
+  {
+   "name": "th_bake_oven",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "bffcd009-a82c-4794-a953-d80fdf2b234c",
+    "task_id": "094369b5-fb53-4f3a-abc1-03d7748124bc",
+    "remesh_operator": "27c1038d-d7b2-4ebc-a693-039569792525",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/th_bake_oven/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_bake_oven.glb"
+  },
+  {
+   "name": "th_carving_frame",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "fe6bbdff-2a32-4838-a8c9-9dc86a2fa6e6",
+    "task_id": "2b3d68a2-0ff2-4b08-a198-c58ca3ea9fe3",
+    "remesh_operator": "0b640c71-3369-40dc-9fd9-778017a4e24b",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/th_carving_frame/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 2.2
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/th_carving_frame.glb"
+  },
+  {
+   "name": "cw_flower_basket",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "860b55ce-01ee-4f15-8f7a-682bc507357e",
+    "task_id": "01ea8be2-ff50-424c-99ae-dc544e618305",
+    "remesh_operator": "e578b152-5281-4918-b736-28eb9b069b66",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/cw_flower_basket/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 0.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 512,
+   "collision": null,
+   "output": "assets/models/kit/cw_flower_basket.glb"
   }
  ]
 }
