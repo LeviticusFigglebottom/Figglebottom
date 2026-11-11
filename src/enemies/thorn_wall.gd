@@ -119,6 +119,27 @@ func _build_run(run: Array) -> void:
 		body.transform = Transform3D(cb, Vector3(mid.x, height * 0.5, mid.y))
 		add_child(body)
 		bodies.append(body)
+	# the modelled wall (tools/art/procedural/thorn_rime.py): two sections a
+	# segment, back to back, so it is thick enough to hide him; the stems
+	# and core stay as the fallback when the mesh is not shipped
+	if ResourceLoader.exists(Forest.HERO_DIR + "hd_thornwall.glb"):
+		var secs: Array = []
+		var sec_len := maxf(Forest._hero_len("hd_thornwall"), 0.5)
+		for k in run.size() - 1:
+			var a2: Vector2 = run[k]
+			var b2: Vector2 = run[k + 1]
+			var d2 := b2 - a2
+			if d2.length() < 0.05:
+				continue
+			var yaw2 := atan2(-d2.y, d2.x)
+			var mid2 := (a2 + b2) * 0.5
+			for j in 2:
+				var bs2 := Basis(Vector3.UP, yaw2 + PI * j + rng.randf_range(-0.2, 0.2))
+				var sc2 := Vector3(d2.length() / sec_len * 1.5, height / 3.0 * rng.randf_range(0.92, 1.12), width / 1.1)
+				var off2 := Vector2(-d2.y, d2.x).normalized() * (0.22 if j == 0 else -0.22)
+				secs.append(Transform3D(bs2.scaled_local(sc2), Vector3(mid2.x + off2.x, -0.08, mid2.y + off2.y)))
+		_multi("hero|hd_thornwall|M_thorn_rime|0|1.5", secs)
+		return
 	_multi("stem|thorn", stems)
 	_multi("core|thorn", cores)
 

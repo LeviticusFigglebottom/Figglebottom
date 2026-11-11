@@ -240,6 +240,21 @@
    "weight": 8.0
   }
  },
+ "armour_hall": {
+  "name": "Hall-Guard's Coat",
+  "desc": "A quilted felt coat over a black mail shirt, yellow at the cuffs, with a fur cape for the draught at the doors. It hung on a peg inside the hall doors, by the bar. Whoever had the door that night took it off when the hall got hot, and stood his watch in his shirt.",
+  "armour": {
+   "slot": "body",
+   "model": "bearer_hall",
+   "poise": 11,
+   "absorb": {
+    "phys": 0.16,
+    "frost": 0.1,
+    "fire": 0.06
+   },
+   "weight": 11.0
+  }
+ },
  "item_latch_wool": {
   "name": "Scrap of Woad Wool",
   "desc": "A scrap of woad-blue wool, pulled long, caught on the latch of the hall door at the height of a woman's hand. It is on the outside of the door. The bar was on the inside."

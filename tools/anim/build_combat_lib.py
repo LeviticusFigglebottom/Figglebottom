@@ -204,11 +204,17 @@ def write_foe_meta(rows, sets):
         meta = json.load(fh)
     for k in [k for k in meta["clips"] if k.startswith("f_")]:
         del meta["clips"][k]
-    for k in [k for k in meta["clip_sets"] if k.startswith("foe_")]:
+    for k in [k for k in meta["clip_sets"] if k.startswith(("foe_", "npc_"))]:
         del meta["clip_sets"][k]
     meta["clips"].update(rows)
     for foe, cs in sets.items():
         cs = dict(cs)
+        if foe.startswith("npc:"):   # a villager's own beats (foe_clips.NPCS): no attacks, no death
+            model = foe[4:]
+            meta["clip_sets"]["npc_" + model] = cs
+            if model in meta["models"]:
+                meta["models"][model]["clip_set"] = "npc_" + model
+            continue
         if foe not in BOSSES_KEEP_OWN:   # Holdfasts keep their own endings
             for k, v in COMMON_FOE.items():
                 cs.setdefault(k, v)      # (a foe's own keyed death wins)

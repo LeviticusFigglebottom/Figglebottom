@@ -134,6 +134,20 @@ while placed < 46:
         continue
     PROPS.append({"kit": "sheep", "at": at(x, z), "rot": rng.uniform(0, 360), "tag": "thaw", "collide": False})
     placed += 1
+# a few more in THAW, in twos and threes near ones already out (ewes keep
+# company). Their own stream: the layout stream above must not shift.
+rng_more = random.Random(515)
+first = [p["at"] for p in PROPS if p["kit"] == "sheep"]
+placed = 0
+while placed < 16:
+    hx, _, hz = first[rng_more.randrange(len(first))]
+    x, z = hx + rng_more.uniform(-3.5, 3.5), hz + rng_more.uniform(-3.5, 3.5)
+    if H.pasture_out(x, z) > -4 or abs(z - H.beck_z(x)) < 6 or math.hypot(x - FX, z - FZ) < H.FOLD_R + 3:
+        continue
+    if any(math.hypot(x - sx, z - sz) < 7 for sx, sz, _ in H.SHEILINGS) or math.hypot(x - hx, z - hz) < 1.4:
+        continue
+    PROPS.append({"kit": "sheep", "at": at(x, z), "rot": rng_more.uniform(0, 360), "tag": "thaw", "collide": False})
+    placed += 1
 placed = 0
 tries = 0
 while placed < 70 and tries < 4000:

@@ -63,6 +63,13 @@ const PIECES := {
 	"drying_rack": {"size": [4.0, 1.2, 2.2], "origin": "bottom-center"},
 	"ladder": {"size": [0.6, 0.2, 4.0], "origin": "bottom-center"},
 	"salt_pan": {"size": [3.0, 2.0, 0.45], "origin": "bottom-center"},
+	# the Long Table's places (look pass 5): a horn beaker, the same frozen
+	# over, a bread board, and a soapstone fat lamp lit or cold
+	"feast_horn": {"size": [0.1, 0.1, 0.3], "origin": "bottom-center"},
+	"feast_horn_frozen": {"size": [0.1, 0.1, 0.34], "origin": "bottom-center"},
+	"trencher": {"size": [0.46, 0.34, 0.12], "origin": "bottom-center"},
+	"fat_lamp": {"size": [0.25, 0.18, 0.1], "origin": "bottom-center"},
+	"fat_lamp_cold": {"size": [0.25, 0.18, 0.1], "origin": "bottom-center"},
 	"well": {"size": [1.4, 1.4, 1.0], "origin": "bottom-center"},
 	"mannequin_wayfarer": {"skeletal": true},
 	"mannequin_rime": {"skeletal": true},
@@ -101,9 +108,29 @@ const HERO_PIECES := {
 	"well": {"glb": "res://assets/models/kit/kit_well_hero.glb", "family": "M_stone", "length": 1.7, "yaw": 0.0, "lift": 0.0},
 	# a wrought fire basket on three legs; the flame is added over its logs
 	"brazier": {"glb": "res://assets/models/kit/kit_brazier_hero.glb", "family": "M_iron", "length": 0.71, "yaw": 0.0, "lift": 0.0},
+	# modelled in Blender (look pass 5, tools/art/procedural/kit_props.py):
+	# authored at the footprint, so no "length"; "tint" 0 keeps their atlas
+	# colours (several materials share one texture)
+	"woodpile": {"glb": "res://assets/models/kit/kit_woodpile_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"hearth_logs": {"glb": "res://assets/models/kit/kit_hearth_logs_p.glb", "family": "M_wood_dark", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"hearth_fire": {"glb": "res://assets/models/kit/kit_hearth_logs_p.glb", "family": "M_wood_dark", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"salt_pan": {"glb": "res://assets/models/kit/kit_salt_pan_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"net_frame": {"glb": "res://assets/models/kit/kit_net_frame_p.glb", "family": "M_rope", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"plaque": {"glb": "res://assets/models/kit/kit_plaque_p.glb", "family": "M_wood", "yaw": 180.0, "lift": 0.0, "tint": 0.0},
+	"door_leaf": {"glb": "res://assets/models/kit/kit_door_leaf_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"rime_spike": {"glb": "res://assets/models/kit/kit_rime_spike_p.glb", "family": "M_veil_rime", "yaw": 0.0, "lift": 0.0, "tint": 0.3},
+	"feast_horn": {"glb": "res://assets/models/kit/kit_feast_horn_p.glb", "family": "M_bone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"feast_horn_frozen": {"glb": "res://assets/models/kit/kit_feast_horn_frozen_p.glb", "family": "M_bone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"trencher": {"glb": "res://assets/models/kit/kit_trencher_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"fat_lamp": {"glb": "res://assets/models/kit/kit_fat_lamp_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"fat_lamp_cold": {"glb": "res://assets/models/kit/kit_fat_lamp_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
 	# the Reach flocks: a ewe with her head up and one grazing, taken in turn
 	"sheep": {"glb": "res://assets/models/kit/kit_ewe_a.glb", "alt": ["res://assets/models/kit/kit_ewe_b.glb"],
-		"family": "M_fleece", "length": 1.15, "yaw": 90.0, "lift": 0.0},
+		"family": "M_fleece", "length": 1.15, "yaw": 90.0, "lift": 0.0,
+		# unrigged: the hall shader swings head and ears (graze_* uniforms).
+		# glb file -> [amp, pivot x, pivot y, from x, from y, mode, ear y]
+		"graze": {"kit_ewe_a.glb": [0.34, 0.22, 0.62, 0.2, 0.5, 0.0, 0.9],
+			"kit_ewe_b.glb": [0.3, 0.26, 0.56, 0.3, -1.0, 1.0, 9.0]}},
 }
 static var _hero_turn := 0
 
@@ -146,6 +173,10 @@ static func _build_hero(n: Node3D, id: String) -> void:
 		aabb = bb if first else aabb.merge(bb)
 		first = false
 		m.set_meta("hero_family", String(h.get("family", "M_wood")))
+		if h.has("tint"):
+			m.set_meta("hero_tint", float(h["tint"]))
+		if h.has("graze") and (h["graze"] as Dictionary).has(glb.get_file()):
+			m.set_meta("hero_graze", h["graze"][glb.get_file()])
 	var long := maxf(aabb.size.x, aabb.size.z)
 	var sc := float(h.get("length", long)) / maxf(long, 0.01)
 	inst.scale = Vector3.ONE * sc
@@ -154,6 +185,15 @@ static func _build_hero(n: Node3D, id: String) -> void:
 	n.add_child(inst)
 	if id == "hearthstone":
 		_hearth_bed(n, 0.42, 0.05)
+	if id == "hearth_fire":
+		# the long fire, lit: coals glowing through the ash under the logs
+		_sphere(n, 0.36, Vector3(0, 0.06, 0), "M_coals", "bed", Vector3(1.0, 0.2, 0.82))
+		_flame(n, Vector3(0, 0.16, 0), 0.75, 0.35, "fire_flame")
+		_flame(n, Vector3(0.18, 0.14, 0.1), 0.45, 0.22, "fire_flame_b")
+		_embers(n, Vector3(0, 0.3, 0), 0.25, 8)
+	if id == "fat_lamp":
+		# a rush wick burns small and steady at the lip
+		_flame(n, Vector3(0.118, 0.1, -0.006), 0.07, 0.022, "wick_flame")
 	if id == "brazier":
 		_flame(n, Vector3(0, 0.9, 0), 0.42, 0.16, "flame")
 		_flame(n, Vector3(0.07, 0.9, -0.05), 0.28, 0.11, "flame_b")
@@ -755,7 +795,11 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 			if mat_remap.has(hfam):
 				hfam = String(mat_remap[hfam])
 			for s in mesh.get_surface_count():
-				mi.set_surface_override_material(s, MaterialLib.hero_mat(mesh.surface_get_material(s), hfam, state_mode))
+				var hm := MaterialLib.hero_mat(mesh.surface_get_material(s), hfam, state_mode,
+						float(mi.get_meta("hero_tint", 0.55)))
+				if mi.has_meta("hero_graze") and state_mode != 2:
+					hm = _graze_mat(hm, mi.get_meta("hero_graze"))
+				mi.set_surface_override_material(s, hm)
 			continue
 		for s in mesh.get_surface_count():
 			var src := mesh.surface_get_material(s)
@@ -772,6 +816,22 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 				mi.set_instance_shader_parameter("flame_height", maxf(aabb.size.y, 0.05))
 				mi.set_instance_shader_parameter("flame_tint", Vector3(1.0, 0.6, 0.2))
 				mi.set_instance_shader_parameter("flame_energy", 1.0)
+
+static var _graze_cache: Dictionary = {}
+
+## A hero material with the living-stock head swing set (one copy per source
+## material, shared by the whole flock).
+static func _graze_mat(src: Material, g: Array) -> Material:
+	var key := src.get_instance_id()
+	if not _graze_cache.has(key):
+		var m := src.duplicate() as ShaderMaterial
+		m.set_shader_parameter("graze_amp", float(g[0]))
+		m.set_shader_parameter("graze_pivot", Vector2(float(g[1]), float(g[2])))
+		m.set_shader_parameter("graze_from", Vector2(float(g[3]), float(g[4])))
+		m.set_shader_parameter("graze_mode", float(g[5]))
+		m.set_shader_parameter("graze_ear_y", float(g[6]))
+		_graze_cache[key] = m
+	return _graze_cache[key]
 
 static func _mesh_instances(node: Node) -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []

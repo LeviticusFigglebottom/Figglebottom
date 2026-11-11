@@ -71,6 +71,12 @@ var _antic_dur := 0.0
 var _antic_deg := 0.0
 var _dig := 0.0
 var _dig_rate := 1.0
+var _held: Node3D = null
+var _held_clips: Array = []
+var _held_scale := 1.0
+var _held_key := ""
+var _held_on := false
+var _held_w := 0.0
 
 ## Locomotion clip substitutions (e.g. a two-handed carry:
 ## {"idle": "twohand_idle", "walk": "twohand_walk", "run": "twohand_walk"}).
@@ -126,7 +132,37 @@ func build_model(id: String) -> bool:
 	add_child(rig)
 	rig.setup(id, skel)
 	rig.clip_set = String(cfg.get("clip_set", ""))   # a foe's own attack clips (ADR 0012)
+	_build_held(cfg.get("held", {}))
 	return true
+
+## A prop the model takes in its hand for certain clips only (clip_meta
+## models.<id>.held: a props row, and the library clips that hold it). The
+## Fellcaller's calling horn: the one on her belt is part of her mesh and
+## cannot be lifted, so her calls raise this one.
+func _build_held(h: Dictionary) -> void:
+	var id := String(h.get("prop", ""))
+	var inst := HumanoidLib.prop_instance(id) if id != "" else null
+	if inst == null:
+		return
+	var slot := String(HumanoidLib.prop_cfg(id).get("slot", id))
+	_held = mount_slot(slot)
+	_held_scale = float(HumanoidLib.mount_cfg(slot).get("scale", 1.0))
+	_held.add_child(inst)
+	_held.scale = Vector3.ONE * 0.001
+	_held.visible = false
+	_held_clips = h.get("clips", [])
+
+## Show or hide the held prop at once (a frozen pose sheet has no blend).
+func snap_held() -> void:
+	if _held != null:
+		_held_w = 1.0 if _held_wanted() else 0.0
+
+func _held_wanted() -> bool:
+	var key := rig.action_clip() + "|" + str(rig.remap)
+	if key != _held_key:   # resolve only when the action changes
+		_held_key = key
+		_held_on = rig.action_clip() != "" and rig._resolved_name(rig.action_clip()) in _held_clips
+	return _held_on and rig.action_active()
 
 ## A Tripo quadruped from clip_meta.json: its glb's walk plays by ground
 ## speed, everything else is a QuadRig pose. False when not a quadruped.
@@ -200,6 +236,11 @@ func _process(dt: float) -> void:
 		body.rotation = _flinch_axis * wave
 	elif body.rotation != Vector3.ZERO:
 		body.rotation = Vector3.ZERO
+	if _held != null:
+		# taken up and put away over a few frames, never popped
+		_held_w = move_toward(_held_w, 1.0 if _held_wanted() else 0.0, dt * 7.0)
+		_held.visible = _held_w > 0.01
+		_held.scale = Vector3.ONE * _held_scale * maxf(smoothstep(0.0, 1.0, _held_w), 0.001)
 	if _has_carry and weapon_mount != null:
 		# the hand turns the weapon into its fighting grip as an action takes the rig
 		_grip_w = move_toward(_grip_w, 1.0 if rig.action_active() else 0.0, dt * 9.0)

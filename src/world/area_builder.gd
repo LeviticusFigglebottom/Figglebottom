@@ -51,8 +51,18 @@ static func build(area_id: String) -> Area:
 		_row(area, spec)
 	for spec in def.get("pieces", []):
 		_piece(area, spec, true)
+	var ewes: Array = []
 	for spec in def.get("props", []):
-		_piece(area, spec, _prop_collides(spec))
+		var pp := _piece(area, spec, _prop_collides(spec))
+		if pp != null and String(spec["kit"]) == "sheep" and String(spec.get("tag", "base")) == "thaw":
+			ewes.append(pp)
+	if not ewes.is_empty():
+		# the living flock ambles (the frozen one in RIME stays as set)
+		var fw := FlockWander.new()
+		fw.name = "FlockWander"
+		fw.area = area
+		fw.ewes = ewes
+		area.attach(fw, "thaw")
 	for spec in def.get("landmarks", []):
 		if not _flag_ok(spec):
 			continue    # (Thornwold's gate: leaning on the hedge, then laid down)
@@ -63,6 +73,9 @@ static func build(area_id: String) -> Area:
 		if lm != null:
 			area.attach(lm, lm_tag)
 			_place(lm, spec)
+			if spec.has("pose"):
+				# a rigged figure as dressing: one held frame, not the bind pose
+				PoseHold.attach(lm, String(spec["pose"]))
 			if spec.has("tilt"):
 				lm.rotation_degrees.x = float(spec["tilt"])
 			if spec.has("scale"):

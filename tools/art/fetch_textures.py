@@ -86,6 +86,10 @@ MANIFEST = {
                   "hue": [0.24, 0.20, 0.17], "pull": 0.5},
     "leather":   {"src": "polyhaven", "id": "fabric_leather_01", "res": 1, "sat": 0.6, "contrast": 1.0,
                   "hue": [0.32, 0.23, 0.16], "pull": 0.4},
+    # look pass 5: frozen thorn (tools/art/procedural/thorn_rime.py bakes it
+    # into the thorn atlas with the snow set)
+    "bark":      {"src": "polyhaven", "id": "bark_brown_02", "res": 1, "sat": 0.5, "contrast": 0.95,
+                  "hue": [0.30, 0.25, 0.21], "pull": 0.45},
 }
 
 

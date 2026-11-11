@@ -740,7 +740,7 @@ FOES = {
         "bill": ("hook", {"amp": 1.05}), "thorn_lash": ("throw", {}), "raise_wall": ("plant", {}),
         "step_into": ("step_into", {}), "where_it_goes": ("where", {})}},
     # ---- Shepherd's Reach (REACH.md 5, 6)
-    "drover": {"beats": {"death": (B.kneel_fall, False)}, "attacks": {
+    "drover": {"beats": {"death": (B.drover_fall, False)}, "attacks": {
         "crook_sweep": ("crook_sweep", {}), "leg_hook": ("leg_hook", {}), "whistle_in": ("whistle_in", {})}},
     # "call" is her intro and her phase-three hold (a loop); "summon" her
     # phase-two turn; "kneel_down" where she is left
@@ -766,6 +766,14 @@ FOES = {
             "held_note": ("lv_held_note", {"amp": 0.9}), "long_note": ("lv_long_note", {"amp": 0.8}),
             "not_yet": ("lv_not_yet", {"amp": 0.9}), "come_up": ("lv_come_up", {}),
             "shelter": ("lv_shelter", {"amp": 0.7})}}},
+}
+
+
+# Villagers with a keyed beat of their own: model id -> {game clip: (beat, loop)}.
+# Built like a foe's beats, on the model's own stance, as f_<model>_<clip> in
+# clip set npc_<model> (build() returns it under "npc:<model>").
+NPCS = {
+    "old_calder": {"sit": (B.calder_sit, True)},
 }
 
 
@@ -919,4 +927,17 @@ def build(ctx, root):
             rows[f"f_{foe}_stagger"] = {"start": 0.0, "end": round((len(st) - 1) / ctx.fps, 3)}
             cs["stagger"] = [f"f_{foe}_stagger"]
         sets[foe] = cs
+    for model, beats in NPCS.items():
+        if model not in models:
+            continue
+        rig = A.Rig(ctx.skel, ctx.own_idle(model), ctx.grips["onehand"], fist_from=ctx.stance())
+        cs = {}
+        for game, (fn, loop) in beats.items():
+            name = f"f_{model}_{game}"
+            clips[name] = seq(rig, ctx.fps, fn(rig=rig, fps=ctx.fps, n=neutral(rig)))
+            rows[name] = {"start": 0.0, "end": round((len(clips[name]) - 1) / ctx.fps, 3)}
+            if loop:
+                rows[name]["loop"] = True
+            cs[game] = [name]
+        sets["npc:" + model] = cs
     return clips, rows, sets

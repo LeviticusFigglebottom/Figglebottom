@@ -113,18 +113,21 @@ for lx in (TX0 + 0.4, (TX0 + TX1) / 2, TX1 - 0.4):
 for bz in (TABLE_Z - 1.45, TABLE_Z + 1.45):
     BOXES.append({"min": [TX0, FY, r2(bz - 0.22)], "max": [TX1, FY + 0.45, r2(bz + 0.22)], "mat": "M_wood_dark", "tag": "base"})
 # the feast on it: horns, bowls, loaves. RIME: every horn full and frozen over.
+# Modelled pieces (KitLib feast_horn, trencher, fat_lamp): a horn at every
+# place, a bread board at every other, and soapstone fat lamps down the
+# middle of the board, lit in THAW and cold in RIME.
 k = 0
 x = TX0 + 0.8
 while x < TX1 - 0.6:
     for side in (-1, 1):
         hz = TABLE_Z + side * 0.42
-        BOXES.append({"min": [r2(x - 0.06), FY + 0.82, r2(hz - 0.06)], "max": [r2(x + 0.06), FY + 1.12, r2(hz + 0.06)],
-                      "mat": "M_bone", "tag": "thaw", "collide": False})
-        BOXES.append({"min": [r2(x - 0.07), FY + 0.82, r2(hz - 0.07)], "max": [r2(x + 0.07), FY + 1.16, r2(hz + 0.07)],
-                      "mat": "M_ice", "tag": "rime", "collide": False})
+        PROPS.append({"kit": "feast_horn", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "thaw", "collide": False})
+        PROPS.append({"kit": "feast_horn_frozen", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "rime", "collide": False})
     if k % 2 == 0:
-        BOXES.append({"min": [r2(x + 0.3), FY + 0.82, r2(TABLE_Z - 0.18)], "max": [r2(x + 0.75), FY + 0.95, r2(TABLE_Z + 0.18)],
-                      "mat": "M_drift", "tag": "base", "collide": False})
+        PROPS.append({"kit": "trencher", "at": [r2(x + 0.52), FY + 0.82, r2(TABLE_Z)], "rot": (k * 23) % 40 - 20, "collide": False})
+    if k % 3 == 1:
+        PROPS.append({"kit": "fat_lamp", "at": [r2(x + 0.5), FY + 0.82, r2(TABLE_Z + 0.05)], "rot": k * 50, "tag": "thaw", "collide": False})
+        PROPS.append({"kit": "fat_lamp_cold", "at": [r2(x + 0.5), FY + 0.82, r2(TABLE_Z + 0.05)], "rot": k * 50, "tag": "rime", "collide": False})
     k += 1
     x += 1.6
 SEATS = []
@@ -301,6 +304,9 @@ pickups = [
      "scene": "res://assets/models/props/barrel_head.tscn", "label": "Prise off the barrel head"},
     {"id": "ottar_staff", "at": [r2(HALL_X0 + 1.2), FY, r2(DOOR_Z - 1.6)], "item": "item_ottar_staff", "tag": "rime",
      "scene": "res://assets/models/props/ottar_stick.tscn", "label": "Take the walking stick", "set_flag": "ks_ottar_staff_found"},
+    # TARNHALL.md 8: the hall guard's coat, on a peg on the gable wall beside the doors
+    {"id": "hall_coat", "at": [r2(HALL_X0 + 0.45), FY, r2(DOOR_Z - 3.1)], "rot": 90, "item": "armour_hall", "tag": "rime",
+     "scene": "res://assets/models/props/hall_coat.tscn", "label": "Take the coat off its peg"},
     {"id": "guest_tally", "at": [r2(HALL_X0 + 1.7), FY, r2(DOOR_Z + 2.4)], "item": "item_guest_tally", "tag": "rime",
      "scene": "res://assets/models/props/guest_tally.tscn", "label": "Untie the guest-tally",
      "appear_flag": "ks_host_released", "set_flag": "ks_guest_tally_found"},
