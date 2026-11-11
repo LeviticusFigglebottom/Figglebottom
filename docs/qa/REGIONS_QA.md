@@ -12,7 +12,26 @@ Every region walk covers: the seam in, the place cards, the NPCs' lines in order
 
 Run one with `tools/test.sh fullgame_<region>` (a quarter of an hour headless). They are not part of the default `tools/test.sh` run; CI runs them as the `fullgame` matrix job, one job per walk.
 
-RESULTS_TABLE
+**Results (2026-11-11, on this branch with `origin/main` 103a252 merged; every walk started from the save the previous one wrote):**
+
+| Walk | Area | Checks | Failures | Holdfast |
+|---|---|---|---|---|
+| `fullslice` | Saltfell | 106 | 0 | the Netmender (3x on her) |
+| `fullgame_lowe` | the Lowe | 194 | 0 | the Turfwright |
+| `fullgame_kettle` | Kettle Fjord | 197 | 0 | the Ice-Cutter |
+| `fullgame_tarnhall` | Tarnhall | 211 | 0 | the Host (3x on him) |
+| `fullgame_thornwold` | Thornwold | 160 | 0 | the Hedgelayer (1x) |
+| `fullgame_reach` | Shepherd's Reach | 195 | 0 | the Fellcaller (1x) |
+| `fullgame_coldwell` | the Coldwell, up to the choice | 178 | 0 | the Leadvoice (2x on her) |
+| `fullgame_ending_outsong` | the Outsong, twice (credits skipped, credits sat through) | 160 | 0 | |
+| `fullgame_ending_kept` | the Hearth Kept, twice | 193 | 0 | |
+
+The default `tools/test.sh` run (every other suite, both audits) also passes on the same code. `fullslice` was last run before the final merge of `main` (it ran green in the default suite after it).
+
+`tools/qa/fullgame_chain.sh` runs all of it in order as one start-to-credits chain, rewriting the saves as it goes. The script itself has **not been run end to end**: the chain above was run walk by walk with the same commands.
+
+**The chained saves are an easy game:** The Gentle Thaw, levels bought with everything carried (level 13 by Thornwold), the blade raised once.
+
 
 ## Fixed
 
@@ -44,6 +63,7 @@ RESULTS_TABLE
 3. **The Host's hall doors can probably be unbarred from inside during the duel** (that veil has no aux seals). From reading the code; not tried.
 4. **Calder's first audience after the release, for a Bearer who rested first, is the pre-release one** ("she'll get forty-three") with Sigga beside him saying "Forty-four"; Sigga's lines and the fleece are then unreachable. Needs gated lines.
 5. **The Knucklebones thread cannot close in the chained run**: the slice walk never takes the four at Saltfell. The walks assert the branch they get. A test gap, and a reminder that the thread spans three regions with nothing pointing back.
+5a. **A ward is attuned at the Unsung.** The first Song learned attunes itself (Aud's Turf-Laying Song, a ward) and nothing changes it; the Unsung only break to a Song that strikes. A player who never opens the Songs leaf arrives with the wrong Song and no hint. The walk switches to the Goat Song by hand.
 6. **Release drops are still runtime-only in Tarnhall and the Coldwell** (the Host's drop; the band and the mask): lost if the area rebuilds before pickup.
 7. **Three regions define no shortcut**: Kettle Fjord, Thornwold and Shepherd's Reach have no gate and no flag. The walks prove the nearest thing (the RIME ice between the hearths; the laid gate; the gap after the release).
 8. **Shepherd's Reach has one Keepsakes thread**, not two.
@@ -52,4 +72,4 @@ RESULTS_TABLE
 11. **Kettle's navmesh climbs decks from the side (0.5 m); the Bearer cannot (0.35 m).** In THAW a player pushing at a walk's side slides into the water; frost-taken may stall at deck edges.
 12. **Moves the real duels never showed** (the melee bot stays close): the Hedgelayer's lash and gap-measure, the Fellcaller's Count them, the Leadvoice's Held note and Long note. Covered only by the sandbox encounter suites.
 13. **Smaller:** the Collier "on the road" stands 7 m off it; Sten stays on his crate after Halla says he is in the end house; Maren and Wren stand 1 m apart so the prompt picks Maren; Lusse's "Somebody's opened the doors" is unreachable with the tally in hand; the yard guest on its barrel plays the Netmender's mending loop; the Fellcaller may kneel overlapping the High Fold hearth; her rams may land on the fold wall; on a resumed save the RIME theme plays at the Wellhead where COLDWELL.md asks for silence; a kept save replays the sit-down on every Resume.
-14. **The chained saves are an easy game**: The Gentle Thaw, the weapon never raised, levels bought with everything carried. Every fight here was judged on gentle.
+14. **Every fight here was judged on The Gentle Thaw** (see the results note). Nothing is known about The Long Winter or the hard one past Saltfell.
