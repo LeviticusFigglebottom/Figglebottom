@@ -283,6 +283,40 @@ D = {
     "edges": edges,
 }
 
+# --- progression gates (ADR 0015) ---------------------------------------------
+# The foot of the Upwater: a head-dyke across the neck of the pasture and two
+# wattle hurdles tied in its gap to keep the flock off the river. In RIME three
+# of her ewes stand frozen against them, facing the fold. Sigga's release
+# lays the ewes down and the hurdles stand open (REACH.md 9). Untied from the
+# Coldwell side at any time. The track to it is in terrain_reach.path_weight.
+import progress_gates as PG  # noqa: E402
+_ua, _ub = H.UPWATER[0], H.UPWATER[1]
+_uf = 0.45
+_RIMED = {"M_fleece": "M_rime", "M_wool": "M_rime", "M_leather": "M_rime"}
+_ewe_rot = r2(math.degrees(math.atan2(-(FX - 695.0), -(FZ + 385.0))))
+UPWATER_GATE = PG.gate(
+    "shepherds_reach", "upwater_hurdle", K.sample,
+    at=(_ua[0] + (_ub[0] - _ua[0]) * _uf, _ua[1] + (_ub[1] - _ua[1]) * _uf), toward=(_ub[0] - _ua[0], _ub[1] - _ua[1]),
+    flag="ks_fellcaller_released", name="the Upwater", to="coldwell", seam_at=seam("coldwell", "shepherds_reach")["at"],
+    width=3.6, height=2.2, depth=0.3, flank="drystone",
+    dressing=[{"scatter": "wattle_fence", "fit": [1.85, 1.3, 0.22], "along": -0.92, "rot": 3},
+              {"scatter": "wattle_fence", "fit": [1.85, 1.3, 0.22], "along": 0.92, "rot": -2},
+              {"scatter": "wattle_fence", "fit": [1.85, 1.3, 0.22], "along": -2.0, "out": -0.95, "rot": 84, "when": "open"},
+              {"scatter": "wattle_fence", "fit": [1.85, 1.3, 0.22], "along": 2.0, "out": -0.95, "rot": -80, "when": "open"}]
+    + [{"kit": "sheep", "along": al, "out": out, "rot": rr, "tag": "rime", "mat_remap": _RIMED, "abs_rot": True}
+       for al, out, rr in ((-1.0, 0.9, 12), (0.1, 1.3, -8), (1.1, 0.8, 5))]
+    + [{"kit": "sheep", "along": al, "out": out, "rot": rr, "tag": "rime", "mat_remap": _RIMED, "abs_rot": True,
+        "scale": [1.0, 0.58, 1.0], "when": "open"}
+       for al, out, rr in ((-2.6, 2.4, 12), (-3.4, 3.6, -8), (2.9, 2.2, 5))],
+    locked_prompt="Tied from the other side", unbar_prompt="Untie the hurdles", open_toast="The hurdles swing back.")
+for _d in UPWATER_GATE["gate"]["dressing"]:
+    if _d.pop("abs_rot", False):          # the ewes face the fold, whichever way the gate runs
+        _d["rot"] = r2(_ewe_rot + _d["rot"] - UPWATER_GATE["rot"])
+PG.install(D, UPWATER_GATE)
+D["landmarks"].append({"scene": "res://assets/models/landmarks/lm_fold_cairn.glb",
+                       "at": at(UPWATER_GATE["gate"]["at"][0] - 4.6, UPWATER_GATE["gate"]["at"][2] + 1.2, -0.05), "rot": 140, "scale": 0.9})
+# --- end progression gates
+
 if __name__ == "__main__":
     out = os.path.join(ROOT, "data", "areas", "shepherds_reach.json")
     json.dump(D, open(out, "w"), indent=1)
