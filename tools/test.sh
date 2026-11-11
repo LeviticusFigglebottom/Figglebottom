@@ -24,6 +24,7 @@ for scene in tools/test/*_test.tscn; do
   # the full-slice walk plays the whole 20-minute slice in real time
   limit=300
   [ "$name" = "fullslice" ] && limit=2700
+  [ "$name" = "intro" ] && limit=900   # sits through the opening once
   # the full-game region walks (fullgame_<region>) each play a whole region
   case "$name" in fullgame_*) limit=2700 ;; esac
   timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \
