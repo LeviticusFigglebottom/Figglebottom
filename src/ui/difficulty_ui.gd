@@ -29,6 +29,7 @@ func _ready() -> void:
 	layer = 85
 	var root := Control.new()
 	root.theme = UITheme.theme()
+	root.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var back := ColorRect.new()
