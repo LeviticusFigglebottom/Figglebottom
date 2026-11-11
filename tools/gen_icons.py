@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""UI icons for Rimeholt: flat silhouettes drawn with PIL, in the UI palette
+"""RETIRED for anything the painted set covers: the game's icons are now
+painted and cut by tools/ui/build_icons.py (sheets in
+tools/ui/icon_sheets.json). This script only writes an icon the painted set
+has no tile for, as a stand-in until one is painted.
+
+UI icons for Rimeholt: flat silhouettes drawn with PIL, in the UI palette
 of docs/art/STYLE.md (bone-white and coal-ember on near-black). Drawn at 4x
 and filtered down, so edges are smooth at any HUD size.
 Usage: python3 tools/gen_icons.py   (writes assets/ui/icons/*.png)"""
@@ -635,7 +640,13 @@ def icon_bare_mask():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
+    import json
+    _sheets = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ui", "icon_sheets.json")))["sheets"]
+    PAINTED = {t[0] for sh in _sheets.values() for t in sh["tiles"]}
     for name, fn in list(globals().items()):
+        if name.startswith("icon_") and name[5:] in PAINTED:
+            print("[icons] %s is painted (tools/ui/build_icons.py); not drawn" % name[5:])
+            continue
         if name.startswith("icon_"):
             fn().save(os.path.join(OUT, name[5:] + ".png"))
             print("[icons]", name[5:])
