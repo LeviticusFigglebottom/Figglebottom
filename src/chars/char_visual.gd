@@ -438,7 +438,11 @@ func add_trail() -> void:
 
 func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 	if rig != null:
-		rig.play(clip, blend, speed)
+		if clip in HumanoidRig.LOCO_CLIPS:
+			# the gait is the tree's own; as an action it would never end
+			rig.settle(blend)
+		else:
+			rig.play(clip, blend, speed)
 		return
 	if quad != null:
 		_quad_play(clip, blend / maxf(speed, 0.05))

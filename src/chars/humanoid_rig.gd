@@ -43,6 +43,7 @@ var _w_slot_speed := 10.0
 var _loco_rate := 1.0
 var _loco_pos := 0.0
 var _loco_phase := 0.0             # seconds into the dominant loco cycle
+var _settling := false             # the gait eases to idle with nobody driving it
 var _carry := ""                   # arms-only carry clip ("" = none)
 var _carry_always := false         # the carry holds through actions too
 
@@ -237,6 +238,14 @@ func stop_action(blend := 0.2) -> void:
 	_w_act_to = 0.0
 	_w_act_speed = 1.0 / maxf(blend, 0.001)
 
+## Stand the gait down to idle and give it the rig, for an owner that stops
+## calling locomotion() mid-stride (a talk, a menu). A gait clip played as an
+## ACTION loops, so it never reports done and locomotion() never gets the rig
+## back: the body then slides about frozen in its idle.
+func settle(blend := 0.2) -> void:
+	stop_action(blend)
+	_settling = true
+
 func action_active() -> bool:
 	return _active and not (_done[_slot] and not _loop[_slot])
 
@@ -263,6 +272,7 @@ func locomotion(dt: float, ground_speed: float, stride: float, run_stride: float
 		return ""
 	if _active:
 		stop_action(0.3)   # a finished one-shot yields, like AnimationPlayer's ""
+	_settling = false
 	var v := ground_speed if grounded else 0.0
 	var want := 0.0
 	if v > 0.55:
@@ -295,6 +305,10 @@ func _physics_process(dt: float) -> void:
 				_done[s] = true
 	_w_act = move_toward(_w_act, _w_act_to, dt * _w_act_speed)
 	_w_slot = move_toward(_w_slot, float(_slot), dt * _w_slot_speed)
+	if _settling:
+		_loco_pos = lerpf(_loco_pos, 0.0, 1.0 - exp(-10.0 * dt))
+		if _loco_pos < 0.5:
+			_loco_rate = 1.0
 	var cyc := loco_cycle()
 	_loco_phase = fposmod(_loco_phase + dt * _loco_rate, maxf(cyc.y, 0.01))
 	_push()
