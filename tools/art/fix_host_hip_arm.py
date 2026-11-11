@@ -25,25 +25,13 @@ TUBE_MAX = 1500   # the arm is about 900 vertices; the flood past its root takes
 def main():
     g = Glb(GLB)
     p = Prim(g, g.prims()[0])
-    live = np.zeros(len(p.pos), bool)
-    live[p.tris.ravel()] = True
     # the far end: behind the back (he faces +Z), between knee and chest height
     x, y, z = p.pos.T
-    seed = live & (z < -1.0) & (y > 1.4) & (y < 2.4) & (np.abs(x) < 0.6)
+    seed = p.live() & (z < -1.0) & (y > 1.4) & (y < 2.4) & (np.abs(x) < 0.6)
     if seed.sum() < 50:
         print("host: no third arm found (already cut)")
         return
-    c = p.pos[seed].mean(0)
-    axis = np.linalg.svd(p.pos[seed] - c)[2][0]
-    if axis[1] < 0:
-        axis = -axis   # up the tube, toward its root in the back
-    t = (p.pos - c) @ axis
-    arm = None
-    for s0 in np.arange(0.30, 1.2, 0.02):   # the furthest cut that is still only the tube
-        m = p.grow(seed, t > s0)
-        if m.sum() > TUBE_MAX:
-            break
-        arm = m
+    arm = p.tube(seed, TUBE_MAX, lo=0.3, hi=1.2)
     n = p.drop_and_cap(arm)
     p.flush()
     g.save()

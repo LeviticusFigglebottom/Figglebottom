@@ -155,6 +155,31 @@ class Prim:
             on |= new
         return on[weld]
 
+    def tube(self, seed, limit, lo=0.1, hi=1.4, step=0.02, axis=None):
+        """A stray limb from its far end: flood from `seed` up the limb's own
+        axis and stop at the furthest cut that is still only the limb (past
+        its root the flood takes in the body and jumps over `limit`)."""
+        c = self.pos[seed].mean(0)
+        if axis is None:
+            axis = np.linalg.svd(self.pos[seed] - c)[2][0]
+        axis = np.asarray(axis, float)
+        if axis[1] < 0:
+            axis = -axis   # up the limb, toward its root
+        t = (self.pos - c) @ axis
+        best = None
+        for s0 in np.arange(lo, hi, step):
+            m = self.grow(seed, t > s0)
+            if m.sum() > limit:
+                break
+            best = m
+        return best
+
+    def live(self):
+        """Vertices still used by a triangle."""
+        m = np.zeros(len(self.pos), bool)
+        m[self.tris.ravel()] = True
+        return m
+
     def bind(self, mask, joints, weights):
         """Give the masked vertices these joints and weights (up to four)."""
         js = np.zeros(4, np.int64)
