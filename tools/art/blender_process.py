@@ -127,7 +127,36 @@ def process_static(a, ob):
     return v
 
 
+def keep_one_of_pair(ob):
+    """Tripo sometimes answers a long thin reference with two copies side by
+    side (the arrow). They do not touch: find the empty gap across the
+    width and delete everything on one side of it."""
+    import bmesh
+    v = verts_np(ob)
+    c = v - v.mean(0)
+    w, vecs = np.linalg.eigh(np.cov(c.T))
+    width = c @ vecs[:, np.argsort(w)[::-1][1]]
+    xs = np.sort(width)
+    mid = xs[len(xs) // 6: -len(xs) // 6]          # a gap in the middle, not a stray fleck at an edge
+    gaps = np.diff(mid)
+    i = int(np.argmax(gaps))
+    if gaps[i] < 0.02 * (xs[-1] - xs[0]):
+        print("  keep_one: no gap found, nothing removed")
+        return
+    cut = (mid[i] + mid[i + 1]) / 2
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bm.verts.ensure_lookup_table()
+    kill = [bm.verts[k] for k in np.nonzero(width > cut)[0]]
+    bmesh.ops.delete(bm, geom=kill, context="VERTS")
+    bm.to_mesh(ob.data)
+    bm.free()
+    print(f"  keep_one: removed {len(kill)} of {len(v)} verts (the second copy)")
+
+
 def process_weapon(a, ob):
+    if a.get("keep_one"):
+        keep_one_of_pair(ob)
     v = verts_np(ob)
     c = v.mean(0)
     v = v - c
