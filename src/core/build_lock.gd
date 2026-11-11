@@ -21,6 +21,10 @@ static var _mx := Mutex.new()
 static var worker_busy := false
 ## Longest the main thread waited for the lock, ms (STREAMING.md).
 static var max_wait_ms := 0.0
+## Set by the worker while it is in a phase of plain arithmetic (ground
+## cover, terrain arrays) that asks the renderer nothing: the main thread
+## need not keep answering.
+static var computing := false
 
 static func lock() -> bool:
 	if OS.get_thread_caller_id() != OS.get_main_thread_id():
@@ -28,17 +32,20 @@ static func lock() -> bool:
 		return true
 	if not worker_busy:
 		return false
-	if _mx.try_lock():
-		return true
-	var t0 := Time.get_ticks_usec()
-	while not _mx.try_lock():
-		pump()
-		OS.delay_usec(50)
-		if Time.get_ticks_usec() - t0 > 2000000:
-			# never hang the game on a cache: go on unlocked and say so
-			push_warning("BuildLock: main thread waited 2 s for a worker build; going on without the lock")
-			return false
-	max_wait_ms = maxf(max_wait_ms, (Time.get_ticks_usec() - t0) / 1000.0)
+	if not _mx.try_lock():
+		var t0 := Time.get_ticks_usec()
+		while not _mx.try_lock():
+			pump()
+			OS.delay_usec(50)
+			if Time.get_ticks_usec() - t0 > 2000000:
+				# never hang the game on a cache: go on unlocked and say so
+				push_warning("BuildLock: main thread waited 2 s for a worker build; going on without the lock")
+				return false
+		max_wait_ms = maxf(max_wait_ms, (Time.get_ticks_usec() - t0) / 1000.0)
+	# what the worker has just made (a material, a mesh) is only allocated
+	# until the main thread carries out its queued creation: do that before
+	# anything here is handed a cache entry it might draw with this frame
+	pump()
 	return true
 
 static func unlock(locked: bool) -> void:

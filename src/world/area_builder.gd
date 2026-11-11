@@ -94,7 +94,9 @@ static func _build(area_id: String) -> Area:
 		var t := Terrain.new()
 		if t.setup(def["terrain"]):
 			area.base.add_child(t)
+			BuildLock.computing = true
 			t.build(RH.L_WORLD_BASE)
+			BuildLock.computing = false
 			area.terrain = t
 	BuildProf.lap("terrain (other)")
 	if def.has("nav_bounds"):
@@ -343,8 +345,10 @@ static func _build(area_id: String) -> Area:
 		if _cancelled():
 			area.free()
 			return null
+		BuildLock.computing = true
 		Scatter.build_veg(area, area.terrain, def["scatter"].get("veg", []),
 				int(def["scatter"].get("seed", 1)) + 7, _keep_clear(def))
+		BuildLock.computing = false
 	BuildProf.lap("scatter ground cover")
 	if _cancelled():
 		area.free()

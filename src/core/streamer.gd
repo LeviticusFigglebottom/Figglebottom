@@ -68,10 +68,12 @@ var _held: Array = []          # resources read ahead for what acts (until settl
 ## What raising one foe costs (its spawner defers it past our timer), learnt
 ## from the frames it happened in; ms.
 var _foe_est_ms := 12.0
+var _heavy_est_ms := 12.0      # likewise a soul, a hearth, a veil
 var _foes_this_frame := 0
 
 var _crossing := false
 var _cold := false
+var _epoch := 0                # bumped by reset(): a crossing begun before it is void
 var _reap_first := false       # a crossing waits for the freeing to end
 ## Off: nothing is made ready ahead (tests that count nodes; a crossing then
 ## builds behind its black).
@@ -188,36 +190,53 @@ func foreign(n: Node) -> bool:
 
 # ---------------------------------------------------------------- the frame
 
+## STREAM_DBG=1 in the environment: one line every two seconds saying what
+## stands, what is coming and going, and how the Bearer is (for reading a
+## long test's log beside its own lines).
+var _dbg_on := OS.has_environment("STREAM_DBG")
 var _dbg_t := 0.0
+
 func _dbg(dt: float) -> void:
 	_dbg_t -= dt
 	if _dbg_t > 0.0:
 		return
 	_dbg_t = 2.0
 	var p = Game.player
-	var map := get_viewport().find_world_3d().navigation_map if get_viewport().find_world_3d() != null else RID()
-	var en := 0
-	for r in NavigationServer3D.map_get_regions(map):
-		if NavigationServer3D.region_get_enabled(r):
-			en += 1
+	var alive: bool = p != null and is_instance_valid(p)
 	var foes := 0
 	var awake := 0
 	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
 		foes += 1
 		if (e as Node).can_process():
 			awake += 1
-	print("[stream] area=%s crossing=%s cold=%s prep=%s/%s dying=%d garbage=%d late=%d/%d nav=%s regions=%d/%d foes=%d/%d player=%s input=%s dead=%s hp=%s" % [
-		Game.current_area_id, _crossing, _cold, pending_id(), str(_prep.stage) if _prep != null else "-", _dying.size(), _garbage.size(),
-		_late_i, _late.size(), str(_nav != null), en, NavigationServer3D.map_get_regions(map).size(), awake, foes,
-		str((p as Node3D).global_position.snapped(Vector3.ONE * 0.1)) if p != null and is_instance_valid(p) else "-",
-		str(p.input_enabled) if p != null and is_instance_valid(p) else "-", str(p.dead) if p != null and is_instance_valid(p) else "-",
-		str(p.hp) if p != null and is_instance_valid(p) else "-"])
+	print("[stream] area=%s crossing=%s prep=%s/%s freeing=%d+%d late=%d/%d foes=%d/%d at=%s input=%s" % [
+		Game.current_area_id, _crossing, pending_id(), str(_prep.stage) if _prep != null else "-", _dying.size(), _garbage.size(),
+		_late_i, _late.size(), awake, foes, str((p as Node3D).global_position.snapped(Vector3.ONE * 0.1)) if alive else "-",
+		str(p.input_enabled) if alive else "-"])
+
+## A budget in microseconds: the data's milliseconds, or a share of the
+## frame when frames are long. At 60 a second the milliseconds rule. Under a
+## software renderer drawing one frame a second (the QA shot runs) the same
+## few milliseconds a frame would stretch a crossing to minutes; a fifth of
+## such a frame is no hitch to anybody.
+func _budget(key: String, def: float) -> int:
+	var us := int(float(cfg(key, def)) * 1000.0)
+	if _frame_us > float(cfg("slow_frame_ms", 100.0)) * 1000.0:
+		us = maxi(us, int(_frame_us * float(cfg("slow_frame_share", 0.2))))
+	return us
+
+var _frame_us := 0.0
+var _last_frame_us := 0
 
 func _process(dt: float) -> void:
 	BuildProf.tick()
-	if OS.has_environment("STREAM_DBG"):
+	if _dbg_on:
 		_dbg(dt)
-	var budget := int(float(cfg("cold_budget_ms" if _cold else "budget_ms", 4.0)) * 1000.0)
+	var now := Time.get_ticks_usec()
+	if _last_frame_us > 0:
+		_frame_us = lerpf(_frame_us, float(now - _last_frame_us), 0.2)
+	_last_frame_us = now
+	var budget := _budget("cold_budget_ms" if _cold else "budget_ms", 4.0)
 	var t0 := Time.get_ticks_usec()
 	_poll_orphans()
 	if _prep != null:
@@ -229,7 +248,7 @@ func _process(dt: float) -> void:
 			_scan_t = float(cfg("scan_s", 0.25))
 			_scan(float(cfg("scan_s", 0.25)))
 	# freeing keeps to its own small share, unless a crossing is waiting on it
-	var free_budget := int(float(cfg("free_budget_ms", 2.5)) * 1000.0)
+	var free_budget := _budget("free_budget_ms", 2.5)
 	if _reap_first:
 		free_budget = maxi(free_budget, budget - (Time.get_ticks_usec() - t0))
 	_reap(free_budget)
@@ -416,10 +435,22 @@ func _advance(prep: Prep, t0: int, budget: int) -> void:
 				# the worker may be waiting on a RenderingServer read: answer it
 				# now and not at the end of the frame. What it has queued for
 				# the renderer (meshes, textures) is carried out here too.
+				# A build asks hundreds of such reads (every primitive a house is
+				# made of), each answered only here: so while it is in a phase
+				# that asks, this frame's budget is spent answering.
 				var tp := Time.get_ticks_usec()
 				BuildLock.pump()
+				while not BuildLock.computing and Time.get_ticks_usec() - t0 < budget * 3 / 4 \
+						and not WorkerThreadPool.is_task_completed(prep.task):
+					OS.delay_usec(250)
+					BuildLock.pump()
 				BuildProf.slice(prep.area_id, "flush: worker's render commands", tp)
 				return
+			# everything the worker queued for the renderer is carried out
+			# before anything it made is grafted or found in a cache
+			var tf := Time.get_ticks_usec()
+			BuildLock.pump()
+			BuildProf.slice(prep.area_id, "flush: worker's render commands", tf)
 			BuildLock.worker_busy = not _orphans.is_empty()
 			prep.built = true     # (the worker's own flag, seen from here now)
 			var res := prep.result
@@ -530,6 +561,7 @@ func yield_to_sync_build() -> void:
 ## Drop everything at once (the return to the title: the world is torn down
 ## behind its veil, so nothing here needs spreading out).
 func reset() -> void:
+	_epoch += 1
 	_drop_prep()
 	yield_to_sync_build()
 	_poll_orphans()
@@ -562,6 +594,7 @@ func reset() -> void:
 func prepare(area_id: String, fade := true) -> bool:
 	_crossing = true
 	crossings += 1
+	var epoch := _epoch
 	var t_call := Time.get_ticks_usec()
 	var was_ready := _prep != null and _prep.area_id == area_id and _prep.stage == St.READY \
 			and _prep.flag_sig == _flag_sig(area_id, _prep.flag_names)
@@ -569,6 +602,9 @@ func prepare(area_id: String, fade := true) -> bool:
 	last_report = {"area": area_id, "ready_at_call": was_ready, "t_call": t_call}
 	if fade:
 		await _fade_to(1.0, float(cfg("fade_out_s", 0.12)))
+	if epoch != _epoch:
+		return false     # the world was put away meanwhile (the title)
+	_crossing = true
 	_cold = true     # behind the black the frame can carry more
 	for attempt in 3:
 		if _prep != null and (_prep.area_id != area_id
@@ -579,10 +615,14 @@ func prepare(area_id: String, fade := true) -> bool:
 		while _prep == null and not (_dying.is_empty() and _garbage.is_empty() and _orphans.is_empty()):
 			await get_tree().process_frame
 		_reap_first = false
+		if epoch != _epoch:
+			return false
 		if _prep == null:
 			_start_prep(area_id)
-		while _prep != null and _prep.stage != St.READY and _prep.stage != St.FAILED:
+		while _prep != null and _prep.stage != St.READY and _prep.stage != St.FAILED and epoch == _epoch:
 			await get_tree().process_frame
+		if epoch != _epoch:
+			return false
 		if _prep == null or _prep.stage == St.FAILED:
 			_prep = null
 			_end_crossing()
@@ -658,7 +698,7 @@ func settle(area: Area) -> void:
 		_nav = NavBaker.new(area)
 		_nav_area = area
 		while _nav != null and not _nav.done():
-			_nav.step(int(float(cfg("settle_budget_ms", 8.0)) * 1000.0))
+			_nav.step(_budget("settle_budget_ms", 8.0))
 			if not _nav.done():
 				await get_tree().process_frame
 		if _nav != null and _nav.phase == NavBaker.P.DONE and is_instance_valid(area):
@@ -695,7 +735,7 @@ func reveal() -> void:
 	_fade_to(0.0, float(cfg("fade_in_s", 0.3)))
 
 func _graft_late(area: Area) -> void:
-	var budget := int(float(cfg("settle_budget_ms", 8.0)) * 1000.0)
+	var budget := _budget("settle_budget_ms", 8.0)
 	var t0 := Time.get_ticks_usec()
 	# what a _ready defers (a spawner raising its foe) runs later this frame:
 	# stamped on both sides so its cost is booked too, and counted against
@@ -707,18 +747,23 @@ func _graft_late(area: Area) -> void:
 		_late_i += 1
 		if not is_instance_valid(e[0]) or not is_instance_valid(e[1]):
 			continue
-		# a soul, a hearth, a veil: each builds a model in its _ready, and
-		# has a frame to itself
+		# a soul, a hearth, a veil: each builds a model in its _ready. With
+		# the usual budget that is a frame to itself; a foe likewise, by what
+		# the last ones cost
 		var heavy: bool = e[1] is NPC or e[1] is Hearthstone or e[1] is FrostVeil
 		var spent := Time.get_ticks_usec() - t0 + int(_foes_this_frame * _foe_est_ms * 1000.0)
-		if spent > 1000 and (heavy or (e[1] is Spawner and spent + int(_foe_est_ms * 1000.0) > budget)):
+		var dear := int((_heavy_est_ms if heavy else (_foe_est_ms if e[1] is Spawner else 0.0)) * 1000.0)
+		if spent > 1000 and dear > 0 and spent + dear > maxi(budget, dear):
 			_late_i -= 1     # next frame, where it has the budget to itself
 			break
+		var th := Time.get_ticks_usec()
 		(e[0] as Node).add_child(e[1])
+		if heavy:
+			_heavy_est_ms = maxf((Time.get_ticks_usec() - th) / 1000.0, lerpf(_heavy_est_ms, (Time.get_ticks_usec() - th) / 1000.0, 0.25))
 		area.settle_new(e[1], "thaw" if e[0] == area.thaw_layer else ("rime" if e[0] == area.rime_layer else "base"))
 		if e[1] is Spawner:
 			_foes_this_frame += 1
-		if heavy or Time.get_ticks_usec() - t0 + int(_foes_this_frame * _foe_est_ms * 1000.0) > budget:
+		if Time.get_ticks_usec() - t0 + int(_foes_this_frame * _foe_est_ms * 1000.0) > budget:
 			break
 	BuildProf.slice(area.area_id, "graft: what acts", t0)
 	_stamp_close.call_deferred(area.area_id)
@@ -798,9 +843,9 @@ func respawn_all() -> void:
 	for n in get_tree().get_nodes_in_group(RH.GROUP_RESPAWN_ON_REST):
 		if not foreign(n):
 			list.append(n)
-	var budget := int(float(cfg("respawn_budget_ms", 4.0)) * 1000.0)
 	var i := 0
 	while i < list.size():
+		var budget := _budget("respawn_budget_ms", 4.0)
 		var t0 := Time.get_ticks_usec()
 		while i < list.size():
 			var n = list[i]

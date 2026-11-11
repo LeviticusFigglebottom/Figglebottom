@@ -319,7 +319,7 @@ func stone(size: Vector3, t: Transform3D, roundness := 0.4, tone := -1.0) -> voi
 
 ## Any PrimitiveMesh (torus ring, sphere) with its UVs scaled to metres.
 func append_mesh(mesh: Mesh, t: Transform3D, uv_scale := Vector2.ONE, tone := -1.0) -> void:
-	var arr := mesh.surface_get_arrays(0)
+	var arr := ProcMesh.arrays_of(mesh)    # (kept per shape: see there)
 	var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 	var n: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
 	var tg: PackedFloat32Array = arr[Mesh.ARRAY_TANGENT] if arr[Mesh.ARRAY_TANGENT] != null else PackedFloat32Array()

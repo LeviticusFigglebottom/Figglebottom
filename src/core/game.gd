@@ -76,9 +76,12 @@ func respawn_player() -> void:
 	var own_window := BuildProf.window_name() == ""
 	if own_window:
 		BuildProf.window_open("respawn")
+	while stream.crossing():
+		await get_tree().process_frame     # (he fell as a seam took him: let it finish)
+	hearth_area = String(World.last_hearth.get("area", ""))
 	if hearth_area != "" and hearth_area != current_area_id and world_root != null:
 		arena_locked = false
-		if stream.enabled() and not stream.crossing():
+		if stream.enabled():
 			if await stream.prepare(hearth_area, false):
 				var next := stream.swap()
 				var t := BuildProf.now()
@@ -333,6 +336,8 @@ func travel_to(area_id: String, spawn_pos: Vector3, spawn_yaw := 1e9) -> void:
 	arena_locked = false   # no lock survives leaving the room that set it
 	player.lock_control(true)
 	if not await stream.prepare(area_id):
+		if player == null or not is_instance_valid(player):
+			return    # the world was put away under the crossing (title)
 		push_error("Game.travel_to: area '%s' could not be built" % area_id)
 		stream.reveal()
 		if player != null and is_instance_valid(player):
