@@ -986,9 +986,9 @@
    "origin": "grip",
    "texture_max": 1024,
    "collision": null,
-   "grip_from_pommel": 0.12,
-   "grip_end": "thin",
-   "output": "assets/models/weapons/turf_spade.glb"
+   "grip_from_pommel": 0.3,
+   "output": "assets/models/weapons/turf_spade.glb",
+   "_note": "the T-handle is the grip end (it was processed blade-in-hand until the weapons overhaul)"
   },
   {
    "name": "post_maul",
@@ -3562,6 +3562,97 @@
    "texture_max": 1024,
    "collision": null,
    "output": "assets/models/kit/kit_well_hero.glb"
+  },
+  {
+   "name": "torch",
+   "category": "weapons",
+   "kind": "weapon",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "7211b9da-08c0-4fca-8227-096372b1e192",
+    "task_id": "c1d127ee-7154-4d63-a652-88784d1283ea",
+    "remesh_operator": "ec8d5506-1864-48fe-b873-eadbf24def7d",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed"
+   },
+   "input": "raw/torch/remesh.fbx",
+   "target": {
+    "length": 0.95
+   },
+   "origin": "grip",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/weapons/torch.glb",
+   "grip_from_pommel": 0.14,
+   "grip_end": "thin"
+  },
+  {
+   "name": "greatblade",
+   "category": "weapons",
+   "kind": "weapon",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "c8ef8b76-2f30-44cc-9ea5-f94cd05cd4ad",
+    "task_id": "01b9c1cc-467b-4ac4-a875-26a39eb3f8ef",
+    "remesh_operator": "b17f3b88-c5b8-4ff6-a77b-a5ade45ca888",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed"
+   },
+   "input": "raw/greatblade/remesh.fbx",
+   "target": {
+    "length": 1.65
+   },
+   "origin": "grip",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/weapons/greatblade.glb",
+   "grip_from_pommel": 0.4
+  },
+  {
+   "name": "quiver",
+   "category": "weapons",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "d4f79f41-aec6-471b-9100-b28c359eb3da",
+    "task_id": "cb7059a5-0d2e-444d-9852-78b1259fa5ca",
+    "remesh_operator": "dbb21e8a-dde7-44c1-9a61-c265927b2dda",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed"
+   },
+   "input": "raw/quiver/remesh.fbx",
+   "target": {
+    "length": 0.68
+   },
+   "origin": "center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/weapons/quiver.glb",
+   "yaw_deg": -90
+  },
+  {
+   "name": "arrow",
+   "category": "weapons",
+   "kind": "weapon",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "1d96b1c8-efc2-42c2-8b1b-f0c3f309ae98",
+    "task_id": "f5cfa31e-fe21-4a76-94ec-a4ebe83d9770",
+    "remesh_operator": "81774013-2d4d-4db2-b25e-133c79bb06a3",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed"
+   },
+   "input": "raw/arrow/remesh.fbx",
+   "target": {
+    "length": 0.72
+   },
+   "origin": "grip",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/weapons/arrow.glb",
+   "grip_from_pommel": 0.0,
+   "keep_one": true,
+   "_note": "origin at the nock, head +Y. The roll came back as two arrows side by side; keep_one deletes the second"
   }
  ]
 }

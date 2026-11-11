@@ -33,6 +33,9 @@ Format: worktree → branch.
 - `/home/user/fb-anim` → `feat/combat-anims` (ready for review)
   - Player combat clips: shared combat library, weapon-class clip sets and grips (ADR 0011)
 
+- `/home/user/fb-anim` → `feat/weapons-overhaul` (ready for review)
+  - Every weapon has a model, its own grip, trail and strikes; the torch is a fire with a light; the bow is strung (ADR 0014)
+
 ## todo
 1. Wire Brede's `give_oilskins` gift once his NPC data lands.
 2. Region tier: the Turfwright fight, the Lowe NPCs, the Keepsakes questline.

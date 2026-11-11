@@ -47,6 +47,10 @@ func _ready() -> void:
 	else:
 		_zone.activated.connect(_on_take)
 	add_child(_zone)
+	if display_scene == "" and item_id != "":
+		# a weapon lies there as itself: its own model, whatever the area row says
+		var kit := String(DB.weapon(item_id).get("kit", item_id))
+		display_scene = String(HumanoidLib.weapon_cfg(kit).get("scene", ""))
 	if display_scene != "" and ResourceLoader.exists(display_scene):
 		var mesh := (load(display_scene) as PackedScene).instantiate() as Node3D
 		if not mesh.get_meta("upright", false):

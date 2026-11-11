@@ -39,6 +39,13 @@ static func launch_arrow(parent: Node, from: Vector3, dir: Vector3, speed: float
 ## goose-feather hint at the tail. Shared by the nocked visual and the shot.
 static func make_arrow() -> Node3D:
 	var root := Node3D.new()
+	var model := HumanoidLib.weapon_instance("arrow")
+	if model != null:
+		# the modelled arrow: nock at its origin, head +Y; laid along -Z about its middle
+		model.rotation_degrees = Vector3(-90, 0, 0)
+		model.position = Vector3(0, 0, 0.36)
+		root.add_child(model)
+		return root
 	var shaft := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.011

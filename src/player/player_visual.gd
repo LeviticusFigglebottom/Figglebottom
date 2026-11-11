@@ -37,6 +37,9 @@ func _process(dt: float) -> void:
 			shield_mount.visible = false
 		if trail != null:
 			trail.visible = false
+		for m in [bow_mount, quiver_mount, belt_brand, stow_mount]:
+			if m != null:
+				(m as Node3D).visible = false
 
 ## The gourd in hand while drinking: its Tripo mesh on the humanoid's gourd
 ## slot, the greybox vessel on the mannequin. Returns the mount (the caller
@@ -63,23 +66,64 @@ func mount_gourd() -> Node3D:
 ## is the exception: it lives in the LEFT hand (the right pulls the string),
 ## standing upright across the grip.
 var bow_mount: Node3D = null
+## The string and nocked arrow of the held bow (humanoid bodies), and the
+## hip quiver worn with it.
+var bow_rig: BowRig = null
+var quiver_mount: Node3D = null
+var belt_brand: Node3D = null
 
 func apply_loadout(weapon_kit: String, with_shield: bool) -> void:
 	var ranged := weapon_kit == "bow"
 	set_weapon("" if ranged else weapon_kit)
 	if ranged and rig != null and bool(HumanoidLib.model_cfg(model_id).get("clip_sets", false)):
 		rig.clip_set = HumanoidLib.weapon_class(weapon_kit)   # the bow rides the left hand, not the weapon mount
+	var modelled := is_humanoid() and HumanoidLib.weapon_instance("bow") != null
 	if bow_mount == null and ranged:
-		bow_mount = mount("hand_l")
-		bow_mount.position = Vector3(0, 0.06, 0)
+		if modelled:
+			bow_mount = mount_slot("bow")
+		else:
+			bow_mount = mount("hand_l")
+			bow_mount.position = Vector3(0, 0.06, 0)
+	bow_rig = null
 	if bow_mount != null:
 		for c in bow_mount.get_children():
 			c.queue_free()
-		if ranged:
+		if ranged and modelled:
+			var bow := HumanoidLib.weapon_instance("bow")
+			bow_mount.add_child(bow)
+			bow_rig = BowRig.new()
+			bow_rig.name = "BowRig"
+			bow.add_child(bow_rig)
+			bow_rig.setup(HumanoidLib.weapon_cfg("bow"))
+			bow_rig.hand = Callable(self, "string_hand")
+		elif ranged:
 			bow_mount.add_child(KitLib.instance(weapon_kit))
 			bow_mount.rotation_degrees = Vector3(90, 0, 0)
+	if modelled:
+		if quiver_mount == null and ranged:
+			quiver_mount = mount_slot("quiver")
+			var q := HumanoidLib.weapon_instance("quiver")
+			if q != null:
+				quiver_mount.add_child(q)
+		if quiver_mount != null:
+			quiver_mount.visible = ranged
 	if shield_mount != null:
 		shield_mount.visible = with_shield
+	# the torch is always carried: out of the hand it hangs unlit at the belt
+	if is_humanoid() and belt_brand == null and not HumanoidLib.mount_cfg("stow@brand").is_empty():
+		var t := HumanoidLib.weapon_instance("torch")
+		if t != null:
+			var c := HumanoidLib.mount_cfg("stow@brand")
+			belt_brand = mount(String(c.get("bone", "mixamorig_Hips")))
+			belt_brand.position = Vector3(c["pos"][0], c["pos"][1], c["pos"][2])
+			belt_brand.rotation_degrees = Vector3(c["rot"][0], c["rot"][1], c["rot"][2])
+			belt_brand.add_child(t)
+	if belt_brand != null:
+		belt_brand.visible = weapon_kit != "torch"
+
+## Where the string fingers are (the right hand's first knuckles), world space.
+func string_hand() -> Vector3:
+	return bone_xform("mixamorig_RightHand") * Vector3(0.0, 0.075, 0.02)
 
 ## The drink is over: free the gourd's attachment, the blade comes back out.
 func unmount_gourd(m: Node3D) -> void:

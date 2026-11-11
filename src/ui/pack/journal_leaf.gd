@@ -33,7 +33,7 @@ static func act(ui: InventoryUI, row: Dictionary) -> void:
 			var open: Dictionary = ui.get_meta("journal_open", {})
 			open[row["id"]] = not bool(open.get(row["id"], false))
 			ui.set_meta("journal_open", open)
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("ui/move")
 	var keep := ui._sel
 	ui._rebuild_list()
 	ui._sel = keep

@@ -289,7 +289,7 @@ func _run() -> void:
 	pv3.queue_free()
 	var dtick := 1.0 / float(Engine.physics_ticks_per_second)
 	var cseen := {}
-	for wid in ["hewing_blade", "greatblade", "maul", "turf_spade", "spear"]:
+	for wid in ["hewing_blade", "greatblade", "maul", "turf_spade", "spear", "torch", "feast_cleaver", "hedging_bill"]:
 		var cw: Dictionary = DB.weapon(wid)
 		player.inventory[wid] = 1
 		player._set_state(Player.S.MOVE)
@@ -379,5 +379,85 @@ func _run() -> void:
 	check(player.vis.rig.clip_set == "bow" and player.vis.rig.qualified("bow_draw") == "bow_pull",
 		"the bow draws with its own clip")
 	check(player.vis.rig.qualified("bow_loose") == "bow_loose", "and looses with one")
+
+	print("== the weapons overhaul (ADR 0014): what is in the hands")
+	# every weapon has a real model, and a per-weapon clip is cut to the
+	# data strike time exactly (so it plays at 1x)
+	var wmeta: Dictionary = HumanoidLib.meta()
+	for wid2 in DB.table("weapons"):
+		var wrow: Dictionary = DB.weapon(String(wid2))
+		check(HumanoidLib.weapon_instance(String(wrow.get("kit", wid2))) != null, "%s has a model" % wid2)
+	var wms: Dictionary = DB.table("movesets")
+	var wbad := []
+	var wn := 0
+	for cname in (wmeta.get("clips", {}) as Dictionary):
+		var note := String(((wmeta["clips"] as Dictionary)[cname] as Dictionary).get("_note", ""))
+		if not String(cname).begins_with("w_") or not note.contains(", cut to"):
+			continue
+		var parts := note.get_slice(",", 0).split(" ")
+		var wmove: Dictionary = wms[parts[0]]["lights"][int(parts[1].substr(1)) - 1] if parts[1].begins_with("l") else wms[parts[0]][parts[1]]
+		var wstrike := maxf(float(wmove["windup"]) + float(wmove["active"]) * 0.45, 0.12)
+		wn += 1
+		if absf(float(wmeta["clips"][cname]["contact"]) - wstrike) > 0.001:
+			wbad.append(cname)
+	check(wn >= 14 and wbad.is_empty(), "%d per-weapon strikes are keyed to their data strike time %s" % [wn, str(wbad)])
+	# the bow: stave in the left hand, a string that follows the fingers, the quiver
+	check(player.vis.bow_rig != null and player.vis.quiver_mount != null and player.vis.quiver_mount.visible,
+		"the bow is strung and the quiver is on the hip")
+	var rest_at: Vector3 = player.vis.bow_rig.string_at()
+	player.inventory["arrows"] = 3
+	player.vis.play("bow_draw", 0.01)
+	player._nock_arrow(true)
+	await ticks(45)
+	await get_tree().process_frame
+	var drawn := player.vis.bow_rig.string_at().distance_to(player.vis.bow_rig.to_global(Vector3(0, 0, player.vis.bow_rig.nock.z)))
+	check(player.vis.bow_rig.is_nocked() and drawn > 0.3, "drawing pulls the string and the arrow back with the hand (%.2f m)" % drawn)
+	player.vis.bow_rig.loose()
+	check(not player.vis.bow_rig.is_nocked(), "the loose takes the arrow off the string")
+	player.vis.back_to_idle(0.01)
+	# the torch: fire on the head, the light its data says, strikes of its own
+	player.equip_weapon("torch")
+	await ticks(40)
+	await get_tree().process_frame
+	var bf: BrandFire = player.vis.brand
+	var tl: Dictionary = DB.weapon("torch").get("light", {})
+	check(bf != null and bf.is_lit() and bf.lit > 0.9, "the drawn torch burns")
+	check(bf != null and is_equal_approx(bf.light().omni_range, float(tl["light_range"]))
+			and bf.light().light_energy > float(tl["light_energy"]) * 0.7, "its light reaches what the data says (%.1f m)" % float(tl["light_range"]))
+	check(bf != null and bf.light().global_position.distance_to(player.vis.weapon_xform() * Vector3(0, 0.74, 0)) < 0.6,
+		"and moves with the head of the brand")
+	check(player.vis.rig.qualified("attack_h") == "w_br_smash" and player.try_attack(true), "the torch strikes (its own heavy)")
+	await ticks(4)
+	player._set_state(Player.S.MOVE)
+	player.vis.back_to_idle(0.01)
+	check(not player.vis.belt_brand.visible, "in hand, it is off the belt")
+	# RIME's wind worries it harder than THAW's air (looks only: the floor holds the light)
+	var g_thaw := 0.0
+	var g_rime := 0.0
+	var keep_blend := StateDirector.state_blend
+	for ph in 2:
+		StateDirector.state_blend = float(ph)
+		var acc := 0.0
+		for k in 240:
+			bf._apply(1.0 / 60.0)
+			acc += bf.gutter()
+		if ph == 0:
+			g_thaw = acc / 240.0
+		else:
+			g_rime = acc / 240.0
+		check(bf.light().light_energy >= float(tl["light_energy"]) * float(bf.cfg.get("light_floor", 0.7)) - 0.01,
+			"guttering never takes the light under its floor (%s)" % ("RIME" if ph == 1 else "THAW"))
+	StateDirector.state_blend = keep_blend
+	check(g_rime > g_thaw, "the flame gutters more under RIME (%.2f vs %.2f)" % [g_rime, g_thaw])
+	# kneeling puts the weapon away, and a stowed torch dies to a coal
+	player._set_state(Player.S.REST)
+	await ticks(50)
+	await get_tree().process_frame
+	check(player.vis.is_stowed() and not bf.is_lit() and bf.lit < 0.2, "at rest the torch is stowed and out")
+	player._set_state(Player.S.MOVE)
+	await ticks(2)
+	check(not player.vis.is_stowed() and bf.is_lit(), "and lit again in the hand")
 	player.equip_weapon("hewing_blade")
+	await ticks(2)
+	check(player.vis.belt_brand != null and player.vis.belt_brand.visible, "out of the hand, the torch hangs at the belt")
 	finish()
