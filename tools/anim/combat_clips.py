@@ -9,7 +9,7 @@ movesets that use them, so playback rates stay close to 1.
 """
 import anim_pose as A
 import anim_rig as R
-from anim_pose import concat, warp, two_hand, ease_to, floor_clamp, lift_to_floor
+from anim_pose import concat, warp, two_hand, ease_to, floor_clamp, lift_to_floor, stop_above
 
 P = R.P
 DOWN = [0, 0, -1]
@@ -57,9 +57,11 @@ def from_stance(c, poses, n=3):
 
 # ------------------------------------------------------------------ one hand
 def sw_light_a(c):
-    """Rising cut, right to left. Wind-up stretched to the light windup."""
+    """Rising cut, right to left. Wind-up stretched to the light windup; the
+    cut itself (two source frames) is spread so the blade is seen crossing
+    the target, and the section's contact sits in the middle of that."""
     p = concat(c.mocap("ual2", "Sword_Regular_A"), c.mocap("ual2", "Sword_Regular_A_Rec"))
-    return warp(p, [(0, 6, 1.35)])
+    return warp(p, [(0, 6, 1.35), (6.5, 8.6, 1.6)])
 
 
 def sw_light_b(c):
@@ -290,8 +292,11 @@ def gs_light_b(c, grip="twohand"):
 
 def gs_heavy(c, grip="twohand"):
     """Leaping overhead smash, both hands: the blade swings low behind, the
-    back arches under it, and it comes down into the ground."""
-    return _two(c, warp(_slam(c), [(4, 14, 1.6), (22, 38, 0.6)]), grip)
+    back arches under it, and it comes down through the target and is
+    stopped at the hip, short of the ground (the real-GPU review: it lay flat
+    on the floor through contact)."""
+    p = warp(_slam(c), [(4, 14, 1.6), (22, 38, 0.6)])
+    return two_hand(stop_above(p, c.grips[grip], 1.5, 0.52, 0.84, start=18), c.grips[grip], fist_from=c.stance())
 
 
 def gs_dash(c, grip="twohand"):
@@ -511,6 +516,113 @@ def bow_loose(c):
                      (0.60, "inout", _bow())], c.fps)
 
 
+# -------------------------------------------------- the endings (ADR 0013)
+# Not combat: the last things the Bearer does. Keyed on his plain standing
+# pose (his own idle), hands empty. Slow; the head always arrives last.
+def _end_rig(c):
+    base = c.own_idle("bearer_traveller")
+    rig = A.Rig(c.skel, base, c.grips["onehand"], fist_from=c.stance())
+    n = {"hips": [0] * 6, "chest": [0, 0, 0], "head": [0, 0], "footL": [0] * 5, "footR": [0] * 5,
+         "rpole": [0.5, -0.4, -0.8], "lpole": [-0.5, -0.4, -0.8], "fists": False,
+         "bones": {"LeftShoulder": [0, 0, 0], "RightShoulder": [0, 0, 0]}}
+    n.update(rig.hands_ctl())
+    return rig, n
+
+
+def _free(keys):
+    for _t, _k, ctl in keys[1:]:
+        ctl.setdefault("rrot", None)
+        ctl.setdefault("lrot", None)
+    return keys
+
+
+def end_sing(c):
+    """The Outsong (loop): he stands with his hands down and open, and
+    sings. Each phrase lifts his chest and his head a little and turns his
+    palms out; between phrases he breathes, and his head comes level."""
+    rig, n = _end_rig(c)
+
+    def phrase(lift, yaw=0.0):
+        return {"hips": [0, 0, 0.005 * lift, 0, -1.5 * lift, 0], "chest": [yaw, -5 * lift, 0],
+                "head": [-yaw * 0.6, -4 - 9 * lift], "fists": False,
+                "rhand": [0.30 + 0.05 * lift, 0.10 + 0.07 * lift, 0.86 + 0.07 * lift],
+                "lhand": [-0.30 - 0.05 * lift, 0.10 + 0.07 * lift, 0.86 + 0.07 * lift],
+                "rrot": [90 - 30, 150 * lift, 0] if lift > 0.5 else None,
+                "lrot": [-90 + 30, 150 * lift, 0] if lift > 0.5 else None,
+                "rpole": [0.6, -0.8, 0.0], "lpole": [-0.6, -0.8, 0.0]}
+    rest = phrase(0.0)
+    return rig.clip([(0.0, "inout", rest), (1.6, "inout", phrase(1.0, 3)), (3.4, "inout", phrase(0.8, 3)),
+                     (4.3, "inout", phrase(0.15)), (5.0, "inout", phrase(0.1)), (6.6, "inout", phrase(1.0, -3)),
+                     (8.6, "inout", phrase(0.85, -3)), (9.6, "inout", phrase(0.1)), (10.4, "inout", rest)], c.fps)
+
+
+def _end_kneel(depth=0.50, lean=10.0):
+    return {"hips": [0, 0.06, -depth, 0, lean, 0], "footR": [0.0, -0.30, -0.03, 0, 78],
+            "footL": [-0.02, 0.26, 0, 0, 0]}
+
+
+def end_kneel(c):
+    """He kneels at the water. The horn comes off his belt in both hands;
+    he holds it a moment, then reaches out and tips the coal into the
+    spring, and stays bent over it with his hand open above the water."""
+    rig, n = _end_rig(c)
+    down = dict(_end_kneel(), chest=[0, 8, 0], head=[0, 12], fists=False,
+                rhand=[0.24, 0.24, 0.62], lhand=[-0.22, 0.30, 0.66], rpole=[0.8, -0.5, -0.1], lpole=[-0.8, -0.5, -0.1])
+    horn = dict(_end_kneel(0.50, 12), chest=[0, 12, 0], head=[0, 26], fists=True,
+                rhand=[0.08, 0.30, 0.68], lhand=[-0.08, 0.32, 0.62])
+    tip = dict(_end_kneel(0.54, 26), chest=[0, 30, 0], head=[0, 20], fists=True,
+               rhand=[0.06, 0.72, 0.36], lhand=[-0.10, 0.60, 0.44], rpole=[0.9, -0.3, 0.3], lpole=[-0.9, -0.3, 0.3])
+    gone = dict(tip, fists=False, rhand=[0.08, 0.70, 0.30], lhand=[-0.20, 0.44, 0.50], head=[0, 30])
+    stay = dict(_end_kneel(0.52, 20), chest=[0, 24, 0], head=[0, 36], fists=False,
+                rhand=[0.10, 0.62, 0.26], lhand=[-0.22, 0.34, 0.60])
+    # (the coal is tipped 2.5 s in: game.json endings.outsong coal_at - kneel_at)
+    return rig.clip(_free([(0.0, "inout", n), (0.9, "inout", down), (1.5, "inout", horn), (1.9, "inout", horn),
+                           (2.5, "inout", tip), (3.0, "inout", gone), (4.6, "inout", stay)]), c.fps)
+
+
+def end_stopper(c):
+    """The Hearth Kept: he lifts the coal-horn from his belt in his left
+    hand, looks at it, and presses the stopper home with the heel of his
+    right. His hand stays on it. Then both come down."""
+    rig, n = _end_rig(c)
+    lift = {"hips": [0, 0, -0.01, 0, 2, 0], "chest": [-4, 6, 0], "head": [4, 20], "fists": True,
+            "lhand": [-0.06, 0.30, 1.10], "lpole": [-0.8, -0.5, -0.3],
+            "rhand": [0.22, 0.20, 1.02], "rpole": [0.8, -0.5, -0.3]}
+    over = dict(lift, fists=True, rhand=[0.00, 0.30, 1.26], rpole=[1.0, -0.3, 0.2], head=[2, 24])
+    press = dict(over, hips=[0, 0.01, -0.03, 0, 5, 0], chest=[-2, 10, 0], rhand=[-0.03, 0.30, 1.17],
+                 lhand=[-0.06, 0.30, 1.08], head=[2, 28])
+    held = dict(press, hips=[0, 0.01, -0.025, 0, 4, 0], rhand=[-0.03, 0.30, 1.175])
+    low = {"hips": [0, 0, 0, 0, 1, 0], "chest": [0, 3, 0], "head": [0, 10], "fists": True,
+           "lhand": [-0.20, 0.16, 0.92], "rhand": [0.24, 0.12, 0.90]}
+    return rig.clip(_free([(0.0, "inout", n), (0.55, "inout", lift), (0.80, "inout", over), (0.98, "in", press),
+                           (1.6, "inout", held), (2.4, "inout", low), (3.0, "inout", dict(n, rrot=None, lrot=None))]),
+                    c.fps)
+
+
+def end_sit(c):
+    """He sits down by the spring: a hand to the ground, the weight let
+    down onto it, knees up, forearms laid across them. His head stays up,
+    toward the water; then that goes too. He does not get up (the clip
+    holds its last frame)."""
+    rig, n = _end_rig(c)
+    crouch = {"hips": [0, -0.10, -0.42, 0, 26, 0], "chest": [-8, 18, 0], "head": [6, -6], "fists": False,
+              "rhand": [0.34, -0.20, 0.34], "rpole": [0.8, -0.8, 0.2],
+              "lhand": [-0.24, 0.30, 0.56], "lpole": [-0.8, -0.4, -0.2],
+              "footL": [-0.04, 0.10, 0, 6, 0], "footR": [0.04, 0.04, 0, -6, 0]}
+    hand = dict(crouch, hips=[0.02, -0.24, -0.66, 0, 6, 0], chest=[-10, 16, 0],
+                rhand=[0.36, -0.42, 0.06], footL=[-0.04, 0.14, 0, 6, -14], footR=[0.04, 0.10, 0, -6, -14])
+    sat = {"hips": [0, -0.30, -0.79, 0, -8, 0], "chest": [0, 22, 0], "head": [0, -10], "fists": False,
+           "rhand": [0.30, 0.14, 0.34], "lhand": [-0.30, 0.14, 0.34],
+           "rpole": [0.9, -0.6, 0.0], "lpole": [-0.9, -0.6, 0.0],
+           "footL": [-0.06, 0.16, 0, 8, -10], "footR": [0.06, 0.12, 0, -8, -10]}
+    # hands come to rest on his knees, the right over the left wrist
+    arms = dict(sat, chest=[0, 26, 0], rhand=[0.10, 0.34, 0.27], lhand=[-0.14, 0.33, 0.25], head=[0, -12])
+    bowed = dict(arms, chest=[0, 32, 0], head=[0, 14], hips=[0, -0.30, -0.79, 0, -6, 0])
+    return lift_to_floor(rig.clip(_free([(0.0, "inout", n), (0.9, "inout", crouch), (1.6, "inout", hand),
+                                         (2.2, "out", sat), (3.2, "inout", arms), (4.4, "inout", arms),
+                                         (7.0, "inout", bowed)]), c.fps))
+
+
 def _pa(fn):
     return lambda c: fn(c, "polearm")
 
@@ -538,4 +650,6 @@ def clips():
         "sp_carry": _carry(lambda c: c.spear_stance()),
         # bow
         "bow_pull": bow_pull, "bow_aim": bow_aim, "bow_loose": bow_loose,
+        # the endings
+        "end_sing": end_sing, "end_kneel": end_kneel, "end_stopper": end_stopper, "end_sit": end_sit,
     }

@@ -100,6 +100,95 @@ def hook(amp=1.0, height=1.28):
     return a, h, f
 
 
+def haymaker(amp=1.0, height=1.30):
+    """The rimewalker's swipe: a heavy round blow with the whole arm. The
+    club-hand is hauled right out behind the shoulder, arm nearly straight,
+    the trunk wound a quarter turn and sunk over the back leg, the off arm
+    out ahead as a counterweight; then a long step and the arm comes round
+    wide (the elbow leads), through the target, and drags the body on
+    after it until the fist hangs past the far knee."""
+    a = {"hips": [0.07, -0.16, -0.13, -44 * amp, 2, -4], "chest": [-40 * amp, -6, -8], "head": [50 * amp, 0],
+         "rhand": [0.74, -0.52, height + 0.24], "rpole": [0.9, -0.6, 0.3],
+         "lhand": [-0.20, 0.52, 1.24], "lpole": [-0.6, -0.1, -0.7],
+         "footR": [0.08, -0.22, 0, -24, 0], "footL": [-0.02, 0.04, 0, 6, 0]}
+    mid = {"hips": [0.02, 0.10, -0.15, -6, 10, 0], "chest": [-8, 8, 0],
+           "rhand": [0.84, 0.30, height + 0.10], "rpole": [0.9, -0.5, -0.1],
+           "lhand": [-0.36, 0.20, 1.10], "footL": [-0.04, 0.30, 0.05, 8, -10]}
+    h = {"hips": [-0.05, 0.36, -0.20, 34 * amp, 16, 4], "chest": [44 * amp, 14, 8], "head": [-40 * amp, -6],
+         "rhand": [-0.06, 0.92, height - 0.08], "rpole": [0.9, -0.2, -0.3],
+         "lhand": [-0.50, -0.20, 1.00], "lpole": [-0.6, -0.8, 0.0],
+         "footL": [-0.04, 0.44, 0, 10, 0], "footR": [0.08, -0.22, 0.07, -24, 34]}
+    f = {"hips": [-0.09, 0.40, -0.30, 52 * amp, 24, 6], "chest": [62 * amp, 22, 10], "head": [-52 * amp, -2],
+         "rhand": [-0.62, 0.34, 0.62], "rpole": [0.6, -0.2, -0.7], "lhand": [-0.54, -0.30, 1.04],
+         "footL": [-0.04, 0.44, 0, 10, 0], "footR": [0.10, -0.10, 0.04, -10, 40]}
+    return {"a": a, "h": h, "f": f, "mid": mid, "rise": 0.24, "strike": 0.14, "creep": 0.14, "hold": 0.34, "out": 0.6}
+
+
+def fk_arms(n):
+    """The rest controls with the arms left to follow the body (no wrist
+    targets): for bodies whose arms carry something skinned to them."""
+    return {k: v for k, v in n.items() if k not in ("rhand", "lhand", "rrot", "lrot")}
+
+
+def table_heave(rig, fps, n, w, atk, amp=1.0, **_):
+    """The Host's table rides his back, its ends out past either shoulder,
+    and is skinned to his upper arms: they must stay where they hang or the
+    table flies. So only the forearms fold: both fists come up and close on
+    the table's edge at the shoulders (held there throughout); he winds his
+    whole frame away under it, sunk over the back leg, the far end dipped;
+    then heaves it round on a step and is dragged on by its weight until it
+    stops him."""
+    n = fk_arms(n)
+    from mathutils import Quaternion
+    free, hold = {}, {}
+    for sd, sgn in (("Right", 1.0), ("Left", -1.0)):
+        e, hd, sh = (rig.base.pos(P + sd + b) for b in ("ForeArm", "Hand", "Arm"))
+        # the forearm folded from where it hangs to point at the table's
+        # edge, just ahead of and above its own shoulder
+        to = sh + A.V(sgn * 0.05, 0.20, 0.10) - e
+        free[sd + "ForeArm"] = Quaternion()
+        hold[sd + "ForeArm"] = (hd - e).normalized().rotation_difference(to.normalized())
+    n0 = dict(n, cbones=free, fists=True)
+    grip = {"hips": [0, 0.02, -0.05, 0, 6, 0], "chest": [0, 8, 0], "head": [0, 10], "cbones": hold}
+    a = {"hips": [0.07, -0.12, -0.20, -36 * amp, 8, 6], "chest": [-34 * amp, 8, 10], "head": [56 * amp, 0],
+         "footR": [0.08, -0.18, 0, -30, 0], "cbones": hold}
+    a2 = dict(a, hips=[0.08, -0.14, -0.23, -40 * amp, 9, 7], chest=[-38 * amp, 9, 12])
+    h = {"hips": [-0.05, 0.24, -0.18, 32 * amp, 10, -6], "chest": [30 * amp, 10, -10], "head": [-40 * amp, -4],
+         "footL": [-0.05, 0.30, 0, 20, 0], "footR": [0.08, -0.18, 0.06, 0, 30], "cbones": hold}
+    f = {"hips": [-0.08, 0.28, -0.26, 50 * amp, 12, -8], "chest": [46 * amp, 14, -8], "head": [-56 * amp, -2],
+         "footL": [-0.05, 0.30, 0, 36, 0], "footR": [0.10, -0.06, 0.03, 24, 30], "cbones": hold}
+    strike = 0.17
+    return [(0.0, "inout", n0), (0.34, "out", grip), (0.62, "inout", a), (w - strike, "inout", a2),
+            (w, "in", h), (w + 0.18, "out", f), (w + 0.60, "inout", f),
+            (w + 1.05, "inout", dict(grip, hips=[0, 0, -0.03, 0, 4, 0], footL=list(Z5), footR=list(Z5))),
+            (w + 1.40, "inout", dict(n0, hips=list(Z6), chest=[0, 0, 0], head=[0, 0]))]
+
+
+table_heave.full = True
+
+
+def long_backhand(amp=1.0, height=1.32):
+    """The Fellcaller's swing: the fist drawn right across to the far hip,
+    her whole back turned into it and sunk over the left leg (held); then a
+    long step and the arm is flung out level, straight, the trunk opening a
+    half turn behind it; it drags her round after it."""
+    a = {"hips": [-0.07, -0.14, -0.14, 46 * amp, 6, -4], "chest": [42 * amp, 8, -6], "head": [-60 * amp, 0],
+         "rhand": [-0.44, 0.08, height - 0.16], "rpole": [0.4, 0.6, -0.6],
+         "lhand": [-0.46, -0.20, 1.06], "lpole": [-0.7, -0.7, 0.0],
+         "footL": [-0.08, -0.20, 0, 26, 0], "footR": [0.02, 0.06, 0, 0, 0]}
+    mid = {"hips": [-0.01, 0.12, -0.16, 8, 10, 0], "chest": [6, 8, 0],
+           "rhand": [-0.16, 0.80, height], "rpole": [0.7, -0.1, -0.6],
+           "lhand": [-0.44, -0.04, 1.02], "footR": [0.06, 0.32, 0.06, -8, -10]}
+    h = {"hips": [0.05, 0.36, -0.20, -34 * amp, 12, 4], "chest": [-40 * amp, 8, 6], "head": [56 * amp, -4],
+         "rhand": [0.74, 0.56, height + 0.04], "rpole": [0.6, -0.5, -0.5],
+         "lhand": [-0.30, 0.20, 1.10], "lpole": [-0.7, -0.4, -0.4],
+         "footR": [0.08, 0.48, 0, -12, 0], "footL": [-0.08, -0.20, 0.07, 26, 34]}
+    f = {"hips": [0.09, 0.40, -0.26, -56 * amp, 14, 6], "chest": [-60 * amp, 10, 8], "head": [74 * amp, 0],
+         "rhand": [0.70, -0.30, height - 0.14], "lhand": [-0.10, 0.36, 1.14],
+         "footR": [0.08, 0.48, 0, -12, 0], "footL": [-0.10, -0.06, 0.04, 8, 40]}
+    return {"a": a, "h": h, "f": f, "mid": mid, "rise": 0.28, "strike": 0.15, "creep": 0.12, "hold": 0.36, "out": 0.7}
+
+
 def backhand(amp=1.0, height=1.3):
     """The arm folded across the chest, shoulder turned in; flung out and round."""
     a = {"hips": [-0.03, -0.06, -0.05, 28 * amp, 3, 0], "chest": [34 * amp, 4, 4], "head": [-36 * amp, 0],
@@ -562,7 +651,7 @@ def turn_away(amp=1.0):
 
 
 
-ARCH = {"hook": hook, "backhand": backhand, "overhead": overhead, "double_slam": double_slam, "thrust": thrust,
+ARCH = {"hook": hook, "long_backhand": long_backhand, "haymaker": haymaker, "table_heave": table_heave, "backhand": backhand, "overhead": overhead, "double_slam": double_slam, "thrust": thrust,
         "throw": throw, "plant": plant, "sweep_low": sweep_low, "cross_cut": cross_cut, "rush": rush,
         "scoop": scoop, "double_slice": double_slice, "heave": heave, "breath": breath, "keen_rock": keen_rock,
         "hush": hush, "rouse": rouse, "twist": twist, "oar_stroke": oar_stroke, "oar_back": oar_back,
@@ -572,15 +661,24 @@ ARCH = {"hook": hook, "backhand": backhand, "overhead": overhead, "double_slam":
         # whole-key beats (foe_beats.py)
         "whirl": B.whirl, "ring_cut": B.ring_cut, "stitch": B.stitch, "curl": B.nm_curl,
         "last_turf": B.tw_last_turf, "kneel_down": B.ic_kneel_down, "set_horn": B.host_set_horn,
-        "where": B.hl_where, "step_into": B.hl_step_into, "door_fall": B.door_fall}
+        "where": B.hl_where, "step_into": B.hl_step_into, "door_fall": B.door_fall,
+        # Shepherd's Reach and the Coldwell
+        "crook_sweep": B.crook_sweep, "leg_hook": B.leg_hook, "whistle_in": B.whistle_in,
+        "shoulder_shove": B.shoulder_shove, "let_go": B.let_go, "ask": B.ask, "breath_in": B.breath_in,
+        "rising_cry": B.rising_cry, "head_down": B.head_down, "call_them_in": B.call_them_in,
+        "bring_tups": B.bring_tups, "count_them": B.count_them,
+        "lv_held_note": B.lv_held_note, "lv_long_note": B.lv_long_note, "lv_not_yet": B.lv_not_yet,
+        "lv_come_up": B.lv_come_up, "lv_shelter": B.lv_shelter}
 for _fn in (B.door_fall, B.whirl, B.ring_cut, B.stitch, B.nm_curl, B.tw_last_turf, B.ic_kneel_down, B.host_set_horn,
-            B.hl_where, B.hl_step_into):
+            B.hl_where, B.hl_step_into, B.crook_sweep, B.leg_hook, B.whistle_in, B.shoulder_shove, B.let_go, B.ask,
+            B.breath_in, B.rising_cry, B.head_down, B.call_them_in, B.bring_tups, B.count_them, B.lv_held_note,
+            B.lv_long_note, B.lv_not_yet, B.lv_come_up, B.lv_shelter):
     _fn.full = True
 
 # foe id -> {"post": [0, 0.0], attacks: {attack id: (archetype, opts)}}
 FOES = {
     "rimewalker": {"attacks": {
-        "swipe": ("hook", {"amp": 1.1}), "flail": ("double_slam", {"amp": 1.1})}},
+        "swipe": ("haymaker", {}), "flail": ("double_slam", {"amp": 1.1})}},
     "oarsman": {"attacks": {
         "stroke": ("oar_stroke", {}), "back_stroke": ("oar_back", {"strike": 0.14}), "ship_oars": ("oar_ship", {})}},
     "barrow_sleeper": {"attacks": {
@@ -633,7 +731,7 @@ FOES = {
     "host": {"boss": True, "also": {"raise_guests": "raise_guests", "host_set_horn": "pour"}, "beats": {
         "pour_horn": (B.host_pour_horn, True), "host_sit": (B.host_sit, False), "defeat": (B.host_sit, False)},
         "attacks": {
-        "horn_fist": ("overhead", {"amp": 1.1}), "table_sweep": ("sweep_low", {"amp": 1.15}),
+        "horn_fist": ("overhead", {"amp": 1.1}), "table_sweep": ("table_heave", {"noclear": True}),
         "bench_throw": ("heave", {}), "raise_guests": ("raise_guests", {}), "tip_horn": ("tip_horn", {}),
         "pour": ("set_horn", {})}},
     "hedgelayer": {"boss": True, "beats": {
@@ -641,6 +739,33 @@ FOES = {
         "measure_gap": (B.hl_measure, True)}, "attacks": {
         "bill": ("hook", {"amp": 1.05}), "thorn_lash": ("throw", {}), "raise_wall": ("plant", {}),
         "step_into": ("step_into", {}), "where_it_goes": ("where", {})}},
+    # ---- Shepherd's Reach (REACH.md 5, 6)
+    "drover": {"beats": {"death": (B.kneel_fall, False)}, "attacks": {
+        "crook_sweep": ("crook_sweep", {}), "leg_hook": ("leg_hook", {}), "whistle_in": ("whistle_in", {})}},
+    # "call" is her intro and her phase-three hold (a loop); "summon" her
+    # phase-two turn; "kneel_down" where she is left
+    "fellcaller": {"boss": True, "beats": {
+        "call": (B.fc_call, True), "summon": (B.fc_arms_up, False), "kneel_down": (B.fc_kneel_down, False)},
+        "attacks": {
+        "horn_swing": ("long_backhand", {}),
+        "rising_cry": ("rising_cry", {}), "head_down": ("head_down", {}), "call_them_in": ("call_them_in", {}),
+        "bring_tups": ("bring_tups", {}), "count_them": ("count_them", {})}},
+    # ---- the Coldwell (COLDWELL.md 5, 6)
+    "upwalker": {"beats": {"death": (B.kneel_fall, False)}, "attacks": {
+        "shoulder": ("shoulder_shove", {}), "fall_forward": ("let_go", {})}},
+    "unsung": {"beats": {"death": (B.unsung_break, False)}, "attacks": {
+        "reach": ("ask", {}), "reach_left": ("ask", {"left": True}), "breath_in": ("breath_in", {})}},
+    # The Leadvoice has no strike and no flinch ("stagger": False). Sat
+    # (phases one and two) her beats are keyed on her seated stance and
+    # answered as "@sit_<attack>"; on her feet, on her standing one.
+    # "shelter" by name is the bow after a verse.
+    "leadvoice": {"boss": True, "stagger": False, "also": {"shelter": "shelter"}, "attacks": {
+        "held_note": ("lv_held_note", {}), "long_note": ("lv_long_note", {}), "not_yet": ("lv_not_yet", {}),
+        "come_up": ("lv_come_up", {}), "shelter": ("lv_shelter", {})},
+        "seated": {"base": "leadvoice#seat", "attacks": {
+            "held_note": ("lv_held_note", {"amp": 0.9}), "long_note": ("lv_long_note", {"amp": 0.8}),
+            "not_yet": ("lv_not_yet", {"amp": 0.9}), "come_up": ("lv_come_up", {}),
+            "shelter": ("lv_shelter", {"amp": 0.7})}}},
 }
 
 
@@ -753,6 +878,19 @@ def build(ctx, root):
             clips[name] = poses
             rows[name] = {"start": 0.0, "contact": round(w, 3), "end": round((len(poses) - 1) / ctx.fps, 3)}
             cs["@" + aid] = [name]
+        # the same attacks on another stance (the Leadvoice, sat): "@sit_<attack>"
+        sat = spec.get("seated")
+        if sat:
+            srig = A.Rig(ctx.skel, ctx.own_idle(sat["base"]), ctx.grips["onehand"], fist_from=ctx.stance())
+            for aid, (arch, opts) in sat["attacks"].items():
+                if aid not in by_id:
+                    continue
+                w = float(by_id[aid]["windup"])
+                name = f"f_{foe}_sit_{aid}"
+                poses = telegraph(srig, ctx.fps, w, arch, opts, [0, 0.0], None, by_id[aid])
+                clips[name] = poses
+                rows[name] = {"start": 0.0, "contact": round(w, 3), "end": round((len(poses) - 1) / ctx.fps, 3)}
+                cs["@sit_" + aid] = [name]
         # game clip names an attack's clip also answers (a transition that plays it)
         for game, aid in spec.get("also", {}).items():
             if "@" + aid in cs:
@@ -763,6 +901,8 @@ def build(ctx, root):
             if fn not in made:
                 name = f"f_{foe}_{game}"
                 poses = seq(rig, ctx.fps, fn(rig=rig, fps=ctx.fps, n=neutral(rig)))
+                if game == "death":   # a keyed fall lies on the ground, not in it
+                    poses = A.lift_to_floor(poses)
                 clips[name] = poses
                 rows[name] = {"start": 0.0, "end": round((len(poses) - 1) / ctx.fps, 3)}
                 if loop:
@@ -771,11 +911,12 @@ def build(ctx, root):
             cs[game] = [made[fn]]
         # hit react on the foe's own stance (the Bearer's is a sword stance);
         # a Holdfast's is slowed to fill its longer stagger
-        st = C.react_front(ctx, base=base)
-        if spec.get("boss"):
-            st = A.warp(st, [(0, len(st), 1.9)])
-        clips[f"f_{foe}_stagger"] = st
-        rows[f"f_{foe}_stagger"] = {"start": 0.0, "end": round((len(st) - 1) / ctx.fps, 3)}
-        cs["stagger"] = [f"f_{foe}_stagger"]
+        if spec.get("stagger", True):
+            st = C.react_front(ctx, base=base)
+            if spec.get("boss"):
+                st = A.warp(st, [(0, len(st), 1.9)])
+            clips[f"f_{foe}_stagger"] = st
+            rows[f"f_{foe}_stagger"] = {"start": 0.0, "end": round((len(st) - 1) / ctx.fps, 3)}
+            cs["stagger"] = [f"f_{foe}_stagger"]
         sets[foe] = cs
     return clips, rows, sets

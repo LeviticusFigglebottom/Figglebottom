@@ -124,6 +124,9 @@ class Rig:
       lfist  True                             close the left hand (as the base's sword hand)
       rpole / lpole [r, f, u]                 elbow direction
       bones  {name: [yaw, pitch, roll]}       extra FK on a bone (short Mixamo name)
+      legs_fk True                            no foot targets: the legs follow the pelvis
+      cbones {name: [yaw, pitch, roll] or Quaternion}   the same, in the turned chest's frame: an arm
+                                              bent the same way however the trunk is wound
     """
 
     def __init__(self, skel, base, grip, fist_from=None):
@@ -153,7 +156,11 @@ class Rig:
             p.rot_world(b, fq @ half @ fq.inverted())
         for name, e in (c.get("bones") or {}).items():
             p.rot_world(P + name, ypr(*e))
+        for name, e in (c.get("cbones") or {}).items():
+            p.rot_world(P + name, fq @ (e if isinstance(e, Quaternion) else ypr(*e)) @ fq.inverted())
         for sd, key in (("Left", "footL"), ("Right", "footR")):
+            if c.get("legs_fk"):
+                break   # the legs hang from the pelvis as the base has them (no foot targets)
             f = c.get(key) or [0] * 5
             pos0, w0 = self.foot0[sd]
             yq = Quaternion((0, 0, 1), math.radians(f[3]))
@@ -224,10 +231,10 @@ class Rig:
         for t, kind, c in keys:
             cur = dict(cur)
             for k, v in c.items():
-                if k == "bones":
-                    b = dict(cur.get("bones") or {})
+                if k in ("bones", "cbones"):
+                    b = dict(cur.get(k) or {})
                     b.update(v)
-                    cur["bones"] = b
+                    cur[k] = b
                 else:
                     cur[k] = v
             full.append((t, kind, cur))
@@ -313,6 +320,25 @@ def floor_clamp(poses, grip, length, floor=0.03):
             p.arm_ik("Right", wrist + (g - g2), None)
         out.append(p)
     return out
+
+
+def stop_above(poses, grip, length, tip_h, hand_h, start=0):
+    """A great blade that ends its fall in the target, not the floor: from
+    frame `start` the hands are kept at least `hand_h` up and the blade is
+    arrested with its tip `tip_h` off the ground (the wrists stop it; the
+    body's fold carries on behind them)."""
+    h = P + "RightHand"
+    out = [p.copy() for p in poses[:start]]
+    held = []
+    for p in poses[start:]:
+        p = p.copy()
+        g, _a, _e = grip.weapon_of(p)
+        if g.z < hand_h:
+            ww = p.W(h).copy()
+            p.arm_ik("Right", p.pos(h) + Vector((0, 0, hand_h - g.z)), None)
+            p.set_world(h, ww)
+        held.append(p)
+    return out + floor_clamp(held, grip, length, tip_h)
 
 
 BODY_R = {"Hips": 0.13, "Spine1": 0.13, "Spine2": 0.14, "Head": 0.11, "LeftLeg": 0.07, "RightLeg": 0.07,
