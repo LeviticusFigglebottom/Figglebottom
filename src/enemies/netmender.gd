@@ -276,7 +276,24 @@ func _live_ridges() -> int:
 func _on_ridge(r: IceRidge) -> void:
 	ridges.append(r)
 
+## Struck out of the Sea-weight (a stagger, a phase change, her release),
+## the sail she had raised stayed in the air over her, for good once she was
+## released: whatever ends the move before the drop takes it down.
+func _set_state(s: ES) -> void:
+	if s != ES.ATTACK:
+		_furl_sheet()
+	super._set_state(s)
+
+func _furl_sheet() -> void:
+	if _sheet == null or not is_instance_valid(_sheet):
+		return
+	if is_inside_tree():
+		FrostDissolve.shards(get_parent(), _sheet.global_position, 1.6)
+	_sheet.queue_free()
+	_sheet = null
+
 func _begin_attack(a: Dictionary) -> void:
+	_furl_sheet()
 	super._begin_attack(a)
 	if String(a.get("id", "")) == "turn_away":
 		_spin_from = vis.rotation.y
@@ -506,6 +523,7 @@ func _die() -> void:
 	if snare != null:
 		snare.end(false)
 	_haul_t = -1.0
+	_fight_over()
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	if vis.rig != null:
