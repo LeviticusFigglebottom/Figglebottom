@@ -202,6 +202,8 @@
    "release_at": 28.5,
    "walk_out_r": 16.0,
    "walk_out_max": 75.0,
+   "sing_clip": "outsong_sing",
+   "kneel_clip": "outsong_kneel",
    "cam_from": [
     1.1,
     2.0,
@@ -232,6 +234,7 @@
    ],
    "cam_time": 40.0,
    "sit_clip": "sit_still",
+   "shut_clip": "press_stopper",
    "cam_begin": [
     -2.4,
     1.6,

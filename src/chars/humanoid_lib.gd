@@ -71,6 +71,8 @@ static func clip_info(clip: String, procedural := false, model := "") -> Diction
 	var c: Dictionary = (meta().get("clips", {}) as Dictionary).get(clip, {})
 	# a model's own take on a clip (its own section times) merges over the shared row
 	var mine: Dictionary = (model_cfg(model).get("clips", {}) as Dictionary).get(clip, {}) if model != "" else {}
+	if mine.is_empty() and model != "":   # a borrowed take keeps its lender's sections
+		mine = (model_cfg(String(model_cfg(model).get("borrow", ""))).get("clips", {}) as Dictionary).get(clip, {})
 	if not mine.is_empty() and not procedural:
 		c = c.duplicate()
 		c.merge(mine, true)
@@ -174,6 +176,15 @@ static func _build(id: String) -> AnimationLibrary:
 	var anims: Dictionary = src["anims"]
 	for n in anims:
 		lib.add_animation(n, anims[n])
+	# another model's sectioned takes, played as this one's own (clip_meta
+	# models.<id>.borrow): an outfit of the Bearer drinks and kneels as he does
+	var lender := String(model_cfg(id).get("borrow", ""))
+	if lender != "" and lender != id and has_model(lender):
+		var lent := _extract(lender)
+		for n in (model_cfg(lender).get("clips", {}) as Dictionary):
+			if (lent["anims"] as Dictionary).has(n) and not lib.has_animation(n):
+				lib.add_animation(n, lent["anims"][n])
+		(lent["inst"] as Node).free()
 	if anims.has("idle") and src["skel"] != null:
 		var over := HumanoidOverlays.build(src["skel"], anims["idle"])
 		for n in over:

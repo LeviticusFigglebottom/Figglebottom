@@ -136,6 +136,18 @@ func _face_spring(p) -> void:
 	if p.get("vis") != null and Vector2(to.x, to.z).length() > 0.1:
 		p.vis.rotation.y = atan2(-to.x, -to.z)
 
+## One of the Bearer's own ending beats (data: the ending's "<x>_clip",
+## answered by the combat library through the clip sets). With `contact_at`
+## the clip's contact frame lands that many seconds from now.
+func _play(p, key: String, blend := 0.4, contact_at := 0.0) -> void:
+	var clip := String(_cfg(key, ""))
+	if clip == "" or p.get("vis") == null or p.vis.rig == null or not p.vis.rig.has_clip(clip):
+		return
+	if contact_at > 0.0 and not fast:
+		p.vis.play_timed(clip, contact_at, blend)
+	else:
+		p.vis.play(clip, blend)
+
 func _hands_empty(p) -> void:
 	if p.get("vis") == null:
 		return
@@ -196,10 +208,13 @@ func _outsong() -> void:
 	_beat("mask")
 	await _until(float(_cfg("sing_at", 3.0)))
 	AudioDirector.play_outsong("", 6.0)
+	_play(p, "sing_clip", 1.2)
 	_beat("sing")
 	await _until(float(_cfg("kneel_at", 16.0)))
 	p.enter_rest()
 	_hands_empty(p)
+	# (his kneel at the water tips the coal on coal_at)
+	_play(p, "kneel_clip", 0.6, float(_cfg("coal_at", 18.5)) - float(_cfg("kneel_at", 16.0)))
 	_beat("kneel")
 	await _until(float(_cfg("coal_at", 18.5)))
 	_lay_coal()
@@ -272,6 +287,8 @@ func _hearth_kept() -> void:
 	_face_spring(p)
 	_take_camera(_cfg("cam_begin", [-2.4, 1.6, -4.0]), _cfg("cam_begin", [-2.4, 1.6, -4.0]), 1.0, p)
 	_beat("begin")
+	_hands_empty(p)
+	_play(p, "shut_clip", 0.2, float(_cfg("shut_at", 1.0)))   # the heel of his hand lands on shut_at
 	await _until(float(_cfg("shut_at", 1.0)))
 	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -4.0, 0.55)   # the stopper, pressed home
 	AudioDirector.play_music("", 3.0)

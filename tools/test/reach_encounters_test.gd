@@ -134,7 +134,9 @@ func _ram() -> void:
 	var start := r.global_position
 	r._begin_attack(ch)
 	await _secs(float(ch["windup"]) * 0.85)
-	check(r.vis.quad.weight("lower") > 0.3, "its head goes down on the tell")
+	# (the tell is keyed: head down, then a forefoot scraping; every one of those poses has the head down)
+	check(r.vis.quad.weight("lower") + r.vis.quad.weight("paw_up") + r.vis.quad.weight("paw_back") > 0.3,
+			"its head goes down on the tell")
 	check(_tells() > 0, "and a strip glows the length of the charge")
 	await _secs(float(ch["windup"]) * 0.15 + float(ch["active"]))
 	check(player.hp < hp0, "it runs him down (%.0f -> %.0f)" % [hp0, player.hp])

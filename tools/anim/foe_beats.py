@@ -92,9 +92,12 @@ def whirl(rig, fps, n, w, atk, **_):
             "rhand": [0.20, 0.66, 1.04], "lhand": [-0.16, -0.62, 1.10],
             "rpole": [0.9, 0.2, -0.5], "lpole": [-0.9, -0.2, -0.5],
             "footL": [-0.04, 0.10, 0, 0, 0], "footR": [0.06, -0.12, 0, 0, 0], "fists": True}
-    cut = {"hips": [0, 0, -0.20, 0, 8, 0], "chest": [20, 6, -8], "head": [20, 0],
-           "rhand": [0.74, 0.16, 1.24], "lhand": [-0.58, -0.30, 0.98],
-           "rpole": [0.6, -0.6, -0.5], "lpole": [-0.8, -0.2, -0.5],
+    # mid-spin the arms are not a T: the leading blade is carried high on a
+    # bent arm ahead of the turn, the trailing one low and behind, and the
+    # trunk leans into the circle
+    cut = {"hips": [0, 0, -0.22, 0, 12, -6], "chest": [26, 10, -14], "head": [24, 4],
+           "rhand": [0.56, 0.36, 1.40], "lhand": [-0.40, -0.40, 0.84],
+           "rpole": [0.9, -0.2, 0.2], "lpole": [-0.5, -0.8, 0.1],
            "footL": [-0.03, 0.05, 0, 0, 0], "footR": [0.05, -0.05, 0, 0, 0], "fists": True}
     a0, lead = -72.0, 0.15
     rise = min(0.24, (w - lead) * 0.5)
@@ -466,25 +469,472 @@ def hl_measure(rig, fps, n, **_):
 
 
 def hl_step_into(rig, fps, n, w, atk, **_):
-    """He walks backward into the thorn, arms folding over his chest, head
-    going down: three steps, the last on the windup, and it closes over him."""
-    def back(df, du=0.0, yaw=0.0):
-        return [0.01, df, du, yaw, 0]
+    """He walks backward into the thorn, upright, three long deliberate
+    steps, the last on the windup; his arms cross over his chest as he goes
+    (they travel back with him) and only his head goes down. It closes over
+    him."""
+    def back(df, du=0.0, pitch=0.0):
+        return [0.01, df, du, 0, pitch]
     k = [(0.0, "inout", n)]
     t3 = w / 3.0
-    arms = [([0.14, 0.24, 1.14], [-0.14, 0.22, 1.08]), ([-0.06, 0.18, 1.26], [0.06, 0.16, 1.18]),
-            ([-0.14, 0.14, 1.30], [0.14, 0.12, 1.22])]
+    stride = 0.26
+    # [right, forward of the chest, up]: open, half folded, crossed on the breastbone
+    arms = [([0.20, 0.20, 1.10], [-0.20, 0.18, 1.06]), ([0.02, 0.21, 1.24], [-0.04, 0.19, 1.16]),
+            ([-0.12, 0.17, 1.32], [0.12, 0.15, 1.24])]
     for i in range(3):
-        d0, d1 = -0.22 * i, -0.22 * (i + 1)
+        d0, d1 = -stride * i, -stride * (i + 1)
         r, l = arms[i]
-        mover, other = ("footR", "footL") if i % 2 == 0 else ("footL", "footR")
-        mid = {"hips": [0, (d0 + d1) / 2 - 0.02, -0.03, 0, -4 + 4 * i, 0], "chest": [0, 4 + 6 * i, 0],
-               "head": [0, 8 + 10 * i], mover: back(d1 - 0.06, 0.09), "fists": False}
-        down = {"hips": [0, d1, -0.05 - 0.02 * i, 0, -2 + 5 * i, 0], "chest": [0, 6 + 6 * i, 0],
-                "head": [0, 12 + 10 * i], mover: back(d1 - 0.12), "rhand": r, "lhand": l,
-                "rpole": [0.7, -0.4, -0.6], "lpole": [-0.7, -0.4, -0.6], "fists": False}
+        mover = "footR" if i % 2 == 0 else "footL"
+        # the foot is lifted clear and reached back; the trunk stays over the standing leg
+        mid = {"hips": [0, d0 - 0.05, 0.0, 0, -3, 0], "chest": [0, -2, 0],
+               "head": [0, 4 + 8 * i], mover: back(d1 - 0.10, 0.14, 24), "fists": False}
+        down = {"hips": [0, d1, -0.02, 0, -2, 0], "chest": [0, 0, 0],
+                "head": [0, 8 + 9 * i], mover: back(d1 - 0.10), "rhand": [r[0], r[1] + d1, r[2]],
+                "lhand": [l[0], l[1] + d1, l[2]],
+                "rpole": [0.8, -0.3, -0.5], "lpole": [-0.8, -0.3, -0.5], "fists": False}
         k += [(t3 * (i + 0.5), "inout", mid), (t3 * (i + 1), "inout", down)]
     last = dict(k[-1][2])
-    last["footL"] = back(-0.78)
+    last["footL"] = back(-stride * 3 - 0.02)
+    last["head"] = [0, 34]
     k += [(w + 0.3, "inout", last), (w + 0.6, "inout", last)]
     return k
+
+
+# ===================================================== Shepherd's Reach
+def _keys(n, *ks):
+    """[(t, ease, controls)] from the rest and back to it."""
+    return [(0.0, "inout", n)] + list(ks)
+
+
+def crook_sweep(rig, fps, n, w, atk, **_):
+    """The Drover's sweep. The crook goes back over the LEFT shoulder in
+    both hands, his long frame wound round after it and sunk (held); then one
+    long flat cut, left to right, arms right out, on a reaching step; it
+    carries him round until the crook trails behind his right hip."""
+    a = {"hips": [-0.06, -0.14, -0.05, 40, 0, 4], "chest": [38, -4, 6], "head": [-62, 0],
+         "rhand": [-0.34, -0.02, 1.66], "lhand": [-0.42, -0.14, 1.48],
+         "rpole": [0.6, 0.5, -0.4], "lpole": [-0.9, -0.3, -0.2],
+         "footL": [-0.07, -0.20, 0, 24, 0], "footR": [0.03, 0.06, 0, 0, 0]}
+    a2 = dict(a, hips=[-0.07, -0.17, -0.07, 44, 0, 5], chest=[42, -5, 7], rhand=[-0.38, -0.08, 1.68],
+              lhand=[-0.45, -0.20, 1.50])
+    mid = {"hips": [0.0, 0.12, -0.16, 6, 10, 0], "chest": [4, 8, 0], "head": [-8, 0],
+           "rhand": [-0.30, 0.74, 1.30], "lhand": [-0.40, 0.50, 1.24], "rpole": [0.8, -0.2, -0.5],
+           "footR": [0.06, 0.34, 0.06, -6, -10]}
+    h = {"hips": [0.05, 0.34, -0.20, -30, 14, -4], "chest": [-36, 12, -6], "head": [52, -4],
+         "rhand": [0.62, 0.66, 1.18], "lhand": [0.22, 0.60, 1.16], "rpole": [0.8, -0.4, -0.4],
+         "lpole": [-0.7, -0.3, -0.5],
+         "footR": [0.08, 0.46, 0, -12, 0], "footL": [-0.07, -0.20, 0.07, 24, 34]}
+    f = {"hips": [0.09, 0.38, -0.28, -52, 18, -6], "chest": [-56, 14, -8], "head": [70, 0],
+         "rhand": [0.80, -0.10, 0.96], "lhand": [0.44, 0.22, 1.02],
+         "footR": [0.08, 0.46, 0, -12, 0], "footL": [-0.09, -0.08, 0.04, 10, 40]}
+    s = 0.15
+    return _keys(n, (0.26, "out", a), (w - s, "inout", a2), (w - s * 0.45, "in", mid), (w, "lin", h),
+                 (w + 0.14, "out", f), (w + 0.52, "inout", f), (w + 1.08, "inout", n))
+
+
+def leg_hook(rig, fps, n, w, atk, **_):
+    """The crook turned over, hook down, and slid out along the ground: he
+    goes down on a long bent leg behind it and feeds it out, further, until
+    his arms are straight (the windup). It bites; then he sits back on his
+    heels and hauls, hand over hand, for as long as the pull lasts."""
+    pull = float(atk.get("pull_time", 0.4))
+    low = {"hips": [0.02, 0.16, -0.20, -10, 26, 0], "chest": [-8, 26, 0], "head": [10, -22],
+           "rhand": [0.14, 0.60, 0.50], "lhand": [0.02, 0.38, 0.64],
+           "rpole": [0.9, -0.3, 0.3], "lpole": [-0.9, -0.3, 0.3],
+           "footL": [-0.05, 0.44, 0, 6, 0], "footR": [0.06, -0.26, 0.0, -14, 20]}
+    out = dict(low, hips=[0.02, 0.44, -0.30, -14, 40, 0], chest=[-10, 34, 0], head=[14, -38],
+               rhand=[0.10, 1.22, 0.28], lhand=[0.00, 0.96, 0.38],
+               footL=[-0.05, 0.70, 0, 6, 0], footR=[0.06, -0.34, 0.03, -14, 40])
+    bite = dict(out, rhand=[0.10, 1.20, 0.36], lhand=[0.00, 0.94, 0.46], hips=[0.02, 0.42, -0.30, -12, 38, 0])
+    back = {"hips": [0.0, -0.10, -0.30, 14, -6, 0], "chest": [16, -10, 0], "head": [-24, 4],
+            "rhand": [0.26, 0.10, 0.84], "lhand": [0.10, 0.30, 0.78],
+            "rpole": [0.8, -0.8, 0.0], "lpole": [-0.8, -0.5, 0.0],
+            "footL": [-0.05, 0.56, 0, 6, -12], "footR": [0.06, -0.34, 0, -14, 0]}
+    back2 = dict(back, hips=[0.0, -0.14, -0.32, 18, -8, 0], rhand=[0.30, -0.06, 0.88], lhand=[0.14, 0.14, 0.80])
+    return _keys(n, (0.30, "out", low), (w - 0.07, "inout", out), (w, "in", bite), (w + pull * 0.55, "out", back),
+                 (w + pull, "inout", back2), (w + pull + 0.30, "inout", back2), (w + pull + 0.85, "inout", n))
+
+
+def whistle_in(rig, fps, n, w, atk, **_):
+    """Two fingers to the mask and his head goes back; the breath is drawn
+    (held), then sent straight up: the chest jumps and the head snaps
+    further back. The crook stays planted beside him."""
+    draw = {"hips": [0, -0.03, 0.0, 0, -4, 0], "chest": [0, -8, 0], "head": [0, -16], "fists": False,
+            "lhand": [-0.05, 0.19, 1.60], "lpole": [-1.0, -0.2, 0.2], "lrot": [-70, 60, 0],
+            "rhand": [0.34, 0.16, 1.00], "rpole": [0.8, -0.6, 0.0]}
+    full = dict(draw, hips=[0, -0.05, 0.02, 0, -8, 0], chest=[0, -16, 0], head=[0, -30],
+                lhand=[-0.05, 0.13, 1.63])
+    blow = dict(full, hips=[0, -0.02, 0.05, 0, -10, 0], chest=[0, -22, 0], head=[0, -40],
+                lhand=[-0.05, 0.10, 1.66], footL=[0, 0, 0.02, 0, 12], footR=[0, 0, 0.02, 0, 12])
+    return _keys(n, (0.28, "out", draw), (w - 0.10, "inout", full), (w, "in", blow), (w + 0.34, "inout", blow),
+                 (w + 0.80, "inout", n))
+
+
+def kneel_fall(rig, fps, n, lean=1.0, **_):
+    """A death that is a stopping: the head comes up, the knees go, it sits
+    back on its heels a moment with its hands open, and folds forward over
+    them. Nothing is thrown."""
+    hit = {"hips": [0, -0.08, 0.02, 0, -8, 0], "chest": [0, -14, 0], "head": [0, -20], "fists": False,
+           "rhand": [0.34, 0.06, 1.00], "lhand": [-0.34, 0.06, 1.00]}
+    knees = {"hips": [0, 0.06, -0.50, 0, 4, 0], "chest": [0, 6, 0], "head": [0, 6], "fists": False,
+             "footR": [0.02, -0.26, -0.03, 0, 78], "footL": [-0.02, -0.22, -0.03, 0, 78],
+             "rhand": [0.26, 0.16, 0.56], "lhand": [-0.26, 0.16, 0.56],
+             "rpole": [0.7, -0.7, 0.0], "lpole": [-0.7, -0.7, 0.0]}
+    sat = dict(knees, hips=[0, -0.04, -0.60, 0, 10, 0], chest=[0, 22, 0], head=[0, 30],
+               rhand=[0.24, 0.26, 0.40], lhand=[-0.24, 0.26, 0.40])
+    # folded right down over its own knees, the brow to the ground between
+    # the hands (the feet stay under it: nothing slides)
+    over = dict(knees, hips=[0, 0.10 * lean, -0.62, 0, 44, 0], chest=[0, 40, 0], head=[0, 24],
+                rhand=[0.26, 0.62 * lean, 0.08], lhand=[-0.26, 0.58 * lean, 0.08],
+                rpole=[1.0, -0.2, 0.3], lpole=[-1.0, -0.2, 0.3])
+    slack = dict(over, hips=[0, 0.12 * lean, -0.65, 0, 50, 0], chest=[0, 46, 0], head=[18, 30],
+                 rhand=[0.34, 0.56 * lean, 0.06], lhand=[-0.32, 0.60 * lean, 0.06])
+    return _keys(n, (0.16, "out", hit), (0.62, "in", knees), (1.20, "inout", sat), (1.52, "inout", sat),
+                 (1.96, "in", over), (2.14, "out", slack), (2.6, "inout", slack))
+
+
+# ============================================================== Coldwell
+def shoulder_shove(rig, fps, n, w, atk, **_):
+    """The Upwalker turns side-on and drops the near shoulder, arms tucked,
+    its whole weight drawn back over the far leg (one slow step, held);
+    then it simply goes through: the shoulder driven forward and up on a
+    long step, the body behind it like a door."""
+    a = {"hips": [-0.02, -0.16, -0.10, 52, 2, 8], "chest": [20, 8, 10], "head": [-64, 6],
+         "lhand": [-0.06, 0.20, 1.10], "lpole": [-0.9, -0.2, -0.3],
+         "rhand": [0.30, -0.06, 0.96], "rpole": [0.7, -0.7, 0.0],
+         "footR": [0.06, -0.24, 0, -40, 0], "footL": [-0.03, 0.10, 0, 20, 0]}
+    a2 = dict(a, hips=[-0.02, -0.21, -0.13, 56, 0, 10], chest=[22, 8, 12])
+    h = {"hips": [0.0, 0.46, -0.12, 60, 16, -8], "chest": [24, 12, -14], "head": [-70, -4],
+         "lhand": [-0.10, 0.34, 1.16], "rhand": [0.34, -0.26, 1.04],
+         "footL": [-0.04, 0.56, 0, 24, 0], "footR": [0.06, -0.14, 0.07, -30, 38]}
+    f = dict(h, hips=[0.0, 0.56, -0.10, 62, 20, -12], chest=[26, 14, -18], lhand=[-0.14, 0.44, 1.22])
+    return _keys(n, (0.40, "inout", a), (w - 0.18, "inout", a2), (w, "in", h), (w + 0.12, "out", f),
+                 (w + 0.50, "inout", f), (w + 1.20, "inout", n))
+
+
+def let_go(rig, fps, n, w, atk, **_):
+    """It stops, and sways back on its heels, twice, breathing; its arms
+    hang. Then it goes over on its face full length like a climber letting
+    go, arms not catching it. It lies there, and gets its knees under it."""
+    stop = {"hips": [0, -0.03, 0.0, 0, -4, 0], "chest": [0, -6, 0], "head": [0, -6], "fists": False,
+            "rhand": [0.30, -0.04, 0.92], "lhand": [-0.30, -0.04, 0.92],
+            "rpole": [0.6, -0.8, 0.0], "lpole": [-0.6, -0.8, 0.0]}
+    back = dict(stop, hips=[0, -0.10, 0.02, 0, -12, 0], chest=[0, -14, 0], head=[0, -16],
+                rhand=[0.34, -0.14, 0.94], lhand=[-0.34, -0.14, 0.94],
+                footL=[0, 0, 0.0, 0, -8], footR=[0, 0, 0.0, 0, -8])
+    down = dict(plank(84), chest=[0, 2, 0], head=[24, -10], fists=False,
+                rhand=[0.52, 0.76, 0.08], lhand=[-0.48, 0.80, 0.08], rpole=[1.0, 0, 0.3], lpole=[-1.0, 0, 0.3])
+    slack = dict(down, head=[30, 4], rhand=[0.56, 0.70, 0.06], lhand=[-0.52, 0.74, 0.06])
+    push = {"hips": [0, 0.50, -0.50, 0, 44, 0], "chest": [0, 16, 0], "head": [0, -6],
+            "rhand": [0.28, 0.98, 0.10], "lhand": [-0.28, 0.98, 0.10],
+            "footR": [0.0, -0.10, -0.03, 0, 70], "footL": [-0.02, 0.36, 0, 0, 0]}
+    knee = {"hips": [0, 0.16, -0.34, 0, 20, 0], "chest": [0, 14, 0], "head": [0, 6],
+            "rhand": [0.24, 0.40, 0.56], "lhand": [-0.22, 0.44, 0.62],
+            "footR": [0.0, -0.20, 0, 0, 40], "footL": [-0.02, 0.26, 0, 0, 0]}
+    lie = float(atk.get("recover", 2.2))
+    b = (w - 0.26 - 0.17) / 4.0
+    return _keys(n, (0.26, "out", stop), (0.26 + b, "inout", back), (0.26 + 2 * b, "inout", stop),
+                 (0.26 + 3 * b, "inout", back), (w - 0.17, "inout", dict(back, hips=[0, -0.12, 0.02, 0, -14, 0])),
+                 (w, "in", down), (w + 0.12, "out", slack), (w + lie * 0.5, "inout", slack),
+                 (w + lie * 0.72, "inout", push), (w + lie * 0.88, "inout", knee), (w + lie + 0.1, "inout", n))
+
+
+def ask(rig, fps, n, w, atk, left=False, **_):
+    """The Unsung's reach: a hand brought up, palm up, close in, as if to be
+    given something (held, and it creeps out); on the windup the arm goes
+    right out after it on a step and the whole thin body leans to follow.
+    The fingers close on nothing, and the hand is drawn back to the chest."""
+    s = -1.0 if left else 1.0
+    hk, pk, rk, ok = ("lhand", "lpole", "lrot", "rhand") if left else ("rhand", "rpole", "rrot", "lhand")
+    palm = [s * 90, 170, 0]
+    offer = {"hips": [0, -0.03, -0.03, s * -8, 4, 0], "chest": [s * -8, 6, 0], "head": [s * 6, 8], "fists": False,
+             hk: [s * 0.16, 0.34, 1.08], pk: [s * 0.5, -0.6, -0.6], rk: palm,
+             ok: [s * -0.22, 0.10, 0.98]}
+    offer2 = dict(offer, hips=[0, 0.0, -0.04, s * -6, 6, 0])
+    offer2[hk] = [s * 0.14, 0.44, 1.12]
+    out = {"hips": [0, 0.30, -0.12, s * 22, 14, 0], "chest": [s * 24, 12, 0], "head": [s * -20, -6], "fists": False,
+           hk: [s * 0.02, 0.92, 1.22], rk: palm, ok: [s * -0.24, 0.16, 0.94],
+           "footL" if not left else "footR": [s * -0.02, 0.36, 0, 0, 0],
+           "footR" if not left else "footL": [0, 0, 0.05, 0, 28]}
+    far = dict(out, hips=[0, 0.34, -0.14, s * 26, 16, 0])
+    far[hk] = [s * -0.02, 0.98, 1.20]
+    took = {"hips": [0, 0.14, -0.06, s * 6, 8, 0], "chest": [s * 4, 12, 0], "head": [0, 20], "fists": True,
+            hk: [s * 0.06, 0.26, 1.24], rk: None, ok: [s * -0.24, 0.04, 0.98]}
+    st = 0.10
+    return _keys(n, (min(0.2, (w - st) * 0.6), "out", offer), (w - st, "inout", offer2), (w, "in", out),
+                 (w + 0.08, "out", far), (w + 0.26, "inout", far), (w + 0.56, "inout", took),
+                 (w + 0.90, "inout", n))
+
+
+def breath_in(rig, fps, n, w, atk, **_):
+    """The mask tips back and it draws a long breath, as before a first
+    note: the chest fills for the whole of the windup, the shoulders lift,
+    the hands open a little at its sides. No note comes. It lets the breath
+    go and everything in it drops: shoulders, hands, head."""
+    half = {"hips": [0, -0.02, 0.01, 0, -4, 0], "chest": [0, -8, 0], "head": [0, -14], "fists": False,
+            "rhand": [0.34, 0.06, 0.98], "lhand": [-0.34, 0.06, 0.98],
+            "rpole": [0.6, -0.8, 0.0], "lpole": [-0.6, -0.8, 0.0],
+            "bones": {"LeftShoulder": [0, 0, -6], "RightShoulder": [0, 0, 6]}}
+    full = dict(half, hips=[0, -0.05, 0.03, 0, -9, 0], chest=[0, -18, 0], head=[0, -30],
+                rhand=[0.42, 0.02, 1.06], lhand=[-0.42, 0.02, 1.06],
+                bones={"LeftShoulder": [0, 0, -14], "RightShoulder": [0, 0, 14]},
+                footL=[0, 0, 0.02, 0, 10], footR=[0, 0, 0.02, 0, 10])
+    gone = {"hips": [0, 0.04, -0.08, 0, 10, 0], "chest": [0, 18, 0], "head": [0, 30], "fists": False,
+            "rhand": [0.26, 0.12, 0.86], "lhand": [-0.26, 0.12, 0.86],
+            "bones": {"LeftShoulder": [0, 0, 6], "RightShoulder": [0, 0, -6]},
+            "footL": list(Z5), "footR": list(Z5)}
+    return _keys(n, (w * 0.4, "inout", half), (w - 0.14, "inout", full), (w, "in", gone), (w + 0.5, "inout", gone),
+                 (w + 1.0, "inout", dict(n, bones={"LeftShoulder": [0, 0, 0], "RightShoulder": [0, 0, 0]})))
+
+
+def unsung_break(rig, fps, n, **_):
+    """It breaks: the hands come up open as if something had been put in
+    them after all, the head lifts, and it stands a breath like that before
+    the ice lets go (the dissolve takes it standing)."""
+    given = {"hips": [0, 0.0, 0.01, 0, -3, 0], "chest": [0, -8, 0], "head": [0, -18], "fists": False,
+             "rhand": [0.16, 0.30, 1.14], "lhand": [-0.16, 0.30, 1.14], "rrot": [90, 170, 0], "lrot": [-90, 170, 0],
+             "rpole": [0.6, -0.6, -0.4], "lpole": [-0.6, -0.6, -0.4]}
+    still = dict(given, hips=[0, 0.0, -0.03, 0, 2, 0], chest=[0, 2, 0], head=[0, 14],
+                 rhand=[0.15, 0.28, 1.08], lhand=[-0.15, 0.28, 1.08])
+    return _keys(n, (0.22, "out", given), (0.6, "inout", still), (1.4, "inout", still))
+
+
+# ------------------------------------------------------- the Fellcaller
+def _horn_up(tilt=0.0, rise=0.0):
+    """Her right hand cupped at the mask (the horn itself is skinned to her
+    belt and cannot be lifted); tilt 1 = thrown right back, calling at the
+    sky."""
+    return {"hips": [0, -0.02 - 0.06 * tilt, 0.0 + 0.04 * rise, 0, -4 - 10 * tilt, 0],
+            "chest": [0, -4 - 20 * tilt, 0], "head": [0, -6 - 30 * tilt],
+            "rhand": [0.09, 0.25 - 0.12 * tilt, 1.57 + 0.16 * tilt], "rpole": [1.0, -0.2, -0.1 + 0.3 * tilt],
+            "rrot": [180, 0, -90],   # fingers up, palm across the mouth
+            "lhand": [-0.36, 0.02 - 0.16 * tilt, 0.96], "lpole": [-0.6, -0.8, 0.0], "fists": False,
+            "footL": [0, 0, 0.03 * rise, 0, 14 * rise], "footR": [0, 0, 0.03 * rise, 0, 14 * rise]}
+
+
+def rising_cry(rig, fps, n, w, atk, **_):
+    """She gathers over the horn, low; brings it to her mask; and her head
+    goes back, further and further as the breath is drawn (the hold). On
+    the windup the cry goes up: she is thrown right back under it, up on
+    her toes, and held there. A second cry (the data's `hits`) is drawn and
+    thrown the same way."""
+    hits = [float(h) for h in atk.get("hits", [0.0])]
+    gather = {"hips": [0, 0.06, -0.14, 0, 16, 0], "chest": [0, 20, 0], "head": [0, 16],
+              "rhand": [0.10, 0.34, 1.20], "rpole": [0.9, -0.4, -0.2],
+              "lhand": [-0.30, 0.16, 0.90], "lpole": [-0.7, -0.6, 0.0], "fists": True}
+    k = _keys(n, (0.26, "out", gather), (0.52, "inout", _horn_up(0.0)), (w - 0.13, "inout", _horn_up(0.55)))
+    t = w
+    for i, h in enumerate(hits):
+        t = w + h
+        k.append((t, "in", _horn_up(1.0, 1.0)))
+        if i + 1 < len(hits):
+            gap = hits[i + 1] - h
+            k += [(t + gap * 0.35, "inout", _horn_up(1.0, 1.0)), (t + gap * 0.7, "inout", _horn_up(0.3)),
+                  (t + gap - 0.12, "inout", _horn_up(0.55))]
+    return k + [(t + 0.55, "inout", _horn_up(0.9, 0.6)), (t + 1.25, "inout", n)]
+
+
+def fc_call(rig, fps, n, **_):
+    """Calling over the fold wall (loop): the horn comes to her mask, she
+    leans back into a long call, and lowers it to listen, her head turning
+    to where the flock should be. Then again."""
+    listen = {"hips": [0, 0.02, -0.02, 0, 4, 0], "chest": [10, 4, 0], "head": [24, 4],
+              "rhand": [0.24, 0.30, 1.22], "rpole": [0.9, -0.5, -0.2],
+              "lhand": [-0.34, 0.06, 0.96], "lpole": [-0.6, -0.8, 0.0], "fists": True}
+    listen2 = dict(listen, chest=[-8, 4, 0], head=[-22, 2])
+    return [(0.0, "inout", listen), (0.7, "inout", _horn_up(0.0)), (1.5, "inout", _horn_up(0.7, 0.4)),
+            (2.9, "inout", _horn_up(0.8, 0.5)), (3.6, "inout", listen), (4.5, "inout", listen2),
+            (5.4, "inout", listen2), (6.2, "inout", listen)]
+
+
+def head_down(rig, fps, n, w, atk, **_):
+    """She drops her head till the ram's horns point down the strip, arms
+    swept back, and scrapes one foot back, twice. On the windup she goes:
+    low, the horns leading, four driving strides for the length of the run
+    (the game moves her); then she cannot stop, is carried upright past it,
+    and shakes her head clear."""
+    run = float(atk.get("active", 0.8))
+    low = {"hips": [0, 0.10, -0.22, 0, 30, 0], "chest": [0, 34, 0], "head": [0, 26], "headfree": True,
+           "rhand": [0.50, -0.34, 0.98], "lhand": [-0.50, -0.34, 0.98], "fists": True,
+           "rpole": [0.7, -0.8, 0.2], "lpole": [-0.7, -0.8, 0.2]}
+    sc0 = dict(low, footR=[0.02, 0.12, 0.05, 0, 14])
+    sc1 = dict(low, hips=[0, 0.12, -0.25, 0, 33, 0], footR=[0.02, -0.34, 0.0, 0, 26])
+    k = _keys(n, (0.26, "out", low))
+    t0, per = 0.30, (w - 0.30 - 0.08) / 2.0
+    for i in range(2):
+        k += [(t0 + per * (i + 0.45), "inout", sc0), (t0 + per * (i + 1.0), "in", sc1)]
+    # the run: strides in place, the trunk level and driving
+    drive = dict(low, hips=[0, 0.22, -0.26, 0, 38, 0], chest=[0, 36, 0], head=[0, 30],
+                 rhand=[0.46, -0.44, 1.04], lhand=[-0.46, -0.44, 1.04])
+    n_st = max(2, int(round(run / 0.2)))
+    st = run / n_st
+    k.append((w, "in", dict(drive, footL=[-0.02, 0.40, 0.0, 0, -10], footR=[0.02, -0.40, 0.10, 0, 50])))
+    for i in range(1, n_st + 1):
+        lead, trail = ("footR", "footL") if i % 2 else ("footL", "footR")
+        d = dict(drive)
+        d[lead] = [0.0, 0.42, 0.0, 0, -10]
+        d[trail] = [0.0, -0.42, 0.12, 0, 54]
+        d["hips"] = [0, 0.22, -0.26 + (0.03 if i % 2 else 0.0), 0, 38, 0]
+        k.append((w + st * i, "lin", d))
+    t = w + run
+    over = {"hips": [0, 0.16, -0.08, 0, 6, 0], "chest": [0, -4, 0], "head": [0, -8], "headfree": True,
+            "rhand": [0.44, 0.10, 1.04], "lhand": [-0.44, 0.10, 1.04],
+            "footL": [-0.06, 0.34, 0, 8, 0], "footR": [0.06, 0.10, 0, -8, 0]}
+    sh_l = dict(over, hips=[0, 0.12, -0.10, 0, 12, 0], chest=[0, 10, 0], head=[34, 14])
+    sh_r = dict(over, hips=[0, 0.12, -0.10, 0, 12, 0], chest=[0, 10, 0], head=[-34, 14])
+    return k + [(t + 0.30, "out", over), (t + 0.52, "inout", sh_l), (t + 0.70, "inout", sh_r),
+                (t + 0.88, "inout", sh_l), (t + 1.04, "inout", dict(sh_r, head=[-16, 8])), (t + 1.45, "inout", n)]
+
+
+def call_them_in(rig, fps, n, w, atk, **_):
+    """One arm out flat to the side, the horn at her mask: a long level
+    call, her body leaning away from the arm (held). On the windup the arm
+    comes round and down the strip, pointing it, and she steps into it."""
+    level = dict(_horn_up(0.1), hips=[0.04, -0.02, -0.02, -10, -4, 4], chest=[-12, -4, 6],
+                 lhand=[-0.76, 0.02, 1.44], lpole=[-0.5, -0.8, -0.2], fists=False)
+    level2 = dict(level, hips=[0.05, -0.03, -0.03, -14, -5, 5], lhand=[-0.78, -0.10, 1.48])
+    send = dict(_horn_up(0.0), hips=[-0.03, 0.20, -0.10, 14, 10, -2], chest=[18, 10, -4], head=[-10, 4],
+                rhand=[0.18, 0.30, 1.40], lhand=[-0.14, 0.86, 1.22], lpole=[-0.8, -0.3, -0.4], fists=False,
+                footL=[-0.03, 0.30, 0, 6, 0], footR=[0.03, 0, 0.05, 0, 26])
+    hold = dict(send, hips=[-0.03, 0.22, -0.12, 16, 12, -2], lhand=[-0.10, 0.88, 1.12])
+    return _keys(n, (0.36, "out", level), (w - 0.22, "inout", level2), (w, "in", send), (w + 0.14, "out", hold),
+                 (w + 0.80, "inout", hold), (w + 1.40, "inout", n))
+
+
+def bring_tups(rig, fps, n, w, atk, **_):
+    """Two short calls: the horn at her mask dips, and dips again on the
+    windup, her whole body nodding with it; then she looks to the wall."""
+    up = _horn_up(0.25)
+    dip = dict(_horn_up(0.0), hips=[0, 0.06, -0.10, 0, 12, 0], chest=[0, 14, 0], head=[0, 10],
+               rhand=[0.08, 0.34, 1.44])
+    look = dict(_horn_up(0.0), chest=[-16, 0, 0], head=[-34, -4], rhand=[0.20, 0.30, 1.30])
+    return _keys(n, (0.26, "out", up), (w * 0.5 - 0.08, "inout", _horn_up(0.35)), (w * 0.5, "in", dip),
+                 (w * 0.5 + 0.2, "out", up), (w - 0.09, "inout", _horn_up(0.4)), (w, "in", dip),
+                 (w + 0.3, "out", look), (w + 0.7, "inout", look), (w + 1.2, "inout", n))
+
+
+def _fc_kneel(bow=0.0):
+    return dict(kneel(0.50, 8 + 10 * bow), chest=[0, 8 + 14 * bow, 0], head=[0, 6 + 28 * bow], fists=False,
+                rhand=[0.22, 0.30, 0.52 - 0.06 * bow], lhand=[-0.20, 0.34, 0.60 - 0.04 * bow],
+                rpole=[0.8, -0.5, -0.1], lpole=[-0.8, -0.5, -0.1])
+
+
+def count_them(rig, fps, n, w, atk, **_):
+    """She turns to her father and comes down to his height, the horn
+    lowered, and calls once, low: head level, the horn barely lifted."""
+    down = _fc_kneel(0.0)
+    call = dict(kneel(0.48, 4), chest=[0, 2, 0], head=[0, -4], fists=True,
+                rhand=[0.08, 0.26, 1.12], rpole=[1.0, -0.3, 0.0], lhand=[-0.20, 0.34, 0.60], lpole=[-0.8, -0.5, -0.1])
+    return _keys(n, (w * 0.5, "inout", down), (w * 0.72, "inout", down), (w, "inout", call),
+                 (w + 1.0, "inout", call))
+
+
+def fc_kneel_down(rig, fps, n, **_):
+    """She kneels by him. The horn is set down on the ground beside her,
+    her hand slow to leave it; her hands come to her knees; her head bows."""
+    set_h = dict(kneel(0.52, 16), chest=[-10, 20, 0], head=[8, 20], fists=False,
+                 rhand=[0.40, 0.30, 0.12], rpole=[0.9, -0.3, 0.2], lhand=[-0.20, 0.34, 0.60], lpole=[-0.8, -0.5, -0.1])
+    return [(0.0, "inout", n), (1.3, "inout", _fc_kneel(0.0)), (2.2, "inout", set_h), (2.8, "inout", set_h),
+            (3.7, "inout", _fc_kneel(0.2)), (5.0, "inout", _fc_kneel(1.0))]
+
+
+def fc_arms_up(rig, fps, n, **_):
+    """Both arms up, the horn over her head: a call that does not rise.
+    Her arms come down slowly through it, and her head with them."""
+    up = {"hips": [0, -0.04, 0.03, 0, -8, 0], "chest": [0, -14, 0], "head": [0, -22], "fists": True,
+          "rhand": [0.26, 0.10, 2.02], "lhand": [-0.30, 0.10, 1.96], "rpole": [1.0, -0.1, 0.2], "lpole": [-1.0, -0.1, 0.2],
+          "footL": [0, 0, 0.02, 0, 10], "footR": [0, 0, 0.02, 0, 10]}
+    sink = dict(up, hips=[0, 0.0, -0.04, 0, 2, 0], chest=[0, 4, 0], head=[0, 8],
+                rhand=[0.34, 0.22, 1.66], lhand=[-0.40, 0.22, 1.60], footL=list(Z5), footR=list(Z5))
+    return [(0.0, "inout", n), (0.6, "out", up), (1.6, "inout", dict(up, hips=[0, -0.05, 0.04, 0, -10, 0])),
+            (2.6, "inout", sink), (3.2, "inout", n)]
+
+
+# -------------------------------------------------------- the Leadvoice
+# She never strikes and never reaches for the Bearer. Everything is small:
+# the head, the breath in the chest, the arms round the child. Hands are
+# keyed from where her own stance holds them (`rel`), so the same beats sit
+# on her seated pose and on her feet.
+def _rel(n, key, dr=0.0, df=0.0, du=0.0):
+    v = n[key]
+    return [v[0] + dr, v[1] + df, v[2] + du]
+
+
+def _lv(n, lift=0.0, pitch=0.0, head=(0, 0), close=0.0, rise=0.0, open_=0.0):
+    """lift: chest opened (breath). pitch: bowed over the child. (close and
+    open_ are kept for the callers' intent; see below.)
+
+    Her model decides what can move. The swaddle is bound to her chest, and
+    the ice her cloak has become is skinned to her ARMS and legs: move a
+    wrist, or even an elbow's swivel, and a slab of the spring comes up off
+    the ground with it. So her hands stay exactly where her stance has them
+    (the rest controls pin them in the world while the trunk bows over
+    them), her legs hang from a pelvis that never turns (legs_fk), and
+    everything she does is in her spine, her shoulders and her head."""
+    return {"hips": [0, 0, rise, 0, 0, 0], "legs_fk": True,
+            "chest": [0, pitch - lift, 0], "head": [head[0], head[1]], "fists": False,
+            "rhand": n["rhand"], "lhand": n["lhand"], "rrot": n["rrot"], "lrot": n["lrot"],
+            "bones": {"LeftShoulder": [0, 0, -lift * 0.5], "RightShoulder": [0, 0, lift * 0.5]}}
+
+
+def _lv_n(rig, n):
+    # (open hands: the ice at her hems is skinned to her fingers too)
+    return dict(n, legs_fk=True, fists=False)
+
+
+def lv_held_note(rig, fps, n, w, atk, amp=1.0, **_):
+    """Her mask comes up off the child and stays up: a thin breath, drawn
+    slowly, and held out. Nothing else moves."""
+    n = _lv_n(rig, n)
+    up = _lv(n, lift=6 * amp, head=(0, -14 * amp))
+    drawn = _lv(n, lift=11 * amp, head=(0, -20 * amp), rise=0.01 * amp)
+    note = _lv(n, lift=7 * amp, head=(0, -16 * amp))
+    return _keys(n, (0.5, "inout", up), (w - 0.2, "inout", drawn), (w, "inout", note), (w + 0.9, "inout", note),
+                 (w + 1.8, "inout", n))
+
+
+def lv_long_note(rig, fps, n, w, atk, amp=1.0, **_):
+    """She draws herself up and the breath goes on and on: taller through
+    the whole windup, her free hand falling open; the note is held as long
+    as the data's last hit, and she settles only after it."""
+    n = _lv_n(rig, n)
+    hits = [float(h) for h in atk.get("hits", [0.0])]
+    up = _lv(n, lift=8 * amp, head=(0, -12 * amp), rise=0.01)
+    tall = _lv(n, lift=16 * amp, head=(0, -26 * amp), rise=0.03 * amp, open_=1.0)
+    note = _lv(n, lift=12 * amp, head=(0, -22 * amp), rise=0.02 * amp, open_=1.0)
+    k = _keys(n, (0.6, "inout", up), (w - 0.2, "inout", tall), (w, "inout", note))
+    t = w
+    for h in hits[1:]:
+        k += [(w + h - 0.5, "inout", tall), (w + h, "inout", note)]
+        t = w + h
+    return k + [(t + 1.0, "inout", note), (t + 2.0, "inout", n)]
+
+
+def lv_not_yet(rig, fps, n, w, atk, amp=1.0, **_):
+    """She breathes in as if to begin, and holds it, and does not begin:
+    the breath is let go on the windup and her head comes down a long way."""
+    n = _lv_n(rig, n)
+    inb = _lv(n, lift=12 * amp, head=(0, -12 * amp), rise=0.01)
+    held = _lv(n, lift=14 * amp, head=(0, -14 * amp), rise=0.015)
+    gone = _lv(n, lift=-4, pitch=10, head=(0, 26), close=0.4)
+    return _keys(n, (w * 0.4, "inout", inb), (w - 0.3, "inout", held), (w, "inout", gone), (w + 0.7, "inout", gone),
+                 (w + 1.4, "inout", n))
+
+
+def lv_come_up(rig, fps, n, w, atk, **_):
+    """Her head turns to the gap in the stones, and stays there."""
+    n = _lv_n(rig, n)
+    turn = _lv(n, lift=4, head=(-44, -6))
+    stay = _lv(n, lift=5, head=(-50, -8))
+    return _keys(n, (w * 0.6, "inout", turn), (w, "inout", stay), (w + 0.8, "inout", stay), (w + 1.5, "inout", n))
+
+
+def lv_shelter(rig, fps, n, w, atk, amp=1.0, **_):
+    """She folds herself down over the child, both arms round it, her head
+    over its head. Held; and slowly up again."""
+    n = _lv_n(rig, n)
+    half = _lv(n, pitch=14 * amp, head=(0, 16), close=0.6)
+    over = _lv(n, pitch=34 * amp, head=(0, 34), close=1.0)
+    rock = _lv(n, pitch=38 * amp, head=(0, 38), close=1.0)
+    return _keys(n, (w * 0.5, "inout", half), (w, "inout", over), (w + 0.6, "inout", rock), (w + 1.2, "inout", over),
+                 (w + 2.2, "inout", n))
