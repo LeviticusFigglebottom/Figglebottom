@@ -17,7 +17,7 @@ var _tex := {}
 var _t := 0.0
 
 func _init() -> void:
-	custom_minimum_size = Vector2(930, 628)
+	custom_minimum_size = Vector2(930, 600)
 	clip_contents = true
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -100,6 +100,7 @@ func region_at(at: Vector2) -> String:
 
 # ---------------------------------------------------------------- transform
 
+const GLYPH := 1.4          # marker size on the sheet
 const HEAD := 40.0
 const FOOT := 34.0
 
@@ -134,7 +135,10 @@ func _rect_of(m: Dictionary) -> Rect2:
 
 # ---------------------------------------------------------------- drawing
 
+var _used: Array = []       # label rects laid this frame, so names do not sit on each other
+
 func _draw() -> void:
+	_used.clear()
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.035, 0.032, 0.030))
 	var meta := MapState.meta()
 	if meta.is_empty():
@@ -159,13 +163,18 @@ func _draw() -> void:
 		draw_texture_rect(t, _rect_of(m), false, Color(dim, dim, dim, 1.0))
 	if mode == "overview":
 		_draw_links()
-	for mk in MapState.markers("" if mode == "overview" else area):
+	var marks := MapState.markers("" if mode == "overview" else area)
+	# names in order of weight: Hearthstones, then zones, ways on, boards
+	var weight := {"hearth": 0, "bearer": 0, "pin": 0, "veil": 0, "place": 1, "seam": 2}
+	marks.sort_custom(func(a, b): return int(weight.get(a["kind"], 3)) + (1 if a["kind"] == "place" and not a["zone"] else 0) \
+		< int(weight.get(b["kind"], 3)) + (1 if b["kind"] == "place" and not b["zone"] else 0))
+	for mk in marks:
 		_draw_marker(mk)
 	if mode == "overview":
 		for r in seen_regions():
 			var m := MapState.region(r)
 			var at := to_view(Vector2(m["label_at"][0], m["label_at"][1]))
-			_label(at + Vector2(0, -16), String(m["name"]), 21 if r != area else 23, true, r == area)
+			_label(at + Vector2(0, -16), String(m["name"]), 24 if r != area else 26, true, r == area)
 	_draw_head()
 	_draw_legend()
 	draw_rect(Rect2(Vector2(0.5, 0.5), size - Vector2.ONE), Color(UITheme.EMBER, 0.35), false, 1.0)
@@ -240,28 +249,29 @@ func _draw_marker(mk: Dictionary) -> void:
 	if at.y < HEAD - 6 or at.y > size.y - FOOT + 6:
 		return
 	var near := mode == "region"
+	var gs := GLYPH if near else 1.0     # smaller on the whole highland, where they crowd
+	draw_set_transform(at, 0.0, Vector2(gs, gs))
+	match String(mk["kind"]):
+		"hearth": _glyph_hearth(Vector2.ZERO, mk["rested"], mk["last"])
+		"veil": _glyph_veil(Vector2.ZERO, mk["released"])
+		"seam":
+			if near: _glyph_seam(Vector2.ZERO, mk["known"])
+		"pin": _glyph_pin(Vector2.ZERO)
+		"bearer": _glyph_bearer(Vector2.ZERO, float(mk["yaw"]))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	if not near:
+		return
 	match String(mk["kind"]):
 		"hearth":
-			_glyph_hearth(at, mk["rested"], mk["last"])
-			if near:
-				_label(at + Vector2(0, 21), HUD._caps_case(String(mk["name"]).to_upper()), 15, false, mk["last"])
-		"veil":
-			_glyph_veil(at, mk["released"])
+			_label(at + Vector2(0, 28), HUD._caps_case(String(mk["name"]).to_upper()), 18, false, mk["last"])
 		"seam":
-			if near:
-				_glyph_seam(at, mk["known"])
-				var txt: String = mk["label"]
-				if mk["known"]:
-					txt = "to %s" % mk["to_name"] if txt == "" else "%s, to %s" % [txt, mk["to_name"]]
-				if txt != "":
-					_label(at + Vector2(0, -15), txt, 14, false, false, true)
+			var txt: String = mk["label"]
+			if mk["known"]:
+				txt = "to %s" % mk["to_name"] if txt == "" else "%s, to %s" % [txt, mk["to_name"]]
+			if txt != "":
+				_label(at + Vector2(0, -22), txt, 17, false, false, true)
 		"place":
-			if near:
-				_label(at, String(mk["name"]), 18 if mk["zone"] else 14, bool(mk["zone"]), false, not bool(mk["zone"]))
-		"pin":
-			_glyph_pin(at)
-		"bearer":
-			_glyph_bearer(at, float(mk["yaw"]))
+			_label(at, String(mk["name"]), 22 if mk["zone"] else 17, bool(mk["zone"]), false, not bool(mk["zone"]))
 
 # ---- glyphs: small inked marks, not pictures
 
@@ -317,7 +327,18 @@ func _label(at: Vector2, text: String, px: int, caps: bool, lit := false, italic
 	var f := UITheme.font("caps" if caps else ("italic" if italic else "medium"))
 	var w := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 	var p := Vector2(clampf(at.x - w * 0.5, 4.0, size.x - w - 4.0), at.y + px * 0.35)
-	draw_string_outline(f, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, 5, Color(PAPER, 0.85))
+	# keep clear of names already laid: try just below, then just above, else leave it out
+	var placed := false
+	for dy in [0.0, px + 4.0, -(px + 4.0), 2.0 * (px + 4.0)]:
+		var r := Rect2(p.x - 3, p.y + dy - px, w + 6, px + 6)
+		if not _used.any(func(u): return (u as Rect2).intersects(r)):
+			p.y += dy
+			_used.append(r)
+			placed = true
+			break
+	if not placed:
+		return
+	draw_string_outline(f, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, 8 if caps else 5, Color(PAPER, 0.95 if caps else 0.85))
 	draw_string(f, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, Color(0.42, 0.13, 0.03) if lit else INK)
 
 func _text(at: Vector2, text: String, px: int, col: Color) -> void:

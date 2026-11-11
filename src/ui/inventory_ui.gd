@@ -19,14 +19,14 @@ const DIM := UITheme.BONE_DIM
 ## A script leaf may also have static input(ui, event) -> bool (keys it takes
 ## for itself) and static act(ui, row) (Enter or a click on one of its rows).
 static var LEAVES: Array = [
-	{"key": "pack", "title": "The Pack", "fill": "_fill_pack", "footer": "hand",
+	{"key": "pack", "title": "Pack", "fill": "_fill_pack", "footer": "hand",
 	 "hint": "A/D  leaf      W/S  choose      1-5 or drag  set the arm in that hand-slot      Tab  close"},
-	{"key": "songs", "title": "The Songs", "fill": "_fill_songs", "footer": "attune",
+	{"key": "songs", "title": "Songs", "fill": "_fill_songs", "footer": "attune",
 	 "hint": "A/D  leaf      W/S  choose      Enter, click or drag  attune the song to X      Tab  close"},
-	{"key": "armour", "title": "The Armour", "fill": "_fill_armour", "footer": "armour",
+	{"key": "armour", "title": "Armour", "fill": "_fill_armour", "footer": "armour",
 	 "hint": "A/D  leaf      W/S  choose      Enter, click or drag  wear it (again to take it off)      1-4  that slot      Tab  close"},
 	{"key": "journal", "title": "Journal", "fill": "res://src/ui/pack/journal_leaf.gd", "footer": "",
-	 "hint": "A/D  leaf      W/S  choose      Enter or click  pin a thread (its objective shows on the HUD and the Map)      J  close"},
+	 "hint": "A/D  leaf      W/S  choose      Enter or click  pin a thread to the HUD and the Map      J  close"},
 	{"key": "map", "title": "Map", "fill": "res://src/ui/pack/map_leaf.gd", "footer": "",
 	 "hint": "A/D  leaf      Enter or click  the highland / one region      W/S  next region      M  close"},
 ]
@@ -176,7 +176,7 @@ func _show_tab(key: String) -> void:
 	_rebuild_list()
 	var footer := String(leaf.get("footer", ""))
 	# a leaf with no footer reads on down to the hint line
-	_scroll.size.y = 512.0 if footer != "" else 640.0
+	_scroll.size.y = 512.0 if footer != "" else 604.0
 	if _frule != null: _frule.visible = footer != ""
 	for s in _slots:
 		(s["panel"] as Control).visible = (footer == "hand")
@@ -264,7 +264,7 @@ func _row(id: String, kind: String, icon_path: String, nm: String, tag: String, 
 	row.add_theme_constant_override("separation", 16)
 	pc.add_child(row)
 	var icon := TextureRect.new()
-	icon.custom_minimum_size = Vector2(52, 52)
+	icon.custom_minimum_size = Vector2(64, 64)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -298,7 +298,7 @@ func _relic_row(icon_path: String, nm: String, tag: String, desc: String) -> voi
 	row.add_theme_constant_override("separation", 16)
 	pc.add_child(row)
 	var icon := TextureRect.new()
-	icon.custom_minimum_size = Vector2(52, 52)
+	icon.custom_minimum_size = Vector2(64, 64)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	if ResourceLoader.exists(icon_path): icon.texture = load(icon_path)

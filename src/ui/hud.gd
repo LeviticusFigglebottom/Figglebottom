@@ -530,6 +530,7 @@ func _ornament(parent: Control, y: float, half_w: float) -> void:
 var _tracker_box: VBoxContainer = null
 var _tracker_title: Label = null
 var _tracker_text: Label = null
+var _tracker_plate: Panel = null
 var _scout_t := 0.0
 
 func _build_tracker(root: Control) -> void:
@@ -553,6 +554,18 @@ func _build_tracker(root: Control) -> void:
 	_tracker_text.custom_minimum_size = Vector2(460, 0)
 	_tracker_text.max_lines_visible = 4
 	_tracker_box.add_child(_tracker_text)
+	# a soft dark ground behind both lines, so they hold against a bright sky
+	var plate := Panel.new()
+	var psb := StyleBoxFlat.new()
+	psb.bg_color = Color(UITheme.COAL, 0.45)
+	psb.set_corner_radius_all(4)
+	plate.add_theme_stylebox_override("panel", psb)
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	plate.show_behind_parent = true
+	plate.top_level = false
+	_tracker_plate = plate
+	root.add_child(plate)
+	root.move_child(plate, _tracker_box.get_index())
 	refresh_tracker()
 
 ## The objective is long in the Journal and short here: its first sentence.
@@ -570,6 +583,10 @@ func refresh_tracker() -> void:
 	if not t.is_empty():
 		_tracker_title.text = String(t["title"])
 		_tracker_text.text = tracker_line(String(t["objective"]))
+	if _tracker_plate != null:
+		_tracker_plate.visible = _tracker_box.visible
+		_tracker_plate.position = _tracker_box.position - Vector2(12, 6)
+		_tracker_plate.size = _tracker_box.size + Vector2(24, 14)
 
 ## Twice a second: mark what the Bearer has come within sight of (the Map),
 ## and keep the tracker honest.
