@@ -124,12 +124,22 @@ static func build(area_id: String) -> Area:
 		g.area_id = area_id
 		g.locked_prompt = spec.get("locked_prompt", "Barred from the other side")
 		g.door_width = float(spec.get("width", 3.6))
+		# progression gates (ADR 0015): opened by a release's world flag
+		g.open_flag = spec.get("open_flag", "")
+		g.unbar_prompt = spec.get("unbar_prompt", g.unbar_prompt)
+		g.open_toast = spec.get("open_toast", g.open_toast)
+		g.plank_leaves = bool(spec.get("leaves", true))
+		g.door_height = float(spec.get("height", g.door_height))
+		g.body_depth = float(spec.get("depth", g.body_depth))
 		if spec.has("tag"):
 			g.layer_bit = _tag_bit(String(spec["tag"]))
 			area.attach(g, String(spec["tag"]))    # (Tarnhall's doors: barred in RIME only)
 		else:
 			area.base.add_child(g)
-		if spec.has("dressing"):
+		if spec.get("dressing") is Array:
+			_place(g, spec)
+			g.dress(area, spec["dressing"])     # (placed first: its pieces sit in world space)
+		elif spec.has("dressing"):
 			# the gate's look (a Tripo pair of doors): shown while it is barred
 			var dr: Dictionary = spec["dressing"]
 			var lm := BuildingGen._landmark(String(dr["scene"]))
