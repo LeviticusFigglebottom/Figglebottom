@@ -215,8 +215,11 @@ func bake_navmeshes() -> void:
 					other.nav_thaw.enabled = false
 				if other.nav_rime != null:
 					other.nav_rime.enabled = false
+	BuildProf.begin(area_id)
 	nav_thaw = _bake_nav("NavThaw", false)
+	BuildProf.lap("nav bake thaw")
 	nav_rime = _bake_nav("NavRime", true)
+	BuildProf.lap("nav bake rime")
 	for other in siblings:
 		if is_instance_valid(other):
 			other.add_to_group("nav_src")

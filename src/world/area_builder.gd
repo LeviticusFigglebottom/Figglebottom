@@ -5,7 +5,9 @@ class_name AreaBuilder
 ## portals, cameos). Everything carries a state tag: base | thaw | rime.
 
 static func build(area_id: String) -> Area:
+	BuildProf.begin(area_id)
 	var def := DB.area_def(area_id)
+	BuildProf.lap("def parse")
 	if def.is_empty():
 		push_error("AreaBuilder: no def for area '%s'" % area_id)
 		return null
@@ -24,6 +26,7 @@ static func build(area_id: String) -> Area:
 			area.base.add_child(t)
 			t.build(RH.L_WORLD_BASE)
 			area.terrain = t
+	BuildProf.lap("terrain (other)")
 	if def.has("nav_bounds"):
 		var nb: Array = def["nav_bounds"]
 		area.nav_aabb = AABB(Vector3(nb[0], nb[1], nb[2]), Vector3(nb[3] - nb[0], nb[4] - nb[1], nb[5] - nb[2]))
@@ -42,9 +45,11 @@ static func build(area_id: String) -> Area:
 		hz.position = (hmn + hmx) * 0.5
 		hz.name = "Hazard_" + hz.kind
 		area.attach(hz, spec.get("tag", "base"))
+	BuildProf.lap("water, hazards")
 	for spec in def.get("houses", []):
 		if _flag_ok(spec):
 			BuildingGen.build(area, spec)
+	BuildProf.lap("houses")
 	for spec in def.get("fills", []):
 		_fill(area, spec)
 	for spec in def.get("rows", []):
@@ -109,6 +114,7 @@ static func build(area_id: String) -> Area:
 	for spec in def.get("boxes", []):
 		_solid_box(area, spec)
 
+	BuildProf.lap("pieces, props, landmarks")
 	for spec in def.get("hearths", []):
 		if not _flag_ok(spec):
 			continue   # a hearth that wakes later (the Long Hearth, on release)
@@ -245,6 +251,7 @@ static func build(area_id: String) -> Area:
 		area.attach(pt, spec.get("tag", "base"))
 		_place(pt, spec)
 
+	BuildProf.lap("entities, spawners")
 	if def.has("zones"):
 		var zt := ZoneTitles.new()
 		zt.name = "ZoneTitles"
@@ -252,10 +259,13 @@ static func build(area_id: String) -> Area:
 		area.add_child(zt)
 	if area.terrain != null and def.has("scatter"):
 		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
+		BuildProf.lap("scatter stones, fences")
 		Scatter.build_veg(area, area.terrain, def["scatter"].get("veg", []),
 				int(def["scatter"].get("seed", 1)) + 7, _keep_clear(def))
+	BuildProf.lap("scatter ground cover")
 	if area.terrain != null and def.has("forest"):
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
+	BuildProf.lap("forest")
 	if area.terrain != null:
 		Weather.build(area, area.terrain, def)
 		TrapWarden.build(area)      # no ditch keeps the Bearer (tools/fix_traps.py)
@@ -263,12 +273,14 @@ static func build(area_id: String) -> Area:
 		if "--house-stats" in OS.get_cmdline_user_args():
 			print("[wayside] %s: %d groups" % [area_id, wayside_n])
 
+	BuildProf.lap("weather, traps, wayside")
 	_mark_indoors(area, def.get("houses", []))
 
 	# ambient mood: gold motes in thaw, ash in rime, sized to the area
 	var ext := _extent(def)
 	area.add_ambient(ext[0], ext[1])
 
+	BuildProf.lap("indoor marks, ambient")
 	area.bake_navmeshes.call_deferred()
 	return area
 
