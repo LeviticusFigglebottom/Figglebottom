@@ -86,6 +86,7 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | the Goat Song | song | burst; taught by Lusse |
 | Guest-Tally / the Host's Cup / Ottar's Stick / Fish-Barrel Head | keepsake items (Tarnhall) | `item_guest_tally`, `item_host_cup`, `item_ottar_staff`, `item_barrel_head` |
 | Host's Carving Cleaver | weapon (Tarnhall) | `feast_cleaver` |
+| Hall-Guard's Coat | armour (body, Tarnhall) | `armour_hall`, on a peg inside the hall doors (RIME); the Bearer's `bearer_hall` outfit |
 | the Byres / the Long Table | Hearthstones (Tarnhall) | the yard by the cattle door; the hall's cold fire, woken on release |
 | the Hedgelayer (Eyvind Brask) | Holdfast (Thornwold) | hedged in his betrothed's grave |
 | Linnet | NPC (Thornwold) | collier, the Hedgelayer's betrothed |

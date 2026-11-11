@@ -18,6 +18,7 @@ and its flat side faces +X, because Pickup lays a display scene on its side
     assets/models/props/bone_whistle.tscn  the shepherd's whistle
     assets/models/props/ice_tracks.tscn    one set of footprints in the ice (KETTLE; upright)
     assets/models/props/latch_wool.tscn    a scrap of woad wool (TARNHALL)
+    assets/models/props/hall_coat.tscn     the hall guard's coat on its peg (TARNHALL; upright)
     assets/models/props/woad_band.tscn     Wren's band (COLDWELL.md 8)
     assets/models/props/mourning_mask.tscn a mourning mask, woad band (Maren's; upright)
     assets/models/props/child_mask.tscn    the small one off the low peg (upright)
@@ -282,6 +283,27 @@ nodes = [("LatchWool", "Node3D", None, {}),
          ("S0", "MeshInstance3D", ".", {"transform": xf(x=0.01, y=0.02), "mesh": 'SubResource("strand")'}),
          ("S1", "MeshInstance3D", ".", {"transform": xf(x=-0.012, y=0.1, z=0.008), "mesh": 'SubResource("strand")'})]
 scene("latch_wool", res, nodes)
+
+# the hall guard's coat, hung by its collar on a peg: quilted felt over
+# mail, a fur cape on the shoulders, yellow cuffs (origin at the floor)
+res = [mat("felt", 0.36, 0.31, 0.25, 0.95), mat("mail", 0.2, 0.21, 0.23, 0.55), mat("fur", 0.5, 0.45, 0.38, 1.0),
+       mat("cuff", 0.72, 0.62, 0.2, 0.9), mat("peg", 0.3, 0.22, 0.15, 0.9),
+       ("body", "BoxMesh", {"size": "Vector3(0.5, 0.78, 0.14)", "material": 'SubResource("felt")'}),
+       ("hem", "BoxMesh", {"size": "Vector3(0.46, 0.14, 0.11)", "material": 'SubResource("mail")'}),
+       ("cape", "BoxMesh", {"size": "Vector3(0.6, 0.2, 0.2)", "material": 'SubResource("fur")'}),
+       ("sleeve", "BoxMesh", {"size": "Vector3(0.13, 0.62, 0.12)", "material": 'SubResource("felt")'}),
+       ("cuff", "BoxMesh", {"size": "Vector3(0.14, 0.07, 0.13)", "material": 'SubResource("cuff")'}),
+       ("peg", "CylinderMesh", {"top_radius": 0.018, "bottom_radius": 0.022, "height": 0.2, "radial_segments": 8,
+                                "material": 'SubResource("peg")'})]
+nodes = [("HallCoat", "Node3D", None, {}),
+         ("Peg", "MeshInstance3D", ".", {"transform": "Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 1.72, -0.06)", "mesh": 'SubResource("peg")'}),
+         ("Cape", "MeshInstance3D", ".", {"transform": xf(y=1.56), "mesh": 'SubResource("cape")'}),
+         ("Body", "MeshInstance3D", ".", {"transform": xf(y=1.1), "mesh": 'SubResource("body")'}),
+         ("Hem", "MeshInstance3D", ".", {"transform": xf(y=0.66), "mesh": 'SubResource("hem")'})]
+for k, x in enumerate((-0.3, 0.3)):
+    nodes += [("Sleeve%d" % k, "MeshInstance3D", ".", {"transform": xf(x=x, y=1.18), "mesh": 'SubResource("sleeve")'}),
+              ("Cuff%d" % k, "MeshInstance3D", ".", {"transform": xf(x=x, y=0.86), "mesh": 'SubResource("cuff")'})]
+scene("hall_coat", res, nodes, upright=True)
 
 # Wren's band: a strip of woad cloth, the knot still in it
 res = [mat("woad", *WOAD, 0.95),

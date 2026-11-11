@@ -180,6 +180,8 @@ func _rig_sheet(clip: String, kit: String) -> String:
 ## Writes anim_foe_<id>_<attack>_sheet.png.
 func _foe_sheet(foe: String, attack: String) -> String:
 	var cfg: Dictionary = DB.enemy(foe)
+	if cfg.is_empty() and HumanoidLib.has_model(foe):
+		cfg = {"model": foe}   # a villager's keyed beat (old_calder@sit)
 	var atk := {}
 	for a in cfg.get("attacks", []):
 		if String(a.get("id", "")) == attack:
@@ -243,6 +245,7 @@ func _foe_sheet(foe: String, attack: String) -> String:
 			info = "%s  %s  (%s)  ->  %s   windup %.2f  contact %.2f  end %.2f" % [foe, attack, clip,
 					vis.rig.qualified(clip), float(atk.get("windup", 0.0)), c - s, e]
 		vis.rig.freeze_at(clip, float(times[i]))
+		vis.snap_held()
 		if foe == "oarsman":   # the oar is the fight scene's; a stand-in shows its line
 			var l := vis.bone_xform("mixamorig_LeftHand").origin
 			var r := vis.bone_xform("mixamorig_RightHand").origin

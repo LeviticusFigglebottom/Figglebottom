@@ -44,9 +44,7 @@ The whole game is on main, in structure:
 - Real-GPU look: THAW exposure blow-out and faceted cliffs (world-fidelity env).
 - RIME constructs: frozen thorn, frost veils as flat cards.
 - `feat/anims-4` (not merged): body armour swaps the Bearer's model (`items.json` `armour.model`); the new-region foes, the Leadvoice and the ending beats have their own clips (ADR 0012 pass 4). Left over from it:
-  - `bearer_hall` (guest-garb) is a registered outfit that no item names. It needs an item (lore, where it is found): the lead's call.
-  - Model faults for the art pass: the Fellcaller's horn is skinned to her belt, not her hand; the Host has a stray rigid left arm and his table crumples when his arms go up; the Leadvoice's cloak ice is skinned to her arms and fingers, so she cannot put her arms round the child.
-  - Old Calder has no seated placement, so no sit was keyed for him.
+  - `fix/rig-fixes` (ADR 0012 pass 5) answers the model faults: the Host's, Fellcaller's and Leadvoice's spare arms are cut off, the Leadvoice's cloak hangs from her hips and spine and her `shelter` closes her arms on the child, the Fellcaller calls with a horn prop in her fist (the belt horn is fused to her dress and stays), Old Calder has a keyed `sit`, and `bearer_hall` is the Hall-Guard's Coat (`armour_hall`, a pickup inside the hall doors in RIME). Left over: the Host's table still crumples when his arms go up; the Leadvoice's arms have no elbow (her rig runs its forearm bones down the cloak); sat, her ground ice is under the floor; REACH.md has Calder stood after the release, so nothing seats him yet.
   - None of it has been seen on a real GPU or in a fight: sheets only (`docs/screens/anim_*`). Rebuild: `$BPY tools/anim/build_combat_lib.py && python3 tools/anim/quad_poses.py && godot --headless --path . --import`.
 - Ottar has no model.
 

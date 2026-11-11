@@ -586,6 +586,21 @@ def icon_armour_fleece():
     return im
 
 
+def icon_armour_hall():
+    """A quilted felt coat over mail: a fur cape, yellow cuffs, mail at the hem."""
+    im, d = canvas()
+    _coat(d, (104, 92, 76, 255), DARK)
+    for x in range(40, 92, 10):                                      # the quilting
+        d.line((x, 44, x - 2, 100), fill=(84, 74, 60, 255), width=2)
+    d.polygon([(38, 18), (90, 18), (104, 38), (84, 46), (64, 34), (44, 46), (24, 38)], fill=(150, 138, 118, 255))   # fur cape
+    d.rectangle((33, 100, 95, 112), fill=(58, 60, 66, 255))          # mail below the felt
+    for x in range(36, 94, 6):
+        d.line((x, 105, x + 2, 107), fill=(120, 122, 128, 255), width=1)
+    d.polygon([(12, 76), (22, 80), (25, 72), (15, 68)], fill=(196, 170, 60, 255))    # lichen-yellow cuffs
+    d.polygon([(116, 76), (106, 80), (103, 72), (113, 68)], fill=(196, 170, 60, 255))
+    return im
+
+
 def icon_latch_wool():
     """An iron latch with a scrap of woad wool caught on it."""
     im, d = canvas()
