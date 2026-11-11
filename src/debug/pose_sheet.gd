@@ -291,7 +291,7 @@ func _foe_sheet(foe: String, attack: String) -> String:
 
 ## Rack mode (--pose-rack=res://a.glb,res://b.glb,...): weapon meshes stood
 ## on their grip origins, flat side and edge-on, with a line at the grip and
-## a 0.5 m scale tick, to check length, which end is up and where the hand
+## 0.5 m scale ticks, to check length, which end is up and where the hand
 ## closes before judging them in the fist. Writes <out>/weapon_rack.png.
 func _rack(paths: Array) -> void:
 	var env := Environment.new()
@@ -311,39 +311,45 @@ func _rack(paths: Array) -> void:
 	cam.current = true
 	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
 	var n := paths.size()
-	var step := 0.62
-	cam.size = maxf(2.9, n * step * 2.0 * 720.0 / 1280.0 + 0.2)
-	cam.position = Vector3(0, 0.75, 10.0)
+	var per_row := 7 if n > 7 else n          # two rows past seven, so each stays big enough to judge
+	var rows := int(ceil(float(n) / per_row))
+	var step := 0.72
+	cam.size = maxf(2.9 * rows, per_row * step * 2.0 * 720.0 / 1280.0 + 0.2)
+	cam.position = Vector3(0, 0.0, 10.0)
 	var bar := StandardMaterial3D.new()
 	bar.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	bar.albedo_color = Color(1.0, 0.75, 0.2)
 	for i in n:
+		var row := i / per_row
+		var col := i % per_row
+		var y0 := (rows - 1) * 1.45 - row * 2.9 - 0.55   # the grip line of this row
 		for side in 2:
-			var x := ((i * 2 + side) - (n * 2 - 1) * 0.5) * step
+			var x := ((col * 2 + side) - (per_row * 2 - 1) * 0.5) * step
 			var inst := (load(String(paths[i])) as PackedScene).instantiate() as Node3D
 			add_child(inst)
-			inst.position = Vector3(x, 0, 0)
+			inst.position = Vector3(x, y0, 0)
 			inst.rotation_degrees.y = 90.0 if side == 0 else 0.0   # flat side (edge +Z turned to +X), then edge-on
 			var mk := MeshInstance3D.new()
 			var bm := BoxMesh.new()
 			bm.size = Vector3(0.3, 0.006, 0.006)
 			bm.material = bar
 			mk.mesh = bm
-			mk.position = Vector3(x, 0, 0.4)
+			mk.position = Vector3(x, y0, 0.4)
 			add_child(mk)
 		var lbl := Label3D.new()
 		lbl.text = String(paths[i]).get_file().get_basename()
 		lbl.pixel_size = 0.003
-		lbl.position = Vector3(((i * 2 + 0.5) - (n * 2 - 1) * 0.5) * step, -0.85, 0.5)
+		lbl.position = Vector3(((col * 2 + 0.5) - (per_row * 2 - 1) * 0.5) * step, y0 - 0.8, 0.5)
 		add_child(lbl)
-	for k in 5:   # height ticks every 0.5 m at the left edge
-		var tk := MeshInstance3D.new()
-		var tb := BoxMesh.new()
-		tb.size = Vector3(n * step * 2.0, 0.003, 0.003)
-		tb.material = bar
-		tk.mesh = tb
-		tk.position = Vector3(0, -0.5 + k * 0.5, -0.5)
-		add_child(tk)
+		if col == 0:   # a tick every half metre up this row's left edge
+			for k in 5:
+				var tk := MeshInstance3D.new()
+				var tb := BoxMesh.new()
+				tb.size = Vector3(0.12, 0.004, 0.004)
+				tb.material = bar
+				tk.mesh = tb
+				tk.position = Vector3(-per_row * step - 0.12, y0 + k * 0.5, 0.0)
+				add_child(tk)
 	for i in 4:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw

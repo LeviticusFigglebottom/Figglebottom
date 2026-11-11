@@ -113,8 +113,8 @@ func apply_loadout(weapon_kit: String, with_shield: bool) -> void:
 	if is_humanoid() and belt_brand == null and not HumanoidLib.mount_cfg("stow@brand").is_empty():
 		var t := HumanoidLib.weapon_instance("torch")
 		if t != null:
-			belt_brand = mount("mixamorig_Hips")
 			var c := HumanoidLib.mount_cfg("stow@brand")
+			belt_brand = mount(String(c.get("bone", "mixamorig_Hips")))
 			belt_brand.position = Vector3(c["pos"][0], c["pos"][1], c["pos"][2])
 			belt_brand.rotation_degrees = Vector3(c["rot"][0], c["rot"][1], c["rot"][2])
 			belt_brand.add_child(t)

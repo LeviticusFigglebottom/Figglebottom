@@ -81,6 +81,9 @@ func setup(fire: Dictionary) -> void:
 	# over the flame, clear of the haft and the fist, so the hand is lit, not burnt out
 	_light.position.y = h * 0.8
 	add_child(_light)
+	# the flame is placed in the world each frame, so it must keep following
+	# the head while the tree is paused (a pause menu, a frozen screenshot)
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(true)
 
 static func _make_sparks(amount: int, life: float) -> CPUParticles3D:

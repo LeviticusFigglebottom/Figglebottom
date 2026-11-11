@@ -5265,18 +5265,18 @@
    "_note": "a one-hand weapon put away (CharVisual.set_stowed: kneeling at a hearth): at the left hip, point down and back"
   },
   "stow@brand": {
-   "bone": "mixamorig_Hips",
+   "bone": "mixamorig_Spine2",
    "pos": [
-    -0.2,
-    0.1,
-    0.0
+    -0.15,
+    -0.42,
+    -0.17
    ],
    "rot": [
-    -135.0,
+    -8.0,
     0.0,
-    6.0
+    10.0
    ],
-   "_note": "the torch thrust through the belt at the right hip, head down and back; also where it hangs, unlit, while another weapon is in hand"
+   "_note": "the torch through the back of the belt, head up behind the right shoulder (hung at the hip it trailed on the ground in every crouch); also where it rides, unlit, while another weapon is in hand"
   },
   "stow@twohand": {
    "bone": "mixamorig_Spine2",
@@ -7096,7 +7096,7 @@
   "combat_lib"
  ],
  "weapon_class": {
-  "_doc": "weapon kit -> clip set (clip_sets) and grip (mounts weapon@<class>)",
+  "_doc": "weapon kit -> clip set (clip_sets), grip (mounts weapon@<class>) and where it is put away (mounts stow@<class>)",
   "hewing_blade": "onehand",
   "torch": "brand",
   "feast_cleaver": "chopper",
@@ -7110,7 +7110,7 @@
   "bow": "bow"
  },
  "clip_sets": {
-  "_doc": "weapon class -> game clip name -> library clips, best first (HumanoidLib.candidates). `_all` answers for every class. Only models with clip_sets: true use them. `_carry` names a looping arms-only clip that holds a two-handed weapon through locomotion (HumanoidRig carry layer).",
+  "_doc": "weapon class -> game clip name -> library clips, best first (HumanoidLib.candidates). `_all` answers for every class. Only models with clip_sets: true use them. `_carry` names a looping arms-only clip that holds a two-handed weapon through locomotion (HumanoidRig carry layer). `_carry_arms` limits that layer to one side ([\"Right\"]: the torch is held aloft in one hand). Classes brand, chopper, maul and polearm, and the w_* carries, are the per-weapon sets of ADR 0014 (tools/anim/weapon_clips.py).",
   "_all": {
    "stagger": [
     "react_front"

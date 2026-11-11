@@ -67,7 +67,7 @@ func _sample(dt: float, xf: Transform3D) -> void:
 func configure(cfg: Dictionary) -> void:
 	var m := material_override as ShaderMaterial
 	var tint: Array = cfg.get("trail_tint", [0.96, 0.91, 0.80])
-	m.set_shader_parameter("tint", Vector3(tint[0], tint[1], tint[2]))
+	m.set_shader_parameter("tint", Color(tint[0], tint[1], tint[2]))
 	m.set_shader_parameter("energy", float(cfg.get("trail_energy", 0.6)))
 	m.set_shader_parameter("ember", 1.0 if String(cfg.get("trail_style", "")) == "ember" else 0.0)
 	m.set_shader_parameter("weight", float(cfg.get("trail_weight", 1.0)))
