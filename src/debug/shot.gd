@@ -266,7 +266,10 @@ func _first_hearth() -> Hearthstone:
 ##   death:  the Bearer falls; the capture lands on the death splash
 ##   rest:   the hearthstone menu opens on the levelling page
 ##   dialogue_ingra: Ingra's audience, framed over the Bearer's shoulder
-##   keepsakes: the Pack opened at the Keepsakes leaf, two threads begun
+##   journal: the Pack opened at the Journal, threads begun, one pinned
+##   pack / pack_songs / pack_armour: the Pack's other leaves, stocked
+##   belt: the HUD with a full belt and the pinned objective
+##   map / map_zoom: the Map, the whole highland and one region
 ##   swing / foe_death / boss: character close-ups (ADR 0004), see _char_stage
 func _stage_tick() -> void:
 	_stage_frame += 1
@@ -337,12 +340,61 @@ func _stage_tick() -> void:
 			# the HUD at rest, with an area card held up for the photograph
 			if _stage_frame == 8:
 				Game.title_card.emit("THE STRAND", 120.0)
-		"keepsakes":
-			# a journey part-way along: both threads started, one further on
+		"ui_tour":
+			# every UI photograph in one boot (the world is slow to build under
+			# a software renderer): OUT_belt, _pack, _songs, _armour, _journal,
+			# _map, _map_zoom. Run with --shot-frames=90.
+			var names := ["belt", "pack", "songs", "armour", "journal", "map", "map_zoom"]
 			if _stage_frame == 8:
-				for f in ["ks_ingra_met", "ks_ingra_rye_found", "ks_ingra_rye", "ks_brede_met", "ks_brede_float_found"]:
+				_stock_pack(p)
+				_walked_world()
+				for f in ["ks_ingra_met", "ks_ingra_rye_found", "ks_brede_met", "ks_knucklebones_found", "ks_horn_wellhead"]:
 					World.set_flag(f)
-				InventoryUI.open_for(p, "keepsakes")
+				Journal.set_pin("ingra_rye")
+			var k := (_stage_frame - 18) / 9
+			if _stage_frame >= 18 and (_stage_frame - 18) % 9 == 0 and k < names.size():
+				get_viewport().get_texture().get_image().save_png("%s_%s.png" % [_shot_path.get_basename(), names[k]])
+				print("[shot] saved %s_%s.png" % [_shot_path.get_basename(), names[k]])
+				var inv: InventoryUI = get_tree().get_first_node_in_group("inventory_ui")
+				match names[k]:
+					"belt": InventoryUI.open_for(p, "pack")
+					"pack": inv._show_tab("songs")
+					"songs": inv._show_tab("armour")
+					"armour": inv._show_tab("journal")
+					"journal": inv._show_tab("map")
+					"map": (inv.get_meta("map_view") as MapView).show_region(Game.current_area_id)
+		"keepsakes", "journal":
+			# a journey part-way along: both threads started, one further on,
+			# one finished thread folded under Done
+			if _stage_frame == 8:
+				for f in ["ks_ingra_met", "ks_ingra_rye_found", "ks_brede_met", "ks_knucklebones_found", "ks_horn_wellhead"]:
+					World.set_flag(f)
+				World.set_area_flag("saltfell_steading", "lit_hs_boat_shed")
+				Journal.set_pin("ingra_rye")
+				InventoryUI.open_for(p, "journal")
+		"pack", "pack_songs", "pack_armour":
+			# the Pack with a traveller's worth in it
+			if _stage_frame == 8:
+				_stock_pack(p)
+				InventoryUI.open_for(p, {"pack": "pack", "pack_songs": "songs", "pack_armour": "armour"}[_stage])
+		"belt":
+			# the HUD with a full belt, a song attuned and a thread pinned
+			if _stage_frame == 8:
+				_stock_pack(p)
+				World.set_flag("ks_ingra_met")
+				Journal.set_pin("ingra_rye")
+		"map", "map_zoom":
+			# the Map after three regions: two released, the third walked into
+			if _stage_frame == 8:
+				_walked_world()
+				World.set_flag("ks_ingra_met")
+				Journal.set_pin("ingra_rye")
+				InventoryUI.open_for(p, "map")
+			if _stage_frame == 12 and _stage == "map_zoom":
+				for c in get_tree().get_nodes_in_group("inventory_ui"):
+					var mv := c.get_meta("map_view", null) as MapView
+					if mv != null:
+						mv.show_region(Game.current_area_id)
 		"rest":
 			if _stage_frame == 8:
 				var h := _first_hearth()
@@ -355,6 +407,39 @@ func _stage_tick() -> void:
 				for c in get_tree().root.get_children():
 					if c is RestUI:
 						(c as RestUI).choose(1)   # the levelling page
+
+## A journey three regions along, for the Map photographs: Saltfell and the
+## Lowe released, Kettle Fjord just walked into.
+func _walked_world() -> void:
+	for a in ["saltfell_steading", "lowe_barrows", "kettle_fjord"]:
+		MapState._mark("regions", a)
+		for h in DB.area_def(a).get("hearths", []):
+			if a != "kettle_fjord" or String(h["id"]) == "hs_landing_ice":
+				MapState._mark("hearths", "%s/%s" % [a, h["id"]])
+		for pl in MapState.places_def(a):
+			MapState._mark("places", "%s/%s" % [a, pl["id"]])
+	# (the flags only: the area on screen is left in the state it was built in)
+	for a in ["saltfell_steading", "lowe_barrows"]:
+		MapState._mark("veils", a)
+		for h in DB.area_def(a).get("hearths", []):
+			World.set_area_flag(a, "lit_" + String(h["id"]))
+	World.set_area_flag("kettle_fjord", "lit_hs_landing_ice")
+	World.last_hearth = {"area": "saltfell_steading", "hearth": "hs_salt_house"}
+
+## A traveller's Pack for the UI photographs: arms on the belt, two songs,
+## armour and a handful of goods.
+func _stock_pack(p: Player) -> void:
+	for id in ["hewing_blade", "spear", "bow", "maul", "turf_spade", "mend", "ember_throw", "long_note",
+			"armour_traveller_coat", "armour_saltfell_oilskins", "armour_barrow_cloak",
+			"item_net_float", "item_rye_sack", "ks_child_mask", "ks_knucklebones", "item_orm_cord", "fostering_horn"]:
+		p.inventory[id] = maxi(int(p.inventory.get(id, 0)), 1)
+	p.inventory["arrows"] = 14
+	p.inventory["bog_iron"] = 3
+	for i in 4:
+		p.set_hotbar_slot(i, ["hewing_blade", "spear", "bow", "maul"][i])
+	p.set_hotbar_slot(4, "gourd")
+	p.attune_song("mend")
+	p.inventory_changed.emit()
 
 ## Character close-ups, side-on, captured on a gameplay beat rather than a
 ## frame count:

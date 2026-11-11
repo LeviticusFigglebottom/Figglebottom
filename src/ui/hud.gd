@@ -62,21 +62,6 @@ var arrows_chip: Label
 var song_panel: Panel
 var song_icon: TextureRect
 var song_cost: Label
-const SLOT_ICON := {
-	"hewing_blade": "res://assets/ui/icons/hewing_blade.png",
-	"spear": "res://assets/ui/icons/spear.png",
-	"bow": "res://assets/ui/icons/bow.png",
-	"greatblade": "res://assets/ui/icons/greatblade.png",
-	"maul": "res://assets/ui/icons/maul.png",
-	"turf_spade": "res://assets/ui/icons/turf_spade.png",
-	"ice_auger": "res://assets/ui/icons/ice_auger.png",
-	"sealer_harpoon": "res://assets/ui/icons/harpoon.png",
-	"feast_cleaver": "res://assets/ui/icons/cleaver.png",
-	"hedging_bill": "res://assets/ui/icons/bill.png",
-	"gourd": "res://assets/ui/icons/gourd.png",
-	"torch": "res://assets/ui/icons/torch.png",
-}
-
 var _xhair: Control = null
 
 ## The archer's sight: a small gold ring-dot dead centre, shown only while
@@ -182,6 +167,7 @@ func _bar(parent: Control, y: float, w: float, h: float, back: Color) -> Array:
 func _build() -> void:
 	var root := Control.new()
 	root.theme = UITheme.theme()
+	root.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS   # 256 px icons, shown small
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
@@ -231,7 +217,7 @@ func _build() -> void:
 	gourd_plate.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	gourd_plate.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	gourd_plate.offset_left = 20
-	gourd_plate.offset_right = 198
+	gourd_plate.offset_right = 132
 	gourd_plate.offset_top = -94
 	gourd_plate.offset_bottom = -48
 	gourd_plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -241,10 +227,18 @@ func _build() -> void:
 	gourd_label.label_settings = _font(SERIF_B, 27, UITheme.BONE)
 	gourd_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	gourd_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	gourd_label.offset_left = 32
+	gourd_label.offset_left = 74
+	var gi := TextureRect.new()
+	gi.texture = UIIcons.tex("gourd")
+	gi.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	gi.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	gi.position = Vector2(6, 4)
+	gi.size = Vector2(38, 38)
+	gi.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gourd_plate.add_child(gi)
 	gourd_label.offset_top = -90
 	gourd_label.offset_bottom = -50
-	gourd_label.text = "Gourd  ×3"
+	gourd_label.text = "×3"
 	root.add_child(gourd_label)
 
 	# Bottom-right Warmth plaque backing + soul-flame emblem
@@ -350,6 +344,7 @@ func _build() -> void:
 	root.add_child(overheard_label)
 
 	_build_hotbar(root)
+	_build_tracker(root)
 
 	# boss bar with ornate gold rule and trailing damage-ghost bar
 	boss_root = Control.new()
@@ -528,6 +523,83 @@ func _ornament(parent: Control, y: float, half_w: float) -> void:
 	k.offset_bottom = k.size.y * 0.5
 	parent.add_child(k)
 
+# ---------------------------------------------------------------- tracker
+## The pinned objective, top-right: the thread's name and what to do next,
+## in two quiet lines. Off when the Journal's switch is off, when there is
+## nothing to do, and while a menu or a talk has the screen.
+var _tracker_box: VBoxContainer = null
+var _tracker_title: Label = null
+var _tracker_text: Label = null
+var _tracker_plate: Panel = null
+var _scout_t := 0.0
+
+func _build_tracker(root: Control) -> void:
+	_tracker_box = VBoxContainer.new()
+	_tracker_box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_tracker_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_tracker_box.offset_left = -484
+	_tracker_box.offset_right = -24
+	_tracker_box.offset_top = 22
+	_tracker_box.add_theme_constant_override("separation", 0)
+	_tracker_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_tracker_box)
+	_tracker_title = Label.new()
+	_tracker_title.label_settings = UITheme.ls(23, UITheme.EMBER_HOT, "caps")
+	_tracker_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_tracker_box.add_child(_tracker_title)
+	_tracker_text = Label.new()
+	_tracker_text.label_settings = UITheme.ls(21, UITheme.BONE)
+	_tracker_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_tracker_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_tracker_text.custom_minimum_size = Vector2(460, 0)
+	_tracker_text.max_lines_visible = 4
+	_tracker_box.add_child(_tracker_text)
+	# a soft dark ground behind both lines, so they hold against a bright sky
+	var plate := Panel.new()
+	var psb := StyleBoxFlat.new()
+	psb.bg_color = Color(UITheme.COAL, 0.45)
+	psb.set_corner_radius_all(4)
+	plate.add_theme_stylebox_override("panel", psb)
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	plate.show_behind_parent = true
+	plate.top_level = false
+	_tracker_plate = plate
+	root.add_child(plate)
+	root.move_child(plate, _tracker_box.get_index())
+	refresh_tracker()
+
+## The objective is long in the Journal and short here: its first sentence.
+static func tracker_line(objective: String) -> String:
+	var cut := objective.find(". ")
+	return objective.substr(0, cut + 1) if cut > 0 else objective
+
+func refresh_tracker() -> void:
+	if _tracker_box == null:
+		return
+	var t := Journal.tracker()
+	var p = Game.player
+	var busy: bool = p != null and is_instance_valid(p) and (p.busy_in_menu() or p.dead)
+	_tracker_box.visible = not t.is_empty() and not busy and World.ended() == ""
+	if not t.is_empty():
+		_tracker_title.text = String(t["title"])
+		_tracker_text.text = tracker_line(String(t["objective"]))
+	if _tracker_plate != null:
+		_tracker_plate.visible = _tracker_box.visible
+		_tracker_plate.position = _tracker_box.position - Vector2(12, 6)
+		_tracker_plate.size = _tracker_box.size + Vector2(24, 14)
+
+## Twice a second: mark what the Bearer has come within sight of (the Map),
+## and keep the tracker honest.
+func _scout(dt: float) -> void:
+	_scout_t -= dt
+	if _scout_t > 0.0:
+		return
+	_scout_t = 0.5
+	var p = Game.player
+	if p != null and is_instance_valid(p) and Game.current_area_id != "":
+		MapState.scout(Game.current_area_id, p.global_position)
+	refresh_tracker()
+
 var _ks_toast: HBoxContainer = null
 var _ks_label: Label = null
 var _ks_tw: Tween = null
@@ -546,6 +618,7 @@ func show_keepsake_toast() -> void:
 	_ks_tw.tween_property(_ks_toast, "modulate:a", 0.0, 1.4).set_trans(Tween.TRANS_SINE)
 
 func _process(dt: float) -> void:
+	_scout(dt)
 	# the surveyor's line follows the live camera every frame. A dev aid,
 	# not a player's: shown only with --surveyor or F3 (it sat in the
 	# corner of every frame of play)
@@ -622,7 +695,7 @@ func _on_stamina(st: float, max_st: float) -> void:
 	_st_ratio = clampf(st / max_st, 0.0, 1.0)
 
 func _on_gourds(n: int, mx: int) -> void:
-	gourd_label.text = "Gourd  ×%d" % n
+	gourd_label.text = "×%d" % n
 	_refresh_hotbar()
 
 # ------------------------------------------------------------------ hotbar
@@ -730,7 +803,7 @@ func _refresh_song() -> void:
 	var sid: String = p.attuned_song
 	song_panel.visible = sid != "" and not DB.song(sid).is_empty()
 	if song_panel.visible:
-		song_icon.texture = load("res://assets/ui/icons/song.png")
+		song_icon.texture = UIIcons.tex(sid)
 		song_cost.text = str(int(DB.song(sid).get("breath", 0)))
 
 func _refresh_hotbar() -> void:
@@ -740,10 +813,7 @@ func _refresh_hotbar() -> void:
 	for i in _slots.size():
 		var slot: Dictionary = _slots[i]
 		var id: String = String(p.hotbar[i])
-		var icon_path: String = SLOT_ICON.get(id, "")
-		var tex: Texture2D = null
-		if icon_path != "" and ResourceLoader.exists(icon_path):
-			tex = load(icon_path)
+		var tex: Texture2D = UIIcons.tex(id) if id != "" else null
 		(slot["icon"] as TextureRect).texture = tex
 		var owned: bool = id != "" and (id == "gourd" or p.owns_weapon(id))
 		var selected: bool = id == p.weapon_id
@@ -854,14 +924,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F3:
 		surveyor = not surveyor
 		return
-	if not event.is_action_pressed("keepsakes"):
+	var leaf := "journal" if event.is_action_pressed("keepsakes") else ("map" if event.is_action_pressed("map") else "")
+	if leaf == "":
 		return
 	var p = Game.player
 	if p == null or not is_instance_valid(p) or p.dead or not p.input_enabled:
 		return
 	if p.busy_in_menu() or PauseUI.is_open():
 		return
-	InventoryUI.open_for(p, "keepsakes")
+	InventoryUI.open_for(p, leaf)
 	get_viewport().set_input_as_handled()
 
 func show_boss(boss: Node) -> void:

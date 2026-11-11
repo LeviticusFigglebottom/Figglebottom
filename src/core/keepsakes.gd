@@ -1,9 +1,10 @@
 class_name Keepsakes
 extends RefCounted
-## The Keepsakes journal as data (data/keepsakes.json): questlines are
-## ordered steps, each a world flag and one line of text. Nothing here is
-## stored: the journal is read straight off World.flags, so it survives a
-## save and load exactly as the flags do. No markers, no objectives.
+## The side threads as data (data/keepsakes.json): ordered steps, each a
+## world flag, an objective and one plain line for when it is done. Nothing
+## here is stored: it is read straight off World.flags, so it survives a
+## save and load exactly as the flags do. The Journal (src/core/journal.gd)
+## builds the quest log on top: objectives, optional steps, the main thread.
 
 static func threads_def() -> Array:
 	return DB.table("keepsakes").get("threads", [])
@@ -22,9 +23,12 @@ static func journal() -> Array:
 	return out
 
 static func is_step_flag(flag: String) -> bool:
-	for t in threads_def():
-		for s in t.get("steps", []):
-			if String(s.get("flag", "")) == flag:
+	var all: Array = threads_def().duplicate()
+	all.append(DB.table("keepsakes").get("main", {}))
+	for t in all:
+		for s in (t.get("steps", []) as Array) + (t.get("optional", []) as Array):
+			var f: Variant = s.get("flag", "")
+			if (f is Array and (f as Array).has(flag)) or (f is String and f == flag):
 				return true
 	return false
 
@@ -35,4 +39,4 @@ static func line_count() -> int:
 	return n
 
 static func toast_text() -> String:
-	return String(DB.table("keepsakes").get("toast", "A keepsake is remembered."))
+	return String(DB.table("keepsakes").get("toast", "Journal updated."))

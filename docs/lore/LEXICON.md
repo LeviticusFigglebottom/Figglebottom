@@ -30,7 +30,7 @@ This is every proper noun in Rimeholt. Check new names against `tools/banned_ter
 | Thornwold | region | forest |
 | Shepherd's Reach | region | high pastures |
 | the Coldwell | region | the glacier's source; the final region |
-| Pack / Belt / Keepsakes | UI | inventory / hotbar / journal |
+| Pack / Belt / Journal / Map | UI | inventory / hotbar / quest log / map (the Journal was "Keepsakes" until ADR 0014; keepsakes are the things found) |
 | Heart, Wind, Might, Craft, Kinship, Lungs | stats | |
 | Coldwell (the spring) | place | the spring under the glacier where every river starts; the dead wait under it until the Melt |
 | up the water / down the water | idiom | toward the Coldwell and the dead / toward the sea and the living |
