@@ -2,6 +2,34 @@
 
 Newest first. QA session: `session_01F3vrULw7QwSZZNWUB551br`. Branch: `fix/qa-regions` (based on `origin/fix/slice-qa`).
 
+## 2026-11-11 (night, 2): `fix/playtest-1` — playtest items 2 and 3 merged
+
+**Suites on the merged branch (items 1, 2, 3 + the Lowe fix), run locally, all 0 failures:** `smoke` 11, `prop_hit` 65 (new), `grounded` 304 (new), `leftovers` 125 (new), `leftovers_longhouse` 28 (new), `combat` 22, `boss` 27, `encounters` 66, `audio` 40, `anim` 148, `lowe` 25. The full-game walks have **not** been re-run on the merged branch yet (in progress); the default full suite has not been run.
+
+### Playtest 2: "enemies/bosses and their objects persist after they die (ice oars, first boss)"
+
+- **Ice oar.** It is drawn with a `material_override`, and `RH.set_dissolve` only drove surface materials, so it never shattered; it also stopped following his hands at death. It hung whole in the air, 2.15 m from his hands, until the body was freed about 4 s later. Now it shatters with him and stays in his hands.
+- **First boss.** The Netmender's raised Sea-weight net was only taken down by the strike: a stagger, the phase-three change or her release during the windup left it over her head for good, through THAW and back. It is furled whenever she leaves the attack. This is the only leftover of hers the count found; **I cannot confirm it is what the owner saw.**
+- **A wider leak.** Everything a foe makes is parented to the spawner, and a reset (the Bearer dying mid-fight, a rest) freed only the body: the Turfwright's bay walls and the Ice-Cutter's ice band (life 9999) stayed until the area was rebuilt; ridges, pools, holes and cinders lived out their timers; the Host's risen guests were never seated again. One mechanism now (`Enemy._own()`, cleared on death, release and reset).
+- **Behaviour changes that follow:** a dead Keener's or Cairn-carrier's projectile in flight goes out; a dead Ice-fisher's hole and a dead Cairn-carrier's cairn close or shatter at once.
+- **Tests:** `leftovers` (all 26 enemy ids, every move, death / release / reset / real Bearer death / a rest's turn) **125 checks, 18 failures before, 0 after**; `leftovers_longhouse` (the real fight and release through the real veil, then THAW and back and a reload) **28 checks, 3 failures before, 0 after**. The agent also ran every `*_encounters` suite, `deathloop`, `release_scenes` and `endings` green.
+- **Not verified / open:** nothing was rendered, so how the oar's shatter and the furled net look is unseen. SLICE.md §6 says the net slides off her and Brede settles by the hearth trench: that does not happen (Brede stays on her back), and was left alone as new work. After a reload a released Holdfast is not in the rebuilt area, for every Holdfast but the Leadvoice (`release_stays`); the lore does not say which is meant.
+
+### Playtest 3: "particle effects when striking props: wood chipping, metal sparking"
+
+- **Surface tags:** `data/surfaces.json` (wood, stone, metal, ice, cloth, turf, snow), stamped as a `surface` meta on every collider the builders make, from what they already know (kit overrides, material family, landmark file, scatter kind, collider kind); terrain is settled at the blow (turf, shingle, plank, snow in RIME). An optional `"surface"` key on any spec wins. All 706 world colliders in built Saltfell carry a stamp; every kit id and family in the seven areas resolves.
+- **The hit:** `src/combat/prop_strike.gd` ray-traces the blade (grip to tip, and the path swept since the last tick) against the world layers during the active window; enemies are never candidates. One burst per swing per prop at the contact point, off the surface normal; no damage, no hit-stop; shake only if the surface's data says so. Everything is data (`game.json` `prop_hit`, `surfaces.json` `fx`).
+- **Sounds:** 14 new synthesized strikes, two per surface (`tools/audio/synth.py`, listed in `data/audio.json`, PROVENANCE row), positional. **Nobody has listened to them.**
+- **Tests:** `prop_hit` 65/0.
+- **Screenshots:** `docs/screens/prop_hit_sheet.png`, `prop_hit_swing_crate.png`. **Honest read:** sparks, ice shards and the snow puff read clearly; wood chips, turf clods and cloth fibres are small and hard to pick out, and in the real swing at a crate the chips are essentially not visible. Every solid chip rendered near-white and the sparks cream: the agent traced that to vertex colours treated as linear and fixed it **after** its last screenshot, so no screenshot shows the fix. This needs a real-GPU look: colours, chip sizes and counts, the spark flash, the sounds.
+- **Other notes:** a swing on flat ground does not reach the turf (the ground bursts on banks and slopes). Foe weapons: the hook is in `enemy.gd` but dormant (no enemy in the data carries a traced weapon). Decals: skipped. Guessed surfaces to review: unstamped/invisible blockers are stone, shortcut gates wood, feast horns stone, sheep and rye sacks cloth, `lm_charcoal_clamp` turf. One-line stamp edits were made in files other owners hold (`building_gen.gd`, `forest.gd`, `scatter.gd`, `kit_lib.gd`, `enemy.gd`).
+
+### Still in flight
+Playtest 4 (the collision audit): not yet reported.
+
+### `feat/intro`
+Reach 195/0 (its Sigga check updated to the bug-4 fix) and Tarnhall 211/0 on re-run: the porch failure did not repeat. The Lowe walk there still fails 2 checks until this branch's bog-box fix reaches it.
+
 ## 2026-11-11 (night): `fix/playtest-1` — the Lowe on main, the chain, and playtest item 1
 
 **Branch:** `fix/playtest-1`, cut from `origin/main` 300ce5f (main's CI triggers; no branch CI). `feat/intro` now carries main's `.github` too. Local results only, as asked.
