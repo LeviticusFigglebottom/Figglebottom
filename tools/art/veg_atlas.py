@@ -32,6 +32,35 @@ KINDS = {
     "grass":   {"gain": 5.0, "sat": 0.85, "bright": 1.0, "fill": 0.98},
     "heather": {"gain": 7.0, "sat": 0.9, "bright": 1.15, "fill": 0.98},
     "sedge":   {"gain": 5.0, "sat": 0.8, "bright": 0.95, "fill": 0.98},
+    # region species (docs/art/BIOMES.md column 2; prompts in PROVENANCE).
+    # Flowers keep their colour: they are what tells one region from the next.
+    # Saltfell
+    "thrift":      {"gain": 7.0, "sat": 0.95, "bright": 1.1, "fill": 0.98},
+    "campion":     {"gain": 7.0, "sat": 0.9, "bright": 1.05, "fill": 0.98},
+    "marram":      {"gain": 6.0, "sat": 0.85, "bright": 1.0, "fill": 0.98},
+    "scurvy":      {"gain": 8.0, "sat": 0.9, "bright": 1.1, "fill": 0.98},
+    # the Lowe
+    "cotton":      {"gain": 6.0, "sat": 0.9, "bright": 1.05, "fill": 0.98},
+    "asphodel":    {"gain": 7.0, "sat": 0.95, "bright": 1.0, "fill": 0.98},
+    "rush":        {"gain": 7.0, "sat": 0.9, "bright": 1.15, "fill": 0.98},
+    # Kettle Fjord
+    "roseroot":    {"gain": 7.0, "sat": 0.9, "bright": 1.05, "fill": 0.98},
+    "frostflower": {"gain": 5.0, "sat": 0.7, "bright": 1.1, "fill": 0.98},
+    # Tarnhall
+    "horsetail":   {"gain": 8.0, "sat": 0.9, "bright": 1.1, "fill": 0.98},
+    "dock":        {"gain": 8.0, "sat": 0.9, "bright": 1.15, "fill": 0.98},
+    # Thornwold
+    "bracken":     {"gain": 8.0, "sat": 0.95, "bright": 1.2, "fill": 0.98},
+    "bilberry":    {"gain": 8.0, "sat": 0.95, "bright": 1.15, "fill": 0.98},
+    # Shepherd's Reach
+    "avens":       {"gain": 8.0, "sat": 0.9, "bright": 1.1, "fill": 0.98},
+    "thistle":     {"gain": 7.0, "sat": 0.95, "bright": 1.1, "fill": 0.98},
+    "matgrass":    {"gain": 5.0, "sat": 0.85, "bright": 1.0, "fill": 0.98},
+    "wooltuft":    {"gain": 6.0, "sat": 0.85, "bright": 1.0, "fill": 0.98},
+    # the Coldwell
+    "marigold":    {"gain": 8.0, "sat": 1.0, "bright": 1.1, "fill": 0.98},
+    "smock":       {"gain": 7.0, "sat": 0.95, "bright": 1.1, "fill": 0.98},
+    "hoarfeather": {"gain": 5.0, "sat": 0.7, "bright": 1.1, "fill": 0.98},
 }
 
 
@@ -124,6 +153,9 @@ def main() -> None:
     args = ap.parse_args()
     for kind in KINDS:
         if args.only and kind != args.only:
+            continue
+        if not os.path.exists(os.path.join(RAW, kind + ".png")):
+            print("%s: no raw sheet (raw/ is not committed), kept as it is" % kind)
             continue
         build(kind)
 

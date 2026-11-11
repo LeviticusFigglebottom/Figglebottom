@@ -1,0 +1,129 @@
+{
+ "doc": "The Lowe (BIOMES.md): ling heather stays here and nowhere else. Cotton-grass and yellow bog asphodel at the water, sphagnum hummocks, soft rush round the bog (the card Tarnhall shares).",
+ "drop": [
+  "sedge"
+ ],
+ "veg": [
+  {
+   "kind": "rush",
+   "region": [
+    -84,
+    -234,
+    4,
+    -146
+   ],
+   "density": 1.6,
+   "near": [
+    [
+     -40.0,
+     -190.0,
+     42.0
+    ]
+   ],
+   "h": [
+    43.9,
+    47.0
+   ],
+   "range": 50
+  },
+  {
+   "kind": "cotton",
+   "region": [
+    -84,
+    -234,
+    4,
+    -146
+   ],
+   "density": 1.5,
+   "near": [
+    [
+     -40.0,
+     -190.0,
+     42.0
+    ]
+   ],
+   "h": [
+    43.9,
+    48.0
+   ],
+   "range": 50
+  },
+  {
+   "kind": "asphodel",
+   "region": [
+    -84,
+    -234,
+    4,
+    -146
+   ],
+   "density": 1.2,
+   "near": [
+    [
+     -40.0,
+     -190.0,
+     42.0
+    ]
+   ],
+   "h": [
+    43.9,
+    45.6
+   ],
+   "range": 45
+  },
+  {
+   "kind": "sphagnum",
+   "region": [
+    -84,
+    -234,
+    4,
+    -146
+   ],
+   "density": 0.3,
+   "near": [
+    [
+     -40.0,
+     -190.0,
+     42.0
+    ]
+   ],
+   "h": [
+    43.9,
+    46.5
+   ],
+   "range": 45
+  },
+  {
+   "kind": "cotton",
+   "region": [
+    -98,
+    -252,
+    64,
+    -86
+   ],
+   "density": 0.35,
+   "range": 45
+  },
+  {
+   "kind": "sphagnum",
+   "region": [
+    -98,
+    -252,
+    64,
+    -86
+   ],
+   "density": 0.05,
+   "range": 45
+  },
+  {
+   "kind": "asphodel",
+   "region": [
+    -98,
+    -252,
+    64,
+    -86
+   ],
+   "density": 0.12,
+   "range": 40
+  }
+ ]
+}

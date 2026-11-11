@@ -1,0 +1,101 @@
+{
+ "doc": "Tarnhall (BIOMES.md): soft rush in clumps round the tarn, water horsetail standing in the shallows, dock and nettle against the byre and hall walls, and trodden earth round the doors (the grass keeps 7 m off the buildings). No heather.",
+ "drop": [
+  "heather",
+  "sedge",
+  "grass"
+ ],
+ "veg": [
+  {
+   "kind": "grass",
+   "region": [
+    24,
+    -400,
+    280,
+    -256
+   ],
+   "density": 1.4,
+   "h": [
+    23.2,
+    140
+   ],
+   "walls": [
+    7.0,
+    100000.0
+   ],
+   "range": 45
+  },
+  {
+   "kind": "rush",
+   "region": [
+    128,
+    -366,
+    268,
+    -286
+   ],
+   "density": 2.2,
+   "h": [
+    22.3,
+    25.2
+   ],
+   "bare": true,
+   "slope": [
+    0.7,
+    1.0
+   ],
+   "range": 50
+  },
+  {
+   "kind": "horsetail",
+   "region": [
+    128,
+    -366,
+    268,
+    -286
+   ],
+   "density": 1.6,
+   "h": [
+    21.45,
+    22.25
+   ],
+   "bare": true,
+   "slope": [
+    0.6,
+    1.0
+   ],
+   "range": 45
+  },
+  {
+   "kind": "dock",
+   "region": [
+    24,
+    -400,
+    280,
+    -256
+   ],
+   "density": 2.4,
+   "walls": [
+    0.2,
+    2.2
+   ],
+   "even": true,
+   "bare": true,
+   "range": 45
+  },
+  {
+   "kind": "rush",
+   "region": [
+    24,
+    -400,
+    280,
+    -256
+   ],
+   "density": 0.25,
+   "h": [
+    25.2,
+    60
+   ],
+   "range": 45
+  }
+ ]
+}

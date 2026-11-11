@@ -1,0 +1,103 @@
+{
+ "doc": "Thornwold (BIOMES.md): bracken and bilberry on the needle floor, moss cushions, hazel coppice stools and birch saplings. No grass cards under the canopy.",
+ "drop": [
+  "grass",
+  "sedge"
+ ],
+ "veg": [
+  {
+   "kind": "bracken",
+   "region": [
+    300.0,
+    -390.0,
+    486.0,
+    -276.0
+   ],
+   "density": 0.6,
+   "range": 45
+  },
+  {
+   "kind": "bilberry",
+   "region": [
+    300.0,
+    -390.0,
+    486.0,
+    -276.0
+   ],
+   "density": 1.0,
+   "range": 34
+  },
+  {
+   "kind": "moss_cushion",
+   "region": [
+    300.0,
+    -390.0,
+    486.0,
+    -276.0
+   ],
+   "density": 0.2,
+   "range": 36
+  },
+  {
+   "kind": "hazel_stool",
+   "region": [
+    300.0,
+    -390.0,
+    486.0,
+    -276.0
+   ],
+   "density": 0.02,
+   "clear": true,
+   "splat": [
+    [
+     1,
+     0.0,
+     0.12
+    ]
+   ],
+   "scale": [
+    0.8,
+    1.2
+   ],
+   "range": 60
+  },
+  {
+   "kind": "birch_sapling",
+   "region": [
+    300.0,
+    -390.0,
+    486.0,
+    -276.0
+   ],
+   "density": 0.03,
+   "clear": true,
+   "splat": [
+    [
+     1,
+     0.0,
+     0.12
+    ]
+   ],
+   "scale": [
+    0.7,
+    1.25
+   ],
+   "range": 60
+  },
+  {
+   "kind": "bracken",
+   "region": [
+    290.0,
+    -400.0,
+    496.0,
+    -266.0
+   ],
+   "density": 0.3,
+   "slope": [
+    0.6,
+    0.8
+   ],
+   "range": 45
+  }
+ ]
+}
