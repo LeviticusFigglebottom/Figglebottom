@@ -29,7 +29,18 @@ var test_boss_dmg_mult := 1.0
 ## holdfast rests or the Bearer does. Set/cleared by the frost veils.
 var arena_locked := false
 
+## Area streaming (ADR 0014): makes the area beyond a seam ready ahead of the
+## Bearer, swaps it in at the crossing, frees the one left a little a frame.
+var stream: Streamer = null
+## What the last rest and the last death cost the main thread, as BuildProf
+## saw them ({max_work_ms, max_frame_ms, sync, ...}; docs/qa/STREAMING.md).
+var last_rest_report: Dictionary = {}
+var last_respawn_report: Dictionary = {}
+
 func _ready() -> void:
+	stream = Streamer.new()
+	stream.name = "Streamer"
+	add_child(stream)
 	player_registered.connect(func(p):
 		if not p.died.is_connected(_on_player_died):
 			p.died.connect(_on_player_died)
@@ -52,29 +63,56 @@ func _on_player_died() -> void:
 	set_warmth(0)
 	World.save_game()
 	await get_tree().create_timer(float(DB.tuning("death/respawn_delay", 2.8)), false).timeout
-	respawn_player()
+	await respawn_player()
 	_death_flow_running = false
 
+## Behind the death's black: a kept hearth in another area has that area
+## built in budgeted slices (Streamer), and the dead come back a few a frame;
+## neither is a frozen frame any more.
 func respawn_player() -> void:
 	# return to the last hearth kept
 	var hearth_area: String = String(World.last_hearth.get("area", ""))
+	var fresh_area := false
+	var own_window := BuildProf.window_name() == ""
+	if own_window:
+		BuildProf.window_open("respawn")
 	if hearth_area != "" and hearth_area != current_area_id and world_root != null:
 		arena_locked = false
-		var old := current_area
-		var next := AreaBuilder.build(hearth_area)
-		if next != null:
-			world_root.add_child(next)
-			register_area(next, hearth_area)
-			if old != null:
-				RH.free_gently(old)
-			StateDirector.snap(next, World.get_area_state(hearth_area))
+		if stream.enabled() and not stream.crossing():
+			if await stream.prepare(hearth_area, false):
+				var next := stream.swap()
+				var t := BuildProf.now()
+				register_area(next, hearth_area)
+				StateDirector.snap(next, World.get_area_state(hearth_area))
+				# somewhere solid while the area's hearths join it
+				player.global_position = _hearth_spot(next, String(World.last_hearth.get("hearth", "")))
+				player.velocity = Vector3.ZERO
+				BuildProf.slice(hearth_area, "state snap, place Bearer", t)
+				await stream.settle(next)
+				stream.finish()
+				fresh_area = true     # its foes were raised as they joined
+				own_window = false    # (the crossing closed the window)
+		else:
+			var old := current_area
+			var next := AreaBuilder.build(hearth_area)
+			if next != null:
+				world_root.add_child(next)
+				register_area(next, hearth_area)
+				if old != null:
+					RH.free_gently(old)
+				StateDirector.snap(next, World.get_area_state(hearth_area))
 	var pos: Vector3 = player.global_position
 	var hearth := find_hearth(World.last_hearth.get("hearth", ""))
 	if hearth != null:
 		pos = hearth.respawn_point()
 	elif current_area != null and current_area.has_method("default_spawn"):
 		pos = current_area.default_spawn()
-	get_tree().call_group(RH.GROUP_RESPAWN_ON_REST, "respawn")
+	if not fresh_area:
+		await respawn_dead()
+	if own_window:
+		last_respawn_report = BuildProf.window_close()
+	else:
+		last_respawn_report = stream.last_report
 	player.revive_at(pos)
 	refresh_breathmark()
 	# dying mid-boss-fight left the boss theme looping forever; the world
@@ -210,6 +248,23 @@ func _clear_of_hearth(boss: Node, bcfg: Dictionary) -> void:
 		b.global_position = target   # the leavings are placed from here
 		return
 
+## Where a hearth of `area` stands by its data (before the hearth itself has
+## joined the tree), else the area's own spawn.
+func _hearth_spot(area: Area, hearth_id: String) -> Vector3:
+	var def: Dictionary = area.get_meta("def", {})
+	for spec in def.get("hearths", []):
+		if String(spec.get("id", "")) == hearth_id and spec.has("at"):
+			return AreaBuilder._v3(spec["at"]) + Vector3(0, 0.4, 0)
+	return area.default_spawn()
+
+## The dead return: every spawner and veil of the live area, a few a frame
+## (streaming/respawn_budget_ms) where it used to be one call_group.
+func respawn_dead() -> void:
+	if stream != null:
+		await stream.respawn_all()
+	else:
+		get_tree().call_group(RH.GROUP_RESPAWN_ON_REST, "respawn")
+
 func snapshot_player() -> void:
 	if player == null:
 		return
@@ -218,7 +273,7 @@ func snapshot_player() -> void:
 
 func find_hearth(hearth_id: String) -> Hearthstone:
 	for l in get_tree().get_nodes_in_group("hearths"):
-		if l.hearth_id == hearth_id:
+		if l.hearth_id == hearth_id and not (stream != null and stream.foreign(l)):
 			return l
 	return null
 
@@ -261,10 +316,67 @@ var world_root: Node3D = null   # container that owns the current area
 ## Cross an AreaPortal: unload the region behind, build the one ahead.
 ## spawn_yaw (deg) turns the camera to face into the new room — arriving
 ## through a door should never leave you staring back at the wall you left.
+## Streamed (ADR 0014): near a seam the area ahead is already standing,
+## unseen, so this is a dip to black over a one-frame swap. Called cold (a
+## door far from where the Bearer was, a test's teleport) the black holds
+## while the area is built in budgeted slices. Returns when the Bearer
+## stands in the new area with his hands free; callers that do not await it
+## watch current_area_id and player.input_enabled.
 func travel_to(area_id: String, spawn_pos: Vector3, spawn_yaw := 1e9) -> void:
 	if world_root == null or player == null:
 		return
+	if not stream.enabled():
+		_travel_now(area_id, spawn_pos, spawn_yaw)
+		return
+	if stream.crossing():
+		return    # one crossing at a time (a seam's twin reporting him again)
 	arena_locked = false   # no lock survives leaving the room that set it
+	player.lock_control(true)
+	if not await stream.prepare(area_id):
+		push_error("Game.travel_to: area '%s' could not be built" % area_id)
+		stream.reveal()
+		if player != null and is_instance_valid(player):
+			player.lock_control(false)
+		return
+	if player == null or not is_instance_valid(player) or world_root == null:
+		stream.reset()    # the world was put away under the crossing (title)
+		return
+	var next := stream.swap()
+	var t := BuildProf.now()
+	register_area(next, area_id)
+	# entering an unvisited area finds it in thaw (D-009)
+	StateDirector.snap(next, World.get_area_state(area_id))
+	_place_player(spawn_pos, spawn_yaw)
+	BuildProf.slice(area_id, "state snap, place Bearer", t)
+	await stream.settle(next)
+	if player == null or not is_instance_valid(player):
+		stream.reset()
+		return
+	t = BuildProf.now()
+	refresh_breathmark()
+	snapshot_player()
+	World.save_game()
+	BuildProf.slice(area_id, "save", t)
+	stream.finish()
+	area_title.emit(next.arrival_title(spawn_pos))
+	stream.reveal()
+	player.lock_control(false)
+
+func _place_player(spawn_pos: Vector3, spawn_yaw: float) -> void:
+	player.global_position = spawn_pos
+	player.velocity = Vector3.ZERO
+	if abs(spawn_yaw) < 720.0:
+		player.cam.yaw = deg_to_rad(spawn_yaw)
+		if player.get("vis") != null:
+			player.vis.rotation.y = deg_to_rad(spawn_yaw)
+	# a foe of the area left is no mark any more
+	if player.get("cam") != null and player.cam.get("locked_target") != null:
+		player.cam.set("locked_target", null)
+
+## The old way, whole and at once (streaming/enabled false): build, swap,
+## free. Kept as the fallback.
+func _travel_now(area_id: String, spawn_pos: Vector3, spawn_yaw := 1e9) -> void:
+	arena_locked = false
 	player.lock_control(true)
 	var old := current_area
 	var next := AreaBuilder.build(area_id)
@@ -272,14 +384,8 @@ func travel_to(area_id: String, spawn_pos: Vector3, spawn_yaw := 1e9) -> void:
 	register_area(next, area_id)
 	if old != null:
 		RH.free_gently(old)
-	# entering an unvisited area finds it in thaw (D-009)
 	StateDirector.snap(next, World.get_area_state(area_id))
-	player.global_position = spawn_pos
-	player.velocity = Vector3.ZERO
-	if abs(spawn_yaw) < 720.0:
-		player.cam.yaw = deg_to_rad(spawn_yaw)
-		if player.get("vis") != null:
-			player.vis.rotation.y = deg_to_rad(spawn_yaw)
+	_place_player(spawn_pos, spawn_yaw)
 	refresh_breathmark()
 	snapshot_player()
 	World.save_game()
@@ -341,6 +447,9 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 
 	World.last_hearth = {"area": aid, "hearth": hearth.hearth_id}
 	World.set_area_flag(aid, "lit_" + hearth.hearth_id)
+	var own_window := BuildProf.window_name() == ""
+	if own_window:
+		BuildProf.window_open("rest:" + aid)
 
 	if p != null:
 		p.lock_control(true)
@@ -359,19 +468,25 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 	else:
 		await get_tree().create_timer(1.6).timeout
 
-	# the dead return as the world settles into its new state
-	get_tree().call_group(RH.GROUP_RESPAWN_ON_REST, "respawn")
+	# the dead return as the world settles into its new state (a few a frame)
+	await respawn_dead()
 
 	if p != null:
 		p.heal_full()
 		snapshot_player()
+	var ts := BuildProf.now()
 	World.save_game()
+	BuildProf.slice("rest", "save", ts)
+	if own_window:
+		last_rest_report = BuildProf.window_close()
 	hearth_kept.emit(hearth)
 	if p != null:
 		p.exit_rest()
 		p.lock_control(false)
 
 func _exit_tree() -> void:
+	if stream != null:
+		stream.reset()    # no worker build outlives the caches cleared below
 	AudioDirector.shutdown()
 	KitLib._scene_cache.clear()
 	KitLib._shape_cache.clear()

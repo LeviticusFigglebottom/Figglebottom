@@ -19,6 +19,9 @@ static var _win := ""
 static var _win_frame := -1
 static var _win_frame_ms := 0.0
 static var _win_max_ms := 0.0
+static var _win_work: Array = []   # work ms of each frame that carried any
+static var _win_cur: Dictionary = {}     # this frame's work by phase
+static var _win_worst: Dictionary = {}   # the worst frame's
 static var _win_wall_max_ms := 0.0
 static var _win_last_us := 0
 static var _win_frames := 0
@@ -66,7 +69,7 @@ static func add(scope_: String, phase: String, usec: int, sync := false) -> void
 	row[2] += 1
 	_phases[scope_][phase] = row
 	if main and _win != "":
-		_frame_add(ms)
+		_frame_add(ms, phase)
 		if sync and ms >= 1.0:
 			_win_sync.append("%s/%s %.1f" % [scope_, phase, ms])
 	_mx.unlock()
@@ -76,13 +79,19 @@ static func add(scope_: String, phase: String, usec: int, sync := false) -> void
 static func slice(scope_: String, phase: String, t0: int) -> void:
 	add(scope_, phase, now() - t0, false)
 
-static func _frame_add(ms: float) -> void:
+static func _frame_add(ms: float, phase: String) -> void:
 	var f := Engine.get_process_frames()
 	if f != _win_frame:
+		if _win_frame >= 0 and _win_frame_ms > 0.0:
+			_win_work.append(_win_frame_ms)
 		_win_frame = f
 		_win_frame_ms = 0.0
+		_win_cur = {}
 	_win_frame_ms += ms
-	_win_max_ms = maxf(_win_max_ms, _win_frame_ms)
+	_win_cur[phase] = float(_win_cur.get(phase, 0.0)) + ms
+	if _win_frame_ms >= _win_max_ms:
+		_win_max_ms = _win_frame_ms
+		_win_worst = _win_cur.duplicate()
 
 ## Open a measuring window. Call tick() once a frame while it is open (the
 ## Streamer does) so the wall-clock frame time is kept beside the work time.
@@ -92,6 +101,9 @@ static func window_open(name: String) -> void:
 	_win_frame = -1
 	_win_frame_ms = 0.0
 	_win_max_ms = 0.0
+	_win_work = []
+	_win_cur = {}
+	_win_worst = {}
 	_win_wall_max_ms = 0.0
 	_win_last_us = now()
 	_win_frames = 0
@@ -109,14 +121,24 @@ static func tick() -> void:
 	_win_last_us = t
 	_win_frames += 1
 
-## Close the window: {name, max_work_ms, max_frame_ms, frames, sync}.
+## Close the window: {name, max_work_ms, second_work_ms, work_frames,
+## max_frame_ms, frames, sync}.
 ##   max_work_ms: the most streaming/build work one main-thread frame carried
+##   second_work_ms: the next most (one frame the OS took away from us does
+##     not fail a test on a loaded box; two would)
+##   work_frames: frames that carried any
+##   worst: the worst frame's work by phase
 ##   max_frame_ms: the longest wall-clock frame (everything: game, render)
 ##   sync: build phases that ran unsliced on the main thread in the window
 static func window_close() -> Dictionary:
 	_mx.lock()
-	var rep := {"name": _win, "max_work_ms": _win_max_ms, "max_frame_ms": _win_wall_max_ms,
-		"frames": _win_frames, "sync": _win_sync.duplicate()}
+	if _win_frame_ms > 0.0:
+		_win_work.append(_win_frame_ms)
+	_win_work.sort()
+	var second: float = _win_work[_win_work.size() - 2] if _win_work.size() >= 2 else 0.0
+	var rep := {"name": _win, "max_work_ms": _win_max_ms, "second_work_ms": second, "work_frames": _win_work.size(),
+		"max_frame_ms": _win_wall_max_ms, "frames": _win_frames, "sync": _win_sync.duplicate(),
+		"worst": _win_worst.duplicate()}
 	if _win != "":
 		windows[_win] = rep
 	_win = ""

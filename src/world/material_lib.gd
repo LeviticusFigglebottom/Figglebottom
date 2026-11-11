@@ -154,7 +154,14 @@ static var _sets: Dictionary = {}
 
 ## The photo set `name`: {albedo, normal, orh: Texture2D, mean: Vector3
 ## (linear), rough: float}. Empty when the set is not shipped.
+## (locked: an area build on a worker thread shares this cache, BuildLock)
 static func tex_set(name: String) -> Dictionary:
+	var lk := BuildLock.lock()
+	var out: Dictionary = _tex_set_u(name)
+	BuildLock.unlock(lk)
+	return out
+
+static func _tex_set_u(name: String) -> Dictionary:
 	if _sets.is_empty():
 		var f := FileAccess.open(TEX_DIR + "sets.json", FileAccess.READ)
 		if f != null:
@@ -201,7 +208,14 @@ static func family_albedo(family: String) -> Color:
 	return (FAMILIES.get(family, FAMILIES["M_stone"]) as Dictionary)["albedo"]
 
 ## `tint`: how far the baked mean is pulled to the family albedo (0 keeps it).
+## (locked: an area build on a worker thread shares this cache, BuildLock)
 static func hero_mat(src: Material, family: String, state_mode := 0, tint := 0.55) -> Material:
+	var lk := BuildLock.lock()
+	var out: Material = _hero_mat_u(src, family, state_mode, tint)
+	BuildLock.unlock(lk)
+	return out
+
+static func _hero_mat_u(src: Material, family: String, state_mode := 0, tint := 0.55) -> Material:
 	var std := src as BaseMaterial3D
 	if std == null or std.albedo_texture == null:
 		return get_mat(family, state_mode)
@@ -251,7 +265,14 @@ static func _tex_mean(t: Texture2D) -> Vector3:
 
 ## uv = true: sample the photo set through the mesh's UVs, in metres (ProcMesh
 ## output). Leave false for anything else (object-aligned triplanar).
+## (locked: an area build on a worker thread shares this cache, BuildLock)
 static func get_mat(family: String, state_mode := 0, uv := false) -> Material:
+	var lk := BuildLock.lock()
+	var out: Material = _get_mat_u(family, state_mode, uv)
+	BuildLock.unlock(lk)
+	return out
+
+static func _get_mat_u(family: String, state_mode := 0, uv := false) -> Material:
 	var key := "%s|%d|%d" % [family, state_mode, int(uv)]
 	if _cache.has(key):
 		return _cache[key]

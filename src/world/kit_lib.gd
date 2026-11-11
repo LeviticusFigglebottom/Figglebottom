@@ -134,7 +134,14 @@ const HERO_PIECES := {
 }
 static var _hero_turn := 0
 
+## (locked: an area build on a worker thread shares this cache, BuildLock)
 static func instance(id: String, state_mode := 0, mat_remap: Dictionary = {}) -> Node3D:
+	var lk := BuildLock.lock()
+	var out: Node3D = _instance_u(id, state_mode, mat_remap)
+	BuildLock.unlock(lk)
+	return out
+
+static func _instance_u(id: String, state_mode := 0, mat_remap: Dictionary = {}) -> Node3D:
 	if not PIECES.has(id):
 		push_error("KitLib: unknown piece '%s'" % id)
 		return Node3D.new()
@@ -886,10 +893,12 @@ static func add_collision(piece: Node3D, layer_bit: int, convex := false) -> voi
 		if mi.mesh == null or String(mi.name).contains("flame"):
 			continue
 		var key := kit_id + "/" + str(mi.name) + ("/cvx" if convex else "")
+		var lk := BuildLock.lock()    # (an area build on a worker shares the cache)
 		var shape: Shape3D = _shape_cache.get(key)
 		if shape == null:
 			shape = mi.mesh.create_convex_shape() if convex else mi.mesh.create_trimesh_shape()
 			_shape_cache[key] = shape
+		BuildLock.unlock(lk)
 		var body := StaticBody3D.new()
 		body.collision_layer = 1 << (layer_bit - 1)
 		body.collision_mask = 0

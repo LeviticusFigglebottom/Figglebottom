@@ -26,6 +26,8 @@ func return_to_title() -> void:
 	get_tree().paused = false
 	if EndingDirector.active != null and is_instance_valid(EndingDirector.active):
 		EndingDirector.active.stop()
+	if Game.stream != null:
+		Game.stream.reset()    # a neighbour made ready, an area half freed: all go
 	# (a seam, a door or a death may have raised another area since the front
 	# door raised one: put away the one that stands now. Left standing, the
 	# resumed journey was built on top of it, and its hearths turned the

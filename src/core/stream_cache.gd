@@ -163,7 +163,13 @@ static func load_res(kind: String, k: String) -> Resource:
 	var p := path_of(kind, k, "res")
 	var out: Resource = null
 	if FileAccess.file_exists(p):
-		if FileAccess.get_file_as_bytes(p).size() > 16:
+		# a binary resource opens with RSRC (RSCC compressed): anything else is
+		# not ours to hand to the loader
+		var f := FileAccess.open(p, FileAccess.READ)
+		var magic := f.get_buffer(4).get_string_from_ascii() if f != null and f.get_length() > 16 else ""
+		if f != null:
+			f.close()
+		if magic == "RSRC" or magic == "RSCC":
 			out = ResourceLoader.load(p, "", ResourceLoader.CACHE_MODE_IGNORE)
 		if out == null:
 			DirAccess.remove_absolute(p)

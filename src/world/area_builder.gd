@@ -5,6 +5,65 @@ class_name AreaBuilder
 ## portals, cameos). Everything carries a state tag: base | thaw | rime.
 
 static func build(area_id: String) -> Area:
+	# a neighbour being built on a worker (Streamer) ends first: the builders'
+	# own statics are not shared between two builds
+	if Game.stream != null:
+		Game.stream.yield_to_sync_build()
+	var area := _build(area_id)
+	if area != null:
+		area.remove_meta("stream_late")
+		area.bake_navmeshes.call_deferred()
+	return area
+
+## The streamed build (ADR 0014), for a worker thread: the same area, taken
+## apart so the main thread can graft it into the tree a little a frame.
+## Returns {area, world: [[parent, node]...], late: [[parent, node]...]}:
+##   area   the bare Area (its three layers, empty)
+##   world  the static world in build order: ground, houses, props, cover.
+##          The Terrain comes childless, its chunks after it.
+##   late   what acts (hearths, gates, spawners, souls, finds, portals,
+##          hazards, the env rig): grafted only once the area is the live one
+## No navmesh is baked (NavBaker does that once it stands in the tree).
+static func build_detached(area_id: String) -> Dictionary:
+	var area := _build(area_id)
+	if area == null:
+		return {}
+	var late_set := {}
+	for n in area.get_meta("stream_late", []):
+		late_set[n] = true
+	area.remove_meta("stream_late")
+	var world: Array = []
+	var late: Array = []
+	for layer in [area.base, area.thaw_layer, area.rime_layer]:
+		for c in layer.get_children():
+			layer.remove_child(c)
+			if late_set.has(c):
+				late.append([layer, c])
+				continue
+			world.append([layer, c])
+			if c is Terrain:
+				for tc in c.get_children():
+					c.remove_child(tc)
+					world.append([c, tc])
+	for c in area.get_children():
+		if c != area.base and c != area.thaw_layer and c != area.rime_layer:
+			area.remove_child(c)
+			late.append([area, c])
+	return {"area": area, "world": world, "late": late}
+
+## Children each layer holds now: _late_since marks what was added after.
+static func _counts(area: Area) -> Array:
+	return [area.base.get_child_count(), area.thaw_layer.get_child_count(), area.rime_layer.get_child_count()]
+
+static func _late_since(area: Area, counts: Array) -> void:
+	var late: Array = area.get_meta("stream_late", [])
+	var layers: Array = [area.base, area.thaw_layer, area.rime_layer]
+	for i in 3:
+		for k in range(int(counts[i]), (layers[i] as Node).get_child_count()):
+			late.append((layers[i] as Node).get_child(k))
+	area.set_meta("stream_late", late)
+
+static func _build(area_id: String) -> Area:
 	BuildProf.begin(area_id)
 	var def := DB.area_def(area_id)
 	BuildProf.lap("def parse")
@@ -34,6 +93,7 @@ static func build(area_id: String) -> Area:
 		_water(area, spec)
 	for spec in def.get("falls", []):
 		_falls(area, spec)
+	var before_hazards := _counts(area)
 	for spec in def.get("hazards", []):
 		var hz := HazardVolume.new()
 		hz.kind = String(spec.get("kind", "fall"))
@@ -45,6 +105,7 @@ static func build(area_id: String) -> Area:
 		hz.position = (hmn + hmx) * 0.5
 		hz.name = "Hazard_" + hz.kind
 		area.attach(hz, spec.get("tag", "base"))
+	_late_since(area, before_hazards)
 	BuildProf.lap("water, hazards")
 	for spec in def.get("houses", []):
 		if _flag_ok(spec):
@@ -115,6 +176,7 @@ static func build(area_id: String) -> Area:
 		_solid_box(area, spec)
 
 	BuildProf.lap("pieces, props, landmarks")
+	var before_entities := _counts(area)
 	for spec in def.get("hearths", []):
 		if not _flag_ok(spec):
 			continue   # a hearth that wakes later (the Long Hearth, on release)
@@ -251,6 +313,7 @@ static func build(area_id: String) -> Area:
 		area.attach(pt, spec.get("tag", "base"))
 		_place(pt, spec)
 
+	_late_since(area, before_entities)
 	BuildProf.lap("entities, spawners")
 	if def.has("zones"):
 		var zt := ZoneTitles.new()
@@ -281,7 +344,6 @@ static func build(area_id: String) -> Area:
 	area.add_ambient(ext[0], ext[1])
 
 	BuildProf.lap("indoor marks, ambient")
-	area.bake_navmeshes.call_deferred()
 	return area
 
 ## Snow settles on what faces the sky, but not under a roof: everything

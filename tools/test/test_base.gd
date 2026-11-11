@@ -19,12 +19,16 @@ func ticks(n: int):
 		await get_tree().physics_frame
 
 func finish() -> void:
+	if Game.stream != null:
+		Game.stream.reset()    # no worker build outlives the test
 	AudioDirector.shutdown()
 	print("")
 	print("RESULT: %d checks, %d failures" % [checks, fails])
 	get_tree().quit(1 if fails > 0 else 0)
 
 func _exit_tree() -> void:
+	if Game.stream != null:
+		Game.stream.reset()
 	AudioDirector.shutdown()
 	KitLib._scene_cache.clear()
 	KitLib._shape_cache.clear()

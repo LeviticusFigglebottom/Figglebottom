@@ -229,6 +229,59 @@ func bake_navmeshes() -> void:
 		_set_layer_collision(thaw_layer, _applied != RH.WState.RIME)
 		_set_layer_collision(rime_layer, _applied == RH.WState.RIME)
 
+## Both navmeshes as baked or read from the cache by NavBaker (the streamed
+## path, ADR 0014): the same regions bake_navmeshes leaves, with no bake.
+func apply_nav(thaw_mesh: NavigationMesh, rime_mesh: NavigationMesh) -> void:
+	for old in [nav_thaw, nav_rime]:
+		if old != null and is_instance_valid(old):
+			old.enabled = false
+			NavigationServer3D.region_set_map(old.get_rid(), RID())
+			old.queue_free()
+	var map_rid := get_world_3d().navigation_map
+	NavigationServer3D.map_set_cell_size(map_rid, 0.20)
+	NavigationServer3D.map_set_cell_height(map_rid, 0.20)
+	var made: Array = []
+	for pair in [["NavThaw", thaw_mesh], ["NavRime", rime_mesh]]:
+		var region := NavigationRegion3D.new()
+		region.name = String(pair[0])
+		region.enabled = false
+		region.navigation_mesh = pair[1]
+		add_child(region)
+		made.append(region)
+	nav_thaw = made[0]
+	nav_rime = made[1]
+	if _applied >= 0 and not inert:
+		nav_thaw.enabled = _applied != RH.WState.RIME
+		nav_rime.enabled = _applied == RH.WState.RIME
+
+## A neighbour made ready ahead of a seam (Streamer) stands in the tree unseen
+## and inert: not drawn, nothing processing, its bodies out of the physics
+## space (a disabled CollisionObject3D leaves it), no navmesh in the map, and
+## out of "nav_src" so no bake of the live area can read its colliders.
+var inert := false
+
+func set_inert(on: bool) -> void:
+	inert = on
+	visible = not on
+	process_mode = Node.PROCESS_MODE_DISABLED if on else Node.PROCESS_MODE_INHERIT
+	if on:
+		remove_from_group("nav_src")
+		if nav_thaw != null:
+			nav_thaw.enabled = false
+		if nav_rime != null:
+			nav_rime.enabled = false
+	else:
+		add_to_group("nav_src")
+
+## Put the layers in a state without telling anyone (no listeners, no env,
+## no story sync): what an inert area does so that what is grafted into it
+## lands in the right layer already put away or shown.
+func quiet_state(s: RH.WState) -> void:
+	_applied = s
+	var rime_on := s == RH.WState.RIME
+	_set_layer_active(thaw_layer, not rime_on)
+	_set_layer_active(rime_layer, rime_on)
+
 ## Called when the area is being left (RH.free_gently): it lingers a few
 ## frames to quench its lights, and in that window it must not take part in
 ## the world. Leave the nav_src group so the next area's bake can't parse
@@ -242,7 +295,8 @@ func retire() -> void:
 	if nav_rime != null:
 		nav_rime.enabled = false
 	for layer in [base, thaw_layer, rime_layer]:
-		_set_layer_collision(layer, false)
+		if is_instance_valid(layer):     # (an area freed from its leaves in has none left)
+			_set_layer_collision(layer, false)
 
 func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	var region := NavigationRegion3D.new()
@@ -252,24 +306,7 @@ func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	var map_rid := get_world_3d().navigation_map
 	NavigationServer3D.map_set_cell_size(map_rid, 0.20)
 	NavigationServer3D.map_set_cell_height(map_rid, 0.20)
-	var mesh := NavigationMesh.new()
-	mesh.agent_radius = 0.4
-	mesh.agent_height = 1.8
-	mesh.agent_max_climb = 0.4
-	mesh.cell_size = 0.20
-	mesh.cell_height = 0.20
-	if nav_aabb.size != Vector3.ZERO:
-		mesh.filter_baking_aabb = nav_aabb
-		mesh.agent_max_slope = 44.0
-		# outdoors the biggest walker sets the margin: a 0.7 m Holdfast must
-		# not be routed along a 0.4 m hairline past a kerb or a doorpost
-		mesh.agent_radius = 0.6
-	mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
-	mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_WITH_CHILDREN
-	mesh.geometry_source_group_name = "nav_src"
-	mesh.geometry_collision_mask = (1 << (RH.L_WORLD_BASE - 1)) \
-		| (1 << ((RH.L_WORLD_RIME if rime_world else RH.L_WORLD_THAW) - 1)) \
-		| (1 << ((RH.L_NAV_BLOCK_RIME if rime_world else RH.L_NAV_BLOCK_THAW) - 1))
+	var mesh := NavBaker.make_mesh(nav_aabb, rime_world)   # (the settings live there)
 	region.navigation_mesh = mesh
 	# make sure every layer's colliders carry their true layer bits for the
 	# mask filter (they may have been zeroed by a previous apply_state)

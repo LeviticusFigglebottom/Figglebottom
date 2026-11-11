@@ -350,5 +350,26 @@
    "knot",
    ""
   ]
- ]
+ ],
+ "streaming": {
+  "_doc": "Area streaming (src/core/streamer.gd, ADR 0014). enabled: off = every area change is the old synchronous build. preload_dist: metres from a seam or door at which the area beyond starts being made ready; drop_dist / drop_after_s: walk further away than this for this long and it is let go again (retarget_after_s: when another seam is now the near one). recross_cooldown_s: the area just left is not made ready again for this long. budget_ms: main-thread milliseconds a frame spent on streaming work while the Bearer plays (grafting, warming, freeing, fingerprinting); cold_budget_ms: the same behind the black of a crossing that was not ready, a death or the front door. settle_budget_ms: of hearths, foes and souls joining the area just entered, a frame. free_budget_ms: of the old area a frame. respawn_budget_ms: of foes brought back a frame at a rest or a death. hitch_ms: the most streaming work any one frame of a crossing may carry (tools/test/streaming_test.gd asserts on it). fade_out_s / fade_in_s: the dip to black over the swap. warm_frames: frames the incoming area's materials are drawn unseen before the swap; warm_batch: materials per frame. scan_s: how often seams are looked for. free_wait_frames: frames between hiding the old area and freeing the first of it (its lights unpair first).",
+  "enabled": true,
+  "preload_dist": 70.0,
+  "drop_dist": 110.0,
+  "drop_after_s": 8.0,
+  "retarget_after_s": 1.5,
+  "recross_cooldown_s": 6.0,
+  "budget_ms": 4.0,
+  "cold_budget_ms": 14.0,
+  "settle_budget_ms": 8.0,
+  "free_budget_ms": 2.5,
+  "respawn_budget_ms": 4.0,
+  "hitch_ms": 30.0,
+  "fade_out_s": 0.12,
+  "fade_in_s": 0.3,
+  "warm_frames": 4,
+  "warm_batch": 32,
+  "scan_s": 0.25,
+  "free_wait_frames": 3
+ }
 }
