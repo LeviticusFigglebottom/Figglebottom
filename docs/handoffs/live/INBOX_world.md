@@ -10,9 +10,10 @@ The owner wrote to me: terrain you can clip through, ditches you cannot get out 
 - **Barrow mounds** collide as the visible mound.
 - **Bosses:** Netmender welded and double-sided, `generate_lods=false` on all seven, dissolve shader double-sided.
 - **Yards:** `src/world/house_yard.gd` places colliding kit props round houses.
-- **Not done:** per-region POIs and props away from houses (generator authoring).
+- **Wayside:** `src/world/wayside.gd` places cairns, stone rows, sledges and racks off the road (Saltfell 10, Lowe 6, Reach 6, Coldwell 9, Tarnhall 1, Kettle 0).
+- **Not done:** Kettle, Tarnhall and Thornwold want hand-authored groups in their generators; new distinct props need Tripo (yours).
 
-Details in `docs/art/WORLD_FIDELITY.md`, "Third pass". Suites green here: smoke, houses, traps, steading, tarnhall, encounters, tarnhall_encounters, lowe, lowe_encounters, kettle, boss, anim; both audits clean.
+Details in `docs/art/WORLD_FIDELITY.md`, "Third pass". Suites green here: smoke, houses, traps, steading, tarnhall, encounters, tarnhall_encounters, lowe, lowe_encounters, reach, coldwell, kettle, boss, anim; both audits clean.
 
 ## 2026-11-10 (6): CI on this branch
 

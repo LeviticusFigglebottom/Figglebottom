@@ -190,7 +190,24 @@ Checked in a still only (`boss` and `anim` suites pass). Whether gaps remain in 
 
 **Yards.** `HouseYard` dresses the ground round every house with KitLib's modelled props through `AreaBuilder._piece` (so they collide): woodpiles, barrels, a bench, crates and sacks at halls, stores and byres; creels and rope at sheds. It skips doors, corners, anything the area already placed, and ground that is not level with the floor. That is 27 props at Saltfell and 15 at Tarnhall; the Kettle fish-houses and the Coldwell well-houses get none because they stand on decks and ledges.
 
-**Not done:** new points of interest and denser props away from houses. That is authoring per region in the area generators (`tools/gen_*.py`), and I did not start it.
+**Wayside.** `Wayside` sets small groups of existing modelled pieces on level ground off the road, with colliders, the same in both states. Each region has its own mix (`Wayside.RECIPES`):
+
+| Region | Groups placed | What |
+|---|---|---|
+| Saltfell | 10 | drying racks, laden sledges with a woodpile and barrel, cairns |
+| Lowe Barrows | 6 | rows of carved standing stones, cairns |
+| Shepherd's Reach | 6 | cairns, stone rows, a sledge |
+| Coldwell | 9 | cairns, stone rows |
+| Tarnhall | 1 | |
+| Kettle Fjord, Thornwold | 0 | Kettle has almost no level ground off its decks; Thornwold has no recipe (the wood is the look-pass agent's) |
+
+Placement steps round spawners, hearths, veils, portals, houses, authored props, hazards that reach the ground, traps and the worn road. Shots: `docs/screens/world3_*.png`.
+
+**Not done:**
+
+- Kettle, Tarnhall and Thornwold are barely touched by this. They need groups authored by hand in their generators, on decks and in clearings.
+- No new models. Every piece is one the game already had; new, distinct props need Tripo, which this session does not have.
+- The sledge and rack groups were placed and pass the suites, but my cameras missed them: I have not looked at them.
 
 ## What is still synthetic
 
