@@ -277,8 +277,8 @@ func _spawn_telegraph(remaining: float) -> Node:
 		var along := Vector3(cos(yaw), 0, -sin(yaw))
 		var start := c - along * float(wd.get("length", 9.0)) * 0.5
 		var b := Basis.looking_at(along, Vector3.UP)
-		last = FloorTelegraph.spawn(get_parent(), Transform3D(b, Vector3(start.x, global_position.y, start.z)), "rect",
-				[float(wd.get("width", 1.4)), float(wd.get("length", 9.0))], maxf(remaining, 0.1), Color(tint[0], tint[1], tint[2]))
+		last = _own(FloorTelegraph.spawn(get_parent(), Transform3D(b, Vector3(start.x, global_position.y, start.z)), "rect",
+				[float(wd.get("width", 1.4)), float(wd.get("length", 9.0))], maxf(remaining, 0.1), Color(tint[0], tint[1], tint[2])))
 	return last
 
 func _raise_walls() -> void:
@@ -333,8 +333,8 @@ func _st_hidden(dt: float) -> void:
 		global_position = Vector3(_exit.x, global_position.y, _exit.z)
 		var tg: Dictionary = st.get("exit_tele", {})
 		var tint: Array = tg.get("color", [0.3, 0.58, 1.0])
-		_exit_tele = FloorTelegraph.spawn(get_parent(), Transform3D(Basis(), global_position), "ring",
-				[float((st.get("sweep", {}) as Dictionary).get("radius", 3.0))], tell, Color(tint[0], tint[1], tint[2]))
+		_exit_tele = _own(FloorTelegraph.spawn(get_parent(), Transform3D(Basis(), global_position), "ring",
+				[float((st.get("sweep", {}) as Dictionary).get("radius", 3.0))], tell, Color(tint[0], tint[1], tint[2])))
 		AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -6.0, 0.8)
 	if _exit != Vector3.INF and state_t >= gone + tell:
 		_emerge(_exit, true)
@@ -406,9 +406,7 @@ func _die() -> void:
 		_emerge(global_position, false)
 	_set_state(ES.DEAD)
 	_end_all_swings()
-	if hook_hold != null:
-		hook_hold.end(false)
-	_pull_t = 0.0
+	_fight_over()   # (his thorn is not in it: _unlay takes that down stem by stem)
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	vis.play(String(_d("release_anim", "kneel_hands")), 0.5)   # he kneels and puts his hands on the ground

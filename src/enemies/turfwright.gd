@@ -273,6 +273,7 @@ func _raise_walls() -> void:
 		w.height = float(spec.get("height", 1.6))
 		w.setup(along.length(), float(spec.get("life", 9999.0)), int(spec.get("breaks", 3)), "sod")
 		get_parent().add_child(w)
+		_own(w)   # (they stand for the phase: reset mid-fight, they stood for good)
 		pa.y = global_position.y
 		w.global_transform = Transform3D(Basis.looking_at(along.normalized(), Vector3.UP), pa)
 		walls.append(w)
@@ -440,6 +441,7 @@ func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
 	_end_all_swings()
+	_fight_over()
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	if vis.rig != null:

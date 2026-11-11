@@ -165,6 +165,11 @@ func _on_area(a: Area3D) -> void:
 	if result != "immune":
 		_poof(global_position)
 
+## Whoever sang it is gone: it goes out where it is.
+func dispel() -> void:
+	if not is_queued_for_deletion():
+		_poof(global_position)
+
 func _poof(at: Vector3) -> void:
 	set_deferred("monitoring", false)
 	packet = null

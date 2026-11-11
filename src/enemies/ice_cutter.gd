@@ -190,6 +190,7 @@ func _transition_event(ev: String) -> void:
 			band = BrokenIce.open(get_parent(), hole_point(), "ring", float(rb.get("outer", 10.5)),
 					float(rb.get("inner", 9.0)), float(rb.get("life", 9999.0)), float(rb.get("sink", 0.7)))
 			holes.append(band)
+			_own(band)   # (open for the phase: reset mid-fight, it stayed open for good)
 		"band_close":
 			if band != null and is_instance_valid(band):
 				band.close()
@@ -290,6 +291,7 @@ func _run_team() -> void:
 		var dog := Enemy.new()
 		dog.setup(String(_atk.get("dog", "sledge_dog")))
 		get_parent().add_child(dog)
+		_own(dog)
 		dog.set_physics_process(false)
 		dog.collision_layer = 0
 		dog.hurtbox.monitorable = false
@@ -323,9 +325,7 @@ func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
 	_end_all_swings()
-	if hook_hold != null:
-		hook_hold.end(false)
-	_pull_t = 0.0
+	_fight_over()
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	var to := hole_point() - global_position
