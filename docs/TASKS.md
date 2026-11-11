@@ -27,6 +27,10 @@ Format: worktree → branch.
 - `/home/user/fb-anim` → `feat/combat-anims` (ready for review)
   - Player combat clips: shared combat library, weapon-class clip sets and grips (ADR 0011)
 
+- worktree `agent-ad8027632bb04c901` → `feat/streaming-gates` (ready for review, not pushed)
+  - Progression gating (ADR 0015): one gate on every region's way on, opened by that region's release; tracks worn to each; `way_on` in every area def
+  - `tools/test.sh gates`
+
 ## todo
 1. Wire Brede's `give_oilskins` gift once his NPC data lands.
 2. Region tier: the Turfwright fight, the Lowe NPCs, the Keepsakes questline.
