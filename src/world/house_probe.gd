@@ -9,7 +9,7 @@ extends ReflectionProbe
 ## The colours are look data: data/game.json "render/interior".
 
 const DEFAULTS := {
-	"thaw_color": [0.52, 0.36, 0.2], "thaw_energy": 0.62,
+	"thaw_color": [0.52, 0.36, 0.2], "thaw_energy": 0.95,
 	"rime_color": [0.2, 0.29, 0.46], "rime_energy": 0.72,
 	"blend_distance": 0.25, "intensity": 0.8,
 }

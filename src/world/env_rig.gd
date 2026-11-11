@@ -193,6 +193,15 @@ func _c(v: Array) -> Color:
 	return Color(v[0], v[1], v[2])
 
 ## t: 0 = thaw, 1 = rime
+## The range between lit and shaded ground, per state (data/game.json
+## "render/balance"): scales on the sun, the ambient, the fill, the bloom and
+## the contrast, applied after an area's own overrides, so every region is
+## pulled in by the same hand. The owner found the light overdone: too bright
+## toward the sun and too dark in shade.
+func _bal(state_name: String, key: String) -> float:
+	var x = DB.tuning("render/balance/" + state_name, {})
+	return float(x.get(key, 1.0)) if x is Dictionary else 1.0
+
 func blend(t: float) -> void:
 	var a := _profile("thaw")
 	var b := _profile("rime")
@@ -200,7 +209,7 @@ func blend(t: float) -> void:
 	var sc := _c(a["sun_color"]).lerp(_c(b["sun_color"]), t)
 	sun.light_color = sc
 	var rime_sun_e := maxf(float(b["sun_energy"]), 0.85)
-	sun.light_energy = lerpf(float(a["sun_energy"]), rime_sun_e, t)
+	sun.light_energy = lerpf(float(a["sun_energy"]) * _bal("thaw", "sun"), rime_sun_e * _bal("rime", "sun"), t)
 	var ra: Array = a["sun_rot"]
 	var rb: Array = b["sun_rot"]
 	sun.rotation_degrees = Vector3(lerpf(ra[0], rb[0], t), lerpf(ra[1], rb[1], t), 0)
@@ -209,15 +218,15 @@ func blend(t: float) -> void:
 		var fca: Color = _c(a["fill_color"]) if a.has("fill_color") else Color(0.82, 0.76, 0.68)
 		var fcb: Color = _c(b["fill_color"]) if b.has("fill_color") else Color(0.64, 0.72, 0.86)
 		sky_fill.light_color = fca.lerp(fcb, t)
-		sky_fill.light_energy = lerpf(float(a.get("fill_energy", 0.22)), float(b.get("fill_energy", 0.52)), t)
+		sky_fill.light_energy = lerpf(float(a.get("fill_energy", 0.22)) * _bal("thaw", "fill"), float(b.get("fill_energy", 0.52)) * _bal("rime", "fill"), t)
 		var fra: Array = a.get("fill_rot", [-68.0, 138.0])
 		var frb: Array = b.get("fill_rot", [-68.0, 138.0])
 		sky_fill.rotation_degrees = Vector3(lerpf(fra[0], frb[0], t), lerpf(fra[1], frb[1], t), 0.0)
 	e.ambient_light_color = _c(a["ambient"]).lerp(_c(b["ambient"]), t)
-	e.ambient_light_energy = lerpf(float(a["ambient_energy"]), float(b["ambient_energy"]), t)
+	e.ambient_light_energy = lerpf(float(a["ambient_energy"]) * _bal("thaw", "ambient"), float(b["ambient_energy"]) * _bal("rime", "ambient"), t)
 	e.ambient_light_sky_contribution = lerpf(a.get("sky_contribution", 0.20), b.get("sky_contribution", 0.14), t)
 	if e.ssao_enabled:
-		e.ssao_intensity = lerpf(a.get("ssao_intensity", 1.75), b.get("ssao_intensity", 1.85), t) * _ssao_scale
+		e.ssao_intensity = lerpf(a.get("ssao_intensity", 1.75) * _bal("thaw", "ssao"), b.get("ssao_intensity", 1.85) * _bal("rime", "ssao"), t) * _ssao_scale
 	e.fog_light_color = _c(a["fog_color"]).lerp(_c(b["fog_color"]), t)
 	e.fog_density = lerpf(a["fog_density"], b["fog_density"], t)
 	e.volumetric_fog_density = lerpf(a["vol_density"], b["vol_density"], t)
@@ -225,9 +234,9 @@ func blend(t: float) -> void:
 	_blend_pockets(t)
 	e.volumetric_fog_albedo = _c(a["vol_albedo"]).lerp(_c(b["vol_albedo"]), t)
 	e.tonemap_exposure = lerpf(a["exposure"], b["exposure"], t)
-	e.adjustment_contrast = lerpf(a.get("contrast", 1.06), b.get("contrast", 1.08), t)
+	e.adjustment_contrast = lerpf(a.get("contrast", 1.06) * _bal("thaw", "contrast"), b.get("contrast", 1.08) * _bal("rime", "contrast"), t)
 	e.adjustment_saturation = lerpf(a.get("saturation", 1.06), b.get("saturation", 0.96), t)
-	e.glow_intensity = lerpf(a["glow"], b["glow"], t)
+	e.glow_intensity = lerpf(a["glow"] * _bal("thaw", "glow"), b["glow"] * _bal("rime", "glow"), t)
 	# the sky: every stop and amount is profile data (defaults in SKY_DEFAULTS)
 	var top := _c(a["bg_top"]).lerp(_c(b["bg_top"]), t)
 	var horizon := _c(a["bg_horizon"]).lerp(_c(b["bg_horizon"]), t)
