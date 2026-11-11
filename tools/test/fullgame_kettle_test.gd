@@ -41,16 +41,16 @@ const KETTLE_TALK := [
 	["pell", "Sixty years. I only know the one way."],
 ]
 const IVO_THREAD := [
-	"Ivo is harnessing the dogs and says he is not going anywhere.",
-	"The supper was still on the hook. The ladle was frozen standing up in it.",
-	"The mitten was in the ice where the hole had been, palm up.",
-	"Ivo put the mitten on. Both of his are his own now.",
+	"Met Ivo at the Fish-Houses, harnessing the sledge dogs. He has lost a mitten and is wearing one of his grandfather's. His supper is waiting for him in the fish-house.",
+	"Took the ladle out of Ivo's supper pot in the westmost fish-house. The pot was still on its hook, frozen, with the ladle standing up in it.",
+	"Chipped Ivo's mitten out of the new ice where the Breathing Hole closed over.",
+	"Gave Ivo his mitten. He is wearing both of his own again.",
 ]
 const HALLA_THREAD := [
-	"Halla keeps her cargo on a knot-cord and says every knot on it is hers.",
-	"Halla's cord was tied to the mooring post. There was a knot at the end in another hand.",
-	"Halla read the last knot and called Sten over, and then told him to stay where he was.",
-	"Halla has put Sten by the fire in the end house.",
+	"Met Halla, a trader, at the Fish-Houses. She counts her cargo on a knot-cord and says every knot on it is hers.",
+	"Untied Halla's cord from the mooring post at the middle fish-house. The last knot on it was tied by someone else.",
+	"Showed Halla the cord. The last knot is not hers. It counts one sick man aboard, and she told her crewman Sten to keep his distance.",
+	"Talked to Halla after the Ice-Cutter's release. She has put Sten to bed by the fire in the end fish-house.",
 ]
 
 var cards: Array = []          # every title card raised, in order

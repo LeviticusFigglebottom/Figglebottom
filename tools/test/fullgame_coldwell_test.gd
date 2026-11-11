@@ -468,7 +468,7 @@ func _leg_climb_thaw() -> bool:
 	await _until(func(): return hud.last_title == "THE WELLHEAD", 6.0)
 	check(_titles.slice(n_t).has("THE WELLHEAD"), "THE WELLHEAD is named (%s)" % str(_titles.slice(n_t)))
 	check(_horn() == HORN_HERE, "the horn reads differently from here on")
-	check(_journal("fostering_horn") == ["The coal is still alight."], "The fostering horn: the coal is still alight")
+	check(_journal("fostering_horn") == ["Reached the Wellhead. The coal in the fostering horn is still alight. The horn's description in the Pack has changed."], "The fostering horn: the coal is still alight")
 	await _shot("wellhead_thaw")
 	return true
 
