@@ -29,7 +29,7 @@ func _build(state: RH.WState) -> void:
 	player.global_position = AreaBuilder._v3(def["start"]["pos"])
 	player.sim_active = true
 	StateDirector.snap(area, state)
-	await ticks(20)
+	await ticks(60)        # (both navmeshes bake off the main thread: give them time on a loaded box)
 
 func _path(from: Vector3, to: Vector3) -> PackedVector3Array:
 	var map := area.get_world_3d().navigation_map
@@ -273,7 +273,7 @@ func _run() -> void:
 		if String(p.get("tag", "")) == "rime" and String(p["kit"]).begins_with("kf_") and float(p["at"][0]) < -100.0:
 			if float(p["at"][0]) > float(crack["min"][0]) - 12.0 + 4.5:
 				check(false, "%s stands too near the crevasse" % p["kit"])
-	var is_hut := func(n): return String(n.get_meta("kit_id", "")) == "kf_ice_hut"
+	var is_hut := func(n): return String(n.get_meta("kit_id", "")).begins_with("kf_ice_hut")
 	check(area.rime_layer.get_children().filter(is_hut).size() == 4, "four huts out on the ice")
 	check(area.thaw_layer.get_children().filter(is_hut).size() == 4, "and the same four drawn up under the wall in THAW")
 	var fa := _foe("camp_fisher_a")

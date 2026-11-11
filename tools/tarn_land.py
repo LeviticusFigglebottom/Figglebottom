@@ -32,6 +32,18 @@ CAUSEWAY_HALF = 2.6
 CAUSEWAY_Y = 24.2
 CHANNEL = (150.0, 155.5)  # x span of the gap the plank bridge crosses
 
+# --- ground widened on the hall's island (docs/lore/POI.md 5, 9)
+# the Cook-Yard: a drystone terrace built out on the north side, behind the
+# hall's east half (x0, z0, x1, z1), its floor at ISLAND_Y. The island's own
+# shore is cut away below its north face, so the wall stands in the water
+# and there is no way up it from the ice.
+COOK_YARD = (198.0, -347.0, 214.0, -340.0)
+# the South Window: a turf walk along the hall's south wall from the porch to
+# the byre yard (x0, z0, x1, z1): 3 m of level ground where the island's own
+# shore came to within a stride of the wall
+SOUTH_WALK = (175.0, -323.0, 232.0, -319.6)
+ISLAND_SKIRT = 5.4        # the island's shore falls to the tarn bed over this many metres
+
 
 def _seg(px, pz, ax, az, bx, bz):
     ex, ez = bx - ax, bz - az
@@ -112,6 +124,7 @@ def tarn_land(x, z, h):
         ie = island_e(x, z)
         if ie < 1.25:
             basin = max(basin, _lerp(TARN_Y - 1.0, ISLAND_Y, smooth(1.25, 0.95, ie)))
+        basin = _island_ground(x, z, basin)
         cd, ct = causeway_d(x, z)
         if cd < CAUSEWAY_HALF + 1.5 and not (CHANNEL[0] - 1.0 < x < CHANNEL[1] + 1.0):
             basin = max(basin, _lerp(TARN_Y - 1.0, CAUSEWAY_Y, smooth(CAUSEWAY_HALF + 1.5, CAUSEWAY_HALF, cd)))
@@ -127,6 +140,33 @@ def tarn_land(x, z, h):
     elif rd < 14:
         land = _lerp(gorge, basin, k)
     return _lerp(h, land, w_in)
+
+
+def _outside(x, z, rect):
+    """How far (x, z) lies outside a rect (x0, z0, x1, z1); 0 inside."""
+    x0, z0, x1, z1 = rect
+    return math.hypot(max(0.0, x0 - x, x - x1), max(0.0, z0 - z, z - z1))
+
+
+def _island_ground(x, z, basin):
+    """The island's widened ground: the South Window's walk, shelving to the
+    tarn like the island's own shore; the Cook-Yard's terrace, sheer."""
+    d = _outside(x, z, SOUTH_WALK)
+    if d < ISLAND_SKIRT:
+        basin = max(basin, _lerp(ISLAND_Y, TARN_Y - 1.0, smooth(0.0, ISLAND_SKIRT, d)))
+    x0, z0, x1, z1 = COOK_YARD
+    if x0 - 0.01 <= x <= x1 + 0.01:
+        if z0 - 0.01 <= z <= z1 + 0.01:
+            basin = max(basin, ISLAND_Y)
+        elif z < z0:
+            basin = min(basin, TARN_Y - 1.0)      # the terrace's foot stands in the water
+    return basin
+
+
+def on_island_ground(x, z):
+    """True on the widened ground (for a generator's water tests)."""
+    x0, z0, x1, z1 = COOK_YARD
+    return _outside(x, z, SOUTH_WALK) < 2.0 or (x0 <= x <= x1 and z0 <= z <= z1)
 
 
 def stream(height_fn, step=1.5):

@@ -125,7 +125,9 @@ func _run() -> void:
 		"the Tarn Steps and Tarn Causeway hearths stand")
 	var names := area.base.get_children().map(func(n): return String(n.name))
 	check(names.has("House_hall") and names.has("House_byres"), "the great hall and the byres at its east gable")
-	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 2, "Lusse and Ottar keep the thaw")
+	# (the four overheard at the landing and the cook-yard cannot be spoken to: POI.md 5)
+	check(area.thaw_layer.find_children("*", "NPC", true, false).filter(func(n): return not (n as NPC).cfg.get("mute", false)).size() == 2,
+		"Lusse and Ottar keep the thaw")
 	check(player.is_on_floor(), "the Bearer stands at the foot of the Tarn Steps")
 
 	print("== one continuous seam down to Kettle Fjord")

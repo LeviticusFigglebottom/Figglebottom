@@ -436,8 +436,11 @@ WAYSIDE_CLEAR.append([CLEFT_X, CLEFT_ZC, 9.0])
 
 # 4.4 the Ice Camp: four huts, drawn up under the wall in THAW, out on the ice in RIME
 CAMP_THAW_X = [-126.2, -123.2, -120.2, -117.2]
+# two makes of hut (plank, and skin over bent poles; the second is modelled lengthwise)
+HUT_KIT = ["kf_ice_hut", "kf_ice_hut_b", "kf_ice_hut", "kf_ice_hut_b"]
+HUT_TURN = {"kf_ice_hut": 0.0, "kf_ice_hut_b": 90.0}
 for k, hx in enumerate(CAMP_THAW_X):
-    prop("kf_ice_hut", at(hx, wall_foot(hx) + 0.3), [4, -3, 2, -5][k], tag="thaw")
+    prop(HUT_KIT[k], at(hx, wall_foot(hx) + 0.3), [4, -3, 2, -5][k] + HUT_TURN[HUT_KIT[k]], tag="thaw")
 WAYSIDE_CLEAR.append([-121.7, r2(wall_foot(-121.7)), 8.0])
 CAMP = (-113.0, r2(fz(-113.0) - 5.0))      # 30 m north of the Landing Ice hearth, 12 m clear of the crevasse at x -96
 CAMP_R = 5.2
@@ -452,7 +455,9 @@ def camp(ang, r, dy=0.0):
 CAMP_HUTS = [35.0, 125.0, 215.0, 305.0]
 BAND_HUT = 1                                # the hut with the madder band on its door
 for k, ang in enumerate(CAMP_HUTS):
-    prop("kf_ice_hut", camp(ang, CAMP_R), ang + 180, tag="rime")     # doors to the middle
+    prop(HUT_KIT[k], camp(ang, CAMP_R), ang + 180 + HUT_TURN[HUT_KIT[k]], tag="rime")     # doors to the middle
+# the camp's one fire, in the middle, the kettle still hung over it
+prop("kf_kettle_tripod", camp(0.0, 0.0), 40, tag="rime")
 # the band hangs on that hut's door, and the winder lies just inside it (taken at the door)
 prop("kf_door_band", camp(CAMP_HUTS[BAND_HUT], CAMP_R - 0.9, 0.75), CAMP_HUTS[BAND_HUT] + 180, tag="rime", collide=False, on=True)
 WINDER = dict(POI, id="line_winder", at=camp(CAMP_HUTS[BAND_HUT], CAMP_R - 1.5), item="item_line_winder", tag="rime",
@@ -463,7 +468,7 @@ for k, (ang, r) in enumerate(CAMP_HOLES):
     hole = camp(ang, r)
     prop("kf_jig_frame", hole, ang + 90 + 30 * k, tag="rime", collide=False)
     for j in range(2):
-        a = math.radians(180 * j + 40 * k)
+        a = math.radians(ang + 180 * j + 12)          # in line with the camp's middle: the fisher kneels to one side
         prop("kf_bough_markers", [r2(hole[0] + 0.85 * math.sin(a)), ICE_Y, r2(hole[2] + 0.85 * math.cos(a))], 70 * j + k * 30,
              tag="rime", collide=False, scale=0.8)
 WINDBREAK_ANG = 80.0
