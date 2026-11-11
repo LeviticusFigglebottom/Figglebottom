@@ -4,7 +4,8 @@
 The engine's generic set (swings, impacts, UI) keeps its names and its
 job, retuned for this world: iron and wool and ice, not polished steel.
 The world-specific foley (footsteps per surface, frost-taken hits, the
-parry ring, the coal catching, the last breath, the frost/melt wave) is
+parry ring, the coal catching, the last breath, the frost/melt wave, the
+blade on wood, stone, iron, ice, cloth, turf and snow) is
 built from the physical models in dsp.py.
 
 Music and ambience live in music.py and ambience.py.
@@ -481,12 +482,122 @@ def gen_misc():
     write("guard_break", x, 0.7)
 
 
+# ------------------------------------------------- the blade on the world
+
+def strike_wood(r):
+    """Bog iron into seasoned timber: a short hollow thock (board modes,
+    damped fast), the bite of the edge, and splinters letting go."""
+    f0 = r.uniform(150, 210)
+    x = dsp.modal([f0, f0 * 2.3, f0 * 3.9, f0 * 6.1], [1.0, 0.6, 0.35, 0.15],
+                  [0.06, 0.04, 0.025, 0.014], 0.4, r, 0.0008)
+    n = len(x)
+    t = np.arange(n) / SR
+    bite = dsp.hp(noise(n, r), 1600) * env_ad(n, 0.0004, 0.007) * 0.6
+    thud = dsp.lp(noise(n, r), 300, 2) * env_ad(n, 0.002, 0.03) * 0.7
+    splint = dsp.crackle(0.4, r, rate=70, f_lo=900, f_hi=3800, decay=np.exp(-t / 0.06)) * 0.35
+    return x + bite + thud + splint
+
+
+def strike_stone(r):
+    """The edge skidding off stone: a hard dry click, the bar's own short
+    ring, and grit scattering."""
+    n = samples(0.38)
+    t = np.arange(n) / SR
+    click = dsp.hp(noise(n, r), 2400) * env_ad(n, 0.0003, 0.005) * 1.3
+    f0 = r.uniform(1700, 2300)
+    ring = dsp.modal([f0, f0 * 2.76, f0 * 5.4], [1.0, 0.5, 0.2], [0.05, 0.03, 0.015], 0.38, r, 0.0003) * 0.45
+    knock = dsp.bp(noise(n, r), r.uniform(600, 900), 2.5) * env_ad(n, 0.001, 0.018) * 0.9
+    grit = dsp.crackle(0.38, r, rate=90, f_lo=1800, f_hi=6500, decay=np.exp(-t / 0.07)) * 0.3
+    return click + ring + knock + grit
+
+
+def strike_metal(r):
+    """Iron on iron, small: a fire basket or a hoop struck, not a bell.
+    Inharmonic bar modes, a spit of sparks."""
+    f0 = r.uniform(680, 900)
+    x = dsp.modal([f0 * k for k in (1.0, 2.756, 5.404, 8.933)], [1.0, 0.65, 0.4, 0.2],
+                  [0.2, 0.13, 0.08, 0.05], 0.55, r, 0.0004)
+    n = len(x)
+    t = np.arange(n) / SR
+    crack = dsp.hp(noise(n, r), 2600) * env_ad(n, 0.0003, 0.008) * 0.9
+    spit = dsp.crackle(0.55, r, rate=120, f_lo=4000, f_hi=10000, decay=np.exp(-t / 0.05)) * 0.2
+    return x + crack + spit
+
+
+def strike_ice(r):
+    """Rime and hard ice chipped: a brittle crack, a spray of shards, one
+    short ping from the mass behind."""
+    n = samples(0.45)
+    t = np.arange(n) / SR
+    snap = dsp.hp(noise(n, r), 3200) * env_ad(n, 0.0003, 0.009) * 1.2
+    shards = dsp.crackle(0.45, r, rate=240, f_lo=2400, f_hi=9500, decay=np.exp(-t / 0.055)) * 0.55
+    ping = np.zeros(n)
+    place(ping, dsp.ice_ping(r.uniform(3200, 4200), r.uniform(900, 1300), 0.25, r), 0.004, 0.3)
+    body = dsp.bp(noise(n, r), 520, 2.0) * env_ad(n, 0.001, 0.02) * 0.6
+    return snap + shards + ping + body
+
+
+def strike_cloth(r):
+    """Wool, rope or a stuffed sack: a dull whump and fibres parting."""
+    n = samples(0.34)
+    t = np.arange(n) / SR
+    whump = dsp.lp(noise(n, r), 520, 2) * env_ad(n, 0.003, 0.045) * 1.3
+    whump += np.sin(2 * np.pi * np.cumsum(95 * np.exp(-t * 14) + 55) / SR) * env_ad(n, 0.002, 0.04) * 0.5
+    rasp = dsp.bp(noise(n, r), r.uniform(1600, 2300), 1.2) * env_ad(n, 0.004, 0.05)
+    rasp *= 0.5 + 0.5 * np.sin(2 * np.pi * r.uniform(55, 80) * t) ** 2
+    return whump + rasp * 0.35
+
+
+def strike_turf(r):
+    """The edge into sod: a wet, heavy thud and clods pattering down."""
+    n = samples(0.5)
+    t = np.arange(n) / SR
+    thud = dsp.lp(noise(n, r), 240, 2) * env_ad(n, 0.003, 0.045) * 1.5
+    thud += np.sin(2 * np.pi * np.cumsum(80 * np.exp(-t * 16) + 42) / SR) * env_ad(n, 0.002, 0.04) * 0.6
+    rip = dsp.bp(noise(n, r), r.uniform(1400, 2000), 1.0) * env_ad(n, 0.006, 0.035) * 0.22
+    clods = np.zeros(n)
+    for _ in range(r.integers(4, 7)):
+        c = dsp.lp(noise(samples(0.04), r), r.uniform(350, 700), 2) * env_ad(samples(0.04), 0.001, 0.008)
+        place(clods, c, r.uniform(0.12, 0.42), r.uniform(0.15, 0.4))
+    return thud + rip + clods
+
+
+def strike_snow(r):
+    """The edge into crusted snow: the crust breaking, a soft thump under
+    it, the dry hiss of what was thrown up settling."""
+    n = samples(0.48)
+    t = np.arange(n) / SR
+    g = np.zeros(n)
+    k = r.integers(380, 520)
+    pos = r.exponential(0.06, k) + r.uniform(0, 0.01, k)
+    for p in pos[pos < 0.44]:
+        g[samples(p)] += r.uniform(-1, 1)
+    crunch = (dsp.bp(g, r.uniform(1200, 1700), 0.7) * 1.2 + dsp.hp(g, 4200) * 0.35) * np.clip(t / 0.006, 0, 1) * np.exp(-t / 0.1)
+    thump = dsp.lp(noise(n, r), 260, 2) * env_ad(n, 0.004, 0.05) * 0.8
+    hiss = dsp.hp(noise(n, r), 5000) * np.sin(np.pi * np.clip((t - 0.08) / 0.38, 0, 1)) ** 2 * 0.05
+    return crunch + thump + hiss
+
+
+STRIKES = (("wood", strike_wood, 0.62), ("stone", strike_stone, 0.6), ("metal", strike_metal, 0.6),
+           ("ice", strike_ice, 0.62), ("cloth", strike_cloth, 0.5), ("turf", strike_turf, 0.58),
+           ("snow", strike_snow, 0.52))
+
+
+def gen_prop_strikes():
+    """One blow of the blade on each surface a prop can be (data/surfaces.json),
+    two takes apiece. Seeded per take: the shared rng's order stays."""
+    for si, (surf, fn, peak) in enumerate(STRIKES):
+        for i in range(2):
+            write(f"strike_{surf}_{i + 1}", fn(np.random.default_rng(8000 + si * 10 + i)), peak, FOLEY)
+
+
 ALL = {
     "footsteps": gen_footsteps, "frost_hits": gen_frost_hits, "parry": gen_parry,
     "coal_catch": gen_coal_catch, "death": gen_death, "wave": gen_wave,
     "horn_low": gen_horn_low, "rest_chime": gen_rest_chime, "hum": gen_hum, "warmth": gen_warmth_pickup,
     "levelup": gen_levelup, "whooshes": gen_whooshes, "impacts": gen_impacts,
     "gourd": gen_gourd, "swells": gen_swells, "creature": gen_creature, "hound": gen_hound, "misc": gen_misc,
+    "prop_strikes": gen_prop_strikes,
 }
 
 if __name__ == "__main__":

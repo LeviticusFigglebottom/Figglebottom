@@ -76,6 +76,7 @@ func _ready() -> void:
 		rs.shape = rb
 		rs.position = Vector3(sx * (width * 0.5 + 0.05), 0.6, -length * 0.5)
 		_body.add_child(rs)
+	Surfaces.stamp_kind(_body, "drawbridge")
 	_deck.add_child(_body)
 	if operable:
 		_zone = Interactable.new()

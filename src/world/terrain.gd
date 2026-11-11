@@ -302,4 +302,5 @@ func _build_collider(layer_bit: int) -> void:
 	cs.position = Vector3(origin.x + (nx - 1) * cell * 0.5, 0, origin.y + (nz - 1) * cell * 0.5)
 	cs.scale = Vector3(cell, 1, cell)
 	body.add_child(cs)
+	Surfaces.stamp_kind(body, "terrain")   # turf, shingle, plank or snow, read at the blow
 	add_child(body)

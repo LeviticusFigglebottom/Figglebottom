@@ -36,6 +36,7 @@ func setup(spec: Dictionary, tag_bit: int) -> void:
 	cs.shape = box
 	cs.position.y = float(sz[2]) * sc.y * 0.5
 	_body.add_child(cs)
+	Surfaces.stamp(_body, Surfaces.for_kit(kit))
 	add_child(_body)
 
 func _unlocked() -> bool:

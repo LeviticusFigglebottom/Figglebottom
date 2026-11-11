@@ -113,6 +113,7 @@ var vis: PlayerVisual
 var cam: CameraRig
 var hitbox: Hitbox
 var hitbox_shape: CollisionShape3D
+var prop_strike: PropStrike     # the blade against props, walls and ground
 var hurtbox: Hurtbox
 var _interact_scan: Area3D
 var _nadir_light: OmniLight3D
@@ -175,6 +176,7 @@ func _ready() -> void:
 	hitbox.add_child(hitbox_shape)
 	vis.add_child(hitbox)
 	hitbox.on_contact = _on_hit_contact
+	prop_strike = PropStrike.new(self)
 
 	_interact_scan = Area3D.new()
 	_interact_scan.name = "InteractScan"
@@ -1180,6 +1182,12 @@ func _st_attack(dt: float) -> void:
 	if _atk_hit_open and t >= wind + act and hitbox.monitoring:
 		hitbox.end_swing()
 		vis.trail.visible = false
+	# the same window, against the world: chips off a post, sparks off iron
+	if prop_strike.live():
+		if t < wind + act:
+			_sweep_props()
+		else:
+			prop_strike.end()
 
 	# combo input capture during recovery
 	if not sim_active and t > wind + act:
@@ -1227,8 +1235,19 @@ func _open_hitbox(m: Dictionary) -> void:
 			float(weapon_data().get("poise_damage", 20)) * float(m.get("poise_mult", 1.0)), self)
 	pk.origin = global_position
 	hitbox.begin_swing(pk)
+	prop_strike.begin(_atk_is_heavy)
 	if _atk_is_heavy:
 		_chip_frozen(reach)
+
+## The blade's edge this tick, from the pose (the ribbon's own two points).
+func _sweep_props() -> void:
+	var xf := vis.weapon_xform()
+	var base_up := 0.12
+	var tip_up := 1.08
+	if vis.trail != null:
+		base_up = float(vis.trail.get("base_up"))
+		tip_up = float(vis.trail.get("tip_up"))
+	prop_strike.sweep(get_world_3d().direct_space_state, xf * Vector3(0, base_up, 0), xf * Vector3(0, tip_up, 0))
 
 ## A heavy blow chips out what is frozen in close in front (the float in
 ## the tide wall): pickups in group chip_heavy within reach and ahead.

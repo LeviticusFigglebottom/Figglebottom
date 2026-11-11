@@ -279,6 +279,7 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 		cs.position = off * sv
 		body.add_child(cs)
 		body.transform = Transform3D(t.basis.orthonormalized(), t.origin)
+		Surfaces.stamp(body, Surfaces.lookup("scatter", kind))
 		area.attach(body, tag)
 
 # ------------------------------------------------------------ meshes

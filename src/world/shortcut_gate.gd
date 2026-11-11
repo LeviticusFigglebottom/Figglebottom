@@ -38,6 +38,7 @@ func _ready() -> void:
 	cs.shape = box
 	cs.position.y = door_height * 0.5
 	body.add_child(cs)
+	Surfaces.stamp_kind(body, "gate")
 	add_child(body)
 
 	# the locked face is +Z (local); the unbarring side is -Z
