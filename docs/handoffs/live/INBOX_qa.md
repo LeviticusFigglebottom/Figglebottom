@@ -4,7 +4,7 @@ Newest first. QA session: `session_01F3vrULw7QwSZZNWUB551br`. Branch: `fix/qa-re
 
 ## 2026-11-11 (night, 2): `fix/playtest-1` — playtest items 2 and 3 merged
 
-**Suites on the merged branch (items 1, 2, 3 + the Lowe fix), run locally, all 0 failures:** `smoke` 11, `prop_hit` 65 (new), `grounded` 304 (new), `leftovers` 125 (new), `leftovers_longhouse` 28 (new), `combat` 22, `boss` 27, `encounters` 66, `audio` 40, `anim` 148, `lowe` 25. The full-game walks have **not** been re-run on the merged branch yet (in progress); the default full suite has not been run.
+**Suites on the merged branch (items 1, 2, 3 + the Lowe fix), run locally, all 0 failures:** `smoke` 11, `prop_hit` 65 (new), `grounded` 304 (new), `leftovers` 125 (new), `leftovers_longhouse` 28 (new), `combat` 22, `boss` 27, `encounters` 66, `audio` 40, `anim` 148, `lowe` 25. **Walks on the merged branch, all 0 failures:** `fullslice` 106, `fullgame_lowe` 194, `fullgame_kettle` 197, `fullgame_tarnhall` 211, `fullgame_thornwold` 160, `fullgame_reach` 195, `fullgame_coldwell` 178. Not re-run here: the two ending walks, and the default full suite as a whole.
 
 ### Playtest 2: "enemies/bosses and their objects persist after they die (ice oars, first boss)"
 
