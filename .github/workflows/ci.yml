@@ -3,12 +3,24 @@ name: CI — test and export
 # Imports the project, runs the headless test suite (tools/test.sh: static
 # area audits + in-engine tests), then packages standalone Linux and Windows
 # builds. Grab the builds from the run's Artifacts.
+# Runs on main only (and on demand). Branch pushes do NOT trigger it: with
+# many sessions pushing branches all day, per-branch runs burned thousands of
+# Actions minutes. Branches are tested locally and by the GPU worker instead.
 on:
   workflow_dispatch:
+    inputs:
+      fullgame:
+        description: "Also run the full-game region walks (8 long jobs)"
+        type: boolean
+        default: false
   push:
-    branches: ["main", "feat/**", "fix/**", "art/**", "claude/**"]
+    branches: ["main"]
     paths-ignore: ["docs/**", "*.md"]
-  pull_request:
+
+# a newer push to the same ref cancels the run still going for the older one
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   GODOT_VERSION: "4.7"
@@ -74,6 +86,8 @@ jobs:
   # plays one whole region with a steered Bearer, from the save the previous
   # region's walk ends on. A quarter of an hour apiece, so one job per region.
   fullgame:
+    # eight long jobs: only when asked for (Run workflow -> fullgame)
+    if: github.event_name == 'workflow_dispatch' && inputs.fullgame
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
