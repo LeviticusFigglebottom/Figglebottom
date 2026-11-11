@@ -257,6 +257,7 @@ func raise_dead(enemy_id: String, n: int, cap: int, from_gap: bool) -> int:
 		e.target = target
 		e._set_state(ES.ALERT)
 		_minions.append(e)
+		_own(e)
 		placed += 1
 		FrostDissolve.shards(get_parent(), e.global_position, 1.2)
 	return placed
@@ -432,6 +433,7 @@ func _release() -> void:
 	hurtbox.set_deferred("monitorable", false)
 	for m in dead_up():
 		(m as Enemy)._die()
+	_fight_over()
 	for r in get_tree().get_nodes_in_group("ice_ridges"):
 		if r.has_method("shatter"):
 			r.shatter()
