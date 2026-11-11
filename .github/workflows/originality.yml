@@ -1,7 +1,9 @@
 name: Originality guard
+# main only: every session runs tools/check_originality.sh before each commit
 on:
+  workflow_dispatch:
   push:
-  pull_request:
+    branches: ["main"]
 jobs:
   banned-terms:
     runs-on: ubuntu-latest
