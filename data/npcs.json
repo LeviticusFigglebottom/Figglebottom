@@ -869,6 +869,10 @@
     "ks_calder_hum"
    ]
   ],
+  "chapter_absent_flags": [
+   "ks_fellcaller_released",
+   ""
+  ],
   "line_sfx": {
    "Mm. Mm, mm.": [
     "res://assets/audio/hum.wav",
@@ -1025,8 +1029,23 @@
   "body": "mannequin_thaw",
   "model": "sigga_thaw",
   "height": 1.8,
-  "mute": true,
-  "_scene": "REACH.md 9: after the release, THAW: in the High Fold beside her father, who is stood at the wall he has finished, his boots off beside him.",
+  "_scene": "REACH.md 9: after the release, THAW: in the High Fold beside her father, who is stood at the wall he has finished, his boots off beside him. She speaks (her own lines from the slope that still hold) and still has the spare fleece to give: a Bearer who rested before he met her had no other way to either.",
+  "lines_first": [
+   "They come to a call. Dogs are for people who can't call."
+  ],
+  "lines_repeat": [
+   "If he asks, I've had my supper."
+  ],
+  "services": [
+   {
+    "id": "give_fleece",
+    "type": "gift",
+    "item": "armour_fleece",
+    "once_flag": "got_fleece",
+    "label": "Take the spare fleece",
+    "line_done": "It's his old one. He won't wear it, he says it makes him cough. Everything makes him cough."
+   }
+  ],
   "overhear": [
    [
     "sigga",

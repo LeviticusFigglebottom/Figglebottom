@@ -3836,6 +3836,7 @@
    "ember",
    "song"
   ],
+  "song_hear": 6.0,
   "death_linger": 0.3,
   "death_dissolve": 0.7,
   "_ai": "COLDWELL.md 5. Thin and quick, in twos. Reaches with both hands, one after the other, and breathes in close. A Song of any kind breaks it outright (breaks_to).",

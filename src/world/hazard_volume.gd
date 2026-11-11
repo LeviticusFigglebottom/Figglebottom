@@ -90,6 +90,13 @@ func _bog(dt: float) -> void:
 			p.velocity.z *= drag
 		else:
 			limit = seconds if seconds >= 0.0 else float(DB.tuning("hazard/thin_ice_seconds", 0.7))
+			# "Off it in a second or go under" (KETTLE.md 5, 6): the second
+			# is his to move in. The break that opens a hole can stagger him
+			# for most of it (the Ice-Cutter's Drill down broke base poise
+			# outright: 0.7 s held of a 1.0 s sink was certain death), so
+			# the ice does not give while he is still reeling on it.
+			if p.state == Player.S.STAGGER:
+				continue
 		_sunk[key] = float(_sunk.get(key, 0.0)) + dt
 		if _sunk[key] > limit:
 			_sunk.erase(key)

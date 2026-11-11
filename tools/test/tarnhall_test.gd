@@ -231,6 +231,15 @@ func _run() -> void:
 	await ticks(8)
 	it = player.nearest_interactable()
 	check(it != null and it.prompt == "Unbar the gate", "from inside, the bar lifts")
+	# (but not as a way out of the duel: with the veil sealed it stays down)
+	Game.arena_locked = true
+	if it != null:
+		it.activate(player)
+	await ticks(30)
+	check(not World.area_flag("tarnhall", "gate_hall_doors") and not gate._is_open()
+			and (gate.get_node("GateBody") as StaticBody3D).collision_layer != 0,
+		"while the veil is sealed the bar will not lift")
+	Game.arena_locked = false
 	if it != null:
 		it.activate(player)
 	await ticks(30)

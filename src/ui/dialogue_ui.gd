@@ -109,6 +109,14 @@ func _ready() -> void:
 	var chapters: Array = npc_cfg.get("chapters", [])
 	if chapters.size() > 0:
 		var ci := int(World.flag_val("chapter_" + nid, 0))
+		# a chapter the story has passed is not told ("chapter_absent_flags":
+		# one flag per chapter, "" for none): met only after the release,
+		# Calder opened on his lass calling the flock in and getting it
+		# wrong, with the wall done and her beside him saying forty-four
+		var gone: Array = npc_cfg.get("chapter_absent_flags", [])
+		while ci < chapters.size() and ci < gone.size() and String(gone[ci]) != "" and World.flag(String(gone[ci])):
+			ci += 1
+			World.set_flag("chapter_" + nid, ci)
 		var closing := _closing_lines()
 		if not closing.is_empty():
 			# an errand closed in this very talk is answered before the tale

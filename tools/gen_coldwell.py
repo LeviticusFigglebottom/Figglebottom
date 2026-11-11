@@ -103,6 +103,29 @@ for k in range(14):
     LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_standing_stone.glb", "at": at(x, z, -0.15), "rot": r2(a * 1.3 % 360),
                       "scale": 0.85, "blocker": [1.6, 3.0, 1.6]})
 GAP = (WX + H.RING_R * math.cos(math.radians(GAP_A)), WZ + H.RING_R * math.sin(math.radians(GAP_A)))
+# In RIME the ring is shut everywhere but the veil: rime has grown stone to
+# stone, and in from each side of the gap to the veil's width. Without it
+# every space between the stones was a way in, the navmesh went round the
+# veil, and the last duel could be begun unsealed or walked out of. RIME
+# only: the Melt and the spring find the ring as open as it was built.
+RIME_SHUT = []
+def _shut(x, z, r, n_spikes, along):
+    """One closed space: an unseen post the Bearer cannot pass, dressed with
+    rime spikes set along `along` (deg, the line the space runs on)."""
+    RIME_SHUT.append({"at": [r2(x), r2(g(x, z) + 1.5), r2(z)], "radius": r, "height": 3.4, "tag": "rime"})
+    for j in range(n_spikes):
+        t = (j - (n_spikes - 1) / 2.0) * (2.0 * r / max(n_spikes, 1)) * 1.3
+        sx, sz = x + t * math.cos(math.radians(along)), z + t * math.sin(math.radians(along))
+        PROPS.append({"kit": "rime_spike", "at": at(sx, sz, -0.05), "rot": r2((j * 97 + x * 13) % 360), "tag": "rime",
+                      "scale": r2(1.15 + 0.2 * ((j + int(abs(x))) % 3)), "collide": False})
+for k in range(13):
+    (x0, z0), (x1, z1) = STONES[k], STONES[k + 1]
+    _shut((x0 + x1) / 2.0, (z0 + z1) / 2.0, 1.05, 2, math.degrees(math.atan2(z1 - z0, x1 - x0)))
+# the gap: 7.6 m between its two stones, the veil 3.6 m across in the middle
+for (ex, ez) in (STONES[0], STONES[13]):
+    for f in (0.36, 0.78):     # from the veil's edge out to the stone
+        mx, mz = GAP[0] + (ex - GAP[0]) * (0.47 + 0.53 * f), GAP[1] + (ez - GAP[1]) * (0.47 + 0.53 * f)
+        _shut(mx, mz, 0.6, 1, math.degrees(math.atan2(ez - GAP[1], ex - GAP[0])))
 # two old houses on the level, flanking the way in (BuildingGen turf houses)
 for i, (hx, hz) in enumerate(((WX - 22.0, WZ - 17.0), (WX - 22.0, WZ + 17.0))):
     hy = g(hx, hz)
@@ -185,6 +208,7 @@ D = {
     ],
     "houses": HOUSES,
     "boxes": BOXES,
+    "blockers": RIME_SHUT,
     "props": PROPS,
     "landmarks": LANDMARKS,
     "hearths": hearths,

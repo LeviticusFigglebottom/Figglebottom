@@ -336,6 +336,12 @@ func snap_cleared() -> void:
 
 func dissolve() -> void:
 	_wall(_seal, false)
+	# the way through is walkable again: the navmesh was baked with the seal
+	# standing in it. Where the veil is the only way in (the Wellhead's
+	# ring, shut with rime stone to stone) nothing could path through the
+	# gap until the area was next built.
+	if Game.current_area != null and is_instance_valid(Game.current_area):
+		Game.current_area.bake_navmeshes.call_deferred()
 	_zone.enabled = false
 	_set_aux(false)
 	Game.arena_locked = false
