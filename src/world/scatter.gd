@@ -203,11 +203,16 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = variants[key.y][1]
 		mm.instance_count = cx.size()
+		var local: Array[Transform3D] = []
 		for i in cx.size():
 			var t: Transform3D = cx[i]
 			t.origin -= c
 			mm.set_instance_transform(i, t)
+			local.append(t)
 		var mmi := MultiMeshInstance3D.new()
+		# the headless server keeps no instance buffer: the collision audit
+		# (tools/test/collision_audit_test.gd) reads the transforms from here
+		mmi.set_meta("instance_xfs", local)
 		mmi.name = "Scatter_%s_%s_%d_%d" % [kind, tag, key.x, key.z] + ("" if variants.size() == 1 else "_%d" % key.y)
 		mmi.multimesh = mm
 		mmi.position = c
@@ -217,60 +222,33 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 		area.attach(mmi, tag)
 	var bit := AreaBuilder._tag_bit(tag)
-	for xf in xfs:
-		var t: Transform3D = xf
+	for i in xfs.size():
+		var t: Transform3D = xfs[i]
+		var vi := i % variants.size()
 		var shape: Shape3D = null
 		var off := Vector3.ZERO
-		match kind:
-			"ice_floe":
-				if t.basis.get_scale().y < 1.0:
-					continue      # flat channel floes: the ice sheet carries you
-				var spi := SphereShape3D.new()
-				spi.radius = 0.8
-				shape = spi
-				off = Vector3(0, 0.2, 0)
-			"boulder":
-				var sp := SphereShape3D.new()
-				sp.radius = 0.85
-				shape = sp
-				off = Vector3(0, 0.3, 0)
-			"rock":
-				if t.basis.get_scale().x < 1.2:
-					continue    # ankle stones: step over them
-				var sp2 := SphereShape3D.new()
-				sp2.radius = 0.7
-				shape = sp2
-				off = Vector3(0, 0.15, 0)
-			"stone_fence", "wattle_fence":
-				var bx := BoxShape3D.new()
-				bx.size = Vector3(2.0, 1.3, 0.55)
-				shape = bx
-				off = Vector3(0, 0.62, 0)
-			"peat_stack":
-				var bx2 := BoxShape3D.new()
-				bx2.size = Vector3(1.5, 1.2, 1.1)
-				shape = bx2
-				off = Vector3(0, 0.6, 0)
-			"standing_stone":
-				var bx3 := BoxShape3D.new()
-				bx3.size = Vector3(0.8, 2.6, 0.5)
-				shape = bx3
-				off = Vector3(0, 1.3, 0)
-			"driftwood":
-				if t.basis.get_scale().x < 1.3:
-					continue
-				var bx4 := BoxShape3D.new()
-				bx4.size = Vector3(3.0, 0.5, 0.5)
-				shape = bx4
-				off = Vector3(0, 0.25, 0)
-			_:
-				continue
 		# physics bodies must not carry scale: bake it into the shape
 		var sv := t.basis.get_scale()
-		if shape is BoxShape3D:
-			(shape as BoxShape3D).size *= sv
-		elif shape is SphereShape3D:
-			(shape as SphereShape3D).radius *= (sv.x + sv.z) * 0.5
+		match kind:
+			"stone_fence", "wattle_fence":
+				var bx := BoxShape3D.new()
+				bx.size = Vector3(2.0, 1.3, 0.55) * sv
+				shape = bx
+				off = Vector3(0, 0.62, 0)
+			"rock", "boulder", "driftwood", "peat_stack", "standing_stone", "ice_floe":
+				if kind == "ice_floe" and sv.y < 1.0:
+					continue      # flat channel floes: the ice sheet carries you
+				# what is drawn is what stops you: the hull of this instance's
+				# own mesh. (The old shapes were sized for the primitive
+				# stand-ins: with the hero meshes a "small" rock stood 1.5 m
+				# tall with no collider, driftwood snags were walked through,
+				# and a boulder's sphere sat inside, or beside, its stone.)
+				sv *= float(variants[vi][2])
+				shape = _hull(variants[vi][1] as Mesh, sv, Transform3D(t.basis.orthonormalized(), t.origin), area.terrain)
+				if shape == null:
+					continue      # ankle stones: step over them
+			_:
+				continue
 		var body := StaticBody3D.new()
 		body.collision_layer = 1 << (bit - 1)
 		body.collision_mask = 0
@@ -281,6 +259,56 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 		body.transform = Transform3D(t.basis.orthonormalized(), t.origin)
 		Surfaces.stamp(body, Surfaces.lookup("scatter", kind))
 		area.attach(body, tag)
+
+## A scatter piece stops the Bearer once it stands this far out of the
+## ground and is this wide: below that it is stepped over. (Just under the
+## collision audit's 0.6 m, data/collision_audit.json, which measures from
+## the navmesh.)
+const SOLID_MIN_H := 0.55
+const SOLID_MIN_W := 0.5
+const HULL_INSET := 0.2
+
+static var _hull_cache: Dictionary = {}
+
+## The convex hull of `mesh` at scale sv, or null for a piece too low or too
+## thin to be an obstacle where it is seated (xf: its unscaled transform).
+static func _hull(mesh: Mesh, sv: Vector3, xf: Transform3D, terrain: Terrain) -> ConvexPolygonShape3D:
+	if mesh == null:
+		return null
+	var ab := mesh.get_aabb()
+	if maxf(ab.size.x * sv.x, ab.size.z * sv.z) < SOLID_MIN_W:
+		return null
+	var key := mesh.get_rid()
+	if not _hull_cache.has(key):
+		# the exact hull: the simplified one sits inside the stone, and a
+		# rock that just clears the threshold measured too low to get one
+		var base := mesh.create_convex_shape(true, false) as ConvexPolygonShape3D
+		_hull_cache[key] = base.points if base != null else PackedVector3Array()
+	var pts: PackedVector3Array = _hull_cache[key]
+	if pts.size() < 4:
+		return null
+	var scaled := PackedVector3Array()
+	scaled.resize(pts.size())
+	var proud := 0.0
+	# drawn in by HULL_INSET a side: a shoulder brushes the stone's flank, and
+	# the ways the generators left between stones stay open (hard against
+	# the mesh, two boulders closed the drove-road's notch at the tarn)
+	var c := ab.get_center() * sv
+	var fx := maxf(0.6, 1.0 - 2.0 * HULL_INSET / maxf(ab.size.x * sv.x, 0.01))
+	var fz := maxf(0.6, 1.0 - 2.0 * HULL_INSET / maxf(ab.size.z * sv.z, 0.01))
+	for i in pts.size():
+		var q := pts[i] * sv
+		scaled[i] = Vector3(c.x + (q.x - c.x) * fx, q.y, c.z + (q.z - c.z) * fz)
+		# how far it stands out of the land under that very point: a slab
+		# leaning with a slope shows more than its own thickness
+		var w := xf * scaled[i]
+		var ground := terrain.height_at(w.x, w.z) if terrain != null and terrain.contains(w.x, w.z) else xf.origin.y
+		proud = maxf(proud, w.y - ground)
+	if proud < SOLID_MIN_H:
+		return null
+	var out := ConvexPolygonShape3D.new()
+	out.points = scaled
+	return out
 
 # ------------------------------------------------------------ meshes
 

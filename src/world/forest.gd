@@ -167,11 +167,16 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = mesh
 		mm.instance_count = list.size()
+		var local: Array[Transform3D] = []
 		for i in list.size():
 			var t2: Transform3D = list[i]
 			t2.origin -= c
 			mm.set_instance_transform(i, t2)
+			local.append(t2)
 		var mmi := MultiMeshInstance3D.new()
+		# the headless server keeps no instance buffer: the collision audit
+		# (tools/test/collision_audit_test.gd) reads the transforms from here
+		mmi.set_meta("instance_xfs", local)
 		var label := key
 		if key.begins_with("hero|"):
 			# keep the node names the primitives had (tests and tools find

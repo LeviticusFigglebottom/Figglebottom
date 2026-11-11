@@ -107,7 +107,10 @@ func _apply(down: bool, instant: bool) -> void:
 	else:
 		create_tween().tween_property(_deck, "rotation:x", target, 2.4)\
 			.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
-	_body.collision_layer = (1 << (RH.L_WORLD_BASE - 1)) if down else 0
+	# raised, the deck stands on end over the hinge and is as solid as it
+	# looks: with its collider off the Bearer walked through the planks and
+	# off the lip of the ravine behind them
+	_body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
 	_body.set_meta("orig_layer", _body.collision_layer)
 	if not instant and Game.current_area != null:
 		Game.current_area.bake_navmeshes.call_deferred()

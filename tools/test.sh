@@ -26,6 +26,8 @@ for scene in tools/test/*_test.tscn; do
   [ "$name" = "fullslice" ] && limit=2700
   # the leftovers count fights every foe three times over: slow on a busy box
   case "$name" in leftovers*) limit=600 ;; esac
+  # the collision audit builds every area five times over (about 5 minutes)
+  [ "$name" = "collision_audit" ] && limit=900
   # the full-game region walks (fullgame_<region>) each play a whole region
   case "$name" in fullgame_*) limit=2700 ;; esac
   timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \
