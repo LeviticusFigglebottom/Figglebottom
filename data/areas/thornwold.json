@@ -361,7 +361,12 @@
    ],
    "rot": 141.07,
    "tag": "thaw",
-   "collide": false
+   "collide": false,
+   "glow": [
+    0.8,
+    0.9,
+    3.2
+   ]
   },
   {
    "kit": "tw_hut_rime",

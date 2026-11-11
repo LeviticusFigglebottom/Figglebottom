@@ -252,7 +252,7 @@ PIECES = {
     "veg_kelp": kelp,
     "veg_sphagnum": cushion("veg_sphagnum", "sphagnum", 0.5, 0.26, 211, lobes=3, lump=0.18, bright=0.9, tile=1.5),
     "veg_crowberry": cushion("veg_crowberry", "crowberry", 0.62, 0.07, 221, lobes=3, lump=0.26, bright=1.15, tile=1.5),
-    "veg_moss_cushion": cushion("veg_moss", "moss", 0.4, 0.13, 231, lobes=3, lump=0.2, bright=0.85),
+    "veg_moss_cushion": cushion("veg_moss", "moss", 0.4, 0.15, 231, lobes=3, lump=0.2, bright=0.6, sat=0.8, tile=1.5),
     "veg_hazel_stool": hazel_stool(False),
     "veg_hazel_stool_bare": hazel_stool(True),
     "veg_birch_sapling": birch_sapling(False),

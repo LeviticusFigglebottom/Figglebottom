@@ -87,8 +87,8 @@ def clamp_atlas(name):
     return pc.make_atlas(name, [
         ("bark", None),
         ("timber", pc.tint((0.52, 0.42, 0.30), 1.0)),
-        ("turf", pc.tint((0.21, 0.24, 0.12), 1.0)),
-        ("peat", pc.tint((0.13, 0.105, 0.085), 1.1, rough=0.95)),
+        ("turf", pc.tint((0.30, 0.35, 0.16), 1.0)),
+        ("peat", pc.tint((0.27, 0.215, 0.16), 1.1, rough=0.95)),
         ("peat", pc.tint((0.028, 0.027, 0.027), 1.6, rough=0.55, keep=0.1)),   # charcoal
         ("snow", pc.tint((0.40, 0.385, 0.37), 1.5, rough=0.95, keep=0.0)),     # ash
     ])
@@ -416,9 +416,9 @@ def hut_atlas():
     return pc.make_atlas("tw_hut", [
         ("bark", None),
         ("timber", pc.tint((0.40, 0.33, 0.25), 1.0)),
-        ("turf", pc.tint((0.19, 0.21, 0.11), 1.0)),
-        ("peat", pc.tint((0.12, 0.10, 0.085), 1.1, rough=0.95)),
-        ("peat", pc.tint((0.035, 0.033, 0.032), 1.3, rough=0.8, keep=0.1)),    # soot, and the dark inside
+        ("turf", pc.tint((0.29, 0.34, 0.16), 1.0)),
+        ("peat", pc.tint((0.26, 0.21, 0.16), 1.1, rough=0.95)),
+        ("peat", pc.tint((0.07, 0.065, 0.06), 1.3, rough=0.8, keep=0.1)),      # soot, and the dark inside
         ("leather", pc.tint((0.27, 0.20, 0.14), 1.0)),
         ("wool", pc.tint((0.55, 0.50, 0.40), 1.0)),
         ("fieldstone", pc.tint((0.36, 0.36, 0.34), 1.0)),

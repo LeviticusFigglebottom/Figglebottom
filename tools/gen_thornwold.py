@@ -265,7 +265,8 @@ def hut_pt(dx, dz, dy=0.0):
 PROPS.append({"kit": "tw_collier_hut", "at": at(HUT[0], HUT[1], -0.04), "rot": HUT_ROT})
 # (the yard's origin is its stool and the interiors' is the bed: thornwold_props.ORIGINS)
 PROPS.append({"kit": "tw_hut_yard", "at": hut_pt(1.15, 2.35, -0.02), "rot": HUT_ROT, "collide": False})
-PROPS.append({"kit": "tw_hut_thaw", "at": hut_pt(-0.72, -0.5, -0.02), "rot": HUT_ROT, "tag": "thaw", "collide": False})
+PROPS.append({"kit": "tw_hut_thaw", "at": hut_pt(-0.72, -0.5, -0.02), "rot": HUT_ROT, "tag": "thaw", "collide": False,
+              "glow": [0.8, 0.9, 3.2]})        # lived in: a little firelight inside, so the door shows the room
 PROPS.append({"kit": "tw_hut_rime", "at": hut_pt(-0.72, -0.5, -0.02), "rot": HUT_ROT, "tag": "rime", "collide": False})
 PROPS.append({"kit": "tw_riddle_stand", "at": hut_pt(2.7, 2.4), "rot": r2(HUT_ROT + 40)})
 PROPS.append({"kit": "tw_charcoal_sacks", "at": hut_pt(-2.7, 1.9), "rot": r2(HUT_ROT - 25)})

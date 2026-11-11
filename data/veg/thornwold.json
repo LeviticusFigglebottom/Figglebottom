@@ -35,8 +35,15 @@
     486.0,
     -276.0
    ],
-   "density": 0.2,
-   "range": 36
+   "density": 0.5,
+   "range": 36,
+   "splat": [
+    [
+     2,
+     0.1,
+     1.0
+    ]
+   ]
   },
   {
    "kind": "hazel_stool",

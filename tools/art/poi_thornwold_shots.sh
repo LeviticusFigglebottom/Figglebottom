@@ -17,7 +17,7 @@ shot tw_linnets_hut thornwold rime 338.6,36.1,-299.6,155.0,-5.0,70
 shot tw_linnets_hut_thaw thornwold thaw 338.6,36.1,-299.6,155.0,-5.0,70
 shot tw_gate_field thornwold rime 369.3,38.1,-311.7,-166.0,-6.0,70
 shot tw_gate_field_thaw thornwold thaw 369.3,38.1,-311.7,-166.0,-6.0,70
-shot tw_layers_stiles thornwold rime 433.2,39.3,-298.2,-35.0,-4.0,70
-shot tw_layers_stiles_thaw thornwold thaw 433.2,39.3,-298.2,-35.0,-4.0,70
+shot tw_layers_stiles thornwold rime 439.4,39.3,-299.1,27.0,-6.0,70
+shot tw_layers_stiles_thaw thornwold thaw 439.4,39.3,-299.1,27.0,-6.0,70
 # the look-pass-5 budget camera (stats only matter here)
 shot hedge_veil_budget thornwold rime 440.0,39.4,-325.0,78.9,-4.0,70 --shot-nohud
