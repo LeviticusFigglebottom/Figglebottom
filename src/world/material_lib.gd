@@ -22,7 +22,7 @@ const HALL_DS := preload("res://shaders/hall_ds.gdshader")
 const DOUBLE_SIDED := {}
 ## Families that take a snow crust on their top faces in RIME.
 const SNOW := {"M_timber": 0.75, "M_planks": 0.8, "M_drystone_wall": 0.85, "M_schist": 0.9, "M_shingle": 0.9, "M_snow": 1.0, "M_stone": 0.85, "M_stone_trim": 0.85, "M_stone_dark": 0.8, "M_wood": 0.75, "M_wood_dark": 0.75, "M_drystone": 0.85,
-	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_needles": 0.8, "M_leaves": 0.7, "M_thorn": 0.6, "M_wool": 0.5, "M_bark_pine": 0.4, "M_drift": 0.85, "M_terrain": 0.9}
+	"M_roof": 0.95, "M_turf": 0.95, "M_peat": 0.8, "M_needles": 0.8, "M_leaves": 0.7, "M_thorn": 0.6, "M_thorn_rime": 0.9, "M_veil_rime": 0.75, "M_wool": 0.5, "M_bark_pine": 0.4, "M_drift": 0.85, "M_terrain": 0.9}
 
 ## family -> [set, repeats per metre, strength(, tint, contrast)]. Sets live in
 ## assets/textures/<set>/T_<set>_{albedo,normal,orh}.jpg; their linear means
@@ -105,6 +105,13 @@ const FAMILIES := {
 	"M_needles":      {"albedo": Color(0.12, 0.20, 0.12), "rough": 0.90, "metallic": 0.0, "specular": 0.30, "rim": 0.45, "sss": 0.3, "moss": 0.0, "crack": 0.0},
 	"M_leaves":       {"albedo": Color(0.32, 0.40, 0.16), "rough": 0.85, "metallic": 0.0, "specular": 0.30, "rim": 0.5, "sss": 0.45, "moss": 0.0, "crack": 0.0},
 	"M_thorn":        {"albedo": Color(0.24, 0.17, 0.11), "rough": 0.90, "metallic": 0.0, "specular": 0.35, "rim": 0.3, "moss": 0.25, "crack": 0.0},
+	# frozen thorn (modelled, tools/art/procedural/thorn_rime.py): black wet
+	# wood under hoar frost. Matt on purpose: M_rime's gloss and glow on thin
+	# branches is what read as glass.
+	"M_thorn_rime":   {"albedo": Color(0.42, 0.44, 0.47), "rough": 0.86, "metallic": 0.0, "specular": 0.38, "rim": 0.45, "moss": 0.0, "crack": 0.0, "wear": 0.0},
+	# grown ice round a frost veil (tools/art/procedural/veil_frame.py)
+	"M_veil_rime":    {"albedo": Color(0.70, 0.81, 0.90), "rough": 0.34, "metallic": 0.0, "specular": 0.7, "rim": 1.0, "sss": 0.45, "moss": 0.0, "crack": 0.0, "wear": 0.0,
+					   "emission": Color(0.30, 0.50, 0.78), "emission_energy": 0.06},
 	"M_foliage":      {"albedo": Color(0.2, 0.32, 0.16), "rough": 0.88, "metallic": 0.0, "specular": 0.40, "rim": 0.55, "sss": 0.35, "moss": 0.0, "crack": 0.0, "vc": 1},
 	# polished pale stone: ivory marble, no moss (nothing decays
 	# above the hours), light cracking only. Gold trim rides M_gild.
@@ -267,6 +274,10 @@ static func get_mat(family: String, state_mode := 0, uv := false) -> Material:
 			mat.set_shader_parameter("snow_alb", sn["albedo"])
 			mat.set_shader_parameter("snow_mean", sn["mean"])
 			mat.set_shader_parameter("photo", 1.0)
+	elif family == "M_spring":
+		# the Coldwell spring: clear at the rim, a dark still eye (look pass 5)
+		mat.shader = load("res://shaders/spring.gdshader")
+		mat.set_shader_parameter("state_mode", state_mode)
 	elif family == "M_falls":
 		mat.shader = FALLS
 		mat.set_shader_parameter("state_mode", state_mode)

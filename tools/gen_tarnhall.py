@@ -110,18 +110,21 @@ for lx in (TX0 + 0.4, (TX0 + TX1) / 2, TX1 - 0.4):
 for bz in (TABLE_Z - 1.45, TABLE_Z + 1.45):
     BOXES.append({"min": [TX0, FY, r2(bz - 0.22)], "max": [TX1, FY + 0.45, r2(bz + 0.22)], "mat": "M_wood_dark", "tag": "base"})
 # the feast on it: horns, bowls, loaves. RIME: every horn full and frozen over.
+# Modelled pieces (KitLib feast_horn, trencher, fat_lamp): a horn at every
+# place, a bread board at every other, and soapstone fat lamps down the
+# middle of the board, lit in THAW and cold in RIME.
 k = 0
 x = TX0 + 0.8
 while x < TX1 - 0.6:
     for side in (-1, 1):
         hz = TABLE_Z + side * 0.42
-        BOXES.append({"min": [r2(x - 0.06), FY + 0.82, r2(hz - 0.06)], "max": [r2(x + 0.06), FY + 1.12, r2(hz + 0.06)],
-                      "mat": "M_bone", "tag": "thaw", "collide": False})
-        BOXES.append({"min": [r2(x - 0.07), FY + 0.82, r2(hz - 0.07)], "max": [r2(x + 0.07), FY + 1.16, r2(hz + 0.07)],
-                      "mat": "M_ice", "tag": "rime", "collide": False})
+        PROPS.append({"kit": "feast_horn", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "thaw", "collide": False})
+        PROPS.append({"kit": "feast_horn_frozen", "at": [r2(x), FY + 0.82, r2(hz)], "rot": (k * 67 + side * 20) % 360, "tag": "rime", "collide": False})
     if k % 2 == 0:
-        BOXES.append({"min": [r2(x + 0.3), FY + 0.82, r2(TABLE_Z - 0.18)], "max": [r2(x + 0.75), FY + 0.95, r2(TABLE_Z + 0.18)],
-                      "mat": "M_drift", "tag": "base", "collide": False})
+        PROPS.append({"kit": "trencher", "at": [r2(x + 0.52), FY + 0.82, r2(TABLE_Z)], "rot": (k * 23) % 40 - 20, "collide": False})
+    if k % 3 == 1:
+        PROPS.append({"kit": "fat_lamp", "at": [r2(x + 0.5), FY + 0.82, r2(TABLE_Z + 0.05)], "rot": k * 50, "tag": "thaw", "collide": False})
+        PROPS.append({"kit": "fat_lamp_cold", "at": [r2(x + 0.5), FY + 0.82, r2(TABLE_Z + 0.05)], "rot": k * 50, "tag": "rime", "collide": False})
     k += 1
     x += 1.6
 SEATS = []

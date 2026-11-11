@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c1o7gfka5yv2c"
-path="res://.godot/imported/hd_thorn2_far.glb-9f466a9604cdfaf139b19e979e2fbd95.scn"
+uid="uid://oh8smasmexr"
+path="res://.godot/imported/hd_thorn3b.glb-6ed620964ba255084dd87ed924e1832b.scn"
 
 [deps]
 
-source_file="res://assets/models/forest/hd_thorn2_far.glb"
-dest_files=["res://.godot/imported/hd_thorn2_far.glb-9f466a9604cdfaf139b19e979e2fbd95.scn"]
+source_file="res://assets/models/forest/hd_thorn3b.glb"
+dest_files=["res://.godot/imported/hd_thorn3b.glb-6ed620964ba255084dd87ed924e1832b.scn"]
 
 [params]
 
