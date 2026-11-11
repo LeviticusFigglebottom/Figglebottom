@@ -270,6 +270,9 @@ func _footing(a: float, b: float) -> void:
 		for k in 2:
 			dark.pole(Vector3(a - 0.02, 0.1 + 0.2 * k, 0.02 + 0.03 * k), Vector3(b + 0.02, 0.1 + 0.2 * k, 0.02 + 0.03 * k), 0.115, 0.0, 8, 0.9 + 0.08 * k)
 		return
+	# a plain core behind the stones, carried below the floor line: no light
+	# or view through the joints, or under them where the ground falls away
+	stone.box(Vector3(b - a, FOOT_H + 0.42, 0.34), Transform3D(Basis.IDENTITY, Vector3((a + b) * 0.5, (FOOT_H - 0.03) * 0.5 - 0.225, 0.02)), 0, 8)
 	var t := a
 	while t < b - 0.05:
 		var bw := minf(rng.randf_range(0.42, 0.85), b - t)

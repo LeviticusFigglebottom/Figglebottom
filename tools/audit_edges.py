@@ -79,6 +79,10 @@ def building_mask(buildings, X0, Z0, NX, NZ):
     return out
 
 
+## (area, state) -> the traps found and the grid they were found on, for tools/fix_traps.py
+TRAPS = {}
+
+
 def audit(area_id):
     path = os.path.join(ROOT, "data", "areas", f"{area_id}.json")
     d = json.load(open(path))
@@ -264,6 +268,71 @@ def audit(area_id):
                     classes["steep"] += 1
                     continue
                 bad.append((x, z, f"open step dh={dh:.2f}"))
+        # traps: ground the Bearer can get down onto (a drop or a slide is one
+        # way) but cannot walk back out of. A step up is limited to the walk
+        # slope; a step down is free. Cells under a hazard volume are not traps
+        # (they hurt, kill or carry the Bearer back).
+        def can_step(c, n):
+            if not (0 <= n[0] < NX and 0 <= n[1] < NZ):
+                return False
+            if n in walls_s or n in gate_cells or n in seam_cells or n in thick_s or killed(*n):
+                return False
+            return h(*n) - h(*c) <= max_step + 1e-6
+
+        warded = set()
+        mpath = os.path.join(ROOT, "data", "terrain", "traps", f"{area_id}.json")
+        if os.path.exists(mpath) and not os.environ.get("AUDIT_NO_WARDEN"):
+            for z, x0, x1 in json.load(open(mpath)).get(state, []):
+                for x in range(int(x0), int(x1) + 1):
+                    warded.add((int(round(x - X0)), int(round(z - Z0))))
+
+        def guarded(c):
+            if c in warded:
+                return True      # the TrapWarden carries a stranded Bearer back
+            pt = (X0 + c[0], h(*c) + 0.5, Z0 + c[1])
+            return any(in_box(pt, gz) for gz in guards if gz.get("tag", "base") in ("base", state))
+
+        down = set(seen)
+        q = deque(seen)
+        while q:
+            c = q.popleft()
+            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                n = (c[0] + di, c[1] + dj)
+                if n not in down and can_step(c, n):
+                    down.add(n)
+                    q.append(n)
+        # who can get back: reverse flood from the walkable land
+        back = set(seen)
+        q = deque(seen)
+        while q:
+            c = q.popleft()
+            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                n = (c[0] + di, c[1] + dj)
+                if n in down and n not in back and can_step(n, c):
+                    back.add(n)
+                    q.append(n)
+        stuck = {c for c in down if c not in back and not guarded(c)}
+        traps = []
+        left = set(stuck)
+        while left:
+            c0 = left.pop()
+            comp = [c0]
+            q = deque([c0])
+            while q:
+                c = q.popleft()
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    n = (c[0] + di, c[1] + dj)
+                    if n in left:
+                        left.discard(n)
+                        comp.append(n)
+                        q.append(n)
+            # a place to stand: at least one cell flat enough to rest on
+            if any(slope_ok(i, j, hh) for (i, j) in comp):
+                traps.append(comp)
+        TRAPS[(area_id, state)] = {"traps": traps, "seen": set(seen), "h": {(i, j): h(i, j) for j in range(NZ) for i in range(NX)},
+                                   "blocked": set(walls_s) | gate_cells | seam_cells | thick_s,
+                                   "origin": (X0, Z0), "size": (NX, NZ), "max_step": max_step}
+
         # reachability of what the player must reach in this state
         unreached = []
         for key in ("hearths", "pickups"):
@@ -291,6 +360,15 @@ def audit(area_id):
             print(f"   ... {len(bad) - 20} more unclassed edges")
         for (x, z, land) in unguarded[:10]:
             print(f"   UNGUARDED  drop at ({x:.0f}, {z:.0f}) lands at {tuple(round(v, 1) for v in land)} with no hazard volume")
+        for comp in sorted(traps, key=len, reverse=True)[:12]:
+            xs = [X0 + i for (i, j) in comp]
+            zs = [Z0 + j for (i, j) in comp]
+            lo = min(h(i, j) for (i, j) in comp)
+            hi = max(h(i, j) for (i, j) in comp)
+            print(f"   TRAP  {len(comp)} m2 at x {min(xs):.0f}..{max(xs):.0f}, z {min(zs):.0f}..{max(zs):.0f}, "
+                  f"y {lo:.1f}..{hi:.1f}: a way down and no way back")
+        if len(traps) > 12:
+            print(f"   ... {len(traps) - 12} more traps")
         for u in unreached:
             print(f"   UNREACHABLE {u}")
         if unreached:
@@ -302,7 +380,7 @@ def audit(area_id):
             zs = [Z0 + j for (i, j) in seen]
             print(f"   OUTSIDE-NAV {outside} walkable cells fall outside nav_bounds "
                   f"(walkable spans x {min(xs):.0f}..{max(xs):.0f}, z {min(zs):.0f}..{max(zs):.0f})")
-        total_bad += len(bad) + len(unguarded) + len(unreached) + (1 if outside else 0)
+        total_bad += len(bad) + len(unguarded) + len(unreached) + (1 if outside else 0) + len(traps)
     return total_bad
 
 

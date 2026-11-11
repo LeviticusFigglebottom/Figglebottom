@@ -416,6 +416,8 @@ def write():
             hs.append(h)
             s = splat(x, z, h)
             sp += bytes(int(max(0, min(1, c)) * 255 + 0.5) for c in s)
+    import terrain_patch                  # ramps out of terrain traps (tools/fix_traps.py)
+    terrain_patch.apply("saltfell_steading", hs, X0, Z0, NX, NZ)
     with open(os.path.join(OUT_DIR, "saltfell_h.bin"), "wb") as f:
         f.write(struct.pack("<%df" % len(hs), *hs))
     with open(os.path.join(OUT_DIR, "saltfell_splat.bin"), "wb") as f:

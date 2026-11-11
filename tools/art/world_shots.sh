@@ -17,12 +17,12 @@ SETS=(
 "saltfell_steading|rime|yard_rime@5,23.6,-11,25,-2,62;wall_rime@-8.3,23.6,-30,-90,-2,62;longhouse_in_rime@0,23.6,-22.5,0,-3,70;longhouse_in2_rime@-2.5,23.6,-47,-155,-4,70;foot_rime@-9.5,23.6,-27,-50,-22,62"
 "kettle_fjord|thaw|fishhouse_thaw@-46.5,3.7,-314.5,12,0,62;fishhouse_in_thaw@-48,3.7,-323.2,0,-4,75"
 "kettle_fjord|rime|fishhouse_rime@-46.5,3.7,-314.5,12,0,62"
-"tarnhall|thaw|hall_in_thaw@183.5,25.9,-330,-90,-2,70;hall_out_thaw@190,25.9,-312,-160,3,66;hall_lusse_thaw@196.5,25.9,-328.6,-141,-4,55"
+"tarnhall|thaw|hall_in_thaw@183.5,25.9,-330,-90,-2,70;hall_out_thaw@200,25.9,-316,10,6,66;hall_lusse_thaw@196.5,25.9,-328.6,-141,-4,55"
 "tarnhall|rime|hall_in_rime@183.5,25.9,-330,-90,-2,70"
 "lowe_barrows|thaw|barrow_thaw@-56.4,33.2,-115.8,26.57,-2,62"
 "lowe_barrows|rime|barrow_rime@-56.4,33.2,-115.8,26.57,-2,62"
 "thornwold|thaw|clearing_thaw@334,37.3,-298,-56,-10,75"
-"coldwell|thaw|wellhouse_thaw@893,176.2,-489,-128,0,62"
+"coldwell|thaw|wellhouse_thaw@898.5,176.2,-486,-6,0,62"
 )
 
 for set in "${SETS[@]}"; do

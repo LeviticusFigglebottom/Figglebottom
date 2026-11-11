@@ -258,6 +258,10 @@ static func build(area_id: String) -> Area:
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
 	if area.terrain != null:
 		Weather.build(area, area.terrain, def)
+		TrapWarden.build(area)      # no ditch keeps the Bearer (tools/fix_traps.py)
+		var wayside_n := Wayside.build(area, def)   # cairns, stone rows, racks, boats: things met along the way
+		if "--house-stats" in OS.get_cmdline_user_args():
+			print("[wayside] %s: %d groups" % [area_id, wayside_n])
 
 	_mark_indoors(area, def.get("houses", []))
 

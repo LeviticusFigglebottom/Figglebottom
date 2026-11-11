@@ -84,6 +84,10 @@ def main() -> int:
         if n != 1:
             print(f"!! {imp}: no _subresources line", file=sys.stderr)
             return 1
+        if "/bosses/" in a["output"]:
+            # a boss fills the screen: the importer's LODs crack a skinned,
+            # seam-split mesh at fighting distance, so bosses keep one mesh
+            text = text.replace("meshes/generate_lods=true", "meshes/generate_lods=false")
         imp.write_text(text)
         print(f"retarget -> {imp.relative_to(ROOT)}")
     return 0

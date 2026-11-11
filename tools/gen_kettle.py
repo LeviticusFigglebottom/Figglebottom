@@ -349,8 +349,9 @@ D = {
     "start": {"pos": START, "yaw": arrive["spawn_yaw"]},
     # THAW: a low evening sun straight down the fjord from the sea, its light
     # thrown back warm off the water onto the walls
-    "env": {"thaw": {"sun_rot": [-13, -96], "sun_energy": 2.8, "fog_density": 0.0012, "vol_density": 0.006,
-                     "ambient_energy": 0.62, "exposure": 1.08,
+    "env": {"thaw": {"sun_rot": [-13, -96], "sun_energy": 2.3, "fog_density": 0.0012, "vol_density": 0.0038,
+                     "vol_anisotropy": 0.3, "glow": 0.4,
+                     "ambient_energy": 0.95, "sky_contribution": 0.34, "exposure": 0.98,
                      "fill_color": [1.0, 0.7, 0.42], "fill_energy": 0.7, "fill_rot": [28, 84]},
             "rime": {"sun_rot": [-24, -60], "fog_density": 0.007, "vol_density": 0.018}},
     # the Breathing Hole: mist held low in the gorge where the ice is cut (Job 4)

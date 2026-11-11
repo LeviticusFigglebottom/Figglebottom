@@ -167,6 +167,10 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 			hd.yaw, y, 2 if not opens.is_empty() else 0, dws)
 	hd.attach(root)
 	_hd = null
+	# the yard: woodpiles, barrels, a bench by the door (HouseYard)
+	var yard_n := HouseYard.build(area, hd, tag)
+	if "--house-stats" in OS.get_cmdline_user_args():
+		print("[yard] %s %s: %d props" % [hd.id, hd.style, yard_n])
 	if tag == "base":
 		# RIME: snow banked against the walls (rime-only, melts with the wave)
 		var dm := hd.build_drifts(area.terrain)
@@ -508,11 +512,26 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 	mst.create_from_arrays(arr)
 	mst.generate_normals()
 	turf.append_from(mst.commit(), 0, Transform3D(Basis.IDENTITY, Vector3(0, -0.2, -0.6)))
-	# mound collision: the turf either side of the passage and behind it
-	var mx := w * 0.5 + 1.0
-	for side in [-1.0, 1.0]:
-		solids.append([Vector3(side * (pass_w * 0.5 + 0.4 + (mx - pass_w * 0.5 - 0.4) * 0.5), 1.4, -0.6), Vector3(mx - pass_w * 0.5 - 0.4, 2.8, l - 1.2)])
-	solids.append([Vector3(0, 1.4, (front - pass_l - 0.3 - l * 0.5 + 0.6) * 0.5 - 0.3), Vector3(pass_w + 0.8, 2.8, maxf(0.5, front - pass_l - 0.3 + l * 0.5 - 0.6))])
+	# mound collision: the turf itself (its own triangles), so the Bearer walks
+	# up against the mound he sees: no stepping into it, no wall of air at its
+	# shoulders. The triangles over the passage mouth are left out; the
+	# passage keeps its slab walls and capstones.
+	var mfaces := PackedVector3Array()
+	var marr := mst.commit_to_arrays()
+	var mv: PackedVector3Array = marr[Mesh.ARRAY_VERTEX]
+	var mi_idx: PackedInt32Array = marr[Mesh.ARRAY_INDEX] if marr[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+	var moff := Vector3(0, -0.2, -0.6)
+	var tcount := (mi_idx.size() if not mi_idx.is_empty() else mv.size()) / 3
+	for t in tcount:
+		var tri: Array = []
+		for k in 3:
+			var vi := mi_idx[t * 3 + k] if not mi_idx.is_empty() else t * 3 + k
+			tri.append(mv[vi] + moff)
+		var c: Vector3 = (tri[0] + tri[1] + tri[2]) / 3.0
+		if absf(c.x) < pass_w * 0.5 + 0.55 and c.z > front - pass_l - 0.6 and c.y < pass_h + 0.5:
+			continue
+		for q in tri:
+			mfaces.append(q)
 	# the stones carry wear / moss / AO: dark at the foot and down the passage,
 	# mossed low and on their north faces
 	var north := Basis(Vector3.UP, -root.rotation.y) * Vector3(0, 0, -1)
@@ -545,6 +564,14 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 		cs.shape = bx
 		cs.position = sd[0]
 		body.add_child(cs)
+	if mfaces.size() >= 3:
+		var mcs := CollisionShape3D.new()
+		var tm := ConcavePolygonShape3D.new()
+		tm.backface_collision = true
+		tm.set_faces(mfaces)
+		mcs.shape = tm
+		mcs.name = "mound"
+		body.add_child(mcs)
 	root.add_child(body)
 	area.attach(root, "base")
 	if area.terrain != null:

@@ -137,7 +137,9 @@
   "fall_lethal_speed": 24.0,
   "bog_drag": 0.55,
   "bog_seconds": 3.0,
-  "thin_ice_seconds": 0.7
+  "thin_ice_seconds": 0.7,
+  "strand_seconds": 2.2,
+  "strand_damage": 0.12
  },
  "render": {
   "_doc": "shadow_distance: the sun's shadow reach in metres per graphics-quality tier (Low, High, Ultra). prop_ranges: [small_max_m, small_range_m, mid_max_m, mid_range_m]; kit props whose largest side is at most small_max_m stop drawing past small_range_m, up to mid_max_m past mid_range_m; larger kit always draws.",
@@ -152,6 +154,23 @@
    4.5,
    120.0
   ],
+  "balance": {
+   "_doc": "The range between lit and shaded ground (EnvRig._bal): per state, factors on the sun, the ambient, the sky fill, the bloom, the contrast and the SSAO, applied on top of every area's own profile. Below 1 on sun and above 1 on ambient narrows the range.",
+   "thaw": {"sun": 0.8, "ambient": 1.5, "fill": 1.6, "glow": 0.75, "contrast": 0.95, "ssao": 0.8},
+   "rime": {"sun": 0.92, "ambient": 1.08, "fill": 1.0, "glow": 0.85, "contrast": 0.97, "ssao": 0.9}
+  },
+  "exposure": {
+   "_doc": "Real-GPU exposure (EnvRig._apply_exposure), tier 2 only: auto-exposure on/off (off: under a software tier-2 run it brightened the Kettle vista further; try it on hardware before turning it on) and its limits in ISO around 100 (80..140 is about -0.3 to +0.5 stop), its speed and target scale; the factor on SSAO intensity where SSIL and SDFGI also occlude; where bloom starts and how much; SDFGI energy.",
+   "auto": false,
+   "min_sensitivity": 80.0,
+   "max_sensitivity": 140.0,
+   "speed": 0.6,
+   "scale": 0.4,
+   "gi_ssao_scale": 0.72,
+   "glow_threshold_gpu": 1.15,
+   "glow_bloom_gpu": 0.08,
+   "sdfgi_energy": 1.0
+  },
   "interior": {
    "_doc": "The ambient a house interior takes in place of the sky's (HouseProbe): colour and energy per world state, how far inside the walls it fades in (metres), and the strength of the room's own reflections.",
    "thaw_color": [
@@ -159,13 +178,13 @@
     0.36,
     0.2
    ],
-   "thaw_energy": 0.62,
+   "thaw_energy": 0.95,
    "rime_color": [
     0.2,
     0.29,
     0.46
    ],
-   "rime_energy": 0.55,
+   "rime_energy": 0.72,
    "blend_distance": 0.25,
    "intensity": 0.8
   }

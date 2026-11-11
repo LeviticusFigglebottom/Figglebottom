@@ -3,7 +3,9 @@ shader_type spatial;
 // death_diss never reached them): the body frosts over, then shatters away in
 // noisy flakes with a cold rim. Textures are copied from the imported material
 // by FrostDissolve.apply(); death_diss is driven by RH.set_dissolve.
-render_mode cull_back, depth_draw_opaque;
+// cull_disabled: the Tripo bodies are double-sided on import (thin cloaks,
+// nets, open hems); culling their backs the moment they die opened holes.
+render_mode cull_disabled, depth_draw_opaque;
 
 uniform sampler2D albedo_tex : source_color, filter_linear_mipmap, hint_default_white;
 uniform vec4 albedo_color : source_color = vec4(1.0);
