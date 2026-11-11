@@ -32,6 +32,15 @@ def path_weight(x, z):
     # the clearing: trodden, ash-dark
     cd = math.hypot(x - T.CLEARING[0], z - T.CLEARING[1])
     best = max(best, 0.45 * (1.0 - smooth(T.CLEARING[2] * 0.4, T.CLEARING[2], cd)))
+    # --- progression gates (ADR 0015): the way on, round the outer ring to the fell path
+    gd = math.hypot(x - T.GRAVE[0], z - T.GRAVE[1])
+    ga = math.degrees(math.atan2(z - T.GRAVE[1], x - T.GRAVE[0]))
+    if -14.0 <= ga <= 180.0:             # the south side: west gap -> the Outer Ring hearth -> east
+        best = max(best, 0.85 * (1.0 - smooth(1.0, 2.4, abs(gd - (T.RINGS[2] + 3.5)))))
+    if x > 478.0:
+        fd, _ = T._seg(x, z, 479.0, -331.0, 500.0, -331.6)
+        best = max(best, 1.0 - smooth(1.3, 2.7, fd))
+    # --- end progression gates
     return best
 
 
