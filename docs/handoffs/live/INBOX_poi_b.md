@@ -2,6 +2,27 @@
 
 *Branch `feat/poi-kettle-tarnhall-coldwell`. Newest first. The lead answers in `LOCAL_OUTBOX.md`.*
 
+## 2026-11-11: state at hand-off (read this first)
+
+**Branch** `feat/poi-kettle-tarnhall-coldwell`, three region commits plus shots. Not merged. CI no longer runs on feature branches, so the suites below were run here.
+
+| Suite | Result here |
+|---|---|
+| `poi_kettle` / `poi_tarnhall` / `poi_coldwell` (new) | 69 / 57 / 57 checks, all pass |
+| `kettle`, `kettle_encounters`, `tarnhall`, `tarnhall_encounters`, `coldwell`, `coldwell_encounters` | pass |
+| `smoke`, `houses`, `traps`, `keepsakes`, `release_scenes` | pass |
+| `fullgame_tarnhall`, `fullgame_coldwell` | pass (211 and 178 checks) |
+| `fullgame_kettle` | **not green: see below** |
+| `tools/audit_edges.py`, `tools/audit_areas.py`, `tools/check_originality.sh --all` | clean |
+
+**Known breakage: `fullgame_kettle`.** Run 1 passed everything up to and through the Ice-Cutter (197 checks) except four checks that assumed one board and nine foes in the region; those assumptions are fixed in the suite. Runs 2 and 3, with those fixes, pass the fixed checks and then stall in the Ice-Cutter duel: the Bearer goes through a hole the Ice-Cutter drills ("stilled ... on thin ice: true ... drill_down"), comes back, and never lands a third blow (the Ice-Cutter sits at 830/1250, in phase one, until the duel's clock runs out; 17 checks fail after it). I did not find the cause. Nothing built here is within 40 m of the arena, and `src/enemies/enemy.gd` gained only a `struck` signal and a `rouse()` nobody calls on him, but I have not shown the stall happens on `main`, so treat it as open. Next step: `tools/test.sh fullgame_kettle` on `main` on a quiet box; if it stalls there too it is the duel bot's, and if not, bisect the three region commits.
+
+**Not done.**
+- `BIOMES.md` column 6 (stand-ins to replace) for these three regions: the items left there are light, cliff and terrain-shader faults that belong to the art/biomes session; none were touched.
+- No ice-fall columns on Kettle's walls (the model exists: `cw_ice_column_a/b/c`).
+- The Turn in the Road cannot be read in its THAW shot: the road's cut is nearly black there (the light is the art/biomes session's).
+- `docs/handoffs/live/CONSOLIDATED.md` and `docs/TASKS.md` are untouched (the lead's); this file stands in for them.
+
 ## 2026-11-11: the Coldwell done
 
 **State.** All four places of `POI.md` §8 are built by hand in `tools/gen_coldwell.py` (the section marked "points of interest"). Three ledges are cut in `tools/high_land.py` (`LEDGES`, `_ledges`, `ledge_frame`), each level with the path where it leaves it:
@@ -49,7 +70,7 @@
 - *Lusse's line for the Vat Dipper sets `ks_vat_dipper_shown` but adds no journal step:* `POI.md` gives no journal line for it, and I did not write one.
 - *The two late guests and the two cooks are unnamed in the overheard strip* (no speaker label), as `POI.md` gives them no names.
 
-**Tests.** New suite `poi_tarnhall` (57 checks). `tarnhall`, `tarnhall_encounters` pass locally (`tarnhall` now counts only souls that can be spoken to). `fullgame_tarnhall` is left to CI.
+**Tests.** New suite `poi_tarnhall` (57 checks). `tarnhall`, `tarnhall_encounters` pass locally (`tarnhall` now counts only souls that can be spoken to). `fullgame_tarnhall` passes locally.
 
 **Variety props (the lead's second message).** Kettle: a second make of hut (`kf_ice_hut_b`, two of the four) and a kettle on a tripod at the camp's fire. Tarnhall: an ale tub in the cook-yard and a wool hanging on the porch.
 
@@ -76,6 +97,6 @@
 - *The crevasse off the Fish-Houses moved 1.5 m north*, two fish-kettles moved off the cleft's mouths, and one boat that was leaving moved from x -60 to -70, all to clear the new ground.
 - *The camp's Sealer waits on data, not a flag:* a spawner's `wakes_with` sets its sight and hearing to nought until one of the named foes is struck (`Spawner._bind_wakes`, `Enemy.struck`, `Enemy.rouse`).
 
-**Tests.** New suite `poi_kettle` (69 checks). `kettle`, `kettle_encounters`, `smoke`, `houses`, `traps`, `keepsakes` pass locally. `fullgame_kettle` is left to CI.
+**Tests.** New suite `poi_kettle` (69 checks). `kettle`, `kettle_encounters`, `smoke`, `houses`, `traps`, `keepsakes` pass locally. `fullgame_kettle`: see the hand-off note at the top.
 
-**Known.** The road's cut is nearly black in THAW (the art/biomes session owns the light), so the Turn in the Road's bay cannot be read in `poi_kettle_kf_road_turn_after.png`; the RIME shot shows it.
+**Known.** The road's cut is nearly black in THAW (the art/biomes session owns the light), so the bay cannot be read in `poi_kettle_kf_road_turn_after.png`; `poi_kettle_kf_road_turn_rime_after.png` shows the cut ground.
