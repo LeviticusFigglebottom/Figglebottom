@@ -5292,6 +5292,19 @@
    "set_flag": "ks_ottar_staff_found"
   },
   {
+   "id": "hall_coat",
+   "at": [
+    180.45,
+    24.3,
+    -332.1
+   ],
+   "rot": 90,
+   "item": "armour_hall",
+   "tag": "rime",
+   "scene": "res://assets/models/props/hall_coat.tscn",
+   "label": "Take the coat off its peg"
+  },
+  {
    "id": "guest_tally",
    "at": [
     181.7,

@@ -296,6 +296,9 @@ pickups = [
      "scene": "res://assets/models/props/barrel_head.tscn", "label": "Prise off the barrel head"},
     {"id": "ottar_staff", "at": [r2(HALL_X0 + 1.2), FY, r2(DOOR_Z - 1.6)], "item": "item_ottar_staff", "tag": "rime",
      "scene": "res://assets/models/props/ottar_stick.tscn", "label": "Take the walking stick", "set_flag": "ks_ottar_staff_found"},
+    # TARNHALL.md 8: the hall guard's coat, on a peg on the gable wall beside the doors
+    {"id": "hall_coat", "at": [r2(HALL_X0 + 0.45), FY, r2(DOOR_Z - 3.1)], "rot": 90, "item": "armour_hall", "tag": "rime",
+     "scene": "res://assets/models/props/hall_coat.tscn", "label": "Take the coat off its peg"},
     {"id": "guest_tally", "at": [r2(HALL_X0 + 1.7), FY, r2(DOOR_Z + 2.4)], "item": "item_guest_tally", "tag": "rime",
      "scene": "res://assets/models/props/guest_tally.tscn", "label": "Untie the guest-tally",
      "appear_flag": "ks_host_released", "set_flag": "ks_guest_tally_found"},

@@ -244,6 +244,8 @@ Every generated asset has one row here. Raw Tripo downloads are never committed:
 | assets/models/props/calder_boots.tscn | procedural: Godot primitives (a pair of boots: shafts, feet, soles) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/bone_whistle.tscn | procedural: Godot primitives (a shin-bone tube, two holes, a lanyard loop) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/ice_tracks.tscn | procedural: Godot primitives (six footprints, the left stride longer) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/models/props/hall_coat.tscn | procedural: Godot primitives (a coat on a peg: body, sleeves, cuffs, cape, mail hem) | — | — | — | none | tools/art/procedural/small_props.py |
+| assets/ui/icons/armour_hall.png | procedural: PIL silhouette in the UI palette | — | — | — | none | tools/gen_icons.py |
 | assets/models/props/latch_wool.tscn | procedural: Godot primitives (a tuft and two strands) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/woad_band.tscn | procedural: Godot primitives (a strip of cloth with a knot in it) | — | — | — | none | tools/art/procedural/small_props.py |
 | assets/models/props/mourning_mask.tscn | procedural: Godot primitives (a smooth mask: face, eye holes, brow, band) | — | — | — | none | tools/art/procedural/small_props.py |

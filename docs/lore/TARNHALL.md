@@ -102,6 +102,7 @@ Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
 - The fire trench is cold.
 - **The Host** walks the length of the table with a horn, filling the horns in front of the guests one after another.
 - Pickup, inside the barred door: **Ottar's Stick** (`item_ottar_staff`; sets `ks_ottar_staff_found`).
+- On a peg inside the front doors, by the bar: the **Hall-Guard's Coat** (`armour_hall`, pickup `hall_coat`).
 
 ---
 
@@ -291,6 +292,9 @@ Voice per `WRITING.md`: a plain fact, then one human detail. No morals.
 **Host's Carving Cleaver** (`feast_cleaver`, weapon)
 > A broad black-iron cleaver with a knotwork oak handle and a ring at the butt, for carving at the feast. It goes through the joint and into the board under it. The ring is for hanging it by the high seat, on a nail he drove in himself, crooked.
 
+**Hall-Guard's Coat** (`armour_hall`, body; on a peg inside the hall doors, RIME)
+> A quilted felt coat over a black mail shirt, yellow at the cuffs, with a fur cape for the draught at the doors. It hung on a peg inside the hall doors, by the bar. Whoever had the door that night took it off when the hall got hot, and stood his watch in his shirt.
+
 **Ottar's Stick** (`item_ottar_staff`)
 > A rowan walking stick with a horn cap, the bark left on for the grip. It was leaning inside the barred door, where you put a thing so you will see it on your way out. The mud on the tip is from the steps coming up.
 
@@ -312,4 +316,4 @@ Voice per `WRITING.md`: a plain fact, then one human detail. No morals.
 
 ## 10. New names
 
-Added to `LEXICON.md`: Ottar, the Goat Song, Guest-Tally, Host's Cup, Host's Carving Cleaver, the Byres hearth, the Long Table hearth. Checked against `tools/banned_terms.txt` and `docs/transposition/ORIGINALITY.md` §1–5: no bells, candles, wax, bees, choirs, runes or letters; nothing from another game.
+Added to `LEXICON.md`: Ottar, the Goat Song, Guest-Tally, Host's Cup, Host's Carving Cleaver, Hall-Guard's Coat, the Byres hearth, the Long Table hearth. Checked against `tools/banned_terms.txt` and `docs/transposition/ORIGINALITY.md` §1–5: no bells, candles, wax, bees, choirs, runes or letters; nothing from another game.
