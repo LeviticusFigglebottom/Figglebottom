@@ -175,6 +175,12 @@ func _build_dress(props: String) -> void:
 ## A GLB instanced with every surface on the hall shader (RIME branch).
 static func _hero(path: String, family: String, tint: float) -> Node3D:
 	var inst: Node3D = (load(path) as PackedScene).instantiate()
+	# dressing only: a model that brings its own collider (the frozen net
+	# does) walled the Longhouse doorway off for good, in both memories and
+	# on the navmesh. The veil's seal is the only thing that stops anyone.
+	for body in inst.find_children("*", "CollisionObject3D", true, false):
+		body.get_parent().remove_child(body)
+		body.free()
 	for c in inst.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
 		for si in mi.mesh.get_surface_count():

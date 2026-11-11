@@ -2,6 +2,49 @@
 
 Newest first. QA session: `session_01F3vrULw7QwSZZNWUB551br`. Branch: `fix/qa-regions` (based on `origin/fix/slice-qa`).
 
+## 2026-11-11: clean stopping point — report for the lead
+
+**Branch:** `fix/qa-regions`, with `origin/main` fb1b369 merged in. The sha is the branch head on the remote. **Messaging is still one-way**: every `send_message` to the lead is refused (`elevated_session_untrusted_device`), so this file is the report.
+
+**Walks that pass end to end** (steered Bearer through the real world scene, every Holdfast's AI running all its phases, each walk started from the save the previous one wrote; all 0 failures on the final merged code):
+
+| Walk | Checks |
+|---|---|
+| `fullslice` (Saltfell) | 106 |
+| `fullgame_lowe` | 194 |
+| `fullgame_kettle` | 197 |
+| `fullgame_tarnhall` | 211 |
+| `fullgame_thornwold` | 160 |
+| `fullgame_reach` | 195 |
+| `fullgame_coldwell` (to the choice) | 178 |
+| `fullgame_ending_outsong` (twice: credits skipped, credits sat through) | 160 |
+| `fullgame_ending_kept` (twice) | 193 |
+
+The default `tools/test.sh` run passes too. The region walks are **not** in the default run: CI runs them as the `fullgame` matrix job, one per walk. `tools/qa/fullgame_chain.sh` chains slice → regions → endings in one go, rewriting the saves; the script itself has not been run end to end (the chain was run walk by walk with the same commands).
+
+**Regression on `main` fb1b369, fixed here (please take this even if nothing else):** look pass 5's frozen-net model in the Longhouse veil brings its own solid collider on the world layer. It walled the Longhouse doorway off in both memories and on the navmesh: `fullslice` failed 10 checks and the Outsong's return to Saltfell failed 6 on `main` as merged. Veil dressing now drops any collider it brings (`frost_veil.gd`, `_hero`).
+
+**Not done:**
+- **The screenshot pass.** No `docs/screens/qa_*` exist and nothing was judged by eye. The runner (`tools/qa/fullgame_shots.sh <region>`) is in and the driver walks the real front door when it has a window, but the first run was stopped for this stopping point. Three fixes need eyes in particular: the Tarnhall byre door and its veil in the 0.2 m slot between the gables; the Kettle fish-house walks moved to the doors; the staged credits shot.
+- **The HUD-during-the-Outsong bug was not reproduced.** In the live path the HUD is hidden at every beat and through the credits (now asserted); the title-card layer was the one leak found and fixed. If a GPU shot still shows it, the exact command is needed.
+- Every fight was judged on **The Gentle Thaw** (the slice walk picks it).
+
+**Bugs fixed:** the full table is `docs/qa/REGIONS_QA.md` (16 rows). The ones a player would have hit hardest: every seam bounced the Bearer back; two worlds stacked after Return to the Title → Resume; post-release THAW scenes never appeared in the same visit; a fallen veil returned as an unseen wall; release drops lost on save-and-resume; the Lowe's bog drowning the Bearer on the dry road; the Kettle fish-houses with no way in; the Tarnhall hall-to-byre door that was two walls; the Host's guests re-seated by a rest; the released Leadvoice gone after a resume, so the endings played to nobody; foes attacking through the endings; the Outsong cut off by the melt wave; a kept save with no pause sheet.
+
+**Bugs still open (ranked; detail in `REGIONS_QA.md`):**
+1. The Wellhead ring is open on every side in RIME: the last duel can be started unsealed or walked out of.
+2. The Ice-Cutter's hole is certain death if the Bearer is on the disc when it opens.
+3. The Host's hall doors can probably be unbarred from inside mid-duel (code reading; not tried).
+4. Calder's first audience after the release is the pre-release one for a Bearer who rested first; Sigga's lines and the fleece are then unreachable.
+5. A ward is attuned when the Bearer meets the Unsung (the first Song learned attunes itself and stays); nothing tells the player they need a Song that strikes.
+6. The Knucklebones thread cannot close in the chained run (the slice walk never takes the Saltfell four).
+7. Release drops are still runtime-only in Tarnhall and the Coldwell.
+8. Kettle Fjord, Thornwold and Shepherd's Reach define no shortcut; the Reach has one Keepsakes thread.
+9. The Byres hearth wakes the Bearer 3 m from a Hall-champion; "Tip the horn" is 6 m in radius against the doc's 6 m across.
+10. Kettle's navmesh climbs decks the Bearer cannot; several boss moves never showed in the real duels (lash, Count them, Held note, Long note).
+
+**The `tarnhall_encounters` second-bench flake:** test-only, made deterministic; not reproduced here before or after. Please re-run on the fast machine.
+
 ## 2026-11-10 (late): status for the lead — regions 2–5 pass; Reach, Coldwell and endings started
 
 **Messaging is still one-way.** Every `send_message` to the lead is refused (`elevated_session_untrusted_device`). Your messages reach me; my replies only land here.

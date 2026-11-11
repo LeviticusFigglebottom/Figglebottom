@@ -12,7 +12,7 @@ Every region walk covers: the seam in, the place cards, the NPCs' lines in order
 
 Run one with `tools/test.sh fullgame_<region>` (a quarter of an hour headless). They are not part of the default `tools/test.sh` run; CI runs them as the `fullgame` matrix job, one job per walk.
 
-**Results (2026-11-11, on this branch with `origin/main` 103a252 merged; every walk started from the save the previous one wrote):**
+**Results (2026-11-11, on this branch with `origin/main` fb1b369 merged; every walk started from the save the previous one wrote):**
 
 | Walk | Area | Checks | Failures | Holdfast |
 |---|---|---|---|---|
@@ -26,7 +26,7 @@ Run one with `tools/test.sh fullgame_<region>` (a quarter of an hour headless). 
 | `fullgame_ending_outsong` | the Outsong, twice (credits skipped, credits sat through) | 160 | 0 | |
 | `fullgame_ending_kept` | the Hearth Kept, twice | 193 | 0 | |
 
-The default `tools/test.sh` run (every other suite, both audits) also passes on the same code. `fullslice` was last run before the final merge of `main` (it ran green in the default suite after it).
+The default `tools/test.sh` run (every other suite, both audits) also passes on the same code.
 
 `tools/qa/fullgame_chain.sh` runs all of it in order as one start-to-credits chain, rewriting the saves as it goes. The script itself has **not been run end to end**: the chain above was run walk by walk with the same commands.
 
@@ -52,6 +52,7 @@ The default `tools/test.sh` run (every other suite, both audits) also passes on 
 | 13 | Shepherd's Reach | The Fellcaller called once and then stood idle; Calder's boots step closed without its lines if the Bearer had rested before meeting him. | She keeps calling; an errand closed in a talk is answered before a chaptered tale goes on (`dialogue_ui.gd`). |
 | 14 | the Coldwell | **The released Leadvoice was gone after any resume**, so both endings played to nobody; she could be pushed off her seat; her veil could be parted after her release, locking the arena with nobody to fight. | `release_stays`; she is pinned to her seat; the veil falls on her release either way. |
 | 15 | both endings | Foes could attack through the ending; the melt wave cut the Outsong off 17 s into a 115 s song; a kept save could not open the pause sheet; Return to the Title mid-ending left it rolling over the title; credits could not be skipped; the title-card layer did not follow the HUD's visibility. | The director stills the frost-taken and keeps the music; the sheet opens from the seat; `EndingDirector.stop()` on the title return; Enter ends the credits; the card layer follows the HUD. |
+| 17 | Saltfell (regression from look pass 5 on `main`) | **The Longhouse doorway was walled off** in both memories and on the navmesh: the frozen-net model hung in the hall's veil brings its own solid collider. The slice walk and the Outsong's return to Saltfell both failed on it. | Veil dressing drops any collider it brings (`frost_veil.gd`). |
 | 16 | tests | `Game.test_boss_dmg_mult` only worked on the Netmender; the `tarnhall_encounters` second-bench check depended on where the Host had drifted. | Every Holdfast honours the seam; the bench check re-seats him, runs a clear lane and waits for the throw. |
 
 **The two bugs from the real-GPU review.** (1) Credits rendered from under the terrain: the staged shot only (`enc_shots.gd` never placed its camera); the live credits camera is asserted above ground and upright through both endings. The staged fix is **not looked at**. (2) HUD on screen through the Outsong beats: **not reproduced**; in the live path the HUD is hidden at every beat and through the credits, now asserted. If it still shows on a GPU, the exact command that made the shot is needed.
