@@ -2,6 +2,49 @@
 
 Newest first. QA session: `session_01F3vrULw7QwSZZNWUB551br`. Branch: `fix/qa-regions` (based on `origin/fix/slice-qa`).
 
+## 2026-11-12: `fix/playtest-1` — playtest item 4 (the collision audit) merged; all four items in
+
+**Branch state.** `fix/playtest-1` = `origin/main` 300ce5f + the Lowe bog-box fix, the chain fix, and playtest items 1–4. Every commit signed; `.github` is main's.
+
+**Local results on the branch with everything merged (0 failures each):** `smoke` 11, `collision_audit` 45 (new), `prop_hit` 65, `grounded` 304, `leftovers` 125; walks `fullslice` 106, `fullgame_lowe` 194, `fullgame_kettle` 197, `fullgame_tarnhall` 211, `fullgame_thornwold` 160, `fullgame_reach` 195, `fullgame_coldwell` 178. **Not run on the final state:** the two ending walks, `leftovers_longhouse`, the encounter suites, and the default full suite as a whole (the agent ran the seven encounter suites, the region suites and `houses` green on its own branch before the merge).
+
+**One thing that needed a driver change.** With the collision work merged, the Lowe and Kettle walks first failed their planned-death step (6 checks each). In the Lowe the Bearer was standing free inside the first barrow, whose passage has no navmesh floor, only fragments; the nearest fragment was now an isolated one, so the steered walker planned a path that went nowhere. Not a softlock for a player (the way out is physically clear). The walk driver now walks straight at its goal for a few seconds when its planned path is stranded, then re-plans (`fullgame_base.gd`, `_stranded`). Both walks pass with it. **I did not confirm the Kettle cause separately** (it passed after the same change), and I did not pin down which collider created the fragment in the barrow.
+
+### Playtest 4: "several props and terrain lack collision"
+
+Full write-up, method and the offender table with positions, sizes, probable fix and owner: **`docs/qa/COLLISION_AUDIT.md`**. Run it with `tools/test.sh collision_audit` (about 5 minutes: every area, THAW and RIME, released, spring).
+
+- **The heightfield has no holes.** Collider against drawn ground at 41,249 samples across all seven areas: no mismatch. Seam crossings agree (worst 0.15 m).
+- **What read as terrain without collision was scatter rock.** 41 driftwood snags and many 1.5 m rocks had no collider, and boulder spheres sat inside or beside their stones. **Fixed** (`scatter.gd`): rocks, boulders, driftwood, peat stacks, standing stones and upright floes collide as the hull of their own mesh once they stand 0.55 m out of the ground. This moves the navmesh in every area.
+- **Also fixed:** plaques are solid; the raised drawbridge is solid (the Bearer walked through it off the ravine lip); the Reach's beck ice in RIME was drawn a metre narrower each side than its collider (walking on air over the bank, x 558–704), and a metre-deep ditch at (625.7, 68.8, -334.6) the navmesh crossed and the Bearer could not climb (`gen_reach.py`, regenerated `--keep-terrain`).
+- **189 known offenders remain, baselined** (`tools/test/fixtures/collision_baseline.json`): the suite passes on those and fails on any new one. By owner: **152 look-pass agent, 21 endings agent, 12 world-fidelity env, 4 the Coldwell well-houses.**
+
+| Area | Walk-through | Partly solid | Invisible collider | Floating | Total |
+|---|---:|---:|---:|---:|---:|
+| saltfell_steading | 1 | 0 | 5 | 1 | 7 |
+| lowe_barrows | 0 | 11 | 2 | 0 | 13 |
+| kettle_fjord | 5 | 1 | 2 | 0 | 8 |
+| tarnhall | 2 | 4 | 4 | 0 | 13 |
+| thornwold | 2 | 2 | 55 | 0 | 59 |
+| shepherds_reach | 54 | 0 | 6 | 0 | 60 |
+| coldwell | 18 | 6 | 1 | 0 | 29 |
+
+(Tarnhall and the Coldwell totals include 2 and 4 threshold steps, and one Tarnhall entry seen in one state only.)
+
+**To route, largest first:**
+1. **The Coldwell well-houses** (`wellhouse_0` at 900, -495; `wellhouse_1` at 900, -461) stand on the 45° corrie wall: ground runs from 17 m below to 12 m above the floor across each footprint, and both doors open into the slope. Needs moving or pads cut: a design call.
+2. **The Reach's flock:** 54 living ewes are walked through (`"collide": false` because `FlockWander` moves them).
+3. **The Coldwell's frozen figures:** 10 `unsung.glb` and 9 `upwalker.glb` dressing figures with no blocker.
+4. **Thornwold:** two `rime_stag.glb` (6 × 5.9 × 5 m) walked through; 49 hedge segments whose box stands clear of the drawn hedge.
+5. **Hearthstones, every area:** the kerb is 2.2 m across and the collider is a 0.38 m capsule in the fire: the kerb is walked through and the middle is an unseen post.
+6. **Landmarks:** `lm_wellhead` (7.5 m, blocker far smaller), `lm_sheiling` (blocker wider than drawn), `lm_barrow_door` ×4, `lm_high_seat`, `lm_guest_post`, `lm_charcoal_clamp`.
+7. **Kettle:** `drying_rack` ×2 and `net_frame` ×3 placed `"collide": false`.
+8. **Tarnhall:** a 0.82 m step at both ends of a 25 × 1.4 m timber box (185/210, 25, -334).
+
+**Limits of the audit, as its author states them:** it tests only within about a metre of navmesh joined to the starts and hearths; it samples, so a bare patch under about 0.7 m² on a partly solid mesh is missed; it does not find steps or ditches in open ground that the navmesh bridges (the Reach ditch was found by a test walker falling in, not by the audit); deck sides, stairs and ramps have no check of their own; it has not run on a GPU or Windows build.
+
+**A note on the killed test runs earlier today:** the collision agent twice ran a kill that matched every headless Godot on this box; that is what cut off several of my runs. It stopped when told. Nothing was lost beyond re-runs.
+
 ## 2026-11-11 (night, 2): `fix/playtest-1` — playtest items 2 and 3 merged
 
 **Suites on the merged branch (items 1, 2, 3 + the Lowe fix), run locally, all 0 failures:** `smoke` 11, `prop_hit` 65 (new), `grounded` 304 (new), `leftovers` 125 (new), `leftovers_longhouse` 28 (new), `combat` 22, `boss` 27, `encounters` 66, `audio` 40, `anim` 148, `lowe` 25. **Walks on the merged branch, all 0 failures:** `fullslice` 106, `fullgame_lowe` 194, `fullgame_kettle` 197, `fullgame_tarnhall` 211, `fullgame_thornwold` 160, `fullgame_reach` 195, `fullgame_coldwell` 178. Not re-run here: the two ending walks, and the default full suite as a whole.
