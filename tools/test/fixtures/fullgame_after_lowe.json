@@ -33,15 +33,7 @@
 			"state": 0
 		}
 	},
-	"breathmark": {
-		"amount": 1395,
-		"area": "lowe_barrows",
-		"pos": [
-			-12.8696994781494,
-			41.0915107727051,
-			-164.830657958984
-		]
-	},
+	"breathmark": null,
 	"flags": {
 		"bought_turf_song": true,
 		"difficulty": "gentle",
@@ -78,11 +70,11 @@
 		"area": "lowe_barrows",
 		"difficulty": "gentle",
 		"ending": "",
-		"level": 11,
-		"play_s": 1087.09990013268,
-		"saved_at": 1794352669.21062
+		"level": 10,
+		"play_s": 1127.32456641104,
+		"saved_at": 1794355759.52397
 	},
-	"play_s": 1087.09990013268,
+	"play_s": 1127.32456641104,
 	"player": {
 		"armour": {
 			"body": "armour_traveller_coat",
@@ -95,7 +87,7 @@
 			"heart": 14,
 			"kinship": 8,
 			"lungs": 8,
-			"might": 12,
+			"might": 11,
 			"wind": 8
 		},
 		"attuned_song": "turf_song",
@@ -117,13 +109,13 @@
 			"turf_song": 1.0,
 			"turf_spade": 1.0
 		},
-		"level": 11,
+		"level": 10,
 		"pos": [
 			39.9788284301758,
 			45.5835037231445,
 			-204.815567016602
 		],
-		"warmth": 0,
+		"warmth": 1642,
 		"weapon": "hewing_blade",
 		"weapon_level": 1
 	},
