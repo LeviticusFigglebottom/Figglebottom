@@ -759,7 +759,24 @@ func _run() -> void:
 	print("== resume from %s" % start_fixture)
 	world = (load("res://scenes/world.tscn") as PackedScene).instantiate()
 	add_child(world)
-	var began := await _until(func(): return Game.player != null and is_instance_valid(Game.player), 60.0)
+	if not DisplayServer.get_name().contains("headless"):
+		# with a window (the shots run) the world scene opens on its real
+		# front door: let the house card go and resume the hearth
+		await _until(func(): return _child_of_type(world, "res://src/ui/house_card.gd") != null, 30.0)
+		await _secs(1.0)
+		var key := InputEventKey.new()
+		key.keycode = KEY_SPACE
+		key.pressed = true
+		get_tree().root.push_input(key)
+		var title: Node = await _wait_child("res://src/ui/title_screen.gd", 240.0)
+		if title != null:
+			await _secs(1.0)
+			var mb: Array = title._main_box.get_children().filter(func(c): return c is Button)
+			mb[0].pressed.emit()
+			await ticks(4)
+			var sb: Array = title._slots_box.get_children().filter(func(c): return c is Button)
+			sb[0].pressed.emit()
+	var began := await _until(func(): return Game.player != null and is_instance_valid(Game.player), 240.0)
 	check(began, "the hearth resumes: the Bearer stands in the world")
 	if not began:
 		finish()
