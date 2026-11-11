@@ -85,7 +85,8 @@
     0.78,
     0.84
    ],
-   "fog_density": 0.0045
+   "fog_density": 0.0045,
+   "sun_energy": 1.5
   }
  },
  "weather": {

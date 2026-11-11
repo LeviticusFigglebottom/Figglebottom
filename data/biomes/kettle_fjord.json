@@ -76,7 +76,8 @@
     0.44
    ],
    "ambient_energy": 1.15,
-   "sky_contribution": 0.4
+   "sky_contribution": 0.4,
+   "sun_energy": 2.1
   },
   "rime": {
    "sun_rot": [
@@ -94,7 +95,8 @@
     0.8
    ],
    "fog_density": 0.004,
-   "vol_density": 0.01
+   "vol_density": 0.01,
+   "sun_energy": 1.5
   }
  },
  "weather": {
