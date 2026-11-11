@@ -112,8 +112,13 @@ def whirl(rig, fps, n, w, atk, **_):
         keys += spin_span(rig, fps, t, w + h, cut, cut, th, th + 360.0, "lin", step=0.07)
         th, t = th + 360.0, w + h
     stop = math.ceil((th + 170.0) / 360.0) * 360.0
-    brake = dict(cut, hips=[0, 0.04, -0.26, 0, 12, 0], chest=[30, 10, -4],
-                 rhand=[0.30, 0.56, 1.02], lhand=[-0.60, -0.30, 1.16])
+    # the skid: side-on and sunk over a braced front foot, the leading blade
+    # brought down across the body as a guard, the trailing one tucked back
+    # at the hip (it used to stop with both arms flung out level)
+    brake = dict(cut, hips=[0.02, 0.06, -0.30, -24, 14, 0], chest=[-16, 14, -4], head=[36, 4],
+                 rhand=[0.10, 0.50, 1.06], lhand=[-0.30, -0.16, 0.84],
+                 rpole=[0.7, -0.3, -0.7], lpole=[-0.5, -0.8, -0.3],
+                 footR=[0.10, 0.30, 0, -12, 0], footL=[-0.08, -0.20, 0, 22, 12])
     keys += spin_span(rig, fps, t, t + 0.26, cut, brake, th, stop, "out")
     keys += [(t + 0.50, "inout", spin(rig, brake, stop)), (t + 0.98, "inout", _turned(n, stop))]
     return keys
@@ -593,6 +598,43 @@ def kneel_fall(rig, fps, n, lean=1.0, **_):
                  (1.96, "in", over), (2.14, "out", slack), (2.6, "inout", slack))
 
 
+def drover_fall(rig, fps, n, **_):
+    """The Drover's death: the same stopping (kneel_fall), but he is too
+    long to stay folded. From his knees he tips on over his hands and goes
+    down his full length, face to the turf, one arm under his head, and the
+    last thing to move is his heels settling."""
+    k = [(t * 0.8, e, c) for t, e, c in kneel_fall(rig, fps, n)[:-1]]   # to the fold over his knees, a little quicker
+    t = k[-1][0]
+    tip = {"hips": [0, 0.46, -0.66, 0, 70, 0], "chest": [0, 26, 0], "head": [30, 0], "fists": False,
+           "footR": [0.05, -0.38, -0.02, 0, 84], "footL": [-0.05, -0.34, -0.02, 0, 84],
+           "rhand": [0.36, 0.98, 0.10], "lhand": [-0.22, 1.16, 0.10],
+           "rpole": [1.0, 0.0, 0.4], "lpole": [-1.0, 0.0, 0.4]}
+    flat = dict(tip, hips=[0, 0.52, -0.80, 0, 86, 0], chest=[0, 4, 0], head=[56, -8],
+                footR=[0.10, -0.42, -0.04, -12, 88], footL=[-0.10, -0.38, -0.04, 12, 88],
+                rhand=[0.42, 0.92, 0.07], lhand=[-0.16, 1.24, 0.07])
+    rest = dict(flat, hips=[0, 0.52, -0.82, 0, 88, 0], head=[60, -10],
+                footR=[0.14, -0.42, -0.05, -20, 90], footL=[-0.13, -0.38, -0.05, 18, 90])
+    return k + [(t + 0.42, "in", tip), (t + 0.62, "out", flat), (t + 1.1, "inout", rest), (t + 1.3, "inout", rest)]
+
+
+# ----------------------------------------------------------- Old Calder
+def calder_sit(rig, fps, n, **_):
+    """Old Calder sat on the wall he has finished (loop): low, knees apart,
+    hands on his knees, an old back. He breathes, looks along the wall, and
+    his thumb goes down the tally stick at his belt."""
+    sat = {"hips": [0, -0.16, -0.38, 0, -6, 0], "chest": [0, 16, 0], "head": [0, 4], "fists": False,
+           "footL": [-0.10, 0.20, 0, 14, 0], "footR": [0.10, 0.24, 0, -14, 0],
+           "rhand": [0.24, 0.26, 0.60], "lhand": [-0.24, 0.24, 0.60],
+           "rrot": None, "lrot": None,
+           "rpole": [0.9, -0.5, 0.1], "lpole": [-0.9, -0.5, 0.1]}
+    breath = dict(sat, hips=[0, -0.16, -0.375, 0, -7, 0], chest=[0, 13, 0], head=[0, 2])
+    look = dict(breath, chest=[14, 14, 0], head=[36, 0])
+    tally = dict(sat, chest=[-8, 20, 0], head=[-20, 22], lhand=[-0.26, 0.06, 0.74], lpole=[-0.9, -0.6, 0.3])
+    return [(0.0, "inout", sat), (1.6, "inout", breath), (3.2, "inout", sat), (4.6, "inout", look),
+            (6.4, "inout", look), (7.6, "inout", sat), (9.0, "inout", tally), (10.6, "inout", dict(tally, lhand=[-0.26, 0.06, 0.66])),
+            (12.0, "inout", sat)]
+
+
 # ============================================================== Coldwell
 def shoulder_shove(rig, fps, n, w, atk, **_):
     """The Upwalker turns side-on and drops the near shoulder, arms tucked,
@@ -701,14 +743,15 @@ def unsung_break(rig, fps, n, **_):
 
 # ------------------------------------------------------- the Fellcaller
 def _horn_up(tilt=0.0, rise=0.0):
-    """Her right hand cupped at the mask (the horn itself is skinned to her
-    belt and cannot be lifted); tilt 1 = thrown right back, calling at the
-    sky."""
+    """The horn in her right fist, its mouthpiece at the mask (the prop is
+    mounted for these clips: clip_meta models.fellcaller.held; the horn on
+    her belt is part of her mesh and stays there); tilt 1 = thrown right
+    back, calling at the sky."""
     return {"hips": [0, -0.02 - 0.06 * tilt, 0.0 + 0.04 * rise, 0, -4 - 10 * tilt, 0],
             "chest": [0, -4 - 20 * tilt, 0], "head": [0, -6 - 30 * tilt],
-            "rhand": [0.09, 0.25 - 0.12 * tilt, 1.57 + 0.16 * tilt], "rpole": [1.0, -0.2, -0.1 + 0.3 * tilt],
+            "rhand": [0.07, 0.17 - 0.42 * tilt, 1.66 + 0.10 * tilt], "rpole": [1.0, -0.2, -0.1 + 0.3 * tilt],
             "rrot": [180, 0, -90],   # fingers up, palm across the mouth
-            "lhand": [-0.36, 0.02 - 0.16 * tilt, 0.96], "lpole": [-0.6, -0.8, 0.0], "fists": False,
+            "lhand": [-0.36, 0.02 - 0.16 * tilt, 0.96], "lpole": [-0.6, -0.8, 0.0], "fists": True,
             "footL": [0, 0, 0.03 * rise, 0, 14 * rise], "footR": [0, 0, 0.03 * rise, 0, 14 * rise]}
 
 
@@ -852,34 +895,40 @@ def fc_arms_up(rig, fps, n, **_):
 
 # -------------------------------------------------------- the Leadvoice
 # She never strikes and never reaches for the Bearer. Everything is small:
-# the head, the breath in the chest, the arms round the child. Hands are
-# keyed from where her own stance holds them (`rel`), so the same beats sit
-# on her seated pose and on her feet.
+# the head, the breath in the chest, the arms round the child.
+LV_CLOSE = (48.0, 100.0)   # an arm brought round the child: degrees inward, degrees raised forward
+
+
 def _rel(n, key, dr=0.0, df=0.0, du=0.0):
     v = n[key]
     return [v[0] + dr, v[1] + df, v[2] + du]
 
 
 def _lv(n, lift=0.0, pitch=0.0, head=(0, 0), close=0.0, rise=0.0, open_=0.0):
-    """lift: chest opened (breath). pitch: bowed over the child. (close and
-    open_ are kept for the callers' intent; see below.)
+    """lift: chest opened (breath). pitch: bowed over the child. close: her
+    arms brought round it (1 = closed). open_: an arm let fall a little
+    open, away from it.
 
-    Her model decides what can move. The swaddle is bound to her chest, and
-    the ice her cloak has become is skinned to her ARMS and legs: move a
-    wrist, or even an elbow's swivel, and a slab of the spring comes up off
-    the ground with it. So her hands stay exactly where her stance has them
-    (the rest controls pin them in the world while the trunk bows over
-    them), her legs hang from a pelvis that never turns (legs_fk), and
-    everything she does is in her spine, her shoulders and her head."""
+    Her model decides what can move. The swaddle is bound to her chest. Her
+    cloak and the ice at its hem hang from her hips and spine
+    (tools/art/fix_leadvoice_cloak.py; they used to be skinned to her
+    forearms and fingers, and came up off the ground with them), so the
+    pelvis never turns and her legs hang from it (legs_fk). Her real arms
+    are one rigid piece each on the upper-arm bones: they are keyed by
+    rotation in the chest's frame (cbones), never by a wrist target, so they
+    ride the bow and close the same way sat or stood."""
+    yaw, up = LV_CLOSE[0] * close - 10.0 * open_, LV_CLOSE[1] * close
     return {"hips": [0, 0, rise, 0, 0, 0], "legs_fk": True,
             "chest": [0, pitch - lift, 0], "head": [head[0], head[1]], "fists": False,
-            "rhand": n["rhand"], "lhand": n["lhand"], "rrot": n["rrot"], "lrot": n["lrot"],
+            "rhand": None, "lhand": None, "rrot": None, "lrot": None,
+            "cbones": {"LeftArm": [-yaw, -up, 0], "RightArm": [yaw, -up, 0]},
             "bones": {"LeftShoulder": [0, 0, -lift * 0.5], "RightShoulder": [0, 0, lift * 0.5]}}
 
 
 def _lv_n(rig, n):
-    # (open hands: the ice at her hems is skinned to her fingers too)
-    return dict(n, legs_fk=True, fists=False)
+    # no wrist targets: her arms hang as her stance has them
+    return dict(n, legs_fk=True, fists=False, rhand=None, lhand=None, rrot=None, lrot=None,
+                cbones={"LeftArm": [0, 0, 0], "RightArm": [0, 0, 0]})
 
 
 def lv_held_note(rig, fps, n, w, atk, amp=1.0, **_):
@@ -930,11 +979,13 @@ def lv_come_up(rig, fps, n, w, atk, **_):
 
 
 def lv_shelter(rig, fps, n, w, atk, amp=1.0, **_):
-    """She folds herself down over the child, both arms round it, her head
-    over its head. Held; and slowly up again."""
+    """She folds herself down over the child and both arms come round it,
+    slowly, the left a moment before the right, her head over its head.
+    Held, with one small rock; and slowly up again, the arms last."""
     n = _lv_n(rig, n)
-    half = _lv(n, pitch=14 * amp, head=(0, 16), close=0.6)
-    over = _lv(n, pitch=34 * amp, head=(0, 34), close=1.0)
-    rock = _lv(n, pitch=38 * amp, head=(0, 38), close=1.0)
+    half = _lv(n, pitch=12 * amp, head=(0, 14), close=0.45)
+    over = _lv(n, pitch=28 * amp, head=(0, 32), close=1.0)
+    rock = _lv(n, pitch=31 * amp, head=(0, 36), close=1.06)
+    up = _lv(n, pitch=8 * amp, head=(0, 12), close=0.7)
     return _keys(n, (w * 0.5, "inout", half), (w, "inout", over), (w + 0.6, "inout", rock), (w + 1.2, "inout", over),
-                 (w + 2.2, "inout", n))
+                 (w + 1.9, "inout", up), (w + 2.8, "inout", n))
