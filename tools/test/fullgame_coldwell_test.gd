@@ -433,7 +433,8 @@ func _leg_seam() -> bool:
 	check(ti >= 0 and seen.slice(ti + 1) == ["THE UPWATER"], "the region's card, then the place (%s)" % str(seen))
 	check(Game.current_area_id == "coldwell", "the seam does not carry him back")
 	await _shot("arrival_thaw")
-	var plaques := area.find_children("*", "LorePlaque", true, false)
+	# (the board at the foot; the points of interest up the water have their own)
+	var plaques := area.find_children("*", "LorePlaque", true, false).filter(func(pl): return String((pl as LorePlaque).text).begins_with("THE COLDWELL\n"))
 	check(plaques.size() == 1 and String((plaques[0] as LorePlaque).text) == "THE COLDWELL\n\nThe river's source, under the glacier's lip.",
 		"the plaque at the foot names it")
 	check(Game.find_hearth("hs_upwater") != null and Game.find_hearth("hs_ice_falls") != null

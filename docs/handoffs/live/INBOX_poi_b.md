@@ -2,6 +2,32 @@
 
 *Branch `feat/poi-kettle-tarnhall-coldwell`. Newest first. The lead answers in `LOCAL_OUTBOX.md`.*
 
+## 2026-11-11: the Coldwell done
+
+**State.** All four places of `POI.md` §8 are built by hand in `tools/gen_coldwell.py` (the section marked "points of interest"). Three ledges are cut in `tools/high_land.py` (`LEDGES`, `_ledges`, `ledge_frame`), each level with the path where it leaves it:
+
+| Place | Ledge | Side |
+|---|---|---|
+| the Flower Bank | 6 × 3 m, 12 m above the Upwater hearth | uphill, into the bank |
+| the Shelter at the Ice-Falls | 8 × 5 m, beside the Ice-Falls hearth | uphill, into the bank |
+| the Sitting Place | 6 × 4 m, 6 m above the Wellhead Steps hearth, railed on its two open sides | downhill, on the shoulder |
+| the Thread-Post | none (the wellhead's level) | — |
+
+**To regenerate.** `python3 tools/gen_coldwell.py`, then `python3 tools/audit_edges.py coldwell`. The Reach's grid stops short of the lowest ledge, so its bins do not change.
+
+**New engine pieces.** `src/world/offering.gd` (the Melt flowers thrown in beside Maren and Wren: spends the item, sets `ks_melt_flowers`, Wren says her own repeat line). A spawner's `rise_time` in the area data overrides the roster's for that place (the walker on the shelter's bench: 2.4 s). `cw_shelter` collides as its own hollow shell, so the Bearer walks in under the roof.
+
+**Decisions taken, for the owner to overrule.**
+- *The Thread-Post stands at (`WX` - 18.5, `WZ` - 6), not at "about (`WX` - 21, `WZ` - 8)":* that spot is on the bank, 1.4 m up, where the level has started to rise. It is still 10 m from the frost veil. `unsung_level_a` moved 2 m to stand clear of it.
+- *The post carries eleven threads, as its two plaques say,* not "hundreds" as the `BIOMES.md` prompt says. The first reference image also hung a ring, a horn and a small iron weight on it; that was re-rolled.
+- *`POI.md`'s new canon (a thread tied at the wellhead for each of the year's dead) is built as written and still wants the owner's word.*
+- *The flowers on the bank are six modelled clumps set by hand.* The marsh-marigold and lady's-smock ground cover is the art/biomes session's.
+- *The ice-fall columns stand on the rock above the path in RIME only, and only here:* none were hung on Kettle's walls.
+
+**Tests.** New suite `poi_coldwell` (57 checks). `coldwell`, `coldwell_encounters` pass locally.
+
+**Variety props.** An offering cairn by the post and a water yoke by the trough.
+
 ## 2026-11-11: Tarnhall done
 
 **State.** All four places of `POI.md` §5 are built by hand in `tools/gen_tarnhall.py` (the section marked "points of interest"). Two grounds are widened in `tools/tarn_land.py`:

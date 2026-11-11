@@ -620,8 +620,8 @@ func _first_rest() -> void:
 	var kinds := {}
 	for e in _standing():
 		kinds[(e as Enemy).id] = int(kinds.get((e as Enemy).id, 0)) + 1
-	check(int(kinds.get("feast_guest", 0)) == 4 and int(kinds.get("cupbearer", 0)) == 2 and int(kinds.get("hall_champion", 0)) == 2
-		and int(kinds.get("host", 0)) == 1, "the frost-taken stand: four guests, two cupbearers, two champions, the Host (%s)" % str(kinds))
+	check(int(kinds.get("feast_guest", 0)) == 4 and int(kinds.get("cupbearer", 0)) == 4 and int(kinds.get("hall_champion", 0)) == 2
+		and int(kinds.get("host", 0)) == 1, "the frost-taken stand: four guests, the byre's two cupbearers and the cook-yard's two, two champions, the Host (%s)" % str(kinds))
 	var seats := _seated()
 	check(seats.size() == 5 and seats.all(func(g): return (g as Enemy).state == Enemy.ES.IDLE and (g as Enemy).vis.current_clip() == "sit_feast"),
 		"five guests sit white at the long table (%d)" % seats.size())
@@ -730,7 +730,9 @@ func _byres() -> void:
 	await _clear_near(12.0, 90.0)
 	check(await _take_alive("byre_cache", "Pry up"), "what the byre floor holds")
 	await _clear_near(12.0, 90.0)
-	check(not player.dead and _standing().filter(func(e): return (e as Enemy).id == "cupbearer").is_empty(), "both Cupbearers are down")
+	# (the cook-yard's pair, behind the hall, are off this road: POI.md 5.3)
+	check(not player.dead and _standing().filter(func(e): return (e as Enemy).id == "cupbearer" and (e as Enemy).global_position.z > -338.0).is_empty(),
+		"both Cupbearers are down")
 	await _shot("byre_rime")
 
 var _veil_node: FrostVeil = null

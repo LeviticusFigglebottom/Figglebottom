@@ -46,6 +46,52 @@ RING_R = 10.0
 WELL_Y = 157.0
 RIVER_OFF = 7.5            # the frozen river runs this far out from the path, on the downhill side
 PATH_HALF = 3.0
+# ledges cut beside the Upwater for its places (docs/lore/POI.md 8, 9): the
+# leg of UPWATER, how far along it (0..1), metres along the path, metres out
+# from the path's edge, and the side (+1 uphill into the bank, -1 downhill
+# onto the shoulder). Each is level with the path where it leaves it.
+LEDGES = {
+    "flower_bank": (1, 0.93, 6.0, 3.0, 1),
+    "stick_shelter": (4, 0.80, 8.0, 5.0, 1),
+    "sitting_place": (8, 0.63, 6.0, 4.0, -1),
+}
+LEDGE_EASE = 1.6           # a ledge's ends ease into the path's own climb over this
+
+
+def ledge_frame(name):
+    """(centre x, centre z, along (x, z), out (x, z), y) of a ledge: `out`
+    points away from the path, the centre is the middle of its level ground."""
+    i, f, _along, depth, side = LEDGES[name]
+    ax, az, ay = UPWATER[i]
+    bx, bz, by = UPWATER[i + 1]
+    ln = math.hypot(bx - ax, bz - az)
+    ux, uz = (bx - ax) / ln, (bz - az) / ln
+    ox, oz = uz * side, -ux * side            # (uz, -ux) is the uphill side
+    px, pz = ax + (bx - ax) * f, az + (bz - az) * f
+    mid = PATH_HALF + depth * 0.5
+    # level with the path as it lies there (the wellhead's flat lifts the last rise)
+    return px + ox * mid, pz + oz * mid, (ux, uz), (ox, oz), cold_land(px, pz, 0.0, ledges=False)
+
+
+_LEDGES = None
+
+
+def _ledges(x, z, land):
+    global _LEDGES
+    if _LEDGES is None:
+        _LEDGES = {n: ledge_frame(n) for n in LEDGES}
+    for n, (cx, cz, al, out, y) in _LEDGES.items():
+        if abs(x - cx) > 12.0 or abs(z - cz) > 12.0:
+            continue
+        _i, _f, along, depth, _side = LEDGES[n]
+        u = (x - cx) * al[0] + (z - cz) * al[1]
+        v = (x - cx) * out[0] + (z - cz) * out[1]
+        hu, hv = along * 0.5, depth * 0.5
+        # level over the ledge; eased into the path along its mouth and at its ends
+        w = (1.0 - smooth(hu, hu + LEDGE_EASE, abs(u))) * (1.0 - smooth(hv, hv + 0.9, v)) * smooth(-hv - 1.6, -hv + 0.4, v)
+        if w > 0.0:
+            land = _lerp(land, y + 0.06 * fbm(x * 0.4, z * 0.4, 1, 199), w)
+    return land
 
 
 def _seg(px, pz, ax, az, bx, bz):
@@ -118,7 +164,7 @@ def reach_land(x, z, h):
     return _lerp(h, h0, smooth(-250.0, -205.0, z))
 
 
-def cold_land(x, z, h):
+def cold_land(x, z, h, ledges=True):
     """The Upwater runs along the crest of the mountain's west shoulder: the
     frozen river on its north side, and beyond the river the land drops
     away to the valleys below (the way back over every region); the
@@ -145,6 +191,8 @@ def cold_land(x, z, h):
     if wd < 34.0:
         flat = WELL_Y + 0.15 * fbm(x * 0.3, z * 0.3, 1, 195)
         land = _lerp(flat, land, smooth(RING_R + 9.0, 30.0, wd))
+    if ledges:
+        land = _ledges(x, z, land)
     if x > WELLHEAD[0] + 14.0 or (wd > 22.0 and x > WELLHEAD[0] - 6.0):
         lip = _rise((max(x - WELLHEAD[0] - 14.0, wd - 22.0)) * 1.8, x, z, 191)
         lip = min(lip, 34.0 + 0.25 * max(0.0, wd - 40.0) + 6.0 * fbm(x * 0.02, z * 0.02, 2, 198))
