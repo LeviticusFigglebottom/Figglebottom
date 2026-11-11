@@ -199,3 +199,26 @@ Pairs: `docs/screens/look4_after_*.png`; before = the matching `look3_after_*` /
 ## Before/after cameras (pass 5)
 
 `tools/art/look5_shots.sh before|after [filter]`, 1280x720, `--shot-nohud`; pairs in `docs/screens/look5_{before,after}_*.png`. The gallery's veil cameras stand inside the veil, so each veil also has a camera 6-7 m out.
+
+| pair | area / state | camera | primitives before → after (lavapipe, tier 1) |
+|---|---|---|---|
+| thornwold_drove_road_rime (gallery camera, inside the road plug) | thornwold rime | 318.0,35.6,-315.0,-67.7,-4.0,70 | 5.21 M → 5.31 M |
+| thornwold_hedge_veil_rime (gallery camera, inside the veil) | thornwold rime | 440.0,39.4,-325.0,78.9,-4.0,70 | 2.41 M → 2.57 M |
+| veil_thornwold_front (before taken 2 m further back, inside a hedge line) | thornwold rime | 435.4,39.38,-322.4,-60.5,6.0,70 | 3.45 M → 2.60 M |
+| veil_tarnhall_front | tarnhall rime | 224.5,26.0,-331.6,112.0,4.0,65 | |
+| veil_reach_front | shepherds_reach rime | 648.1,78.45,-356.4,-23.0,4.0,65 | |
+| veil_saltfell_front | saltfell_steading rime | 2.6,23.7,-13.5,22.0,4.0,65 | |
+| tarnhall_long_table_thaw | tarnhall thaw | 197.0,26.0,-327.4,89.2,-4.0,70 | |
+| reach_sheilings_thaw | shepherds_reach thaw | 604.0,69.5,-306.0,18.4,-4.0,70 | |
+| coldwell_spring_thaw | coldwell thaw | 915.5,160.4,-474.5,-61.7,-24.0,60 | |
+| coldwell_river_dead_rime (after only) | coldwell rime | 757.9,97.5,-397.0,32.1,-6.0,60 | |
+
+The Tarnhall and Reach veil afters were taken before the last mist change (it is a lighter frost-white now, as in the Thornwold and Saltfell shots).
+
+## Verdict and what is still open (pass 5)
+
+- **Fixed for real:** the frozen thorn. It is branching wood with thorns and snow, from inside the plug and from across the ring. The veils have a body, a frame and a region each. The Long Table, the long fires, the spring and the river dead no longer show a primitive or a bind pose.
+- **Draw cost: the 2.5 M target is missed by 3% at the hedge_veil camera** (2.57 M; it was 2.41 M with the Tripo section). The modelled section is 19k triangles close up against 3k; it is held to 11 m and casts no shadow. The drove-road view is unchanged at 5.3 M and that is trees, not thorn. Next step if it matters on the GPU: a 9k middle mesh between 6 m and 13 m.
+- **Not looked at in game:** the Lowe, Kettle and Coldwell veils (sod, sheet ice, spring ice), the veils from edge-on, the salt pan, woodpile, net frame and rime spike in place (their Blender renders were checked), the masks on their pegs, the ewes moving (stills only; the test proves they walk and stay tethered), the spring in RIME.
+- **Known rough edges:** snow lumps on the thorn stems still read a little regular close up; bark stretches on the thickest stems; the veil's refraction was only seen under lavapipe; the ewes' head swing is a vertex bend, not a rig, and their legs do not step when they amble.
+- **Still wanted from Tripo when it is allowed:** rigged ewes. The eight queued props are no longer needed.
