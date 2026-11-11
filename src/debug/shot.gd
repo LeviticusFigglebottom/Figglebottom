@@ -509,9 +509,9 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 	if _stage == "bearer_hold":   # the Bearer alone, from his front quarter, the light in frame
 		tgt = p.global_position + Vector3.UP * 1.25
 		cam.global_position = tgt + axis.normalized() * 2.9 + side * 2.2 + Vector3.UP * 0.25
-	elif _stage == "bearer_bow":  # down the bow arm's side: stave, string and shaft all in profile
+	elif _stage == "bearer_bow":  # from ahead on his open side: stave, string, shaft and the drawing hand
 		tgt = p.global_position + Vector3.UP * 1.3
-		cam.global_position = tgt - side * 2.9 + axis.normalized() * 0.6 + Vector3.UP * 0.2
+		cam.global_position = tgt - side * 3.0 + axis.normalized() * 1.9 + Vector3.UP * 0.15
 	cam.look_at(tgt, Vector3.UP)
 	cam.fov = 48.0
 

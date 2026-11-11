@@ -5378,8 +5378,8 @@
     0.72,
     0.6
    ],
-   "trail_weight": 1.35,
-   "trail_life": 0.22,
+   "trail_weight": 1.0,
+   "trail_life": 0.16,
    "trail_energy": 0.15
   },
   "turf_spade": {
@@ -5483,8 +5483,8 @@
     1.22
    ],
    "_note": "the long war-knife: right hand at origin high on the two-hand grip, blade +Y, edge +Z",
-   "trail_weight": 1.2,
-   "trail_life": 0.18
+   "trail_weight": 0.8,
+   "trail_life": 0.13
   },
   "quiver": {
    "scene": "res://assets/models/weapons/quiver.glb",
