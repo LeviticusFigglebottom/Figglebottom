@@ -26,12 +26,23 @@ def height(x, z):
     return L.height(x, z)
 
 
+# --- progression gates (ADR 0015)
+DROVE_OUT = [(214.0, -338.5), (228.0, -344.5), (244.0, -344.5), (256.0, -337.0), (262.0, -328.0),
+             (266.0, -324.5), (280.0, -323.0)]
+# --- end progression gates
+
+
 def path_weight(x, z):
     rd, _, _ = T.road(x, z)
     best = 1.0 - smooth(2.4, 3.6, rd) if x < 133 else 0.0
     cd, _ = T.causeway_d(x, z)
     if T.tarn_e(x, z) < 1.0:
         best = max(best, 1.0 - smooth(1.5, 2.8, cd))
+    # --- progression gates (ADR 0015): the way on, the drove-road out by the notch
+    for i in range(len(DROVE_OUT) - 1):
+        d = _seg_dist(x, z, *DROVE_OUT[i], *DROVE_OUT[i + 1])
+        best = max(best, 1.0 - smooth(1.3, 2.9, d + 0.5 * fbm(x * 0.4, z * 0.4, 1, 30)))
+    # --- end progression gates
     return best
 
 
