@@ -55,6 +55,7 @@ var hitbox_shape: CollisionShape3D
 ## chest-projected `hitbox` remains for the unarmed and for attacks flagged
 ## "body_hitbox" (charges, horn butts).
 var blade_hitbox: Hitbox
+var _prop_strike: PropStrike = null   # the blade against props and walls (armed foes only)
 ## Unarmed humanoids (the rimewalker's grown ice clubs) strike with their
 ## hands: one hit volume whose sphere shapes ride the hand bones each tick
 ## (clip_meta.json models.<id>.unarmed). One Area per swing, so a two-handed
@@ -591,6 +592,8 @@ func _st_attack(dt: float) -> void:
 		var ht := w + float(h) / sm
 		if t >= ht and t < ht + act:
 			in_strike = true
+	if in_strike and _prop_strike != null and _prop_strike.live():
+		_sweep_props()
 	if in_strike:
 		var lunge := float(_atk.get("lunge", 1.5))
 		velocity.x = _atk_dir.x * lunge
@@ -652,6 +655,7 @@ func _strike() -> void:
 		"none": pass
 		_:
 			_open_hitbox()
+			_begin_prop_strike()
 			if vis.trail != null:
 				vis.trail.visible = true
 			AudioDirector.sfx_at("res://assets/audio/swing.wav", global_position, -11.0,
@@ -1210,6 +1214,26 @@ func _sync_fists() -> void:
 ## The fist volume at `side` in world space (for tests and debug).
 func fist_position(side: String) -> Vector3:
 	return fist_hitbox.global_position + (_fists[side]["shape"] as CollisionShape3D).position
+
+## An armed foe's blade raises chips and sparks from the world as the
+## Bearer's does (game.json prop_hit foe_weapons), when he is near enough
+## to see it. The unarmed and the far away trace nothing.
+func _begin_prop_strike() -> void:
+	if vis.weapon_mount == null or vis.trail == null or not bool(DB.tuning("prop_hit/foe_weapons", true)):
+		return
+	if target == null or not is_instance_valid(target) \
+			or global_position.distance_to(target.global_position) > float(DB.tuning("prop_hit/foe_range", 28.0)):
+		if _prop_strike != null:
+			_prop_strike.end()
+		return
+	if _prop_strike == null:
+		_prop_strike = PropStrike.new(self)
+	_prop_strike.begin(false)
+
+func _sweep_props() -> void:
+	var xf := vis.weapon_xform()
+	_prop_strike.sweep(get_world_3d().direct_space_state,
+			xf * Vector3(0, float(vis.trail.get("base_up")), 0), xf * Vector3(0, float(vis.trail.get("tip_up")), 0))
 
 func _end_all_swings() -> void:
 	if fist_hitbox != null:
