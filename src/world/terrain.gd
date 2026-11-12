@@ -173,17 +173,26 @@ func contains(x: float, z: float) -> bool:
 	return x >= origin.x and z >= origin.y and x <= origin.x + (nx - 1) * cell \
 		and z <= origin.y + (nz - 1) * cell
 
+## Cache warming (AreaBuilder.warm_cache): build() computes and stores the
+## arrays and makes no mesh and no collider.
+var cache_only := false
+
+func cache_key() -> String:
+	return StreamCache.key(["terrain", origin, cell, nx, nz, int(spec.get("chunk", 32)), LOD1_STRIDE, heights, splat])
+
 func build(layer_bit: int) -> void:
 	BuildProf.lap("terrain setup")
 	var chunk := int(spec.get("chunk", 32))
 	# the chunk arrays are a pure function of the grids: kept on disk
-	var ck := StreamCache.key(["terrain", origin, cell, nx, nz, chunk, LOD1_STRIDE, heights, splat])
+	var ck := cache_key()
 	var cached: Variant = StreamCache.load_var("terrain", ck)
 	var hit: bool = cached is Array
 	var store: Array = []
 	var k := 0
 	var cj := 0
 	while cj < nz - 1:
+		if AreaBuilder._cancelled():
+			return     # (a worker build nobody waits for; nothing is cached)
 		var ci := 0
 		while ci < nx - 1:
 			var w := mini(chunk, nx - 1 - ci)
@@ -215,6 +224,8 @@ func build(layer_bit: int) -> void:
 	BuildProf.lap("terrain mesh")
 	_build_far()
 	BuildProf.lap("terrain horizon")
+	if cache_only:
+		return
 	_build_collider(layer_bit)
 	BuildProf.lap("terrain collider")
 
@@ -272,6 +283,8 @@ func _chunk_mesh(ci: int, cj: int, w: int, d: int, stride: int, arrays: Variant 
 ## What SurfaceTool.commit() does with the arrays, in two steps so the arrays
 ## can come from disk.
 func _surface(arrays: Array) -> ArrayMesh:
+	if cache_only:
+		return null
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	mesh.surface_set_material(0, material())

@@ -169,6 +169,7 @@ func _walk_to(to: Vector3, max_ticks := 900, tol := 1.0, fight := true) -> bool:
 	return false
 
 func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
+	await nav_wait()     # (a gate just opened: the routes are being baked again)
 	var p := _path(player.global_position, to)
 	if p.size() < 2:
 		return player.global_position.distance_to(to) < 1.5
@@ -414,6 +415,7 @@ func _cross(to_area: String, via: Vector3, max_ticks := 9000, fight := false) ->
 	var stilled0 := _stilled
 	var wg := _way_gate(to_area)
 	if wg != null:
+		await nav_wait()     # (the release's re-bake: the walk paths through the gate)
 		# the walk follows the gates: the way on opens with the release
 		check(_gate_open(wg) and World.flag(wg.open_flag), "the way on to %s stands open: %s" % [to_area, wg.open_flag])
 	_halt = func(): return Game.current_area_id == to_area

@@ -17,6 +17,11 @@ var nav_rime: NavigationRegion3D
 var terrain: Terrain = null
 ## Terrain areas bake only the playable footprint (the horizon is scenery).
 var nav_aabb := AABB()
+## A runtime re-bake (an opened gate, the lowered bridge) is asked for and
+## not yet in the map: the old navmesh still answers. nav_ready fires each
+## time fresh navmeshes are in the map.
+signal nav_ready
+var nav_pending := false
 
 var _applied: int = -1
 
@@ -228,6 +233,28 @@ func bake_navmeshes() -> void:
 		nav_rime.enabled = _applied == RH.WState.RIME
 		_set_layer_collision(thaw_layer, _applied != RH.WState.RIME)
 		_set_layer_collision(rime_layer, _applied == RH.WState.RIME)
+	if Game.stream == null or not Game.stream.rebake_waits(self):
+		nav_pending = false
+	nav_ready.emit()
+
+## The routes changed while the area is lived in (a gate opened, the bridge
+## came down): bake again without a frozen frame (Streamer.rebake, ADR 0014).
+## The old navmesh stays in the map until the new one replaces it, in one
+## frame. `delay_s`: what moves into place first (the bridge deck).
+## Without the streamer it is the synchronous bake, as it always was.
+func rebake_navmeshes(delay_s := 0.0) -> void:
+	nav_pending = true
+	if Game.stream != null and Game.stream.enabled() and is_inside_tree() and not inert:
+		Game.stream.rebake(self, delay_s)
+	elif delay_s > 0.0 and is_inside_tree():
+		get_tree().create_timer(delay_s, false).timeout.connect(bake_navmeshes)
+	else:
+		bake_navmeshes.call_deferred()
+
+## For whoever must have the new routes (a test, a scripted walk).
+func nav_settled() -> void:
+	while nav_pending:
+		await nav_ready
 
 ## Both navmeshes as baked or read from the cache by NavBaker (the streamed
 ## path, ADR 0014): the same regions bake_navmeshes leaves, with no bake.
@@ -253,6 +280,9 @@ func apply_nav(thaw_mesh: NavigationMesh, rime_mesh: NavigationMesh) -> void:
 	if _applied >= 0 and not inert:
 		nav_thaw.enabled = _applied != RH.WState.RIME
 		nav_rime.enabled = _applied == RH.WState.RIME
+	if Game.stream == null or not Game.stream.rebake_waits(self):
+		nav_pending = false
+	nav_ready.emit()
 
 ## A neighbour made ready ahead of a seam (Streamer) stands in the tree unseen
 ## and inert: not drawn, nothing processing, its bodies out of the physics

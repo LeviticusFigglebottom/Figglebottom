@@ -175,10 +175,153 @@ func areas_alive() -> int:
 func crossing() -> bool:
 	return _crossing
 
+# ---------------------------------------------------------------- warming the cache
+
+## Off for a test that counts hits and misses itself.
+var warm_ahead := true
+var _wc_task := -1
+var _wc_id := ""
+var _wc_did := false
+var _wc_checked: Dictionary = {}     # area ids whose entries are known to be there
+var _wc_idle_s := 0.0
+## Areas whose entries were computed in idle time this run.
+var warmed: Array = []
+
+## With nothing else to do, the live area's neighbours have their missing
+## cache entries (terrain arrays, ground cover) computed on a low-priority
+## worker, one area at a time: the first walk to that seam then finds them
+## and the area is made ready in a second or so, not ten. Nothing is built
+## of them here. A real preload or a synchronous build calls it off at once.
+func _tick_cache_warm(dt: float) -> void:
+	if _wc_task >= 0:
+		if not WorkerThreadPool.is_task_completed(_wc_task):
+			return
+		WorkerThreadPool.wait_for_task_completion(_wc_task)
+		_wc_task = -1
+		if not AreaBuilder.cancel_worker:
+			_wc_checked[_wc_id] = true
+			if _wc_did:
+				warmed.append(_wc_id)
+		return
+	if not warm_ahead or not bool(cfg("warm_cache", true)) or not StreamCache.enabled or not enabled() \
+			or not idle() or Game.arena_locked or Game.current_area == null or not is_instance_valid(Game.current_area):
+		_wc_idle_s = 0.0
+		return
+	_wc_idle_s += dt
+	if _wc_idle_s < float(cfg("warm_idle_s", 2.0)):
+		return
+	for p in (Game.current_area.get_meta("def", {}) as Dictionary).get("portals", []):
+		var to := String((p as Dictionary).get("to", ""))
+		if to == "" or to == Game.current_area_id or _wc_checked.has(to):
+			continue
+		_wc_id = to
+		_wc_did = false
+		_wc_idle_s = 0.0
+		AreaBuilder.cancel_worker = false
+		_wc_task = WorkerThreadPool.add_task(_cache_warm_worker.bind(to), false, "cache warm " + to)
+		return
+
+func _cache_warm_worker(area_id: String) -> void:
+	_wc_did = AreaBuilder.warm_cache(area_id)
+
+func cache_warming() -> String:
+	return _wc_id if _wc_task >= 0 else ""
+
+## Call the warming off and wait for it to let go (it looks at the flag
+## every row of ground: milliseconds).
+func _stop_cache_warm() -> void:
+	if _wc_task < 0:
+		return
+	AreaBuilder.cancel_worker = true
+	while not WorkerThreadPool.is_task_completed(_wc_task):
+		BuildLock.pump()     # (never sleep on a worker: it may be waiting on this thread)
+		OS.delay_usec(100)
+	WorkerThreadPool.wait_for_task_completion(_wc_task)
+	_wc_task = -1
+	AreaBuilder.cancel_worker = false
+	_wc_idle_s = 0.0
+
+# ---------------------------------------------------------------- runtime re-bake
+
+var _rb_area: Area = null
+var _rb: NavBaker = null
+var _rb_at_us := 0
+var _rb_own_window := false
+var _rb_t0 := 0
+## The last runtime re-bake: {area, ok, ms (asked to in the map), from_cache,
+## bake_ms, and the BuildProf window when no other was open}.
+var last_rebake: Dictionary = {}
+
+## Area.rebake_navmeshes: both navmeshes again, budgeted and in the
+## background (NavBaker), the old ones live until then. A second asking
+## (two gates on one release) starts over from the colliders as they are.
+func rebake(area: Area, delay_s := 0.0) -> void:
+	if _rb != null:
+		_rb.cancel()
+		_rb = null
+	if _rb_area != null and _rb_area != area and is_instance_valid(_rb_area):
+		_rb_area.nav_pending = false
+		_rb_area.nav_ready.emit()
+		_rb_at_us = 0
+	if _rb_area == null:
+		_rb_t0 = Time.get_ticks_usec()
+		_rb_own_window = BuildProf.window_name() == ""
+		if _rb_own_window:
+			BuildProf.window_open("rebake")
+	_rb_area = area
+	_rb_at_us = maxi(_rb_at_us, Time.get_ticks_usec() + int(delay_s * 1000000.0))
+
+## True while `area` still has a re-bake coming (its nav_pending stays set).
+func rebake_waits(area: Area) -> bool:
+	return _rb_area == area
+
+func _end_rebake(ok: bool) -> void:
+	var area := _rb_area
+	last_rebake = {"area": area.area_id if is_instance_valid(area) else "", "ok": ok,
+		"ms": (Time.get_ticks_usec() - _rb_t0) / 1000.0,
+		"from_cache": _rb.from_cache.duplicate() if _rb != null else [false, false],
+		"bake_ms": _rb.bake_ms().duplicate() if _rb != null else [0.0, 0.0]}
+	if _rb_own_window and BuildProf.window_name() == "rebake":
+		last_rebake.merge(BuildProf.window_close())
+	_rb = null
+	_rb_area = null
+	_rb_at_us = 0
+	if is_instance_valid(area):
+		area.nav_pending = false
+		area.nav_ready.emit()
+
+func _tick_rebake(budget: int) -> void:
+	if _rb_area == null:
+		return
+	var area := _rb_area
+	if not is_instance_valid(area) or not area.is_inside_tree() or area.inert or not area.is_in_group("nav_src"):
+		if _rb != null:
+			_rb.cancel()
+		_end_rebake(false)     # the area was left: nothing to bake for
+		return
+	if _rb == null:
+		if Time.get_ticks_usec() < _rb_at_us or _nav_area == area:
+			return             # (the deck still coming down; the arrival's own bake still running)
+		if area.nav_thaw == null:
+			area.bake_navmeshes()    # never baked: the plain bake
+			_end_rebake(true)
+			return
+		_rb = NavBaker.new(area)
+	if not _rb.step(maxi(budget, 1000)):
+		return
+	if _rb.phase == NavBaker.P.DONE:
+		var ts := Time.get_ticks_usec()
+		area.apply_nav(_rb.meshes[0], _rb.meshes[1])
+		BuildProf.slice(area.area_id, "nav apply", ts)
+		_end_rebake(true)
+	else:
+		area.bake_navmeshes()
+		_end_rebake(false)
+
 ## Nothing coming, nothing going: the live area alone.
 func idle() -> bool:
 	return _prep == null and _dying.is_empty() and _garbage.is_empty() and _orphans.is_empty() \
-			and _late_i >= _late.size() and _nav == null and not _crossing
+			and _late_i >= _late.size() and _nav == null and not _crossing and _rb_area == null
 
 ## True for a node that stands in the tree but is no part of the live world
 ## (the inert neighbour, an area being freed).
@@ -244,6 +387,8 @@ func _process(dt: float) -> void:
 	if _prep != null:
 		_advance(_prep, t0, budget)
 	_tick_warm()
+	_tick_rebake(budget - (Time.get_ticks_usec() - t0))
+	_tick_cache_warm(dt)
 	if not _crossing and look_ahead and enabled():
 		_scan_t -= dt
 		if _scan_t <= 0.0:
@@ -320,6 +465,7 @@ func _scan(dt: float) -> void:
 # ---------------------------------------------------------------- making ready
 
 func _start_prep(area_id: String) -> void:
+	_stop_cache_warm()
 	var prep := Prep.new()
 	prep.area_id = area_id
 	prep.t0_us = Time.get_ticks_usec()
@@ -562,6 +708,7 @@ func _drop_prep() -> void:
 ## The synchronous AreaBuilder.build is about to run on the main thread: any
 ## worker build ends first (the builders' statics are one build's at a time).
 func yield_to_sync_build() -> void:
+	_stop_cache_warm()
 	if not BuildLock.worker_busy:
 		return
 	var tasks: Array = []
@@ -586,6 +733,11 @@ func reset() -> void:
 	if _nav != null:
 		_nav.cancel()
 		_nav = null
+	if _rb != null:
+		_rb.cancel()
+	if _rb_area != null:
+		_end_rebake(false)
+	_stop_cache_warm()
 	for e in _late.slice(_late_i):
 		_garbage.append(e[1])
 	_late = []

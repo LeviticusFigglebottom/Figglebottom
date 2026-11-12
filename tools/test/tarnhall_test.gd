@@ -240,6 +240,7 @@ func _run() -> void:
 	if it != null:
 		it.activate(player)
 	await ticks(30)
+	await nav_wait(area)
 	check(World.area_flag("tarnhall", "gate_hall_doors"), "the doors stand open for good (a shortcut to the causeway)")
 	player.invulnerable = false
 

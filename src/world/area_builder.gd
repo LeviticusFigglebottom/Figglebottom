@@ -64,6 +64,34 @@ static func build_detached(area_id: String) -> Dictionary:
 ## it before it starts another.
 static var cancel_worker := false
 
+## Idle-time cache warming (Streamer, ADR 0014), for a worker thread: compute
+## the two cache entries a build of `area_id` would otherwise compute at the
+## seam, its terrain arrays and its ground cover, and store them. Nothing is
+## made of them and nothing joins the tree. True when something was
+## computed and stored; false when both were there (or the job was called
+## off: cancel_worker).
+static func warm_cache(area_id: String) -> bool:
+	var def := DB.area_def(area_id)
+	if def.is_empty() or not def.has("terrain"):
+		return false
+	BuildProf.begin("warm:" + area_id)
+	var t := Terrain.new()
+	var did := false
+	if t.setup(def["terrain"]):
+		if not StreamCache.has_var("terrain", t.cache_key()):
+			t.cache_only = true
+			t.build(RH.L_WORLD_BASE)
+			did = not _cancelled()
+		if def.has("scatter") and not _cancelled():
+			var veg: Array = def["scatter"].get("veg", [])
+			var seed := int(def["scatter"].get("seed", 1)) + 7
+			var clear := _keep_clear(def)
+			if not StreamCache.has_var("veg", Scatter.veg_key(t, veg, seed, clear)):
+				Scatter.build_veg(null, t, veg, seed, clear)
+				did = not _cancelled()
+	t.free()
+	return did
+
 static func _cancelled() -> bool:
 	return cancel_worker and not BuildProf.is_main()
 

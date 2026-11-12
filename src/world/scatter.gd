@@ -491,7 +491,7 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var ground := Color(0.1, 0.11, 0.05)
-	if terrain.has_method("palette_color"):
+	if area != null and terrain.has_method("palette_color"):
 		ground = terrain.palette_color("turf_a")
 	# the sward rides on the grass rules, after them all, so adding it moved
 	# no existing clump
@@ -510,8 +510,7 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			all_rules.append(bl)
 	# where every clump stands is a pure function of the rules, the seed and
 	# the land: kept on disk (StreamCache) as one MultiMesh buffer per chunk
-	var ck := StreamCache.key(["veg", rules, seed, keep_clear, terrain.origin, terrain.cell, terrain.nx, terrain.nz,
-			terrain.heights, terrain.splat])
+	var ck := veg_key(terrain, rules, seed, keep_clear)
 	var cached: Variant = StreamCache.load_var("veg", ck)
 	var hit: bool = cached is Array and (cached as Array).size() == all_rules.size()
 	var store: Array = []
@@ -530,6 +529,8 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 		var chunks: Dictionary = {}
 		var x := float(reg[2]) if hit else float(reg[0])   # (a hit walks nothing)
 		while x < float(reg[2]):
+			if AreaBuilder.cancel_worker and AreaBuilder._cancelled():
+				return
 			var z := float(reg[1])
 			while z < float(reg[3]):
 				var px := x + rng.randf() * step
@@ -585,10 +586,12 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 					var custom := Color(rng.randf(), clampf(rng.randf() * 0.7 + (0.5 - drift) * 0.8, 0.0, 1.0), rng.randf(), rng.randf())
 					chunks[key].append([Transform3D(b.scaled_local(Vector3(s, s * rng.randf_range(0.8, 1.15), s)), Vector3(qx, qy - 0.02, qz)), custom])
 			x += step
-		var mesh := _veg_mesh(kind, tag, ground)
-		var rng_end := float(rule.get("range", 55.0))
 		var bufs: Dictionary = cached[ri] if hit else _veg_buffers(chunks, terrain)
 		store.append(bufs)
+		if area == null:
+			continue     # (cache warming: the buffers, and nothing made of them)
+		var mesh := _veg_mesh(kind, tag, ground)
+		var rng_end := float(rule.get("range", 55.0))
 		for key in bufs:
 			var buf: PackedFloat32Array = bufs[key]
 			var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
@@ -611,6 +614,10 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			area.attach(mmi, tag)
 	if not hit:
 		StreamCache.store_var("veg", ck, store)
+
+static func veg_key(terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> String:
+	return StreamCache.key(["veg", rules, seed, keep_clear, terrain.origin, terrain.cell, terrain.nx, terrain.nz,
+			terrain.heights, terrain.splat])
 
 ## Each chunk's clumps as the MultiMesh's own buffer (per instance: the
 ## transform's three rows with the origin, relative to the chunk centre, then

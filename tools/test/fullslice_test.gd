@@ -176,6 +176,7 @@ func _walk_to(to: Vector3, max_ticks := 900, tol := 1.0, fight := true) -> bool:
 	return false
 
 func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
+	await nav_wait()     # (a gate just opened: the routes are being baked again)
 	var p := _path(player.global_position, to)
 	if p.size() < 2:
 		return player.global_position.distance_to(to) < 1.5
@@ -595,6 +596,7 @@ func _run() -> void:
 	if it != null:
 		player.try_interact()
 	await _secs(1.0)
+	await nav_wait()
 	check(World.area_flag(AID, "gate_boatshed_back"), "the shortcut stands open")
 	walked = await _walk_to(gate.global_position + Vector3(0, 0, 2.5), 400, 0.8, true)
 	check(walked, "through the boat-shed to the Strand")
@@ -812,6 +814,7 @@ func _run() -> void:
 
 	check(not _pass_shut(), "THAW: the pass stays open")
 	await ticks(40)
+	await nav_wait()
 	check(_reaches_pass(Vector3(-89, 22.5, -84.0)), "and the yard's navmesh runs through the dyke to the pass seam")
 
 	_set_leg("keepsakes")

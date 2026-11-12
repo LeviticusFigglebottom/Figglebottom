@@ -66,4 +66,4 @@ func _animate_open() -> void:
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.tween_callback(func(): _piece.visible = false)
 	if Game.current_area != null:
-		Game.current_area.bake_navmeshes.call_deferred()
+		Game.current_area.rebake_navmeshes()

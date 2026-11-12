@@ -201,4 +201,4 @@ func _apply_open(instant: bool) -> void:
 				.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	# navmesh changed: gates count as base geometry, rebake both maps
 	if Game.current_area != null and not instant:
-		Game.current_area.bake_navmeshes.call_deferred()
+		Game.current_area.rebake_navmeshes()
