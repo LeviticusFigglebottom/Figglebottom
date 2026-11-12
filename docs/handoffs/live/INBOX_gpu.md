@@ -431,3 +431,31 @@ Next: item 3 (trails, gpu/trail-fix, code ready), then item 2 (Lowe physics, abl
 - The greatblade gets `trail_edge` 0.35, `trail_weight` 0.4 and a steel tint. The arc is now a translucent steel smear in THAW and still reads over RIME snow.
 
 No timing change. smoke 11/0, anim 229/0, combat 22/0, body 8/0. Before/after shots, both states, are in `docs/gallery_gpu/trail_fix/`.
+
+## 2026-11-12T18:44Z Item 2 DONE: "Lowe physics +3 ms" was the perf tour pinning the Bearer inside a peat stack. No game change needed (gpu/lowe-phys)
+**Per-view Lowe THAW physics ms** (q1):
+
+| view | f367dee (before playtest-1) | 472b1b3 (playtest-1) | main | gpu/lowe-phys |
+|---|---:|---:|---:|---:|
+| start | 1.00 | 1.09 | 1.08 | 0.94 |
+| hs_barrow_road | 1.32 | 1.39 | 1.34 | 1.05 |
+| **hs_drying_stacks** | 1.46 | **14.34** | **15.97** | **0.89** |
+| open_barrow_veil | 1.17 | 1.19 | 1.02 | 1.09 |
+| overview | 1.03 | 1.03 | 1.19 | 1.14 |
+
+**How I found it:**
+1. Taking the scatter colliders off their layer gave 1.25 ms. Ablating the player alone gave 0.51. Enemies, NPCs, casts, the camera arm and Area3Ds don't matter, and no monitoring Area3D overlaps the scatter.
+2. Timing the player's step showed `move_and_slide` at **9–10 ms per tick**, but only at hs_drying_stacks, with one 205-point peat-stack hull 1 m away and the Bearer not on the floor.
+3. For hearth views, perf_tour pinned him every frame at `respawn_point + 2 m`, **at the hearth's height**. On Lowe's slope that is underground, and beside a convex hull the capsule fought both on every tick.
+
+**The fix, in the tool only:**
+- `_clear_spot()` puts the hearth-view spot on the ground (ray down) and steps further out until a 0.6 m capsule is clear of every solid but terrain.
+- Lowe drops from 4.1 to **1.02 ms** of physics, 145 → 185 FPS.
+- The census also checks every hearth's real **respawn point** in all seven regions: **none** overlaps a scatter collider. So players aren't affected.
+- The exact hulls stay, and collision_audit is unaffected: no collider changed. The only game-side line is `scatter_body` group membership on scatter colliders, so the tour can find them.
+
+**One real caution:** a capsule *held inside* a 200-point hull costs about 10 ms a tick. In play, `_unwedge` resolves a wedge within 0.2 s, so it would be a hitch, not a sustained cost.
+
+**Note:** this also explains part of the morning's q1 Lowe figures. Hearth views in other regions move slightly too, onto the ground. Earlier tours' hearth-view numbers are comparable among themselves, not with tours after this.
+
+**Commits:** 1f5a498..8ef7908 on gpu/lowe-phys. The ablation classes and census hooks stay for future use. smoke 11/0.
