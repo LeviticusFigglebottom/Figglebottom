@@ -82,7 +82,7 @@ const PIECES := {
 	"kf_bough_markers": {"size": [0.7, 0.7, 1.1], "origin": "bottom-center"},
 	"kf_net_hurdle": {"size": [0.95, 0.12, 2.4], "origin": "bottom-center"},
 	"kf_door_band": {"size": [0.1, 0.04, 0.36], "origin": "bottom-center"},
-	"kf_ice_hut_b": {"size": [1.5, 2.6, 1.7], "origin": "bottom-center"},
+	"kf_ice_hut_b": {"size": [1.5, 2.6, 1.7], "origin": "bottom-center", "hull": "simple"},
 	"kf_kettle_tripod": {"size": [1.75, 1.45, 1.8], "origin": "bottom-center"},
 	# --- Tarnhall's own set
 	"th_spit": {"size": [3.0, 1.1, 1.5], "origin": "bottom-center"},
@@ -1020,7 +1020,12 @@ static func add_collision(piece: Node3D, layer_bit: int, convex := false, surfac
 		var key := kit_id + "/" + str(mi.name) + ("/cvx" if convex else "")
 		var shape: Shape3D = _shape_cache.get(key)
 		if shape == null:
-			shape = mi.mesh.create_convex_shape() if convex else mi.mesh.create_trimesh_shape()
+			# "hull": "simple" on a piece: a hull of at most 32 points. The
+			# physics server stopped naming the 186-point hull of the hide tent
+			# as a wall to a capsule sliding along its side; the Bearer, taken
+			# for pinned and lifted a hair (Player._unpin), then walked in.
+			var simple := convex and String((PIECES.get(kit_id, {}) as Dictionary).get("hull", "")) == "simple"
+			shape = mi.mesh.create_convex_shape(true, simple) if convex else mi.mesh.create_trimesh_shape()
 			_shape_cache[key] = shape
 		var body := StaticBody3D.new()
 		body.collision_layer = 1 << (layer_bit - 1)
