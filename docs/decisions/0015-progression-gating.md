@@ -119,4 +119,4 @@ Each area def carries `way_on`: a list (one entry today) of
 - `gates_before_saltfell_pass_thaw`, `…_pass_far_thaw`, `…_bridge_thaw`: the pass as it was (bare turf), and the raised bridge on the skyline.
 - `gates_shut_saltfell_pass_thaw` / `_rime`, `gates_shut_saltfell_pass_far_thaw`: the dyke, the stones, the net, the track.
 - `gates_open_saltfell_pass_thaw`, `gates_open_saltfell_from_longhouse_door_thaw`: after the release.
-- `gates_shut_<region>_*` and `gates_open_<region>_*` for the Lowe, Kettle, Tarnhall, Thornwold and the Reach. The Kettle shots predate pulling its two outermost flank boulders down off the gorge walls.
+- `gates_shut_<region>_*` and `gates_open_<region>_*` for the Lowe, Kettle, Tarnhall, Thornwold and the Reach.
