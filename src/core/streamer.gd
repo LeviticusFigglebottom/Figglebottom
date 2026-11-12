@@ -202,6 +202,7 @@ func _tick_cache_warm(dt: float) -> void:
 			_wc_checked[_wc_id] = true
 			if _wc_did:
 				warmed.append(_wc_id)
+		AreaBuilder.cancel_worker = false
 		return
 	if not warm_ahead or not bool(cfg("warm_cache", true)) or not StreamCache.enabled or not enabled() \
 			or not idle() or Game.arena_locked or Game.current_area == null or not is_instance_valid(Game.current_area):
@@ -460,6 +461,12 @@ func _scan(dt: float) -> void:
 	# (not during a duel behind a sealed veil: no door opens until it is over,
 	# and the fight should have the cores to itself)
 	if want != "" and not Game.arena_locked and _dying.is_empty() and _garbage.is_empty() and _orphans.is_empty():
+		if _wc_task >= 0:
+			# the cache warming gives way: called off now, and the preload
+			# starts at the next look (no waiting on it in a played frame)
+			AreaBuilder.cancel_worker = true
+			_scan_t = 0.0
+			return
 		_start_prep(want)
 
 # ---------------------------------------------------------------- making ready

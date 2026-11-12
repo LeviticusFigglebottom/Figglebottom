@@ -679,10 +679,13 @@ static func _v3(a) -> Vector3:
 ## when the area was built, so without this the scene a release earns (Old
 ## Pell and Ivo at the kettle, KETTLE.md 9) waited for the next load: the
 ## first warming after the duel still showed the evening before it.
+## One soul or find a frame: a release may bring back half a dozen, each
+## some 20 ms to instance, and the frame the Holdfast falls in is the one
+## everybody watches. (A rest, or the memory turning, places whatever is
+## still missing at once: sync_flagged.)
 static func refresh_flagged(area: Area) -> void:
-	if area == null or not is_instance_valid(area):
-		return
-	sync_flagged(area)
+	while area != null and is_instance_valid(area) and area.is_inside_tree() and sync_flagged(area, 1) > 0:
+		await area.get_tree().process_frame
 
 static func _place(n: Node3D, spec: Dictionary) -> void:
 	n.position = _v3(spec.get("at", [0, 0, 0]))
@@ -745,9 +748,12 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 ## outside the barrow) or its finds lay there (the twins' spindles).
 ## Game.hearth_flow calls this as he kneels: what the story has since
 ## allowed is placed, and a soul it no longer allows steps away.
-static func sync_flagged(area: Area) -> void:
+## `max_new`: place at most so many this call (-1: all). Returns how many
+## were placed.
+static func sync_flagged(area: Area, max_new := -1) -> int:
 	var def: Dictionary = area.get_meta("def", {})
 	var late: Dictionary = area.get_meta("flag_built", {})
+	var made_n := 0
 	for list in ["npcs", "pickups"]:
 		var specs: Array = def.get(list, [])
 		for i in specs.size():
@@ -759,17 +765,21 @@ static func sync_flagged(area: Area) -> void:
 			var node = late.get(key)
 			var there: bool = node != null and is_instance_valid(node) and not (node as Node).is_queued_for_deletion()
 			if ok and not there:
+				if max_new >= 0 and made_n >= max_new:
+					continue
 				if list == "pickups" and (_has_pickup(area, String(spec.get("id", "")))
 						or World.area_flag(area.area_id, "took_" + String(spec.get("id", "")))):
 					continue    # a release set it down itself (the tally-stick), or it is taken
 				var made: Node3D = _npc(area, spec) if list == "npcs" else _pickup(area, spec)
 				area.settle_new(made, String(spec.get("tag", "thaw" if list == "npcs" else "base")))
 				late[key] = made
+				made_n += 1
 			elif not ok and there and list == "npcs":
 				(node as Node3D).visible = false
 				(node as Node).queue_free()
 				late.erase(key)
 	area.set_meta("flag_built", late)
+	return made_n
 
 ## The memory turning is a new visit as well (Area.pre_transition and
 ## apply_state): a Holdfast released in RIME must not leave the old THAW

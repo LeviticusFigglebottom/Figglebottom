@@ -25,6 +25,7 @@ const MAX_BYTES := 512 * 1024 * 1024
 
 static var enabled := true
 static var _dir := "user://cache"
+static var _seed := ""       # a second, read-only place to look (shipped beside the executable)
 static var _ready := false
 static var _code_sig := ""
 static var _mx := Mutex.new()
@@ -41,6 +42,14 @@ static func _setup() -> void:
 				_dir = arg.get_slice("=", 1)
 			elif arg == "--no-cache":
 				enabled = false
+			elif arg.begins_with("--cache-seed="):
+				_seed = arg.get_slice("=", 1)
+		# a cache shipped with the game (tools/qa/warm_cache.sh): read-only,
+		# looked in when user://cache has no entry
+		if _seed == "":
+			var beside := OS.get_executable_path().get_base_dir().path_join("cache_seed")
+			if DirAccess.dir_exists_absolute(beside):
+				_seed = beside
 		_code_sig = _hash_code()
 		if enabled:
 			DirAccess.make_dir_recursive_absolute(_dir)
@@ -52,6 +61,7 @@ static func use_dir(path: String, on := true) -> void:
 	_setup()
 	_mx.lock()
 	_dir = path
+	_seed = ""
 	enabled = on
 	hits = 0
 	misses = 0
@@ -115,9 +125,9 @@ static func load_var(kind: String, k: String) -> Variant:
 	_setup()
 	if not enabled:
 		return null
-	var p := path_of(kind, k)
+	var p := _find(kind, k)
 	var out: Variant = null
-	if FileAccess.file_exists(p):
+	if p != "":
 		var f := FileAccess.open_compressed(p, FileAccess.READ, FileAccess.COMPRESSION_ZSTD)
 		if f != null:
 			# [magic, payload]: a truncated or foreign file fails one of the two
@@ -156,7 +166,18 @@ static func store_var(kind: String, k: String, value: Variant) -> void:
 
 static func has_var(kind: String, k: String) -> bool:
 	_setup()
-	return enabled and FileAccess.file_exists(path_of(kind, k))
+	return enabled and _find(kind, k) != ""
+
+## Where an entry is: the cache itself, else the shipped seed, else "".
+static func _find(kind: String, k: String) -> String:
+	var p := path_of(kind, k)
+	if FileAccess.file_exists(p):
+		return p
+	if _seed != "":
+		p = _seed.path_join("%s_%s.bin" % [kind, k])
+		if FileAccess.file_exists(p):
+			return p
+	return ""
 
 ## Drop the oldest entries past MAX_BYTES (and any stray .part files).
 ## Cheap enough for boot: a directory listing and a sort.

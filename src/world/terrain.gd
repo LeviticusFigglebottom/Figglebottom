@@ -195,6 +195,8 @@ func build(layer_bit: int) -> void:
 			return     # (a worker build nobody waits for; nothing is cached)
 		var ci := 0
 		while ci < nx - 1:
+			if cache_only and AreaBuilder._cancelled():
+				return
 			var w := mini(chunk, nx - 1 - ci)
 			var d := mini(chunk, nz - 1 - cj)
 			var lod0 := MeshInstance3D.new()

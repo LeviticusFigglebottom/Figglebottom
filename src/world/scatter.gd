@@ -586,6 +586,8 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 					var custom := Color(rng.randf(), clampf(rng.randf() * 0.7 + (0.5 - drift) * 0.8, 0.0, 1.0), rng.randf(), rng.randf())
 					chunks[key].append([Transform3D(b.scaled_local(Vector3(s, s * rng.randf_range(0.8, 1.15), s)), Vector3(qx, qy - 0.02, qz)), custom])
 			x += step
+		if AreaBuilder._cancelled():
+			return
 		var bufs: Dictionary = cached[ri] if hit else _veg_buffers(chunks, terrain)
 		store.append(bufs)
 		if area == null:
@@ -612,7 +614,7 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			mmi.visibility_range_end_margin = 6.0
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			area.attach(mmi, tag)
-	if not hit:
+	if not hit and not AreaBuilder._cancelled():
 		StreamCache.store_var("veg", ck, store)
 
 static func veg_key(terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> String:
