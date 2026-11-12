@@ -60,6 +60,36 @@ func _route(from: Vector3, to: Vector3) -> bool:
 		NavigationServer3D.map_get_closest_point(map, to), true)
 	return p.size() > 1 and p[p.size() - 1].distance_to(to) < 2.5
 
+## Where a route that should not exist goes: its points within 30 m of the gate.
+func _print_leak(from: Vector3, to: Vector3, g: Node3D) -> void:
+	var map := area.get_world_3d().navigation_map
+	var p := NavigationServer3D.map_get_path(map, NavigationServer3D.map_get_closest_point(map, from),
+		NavigationServer3D.map_get_closest_point(map, to), true)
+	var near: Array = []
+	for q in p:
+		if q.distance_to(g.global_position) < 30.0:
+			near.append(q.snapped(Vector3.ONE * 0.1))
+	print("    the route runs (gate at %s): %s" % [g.global_position.snapped(Vector3.ONE * 0.1), str(near)])
+	# and what it stands on there
+	var space := area.get_world_3d().direct_space_state
+	var seen := {}
+	for q in near:
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(q + Vector3.UP * 1.5, q - Vector3.UP * 1.0))
+		if not hit.is_empty():
+			var c: Node = hit["collider"]
+			var path := str(c.get_path()).replace(str(area.get_path()), "")
+			if not seen.has(path):
+				seen[path] = true
+				var what: Array = []
+				for k in [c, c.get_parent()]:
+					what.append("%s %s" % [k.name, str(k.get_meta("kit_id", ""))])
+				for ch in c.get_children():
+					what.append(ch.name)
+					if ch is CollisionShape3D and (ch as CollisionShape3D).shape != null:
+						var sh: Shape3D = (ch as CollisionShape3D).shape
+						what.append("%s %s at %s" % [sh.get_class(), str(sh.get("size")) if "size" in sh else "", str((ch as Node3D).global_position.snapped(Vector3.ONE * 0.1))])
+				print("      on %s at %s: %s" % [path, (hit["position"] as Vector3).snapped(Vector3.ONE * 0.1), str(what)])
+
 ## Steer the capsule from the near side straight at the gate line, `along`
 ## metres from the middle of the opening. True if he ends up beyond it.
 func _push_through(g: ShortcutGate, along: float, max_ticks := 80) -> bool:
@@ -131,7 +161,10 @@ func _run() -> void:
 			var sn := "THAW" if st == RH.WState.THAW else "RIME"
 			StateDirector.snap(area, st)
 			await ticks(30)
-			check(not _route(start, beyond), "%s: no route from the start to the far side of the gate" % sn)
+			var leak := _route(start, beyond)
+			check(not leak, "%s: no route from the start to the far side of the gate" % sn)
+			if leak:
+				_print_leak(start, beyond, g)
 			await _holds(g, spec["span"], sn)
 		# --- the release, while he stands in the region
 		StateDirector.snap(area, RH.WState.RIME)

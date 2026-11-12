@@ -35,6 +35,7 @@ def install(D, G):
     sc.setdefault("fences", []).extend(G["fences"])
     sc.setdefault("place", []).extend(G["place"])
     sc.setdefault("clear", []).extend(G["clear"])
+    D.setdefault("blockers", []).extend(G.get("cores", []))
 
 
 def _walkable(sample, x, z, floor=-0.9):
@@ -85,7 +86,7 @@ def gate(area_id, gate_id, sample, at, toward, flag, name, to, seam_at, width=3.
     lo, hi = span(sample, cx, cz, lx, lz, blocked=blocked, floor=floor)
     assert hi - lo <= max_span, f"{gate_id}: the neck is {hi - lo:.1f} m wide here; pick a narrower place"
 
-    fences, place = [], []
+    fences, place, cores = [], [], []
     for sgn, end in ((-1, lo), (1, hi)):
         t0, t1 = half + (0.9 if posts else 0.1), abs(end) + ext
         if flank is None or t1 - t0 < 0.4:
@@ -110,6 +111,16 @@ def gate(area_id, gate_id, sample, at, toward, flag, name, to, seam_at, width=3.
                 if flank_tag != "base":
                     p["tag"] = flank_tag
                 place.append(p)
+                if flank == "boulder":
+                    # a boulder's collider is the hull of its rounded mesh: low
+                    # enough that the navmesh baked a step over its top though
+                    # nobody can climb it (Kettle, after the landing was widened).
+                    # A tall core inside it keeps the routes where the feet are.
+                    bx, bz = p["at"]
+                    core = {"at": [bx, r2(sample(bx, bz) + 2.0), bz], "radius": r2(0.42 * p["scale"]), "height": 4.0}
+                    if flank_tag != "base":
+                        core["tag"] = flank_tag
+                    cores.append(core)
                 t += pitch
                 k += 1
 
@@ -134,5 +145,5 @@ def gate(area_id, gate_id, sample, at, toward, flag, name, to, seam_at, width=3.
               "seam": [r2(v) for v in seam_at], "open_flag": flag, "gate": gate_id}
     if hint:
         way_on["hint"] = hint
-    return {"gate": g, "fences": fences, "place": place, "clear": [[r2(cx), r2(cz), r2(half + 1.6)]],
+    return {"gate": g, "fences": fences, "place": place, "cores": cores, "clear": [[r2(cx), r2(cz), r2(half + 1.6)]],
             "way_on": way_on, "span": (lo, hi), "rot": rot, "line": (lx, lz)}
