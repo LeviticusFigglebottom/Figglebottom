@@ -195,8 +195,14 @@ func _process(dt: float) -> void:
 	_flare = move_toward(_flare, 0.0, dt * 2.6)
 	_apply(dt)
 
+## The flame's own clock, told in the time it is given: on the wall clock a
+## run of steps in one frame saw one instant of the wind, and a calm instant
+## made a flame that did not gutter at all.
+var _clock := 0.0
+
 func _apply(dt: float) -> void:
-	var t := Time.get_ticks_msec() * 0.001
+	_clock += maxf(dt, 0.0)
+	var t := _clock
 	var head := global_position
 	if dt > 0.0:
 		if _has_prev:

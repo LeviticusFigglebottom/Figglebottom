@@ -437,14 +437,15 @@ func _run() -> void:
 	var keep_blend := StateDirector.state_blend
 	for ph in 2:
 		StateDirector.state_blend = float(ph)
+		# (twenty seconds of the flame's own time: two swells of the wind)
 		var acc := 0.0
-		for k in 240:
+		for k in 1200:
 			bf._apply(1.0 / 60.0)
 			acc += bf.gutter()
 		if ph == 0:
-			g_thaw = acc / 240.0
+			g_thaw = acc / 1200.0
 		else:
-			g_rime = acc / 240.0
+			g_rime = acc / 1200.0
 		check(bf.light().light_energy >= float(tl["light_energy"]) * float(bf.cfg.get("light_floor", 0.7)) - 0.01,
 			"guttering never takes the light under its floor (%s)" % ("RIME" if ph == 1 else "THAW"))
 	StateDirector.state_blend = keep_blend
