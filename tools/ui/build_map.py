@@ -6,7 +6,7 @@ Reads data/areas/index.json, every area's JSON and its terrain grids
 coarse horizon) and draws the highland the way a careful hand would on
 parchment: height wash and hill shading, contour lines, hachured cliffs,
 water with shore lines, worn paths, shingle, woods, hedges, and buildings
-as small marks. Nothing is invented: every mark is where the game has it.
+(houses, barrows, and the landmark models that are buildings) as small marks. Nothing is invented: every mark is where the game has it.
 
 Writes
   assets/ui/map/base.webp      the whole highland, dark: land nobody has
@@ -33,6 +33,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 OUT = os.path.join(ROOT, "assets", "ui", "map")
 PPM = 3                                  # region sheets: pixels per metre
 PAD = 12.0                               # world margin round the regions, metres
+
+# landmark models that are buildings somebody could shelter in: the map marks
+# them as it marks houses (a standing stone or a cairn is not a building)
+BUILDING_LANDMARKS = {"lm_cutters_bothy", "lm_sheiling"}
 
 PAPER_LOW = np.array([226.0, 212.0, 180.0])
 PAPER_HIGH = np.array([198.0, 178.0, 142.0])
@@ -194,8 +198,16 @@ def draw_region(aid, seed):
         for pl in forest.get("place", []):
             cx, cy = px(pl["at"][0], pl["at"][1])
             dr.ellipse([cx - 9, cy - 9, cx + 9, cy + 9], fill=(84, 92, 58, 255), outline=(40, 34, 24, 255), width=2)
-    # buildings: houses as inked blocks, barrows as mounds
-    for hs in d.get("houses", []):
+    # buildings: houses as inked blocks, barrows as mounds. A landmark that is
+    # a roofed building (BUILDING_LANDMARKS) is drawn the same way, on the
+    # footprint of its blocker.
+    built = list(d.get("houses", []))
+    for lm in d.get("landmarks", []):
+        name = os.path.splitext(os.path.basename(lm.get("scene", "")))[0]
+        if name in BUILDING_LANDMARKS and "blocker" in lm and lm.get("tag", "base") != "rime":
+            built.append({"center": [lm["at"][0], lm["at"][2]], "size": [lm["blocker"][0], lm["blocker"][2]],
+                          "yaw": lm.get("rot", 0.0)})
+    for hs in built:
         cx, cz = hs["center"]
         sx, sz = hs["size"]
         yaw = math.radians(float(hs.get("yaw", 0.0)))
