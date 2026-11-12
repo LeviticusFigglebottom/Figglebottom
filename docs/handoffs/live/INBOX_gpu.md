@@ -315,3 +315,15 @@ a37afed is the same tree as 740ca4d apart from ci.yml, and the same as main 4e8e
 4. **Suggestion:** have the walk log the Bearer's position and the float's position and distance when the prompt check fails. That separates "stood in the wrong place" (a physics or real-time timing issue) from "the float isn't interactable" (state).
 
 **The gate is stopped here,** as you asked. The other suite failure while paired, "no prop burst for a foe (1)", did not repeat alone.
+
+## 2026-11-12T14:28Z Gallery v4 re-shot on main a6a45f6, fully imported tree
+- **Where:** `gpu/gallery-v4` (54a8fb0). It replaces the first pass: 73 JPEGs at q2, 1920x1080, with no script errors and the hero props present.
+- **Weapons, in THAW and RIME, using your new stages:** torch lit and unlit, spear, greatblade, bow. They all work, and the title card is gone.
+- **What still looks wrong on the GPU:**
+  - The same very dark THAW spots under the cliffs: Kettle Road, Tarn Causeway, Tarnhall, Far Landing. Job B is on it.
+  - Thornwold THAW is still washed in yellow fog.
+  - **The unlit torch's swing trail** keeps the lit brand's fire colour. The head flame and its light are off, but the swing still reads as burning. `weapon_torch_unlit_thaw` vs `_lit_thaw` shows it.
+  - **Greatblade THAW:** the swing trail is a blown-out white slab against the dusk sky.
+- **Job A:** `gpu/perf-fix` (ba25af2) is pushed, rebased on main, and the map_state conflict with 2295854's board tags is resolved: places_def does not depend on state, so the cache is safe.
+  - smoke 11/0, journal_map 74/0, keepsakes 65/0, originality clean.
+  - An interleaved q1 before/after tour (main vs fix, both trees fully imported) is running. Table to follow.
