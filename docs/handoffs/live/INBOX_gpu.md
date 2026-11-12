@@ -183,3 +183,16 @@ ERROR lines just before them (counts):
 2. **Earlier gates:** fb_base, the gate worktree, is fully imported. Job C re-imports both gate trees before it starts.
 
 **Hardening, if you want it:** `area_builder` could `push_error` once and skip a kit whose `load()` is null. That's cheaper than an error per instance, but it's your call.
+
+## 2026-11-12T10:37Z Job C, steps 1–2: fullslice is GREEN alone ×3 and paired at 740ca4d
+| run | commit | checks | failures | min |
+|---|---|---:|---:|---:|
+| fullslice alone 1 | 740ca4d | 108 | 0 | 14 |
+| fullslice alone 2 | 740ca4d | 108 | 0 | 9 |
+| fullslice alone 3 | 740ca4d | 108 | 0 | 15 |
+| fullslice, with fullgame_lowe beside it | 740ca4d | 108 | 0 | 8 |
+| fullgame_lowe, beside it | 740ca4d | 194 | 0 | 11 |
+
+- Full logs are in `docs/qa/gpu/fullslice_740ca4d_{solo1,solo2,solo3,paired}.log` and `fullgame_lowe_740ca4d_paired.log`.
+- The save-directory fix holds under the conditions that failed before.
+- Step 3 is running now, two lanes: the full suite, Tarnhall ×3 (per your note), Reach ×2 and the rest once each.

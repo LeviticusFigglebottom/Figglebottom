@@ -1,0 +1,262 @@
+=== test: fullgame_lowe
+  ok  - the starting save exists (fullgame_after_saltfell)
+== resume from fullgame_after_saltfell
+  ok  - the hearth resumes: the Bearer stands in the world
+  ok  - the HUD is raised
+== the pass: Saltfell to the Lowe
+  ok  - the walk starts in Saltfell
+  ok  - the pass seam stands
+WARNING: Navigation map synchronization had 14 edge error(s).
+More than 2 edges tried to occupy the same map rasterization space.
+This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.
+Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.
+Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.
+This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.
+   at: _build_step_find_edge_connection_pairs (modules/navigation_3d/3d/nav_map_builder_3d.cpp:149)
+  ok  - the Bearer walks over the pass into the Lowe ((-89.0, 23.0, -90.0))
+== the Lowe, in THAW
+  ok  - first arrival is THAW
+  ok  - the region's card, then THE BARROW ROAD (["THE STRAND", "SALTFELL", "The Lowe", "THE BARROW ROAD"])
+  ok  - the card on the HUD (THE BARROW ROAD)
+  ok  - no enemies in THAW
+  ok  - two hearths stand; the Open Barrow is cold
+  ok  - no Arne, no twins yet
+  ok  - the bridge stands raised
+== Aud on the road
+  ok  - the Bearer walks to Aud and speaks with her ((-34.0, 28.6, -119.6))
+  ok  - Aud's first lines, in order (5)
+  ok  - she teaches the Turf-Laying Song and sits you down; no cloak yet (["buy_turf_song", "rest_level", "leave"])
+  ok  - the Turf-Laying Song is learned for 240 warmth
+  ok  - and she says how it goes (It's counting, mostly. Count w)
+  ok  - Leave closes the talk and hands control back
+  ok  - Aud's thread begins
+  ok  - THE KIN-MOUNDS is named among the barrows (THE KIN-MOUNDS)
+== Hesk at the cutting
+  ok  - the Bearer walks to Hesk and speaks with him ((-57.6, 43.9, -164.7))
+  ok  - Hesk's first lines, in order (5)
+  ok  - he folds iron, sells bog-iron and the post maul (["fold_iron", "buy_bog_iron", "buy_maul", "leave"])
+  ok  - Hesk's thread begins
+  ok  - two threads, one line each
+== the bog in THAW: black water
+  ok  - the bog drags and drowns in THAW
+  ok  - no THAW route to the peat island
+  ok  - the tongs are under the water
+== the first rest forces RIME
+  ok  - the Barrow Road offers its hearth ((-80.4, 25.9, -105.3))
+  ok  - uncleared THAW: rest only, no turning back
+  ok  - 7 levels grown by warmth (2 -> 9, 190 warmth left)
+  ok  - the Lowe is RIME now
+  ok  - the Barrow Road is the anchor
+  ok  - Aud and Hesk are gone in RIME
+  ok  - the frost-taken stand ({ "barrow_sleeper": 4, "keener": 3, "cairn_carrier": 2, "turfwright": 1 })
+  ok  - three of the dead sit up in the barrow mouths
+  ok  - uncleared RIME: rest only
+== the drawbridge, lowered from the Lowe side
+  ok  - along the ravine rim to the windlass ((-8.3, 22.1, -84.2))
+  ok  - the Bearer lives past the sleeper at the windlass
+  ok  - the fallen give up warmth (34)
+  ok  - nothing spans the ravine yet
+  ok  - the windlass offers itself
+  ok  - the bridge is down for good (world flag)
+  ok  - the deck spans the ravine
+  ok  - the windlass has nothing more to give
+  ok  - the bridge seam stands on the Lowe side
+WARNING: Navigation map synchronization had 12 edge error(s).
+More than 2 edges tried to occupy the same map rasterization space.
+This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.
+Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.
+Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.
+This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.
+   at: _build_step_find_edge_connection_pairs (modules/navigation_3d/3d/nav_map_builder_3d.cpp:149)
+  ok  - over the deck and the second seam into Saltfell ((-8.0, 21.8, -71.7))
+  ok  - off the far end onto the Saltfell yard ((-8.0, 21.6, -67.0))
+  ok  - Saltfell sees the same bridge down
+  ok  - the yard lies ahead: the shortcut joins the two regions
+  ok  - the bridge seam stands on the Saltfell side
+WARNING: Navigation map synchronization had 14 edge error(s).
+More than 2 edges tried to occupy the same map rasterization space.
+This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.
+Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.
+Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.
+This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.
+   at: _build_step_find_edge_connection_pairs (modules/navigation_3d/3d/nav_map_builder_3d.cpp:149)
+  ok  - and back over it into the Lowe ((-8.0, 22.0, -79.7))
+  ok  - off the deck at the windlass ((-8.0, 22.2, -84.6))
+  ok  - the Lowe is as it was left: RIME, bridge down
+  ok  - nobody fell into the ravine (0)
+  (the deck on the Lowe's navmesh: false)
+== Orm's cord, in the first barrow
+  ok  - to the mouth of the first barrow ((-58.8, 31.6, -121.0))
+  ok  - the knot-cord is taken from the one who sat up there
+  ok  - further in, the grave goods ((-60.9, 31.6, -124.9))
+  ok  - 60 warmth for the road
+== STILLED, and the Breathmark
+  ok  - warmth carried into the fall (352)
+  ok  - a frost-taken stands near (keener)
+  (stilled #1: lowe_barrows at (-29.4, 31.0, -126.9), RIME, carrying 352)
+  ok  - the frost-taken bring the Bearer down
+  ok  - STILLED (Stilled)
+  ok  - the warmth hangs as a Breathmark in this region
+  ok  - the Bearer wakes at the hearth
+  ok  - at hs_barrow_road
+  ok  - the mark waits on ground the Bearer can reach (y 31.00)
+  ok  - with nothing carried
+  ok  - the Breathmark offers itself
+  ok  - the warmth is taken back (+352 of 352, first fall carried 352, 1 tries)
+== the frozen bog
+  ok  - in RIME the black water takes nobody
+  ok  - the RIME navmesh crosses the ice to the peat island
+  ok  - over the ice to the tongs ((-43.2, 43.9, -185.5))
+  ok  - Hesk's tongs are chipped out of the ice
+  ok  - the Bearer stands on the bog ice (y 43.92, ice 43.96)
+  ok  - on to the peat island ((-39.8, 44.4, -188.9))
+  ok  - two lumps of bog-iron pried up
+  ok  - four seconds on the ice and nothing gives
+  ok  - both finds are remembered
+== the Kin-Mounds, fought through
+  (pickup woad_thread: prompt is nothing)
+  ok  - to the closed barrow ((1.6, 37.0, -145.5))
+  ok  - the woad thread is untied from its stone
+  ok  - to the last barrow on the road ((17.8, 32.2, -137.4))
+  ok  - the Turf Spade comes loose and seats itself in a hand-slot
+== the Drying Stacks
+  ok  - the Drying Stacks offers its hearth ((31.1, 40.2, -166.7))
+  (1 more levels from the road: 9 -> 10, 282 warmth left)
+  ok  - still no turning back
+  ok  - the Drying Stacks is lit and kept
+  ok  - and the Lowe stays RIME
+== the frost veil
+  ok  - a frost veil stands across the gap in the sod wall
+  ok  - the veil seals at the Bearer's back ((46.0, 45.6, -179.7))
+  ok  - and he stands inside the ring, on the turf ((46.0, 45.6, -179.7))
+  ok  - THE OPEN BARROW is named inside the ring (THE OPEN BARROW)
+== the Turfwright
+  ok  - the Turfwright stands at the twins' barrow
+  ok  - holding the last sod up to the door, his back to the road
+  ok  - no bar until he turns
+  (duel 2 s: phase 1, he has 1150 of 1150, state 0 at (46.0, 45.6, -205.0); the Bearer 172 hp, 3 gourds, at (46.0, 45.6, -179.7), falls 1)
+  (duel 14 s: phase 2, he has 598 of 1150, state 10 at (44.1, 45.6, -203.0); the Bearer 147 hp, 3 gourds, at (46.1, 45.7, -202.7), falls 1)
+  (duel 20 s: phase 3, he has 211 of 1150, state 10 at (44.7, 45.7, -202.9); the Bearer 125 hp, 3 gourds, at (46.2, 45.7, -202.6), falls 1)
+  ok  - the Turfwright is released (deaths along the way: 0)
+  ok  - he set the sod down, turned, and the bar read THE TURFWRIGHT
+  ok  - his AI ran all three phases ([1, 2, 3])
+  ok  - the four bay walls stood in phase two (4)
+  (the last turf held at the door: false)
+== the release
+  ok  - the Outsong is sung (res://assets/audio/music/outsong.ogg)
+  ok  - the quiet card (THE TURFWRIGHT — RELEASED)
+  ok  - the release flag is set
+  ok  - the Lowe is cleared
+  ok  - the veil falls
+  ok  - he lays the sod in the doorway
+  ok  - the cuts and the bay walls sink back
+  ok  - the tally-stick lies in front of where he knelt
+  ok  - the Bearer walks to it ((46.2, 45.6, -205.2))
+  ok  - Arne's tally-stick is taken
+  ok  - the Open Barrow hearth wakes
+  ok  - nothing left to fight at the door
+== the Open Barrow hearth
+  ok  - it can be rested at, and offers to turn the memory ((40.5, 45.6, -204.9))
+  ok  - the Open Barrow is lit and kept
+  ok  - a plain rest keeps the RIME
+  ok  - he does not come back with the rest
+  ok  - and the veil stays down
+  ok  - the twins' spindles lie on the threshold stone
+  ok  - the Bearer walks to the threshold ((45.7, 46.0, -208.2))
+  ok  - the spindles are taken
+  ok  - the memory is turned at the Open Barrow
+  ok  - warmed: THAW again
+  ok  - no enemies in THAW
+== Arne and his girls outside the barrow
+  ok  - Arne, Liv and Asta are there
+  ok  - all three sit
+  ok  - Arne talks from the grass, a sod under each girl
+  ok  - the twins either side of him
+  ok  - outside the barrow, their backs to it
+  ok  - the Bearer stands by them ((45.9, 45.6, -204.0))
+  ok  - nobody in the scene can be spoken to
+  ok  - the argument is overheard, in order ([["arne", "There\'s no window. It\'s a barrow."], ["asta", "Then you\'ll cut one. You cut everything else."]])
+  ok  - low over the belt, with who said it (Asta: Then you'll cut one. You cut everything else.)
+  ok  - to the last line: I'll remind you. (heard 8)
+== Orm's cord goes home
+  ok  - Aud, in THAW again ((-33.3, 28.5, -120.3))
+  ok  - she takes the cord and will not be told (["That\'s Orm\'s cord. He tied his knots too tight. You can\'t read a word of it, so don\'t try."])
+  ok  - the cord is hers
+  ok  - the heather waits for the next talk
+  ok  - Orm's working cloak is offered; the song is already learned (["give_barrow_cloak", "rest_level", "leave"])
+  ok  - the Bearer takes the cloak
+  ok  - three lines in her thread
+  ok  - Aud, a second time
+  ok  - then she has moved the heather (["I\'ve moved the heather. It was always that one. I don\'t know why you\'re looking at me like that."])
+  ok  - the cloak is not offered twice
+  ok  - Orm's cord: four lines, in order (4)
+== Hesk's tongs go home
+  ok  - Hesk, in THAW again ((-57.6, 43.9, -164.6))
+  ok  - he takes the tongs and runs them down (["Never that good, these. Bent in the rein. I\'ll have them back all the same."])
+  ok  - the tongs are his again
+  ok  - and he gives a lump of bog-iron for them
+  ok  - the wind waits for the next talk
+  ok  - he folds iron for less now (["fold_iron_kin", "buy_bog_iron", "buy_maul", "leave"])
+  ok  - a lump folded into the blade for 140 warmth (+1)
+  ok  - and he says so
+  ok  - three lines in his thread
+  ok  - Hesk, a second time
+  ok  - then the wind has come right (["Wind\'s come right. First time all summer. I don\'t trust it."])
+  ok  - Hesk's tongs: four lines, in order (4)
+== the bog in THAW again
+  ok  - the black water is back: no way to the island
+  ok  - the road on to Kettle Fjord lies open
+== turned again at the Drying Stacks: RIME without its Holdfast
+  ok  - the Drying Stacks turns freely now ((30.7, 40.3, -167.2))
+  ok  - stilled again: RIME
+  ok  - the frost-taken stand again; he does not (9)
+  ok  - the living are gone with the THAW
+  ok  - nothing stands in the gap of the sod wall
+  ok  - back to the gap ((45.3, 44.2, -174.7))
+  ok  - and the Bearer walks straight in through it ((45.9, 45.5, -180.9))
+  ok  - nothing to part, nothing sealed
+  ok  - and the memory is warmed again at the Open Barrow ((40.3, 45.6, -204.3))
+  ok  - the Open Barrow is the kept hearth
+  ok  - and the Lowe is left warm
+  ok  - no Breathmark is left lying behind (<null>)
+== save, the title, and back
+  ok  - the pause sheet offers the title (["Return to the World", "Settings", "Return to the Title", "Begin the Journey Anew", "Leave the Highland"])
+  ok  - back at the title
+  ok  - the world is put away
+  ok  - Resume the hearth is offered
+  ok  - first choice is Resume
+  ok  - the hearth resumes
+  ok  - in the kept hearth's region (lowe_barrows)
+  ok  - level kept (10)
+  ok  - the Pack kept
+  ok  - lowe_barrows cleared, its memory as it was left
+  ok  - the Keepsakes kept, in order
+  ok  - story flags kept ([])
+  ok  - every region's flags kept ([])
+  ok  - back at the kept hearth
+== the Lowe, resumed
+  ok  - all three hearths lit
+  ok  - the Open Barrow hearth still stands
+  ok  - the bridge stays down
+  ok  - its deck still spans the ravine
+  ok  - the Lowe cleared and warm
+  ok  - the tally-stick, the spade, the thread, the cloak, the song and the spindles are in the Pack
+  ok  - the cord and the tongs stayed with their people
+  ok  - both threads whole
+  ok  - Arne and his girls, Aud and Hesk keep the THAW
+  ok  - no frost-taken, no veil
+  ok  - the winter kept
+RESULT: 194 checks, 0 failures
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 13 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 6 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
