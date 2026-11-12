@@ -1,0 +1,124 @@
+{
+ "_doc": "Peat and the dead: red-brown heather over black peat, almost no bare rock. Lilac-grey RIME, ground fog.",
+ "terrain": {
+  "palette": {
+   "turf_a": [
+    0.148,
+    0.055,
+    0.067
+   ],
+   "turf_b": [
+    0.181,
+    0.141,
+    0.039
+   ],
+   "path_col": [
+    0.026,
+    0.015,
+    0.011
+   ],
+   "shingle_col": [
+    0.066,
+    0.048,
+    0.036
+   ],
+   "rock_col": [
+    0.276,
+    0.259,
+    0.22
+   ],
+   "snow_col": [
+    0.797,
+    0.774,
+    0.752
+   ]
+  },
+  "sets": {
+   "path": "lw_peat",
+   "rock": "rock"
+  },
+  "shader": {
+   "bed_strength": 0.25,
+   "rock_relief": 0.4,
+   "streak_strength": 0.1,
+   "rock_moss": 0.5,
+   "puddle_amount": 0.75,
+   "rock_slope": 0.66
+  }
+ },
+ "env": {
+  "thaw": {
+   "sun_rot": [
+    -10,
+    -60
+   ],
+   "sun_color": [
+    1.0,
+    0.84,
+    0.65
+   ],
+   "sun_energy": 2.0,
+   "fog_color": [
+    0.78,
+    0.66,
+    0.52
+   ],
+   "vol_density": 0.0052,
+   "fog_density": 0.0014
+  },
+  "rime": {
+   "sun_rot": [
+    -28,
+    -40
+   ],
+   "sun_color": [
+    0.89,
+    0.88,
+    0.94
+   ],
+   "fog_color": [
+    0.74,
+    0.72,
+    0.82
+   ],
+   "fog_density": 0.007,
+   "vol_density": 0.02,
+   "ambient": [
+    0.44,
+    0.42,
+    0.52
+   ],
+   "sun_energy": 1.5
+  }
+ },
+ "weather": {
+  "gulls": false,
+  "pollen": 220,
+  "pollen_color": [
+   0.75,
+   0.8,
+   0.9,
+   0.35
+  ],
+  "pollen_drift": [
+   0.12,
+   0.02,
+   0.05
+  ],
+  "snow": 220,
+  "snow_fall": [
+   0.05,
+   -0.35,
+   0.02
+  ],
+  "snow_size": 0.05,
+  "glitter": 220
+ },
+ "veg": {
+  "density": {
+   "heather": 1.5,
+   "grass": 0.6
+  },
+  "add": []
+ }
+}

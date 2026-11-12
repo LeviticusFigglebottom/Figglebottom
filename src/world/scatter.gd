@@ -604,6 +604,17 @@ static func region_recipe(area_id: String) -> Dictionary:
 	return _recipes[area_id]
 
 ## The area's own rules with the region recipe laid over them.
+##
+## THE ORDER, and the only place it is applied (build_veg), each step once:
+##   1. the area JSON's "veg" rules, as the generator wrote them;
+##   2. the region recipe (data/veg/<area>.json): its "drop" kinds leave, its
+##      "veg" rules are appended. The recipe is the source of a region's plants;
+##   3. the biome file (data/biomes/<area>.json "veg", Biome.veg_rules) over
+##      that whole list: "density" scales a kind (0 removes it) and "swap"
+##      draws one kind as another, recipe plants included; its "add" rules
+##      are appended as written, unscaled.
+## A kind both files remove is simply gone; plants are added by the recipe,
+## so a biome's "add" stays empty unless a species is its alone.
 static func region_rules(area_id: String, rules: Array) -> Array:
 	var recipe := region_recipe(area_id)
 	if recipe.is_empty():
@@ -670,7 +681,7 @@ const SCATTER_CHUNK := 32.0
 static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
-	rules = region_rules(area.area_id, rules)
+	rules = Biome.veg_rules(area.area_id, region_rules(area.area_id, rules))
 	var def: Dictionary = area.get_meta("def", {})
 	var area_clear: Array = def.get("scatter", {}).get("clear", [])
 	var ground := Color(0.1, 0.11, 0.05)

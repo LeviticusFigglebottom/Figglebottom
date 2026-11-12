@@ -15,12 +15,14 @@ static func build(area_id: String) -> Area:
 	area.display_name = def.get("name", area_id)
 	area.set_meta("def", def)
 
-	area.env.set_overrides(def.get("env", {}))
+	# the region's own look (data/biomes): light, ground, weather, ground cover
+	var biome := Biome.of(area_id)
+	area.env.set_overrides(Biome.over(def.get("env", {}), biome.get("env", {})))
 	area.env.build_fog_pockets(def.get("fog_pockets", []))
 	# the land first: buildings sit on it, they are not it (ADR 0003)
 	if def.has("terrain"):
 		var t := Terrain.new()
-		if t.setup(def["terrain"]):
+		if t.setup(def["terrain"], area_id):
 			area.base.add_child(t)
 			t.build(RH.L_WORLD_BASE)
 			area.terrain = t
@@ -277,7 +279,11 @@ static func build(area_id: String) -> Area:
 	if area.terrain != null and def.has("forest"):
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
 	if area.terrain != null:
-		Weather.build(area, area.terrain, def)
+		var wdef := def
+		if biome.has("weather"):
+			wdef = def.duplicate()
+			wdef["weather"] = Biome.over({"w": def.get("weather", {})}, {"w": biome["weather"]})["w"]
+		Weather.build(area, area.terrain, wdef)
 		TrapWarden.build(area)      # no ditch keeps the Bearer (tools/fix_traps.py)
 		var wayside_n := Wayside.build(area, def)   # cairns, stone rows, racks, boats: things met along the way
 		if "--house-stats" in OS.get_cmdline_user_args():

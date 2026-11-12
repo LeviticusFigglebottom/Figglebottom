@@ -29,6 +29,9 @@ func material() -> ShaderMaterial:
 		for k in pal:
 			var c: Array = pal[k]
 			_mat.set_shader_parameter(k, Color(c[0], c[1], c[2]))
+		var sh: Dictionary = spec.get("shader", {})
+		for k in sh:
+			_mat.set_shader_parameter(k, Color(sh[k][0], sh[k][1], sh[k][2]) if sh[k] is Array else float(sh[k]))
 		_bind_sets(_mat)
 	return _mat
 
@@ -95,8 +98,12 @@ func add_footprint(center: Vector2, half: Vector2, yaw: float, floor_y: float, k
 	m.set_shader_parameter("door_at", dd)
 	m.set_shader_parameter("door_count", _doors.size())
 
-func setup(s: Dictionary) -> bool:
+## area_id: the region whose biome (data/biomes) is laid over the terrain block.
+func setup(s: Dictionary, area_id := "") -> bool:
 	spec = s
+	if area_id != "":
+		spec = Biome.over(s, Biome.of(area_id).get("terrain", {}))
+		s = spec
 	name = "Terrain"
 	var o: Array = s.get("origin", [0, 0])
 	origin = Vector2(float(o[0]), float(o[1]))

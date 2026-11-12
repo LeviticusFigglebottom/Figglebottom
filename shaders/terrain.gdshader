@@ -76,6 +76,14 @@ uniform float has_tex = 0.0;           // 0 until Terrain binds the sets
 // close-up detail
 uniform float parallax_depth = 0.055;  // metres of relief on path and shingle
 uniform float detail_near = 7.0;       // the finer second sample fades out by here
+// rock character, per region (data/biomes/<area>.json "shader")
+uniform float bed_thickness = 1.7;     // metres between bedding planes
+uniform float bed_strength = 1.0;      // 0 = massive rock with no beds (granite), 1 = strongly bedded
+uniform float joint_vertical = 0.0;    // upright joints top to bottom (granite walls, slate cleavage)
+uniform float joint_spacing = 2.6;     // metres between upright joints
+uniform float streak_strength = 0.25;  // dark water stains down the face
+uniform float rock_moss = 0.35;        // green wash in the damp hollows
+uniform vec3 rock_stain : source_color = vec3(1.06, 1.0, 0.92);   // tint of the odd bed (iron, lichen)
 uniform float rock_relief = 0.55;       // strength of the cliffs' macro normal
 uniform float snow_ripple = 1.0;       // wind ripple and drift relief on RIME snow
 uniform float puddle_amount = 0.5;     // 0 = none; raises the puddle / ice-patch cover
@@ -288,15 +296,22 @@ void fragment() {
 	vec3 rock = retint(rock_a, rock_mean, rock_col);
 	// beds: each bed its own tone, an iron-stained one, seep streaks
 	// beds of uneven thickness (even strata read as a tiled band on a cliff)
-	float bed_c = (bed_v + 2.2 * vnoise(vec3(bed_v * 0.19, blk * 5.0, 3.0)) + 0.5 * n1) / 1.7;
+	float bed_c = (bed_v + 2.2 * vnoise(vec3(bed_v * 0.19, blk * 5.0, 3.0)) + 0.5 * n1) / bed_thickness;
 	float bed_f = fract(bed_c);
 	float bed_tone = hash13(vec3(floor(bed_c), 7.0, 3.0));
 	// each bed stands a little proud of the one above: a lit ledge at its
 	// top, a line of shade under it, and joints that crack it into blocks
-	float ledge = smoothstep(0.84, 0.98, bed_f);
-	float undercut = 1.0 - smoothstep(0.0, 0.14, bed_f);
+	float ledge = smoothstep(0.84, 0.98, bed_f) * bed_strength;
+	float undercut = (1.0 - smoothstep(0.0, 0.14, bed_f)) * bed_strength;
 	float jn = vnoise(vec3(v_wp.x * 0.38, floor(bed_c) * 3.1, v_wp.z * 0.38));
-	float joint = smoothstep(0.47, 0.5, jn) * (1.0 - smoothstep(0.5, 0.53, jn));
+	float joint = smoothstep(0.47, 0.5, jn) * (1.0 - smoothstep(0.5, 0.53, jn)) * bed_strength;
+	// upright joints: the face splits into columns and slabs from top to foot
+	if (joint_vertical > 0.001) {
+		float along = (abs(n.x) > abs(n.z) ? v_wp.z : v_wp.x) / joint_spacing;
+		along += 0.35 * vnoise(vec3(along * 0.7, v_wp.y * 0.05, 9.0));
+		float jf = abs(fract(along + hash13(vec3(floor(v_wp.y * 0.07), 2.0, 5.0)) * 0.4) - 0.5);
+		joint = max(joint, (1.0 - smoothstep(0.0, 0.035, jf)) * joint_vertical);
+	}
 	// macro relief: buttresses and hollows metres across, so a flat facet of
 	// the heightfield does not shade as one plane
 	float m0 = vnoise(v_wp * 0.11);
@@ -310,11 +325,11 @@ void fragment() {
 	}
 	rock *= 0.78 + 0.22 * m0 + 0.14 * m1;
 	rock *= 1.0 - 0.3 * undercut - 0.38 * joint * (1.0 - far * 0.6);
-	rock *= 0.82 + 0.3 * bed_tone;
-	rock *= mix(vec3(1.0), vec3(1.06, 1.0, 0.92), step(0.6, bed_tone));
+	rock *= 1.0 + (0.3 * bed_tone - 0.18) * bed_strength;
+	rock *= mix(vec3(1.0), rock_stain, step(0.6, bed_tone) * max(bed_strength, 0.35));
 	float streak = vnoise(vec3(v_wp.x * 1.6, v_wp.y * 0.08, v_wp.z * 1.6));
-	rock *= 1.0 - 0.25 * smoothstep(0.5, 0.92, streak) * (0.6 + 0.4 * n1);
-	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * 0.35);
+	rock *= 1.0 - streak_strength * smoothstep(0.5, 0.92, streak) * (0.6 + 0.4 * n1);
+	rock = mix(rock, rock * vec3(0.8, 0.95, 0.75), smoothstep(0.5, 0.8, n_macro) * rock_moss);
 
 	// --- height-blended weights ------------------------------------------
 	float w_heath = clamp(v_col.a * 0.7 + n_macro * 0.6 - 0.15, 0.0, 1.0);
