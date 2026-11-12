@@ -64,6 +64,7 @@ Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
   - **Orm's knot-cord**, just inside the door of `kin_a`, across the knees of the one who sat up there (`item_orm_cord`; sets `ks_aud_cord_found`).
   - The **Turf Spade** holding up the door of `kin_d` (`turf_spade`). Taking it does not bring the door down.
   - The grave goods further in at `kin_a` (warmth, already placed).
+  - In both states: the **Spear** stood against `kin_a`'s kin-post, on the road side, beside the bier (`kin_spear`, `spear`; ADR 0015).
 
 ---
 
