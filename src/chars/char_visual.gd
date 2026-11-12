@@ -20,6 +20,20 @@ var weapon_kit := ""
 ## a brand's head (null for every other weapon).
 var stow_mount: Node3D
 var brand: BrandFire = null
+var _trail_cfg: Dictionary = {}
+
+## A swing's trail takes its look as it appears: a brand that is put out
+## swaps in its weapon's "trail_unlit" keys (clip_meta weapons.<kit>), so a
+## cold head leaves no fire in the air. Look only: the trail's timing is the
+## attack's own.
+func _on_trail_shown() -> void:
+	if trail == null or not trail.visible or _trail_cfg.is_empty():
+		return
+	var cfg := _trail_cfg
+	if brand != null and not brand.is_lit() and _trail_cfg.has("trail_unlit"):
+		cfg = _trail_cfg.duplicate()
+		cfg.merge(_trail_cfg["trail_unlit"], true)
+	trail.call("configure", cfg)
 var _stowed := false
 ## Humanoid mode: the AnimationTree driver (null for mannequins).
 var rig: HumanoidRig = null
@@ -407,7 +421,8 @@ func set_weapon(kit_id: String) -> void:
 		trail.set("base_up", ext.x)
 		trail.set("tip_up", ext.y)
 		if rig != null:
-			trail.call("configure", HumanoidLib.weapon_cfg(kit_id))
+			_trail_cfg = HumanoidLib.weapon_cfg(kit_id)
+			trail.call("configure", _trail_cfg)
 	apply_carry_pose(current_clip())
 
 func apply_carry_pose(clip := "") -> void:
@@ -484,9 +499,11 @@ func add_trail() -> void:
 	trail = st
 	if rig != null:
 		st.set("sampler", Callable(self, "weapon_xform"))
-		st.call("configure", HumanoidLib.weapon_cfg(weapon_kit))
+		_trail_cfg = HumanoidLib.weapon_cfg(weapon_kit)
+		st.call("configure", _trail_cfg)
 	# sibling of the weapon so set_weapon() never frees it
 	weapon_mount.get_parent().add_child(trail)
+	trail.visibility_changed.connect(_on_trail_shown)
 
 func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 	if rig != null:
