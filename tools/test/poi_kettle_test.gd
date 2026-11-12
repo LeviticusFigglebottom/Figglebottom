@@ -321,11 +321,17 @@ func _run() -> void:
 	check(int(player.inventory.get("item_sounding_pole", 0)) == 1, "he does not take his grandfather's pole")
 	check(int(player.inventory.get("item_line_winder", 0)) == 0, "he takes his own winder")
 	check(int(player.inventory.get("item_healer_pack", 0)) == 1, "he is not shown the pack")
-	var lines := _journal("ivo_mitten")
-	check(lines.has("Ivo says he can hear the ice through his feet.") and lines.has("Ivo says the line holds either way round."),
+	# (the Journal's shape, ADR 0014: a shown find is an optional step, its
+	# plain line filed after the step it belongs to)
+	var lines: Array = Journal.view_of(Journal.thread_def("ivo_mitten"))["done"]
+	check(lines.any(func(l): return String(l).begins_with("Showed Ivo the sounding pole.")) \
+		and lines.any(func(l): return String(l).begins_with("Showed Ivo the line-winder.")),
 		"the journal has both lines")
-	var steps: Array = Keepsakes.threads_def().filter(func(t): return t["id"] == "ivo_mitten")[0]["steps"].map(func(s): return String(s["flag"]))
-	check(steps.find("ks_ivo_pole") == 1 and steps.find("ks_ivo_supper") == 2, "the pole's step sits between the meeting and the supper")
+	var after := {}
+	for o in Journal.thread_def("ivo_mitten").get("optional", []):
+		after[String(o["flag"])] = String(o.get("after", ""))
+	check(after.get("ks_ivo_pole", "") == "ks_ivo_met" and after.get("ks_ivo_line", "") == "ks_ivo_supper",
+		"the pole's step sits between the meeting and the supper; the winder's after the supper")
 	if is_instance_valid(ui):
 		ui.close()
 	await ticks(3)

@@ -190,7 +190,7 @@ func _run() -> void:
 	for t in Keepsakes.journal():
 		if t["id"] == "melt_flowers":
 			lines = t["lines"]
-	check(lines == ["The flowers went down the water. Wren watched them out of sight."], "the journal has the Melt flowers thread")
+	check(lines == ["Threw a bunch of Melt flowers into the water at the Wellhead. Wren watched them out of sight."], "the journal has the Melt flowers thread")
 
 	print("== 8.2 the Shelter at the Ice-Falls (THAW)")
 	var sh: Dictionary = _prop("cw_shelter", "thaw")

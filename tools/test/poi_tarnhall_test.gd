@@ -306,13 +306,12 @@ func _run() -> void:
 	await ticks(2)
 	check(World.flag("ks_ottar_pair"), "shown the rowan stick: ks_ottar_pair")
 	check(int(player.inventory.get("item_rowan_stick", 0)) == 1, "he does not take it: it is hers")
-	var steps: Array = Keepsakes.threads_def().filter(func(t): return t["id"] == "ottar_stick")[0]["steps"].map(func(s): return String(s["flag"]))
-	check(steps.find("ks_ottar_pair") == 2 and steps.find("ks_ottar_staff_found") == 1, "the new step follows step 2")
-	var jl: Array = []
-	for t in Keepsakes.journal():
-		if t["id"] == "ottar_stick":
-			jl = t["lines"]
-	check(jl.has("Ottar says the other stick is his wife's, and that she is at home."), "the journal has the line")
+	# (the Journal's shape, ADR 0014: a shown find is an optional step, its
+	# plain line filed after the step it belongs to)
+	var opt: Array = (Journal.thread_def("ottar_stick").get("optional", []) as Array).filter(func(o): return o["flag"] == "ks_ottar_pair")
+	check(opt.size() == 1 and String(opt[0].get("after", "")) == "ks_ottar_staff_found", "the new step follows step 2")
+	var jl: Array = Journal.view_of(Journal.thread_def("ottar_stick"))["done"]
+	check(jl.any(func(l): return String(l).begins_with("Showed Ottar the second stick, from the porch.")), "the journal has the line")
 	if is_instance_valid(ui):
 		ui.close()
 	await ticks(3)
