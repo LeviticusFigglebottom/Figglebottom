@@ -2391,6 +2391,8 @@
    "label": "Take the Host's cup",
    "pickup_id": "host_cup",
    "ahead": 3.0,
+   "_clear": "set down short of a bench or the table edge between him and the Bearer, by this much",
+   "clear": 0.5,
    "scene": "res://assets/models/props/host_cup.tscn"
   },
   "attacks": [

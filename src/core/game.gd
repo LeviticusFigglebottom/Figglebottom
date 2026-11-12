@@ -114,7 +114,7 @@ func on_boss_slain(area_id: String, boss: Node = null) -> void:
 		AudioDirector.end_boss_theme("", 4.0)
 
 ## What a released holdfast leaves (SLICE.md 6), from its data:
-##   release_drop: {item, scene, label, pickup_id, ahead, set_flag, at_seal} ->
+##   release_drop: {item, scene, label, pickup_id, ahead, clear, set_flag, at_seal} ->
 ##     a pickup set down in front of where it sat, toward the Bearer, so it
 ##     is seen at once (or, with at_seal, in the middle of the sealed hole;
 ##     with at_point, at the boss's drop_point())
@@ -150,7 +150,10 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 		toward.y = 0.0
 		if toward.length() < 0.1:
 			toward = Vector3(0, 0, 1)
-		k.global_position = b.global_position + toward.normalized() * float(drop.get("ahead", 2.2)) + Vector3.UP * 0.02
+		var ahead := float(drop.get("ahead", 2.2))
+		if drop.has("clear"):
+			ahead = _drop_reach(b, toward.normalized(), ahead, float(drop["clear"]))
+		k.global_position = b.global_position + toward.normalized() * ahead + Vector3.UP * 0.02
 		if bool(drop.get("at_seal", false)) and seal_at != Vector3.INF:
 			k.global_position = seal_at + Vector3.UP * 0.12   # frozen into the new ice
 		elif bool(drop.get("at_point", false)) and b.has_method("drop_point"):
@@ -177,6 +180,28 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 			h.position = Vector3(spec["at"][0], spec["at"][1], spec["at"][2])
 			h.rotation.y = deg_to_rad(float(spec.get("rot", 0)))
 			AudioDirector.play("world/pickup", h.global_position)
+
+## How far ahead of the boss the drop may go toward the Bearer: `ahead`,
+## or (opt-in, `clear`) that much short of the first furniture or wall in
+## between. Set down blindly, the Host's cup fell into the gap between a
+## bench and the table edge when the Bearer stood across the board, and the
+## way to it ended on the bench lip. (Two rays: a bench's height, and the
+## height of a table's edge.)
+func _drop_reach(b: Node3D, dir: Vector3, ahead: float, clear: float) -> float:
+	if not b.is_inside_tree() or dir.length() < 0.5:
+		return ahead
+	var space := b.get_world_3d().direct_space_state
+	var best := ahead
+	for h: float in [0.3, 0.77]:
+		var from: Vector3 = b.global_position + Vector3.UP * h
+		var q := PhysicsRayQueryParameters3D.create(from, from + dir * (ahead + clear),
+				RH.M_WORLD_ALL | (1 << (RH.L_WORLD_LOW - 1)))
+		if b is CollisionObject3D:
+			q.exclude = [(b as CollisionObject3D).get_rid()]
+		var hit := space.intersect_ray(q)
+		if not hit.is_empty():
+			best = minf(best, maxf(from.distance_to(hit["position"]) - clear, 0.0))
+	return best
 
 ## release_clear (metres, opt-in): she sits back down where the fight
 ## ended; if that is on the hearth her release wakes, the hearth caught
