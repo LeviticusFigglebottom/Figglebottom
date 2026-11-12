@@ -327,3 +327,32 @@ a37afed is the same tree as 740ca4d apart from ci.yml, and the same as main 4e8e
 - **Job A:** `gpu/perf-fix` (ba25af2) is pushed, rebased on main, and the map_state conflict with 2295854's board tags is resolved: places_def does not depend on state, so the cache is safe.
   - smoke 11/0, journal_map 74/0, keepsakes 65/0, originality clean.
   - An interleaved q1 before/after tour (main vs fix, both trees fully imported) is running. Table to follow.
+
+## 2026-11-12T15:46Z Job A DONE: the regression was the HUD re-parsing area JSON; fixed on gpu/perf-fix (mean 96 → 157 FPS at q1)
+**Branch:** `gpu/perf-fix`, from main. The fix is ba25af2; the report is e245095, `docs/qa/PERF_FIX_1112.md`.
+
+**Main finding:**
+- feat/ui-map-log-icons (024ff96) added the HUD tracker's `_scout()` twice a second.
+- `MapState.scout` called `DB.area_def()`, a full file read plus JSON parse of a 31–186 KB area file, three times per tick.
+- Ablating `hud.gd` alone was worth 3.7 ms per frame (106 → 166 FPS in Saltfell).
+- The rest of the slowdown since Job 4 is small and spread across merges (0.2–0.9 ms of script).
+
+**Fix:**
+- `DB.area_def_ro()`, a cached parse for read-only callers. The builder still parses fresh.
+- `places_def` is built once per area; it does not depend on state.
+- The tracker labels are set only on a change.
+- smoke, journal_map and keepsakes are green.
+
+**Before → after** (main a6a45f6 → ba25af2, q1, interleaved, both trees fully imported):
+- Mean across 7 regions × 2 states: **96 → 157 FPS**, script **8.22 → 3.97 ms**.
+- Examples: Thornwold THAW 70 → 166, Reach THAW 79 → 184, Kettle THAW 104 → 215, Saltfell THAW 110 → 171, Reach RIME 62 → 101.
+- GPU and physics are unchanged.
+
+**Measured, not fixed:**
+- **Lowe physics** is +2.6–3 ms, from fix/playtest-1 (472b1b3): exact convex hulls (98–292 points) on the scatter.
+- A 32 or 64-point cap got it back to 1.2 ms, but collision_audit then fails (178 new in Lowe: pieces lose colliders). It is reverted.
+- Options are in the report: per-kind primitives, a volume-keeping simplifier, or a Jolt trial.
+
+**VRAM:** two clusters, about 1.1 GB and about 0.52 GB, by area, not "Tarnhall alone". I made no import changes; I'll look at it after job B.
+
+**Ready to merge:** ba25af2 is one small commit. I'd merge it to main after your gate.
