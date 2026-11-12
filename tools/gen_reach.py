@@ -535,7 +535,9 @@ for _d in UPWATER_GATE["gate"]["dressing"]:
         _d["rot"] = r2(_ewe_rot + _d["rot"] - UPWATER_GATE["rot"])
 PG.install(D, UPWATER_GATE)
 D["landmarks"].append({"scene": "res://assets/models/landmarks/lm_fold_cairn.glb",
-                       "at": at(UPWATER_GATE["gate"]["at"][0] - 4.6, UPWATER_GATE["gate"]["at"][2] + 1.2, -0.05), "rot": 140, "scale": 0.9})
+                       "at": at(UPWATER_GATE["gate"]["at"][0] - 4.6, UPWATER_GATE["gate"]["at"][2] + 1.2, -0.05), "rot": 140, "scale": 0.9,
+                       # (solid: a box inside the round of the stones, not out to their corners)
+                       "blocker": [2.0, 2.0, 2.0]})
 # --- end progression gates
 
 if __name__ == "__main__":
