@@ -337,6 +337,21 @@ Before the fix, `preload` quit by a bare `get_tree().quit()` did not exit within
 
 All 24 exit 0 with no error logged. Most of each figure is the engine's own teardown: a suite with nothing in flight takes 0.33 to 0.41 s from `RESULT` to exit.
 
+Suites after the fix, with the time from `RESULT` to the process being gone:
+
+| suite | result | exit | RESULT to exit |
+|---|---|---|---|
+| streaming | 108 checks, 0 failures | 0 | 409 ms |
+| smoke | 11 checks, 0 failures | 0 | 336 ms |
+| deathloop | 26 checks, 0 failures | 0 | 341 ms |
+| gates | 151 checks, 0 failures | 0 | 514 ms |
+| fullgame_tarnhall | 213 checks, 0 failures | 0 | 538 ms |
+| fullgame_reach | two runs: 197 checks, 1 failure; then 197 checks, 0 failures | 1, then 0 | 463 ms, 434 ms |
+
+The one `fullgame_reach` failure was a duel measure ("in the count she kept by her father": 9.8 m against a limit of 9.5; 3.1 m in the second run, 3.2 m in the coordinator's earlier run). The duel is behind a sealed veil, where the streamer does nothing, and the bot's fight rolls dice; it is taken for the walk's own variance, which one passing re-run does not prove.
+
+Seen in the `fullgame_tarnhall` run and not explained: once, while the main thread flushed a worker build's queued render commands (`BuildLock.pump`), the headless renderer logged `Attempting to use an uninitialized RID`, `Parameter "m" is null` (`mesh_clear`, `mesh_add_surface`) and `unimplemented base type` (`instance_set_base`): one mesh of that build was lost to it. The walk passed. Together with the `Weather._gpu` line noted below it points at mesh RIDs going wrong when a worker and the main thread make meshes at once under the headless (dummy) renderer; whether a real renderer can do the same is not known, and the one renderer run made earlier (llvmpipe) logged nothing of the kind. Not seen in the six other suites of this pass or in the coordinator's two earlier walks.
+
 ## What the suite asserts (`tools/test.sh streaming`)
 
 108 checks, from an empty scratch cache (`user://test_streaming`), headless:
