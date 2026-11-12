@@ -5501,7 +5501,8 @@
     0.72,
     0.74,
     0.76
-   ]
+   ],
+   "trail_edge": 0.35
   },
   "quiver": {
    "scene": "res://assets/models/weapons/quiver.glb",
@@ -5539,7 +5540,7 @@
    "scene": "res://assets/models/weapons/quiver.glb",
    "_note": "what a cache of arrows looks like on the ground (Pickup)"
   },
-  "_doc": "weapon kit -> model and how its swing reads. scene: the GLB (grip at the origin, head +Y, edge +Z). trail [from, to]: the part of the weapon that marks the air, metres up from the grip (the head or blade, not the haft). trail_tint, trail_life (s the arc lingers), trail_weight (opacity: a maul drags a heavy smear, a spear point barely marks), trail_energy (glow), trail_style ember (fire, the torch). seat {pos, rot}: this weapon's own shift in the fist inside its class grip. fire: a flame on the head (BrandFire). trail_unlit: for a brand, the trail keys that replace these while it is put out (no fire in the air from a cold head)."
+  "_doc": "weapon kit -> model and how its swing reads. scene: the GLB (grip at the origin, head +Y, edge +Z). trail [from, to]: the part of the weapon that marks the air, metres up from the grip (the head or blade, not the haft). trail_tint, trail_life (s the arc lingers), trail_weight (opacity: a maul drags a heavy smear, a spear point barely marks), trail_energy (glow), trail_style ember (fire, the torch). seat {pos, rot}: this weapon's own shift in the fist inside its class grip. fire: a flame on the head (BrandFire). trail_unlit: for a brand, the trail keys that replace these while it is put out (no fire in the air from a cold head). trail_edge: the opacity and whiteness of the leading edge's flash (default 1)."
  },
  "clips": {
   "idle": {

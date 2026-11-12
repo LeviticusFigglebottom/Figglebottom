@@ -62,7 +62,7 @@ func _sample(dt: float, xf: Transform3D) -> void:
 	_dirty = true
 
 ## Per-weapon look (clip_meta weapons.<kit>): trail_tint [r,g,b],
-## trail_life (s), trail_energy, and trail_style "ember" for a brand, whose
+## trail_life (s), trail_energy, trail_edge (the leading edge's opacity), and trail_style "ember" for a brand, whose
 ## swing leaves fire and sparks in the air where steel leaves a pale cut.
 func configure(cfg: Dictionary) -> void:
 	var m := material_override as ShaderMaterial
@@ -71,6 +71,7 @@ func configure(cfg: Dictionary) -> void:
 	m.set_shader_parameter("energy", float(cfg.get("trail_energy", 0.6)))
 	m.set_shader_parameter("ember", 1.0 if String(cfg.get("trail_style", "")) == "ember" else 0.0)
 	m.set_shader_parameter("weight", float(cfg.get("trail_weight", 1.0)))
+	m.set_shader_parameter("edge", float(cfg.get("trail_edge", 1.0)))
 	life = float(cfg.get("trail_life", 0.15))
 
 static func _catmull_rom(p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, t: float) -> Vector3:
