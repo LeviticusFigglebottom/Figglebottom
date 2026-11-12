@@ -45,7 +45,9 @@ Once the new area's colliders are all in the tree, `NavBaker`:
 2. **Reads the cache** on a worker when both states' meshes are there.
 3. **On a miss, parses** the source geometry in budgeted slices on the main thread (`NavigationServer3D.parse_source_geometry_data` reads the tree; a slice is 24 top-level nodes, one state at a time) and **bakes** with `bake_from_source_geometry_data_async`, then writes the result to the cache.
 
-The crossing waits (in the dark) for the navmeshes, so foes never wake without one. `Area.bake_navmeshes` (synchronous) is kept for direct builds and for the runtime re-bakes a gate or the drawbridge asks for.
+The crossing waits (in the dark) for the navmeshes, so foes never wake without one. `Area.bake_navmeshes` (synchronous) is kept for direct builds.
+
+**Runtime re-bakes** (added 2026-11-12, with ADR 0015's gates). A `ShortcutGate` or `FlagGate` opening and the `DrawBridge` coming down call `Area.rebake_navmeshes()`, which hands the area to `Streamer.rebake`: the same `NavBaker` job (fingerprint, cache, sliced parse within `budget_ms`, background bake), run while the game plays. The old regions stay in the map until the new meshes are ready, then `Area.apply_nav` takes the old out and puts the new in within one frame, so there is no frame with overlapping regions and none with no navmesh. Until then the old navmesh still says the way is shut: a foe does not path through an opening for the half second or so the bake takes. `Area.nav_pending` is true from the asking to the swap and `Area.nav_ready` fires at it (`await area.nav_settled()`; tests use `TestBase.nav_wait`). A second asking while one runs starts over from the colliders as they then are. The bridge asks with a delay of its swing (`DrawBridge.LOWER_S`): its collider turns with the deck, and a bake taken at the windlass, as the synchronous one was, saw the deck on end and left it off the navmesh. Without the streamer (`--no-streaming`, a test that builds an area with no world root) it is the synchronous bake as before.
 
 ### The cache (`src/core/stream_cache.gd`, `user://cache`)
 
@@ -56,6 +58,12 @@ The crossing waits (in the dark) for the navmeshes, so foes never wake without o
 | baked navmeshes, per state (`NavBaker`), as vertices and polygons | area, collider fingerprint, bounds | 0.4 to 1.5 s |
 
 Every key also hashes the **source of the builder scripts** (their `.gd`, or `.gdc` in an export) and the engine version, so changed code or data can only miss. A missing, truncated or foreign file reads as a miss and the thing is built. Navmeshes are stored as plain arrays, not as saved Resources: `ResourceLoader` would not read the same `user://` file twice in one run (the second load of a path came back null), which turned every repeat visit into a re-bake. Entries are written beside and renamed. The oldest go past 512 MB. `--cache-dir=` moves it and `--no-cache` turns it off. The synchronous build uses the first two as well, so the front door and the test suites gain too; CI starts empty and builds everything.
+
+**Warming ahead of need** (added 2026-11-12). Three ways the cache is filled before the Bearer needs it:
+
+1. **In idle time.** When the streamer has nothing to do for `warm_idle_s` (no neighbour being made ready, no crossing, nothing being freed, no arena sealed), `Streamer._tick_cache_warm` takes the live area's neighbours one at a time (every portal's `to`, locked or not) and has a worker compute whichever of the terrain arrays and the ground cover is not in the cache (`AreaBuilder.warm_cache`: `Terrain.cache_only`, `Scatter.build_veg` with no area). Arithmetic and a file write: no mesh, no node, nothing in the tree, no RenderingServer call. A preload that becomes wanted calls it off (the worker looks at the flag every row of ground) and starts at the next look; a synchronous build waits the few milliseconds it takes to let go. Navmeshes are not warmed this way: the parse needs the area's colliders in the tree.
+2. **By a tool.** `tools/qa/warm_cache.sh` fills the cache for all seven areas, navmeshes of a new journey included (it builds each area and runs `NavBaker`).
+3. **Shipped.** `StreamCache` also reads from a second, read-only directory: `cache_seed` beside the executable, or `--cache-seed=PATH`. Not wired into the export or CI (that is the release lane's call); STREAMING.md says how.
 
 ### Thread safety
 
@@ -70,11 +78,12 @@ Every key also hashes the **source of the builder scripts** (their `.gd`, or `.g
 ## Consequences
 
 - A seam crossed with the neighbour ready is a dip to black of a few tenths of a second with no frame over the budget; the numbers, per area, are in STREAMING.md.
-- **The first visit to an area on a machine is still slow to make ready** (the ground cover is computed once, on a worker): if the Bearer reaches the seam first, the black holds for it. Nothing freezes; the cache makes every later visit fast.
+- **The first visit to an area on a machine** needs its ground cover computed once. The idle-time warming does that for the neighbours while the Bearer is busy in the area before; only a player who goes straight from an area's entrance to its next seam in less time than the worker needs can still meet a held black (nothing freezes). A shipped seed removes even that.
 - A worker build is slower than the same build on the main thread (each RenderingServer read waits a frame). It is time nobody sees.
 - What acts appears a few frames after the swap, behind the black. The black is therefore as long as the area's cast is costly: a region with twenty foes holds it longer than an empty one.
 - **Generated building meshes are not cached.** The houses interleave mesh generation with the nodes and colliders they make; caching the meshes alone would mean restructuring `BuildingGen`/`HouseDetail`, which this change was not to do. They are built on the worker (0.1 to 0.6 s), off the main thread.
-- **Runtime re-bakes are still synchronous** (`ShortcutGate`, `FlagGate`, `Drawbridge` call `bake_navmeshes`): opening a gate still costs one long frame. `NavBaker` can take them over; the suites that walk through a gate the moment it opens would have to wait for it.
+- **Runtime re-bakes no longer freeze a frame**, and the routes through an opened gate exist a moment later, not in the same frame: anything that must path through it at once waits for `nav_ready`. The suites that did (gates, steading, lowe, tarnhall, fullslice, the full-game walks) now call `nav_wait()`.
+- The idle-time warming uses one worker core for some seconds after each arrival, on a first visit only.
 - The front door still builds synchronously behind the title's veil, faster for the cache.
 - New rules for builders: anything that acts must be created in the entity section of `AreaBuilder._build` (it is marked late by position); a static cache that both a build and live play reach must take `BuildLock`; and anything that makes a `StandardMaterial3D`, a `ParticleProcessMaterial`, a `FogMaterial` or a `GradientTexture2D` at build time must go through `AreaBuilder._for_main` (or `BuildLock.on_main`).
 - Tests that count on `travel_to` being instantaneous must wait for `current_area_id` and `player.input_enabled`, as the full-game walks already do.

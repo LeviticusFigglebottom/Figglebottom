@@ -24,8 +24,11 @@ godot --headless --path . -- --scene=res://tools/qa/stream_prof.tscn --prof-stre
 godot --path . --rendering-driver vulkan --resolution 1920x1080 \
   -- --scene=res://tools/qa/stream_prof.tscn --prof-stream --prof-out=/tmp/after_gpu.md
 
-# the suite (asserts on the budget)
+# the suite (asserts on the budget; prints the re-bake, release and warming numbers too)
 tools/test.sh streaming
+
+# fill the cache for every area ahead of time (see "Warming the cache")
+tools/qa/warm_cache.sh [--cache-dir=PATH]
 
 # A/B in the running game: the old synchronous area change on the same build
 godot --path . -- --no-streaming
@@ -46,6 +49,7 @@ STREAM_DBG=1 godot --path .
 | freeing the area left | 67 to 101 ms in one frame | 2.8 to 4.3 ms a frame over 6 to 33 frames | same |
 | a rest (every foe brought back) | 31 to 118 ms in one frame | 6 to 8 ms worst frame (8 to 18 in an earlier, busier run) | same |
 | the turn THAW to RIME (settle frame) | 1 to 3 ms + the respawn above | 8 to 16 ms worst frame, respawn included | same |
+| a gate opening or the bridge coming down (navmesh re-bake) | 622 to 756 ms in one frame (the Lowe) | 10 to 15 ms worst frame of nav work, 26 ms once; routes open 0.5 to 0.6 s later | same |
 | synchronous build phases on the main thread during a crossing | all of them | none | none |
 
 At the Bearer's run speed (7.5 m/s) the 70 m preload distance is 9.3 s of walking. With a warm cache every area is ready in under 2 s on this box. With an empty cache Saltfell (12.5 s), the Reach (8.9 s), the Lowe (8.6 s) and the Coldwell (7.8 s) may not be ready if he sprints straight at the seam: the black then holds until they are, at `cold_budget_ms` a frame, with nothing frozen. That happens once per area per machine (and again after a game update, because the cache key includes the builders' source).
@@ -265,9 +269,54 @@ Per phase, warm cache, main-thread ms (+ worker ms):
 | save | 1 | 1 |
 | **total** | **2506 (+23933 w)** | **2904 (+27493 w)** |
 
+## Runtime re-bakes: a gate opens, the bridge comes down
+
+Added 2026-11-12, after the progression gates (ADR 0015) made every region's way on a `ShortcutGate` that opens the moment its Holdfast is released. Before, each opening called `Area.bake_navmeshes` in that frame. Now it calls `Area.rebake_navmeshes()`: fingerprint, sliced parse within `budget_ms`, background bake, and the old navmesh in the map until the new one replaces it in one frame (ADR 0014, "Runtime re-bakes").
+
+Measured in the Lowe by the streaming suite, four runs on this box (headless; other suites on the same cores):
+
+| | before | after |
+|---|---|---|
+| the bake itself | 622 to 756 ms, one frame, main thread | 276 to 397 ms per state, in the background |
+| main-thread nav work in the worst frame, bridge | all of it | 13.7 to 15.1 ms in three runs, 26.4 ms in one (the next worst frame 9.6 to 19.2 ms); the terrain's parse slice is the large one |
+| main-thread nav work in the worst frame, release | all of it | 10.4 to 14.2 ms (next worst 9.9 to 12.5 ms) |
+| frames carrying nav work | 1 | 17 to 24 |
+| release: Holdfast falls to routes open through the gate | the same frame, frozen | 0.52 to 0.62 s later, nothing frozen |
+| bridge: windlass to the deck on the navmesh | never (see below) | 3.0 s, of which 2.4 s is the deck's swing |
+| synchronous phases on the main thread | nav bake thaw, nav bake rime | none |
+
+- **The release moment end to end** (story flag set, `Game.on_boss_slain`, the gate answers, re-bake, routes open): no frame carries more than 14.2 ms of nav work. The longest frame of that window, wall-clock, was 63 to 94 ms in the first three runs. That was not the navmesh: `Game.on_boss_slain` itself took 92 to 118 ms, placing every soul and find the release brings back in one frame (`AreaBuilder.refresh_flagged`, about 20 to 30 ms a soul here). They are now placed one a frame; `on_boss_slain` measured 30 to 38 ms after that (the first soul and the song's first load), and the window's longest frame 52 ms. **Still over 30 ms on this box**: one soul's instancing is the known largest single item (below).
+- **The bridge.** The old bake was taken the frame the windlass turned, with the deck still on end (its collider turns with it), so the deck never was on the navmesh. The re-bake now waits for the swing. The Lowe's nav bounds end 2.5 m out along the deck (z -80), so its navmesh reaches that far and no further; the suite checks that, and the full-game walk's own note "(the deck on the Lowe's navmesh: false)" asks about a point beyond the bounds and is unchanged. Widening the bounds is area data, not touched here.
+- **In the gap** the old navmesh still says shut: a foe does not path through the opening for that half second. The Bearer's capsule is not on the navmesh and walks through at once.
+- **Not exercised by the `gates` suite**: it builds areas with no world root, where there is no streamer and `rebake_navmeshes` is the synchronous bake as before. The streamed path is covered by the streaming suite (bridge, release gate), `fullslice` and `fullgame_lowe`.
+
+## Warming the cache
+
+Added 2026-11-12. A first visit to an area computed its ground cover at the seam (3 to 12 s on a worker here), and a player who reached the seam first met a held black. Three things now fill the cache earlier.
+
+**Idle time.** With the streamer idle for `warm_idle_s` (2 s; `warm_cache: false` turns it off), the live area's neighbours have their missing terrain and ground-cover entries computed on a low-priority worker, one area at a time. Arithmetic and a file write only: no mesh, no node, no RenderingServer call. Navmeshes are not included (the parse needs the colliders in the tree); they are baked in the background on arrival as before, 0.3 to 0.8 s behind the black.
+
+| measured by the streaming suite, standing in the Lowe with an empty cache | |
+|---|---|
+| both neighbours (Saltfell, the Kettle) warmed | 17.8 s of idle time, on one worker |
+| the Kettle then made ready and crossed into | 3 hits, 0 misses for terrain, horizon and ground cover; 1.2 s from the call to arrival, cold (nothing preloaded) |
+| worst frame of that crossing | 15 to 19 ms (next 13 to 16 ms) |
+| a synchronous build calling the warming off | 33.5 ms in the one run measured before the finer checks; the suite allows 250 ms. A preload near a seam does not wait: it calls the warming off and starts at the next look. |
+
+**The tool.** `tools/qa/warm_cache.sh` fills the cache for all seven areas: terrain, horizon, ground cover, and both navmeshes as a new journey finds them. Here: the Lowe 8.3 s + 2.7 s for its navmeshes, the Kettle 2.8 s + 1.4 s; two areas 18.5 MB. With the cache it left, a first streamed visit to the Kettle was ready in 1.1 s and black for 0.31 s, navmeshes read from the cache (against 3.2 s and 0.57 s from empty).
+
+**Shipping it with an export** (not wired in: export presets and CI are not this lane's).
+
+1. Export the game. The cache key holds the hash of the builder scripts as the running build has them (`.gdc` in an export, `.gd` in the editor), so the cache must be made by the exported build, not by the editor.
+2. Run the exported binary once on the build machine: `GODOT=./rimeholt.x86_64 tools/qa/warm_cache.sh --cache-dir=/abs/path/cache_seed` (it needs `res://tools/qa/warm_cache.tscn` and `.gd` in the export's file filter). About 84 MB for seven areas, mostly ground cover; zstd-compressed already.
+3. Ship the `cache_seed` directory beside the executable. `StreamCache` looks there (or where `--cache-seed=PATH` says) when `user://cache` has no entry, read-only; whatever a journey adds (navmeshes after gates open) goes to `user://cache` as before.
+4. Nothing else changes: a seed made by another build simply never matches and the game computes its own.
+
+Checked here with the editor binary only (`--cache-seed=` pointing at a filled directory: every entry found, nothing computed). **Not checked with an exported build.**
+
 ## What the suite asserts (`tools/test.sh streaming`)
 
-78 checks, from an empty scratch cache (`user://test_streaming`), headless:
+102 checks, from an empty scratch cache (`user://test_streaming`), headless:
 
 - a cold crossing (nothing ready, empty cache) arrives, with both navmeshes baked in the background and no synchronous build phase on the main thread;
 - 25 m from a seam the neighbour starts being made ready; it stands in the tree unseen, unprocessing, in none of the groups play reads, with no hearth, foe, seam or navmesh in the world and none of its colliders in the physics space;
@@ -276,20 +325,26 @@ Per phase, warm cache, main-thread ms (+ worker ms):
 - walked toward at walking pace from outside the preload distance, it is ready before arrival (64 m to spare here) and the crossing's second-worst frame is within `hitch_ms`; the swap is one frame within it too;
 - never more than two areas alive; the area left is freed;
 - the next crossing reads navmeshes, ground cover and terrain from the cache; with every entry corrupted the area is built all the same;
-- a rest, the turn to RIME and a cross-area respawn stay within `hitch_ms` with no synchronous phase.
+- a rest, the turn to RIME and a cross-area respawn stay within `hitch_ms` with no synchronous phase;
+- the bridge lowered: a re-bake is asked for, the old navmesh answers meanwhile, `nav_ready` fires, no frame over `hitch_ms` and no synchronous phase, the navmesh then reaches out onto the deck, two regions stand and no more;
+- a release: the way-on gate answers the flag, the old navmesh still says shut, `nav_ready` fires within the budget, and a route runs through the opened gate;
+- idle time: from an empty cache both neighbours' ground cover and terrain appear on disk with nothing built or grafted, the next crossing reads them (no miss), and a wanted build calls the warming off.
 
 The budget assertion is on the **second-worst** frame's streaming work: on a shared box one frame can be taken by the OS in the middle of a 4 ms slice, and that is not a hitch of ours. The worst frame is printed beside it.
 
 ## Suites run on this branch (headless, this box)
 
+After the follow-up (runtime re-bakes, cache warming), on the merged `feat/streaming` code:
+
 | suite | result | note |
 |---|---|---|
-| streaming | 78 checks, 0 failures | |
-| 29 others (smoke, deathloop, houses, steading, lowe, kettle, thornwold, tarnhall, reach, coldwell, boss, combat, controller, encounters, endings, keepsakes, deltas, traps, release_scenes, anim, audio, body, look5, and the six `*_encounters`) | 1,568 checks, 0 failures | one pass on the final code |
-| fullslice | 106 checks, 0 failures; and one run of 101 checks, 20 failures | two runs on the final code. The failing run lost the Bearer at the net float on the Strand ("the float shows its prompt") and everything after followed from it; another agent's full-game walks were on the same cores. Not diagnosed; not seen in the earlier runs. |
-| fullgame_lowe | 194 checks, 2 failures | the same two fail with `--no-streaming` ("no THAW route to the peat island", "the black water is back"): not from streaming. Run before the last small changes (arena rule, respawn order). |
-| fullgame_kettle | did not finish | the Ice-Cutter duel stalls (his hp stays at 1040/1250, the Bearer's at 196, from 16 s on). The same stall, same numbers, shows with `--no-streaming` (watched to 48 s of the duel, then stopped): not from streaming. The arena's static colliders were compared ray by ray between the synchronous and the streamed build: 4,131 rays, no difference. |
-| fullgame_tarnhall, fullgame_thornwold, fullgame_reach, fullgame_coldwell, fullgame_ending_kept, fullgame_ending_outsong | not run | |
+| streaming | 102 checks, 0 failures in the last three runs, the last of them on the final code | an earlier run failed one check, "calls the warming off at once (33.5 ms)" against 30 ms; the cancel checks were made finer and the limit for a synchronous build set to 250 ms. In the final-code run the dummy renderer logged `Parameter "m" is null` (`mesh_get_surface_count`) once, from `Weather._gpu` freeing a `CPUParticles3D` on the main thread during a graft; nothing failed. Not explained. |
+| gates | 151 checks, 0 failures | (synchronous path: see "Runtime re-bakes") |
+| smoke, steading, lowe, tarnhall, deathloop, traps | 11, 49, 25, 39, 26, 22 checks, 0 failures | run twice, the second time before the last change (a release's souls spread over frames) |
+| release_scenes, kettle, endings, keepsakes, encounters, boss, lowe_encounters | 32, 34, 85, 64, 66, 27, 98 checks, 0 failures | on the final code |
+| fullslice | 112 checks, 0 failures | two runs, the second on the final code |
+| fullgame_lowe | 196 checks, 0 failures | one run, on the final code (the bridge and a release gate re-baked in the background) |
+| fullgame_kettle, fullgame_tarnhall, fullgame_thornwold, fullgame_reach, fullgame_coldwell, fullgame_ending_kept, fullgame_ending_outsong; houses, thornwold, reach, coldwell, combat, controller, deltas, anim, audio, body, look5, the other five `*_encounters` | not run after the follow-up | before it: see the earlier table in git history (`a9cffc4`); `fullgame_kettle` stalled in the Ice-Cutter duel then, with and without streaming |
 
 
 ## Still over budget, or not verified
@@ -297,7 +352,9 @@ The budget assertion is on the **second-worst** frame's streaming work: on a sha
 - **Real GPU.** Nothing here was measured on one. What can only show there: the cost of the worker's uploads when the main thread flushes them (in the "flush" row with a renderer); whether the warm-up specks really build every pipeline variant the area's meshes need (they are quads: a mesh with another vertex format may still compile its own variant on first sight); the swap frame when several thousand instances become visible at once.
 - **The first soul or foe of a kind** costs 15 to 25 ms on this box to instance (skeleton, materials, animation library), on the main thread, alone in its frame. Under 30 ms here; it is the largest single item left.
 - **Thornwold's swap frame** (14 ms headless) is the largest swap: 6,016 nodes.
-- **A first visit with an empty cache** can still hold the black for several seconds if the Bearer outruns the worker (see Headline). Shipping a pre-built cache with the game would remove it; not done.
-- **Runtime navmesh re-bakes are still synchronous**: opening a `ShortcutGate`, a `FlagGate` turning, the drawbridge coming down each call `Area.bake_navmeshes` and cost one frame of 0.4 to 1.5 s (the "nav bake" rows of the Before table). `NavBaker` can do them in the background; the full-game walks path through a gate the moment it opens and would have to wait for it, so it was left.
+- **A first visit with an empty cache** can still hold the black if the Bearer goes from an area's entrance to its next seam faster than the idle-time warming computes that neighbour (Saltfell: about 12 s of worker time). A shipped seed removes it ("Warming the cache"); the export is not set up to make one.
+- **The release frame** is still 30 to 52 ms long here, wall-clock: the first soul the release brings back and the song's first load. None of it is navmesh work.
+- **One bridge re-bake frame of 26 ms** of nav parse (the terrain slice) in one run of four; the others 14 to 15 ms. Under `hitch_ms`, over the usual.
+- **Runtime re-bakes on a real GPU box, and with foes mid-chase at a gate**: not measured, not staged. The gap is half a second of the old routes.
 - **Generated building meshes are not cached** (ADR 0014, Consequences). They are built on the worker: 0.1 to 0.7 s there, nothing on the main thread.
 - **The front door** (title to first area) is still a synchronous build behind the title's veil. The cache helps it all the same: Saltfell builds in 2.4 s here with a warm cache, against 13.3 s.

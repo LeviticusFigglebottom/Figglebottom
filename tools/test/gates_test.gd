@@ -137,7 +137,8 @@ func _run() -> void:
 		StateDirector.snap(area, RH.WState.RIME)
 		player.global_position = start
 		World.set_flag(flag)
-		await ticks(120)      # the gate answers, what stood in it comes down, the navmesh rebakes
+		await ticks(120)      # the gate answers, what stood in it comes down
+		await nav_wait(area)  # and the navmesh is baked again
 		check(not _body_on(g) and not g._front.enabled, "the release opens it where it stands")
 		check(await _push_through(g, 0.0, 160), "RIME: the Bearer walks through")
 		StateDirector.snap(area, RH.WState.THAW)
@@ -170,6 +171,7 @@ func _run() -> void:
 			check(g._back.enabled and far.distance_to(g._back.zone_global()) < 2.0, "and he stands in reach of its far side")
 		g._back.activate(player)
 		await ticks(120)
+		await nav_wait(area)
 		check(not _body_on(g) and World.area_flag(aid, "gate_" + gid), "undone from the far side")
 		check(await _push_through(g, 0.0, 160) or g.to_local(player.global_position).z < 0.0, "the way back is open")
 		player.global_position = _ground(g.global_position + g.global_transform.basis.z.normalized() * 3.0)

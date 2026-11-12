@@ -220,6 +220,7 @@ func _run() -> void:
 	if it != null:
 		it.activate(player)
 	await ticks(30)
+	await nav_wait(area)
 	check(World.area_flag("saltfell_steading", "gate_boatshed_back"), "the shortcut is open for good")
 	var short_way := _path(gully_head, by_hearth)
 	var l2 := _plen(short_way)

@@ -110,6 +110,7 @@ func _run() -> void:
 	if it != null:
 		it.activate(player)
 	await ticks(200)
+	await nav_wait(area)
 	check(World.flag("lowe_bridge_down"), "the bridge is down for good (world flag)")
 	check(absf(_ray_y(-8, mid_z, 30) - bridge.global_position.y) < 0.4, "the deck spans the ravine")
 
