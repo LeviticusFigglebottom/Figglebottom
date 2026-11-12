@@ -581,8 +581,13 @@ func refresh_tracker() -> void:
 	var busy: bool = p != null and is_instance_valid(p) and (p.busy_in_menu() or p.dead)
 	_tracker_box.visible = not t.is_empty() and not busy and World.ended() == ""
 	if not t.is_empty():
-		_tracker_title.text = String(t["title"])
-		_tracker_text.text = tracker_line(String(t["objective"]))
+		# only on a change: a Label given new text re-lays-out its wrap
+		var title := String(t["title"])
+		var line := tracker_line(String(t["objective"]))
+		if _tracker_title.text != title:
+			_tracker_title.text = title
+		if _tracker_text.text != line:
+			_tracker_text.text = line
 	if _tracker_plate != null:
 		_tracker_plate.visible = _tracker_box.visible
 		_tracker_plate.position = _tracker_box.position - Vector2(12, 6)

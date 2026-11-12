@@ -57,6 +57,17 @@ func item(id: String) -> Dictionary:
 func npc(id: String) -> Dictionary:
 	return table("npcs").get(id, {})
 
+var _area_ro: Dictionary = {}
+
+## The parsed area file, parsed once and shared: for code that only reads it
+## (the Map's scouting twice a second, the Journal, the hearth toggle). Parsing
+## the file on every call cost the HUD about 3.7 ms a frame. Anything that
+## edits a def (the area builder) keeps area_def(), which parses a fresh copy.
+func area_def_ro(id: String) -> Dictionary:
+	if not _area_ro.has(id):
+		_area_ro[id] = area_def(id)
+	return _area_ro[id]
+
 func area_def(id: String) -> Dictionary:
 	var path := "res://data/areas/%s.json" % id
 	if not FileAccess.file_exists(path):

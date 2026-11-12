@@ -155,7 +155,7 @@ static func resolve_at(area: String, at: Variant) -> Variant:
 		return Vector2(float(at[0]), float(at[1]))
 	if not (at is String) or area == "":
 		return null
-	var def := DB.area_def(area)
+	var def := DB.area_def_ro(area)
 	var kind := String(at).get_slice(":", 0)
 	var id := String(at).get_slice(":", 1)
 	var list := {"npc": "npcs", "pickup": "pickups", "hearth": "hearths", "veil": "frost_veils"}

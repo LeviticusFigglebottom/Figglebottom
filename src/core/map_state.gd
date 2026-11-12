@@ -59,8 +59,15 @@ static func _ok(spec: Dictionary) -> bool:
 ## its wayside boards (found by coming up to them; a board is named by its
 ## first line). [{id, name, pos (Vector2), zone: {min, max} or null}]; a
 ## board also has `tags`, the states its texts are tagged for.
+static var _places := {}
+
 static func places_def(area: String) -> Array:
-	var def := DB.area_def(area)
+	if not _places.has(area):
+		_places[area] = _build_places(area)
+	return _places[area]
+
+static func _build_places(area: String) -> Array:
+	var def := DB.area_def_ro(area)
 	var out := []
 	var names := {}
 	for z in def.get("zones", []):
@@ -105,10 +112,10 @@ static func _board_stands(area: String, pl: Dictionary) -> bool:
 ## Called as the Bearer walks (HUD, twice a second): marks what is now
 ## within sight. Returns true when something new was found.
 static func scout(area: String, pos: Vector3) -> bool:
-	if area == "" or DB.area_def(area).is_empty():
+	if area == "" or DB.area_def_ro(area).is_empty():
 		return false
 	var found := _mark("regions", area)
-	var def := DB.area_def(area)
+	var def := DB.area_def_ro(area)
 	var here := Vector2(pos.x, pos.z)
 	for h in def.get("hearths", []):
 		var at: Array = h.get("at", [0, 0, 0])
@@ -146,7 +153,7 @@ static func markers(only_area := "") -> Array:
 	for area in regions():
 		if (only_area != "" and area != only_area) or not region_seen(area):
 			continue
-		var def := DB.area_def(area)
+		var def := DB.area_def_ro(area)
 		for h in def.get("hearths", []):
 			var hid := String(h.get("id", ""))
 			if not _ok(h) or not hearth_seen(area, hid):
