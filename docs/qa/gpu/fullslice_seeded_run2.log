@@ -1,0 +1,146 @@
+=== test: fullslice
+== boot: the house card, the title, a new journey, the winter
+  ok  - the house card comes up first
+  ok  - Figglebottom Productions fades in
+  ok  - a key lets the card go; the title rises
+  ok  - no hearth kept yet: no Resume
+  ok  - New journey and Settings
+  ok  - three hearths and Back
+  ok  - the winter is weighed after New journey
+  ok  - The Long Winter is marked as the default
+  ok  - W weighs toward The Gentle Thaw
+  ok  - the journey begins: the Bearer stands in the world
+  ok  - The Gentle Thaw holds
+  ok  - the intro opens the journey
+  ok  - held, it lets go and hands the Bearer over
+== the Strand, in THAW
+  ok  - first arrival is THAW
+  ok  - the HUD is raised
+  ok  - the region's card, then THE STRAND (THE STRAND)
+  ok  - no enemies in THAW
+  ok  - the Bearer walks to Brede and speaks with him
+  ok  - Brede's first lines, in order
+  ok  - Brede's thread begins
+  ok  - Leave closes the talk and hands control back
+== the cliff path to the yard
+  ok  - Ingra keeps the yard in THAW
+  ok  - the Bearer climbs the cliff path to the shelf ((-13.0, 22.0, 14.0))
+  ok  - SALTFELL is named on reaching the yard (SALTFELL)
+  ok  - the Bearer speaks with Ingra
+  ok  - Ingra's first lines, in order
+  ok  - Ingra's thread begins
+  ok  - two threads, one line each
+== the first rest forces RIME
+  ok  - the Salt House offers its hearth
+  ok  - uncleared THAW: rest only, no turning back
+  ok  - Saltfell is RIME now
+  ok  - the Salt House is the anchor
+  ok  - Ingra is gone in RIME
+  ok  - the frost-taken stand (16)
+== fight through the yard to the byre
+  ok  - the Bearer lives through the yard
+  ok  - the fallen give up warmth (42)
+  ok  - the rye sack lies in the byre in RIME
+  ok  - the rye sack is taken from under the byre dog
+== one level at the Salt House
+  ok  - warmth enough for a level (60)
+  ok  - a level bought (1 -> 2, 60 warmth)
+  ok  - Rise hands control back
+== the gully shortcut
+  ok  - down the gully to the barred side ((25.0, 4.0, 46.0))
+  ok  - from above the gate can be unbarred
+  ok  - the shortcut stands open
+  ok  - through the boat-shed to the Strand
+== the float, out of the frozen tide
+  ok  - the float waits in the ice wall
+  ok  - the tide froze into a wall along the Strand
+  ok  - the float shows its prompt
+  ok  - a hand alone cannot free it
+  ok  - a heavy blow chips the float out of the ice
+== STILLED, and the Breathmark
+  ok  - warmth carried into the fall (84)
+  ok  - a frost-taken stands near (rimewalker)
+  ok  - the frost-taken bring the Bearer down
+  ok  - STILLED (Stilled)
+  ok  - the warmth hangs as a Breathmark
+  ok  - it waits on ground the Bearer can reach (y 21.82)
+  ok  - the Bearer wakes at the hearth
+  ok  - at the Salt House
+  ok  - with nothing carried
+  ok  - the Breathmark offers itself
+  ok  - the warmth is taken back (+168 of 168, first fall carried 168, 1 tries)
+== the frost veil
+  ok  - the veil offers passage
+  FAIL - the veil seals at the Bearer's back
+== the Netmender
+  ok  - the Netmender sits mending
+  FAIL - the Netmender is released (deaths along the way: 1)
+  FAIL - her AI ran all three phases ([1])
+== the release
+  FAIL - the Outsong is sung (res://assets/audio/music/theme_rime.ogg)
+  FAIL - the quiet card (SALTFELL)
+  FAIL - Saltfell is cleared
+  ok  - the veil falls
+  FAIL - the mending needle lies where she sat
+  FAIL - the needle is taken
+  FAIL - the Long Hearth wakes
+  FAIL - the Long Hearth offers to turn the memory
+  FAIL - warmed: THAW again
+  FAIL - the Long Hearth is lit and kept
+== both threads close in THAW
+  (talk steward_ingra, try 1: 48.8 m off, nearest Keep hearth)
+  (talk steward_ingra, try 2: 48.8 m off, nearest Keep hearth)
+  (talk steward_ingra, try 3: 48.8 m off, nearest Keep hearth)
+  FAIL - Ingra, in THAW again
+  FAIL - the rye is home
+  ok  - the bowls wait for the next talk
+  (talk steward_ingra, try 1: 48.8 m off, nearest Keep hearth)
+  (talk steward_ingra, try 2: 48.8 m off, nearest Keep hearth)
+  (talk steward_ingra, try 3: 48.8 m off, nearest Keep hearth)
+  FAIL - Ingra, a second time
+  FAIL - Ingra's thread is whole (2)
+  (talk brede, try 1: 59.1 m off, nearest Keep hearth)
+  (talk brede, try 2: 59.1 m off, nearest Keep hearth)
+  (talk brede, try 3: 59.1 m off, nearest Keep hearth)
+  FAIL - down to the Strand for Brede
+  (talk brede, try 1: 59.1 m off, nearest Keep hearth)
+  (talk brede, try 2: 59.1 m off, nearest Keep hearth)
+  (talk brede, try 3: 59.1 m off, nearest Keep hearth)
+  FAIL - Brede, a second time
+  FAIL - Brede's thread is whole (2)
+== turning freely
+  FAIL - the Boat-Shed turns freely too
+  ok  - stilled again: RIME
+  FAIL - she does not come back
+  FAIL - and warmed once more
+== save, the title, and back
+  ok  - the pause sheet offers the title (["Return to the World", "Settings", "Return to the Title", "Begin the Journey Anew", "Leave the Highland"])
+  ok  - back at the title
+  ok  - the world is put away
+  ok  - Resume the hearth is offered
+  ok  - first choice is Resume
+  ok  - the ledger names the winter (Hearth I   Level 2  ·  Saltfell  ·  The Gentle Thaw  ·  0h 30m)
+  ok  - the hearth resumes
+  ok  - level kept (2)
+  FAIL - the Pack kept
+  FAIL - Saltfell cleared and warm
+  ok  - the Keepsakes kept, in order
+  ok  - the shortcut stays open
+  FAIL - the Long Hearth still burns
+  ok  - the winter kept
+  ok  - back at the kept hearth
+  FAIL - story flags kept
+RESULT: 104 checks, 26 failures
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 11 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 6 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

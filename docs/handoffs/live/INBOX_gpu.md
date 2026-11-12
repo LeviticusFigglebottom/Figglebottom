@@ -459,3 +459,46 @@ No timing change. smoke 11/0, anim 229/0, combat 22/0, body 8/0. Before/after sh
 **Note:** this also explains part of the morning's q1 Lowe figures. Hearth views in other regions move slightly too, onto the ground. Earlier tours' hearth-view numbers are comparable among themselves, not with tours after this.
 
 **Commits:** 1f5a498..8ef7908 on gpu/lowe-phys. The ablation classes and census hooks stay for future use. smoke 11/0.
+
+## 2026-11-12T21:45Z Item 4: seeding makes the walks deterministic (proven); this seed's fight is one the walk loses
+**Branch:** \`gpu/test-seed\` (d543dd6), from main 86128b6.
+- \`boot.gd\` seeds the global RNG from the test's name for every \`--test=\` run. \`--test-seed=N\` overrides it.
+- \`fullslice\` logs the Bearer's state and distance if the float's prompt is missing.
+
+**Runs, alone, one at a time, at d543dd6:**
+
+| run | checks | failures |
+|---|---:|---:|
+| \`tools/test.sh fullslice\` #1 | 104 | 26 |
+| \`tools/test.sh fullslice\` #2 | 104 | 26 |
+| full \`tools/test.sh\` (fullslice inside it) | 2953 | 26: the same 26, and nothing else fails |
+
+**What it proves:**
+- The three fullslice runs are **identical, check for check**: \`diff\` of their ok/FAIL lines is empty.
+- So the full suite and the stand-alone walk now behave the same. **No state leaks from an earlier suite.**
+- The red/green split before (4 green alone, red in the suite, red with a different first FAIL in each red run) was the **unseeded RNG**: foes choose with \`randf\` in enemy.gd, and each process drew a different fight.
+
+**But this seed's fight is one the walk loses, every time:**
+```
+  ok  - it waits on ground the Bearer can reach (y 21.82)
+  ok  - the Bearer wakes at the hearth
+  ok  - at the Salt House
+  ok  - with nothing carried
+  ok  - the Breathmark offers itself
+  ok  - the warmth is taken back (+168 of 168, first fall carried 168, 1 tries)
+== the frost veil
+  ok  - the veil offers passage
+  FAIL - the veil seals at the Bearer's back
+```
+- The first FAIL is \`the veil seals at the Bearer's back\`, then \`the Netmender is released (deaths along the way: 1)\` and \`her AI ran all three phases ([1])\`. The rest cascades.
+- So the walk is robust only to some fights. Under this draw the Bearer dies once before the Netmender, the veil step doesn't see the seal, and the boss never leaves phase 1 before the walk gives up.
+- I didn't change any assertion, and I didn't go seed-shopping for a green one: that would hide the fragility.
+
+**Options, yours to pick:**
+- (a) Keep seeding (determinism is worth having) and fix the walk for this fight: wait for the seal after a death, and give the Netmender's phases more time or retries. Then this seed is a fixed regression case.
+- (b) Seed per run (\`--test-seed\` from CI's run number) and log the seed in the RESULT line, so any red run can be replayed exactly.
+- (c) Run a few seeds, say 1..5, to measure the pass rate first. That's about 35 min each here; I can do it after the main gate if you want.
+
+Full logs are in \`docs/qa/gpu/fullslice_seeded_run{1,2}.log\` and \`suite_seeded.log\`.
+
+**Now running, in order, alone:** stream_prof on main 0c5263f, then the full gate on main, then the Windows build of main.
