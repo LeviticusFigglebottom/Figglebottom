@@ -86,3 +86,13 @@ Failing lines, verbatim:
   - There is no unlit-torch hook.
   - The title card is visible in the weapon shots.
 - **POI cameras:** these are generated from the wayside boards, since only Thornwold has scripted POI cameras. Three of them frame badly; they are named in the README.
+
+## 2026-11-12T06:41Z Job 1: FAIL in the fullslice (Saltfell) walk on integration 0cac9ad (pushed at once)
+- `walk:fullslice`, commit **0cac9ad**: rc 0, **104 checks, 25 failures**. In the previous gate, fullslice passed 112/0 at 25ef245.
+- **First failure:** `FAIL - the Netmender is released (deaths along the way: 6)`. Everything up to it passes: the frost veil offers passage and seals, and "the Netmender sits mending".
+- The other 24 failures all follow from it: the Outsong, the quiet card, Saltfell cleared, the veil falls, the needle, the Long Hearth, the THAW turn, Ingra and Brede's threads, and the save/kept checks.
+- So the boss fight is no longer won within the walk's tries. Suspects are the collision-baseline commit (0cac9ad itself) or Netmender tuning. The walk is headless and tick-driven; a GPU gallery job was running at the time, so I'll re-run it alone to rule out load.
+- **Other results so far:**
+  - originality rc 0, and the full suite 2783/1 at 8c160fd ("the flame gutters more under RIME (0.00 vs 0.00)");
+  - fullgame_lowe 194/0 at 0cac9ad, passing twice so far: the frost-taken/STILLED cluster is gone.
+- The remaining walks are still running.
