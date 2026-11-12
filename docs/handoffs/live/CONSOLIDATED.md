@@ -4,7 +4,17 @@ _Last updated: 2026-11-12 (integration session: `feat/integration-1112`; the sec
 
 Read `docs/handoffs/live/TEAM.md` next: it has the roster, file ownership and how the sessions talk.
 
-## Integration branch `feat/integration-1112` (2026-11-12): waiting for the lead to fast-forward main
+## Main moved to a37afed (2026-11-12 ~11:55 UTC), on the owner's request, ahead of the last gate
+
+The owner asked for main now so they could play it. Main = `feat/integration-1112` at a37afed.
+**Known breakages on main:**
+- `fullgame_tarnhall` fails 3/211 on GitHub CI (e.g. "the cup, the barrel head, the cleaver and the Goat Song are in the Pack"); passes on the PC and cloud box most runs. Fix in progress on `fix/tarnhall-walk`.
+- The owner's PC was still running the full suite and the remaining walks at 740ca4d when main moved; fullslice is green ×4 there.
+- Map images not rebaked after the POI merge (`fix/map-rebake`); spear/greatblade/bow not obtainable (`feat/weapon-finds`); perf ~halved (CPU script time) and THAW too dark under cliffs on real GPU (PC jobs A/B); area-change hitches (`feat/streaming`).
+
+**Next exact step:** merge `fix/tarnhall-walk`, `fix/map-rebake`, `feat/weapon-finds` into main once each is green (`tools/test.sh` + touched walks), dispatch `ci.yml` with `fullgame=true` on main.
+
+## Integration branch `feat/integration-1112` (2026-11-12): merged to main
 
 **What it is.** `origin/main` 024ff96 (sounds redo, painted icons, Journal, Map) with these merged in, in this order: `feat/weapons-overhaul`, `feat/poi-kettle-tarnhall-coldwell`, `fix/playtest-1`, `feat/poi-thornwold-plants`, `feat/intro`, `art/biomes`, `feat/poi-saltfell-lowe-reach`. Not merged: `feat/streaming`. Main was not touched.
 
