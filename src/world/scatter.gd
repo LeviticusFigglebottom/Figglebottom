@@ -265,6 +265,7 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 		body.add_child(cs)
 		body.transform = Transform3D(t.basis.orthonormalized(), t.origin)
 		Surfaces.stamp(body, Surfaces.lookup("scatter", kind))
+		body.add_to_group("scatter_body")
 		area.attach(body, tag)
 
 ## A scatter piece stops the Bearer once it stands this far out of the

@@ -139,7 +139,7 @@ func _build_views() -> void:
 		n_hearths += 1
 		var out_dir: Vector3 = h.global_transform.basis.z
 		_views.append({"name": String(hd["id"]), "kind": "player",
-				"pos": h.respawn_point() + out_dir * 2.0, "yaw": atan2(-out_dir.x, -out_dir.z)})
+				"pos": _clear_spot(h.respawn_point(), out_dir), "yaw": atan2(-out_dir.x, -out_dir.z)})
 	var veils: Array = def.get("frost_veils", [])
 	if not veils.is_empty():
 		var v := AreaBuilder._v3(veils[0]["at"])
@@ -160,6 +160,22 @@ func _apply_ablation(n: Node) -> void:
 	if _ablate.is_empty():
 		return
 	var hit := false
+	if "scatter_bodies" in _ablate and n is StaticBody3D and n.is_in_group("scatter_body"):
+		(n as StaticBody3D).collision_layer = 0   # price the scatter colliders by difference
+		return
+	if "areas" in _ablate and n is Area3D:
+		(n as Area3D).monitoring = false
+		(n as Area3D).monitorable = false
+	if "player" in _ablate and n is Player:
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+		return
+	if "bodies" in _ablate and n is CharacterBody3D and not (n is Player):
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+		return
+	if "casts" in _ablate and (n is RayCast3D or n is ShapeCast3D):
+		n.set("enabled", false)
+	if "camera_arm" in _ablate and n is SpringArm3D:
+		(n as SpringArm3D).collision_mask = 0
 	if "enemies" in _ablate and (n is Enemy):
 		hit = true
 	elif "npcs" in _ablate and (n is NPC):
@@ -185,6 +201,8 @@ func _apply_ablation(n: Node) -> void:
 ## --perf-census: print how many nodes of each script process per frame, so
 ## script time can be priced by script ("--perf-ablate=script:<path part>").
 func _census(root: Node) -> void:
+	_area_census(root)
+	_hearth_census()
 	var counts := {}
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
@@ -354,3 +372,103 @@ static func _pct(a: Array, q: float) -> float:
 	var s := a.duplicate()
 	s.sort()
 	return float(s[clampi(int(ceil(q * s.size())) - 1, 0, s.size() - 1)])
+
+
+## --perf-census: every monitoring Area3D whose mask takes the scatter
+## colliders' layers, with how many scatter hulls its shapes overlap. A static
+## volume monitors static bodies too, every physics step.
+func _area_census(root: Node) -> void:
+	var smask := 0
+	var bodies: Array = get_tree().get_nodes_in_group("scatter_body")
+	for b in bodies:
+		smask |= (b as StaticBody3D).collision_layer
+	var rows := {}
+	for a in root.find_children("*", "Area3D", true, false):
+		var ar := a as Area3D
+		if not ar.monitoring or (ar.collision_mask & smask) == 0:
+			continue
+		var aabb := AABB()
+		var first := true
+		for cs in ar.find_children("*", "CollisionShape3D", false, false):
+			var sh := (cs as CollisionShape3D).shape
+			if sh == null:
+				continue
+			var bb := (cs as CollisionShape3D).global_transform * sh.get_debug_mesh().get_aabb()
+			aabb = bb if first else aabb.merge(bb)
+			first = false
+		var hits := 0
+		for b in bodies:
+			if aabb.has_point((b as Node3D).global_position):
+				hits += 1
+		var sc: Script = ar.get_script()
+		var key := "%s (%s)" % [sc.resource_path.get_file() if sc != null else "Area3D", ar.get_parent().name]
+		var r: Array = rows.get(key, [0, 0, Vector3.ZERO])
+		rows[key] = [int(r[0]) + 1, int(r[1]) + hits, aabb.size if aabb.size.length() > (r[2] as Vector3).length() else r[2]]
+	var keys := rows.keys()
+	keys.sort_custom(func(x, y): return rows[x][1] > rows[y][1])
+	print("[areas] %d scatter bodies, mask %d" % [bodies.size(), smask])
+	for k in keys:
+		print("[areas] %4d areas  %5d hulls inside  largest %s  %s" % [rows[k][0], rows[k][1], rows[k][2], k])
+
+
+## --perf-census: does a Bearer's capsule overlap anything solid where the
+## game respawns him at each hearth (respawn_point) and where the tour pins
+## him (2 m further out)? A capsule held inside a convex hull costs the
+## physics server milliseconds a tick.
+func _hearth_census() -> void:
+	var space := get_viewport().get_world_3d().direct_space_state
+	var cap := CapsuleShape3D.new()
+	cap.radius = 0.34
+	cap.height = 1.8
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = cap
+	q.collision_mask = Game.player.collision_mask if Game.player != null else 1
+	if Game.player != null:
+		q.exclude = [Game.player.get_rid()]
+	for hd in DB.area_def(Game.current_area_id).get("hearths", []):
+		var h = Game.find_hearth(String(hd["id"]))
+		if h == null:
+			continue
+		var out_dir: Vector3 = h.global_transform.basis.z
+		for tag in ["respawn", "tour"]:
+			var p: Vector3 = h.respawn_point() + (out_dir * 2.0 if tag == "tour" else Vector3.ZERO)
+			q.transform = Transform3D(Basis.IDENTITY, p + Vector3(0, 0.95, 0))
+			var hits := space.intersect_shape(q, 8)
+			var names := []
+			for r in hits:
+				var c = r["collider"]
+				names.append("%s%s" % [c.name, " [scatter]" if c is Node and (c as Node).is_in_group("scatter_body") else ""])
+			print("[hearth] %-18s %-7s at %s overlaps %d %s" % [hd["id"], tag, p, hits.size(), names])
+
+
+## Where the tour stands the Bearer at a hearth: 2 m out from its respawn
+## point, stepped further out until his capsule is clear of every solid but
+## the ground. _hold_player pins him there every frame, and a capsule held
+## inside a convex hull made the physics server work milliseconds a tick
+## (Lowe's hs_drying_stacks, inside a peat stack: 16 ms of physics, the whole
+## of the "Lowe physics" regression). Falls back to the respawn point.
+func _clear_spot(rp: Vector3, out_dir: Vector3) -> Vector3:
+	var space := get_viewport().get_world_3d().direct_space_state
+	var cap := CapsuleShape3D.new()
+	cap.radius = 0.6                 # the capsule and a hand's breadth of room
+	cap.height = 1.8
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = cap
+	q.collision_mask = Game.player.collision_mask if Game.player != null else 1
+	if Game.player != null:
+		q.exclude = [Game.player.get_rid()]
+	for d in [2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 0.0]:
+		var p: Vector3 = rp + out_dir * float(d)
+		# on the ground there, not at the hearth's height: out on a slope the
+		# hearth's height is underground (he was held half in the hill)
+		var dn := space.intersect_ray(PhysicsRayQueryParameters3D.create(p + Vector3.UP * 6.0, p + Vector3.DOWN * 6.0, q.collision_mask, q.exclude))
+		if not dn.is_empty():
+			p.y = (dn["position"] as Vector3).y + 0.05
+		q.transform = Transform3D(Basis.IDENTITY, p + Vector3(0, 1.0, 0))   # the capsule's centre, its foot just over the ground
+		var solid := false
+		for r in space.intersect_shape(q, 8):
+			if not (r["collider"] is Node and String((r["collider"] as Node).name) == "TerrainBody"):
+				solid = true
+		if not solid:
+			return p
+	return rp
