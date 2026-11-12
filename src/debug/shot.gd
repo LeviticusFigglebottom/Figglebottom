@@ -587,6 +587,7 @@ func _bearer_stage(p: Player, foe: Enemy) -> void:
 				# the draw, driven by hand (no key is held in a shot): nock,
 				# pull, and hold at the cheek
 				p.inventory["arrows"] = 12
+				p.inventory_changed.emit()   # (the HUD's arrow count reads it)
 				p.set_physics_process(false)
 				p.vis.play("bow_draw", 0.1)
 				p._nock_arrow(true)
