@@ -26,6 +26,9 @@ for scene in tools/test/*_test.tscn; do
   [ "$name" = "fullslice" ] && limit=2700
   # the streaming suite builds three areas from an empty cache, twice over
   [ "$name" = "streaming" ] && limit=900
+  # the progression gates: six regions built several times over, a capsule
+  # steered at every metre of each neck in both states
+  [ "$name" = "gates" ] && limit=1800
   # the full-game region walks (fullgame_<region>) each play a whole region
   case "$name" in fullgame_*) limit=2700 ;; esac
   timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \

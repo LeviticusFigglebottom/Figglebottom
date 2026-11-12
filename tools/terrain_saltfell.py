@@ -365,6 +365,10 @@ PATHS = [
     ([(-8, -4), (-18, -10), (-21, -13)], 1.6),  # to the byre
     ([(4, 6), (16, 6), (24, 8), (25, 12)], 1.8),  # yard -> gully head
     ([(-24, 18), (-30, 26)], 1.6),             # to the salt-house hearth
+    # --- progression gates (ADR 0015): the way on to the Lowe, worn into the turf
+    ([(-2, -20.5), (-21, -22), (-33, -27), (-45, -53), (-60, -57), (-77, -65), (-88, -73), (-89, -88)], 1.9),  # Longhouse door -> the pass
+    ([(-40, 27), (-51, 22), (-59, 12), (-63, -14), (-62, -40), (-60, -57)], 1.5),         # cliff-path top -> round the yard dyke
+    # --- end progression gates
 ]
 
 

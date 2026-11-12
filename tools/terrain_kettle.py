@@ -36,6 +36,12 @@ def path_weight(x, z):
         d = _seg_dist(x, z, *pts[i], *pts[i + 1])
         if d < 3.5:
             best = max(best, 1.0 - smooth(1.0, 3.0, d))
+    # --- progression gates (ADR 0015): the way on, the foot of the Tarn Steps
+    import tarn_land as TL
+    rd, _, _ = TL.road(x, z)
+    if x > TL.STEPS[0][0] - 2.0:
+        best = max(best, 1.0 - smooth(1.2, 2.8, rd))
+    # --- end progression gates
     return best
 
 

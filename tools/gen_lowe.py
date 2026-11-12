@@ -114,8 +114,16 @@ VEIL = [r2(CX), r2(A), r2(CZ + CR - 0.5)]
 
 # the frozen bog (RIME): an invisible sheet carries you; ice shows where
 # THAW: the AI must not path through the black water (nothing collides)
-BLOCKERS.append({"min": [L.BOG[0] - 24, r2(W - 3), L.BOG[1] - 24], "max": [L.BOG[0] + 24, r2(W + 2.5), L.BOG[1] + 24],
-                 "tag": "thaw", "nav_only": True})
+# (three boxes make an octagon out to the bog hazard's rim, 27 m: one square
+# box left navmesh over drowning water north and south of it, and at
+# W + 2.5 its own top was baked as walkable ground level with the moor, a
+# bridge straight over the pool that the walks and the AI took. It stands
+# well above the moor now, so nothing can step onto it.)
+_BR = 28.0
+for _hx, _hz in ((_BR, _BR * 0.414), (_BR * 0.414, _BR), (_BR * 0.707, _BR * 0.707)):
+    BLOCKERS.append({"min": [r2(L.BOG[0] - _hx), r2(W - 3), r2(L.BOG[1] - _hz)],
+                     "max": [r2(L.BOG[0] + _hx), r2(W + 16.0), r2(L.BOG[1] + _hz)],
+                     "tag": "thaw", "nav_only": True})
 BLOCKERS.append({"radius": L.BOG_RIM, "at": [L.BOG[0], r2(W - 0.3), L.BOG[1]], "height": 0.6, "tag": "rime"})
 
 
@@ -277,6 +285,33 @@ D = {
     },
     "edges": edges,
 }
+
+# --- progression gates (ADR 0015) ---------------------------------------------
+# The Kettle Road leaves the moor by a cutting two strides wide. Arne's sods
+# are stacked across it, two courses, until he is released (WORLD.md 5.2:
+# "enough to close every barrow on the Lowe"). Pulled down from the Kettle
+# side at any time. The tracks to it are in terrain_lowe (KETTLE_TRACK_*).
+import progress_gates as PG  # noqa: E402
+_ka, _kb = L.KETTLE_ROAD[0], L.KETTLE_ROAD[1]
+_kf = 0.5
+SOD_GATE = PG.gate(
+    "lowe_barrows", "kettle_sods", L.sample,
+    at=(_ka[0] + (_kb[0] - _ka[0]) * _kf, _ka[1] + (_kb[1] - _ka[1]) * _kf), toward=(_kb[0] - _ka[0], _kb[1] - _ka[1]),
+    flag="ks_turfwright_released", name="the Kettle Road", to="kettle_fjord", seam_at=kettle_seam("lowe_barrows")["at"],
+    width=2.8, height=2.4, depth=1.2, flank="peat_stack", ext=1.0,
+    dressing=[{"scatter": "peat_stack", "fit": [1.5, 1.2, 1.15], "along": -0.72, "rot": 4},
+              {"scatter": "peat_stack", "fit": [1.5, 1.2, 1.15], "along": 0.72, "rot": -5},
+              {"scatter": "peat_stack", "fit": [1.45, 1.15, 1.05], "along": -0.3, "lift": 1.12, "rot": 9},
+              {"scatter": "peat_stack", "fit": [1.3, 1.0, 1.0], "along": 0.95, "lift": 1.12, "rot": -12},
+              {"scatter": "peat_stack", "fit": [1.4, 0.3, 1.0], "along": -0.9, "out": 1.6, "rot": 40, "when": "open"}],
+    locked_prompt="Stacked from the other side", unbar_prompt="Pull the sods down", open_toast="The stack comes down.")
+PG.install(D, SOD_GATE)
+# two stones where the track turns into the cutting
+for _sgn in (-1, 1):
+    _mx = _ka[0] + (_kb[0] - _ka[0]) * 0.08 + SOD_GATE["line"][0] * _sgn * 3.4
+    _mz = _ka[1] + (_kb[1] - _ka[1]) * 0.08 + SOD_GATE["line"][1] * _sgn * 3.4
+    D["scatter"]["place"].append({"kind": "standing_stone", "at": [r2(_mx), r2(_mz)], "scale": 1.3, "rot": r2(SOD_GATE["rot"] + 90 + _sgn * 11)})
+# --- end progression gates
 
 if __name__ == "__main__":
     out = os.path.join(ROOT, "data", "areas", "lowe_barrows.json")

@@ -35,6 +35,13 @@ The whole game is on main, in structure:
 | World-fidelity env (cloud) | `art/world-fidelity` | Exposure per state, cliffs, snow, the Coldwell horizon, building construction detail, interiors |
 | Lead's agents (this box) | `feat/anims-4`, `art/look-pass-5` | See the task board |
 
+## Progression gating (`feat/streaming-gates`, ADR 0015; not merged)
+- Every region's way on is shut by one `ShortcutGate` until that region's Holdfast is released: the net on the Saltfell pass, sods on the Kettle Road, a stack at the Tarn Steps, the drove gate, a hedge on the fell path, hurdles at the Upwater. Each can be undone from its far side.
+- Each area def has `way_on` (where, what to call it, the flag that opens it) for the journal and map.
+- Gates and tracks are placed by `tools/progress_gates.py` from marked blocks in each `tools/gen_*.py` and `tools/terrain_*.py`. After merging with a branch that repaints a splat, rerun that generator.
+- Check: `tools/test.sh gates` (about ten minutes), then the `fullgame_*` walks.
+- For the lead: the THAW half of each gate has no line of text behind it, and Kettle's is the thinnest (ADR 0015, Consequences).
+
 ## Open questions for the owner
 - **Tripo calls:** paid generation was blocked by this session's permission system on 2026-11-10. Eight prop references and the ewe rigs are waiting on it.
 - **Music:** nobody has listened to it yet.

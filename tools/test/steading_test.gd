@@ -127,9 +127,16 @@ func _run() -> void:
 	var drawbridge: DrawBridge = area.find_children("*", "DrawBridge", true, false)[0]
 	check(not drawbridge.is_down() and not drawbridge.operable, "the bridge stands raised on the far side, out of reach")
 	var pass_seam: AreaPortal = seams.filter(func(p): return p.zone_size.x > 10.0)[0]
+	# ADR 0015: the road runs to the dyke on the pass, and the net across its
+	# gap holds it there until the Netmender is released (tools/test/gates_test.gd)
+	var net: Array = area.find_children("*", "ShortcutGate", true, false).filter(func(g): return g.gate_id == "pass_net")
+	check(net.size() == 1 and (net[0].get_node("GateBody") as StaticBody3D).collision_layer != 0, "the net hangs across the pass")
+	var at_net := _ground(-89, -72.5)
+	check(_reaches(_path(_ground(-10, 10), at_net), at_net, 3.0),
+		"the main road: from the yard west and north along the cliff top to the net on the pass")
 	var to_pass := _path(_ground(-10, 10), pass_seam.global_position + Vector3(0, 0, 3.0))
-	check(_reaches(to_pass, pass_seam.global_position + Vector3(0, 0, 3.0), 3.0),
-		"the main road: from the yard west and north along the cliff top to the pass")
+	check(not _reaches(to_pass, pass_seam.global_position + Vector3(0, 0, 3.0), 3.0),
+		"and no further, on a new journey")
 
 	print("== the cliff path (thaw navmesh)")
 	var strand := _ground(-4, 62)

@@ -940,6 +940,47 @@
    "rot": 0,
    "width": 1.9,
    "locked_prompt": "Barred from the other side"
+  },
+  {
+   "id": "pass_net",
+   "at": [
+    -89.0,
+    22.32,
+    -75.5
+   ],
+   "rot": -0.0,
+   "width": 3.6,
+   "height": 2.5,
+   "depth": 0.3,
+   "leaves": false,
+   "open_flag": "ks_netmender_released",
+   "locked_prompt": "Tied off on the far side",
+   "unbar_prompt": "Untie the net",
+   "open_toast": "The net comes down.",
+   "dressing": [
+    {
+     "kit": "net_frame",
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "kit": "rope_coil",
+     "rot": 30,
+     "when": "open",
+     "offset": [
+      -1.25,
+      -0.01,
+      0.7
+     ]
+    }
+   ],
+   "span": [
+    -8.0,
+    3.5
+   ]
   }
  ],
  "spawners": [
@@ -1726,6 +1767,11 @@
     25.0,
     50.0,
     3.2
+   ],
+   [
+    -89.0,
+    -75.5,
+    3.4
    ]
   ],
   "rules": [
@@ -3113,6 +3159,24 @@
     "scale": 1.92,
     "rot": 293.4,
     "tag": "rime"
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -91.25,
+     -75.5
+    ],
+    "rot": 82.0,
+    "scale": 0.9
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -86.75,
+     -75.5
+    ],
+    "rot": 98.0,
+    "scale": 0.9
    }
   ],
   "veg": [
@@ -3342,6 +3406,48 @@
       -24.5
      ]
     ]
+   },
+   {
+    "kind": "drystone",
+    "points": [
+     [
+      -91.7,
+      -75.5
+     ],
+     [
+      -93.65,
+      -75.5
+     ],
+     [
+      -95.6,
+      -75.5
+     ],
+     [
+      -97.55,
+      -75.5
+     ],
+     [
+      -99.5,
+      -75.5
+     ]
+    ]
+   },
+   {
+    "kind": "drystone",
+    "points": [
+     [
+      -86.3,
+      -75.5
+     ],
+     [
+      -84.65,
+      -75.5
+     ],
+     [
+      -83.0,
+      -75.5
+     ]
+    ]
    }
   ]
  },
@@ -3507,6 +3613,25 @@
     -79.7
    ],
    "spawn_yaw": 0
+  }
+ ],
+ "way_on": [
+  {
+   "id": "pass_net",
+   "name": "the cliff-top pass",
+   "to": "lowe_barrows",
+   "at": [
+    -89.0,
+    22.32,
+    -75.5
+   ],
+   "seam": [
+    -89.0,
+    23.15,
+    -85.5
+   ],
+   "open_flag": "ks_netmender_released",
+   "gate": "pass_net"
   }
  ]
 }
