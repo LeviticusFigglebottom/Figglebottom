@@ -499,7 +499,10 @@ func _take(pickup_id: String, prompt_prefix := "", fight := true) -> bool:
 	await _settle()
 	var it := player.nearest_interactable()
 	if prompt_prefix != "" and (it == null or not it.prompt.begins_with(prompt_prefix)):
-		print("  (pickup %s: prompt is %s)" % [pickup_id, it.prompt if it != null else "nothing"])
+		print("  (pickup %s: prompt is %s; the Bearer at %s, state %d, %.1f m from it at %s)" % [pickup_id,
+			it.prompt if it != null else "nothing", str(player.global_position.snapped(Vector3.ONE * 0.1)),
+			player.state, player.global_position.distance_to(pk.global_position),
+			str(pk.global_position.snapped(Vector3.ONE * 0.1))])
 		return false
 	player.try_interact()
 	await ticks(6)
