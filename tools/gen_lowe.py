@@ -115,7 +115,9 @@ VEIL = [r2(CX), r2(A), r2(CZ + CR - 0.5)]
 
 # the frozen bog (RIME): an invisible sheet carries you; ice shows where
 # THAW: the AI must not path through the black water (nothing collides)
-BLOCKERS.append({"min": [L.BOG[0] - 24, r2(W - 3), L.BOG[1] - 24], "max": [L.BOG[0] + 24, r2(W + 2.5), L.BOG[1] + 24],
+# (tall: the rocks on the bog's rim are solid now, and a low box had a walkable
+# top the navmesh could step onto from one of them)
+BLOCKERS.append({"min": [L.BOG[0] - 24, r2(W - 3), L.BOG[1] - 24], "max": [L.BOG[0] + 24, r2(W + 9.0), L.BOG[1] + 24],
                  "tag": "thaw", "nav_only": True})
 BLOCKERS.append({"radius": L.BOG_RIM, "at": [L.BOG[0], r2(W - 0.3), L.BOG[1]], "height": 0.6, "tag": "rime"})
 
@@ -414,6 +416,7 @@ D = {
     "scripted": [bridge],
     "scatter": {
         "seed": 5150,
+        "solid_small": True,       # small rocks and driftwood collide here (Scatter)
         "clear": [[b["center"][0], b["center"][1], r2(math.hypot(*b["size"]) * 0.5 + 1)] for b in BUILDINGS]
                  + [[CX, CZ, CR + 1.0], [L.BOG[0], L.BOG[1], L.BOG[2] + 3]] + POI_CLEAR,
         "rules": [

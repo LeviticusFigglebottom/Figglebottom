@@ -8055,6 +8055,7 @@
  ],
  "scatter": {
   "seed": 6061,
+  "solid_small": true,
   "clear": [
    [
     660.0,

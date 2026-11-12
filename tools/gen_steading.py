@@ -408,6 +408,7 @@ for k in range(15):                       # and so does the gully
     clear.append([r2(T.gully_x(z)), r2(z), 3.2])
 scatter = {
     "seed": 90210,
+    "solid_small": True,       # small rocks and driftwood collide here (Scatter)
     "clear": clear,
     "rules": [
         {"kind": "rock", "count": 170, "region": [-74, 54, 56, 86], "slope": [0.85, 1.0], "h": [-0.6, 3.6], "scale": [0.3, 1.0]},

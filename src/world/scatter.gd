@@ -15,7 +15,13 @@ const KINDS := ["rock", "boulder", "hummock", "driftwood", "peat_stack", "stone_
 
 static var _mesh_cache: Dictionary = {}
 
+## "solid_small" in an area's scatter block: its smaller rocks and every
+## piece of driftwood collide (the owner walked through them on the Strand).
+## Off by default: an area's routes and navmesh were laid with those passable.
+static var _solid_small := false
+
 static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Array) -> void:
+	_solid_small = bool(spec.get("solid_small", false))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(spec.get("seed", 1))
 	var clear: Array = keep_clear.duplicate()
@@ -242,7 +248,7 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 				shape = sp
 				off = Vector3(0, 0.3, 0)
 			"rock":
-				if t.basis.get_scale().x < 0.75:
+				if t.basis.get_scale().x < (0.75 if _solid_small else 1.2):
 					continue    # ankle stones: step over them
 				var sp2 := SphereShape3D.new()
 				sp2.radius = 0.7
@@ -269,6 +275,8 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 				shape = bx3
 				off = Vector3(0, 1.3, 0)
 			"driftwood":
+				if not _solid_small and t.basis.get_scale().x < 1.3:
+					continue
 				# every piece is something to walk round or step over: a low
 				# box its own length (the pieces run 0.9 to 1.5 m at scale 1)
 				var bx4 := BoxShape3D.new()

@@ -374,7 +374,8 @@ func _leg_seam() -> bool:
 	walked = await _walk_path(h.respawn_point(), 5400, false)
 	check(walked, "up the fell path to where it comes out onto the grass (%s)" % str(player.global_position.snapped(Vector3.ONE)))
 	var plaques := area.find_children("*", "LorePlaque", true, false)
-	check(plaques.size() == 1 and String((plaques[0] as LorePlaque).text).begins_with("SHEPHERD'S REACH\n"), "the plaque at the path's head names the Reach")
+	# (the Counting Stone has boards of its own now: one of them all names the region)
+	check(plaques.filter(func(p): return String((p as LorePlaque).text).begins_with("SHEPHERD'S REACH\n")).size() == 1, "the plaque at the path's head names the Reach")
 	return true
 
 func _leg_sheilings_thaw() -> bool:

@@ -475,6 +475,7 @@ D = {
     "portals": portals,
     "scatter": {
         "seed": 6061,
+        "solid_small": True,       # small rocks and driftwood collide here (Scatter)
         "clear": [[FX, FZ, H.FOLD_R + 3.0]] + [[sx, sz, 7.0] for sx, sz, _ in H.SHEILINGS] + POI_CLEAR
                  + [[x, z, 3.2] for (x, z) in H.DRIFT_LANE] + [[(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, 3.2] for a, b in zip(H.DRIFT_LANE, H.DRIFT_LANE[1:])],
         "rules": [
