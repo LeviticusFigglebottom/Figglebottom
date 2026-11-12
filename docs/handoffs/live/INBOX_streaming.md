@@ -2,6 +2,36 @@
 
 Newest entry at the top. Branch `feat/streaming`.
 
+## 2026-11-12: follow-ups merged (73013bf); **do not merge to main yet: exit hang found**
+
+**Known breakage on this branch.** The process can hang on quit while a worker build is in flight. `fullgame_tarnhall` and `fullgame_reach` both reported 0 failures and then never exited (killed by the 45-minute limit). After the result line the log repeats `BuildLock: a worker build did not end in 120 s` from `Streamer.reset` in `_exit_tree`. Both walks end beside a seam. The same would hang the real game when the player quits near a seam. Cause not yet found; the fix and a fast-failing regression test are in work now.
+
+**Merged since the last entry.**
+- **Gate and bridge navmesh re-bakes run in the background.** Was 622 to 756 ms in one frame; now 10 to 15 ms worst frame of nav work (one bridge run: 26 ms). Routes open 0.5 to 0.6 s after the Holdfast falls. Tests wait with `TestBase.nav_wait()` / `await area.nav_settled()`.
+- **Bridge behaviour change:** the re-bake now follows the deck's swing. Before, it ran with the deck upright, so the deck was never on the navmesh. The Lowe's `nav_bounds` still end 2.5 m out along the deck; covering all of it needs an area-data change, not made.
+- **Cache warming.** After 2 s idle, neighbours' terrain and ground-cover entries are computed on a low-priority worker. `tools/qa/warm_cache.sh` fills all seven areas. A read-only `cache_seed` folder beside the executable (or `--cache-seed=PATH`) is read if present. Export presets and CI untouched.
+
+**Still over budget.** The release frame: `on_boss_slain` 30 to 38 ms, longest frame around the release 52 ms, after spreading the returning souls over frames. What is left is the first soul's instancing and the song's first load.
+
+**Unproven.**
+- One `Parameter "m" is null` engine error in one of six streaming runs (the weather freeing a particle node during a graft). Nothing failed.
+- The cache seed was checked with the editor binary only, not an exported build.
+
+**Suites on 73013bf, run here.**
+| suite | checks | failures | note |
+|---|---:|---:|---|
+| `streaming` | 102 | 0 | |
+| `smoke` | 11 | 0 | |
+| `gates` | 151 | 0 | |
+| `fullgame_tarnhall` | 213 | 0 | **then hung on exit** |
+| `fullgame_thornwold` | 163 | 0 | |
+| `fullgame_reach` | 197 | 0 | **then hung on exit** |
+| `fullgame_coldwell` | 179 | 0 | |
+| `fullgame_ending_outsong` | 161 | 0 | |
+| `fullgame_ending_kept` | 193 | 0 | |
+| `fullgame_lowe` | 196 | 0 | run on b613e83 here, and on the follow-up code by the agent; my rerun on 73013bf was cut off by the time limit |
+| `fullgame_kettle` | | | not run: fails the same 17 on `c3721bb` |
+
 ## 2026-11-12: Job 2 merged; both jobs are on `feat/streaming` (b613e83)
 
 **What changed.** Every region's way on is shut by a real object until that region's Holdfast is released, then stands open with a worn track leading to it. ADR: `docs/decisions/0015-progression-gating.md` (both readings of the owner's sentence, and the before/after per region).
