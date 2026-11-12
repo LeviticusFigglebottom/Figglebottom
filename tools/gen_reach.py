@@ -94,7 +94,10 @@ while bx < 704.0:
         sz = H.beck_z(sx + 1.0)
         reach = H.BECK_HALF + 2.7
         top = r2(min(g(xx, sz + side * (H.BECK_HALF + 2.5)) for xx in (sx, sx + 1.0, sx + 2.0) for side in (-1.0, 1.0)) - 0.15)
-        BLOCKERS.append({"min": [r2(sx), r2(bed - 0.5), r2(sz - reach)], "max": [r2(sx + 2.0), top, r2(sz + reach)], "tag": "rime"})
+        # (at the foot of the beck the bank drops below the bed: the slab keeps
+        # half a metre of body there, where it was laid upside down, a box of
+        # negative height the engine refused)
+        BLOCKERS.append({"min": [r2(sx), r2(min(bed - 0.5, top - 0.5)), r2(sz - reach)], "max": [r2(sx + 2.0), top, r2(sz + reach)], "tag": "rime"})
         # the sheet is drawn as wide as the floor that carries: a metre
         # narrower each side, the Bearer walked on air over the bank between
         # the two (tools/audit_collision.sh, "floating")
@@ -115,10 +118,13 @@ FLOORS.append({"tag": "base", "min": [H.BRIDGE_X - 1.4, r2(BZ - 5.5)], "max": [H
 for xx in (H.BRIDGE_X - 1.5, H.BRIDGE_X + 1.5):
     BOXES.append({"min": [r2(xx - 0.06), deck_y, r2(BZ - 4.0)], "max": [r2(xx + 0.06), deck_y + 0.95, r2(BZ + 4.0)], "mat": "M_wood", "tag": "base"})
 BLOCKERS[:] = [b for b in BLOCKERS if not (b.get("nav_only") and b["min"][0] < H.BRIDGE_X + 1.6 and b["max"][0] > H.BRIDGE_X - 1.6)]
-# the AI gives the rails' ends a wide berth (no snagging on the posts)
+# the AI gives the rails' ends a wide berth (no snagging on the posts), and
+# past the deck's own ends (5.5): a path that came onto the deck over its
+# corner met a step of half a metre there, where the bank is lowest, and
+# whoever followed it stood stuck beside the cut
 for xx in (H.BRIDGE_X - 1.5, H.BRIDGE_X + 1.5):
     for st in ("thaw", "rime"):
-        BLOCKERS.append({"min": [r2(xx - 0.45), deck_y - 1.0, r2(BZ - 4.6)], "max": [r2(xx + 0.45), deck_y + 2.0, r2(BZ + 4.6)],
+        BLOCKERS.append({"min": [r2(xx - 0.45), deck_y - 1.0, r2(BZ - 6.0)], "max": [r2(xx + 0.45), deck_y + 2.0, r2(BZ + 6.0)],
                          "tag": st, "nav_only": True})
 
 # --- the flocks ---------------------------------------------------------------------
