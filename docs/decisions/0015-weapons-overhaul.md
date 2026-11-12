@@ -77,3 +77,15 @@ Carries are keyed on the Bearer's own idle, because that is the body they play o
   - They are in the **arena sandbox in its RIME dusk mode** (`--sandbox=arena --state=rime`: frosted kit, low blue sun, snowfall), not on the Strand. A full area needs about 5 GB to render in software and this box was shared with other sessions' renders; it was killed for memory or timed out on most tries.
   - Two full-area shots did finish during the work (a torch heavy and a greatblade heavy on the Strand in RIME) and were looked at: the light pool on snow and the blade read as in the arena. They were taken before the last fixes and are not committed. **Not yet seen on a real GPU.**
   - Command: `SHOT_RES=1280x720 tools/shot.sh OUT.png --area=saltfell_steading --state=rime --shot-nohud --shot-stage=bearer_heavy --shot-weapon=torch --shot-beat=0.06 --shot-frames=300`.
+
+## Follow-up (2026-11-12, `feat/weapon-finds`): the three are placed
+
+One a third of the way through the game each, none in Saltfell, all a short step off the route, in both states (the pickup's `pose` stands or hangs the model instead of laying it down; `also` gives the arrows with the bow):
+
+| Weapon | Region (order) | Find | Where |
+|---|---|---|---|
+| Spear | the Lowe (2 of 7) | `kin_spear` | against the kin-post at `kin_a`'s door, beside the bier, about 4.5 m off the Barrow Road (`gen_lowe.py`) |
+| Greatblade | Tarnhall (4 of 7) | `oar_greatblade` | at the oar-stand on the Seven Landings shore, about 10 m off the causeway's land end (`gen_tarnhall.py`; the shore rush keeps off a trodden way to it, `data/veg/tarnhall.json`) |
+| Bow, 20 arrows | Shepherd's Reach (6 of 7) | `sheiling_bow` | on the lower sheiling's north wall, the side facing the Sheilings hearth, about 8 m from it (`gen_reach.py`) |
+
+No Journal step and no Map marker: none of them belongs to a thread, and ADR 0014 marks only places, hearths, veils and ways on. Their `desc` texts say where each was left. No combat number changed; the torch's damage is still 0. Test: `tools/test.sh weapon_finds`.
