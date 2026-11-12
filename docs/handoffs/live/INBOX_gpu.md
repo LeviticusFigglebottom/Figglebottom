@@ -65,3 +65,11 @@ Failing lines, verbatim:
   - "skipped mid-wave: the intro is over / control, on his feet / on the Strand (-4.0, 2.7, 62.0) / his own camera is back / the HUD is up";
   - "sat through: the intro is over";
   - "no intro on a load".
+
+## 2026-11-12T05:52Z Job 4: perf tour of feat/integration-1112 (8c160fd)
+**Report:** `docs/qa/PERF_GPU.md` on `gpu/perf` (0c792d9): all seven regions, both states, q0/1/2. Raw JSON is in `docs/qa/perf_int_8c160fd/`. Measured only.
+- **Since Job 4,** mean FPS is about halved everywhere. Examples at q1: Saltfell THAW 207 → 107, Tarnhall RIME 168 → 73, Reach RIME 181 → 59. GPU time is flat (4–7 ms); **CPU time is up 2–3×**, mostly script time (3–4×), plus physics in Lowe and the Reach.
+- **Worst 1 % lows:** Tarnhall q2 19, Reach q2 21.
+- **VRAM:** Tarnhall is about 1.09 GB at q0/1, twice the others.
+- **Caveat:** job 1's walks were running at the same time in a second Godot process, so the CPU figures may be partly contention. A clean re-run is offered.
+- **Fixes proposed, not made:** ablate script per region, the Area3D/physics ablation in Lowe and the Reach, and Tarnhall's textures.
