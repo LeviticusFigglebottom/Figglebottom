@@ -202,6 +202,7 @@ func _apply_ablation(n: Node) -> void:
 ## script time can be priced by script ("--perf-ablate=script:<path part>").
 func _census(root: Node) -> void:
 	_area_census(root)
+	_hearth_census()
 	var counts := {}
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
@@ -408,3 +409,33 @@ func _area_census(root: Node) -> void:
 	print("[areas] %d scatter bodies, mask %d" % [bodies.size(), smask])
 	for k in keys:
 		print("[areas] %4d areas  %5d hulls inside  largest %s  %s" % [rows[k][0], rows[k][1], rows[k][2], k])
+
+
+## --perf-census: does a Bearer's capsule overlap anything solid where the
+## game respawns him at each hearth (respawn_point) and where the tour pins
+## him (2 m further out)? A capsule held inside a convex hull costs the
+## physics server milliseconds a tick.
+func _hearth_census() -> void:
+	var space := get_viewport().get_world_3d().direct_space_state
+	var cap := CapsuleShape3D.new()
+	cap.radius = 0.34
+	cap.height = 1.8
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = cap
+	q.collision_mask = Game.player.collision_mask if Game.player != null else 1
+	if Game.player != null:
+		q.exclude = [Game.player.get_rid()]
+	for hd in DB.area_def(Game.current_area_id).get("hearths", []):
+		var h = Game.find_hearth(String(hd["id"]))
+		if h == null:
+			continue
+		var out_dir: Vector3 = h.global_transform.basis.z
+		for tag in ["respawn", "tour"]:
+			var p: Vector3 = h.respawn_point() + (out_dir * 2.0 if tag == "tour" else Vector3.ZERO)
+			q.transform = Transform3D(Basis.IDENTITY, p + Vector3(0, 0.95, 0))
+			var hits := space.intersect_shape(q, 8)
+			var names := []
+			for r in hits:
+				var c = r["collider"]
+				names.append("%s%s" % [c.name, " [scatter]" if c is Node and (c as Node).is_in_group("scatter_body") else ""])
+			print("[hearth] %-18s %-7s at %s overlaps %d %s" % [hd["id"], tag, p, hits.size(), names])
