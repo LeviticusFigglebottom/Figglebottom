@@ -26,7 +26,7 @@ The last green point before the Saltfell, Lowe and Reach merge is commit `7e4f17
 **Verification on the final state** (local, headless; see the session's report for run counts):
 - `tools/check_originality.sh --all`, `tools/audit_edges.py`, `tools/audit_areas.py`: clean.
 - Default `tools/test.sh`: 44 suites, 2,975 checks, 0 failures.
-- Walks: see "Known breakages" for the Reach.
+- Walks, all green on the final walk code: `fullslice` (6 runs), `fullgame_lowe` (4), `fullgame_reach` (3), `fullgame_kettle`, `fullgame_tarnhall` (2), `fullgame_thornwold`, `fullgame_coldwell`, both endings. See "Known breakages" for the slice walk on the owner's PC.
 - Collision audit: 219 baselined offenders (189 before), each with an owner in `tools/test/fixtures/collision_baseline.json`. New owners: the three POI agents (`data/collision_audit.json`).
 
 ## State (on main fd881f6)
@@ -89,7 +89,8 @@ The whole game is on main, in structure:
 - None right now.
 
 ## Known breakages
-- **`fullgame_reach` is not steady.** With the Drift Lane's walls on the trod, a Drover or a ram on the far side of a wall can hold the steered Bearer until the fold-cache leg's time is spent; the walk now goes back for the cache (`_leg_slope`). Run it three times before trusting one result: `tools/test.sh fullgame_reach`.
+- **`fullslice` is red on the owner's PC and green here.** At 0cac9ad the PC failed it twice, at different places (the float's prompt; the Netmender, six deaths), after passing it before the Saltfell, Lowe and Reach merge. On this box it passed six times on the merged code, one of them with drawn frames held to four a second. Cause not found. Next step: have the PC run `tools/test.sh fullslice` alone, with nothing else running, and send the whole log, not only the FAIL lines. The walks now keep a save directory per process, so two runs at once cannot write over each other.
+- **`fullgame_reach` leaned on luck in two places,** both in the walk's driving: a scatter stone on the straight line over the beck ice, and the fold cache inside the Drift Lane's walls with foes on the far side. The walk now follows the planned path over the ice and goes back for the cache (`_leg_slope`). Three runs green since. `fullgame_tarnhall`'s porch leg comes back from a fight the same way.
 - **A dense convex hull can lose the Bearer.** The hide tent `kf_ice_hut_b` (a 186-point hull) stopped being named as a wall to a capsule sliding along it, `Player._unpin` then lifted him and he walked in. That piece now asks for a 32-point hull (`"hull": "simple"` in `KitLib.PIECES`). Other Tripo props with hulls that dense have not been walked into one by one.
 - **Decision records 0006 and 0011 each exist twice** (on main already). Not renumbered here.
 - **`data/map.json` and the baked map images were not rebuilt** after the points of interest moved ground (`tools/ui/build_map.py`).

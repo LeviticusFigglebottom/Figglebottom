@@ -760,7 +760,9 @@ func _save_title_load() -> bool:
 
 # ------------------------------------------------------------------ the run
 func _save_dir() -> String:
-	return "user://test_fullgame_%s%s" % [region, "_shots" if shots_dir != "" else ""]
+	# (per process: two runs of one walk at once, from two checkouts, wrote
+	# over each other's slot and both failed some forty checks)
+	return "user://test_fullgame_%s%s_%d" % [region, "_shots" if shots_dir != "" else "", OS.get_process_id()]
 
 func _fixture_path(name: String) -> String:
 	return "res://tools/test/fixtures/%s.json" % name

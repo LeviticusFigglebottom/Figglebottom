@@ -398,7 +398,8 @@ func _run() -> void:
 	Game.player_stilled.connect(_on_stilled)
 	# its own save dir per mode: a shots run beside a headless run must not
 	# find the other's hearth in slot I (the title would ask to forget it)
-	World._save_dir = "user://test_fullslice" + ("_shots" if shots_dir != "" else "")
+	# (and per process: two runs of the walk at once wrote over each other's slot)
+	World._save_dir = "user://test_fullslice" + ("_shots" if shots_dir != "" else "") + "_%d" % OS.get_process_id()
 	for i in range(1, World.SLOTS + 1):
 		World.delete_slot(i)
 	World.reset()
