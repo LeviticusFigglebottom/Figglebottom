@@ -2,6 +2,49 @@
 
 Newest entry at the top. Branch `feat/streaming`.
 
+## 2026-11-12: hitch fixes in, integration merged; GPU re-measure wanted
+
+Branch head after this entry: see `git log origin/feat/streaming`. Full `tools/test.sh` and the walks are running now, one at a time. Their results follow in the next entry.
+
+**Please have the GPU box run, alone, at the branch head:**
+```
+godot --path . --rendering-driver vulkan --resolution 1920x1080 -- --scene=res://tools/qa/stream_prof.tscn --prof-stream --prof-out=stream_prof_gpu.md
+```
+The report has a new table, "The dearest single grafts of what acts, and the dearest single flush". It names the node behind any slow graft frame, and the worker phase behind the cold Saltfell peak.
+
+**Job 1 (hitches). Done here; not proven on a GPU.**
+- **Cause, inferred.** With the renderer on the main thread, the 83–107 ms frame is CPU time inside one actor's `_ready`. The warm pass was as bad as the cold, and on the GPU it revisits areas in the same process. The turn to RIME cost about 50 ms *every* time. The explanation that fits all of this: a shader and its pipelines are freed with the last material that uses it (the old area, the wave's particles), then rebuilt in the frame the next one appears. Lavapipe cannot show this because Mesa caches its own compiles. ADR 0014 has a new section, "Hitches on a real GPU".
+- **Fixes:**
+  - `ShaderWarm.retain` keeps one cheap stand-in per kind of shader for the run.
+  - The prep now also builds, one per frame before the swap: each humanoid model's clip tables, each read-ahead model (unseen, 40 m ahead of the camera), and the wave's particles.
+  - The wave's materials are made once, and its emitters start one per frame.
+  - God rays' textures are made once.
+- **Headless, the CPU part is measurable.** A soul's first graft was 12–14 ms (clip tables built in its `_ready`). The prepared crossing's worst frame went from 18.8 to 14.4 ms (12.2 ms before the merge), with the next worst at 12.7.
+- **Cold Saltfell (238 ms, "flush: worker's render commands").** Not fixed: I cannot see which phase queues it. The new table names the dearest single flush and the build phase it followed.
+
+**Job 2 (failures).**
+- `streaming` "within 30 ms (30.3)": the margin is now about 2×, as above.
+- `streaming`, the deck and opened-gate routes (84 m from any navmesh): the map takes a new region on the navigation server's own thread, and 4 ticks were not enough on a loaded box. The checks now poll for up to 5 s. This is a test-side fix; the game's routes were never affected.
+- `fullgame_lowe` ("no THAW route to the peat island", "the black water is back"), `fullgame_kettle` (the Ice-Cutter stall) and `fullslice` (the float's prompt): **I merged `feat/integration-1112` (a37afed) into this branch**, which carries the fixes for all three. Its handoff puts the slice failure down to two walks sharing a save directory on the owner's PC, now one directory per process. The walks have not been run on the merge yet.
+
+**Job 3 (merge).** `origin/main` is still 024ff96. Integration is merged here already, so merging main once integration lands should be small.
+- 18 conflicts: areas and splats regenerated with `tools/gen_*.py`; every output matches the side that changed it.
+- Integration's builder code made streaming-safe:
+  - biome fog and weather go through `_for_main`;
+  - the veg model loader uses `BuildLock.wload`;
+  - `Biome`'s cache is locked;
+  - modelled plants are served from the cached ground-cover buffers.
+- Lowe bog blocker: integration's tall box, not this branch's octagon.
+- `ShortcutGate`: one set of names (`has_leaves`, `open_prompt`).
+- Found and fixed after the merge:
+  - cache warming broke on the biome rules (and its keys never matched the live build);
+  - a route over the Kettle gate's flank boulder, now under integration's hull colliders. Boulder flanks get an invisible core (`progress_gates.py`).
+- `streaming` 113/0, `gates` 151/0, `smoke` 11/0, audits and originality pass.
+
+**Open, for the lead.**
+- **ADR numbers collide.** Main has `0014-journal-and-map`, integration `0015-weapons-overhaul`, and this branch `0014-area-streaming` and `0015-progression-gating`, cited in many code comments. Renumbering this branch's two to the next free numbers is a mechanical change; say if you want it.
+- Not watched on a real GPU: the off-screen model prewarm (tiny models 40 m ahead of the camera, 4 frames each, behind the play camera's view of the incoming area).
+
 ## 2026-11-12: GPU report received; hitch work started
 
 Read the GPU worker's 05:09Z entry and `stream_prof_gpu_25ef245.md`. In work now, on top of 64147e8:
