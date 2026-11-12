@@ -114,8 +114,16 @@ VEIL = [r2(CX), r2(A), r2(CZ + CR - 0.5)]
 
 # the frozen bog (RIME): an invisible sheet carries you; ice shows where
 # THAW: the AI must not path through the black water (nothing collides)
-BLOCKERS.append({"min": [L.BOG[0] - 24, r2(W - 3), L.BOG[1] - 24], "max": [L.BOG[0] + 24, r2(W + 2.5), L.BOG[1] + 24],
-                 "tag": "thaw", "nav_only": True})
+# (three boxes make an octagon out to the bog hazard's rim, 27 m: one square
+# box left navmesh over drowning water north and south of it, and at
+# W + 2.5 its own top was baked as walkable ground level with the moor, a
+# bridge straight over the pool that the walks and the AI took. It stands
+# well above the moor now, so nothing can step onto it.)
+_BR = 28.0
+for _hx, _hz in ((_BR, _BR * 0.414), (_BR * 0.414, _BR), (_BR * 0.707, _BR * 0.707)):
+    BLOCKERS.append({"min": [r2(L.BOG[0] - _hx), r2(W - 3), r2(L.BOG[1] - _hz)],
+                     "max": [r2(L.BOG[0] + _hx), r2(W + 16.0), r2(L.BOG[1] + _hz)],
+                     "tag": "thaw", "nav_only": True})
 BLOCKERS.append({"radius": L.BOG_RIM, "at": [L.BOG[0], r2(W - 0.3), L.BOG[1]], "height": 0.6, "tag": "rime"})
 
 
