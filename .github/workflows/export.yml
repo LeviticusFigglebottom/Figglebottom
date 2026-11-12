@@ -1,0 +1,73 @@
+name: Build — playable export
+
+# Packages Windows and Linux builds of main without waiting on the test suite,
+# so the owner can always play the latest main. Tests stay in ci.yml.
+# Grab the builds from the run's Artifacts.
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths-ignore: ["docs/**", "*.md"]
+
+concurrency:
+  group: export-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.7"
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot + export templates
+        run: |
+          set -e
+          curl -sSL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+          curl -sSL -o templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          unzip -q templates.tpz
+          mv templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
+
+      - name: Import project resources
+        # twice: one headless pass can exit before every model's textures are extracted,
+        # which exports a build with stand-in models
+        run: |
+          godot --headless --path . --import 2>&1 | tail -2 || true
+          godot --headless --path . --import 2>&1 | tail -2 || true
+          echo "imported files: $(ls .godot/imported | wc -l)"
+
+      - name: Export Windows
+        run: |
+          mkdir -p build/windows
+          godot --headless --path . --export-release "Windows" build/windows/Rimeholt.exe 2>&1 | tail -3
+          test -f build/windows/Rimeholt.exe
+          ls -la build/windows
+
+      - name: Export Linux
+        run: |
+          mkdir -p build/linux
+          godot --headless --path . --export-release "Linux" build/linux/rimeholt.x86_64 2>&1 | tail -3
+          test -f build/linux/rimeholt.x86_64
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 3
+          name: rimeholt-windows-${{ github.sha }}
+          path: build/windows
+
+      - name: Upload Linux build
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 3
+          name: rimeholt-linux-${{ github.sha }}
+          path: build/linux
