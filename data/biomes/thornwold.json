@@ -49,13 +49,13 @@
  "env": {
   "thaw": {
    "sun_rot": [
-    -22,
+    -30,
     -75
    ],
    "sun_color": [
     1.0,
-    0.89,
-    0.71
+    0.92,
+    0.8
    ],
    "sun_energy": 2.0,
    "ambient": [
@@ -66,11 +66,11 @@
    "ambient_energy": 1.2,
    "fill_energy": 0.85,
    "fog_color": [
-    0.66,
-    0.7,
-    0.5
+    0.72,
+    0.74,
+    0.68
    ],
-   "vol_density": 0.009,
+   "vol_density": 0.0045,
    "sky_contribution": 0.32
   },
   "rime": {
