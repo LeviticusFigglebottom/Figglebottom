@@ -242,6 +242,47 @@
    "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb"
   },
   {
+   "id": "kit:tw_*",
+   "owner": "POI agent (Thornwold)",
+   "fix": "gen_thornwold.py places it with \"collide\": false (a burnt-out clamp's ring stands 1 m high): drop that, or keep it under 0.6 m"
+  },
+  {
+   "id": "scene:lm_thorn_stile.glb",
+   "owner": "POI agent (Thornwold)",
+   "fix": "ShortcutGate with \"leaves\": false: the grown-shut stile is wider than the gate's box; fit the box to the dressing"
+  },
+  {
+   "id": "kit:kf_*",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_kettle.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:th_*",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_tarnhall.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:cw_*",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_coldwell.py places it with \"collide\": false and \"embed\": true (ice columns up to 5 m): give the column a hull"
+  },
+  {
+   "id": "scene:sledge_dog.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_kettle.py: the dogs at the Dog Lines have no blocker: add one each (about 0.5 x 0.8 x 1.0)"
+  },
+  {
+   "id": "scene:lm_sledge.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_kettle.py: the sledge's \"blocker\" covers half of what is drawn: widen it to the runners"
+  },
+  {
+   "check": "walk_through",
+   "id": "box#*(M_drystone)",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_tarnhall.py: the cook-yard's retaining wall face is \"collide\": false and stands clear of the yard's edge in RIME: give it its collider"
+  },
+  {
    "id": "kit:sheep",
    "owner": "Lead's look-pass agent",
    "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her"
