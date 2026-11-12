@@ -605,6 +605,10 @@ func _run() -> void:
 		check(walls.size() == 1, "the tide froze into a wall along the Strand")
 		await _until(func(): return player.state == Player.S.MOVE and player._interact_suppress == 0, 3.0)
 		await ticks(2)
+		if _near_interact("Chip the float") == null:
+			# why, for the log: still at the float, or downed in the Strand fight
+			print("   [float] dead=%s hp=%.0f state=%d dist=%.2f at=%s" % [player.dead, player.hp, player.state,
+				player.global_position.distance_to(flt.global_position), player.global_position])
 		check(_near_interact("Chip the float") != null, "the float shows its prompt")
 		player.try_interact()
 		await ticks(6)
