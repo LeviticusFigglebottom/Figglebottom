@@ -65,6 +65,8 @@ func _beside_leavings(before: Dictionary) -> Array:
 			continue
 		if n is Hearthstone and (n as Hearthstone).hearth_id == "hs_long_hearth":
 			continue
+		if n is NavigationRegion3D and (n == area.nav_thaw or n == area.nav_rime):
+			continue   # (the fallen veil re-bakes the area's navmesh: its own two regions, new)
 		if n is Enemy and _pen_of(n) != null and _pen_of(n).current == n:
 			continue   # (a rest raises the yard's dead again: those are new)
 		out.append(n)
