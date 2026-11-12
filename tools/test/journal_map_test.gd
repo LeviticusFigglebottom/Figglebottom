@@ -23,6 +23,12 @@ func _stand(at: Vector2) -> void:
 	player.global_position = Vector3(at.x, player.global_position.y, at.y)
 	MapState.scout(Game.current_area_id, player.global_position)
 
+func _board(a: String, place_name: String) -> Dictionary:
+	for pl in MapState.places_def(a):
+		if pl["zone"] == null and pl["name"] == place_name:
+			return pl
+	return {}
+
 func _run() -> void:
 	World._save_dir = "user://test_journal_map"
 	World.reset()
@@ -201,6 +207,24 @@ func _run() -> void:
 	MapState.scout("lowe_barrows", Vector3(-89, 24, -95))
 	check(_markers("seam", "saltfell_steading").all(func(m): return m["known"]) and MapState.region_seen("lowe_barrows"), "walked through: the far end is known")
 	check(_markers("seam", "lowe_barrows").size() == 3, "the Lowe shows its own ways on")
+	# wayside boards: a place is found at a board that stands in the state walked in
+	var graves := _board("saltfell_steading", "The Cliff Graves")
+	var mound := _board("lowe_barrows", "The Last Mound")
+	check(not graves.is_empty() and (graves["tags"] as Array).has("thaw") and (graves["tags"] as Array).has("rime"),
+		"a board with a THAW text and a RIME text is one place")
+	check(not mound.is_empty() and mound["tags"] == ["rime"], "the Last Mound's board stands only in RIME")
+	if not graves.is_empty() and not mound.is_empty():
+		var mound_at := Vector3(mound["pos"].x, 0.0, mound["pos"].y)
+		World.set_area_state("lowe_barrows", RH.WState.THAW)
+		MapState.scout("lowe_barrows", mound_at)
+		check(not MapState.place_seen("lowe_barrows", mound["id"]), "in THAW its board is not there to find")
+		World.set_area_state("lowe_barrows", RH.WState.RIME)
+		MapState.scout("lowe_barrows", mound_at)
+		check(MapState.place_seen("lowe_barrows", mound["id"]), "in RIME, come up to: the place is found")
+		World.set_area_state("lowe_barrows", RH.WState.THAW)
+		check(_markers("place", "lowe_barrows").any(func(m): return m["name"] == "The Last Mound"), "a found place stays on the map when the world turns")
+		MapState.scout("saltfell_steading", Vector3(graves["pos"].x, 0.0, graves["pos"].y))
+		check(MapState.place_seen("saltfell_steading", graves["id"]), "a board with a text for each state is found in either")
 	# the pinned objective's place
 	World.flags.erase("ks_ingra_rye_found"); World.flags.erase("ks_ingra_rye"); World.flags.erase("ks_ingra_count")
 	Journal.set_pin("ingra_rye")

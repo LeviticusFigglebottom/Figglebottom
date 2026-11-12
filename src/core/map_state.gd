@@ -57,7 +57,8 @@ static func _ok(spec: Dictionary) -> bool:
 
 ## The named places of an area: its zones (found by walking into them) and
 ## its wayside boards (found by coming up to them; a board is named by its
-## first line). [{id, name, pos (Vector2), zone: {min, max} or null}]
+## first line). [{id, name, pos (Vector2), zone: {min, max} or null}]; a
+## board also has `tags`, the states its texts are tagged for.
 static func places_def(area: String) -> Array:
 	var def := DB.area_def(area)
 	var out := []
@@ -71,16 +72,35 @@ static func places_def(area: String) -> Array:
 			"pos": Vector2((float(mn[0]) + float(mx[0])) * 0.5, (float(mn[1]) + float(mx[1])) * 0.5),
 			"zone": {"min": Vector2(float(mn[0]), float(mn[1])), "max": Vector2(float(mx[0]), float(mx[1]))}})
 	var region_name := String(def.get("name", "")).to_lower()
+	# (a Hearthstone's mark carries its name already: a board beside it with
+	# the same name would write it on the sheet twice)
+	for h in def.get("hearths", []):
+		names[HUD._caps_case(String(h.get("name", "")).to_upper()).to_lower()] = true
+	var boards := {}     # name -> its place: one board may carry a THAW text and a RIME text
 	for pl in def.get("plaques", []):
 		var first := String(pl.get("text", "")).get_slice("\n", 0).strip_edges()
 		var nm := HUD._caps_case(first)
-		# a board that only names the region or a zone adds no place of its own
+		var tag := String(pl.get("tag", "base"))
+		if boards.has(nm.to_lower()):
+			(boards[nm.to_lower()]["tags"] as Array).append(tag)
+			continue
+		# a board that only names the region, a zone or a Hearthstone adds no place of its own
 		if first == "" or names.has(nm.to_lower()) or nm.to_lower() == region_name:
 			continue
 		names[nm.to_lower()] = true
 		var at: Array = pl.get("at", [0, 0, 0])
-		out.append({"id": "board:" + first, "name": nm, "pos": Vector2(float(at[0]), float(at[2])), "zone": null})
+		var place := {"id": "board:" + first, "name": nm, "pos": Vector2(float(at[0]), float(at[2])), "zone": null, "tags": [tag]}
+		boards[nm.to_lower()] = place
+		out.append(place)
 	return out
+
+## Whether a board stands to be read in the area's state now: one tagged
+## `rime` is not there in THAW, and a place cannot be found by a board that
+## is not there.
+static func _board_stands(area: String, pl: Dictionary) -> bool:
+	var now := "rime" if World.get_area_state(area) == RH.WState.RIME else "thaw"
+	var tags: Array = pl.get("tags", ["base"])
+	return tags.has("base") or tags.has(now)
 
 ## Called as the Bearer walks (HUD, twice a second): marks what is now
 ## within sight. Returns true when something new was found.
@@ -106,7 +126,7 @@ static func scout(area: String, pos: Vector3) -> bool:
 			var z: Dictionary = pl["zone"]
 			hit = here.x >= z["min"].x and here.x <= z["max"].x and here.y >= z["min"].y and here.y <= z["max"].y
 		else:
-			hit = here.distance_to(pl["pos"]) <= PLACE_SIGHT
+			hit = here.distance_to(pl["pos"]) <= PLACE_SIGHT and _board_stands(area, pl)
 		if hit:
 			found = _mark("places", "%s/%s" % [area, pl["id"]]) or found
 	return found
