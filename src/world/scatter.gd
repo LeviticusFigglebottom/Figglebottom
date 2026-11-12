@@ -494,7 +494,148 @@ const VEG_KINDS := {
 	"sedge": {"atlas": "res://assets/textures/veg/T_veg_sedge.png", "cell": 0.9, "cards": 3, "lean": 0.2,
 		"wind": 0.15, "keep": 0.55, "bury": 0.6, "dry": Color(0.45, 0.38, 0.2), "dryness": 0.8,
 		"tint_a": Color(0.72, 0.8, 0.6), "tint_b": Color(0.95, 0.92, 0.75)},
+	# ---- region species (docs/art/BIOMES.md column 2). Each region's recipe
+	# is data (data/veg/<area>.json); a kind is used by one region unless the
+	# table there says otherwise. Flowers keep their paint: "dryness" 0.
+	# Saltfell: salt and boats
+	"thrift": {"atlas": "res://assets/textures/veg/T_veg_thrift.png", "cell": 0.36, "cards": 3, "lean": 0.3,
+		"wind": 0.05, "keep": 0.3, "bury": 0.5, "dry": Color(0.4, 0.33, 0.24), "dryness": 0.0,
+		"tint_a": Color(0.95, 0.92, 0.92), "tint_b": Color(1.0, 0.98, 0.96)},
+	"campion": {"atlas": "res://assets/textures/veg/T_veg_campion.png", "cell": 0.42, "cards": 3, "lean": 0.5,
+		"wind": 0.04, "keep": 0.2, "bury": 0.5, "dry": Color(0.4, 0.38, 0.3), "dryness": 0.0,
+		"tint_a": Color(0.92, 0.95, 0.92), "tint_b": Color(1.0, 1.0, 0.97)},
+	"marram": {"atlas": "res://assets/textures/veg/T_veg_marram.png", "cell": 0.95, "cards": 3, "lean": 0.24,
+		"wind": 0.2, "keep": 0.7, "bury": 0.45, "dry": Color(0.5, 0.43, 0.26), "dryness": 0.5,
+		"tint_a": Color(0.85, 0.92, 0.82), "tint_b": Color(1.0, 0.96, 0.84)},
+	"scurvy": {"atlas": "res://assets/textures/veg/T_veg_scurvy.png", "cell": 0.3, "cards": 3, "lean": 0.6,
+		"wind": 0.02, "keep": 0.15, "bury": 0.5, "dry": Color(0.3, 0.3, 0.2), "dryness": 0.0,
+		"tint_a": Color(0.9, 0.95, 0.9), "tint_b": Color(1.0, 1.0, 0.95)},
+	"thrift_cushion": {"glb": "veg_thrift_cushion", "family": "M_turf", "keep": 0.6, "bury": 0.4, "h": 0.16},
+	"kelp": {"glb": "veg_kelp", "family": "M_leather", "keep": 0.5, "bury": 0.3, "h": 0.06, "flat": true},
+	# the Lowe: peat and the dead (ling heather stays here, and only here)
+	"cotton": {"atlas": "res://assets/textures/veg/T_veg_cotton.png", "cell": 0.58, "cards": 3, "lean": 0.26,
+		"wind": 0.16, "keep": 0.45, "bury": 0.4, "dry": Color(0.5, 0.42, 0.3), "dryness": 0.0,
+		"tint_a": Color(0.94, 0.92, 0.88), "tint_b": Color(1.0, 0.99, 0.96)},
+	"asphodel": {"atlas": "res://assets/textures/veg/T_veg_asphodel.png", "cell": 0.44, "cards": 3, "lean": 0.26,
+		"wind": 0.06, "keep": 0.3, "bury": 0.45, "dry": Color(0.5, 0.32, 0.12), "dryness": 0.0,
+		"tint_a": Color(0.95, 0.93, 0.88), "tint_b": Color(1.0, 0.98, 0.9)},
+	"rush": {"atlas": "res://assets/textures/veg/T_veg_rush.png", "cell": 0.85, "cards": 3, "lean": 0.16,
+		"wind": 0.1, "keep": 0.75, "bury": 0.4, "dry": Color(0.42, 0.36, 0.2), "dryness": 0.35,
+		"tint_a": Color(0.88, 0.95, 0.85), "tint_b": Color(1.0, 1.0, 0.9)},
+	"sphagnum": {"glb": "veg_sphagnum", "family": "M_turf", "keep": 0.7, "bury": 0.35, "h": 0.26},
+	# Kettle Fjord: very little, on purpose
+	"roseroot": {"atlas": "res://assets/textures/veg/T_veg_roseroot.png", "cell": 0.42, "cards": 2, "lean": 0.3, "root_shade": 0.9,
+		"wind": 0.03, "keep": 0.35, "bury": 0.3, "dry": Color(0.4, 0.36, 0.26), "dryness": 0.0,
+		"tint_a": Color(0.92, 0.95, 0.95), "tint_b": Color(1.0, 1.0, 0.96)},
+	"frostflower": {"atlas": "res://assets/textures/veg/T_veg_frostflower.png", "cell": 0.34, "cards": 3, "lean": 0.4, "root_shade": 1.0,
+		"wind": 0.0, "keep": 1.0, "bury": 0.0, "dry": Color(0.8, 0.85, 0.9), "dryness": 0.0,
+		"tint_a": Color(0.92, 0.97, 1.0), "tint_b": Color(1.0, 1.0, 1.0)},
+	"crowberry": {"glb": "veg_crowberry", "family": "M_turf", "keep": 0.6, "bury": 0.5, "h": 0.07, "flat": true},
+	# Tarnhall: feasting
+	"horsetail": {"atlas": "res://assets/textures/veg/T_veg_horsetail.png", "cell": 0.75, "cards": 3, "lean": 0.1, "root_shade": 0.8,
+		"wind": 0.08, "keep": 0.5, "bury": 0.3, "dry": Color(0.45, 0.4, 0.22), "dryness": 0.2,
+		"tint_a": Color(0.88, 0.95, 0.85), "tint_b": Color(1.0, 1.0, 0.92)},
+	"dock": {"atlas": "res://assets/textures/veg/T_veg_dock.png", "cell": 0.95, "cards": 3, "lean": 0.22,
+		"wind": 0.05, "keep": 0.4, "bury": 0.4, "dry": Color(0.4, 0.26, 0.14), "dryness": 0.25,
+		"tint_a": Color(0.9, 0.95, 0.86), "tint_b": Color(1.0, 1.0, 0.92)},
+	# Thornwold: charcoal and hedging (no grass cards under the canopy)
+	"bracken": {"atlas": "res://assets/textures/veg/T_veg_bracken.png", "cell": 1.05, "cards": 3, "lean": 0.4,
+		"wind": 0.07, "keep": 0.4, "bury": 0.45, "dry": Color(0.45, 0.27, 0.13), "dryness": 0.55,
+		"tint_a": Color(0.9, 1.0, 0.85), "tint_b": Color(1.0, 0.98, 0.86)},
+	"bilberry": {"atlas": "res://assets/textures/veg/T_veg_bilberry.png", "cell": 0.5, "cards": 3, "lean": 0.34,
+		"wind": 0.03, "keep": 0.35, "bury": 0.5, "dry": Color(0.42, 0.24, 0.16), "dryness": 0.2,
+		"tint_a": Color(0.9, 0.98, 0.88), "tint_b": Color(1.0, 1.0, 0.92)},
+	"moss_cushion": {"glb": "veg_moss_cushion", "family": "M_turf", "keep": 0.5, "bury": 0.5, "h": 0.13},
+	"hazel_stool": {"glb": "veg_hazel_stool", "rime_glb": "veg_hazel_stool_bare", "family": "M_leaves", "keep": 1.0, "bury": 0.04, "h": 2.4,
+		"sway": 0.06, "upright": true},
+	"birch_sapling": {"glb": "veg_birch_sapling", "rime_glb": "veg_birch_sapling_bare", "family": "M_leaves", "keep": 1.0, "bury": 0.04, "h": 2.6,
+		"sway": 0.12, "upright": true},
+	# Shepherd's Reach: sheep and folds
+	"fescue": {"atlas": "res://assets/textures/veg/T_veg_grass.png", "cell": 0.26, "cards": 3, "lean": 0.36, "sward": true,
+		"wind": 0.06, "keep": 0.25, "bury": 0.45, "dry": Color(0.4, 0.38, 0.18), "dryness": 0.25,
+		"tint_a": Color(0.62, 0.86, 0.4), "tint_b": Color(0.8, 0.95, 0.5)},
+	"matgrass": {"atlas": "res://assets/textures/veg/T_veg_matgrass.png", "cell": 0.5, "cards": 3, "lean": 0.34,
+		"wind": 0.07, "keep": 0.55, "bury": 0.45, "dry": Color(0.62, 0.56, 0.4), "dryness": 0.3,
+		"tint_a": Color(0.86, 0.9, 0.78), "tint_b": Color(1.0, 0.98, 0.9)},
+	"avens": {"atlas": "res://assets/textures/veg/T_veg_avens.png", "cell": 0.36, "cards": 3, "lean": 0.5,
+		"wind": 0.03, "keep": 0.15, "bury": 0.5, "dry": Color(0.4, 0.36, 0.26), "dryness": 0.0,
+		"tint_a": Color(0.94, 0.96, 0.92), "tint_b": Color(1.0, 1.0, 0.97)},
+	"thistle": {"atlas": "res://assets/textures/veg/T_veg_thistle.png", "cell": 0.95, "cards": 2, "lean": 0.08,
+		"wind": 0.06, "keep": 0.6, "bury": 0.25, "dry": Color(0.5, 0.42, 0.3), "dryness": 0.15,
+		"tint_a": Color(0.92, 0.95, 0.9), "tint_b": Color(1.0, 1.0, 0.96)},
+	"wooltuft": {"atlas": "res://assets/textures/veg/T_veg_wooltuft.png", "cell": 0.42, "cards": 2, "lean": 0.1, "root_shade": 0.9,
+		"wind": 0.12, "keep": 0.6, "bury": 0.2, "dry": Color(0.7, 0.66, 0.56), "dryness": 0.0,
+		"tint_a": Color(0.95, 0.94, 0.9), "tint_b": Color(1.0, 1.0, 0.98)},
+	"juniper": {"glb": "veg_juniper", "family": "M_needles", "keep": 0.8, "bury": 0.35, "h": 0.22},
+	# the Coldwell: the only place in Rimeholt with flowers (THAW); in RIME
+	# nothing grows, and hoar feathers stand on the stones
+	"marigold": {"atlas": "res://assets/textures/veg/T_veg_marigold.png", "cell": 0.42, "cards": 3, "lean": 0.36,
+		"wind": 0.04, "keep": 0.0, "bury": 0.5, "dry": Color(0.4, 0.36, 0.2), "dryness": 0.0,
+		"tint_a": Color(0.95, 0.96, 0.9), "tint_b": Color(1.0, 1.0, 0.96)},
+	"smock": {"atlas": "res://assets/textures/veg/T_veg_smock.png", "cell": 0.5, "cards": 3, "lean": 0.2,
+		"wind": 0.1, "keep": 0.0, "bury": 0.5, "dry": Color(0.42, 0.4, 0.3), "dryness": 0.0,
+		"tint_a": Color(0.95, 0.95, 0.97), "tint_b": Color(1.0, 1.0, 1.0)},
+	"hoarfeather": {"atlas": "res://assets/textures/veg/T_veg_hoarfeather.png", "cell": 0.34, "cards": 3, "lean": 0.5, "root_shade": 1.0,
+		"wind": 0.0, "keep": 1.0, "bury": 0.0, "dry": Color(0.8, 0.85, 0.9), "dryness": 0.0,
+		"tint_a": Color(0.9, 0.96, 1.0), "tint_b": Color(1.0, 1.0, 1.0)},
+	"saxifrage": {"glb": "veg_saxifrage", "family": "M_turf", "keep": 0.0, "bury": 0.5, "h": 0.11},
+	"starmoss": {"glb": "veg_starmoss", "family": "M_turf", "keep": 0.0, "bury": 0.5, "h": 0.05, "flat": true},
 }
+const VEG_MODEL_DIR := "res://assets/models/veg/"
+const VEG_RECIPE_DIR := "res://data/veg/"
+static var _recipes: Dictionary = {}
+
+## A region's own plants (data/veg/<area id>.json), or {} when it has none:
+##   {"drop": [kinds of the area's own "veg" rules to leave out],
+##    "veg": [rules, as below]}
+## The area JSON's rules come from the generators; the recipe is laid over
+## them here, so a region's plants can change without regenerating its area.
+static func region_recipe(area_id: String) -> Dictionary:
+	if not _recipes.has(area_id):
+		var out := {}
+		var path := VEG_RECIPE_DIR + area_id + ".json"
+		if FileAccess.file_exists(path):
+			var parsed = JSON.parse_string(FileAccess.get_file_as_string(path))
+			if parsed is Dictionary:
+				out = parsed
+			else:
+				push_error("Scatter: %s is not a JSON object" % path)
+		_recipes[area_id] = out
+	return _recipes[area_id]
+
+## The area's own rules with the region recipe laid over them.
+static func region_rules(area_id: String, rules: Array) -> Array:
+	var recipe := region_recipe(area_id)
+	if recipe.is_empty():
+		return rules
+	var drop: Array = recipe.get("drop", [])
+	var out: Array = []
+	for r in rules:
+		if not (String((r as Dictionary).get("kind", "grass")) in drop):
+			out.append(r)
+	out.append_array(recipe.get("veg", []))
+	return out
+
+## Distance from a point to the nearest building footprint (edges.buildings:
+## centre, size, yaw) or fence line (scatter.fences) of the area; INF if none.
+static func _wall_dist(def: Dictionary, x: float, z: float, fences: bool) -> float:
+	var best := INF
+	if fences:
+		for f in def.get("scatter", {}).get("fences", []):
+			var pts: Array = f.get("points", [])
+			for k in pts.size() - 1:
+				var a := Vector2(float(pts[k][0]), float(pts[k][1]))
+				var b := Vector2(float(pts[k + 1][0]), float(pts[k + 1][1]))
+				best = minf(best, Geometry2D.get_closest_point_to_segment(Vector2(x, z), a, b).distance_to(Vector2(x, z)))
+		return best
+	for b in def.get("edges", {}).get("buildings", []):
+		var c: Array = b["center"]
+		var sz: Array = b["size"]
+		var yaw := deg_to_rad(float(b.get("yaw", 0.0)))
+		var d := Vector2(x - float(c[0]), z - float(c[1])).rotated(yaw)
+		var q := Vector2(absf(d.x) - float(sz[0]) * 0.5, absf(d.y) - float(sz[1]) * 0.5)
+		best = minf(best, Vector2(maxf(q.x, 0.0), maxf(q.y, 0.0)).length() + minf(maxf(q.x, q.y), 0.0))
+	return best
 
 ## Smooth value noise in metres: where a kind grows thick and where it thins.
 static func _patch(x: float, z: float, cell: float, seed: int) -> float:
@@ -511,14 +652,27 @@ static func _patch(x: float, z: float, cell: float, seed: int) -> float:
 	return lerpf(lerpf(h.call(ix, iz), h.call(ix + 1, iz), tx), lerpf(h.call(ix, iz + 1), h.call(ix + 1, iz + 1), tx), tz)
 const SCATTER_CHUNK := 32.0
 
-## "veg": [{"kind": "grass"|"heather"|"sedge", "region": [x0, z0, x1, z1],
+## "veg": [{"kind": a VEG_KINDS key, "region": [x0, z0, x1, z1],
 ##          "density": per m2, "h": [min, max], "tag", "range": m}]
 ## Clumps gather in drifts (a kind grows thick in patches and thins between
 ## them), crowd the edges of worn paths and settle in hollows; they thin on
 ## slopes and stay off bare shingle, wet shore, rock and the path itself.
+## A region recipe (data/veg/<area>.json) may also say where a plant lives:
+##   "slope": [min, max]   the ground normal's y (cracks and ledges; default turf slopes)
+##   "bare": true          grows on shingle, wet shore and thin soil too
+##   "splat": [[ch, min, max], ...]   painted layer must be in range (0 shingle, 1 path, 2 wet, 3 turf)
+##   "near": [[x, z, r], ...]  only inside these circles;  "avoid": the reverse
+##   "walls": [d0, d1]     metres from a building footprint;  "fences": [d0, d1] from a fence line
+##   "drop_min": m         only where the land falls away this much within "drop_r" (cliff edges)
+##   "level": y            stands on a level at y where the land is under it (on the ice)
+##   "even": true          no drifts: spread evenly;  "scale": [a, b] clump size
+##   "clear": true         keeps out of the area's scatter "clear" circles (clearings)
 static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
+	rules = region_rules(area.area_id, rules)
+	var def: Dictionary = area.get_meta("def", {})
+	var area_clear: Array = def.get("scatter", {}).get("clear", [])
 	var ground := Color(0.1, 0.11, 0.05)
 	if terrain.has_method("palette_color"):
 		ground = terrain.palette_color("turf_a")
@@ -526,7 +680,9 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 	# no existing clump
 	var all_rules: Array = rules.duplicate()
 	for rule in rules:
-		if String(rule.get("kind", "grass")) == "grass":
+		var rk := String(rule.get("kind", "grass"))
+		# (a region's own turf grass brings the same pile and blades: "sward")
+		if rk == "grass" or bool((VEG_KINDS.get(rk, {}) as Dictionary).get("sward", false)):
 			var sw: Dictionary = (rule as Dictionary).duplicate()
 			sw["kind"] = "sward"
 			sw["density"] = float(rule.get("density", 1.0)) * 4.0
@@ -545,6 +701,10 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 		var dens := float(rule.get("density", 1.0))
 		var step := 1.0 / sqrt(maxf(dens, 0.01))
 		var kseed := hash(kind)
+		var kcfg: Dictionary = VEG_KINDS.get(kind, VEG_KINDS["grass"])
+		var size_r: Array = rule.get("scale", [0.75, 1.4])
+		var upright := bool(kcfg.get("upright", false))
+		var flat := bool(kcfg.get("flat", false))
 		var chunks: Dictionary = {}
 		var x := float(reg[0])
 		while x < float(reg[2]):
@@ -560,32 +720,67 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 					continue
 				var nrm := terrain.normal_at(px, pz)
 				var p := smoothstep(0.72, 0.93, nrm.y)
+				if rule.has("slope"):
+					p = 1.0 if nrm.y >= float(rule["slope"][0]) and nrm.y <= float(rule["slope"][1]) else 0.0
+				if rule.has("level"):
+					p = 1.0
 				if p <= 0.0:
 					continue
 				var path := terrain.splat_at(px, pz, 1)
 				if path > 0.55:
 					continue
-				p *= 1.0 + 1.6 * clampf(1.0 - absf(path - 0.32) / 0.22, 0.0, 1.0)   # path edges
-				if terrain.splat_at(px, pz, 0) > 0.35 or terrain.splat_at(px, pz, 2) > 0.3:
-					continue      # shingle and wet shore stay bare
-				var around := (terrain.height_at(px + 3, pz) + terrain.height_at(px - 3, pz)
-						+ terrain.height_at(px, pz + 3) + terrain.height_at(px, pz - 3)) * 0.25
-				p *= 1.0 + clampf((around - y) * 1.2, 0.0, 1.2)                     # hollows
-				p *= 0.55 + 0.45 * terrain.splat_at(px, pz, 3)
+				var bare := bool(rule.get("bare", false))
+				if not bare:
+					p *= 1.0 + 1.6 * clampf(1.0 - absf(path - 0.32) / 0.22, 0.0, 1.0)   # path edges
+					if terrain.splat_at(px, pz, 0) > 0.35 or terrain.splat_at(px, pz, 2) > 0.3:
+						continue      # shingle and wet shore stay bare
+				var out_of_place := false
+				for sp in rule.get("splat", []):
+					var sv := terrain.splat_at(px, pz, int(sp[0]))
+					if sv < float(sp[1]) or sv > float(sp[2]):
+						out_of_place = true
+				if rule.has("near") and not _blocked(_circles(rule["near"]), px, pz):
+					out_of_place = true
+				if rule.has("avoid") and _blocked(_circles(rule["avoid"]), px, pz):
+					out_of_place = true
+				if bool(rule.get("clear", false)) and _blocked(_circles(area_clear), px, pz):
+					out_of_place = true
+				if out_of_place:
+					continue
+				if rule.has("walls"):
+					var wd := _wall_dist(def, px, pz, false)
+					if wd < float(rule["walls"][0]) or wd > float(rule["walls"][1]):
+						continue
+				if rule.has("fences"):
+					var fd := _wall_dist(def, px, pz, true)
+					if fd < float(rule["fences"][0]) or fd > float(rule["fences"][1]):
+						continue
+				if rule.has("drop_min") and terrain.drop_at(px, pz, float(rule.get("drop_r", 5.0))) < float(rule["drop_min"]):
+					continue
+				if not bare and not rule.has("level"):
+					var around := (terrain.height_at(px + 3, pz) + terrain.height_at(px - 3, pz)
+							+ terrain.height_at(px, pz + 3) + terrain.height_at(px, pz - 3)) * 0.25
+					p *= 1.0 + clampf((around - y) * 1.2, 0.0, 1.2)                     # hollows
+					p *= 0.55 + 0.45 * terrain.splat_at(px, pz, 3)
 				# drifts: thick patches a few metres across, thin ground between
 				var drift := _patch(px, pz, 7.0, kseed) * 0.65 + _patch(px, pz, 2.6, kseed + 1) * 0.35
-				if kind == "sward" or kind == "blades":
+				if bool(rule.get("even", false)):
+					p *= 1.0
+				elif kind == "sward" or kind == "blades":
 					p *= lerpf(0.55, 1.5, smoothstep(0.25, 0.75, drift))
 				else:
 					p *= lerpf(0.08, 1.7, smoothstep(0.38, 0.74, drift))
 				if rng.randf() > p * 0.6 or _blocked(keep_clear, px, pz):
 					continue
+				if rule.has("level"):
+					y = float(rule["level"])
+					nrm = Vector3.UP
 				# a clump and sometimes a smaller one grown out of its side
 				var n := 1 + (1 if kind != "sward" and kind != "blades" and rng.randf() < 0.3 else 0)
 				for j in n:
 					var qx := px
 					var qz := pz
-					var s := rng.randf_range(0.75, 1.4)
+					var s := rng.randf_range(float(size_r[0]), float(size_r[1]))
 					if j > 0:
 						var a := rng.randf() * TAU
 						qx += cos(a) * 0.3
@@ -593,18 +788,23 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 						s *= 0.65
 						if not terrain.contains(qx, qz) or terrain.splat_at(qx, qz, 1) > 0.55:
 							continue
-					var qy := terrain.height_at(qx, qz)
-					var up := Vector3.UP.lerp(nrm, 0.5).normalized()
+					var qy := y if rule.has("level") else terrain.height_at(qx, qz)
+					var up := Vector3.UP.lerp(nrm, 0.12 if upright else (0.9 if flat else 0.5)).normalized()
 					var b := Basis(Quaternion(Vector3.UP, up)) * Basis(Vector3.UP, rng.randf() * TAU)
 					var key := Vector2i(int(floor(qx / VEG_CHUNK)), int(floor(qz / VEG_CHUNK)))
 					if not chunks.has(key):
 						chunks[key] = []
 					# custom: atlas cell, dryness (drier where the kind is thin), value, wind phase
 					var custom := Color(rng.randf(), clampf(rng.randf() * 0.7 + (0.5 - drift) * 0.8, 0.0, 1.0), rng.randf(), rng.randf())
-					chunks[key].append([Transform3D(b.scaled_local(Vector3(s, s * rng.randf_range(0.8, 1.15), s)), Vector3(qx, qy - 0.02, qz)), custom])
+					# cards may stand a little taller or shorter; a modelled plant is only ever scaled whole
+					var tall := rng.randf_range(0.8, 1.15)
+					chunks[key].append([Transform3D(b.scaled_local(Vector3(s, s if kcfg.has("glb") else s * tall, s)), Vector3(qx, qy - 0.02, qz)), custom])
 			x += step
-		var mesh := _veg_mesh(kind, tag, ground)
 		var rng_end := float(rule.get("range", 55.0))
+		if kcfg.has("glb"):
+			_emit_veg_models(area, terrain, kind, kcfg, tag, chunks, rng_end)
+			continue
+		var mesh := _veg_mesh(kind, tag, ground)
 		for key in chunks:
 			var xfs: Array = chunks[key]
 			var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
@@ -629,6 +829,88 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			mmi.visibility_range_end_margin = 6.0
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			area.attach(mmi, tag)
+
+static func _circles(list: Array) -> Array:
+	var out: Array = []
+	for c in list:
+		out.append(Vector3(float(c[0]), float(c[1]), float(c[2])))
+	return out
+
+## Plants with a body (cushions, mats, stools, saplings: tools/art/procedural/
+## veg_models.py) on the same chunks and ranges as the cards. A "base" rule is
+## drawn as two sets: the THAW plants, and their RIME variant: a "keep" share
+## of them, each sunk "bury" of its height into the snow (and the bare mesh,
+## for what loses its leaves). hero_mat lays the snow crust on what shows.
+static func _emit_veg_models(area: Area, terrain: Terrain, kind: String, kcfg: Dictionary, tag: String,
+		chunks: Dictionary, rng_end: float) -> void:
+	var states: Array = ["thaw", "rime"] if tag == "base" else [tag]
+	for st in states:
+		var rime: bool = st == "rime"
+		var keep := float(kcfg.get("keep", 1.0)) if rime and tag == "base" else 1.0
+		if keep <= 0.0:
+			continue
+		var glb := String(kcfg.get("rime_glb", kcfg["glb"])) if rime else String(kcfg["glb"])
+		var mesh := _veg_model_mesh(glb, String(kcfg.get("family", "M_turf")), 2 if rime else 1, float(kcfg.get("sway", 0.0)))
+		if mesh == null:
+			return
+		var sink := float(kcfg.get("bury", 0.0)) * float(kcfg.get("h", 0.2)) if rime else 0.0
+		for key in chunks:
+			var xfs: Array = []
+			for e in chunks[key]:
+				var t: Transform3D = e[0]
+				# which plants the snow has: fixed by where each one stands
+				if keep < 1.0 and float(hash(Vector2i(int(t.origin.x * 7.0), int(t.origin.z * 7.0))) % 1000) / 1000.0 > keep:
+					continue
+				t.origin.y -= sink * t.basis.get_scale().y
+				xfs.append(t)
+			if xfs.is_empty():
+				continue
+			var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
+			c.y = terrain.height_at(c.x, c.z)
+			var mm := MultiMesh.new()
+			mm.transform_format = MultiMesh.TRANSFORM_3D
+			mm.mesh = mesh
+			mm.instance_count = xfs.size()
+			for i in xfs.size():
+				var t2: Transform3D = xfs[i]
+				t2.origin -= c
+				mm.set_instance_transform(i, t2)
+			var mmi := MultiMeshInstance3D.new()
+			mmi.name = "Veg_%s_%s_%d_%d" % [kind, st, key.x, key.y]
+			mmi.multimesh = mm
+			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mmi.position = c
+			mmi.visibility_range_end = rng_end
+			mmi.visibility_range_end_margin = 6.0
+			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+			area.attach(mmi, st)
+
+## A plant model's mesh, shaded through MaterialLib.hero_mat with its own
+## paint kept (tint 0) and a little wind where it has stems.
+static func _veg_model_mesh(name: String, family: String, mode: int, sway: float) -> Mesh:
+	var key := "vegm|%s|%s|%d" % [name, family, mode]
+	if _mesh_cache.has(key):
+		return _mesh_cache[key]
+	var path := VEG_MODEL_DIR + name + ".glb"
+	var out: Mesh = null
+	if ResourceLoader.exists(path):
+		var inst := (load(path) as PackedScene).instantiate()
+		for c in inst.find_children("*", "MeshInstance3D", true, false):
+			var src := (c as MeshInstance3D).mesh
+			if src == null:
+				continue
+			out = src.duplicate() as Mesh
+			for si in out.get_surface_count():
+				var m := MaterialLib.hero_mat(src.surface_get_material(si), family, mode, 0.0)
+				if sway > 0.0 and m is ShaderMaterial:
+					m = m.duplicate()
+					(m as ShaderMaterial).set_shader_parameter("wind_sway", sway)
+					(m as ShaderMaterial).set_shader_parameter("wind_height", 2.5)
+				out.surface_set_material(si, m)
+			break
+		inst.free()
+	_mesh_cache[key] = out
+	return out
 
 ## One clump: a few cards crossed through the root, each tipped outward so
 ## the clump has a top when seen from above, each in three rows so the wind

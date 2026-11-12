@@ -546,6 +546,14 @@
     "absent_flag": "ks_vat_dipper_shown",
     "take_item": false,
     "set_flag": "ks_vat_dipper_shown"
+   },
+   {
+    "needs_item": "item_wool_ends",
+    "require_flag": "ks_song_cord_read",
+    "absent_flag": "ks_wool_ends",
+    "take_item": false,
+    "set_flag": "ks_wool_ends",
+    "toast": "Lusse counts the ends."
    }
   ],
   "lines_when": [
@@ -579,6 +587,12 @@
     "flag": "ks_vat_dipper_shown",
     "lines": [
      "He's had that vat filled twice since noon. He counts the horns, not the guests."
+    ]
+   },
+   {
+    "flag": "ks_wool_ends",
+    "lines": [
+     "She's cut and started again, look. Six times. Seven. It's hard, saying it about yourself."
     ]
    }
   ]
@@ -779,6 +793,13 @@
     "take_item": true,
     "set_flag": "ks_birch_ring",
     "toast": "Linnet takes the ring."
+   },
+   {
+    "needs_item": "item_gate_latch",
+    "absent_flag": "ks_gate_latch",
+    "take_item": false,
+    "set_flag": "ks_gate_latch",
+    "toast": "Linnet looks at the latch."
    }
   ],
   "lines_when": [
@@ -792,6 +813,12 @@
     "flag": "ks_birch_ring",
     "lines": [
      "That's mine. I had it on this morning. He made it. Don't tell him I took it off to work."
+    ]
+   },
+   {
+    "flag": "ks_gate_latch",
+    "lines": [
+     "He's made that for both. Look at it. It won't fit either."
     ]
    }
   ],

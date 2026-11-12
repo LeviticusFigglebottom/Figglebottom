@@ -16,6 +16,9 @@ var leaf_kit := "door_leaf"
 ## yard gate 3.6 m). The leaves hinge at the jambs and swing to the far side.
 var door_width := 3.6
 var door_height := 2.5
+## A way that is grown or fallen shut has no leaves to swing: its dressing
+## is the barrier, and opening it clears the dressing away.
+var has_leaves := true
 
 var _leaves: Array[Node3D] = []
 var _front: Interactable
@@ -23,7 +26,7 @@ var _back: Interactable
 
 func _ready() -> void:
 	# two plank leaves, each hung from its jamb on a pivot so it really swings
-	for side in [-1.0, 1.0]:
+	for side in ([-1.0, 1.0] if has_leaves else []):
 		var pivot := Node3D.new()
 		pivot.name = "gate_leaf_%s" % ("l" if side < 0 else "r")
 		pivot.position = Vector3(side * door_width * 0.5, 0, 0)

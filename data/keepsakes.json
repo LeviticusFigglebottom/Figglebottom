@@ -419,6 +419,27 @@
      "area": "tarnhall",
      "at": "npc:lusse"
     }
+   ],
+   "optional": [
+    {
+     "flag": "ks_gate_latch",
+     "objective": "Show Linnet the gate latch from the field with two pairs of gateposts, in THAW.",
+     "line": "Showed Linnet the holly latch. Eyvind cut it for both gates, and it fits neither.",
+     "at": "npc:linnet",
+     "needs_item": "item_gate_latch",
+     "after": "ks_linnet_met",
+     "poi": "POI.md 6.3"
+    },
+    {
+     "flag": "ks_wool_ends",
+     "objective": "Show Lusse the ends of wool from Linnet's hut. She is in the hall at Tarnhall, in THAW.",
+     "line": "Showed Lusse the ends of wool. She counted them: Linnet began her cord seven times.",
+     "area": "tarnhall",
+     "at": "npc:lusse",
+     "needs_item": "item_wool_ends",
+     "after": "ks_song_cord_read",
+     "poi": "POI.md 6.2"
+    }
    ]
   },
   {

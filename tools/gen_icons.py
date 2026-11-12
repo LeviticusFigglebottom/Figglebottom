@@ -546,6 +546,31 @@ def icon_armour_collier():
     return im
 
 
+# --- Thornwold points of interest (POI.md 6) -----------------------------------
+def icon_wool_ends():
+    """Short ends of plaited wool, oat and yellow, in a swept heap."""
+    im, d = canvas()
+    rnd = [(0.13, 0.71), (0.52, 0.24), (0.88, 0.63), (0.35, 0.92), (0.67, 0.08), (0.21, 0.45), (0.79, 0.33), (0.44, 0.58),
+           (0.95, 0.86), (0.06, 0.17), (0.61, 0.77), (0.29, 0.02)]
+    for k, (a, b) in enumerate(rnd):
+        x, y = 30 + a * 64, 52 + b * 44
+        ang = (a * 7 + b * 3) * 2.0
+        dx, dy = 13 * math.cos(ang), 7 * math.sin(ang)
+        d.line([(x - dx, y - dy), (x + dx, y + dy)], fill=WOOL if k % 3 else (196, 160, 70, 255), width=5)
+        d.line([(x + dx - 2, y + dy - 2), (x + dx + 2, y + dy + 2)], fill=DARK, width=2)     # the cut
+    return im
+
+
+def icon_gate_latch():
+    """A holly latch and its keeper, cut for different posts."""
+    im, d = canvas()
+    d.polygon(rot([(22, 56), (92, 56), (100, 64), (92, 72), (22, 72)], -18), fill=INK)        # the latch bar
+    c = rot([(32, 64)], -18)[0]
+    d.ellipse((c[0] - 5, c[1] - 5, c[0] + 5, c[1] + 5), fill=DARK)                           # its pivot hole
+    d.polygon([(78, 84), (104, 84), (104, 112), (94, 112), (94, 96), (78, 96)], fill=(170, 158, 132, 255))   # the keeper
+    return im
+
+
 # --- Shepherd's Reach, the Coldwell, and the pieces on the way up (REACH.md 8,
 # COLDWELL.md 8) ---------------------------------------------------------------
 def icon_fold_tally():

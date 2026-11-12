@@ -4067,6 +4067,126 @@
    "texture_max": 1024,
    "collision": null,
    "output": "assets/models/kit/cw_water_yoke.glb"
+  },
+  {
+   "name": "kit_tw_shaving_horse",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "4dec93b0-194e-4362-927d-856e76a39fc8",
+    "task_id": "d93836d3-1f54-4b7b-9605-526666fa09bf",
+    "remesh_operator": "de09f264-6e20-4ea4-a4fb-6a071023bf71",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000,
+    "region": "thornwold"
+   },
+   "input": "raw/kit_tw_shaving_horse/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.95
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_tw_shaving_horse.glb"
+  },
+  {
+   "name": "kit_tw_riddle_stand",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "59e4cec4-921e-4a31-911b-81ba6e553bb0",
+    "task_id": "01323736-7899-444e-9e02-771cc0cdfdcd",
+    "remesh_operator": "00705f64-eef4-4330-a7bc-eea48e7181df",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000,
+    "region": "thornwold"
+   },
+   "input": "raw/kit_tw_riddle_stand/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.5
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_tw_riddle_stand.glb"
+  },
+  {
+   "name": "kit_tw_sledge",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "66688ee3-4dde-4e28-bdb9-3dd7f0ba6592",
+    "task_id": "74038f91-fff0-4853-9c68-632a2c2af289",
+    "remesh_operator": "eccff3d6-a2e9-4eb5-a429-c6055db7c7ac",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000,
+    "region": "thornwold"
+   },
+   "input": "raw/kit_tw_sledge/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.85
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_tw_sledge.glb"
+  },
+  {
+   "name": "kit_tw_hedging_tools",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "b90a10e4-976b-4750-824c-bc2fad845ec0",
+    "task_id": "f59ab956-5c91-4c64-bcca-10423c481a4a",
+    "remesh_operator": "804a7d1d-39c5-4a5d-9c1e-ff8170105514",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000,
+    "region": "thornwold"
+   },
+   "input": "raw/kit_tw_hedging_tools/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.95
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_tw_hedging_tools.glb"
+  },
+  {
+   "name": "kit_tw_wood_shelter",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "f55d429f-8377-4e18-bcf0-3a9c4c946778",
+    "task_id": "b878f7b2-73ff-4e60-a9d3-ffa75c21df6f",
+    "remesh_operator": "fa452057-54b7-4e7b-80f6-3be91c3992e8",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000,
+    "region": "thornwold"
+   },
+   "input": "raw/kit_tw_wood_shelter/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 2.3
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_tw_wood_shelter.glb"
   }
  ]
 }

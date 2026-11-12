@@ -198,6 +198,14 @@
   "name": "Knucklebone",
   "desc": "A sheep's knucklebone, worn smooth. It was in the middle of the drove-road, on the side going east. There is a tooth-mark on it."
  },
+ "item_wool_ends": {
+  "name": "Ends of Wool",
+  "desc": "Short ends of plaited wool, oat and yellow, cut with a billhook and swept into the corner of a collier's hut. A song-cord takes an evening to tie if you know what you want said. There are a great many ends here."
+ },
+ "item_gate_latch": {
+  "name": "Gate Latch",
+  "desc": "A latch and its keeper whittled from holly, oiled and never fitted. They were on the east post of a field with gateposts on two sides. The latch is cut to close from the left, and the keeper is cut for the right."
+ },
  "armour_collier": {
   "name": "Collier's Leathers",
   "desc": "A soot-black leather apron and jerkin over oat wool, scorched at the hems, for working the clamps. The leather is cracked at the elbows. It smells of smoke whatever you do to it.",

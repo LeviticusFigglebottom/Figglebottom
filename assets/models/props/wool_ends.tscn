@@ -1,0 +1,90 @@
+[gd_scene load_steps=5 format=3]
+
+[sub_resource type="StandardMaterial3D" id="oat"]
+albedo_color = Color(0.740, 0.680, 0.540, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="yellow"]
+albedo_color = Color(0.720, 0.560, 0.200, 1)
+roughness = 0.95
+
+[sub_resource type="CapsuleMesh" id="end"]
+radius = 0.007
+height = 0.07
+radial_segments = 6
+rings = 2
+material = SubResource("oat")
+
+[sub_resource type="CapsuleMesh" id="endy"]
+radius = 0.007
+height = 0.06
+radial_segments = 6
+rings = 2
+material = SubResource("yellow")
+
+[node name="WoolEnds" type="Node3D"]
+metadata/upright = true
+
+[node name="End0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.000, -0.000, 0, 0, 0, 1, 0.000, 1.000, 0, 0.015, 0.008, 0.000)
+mesh = SubResource("endy")
+
+[node name="End1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.359, 0.933, 0, 0, 0, 1, -0.933, 0.359, 0, -0.020, 0.012, 0.018)
+mesh = SubResource("end")
+
+[node name="End2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.742, 0.671, 0, 0, 0, 1, -0.671, -0.742, 0, 0.003, 0.016, -0.039)
+mesh = SubResource("end")
+
+[node name="End3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.892, -0.451, 0, 0, 0, 1, 0.451, -0.892, 0, 0.031, 0.008, 0.040)
+mesh = SubResource("endy")
+
+[node name="End4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.100, -0.995, 0, 0, 0, 1, 0.995, 0.100, 0, -0.062, 0.012, -0.011)
+mesh = SubResource("end")
+
+[node name="End5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.965, -0.264, 0, 0, 0, 1, 0.264, 0.965, 0, 0.013, 0.016, -0.008)
+mesh = SubResource("end")
+
+[node name="End6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.593, 0.805, 0, 0, 0, 1, -0.805, 0.593, 0, -0.007, 0.008, 0.026)
+mesh = SubResource("endy")
+
+[node name="End7" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.539, 0.843, 0, 0, 0, 1, -0.843, -0.539, 0, -0.018, 0.012, -0.035)
+mesh = SubResource("end")
+
+[node name="End8" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.980, -0.200, 0, 0, 0, 1, 0.200, -0.980, 0, 0.048, 0.016, 0.017)
+mesh = SubResource("end")
+
+[node name="End9" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.166, -0.986, 0, 0, 0, 1, 0.986, -0.166, 0, -0.058, 0.008, 0.024)
+mesh = SubResource("endy")
+
+[node name="End10" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.861, -0.509, 0, 0, 0, 1, 0.509, 0.861, 0, 0.006, 0.012, -0.014)
+mesh = SubResource("end")
+
+[node name="End11" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.784, 0.620, 0, 0, 0, 1, -0.620, 0.784, 0, 0.008, 0.016, 0.026)
+mesh = SubResource("end")
+
+[node name="End12" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.297, 0.955, 0, 0, 0, 1, -0.955, -0.297, 0, -0.034, 0.008, -0.020)
+mesh = SubResource("endy")
+
+[node name="End13" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.998, 0.066, 0, 0, 0, 1, -0.066, -0.998, 0, 0.050, 0.012, -0.011)
+mesh = SubResource("end")
+
+[node name="End14" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.420, -0.908, 0, 0, 0, 1, 0.908, -0.420, 0, -0.036, 0.016, 0.052)
+mesh = SubResource("end")
+
+[node name="End15" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.696, -0.718, 0, 0, 0, 1, 0.718, 0.696, 0, -0.002, 0.008, -0.015)
+mesh = SubResource("endy")

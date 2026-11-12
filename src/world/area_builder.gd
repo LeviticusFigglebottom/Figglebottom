@@ -125,8 +125,12 @@ static func build(area_id: String) -> Area:
 		g.area_id = area_id
 		g.locked_prompt = spec.get("locked_prompt", "Barred from the other side")
 		g.door_width = float(spec.get("width", 3.6))
-		g.open_prompt = spec.get("open_prompt", g.open_prompt)
-		g.open_toast = spec.get("open_toast", g.open_toast)
+		# a way grown shut, not a door (Thornwold's stiles): no leaves, its
+		# own words, and the dressing is what blocks it
+		g.door_height = float(spec.get("height", 2.5))
+		g.has_leaves = bool(spec.get("leaves", true))
+		g.open_prompt = String(spec.get("open_prompt", g.open_prompt))
+		g.open_toast = String(spec.get("open_toast", g.open_toast))
 		g.leaf_kit = spec.get("leaf", g.leaf_kit)
 		if spec.has("tag"):
 			g.layer_bit = _tag_bit(String(spec["tag"]))
@@ -136,9 +140,17 @@ static func build(area_id: String) -> Area:
 		if spec.has("dressing"):
 			# the gate's look (a Tripo pair of doors): shown while it is barred
 			var dr: Dictionary = spec["dressing"]
-			var lm := BuildingGen._landmark(String(dr["scene"]))
+			var lm := BuildingGen._landmark(String(dr["scene"]), String(dr.get("family", "")),
+				(2 if String(spec.get("tag", "")) == "rime" else 0) if dr.has("family") else 0)
 			if lm != null:
 				lm.set_meta("gate_dressing", true)
+				if dr.has("range"):
+					for gi in lm.find_children("*", "GeometryInstance3D", true, false):
+						(gi as GeometryInstance3D).visibility_range_end = float(dr["range"])
+						(gi as GeometryInstance3D).visibility_range_end_margin = 6.0
+				if not bool(dr.get("shadow", true)):
+					for gi in lm.find_children("*", "GeometryInstance3D", true, false):
+						(gi as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 				lm.position = _v3(dr.get("offset", [0, 0, 0]))
 				lm.rotation.y = deg_to_rad(float(dr.get("rot", 0)))
 				lm.scale = Vector3.ONE * float(dr.get("scale", 1.0))
@@ -556,6 +568,8 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 	k.set_flag = spec.get("set_flag", "")
 	k.look_text = spec.get("look", "")
 	k.display_lift = float(spec.get("lift", 0.0))
+	if spec.has("show_off"):
+		k.display_offset = Vector2(float(spec["show_off"][0]), float(spec["show_off"][1]))
 	k.chip_heavy = bool(spec.get("chip_heavy", false))
 	area.attach(k, spec.get("tag", "base"))
 	_place(k, spec)
@@ -639,6 +653,8 @@ static func _range_by_size(piece: Node3D, kit: String, spec: Dictionary) -> void
 		sc = maxf(maxf(float(v[0]), float(v[1])), float(v[2])) if v is Array else float(v)
 	var big := maxf(maxf(float(sz[0]), float(sz[1])), float(sz[2])) * sc
 	var end := float(r[1]) if big <= float(r[0]) else (float(r[3]) if big <= float(r[2]) else 0.0)
+	if spec.has("range"):
+		end = float(spec["range"])      # a piece no one can see from further (a wood closes in at 70 m)
 	if end <= 0.0:
 		return
 	for gi in piece.find_children("*", "GeometryInstance3D", true, false):
@@ -668,6 +684,11 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 			# is a solid convex blocker so the capsule never wedges inside it
 			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]), String(spec.get("surface", "")))
 	_range_by_size(piece, String(spec["kit"]), spec)
+	if spec.has("tilt"):
+		piece.rotation_degrees.x = float(spec["tilt"])     # leaned on something (hurdles against a hedge)
+	if spec.has("smoke"):
+		# a lit charcoal clamp set as a prop (THAW only, like a landmark's)
+		_smoke(area, _v3(spec["at"]) + Vector3(0, float(spec["smoke"]), 0))
 	if spec.get("flames", true) and (tag != "rime"):
 		KitLib.add_flame_lights(piece)
 	# "glow": [dy, energy, range] — a warm interior light the piece carries

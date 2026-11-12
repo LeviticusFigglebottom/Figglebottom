@@ -1,0 +1,147 @@
+{
+ "doc": "The Coldwell (BIOMES.md): bare gravel, and in THAW (the Melt) the only flowers in Rimeholt: marsh marigold at the water, lady's smock, purple saxifrage cushions, star moss round the spring. RIME: nothing grows; hoar feathers on the stones.",
+ "drop": [
+  "grass",
+  "sedge"
+ ],
+ "veg": [
+  {
+   "kind": "marigold",
+   "region": [
+    676,
+    -556,
+    964,
+    -364
+   ],
+   "density": 4.8,
+   "tag": "thaw",
+   "splat": [
+    [
+     2,
+     0.04,
+     0.7
+    ]
+   ],
+   "bare": true,
+   "slope": [
+    0.6,
+    1.0
+   ],
+   "range": 50
+  },
+  {
+   "kind": "marigold",
+   "region": [
+    676,
+    -556,
+    964,
+    -364
+   ],
+   "density": 0.4,
+   "tag": "thaw",
+   "range": 45
+  },
+  {
+   "kind": "smock",
+   "region": [
+    676,
+    -556,
+    964,
+    -364
+   ],
+   "density": 0.8,
+   "tag": "thaw",
+   "range": 45
+  },
+  {
+   "kind": "saxifrage",
+   "region": [
+    676,
+    -556,
+    964,
+    -364
+   ],
+   "density": 0.2,
+   "tag": "thaw",
+   "slope": [
+    0.6,
+    0.97
+   ],
+   "bare": true,
+   "range": 40
+  },
+  {
+   "kind": "starmoss",
+   "region": [
+    900,
+    -494,
+    944,
+    -456
+   ],
+   "density": 1.34,
+   "tag": "thaw",
+   "near": [
+    [
+     922.0,
+     -478.0,
+     11.0
+    ]
+   ],
+   "bare": true,
+   "slope": [
+    0.75,
+    1.0
+   ],
+   "range": 40,
+   "scale": [
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "kind": "starmoss",
+   "region": [
+    676,
+    -556,
+    964,
+    -364
+   ],
+   "density": 0.7,
+   "tag": "thaw",
+   "splat": [
+    [
+     2,
+     0.04,
+     0.6
+    ]
+   ],
+   "bare": true,
+   "slope": [
+    0.75,
+    1.0
+   ],
+   "range": 40,
+   "scale": [
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "kind": "hoarfeather",
+   "region": [
+    676,
+    -556,
+    964,
+    -364
+   ],
+   "density": 0.5,
+   "tag": "rime",
+   "bare": true,
+   "slope": [
+    0.55,
+    1.0
+   ],
+   "range": 35
+  }
+ ]
+}
