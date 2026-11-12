@@ -143,3 +143,43 @@ Failing lines, verbatim:
 **Notes:**
 - The suite and originality ran at 8c160fd. The branch then moved, and every walk ran at 0cac9ad.
 - I wouldn't merge yet. The Saltfell walk, the game's opening, is red and non-deterministic. The Tarnhall porch and the anim flame check are single failures.
+
+## 2026-11-12T08:48Z The instantiate-on-null error: a local import fault (not a game bug); gallery v4 is missing props
+**The exact text and stack**, from Godot's own log (`user://logs/godot.log`, written during a perf_tour boot):
+```
+       [5] _ready (res://src/debug/perf_tour.gd:74)
+SCRIPT ERROR: Cannot call method 'instantiate' on a null value.
+   at: _hero_gable (res://src/world/building_gen.gd:49)
+   GDScript backtrace (most recent call first):
+       [0] _hero_gable (res://src/world/building_gen.gd:49)
+       [1] build (res://src/world/building_gen.gd:144)
+       [2] build (res://src/world/area_builder.gd:49)
+       [3] _front_door (res://src/core/world_root.gd:120)
+       [4] _ready (res://src/core/world_root.gd:16)
+       [5] _ready (res://src/debug/perf_tour.gd:74)
+       [6] _ready (res://src/debug/perf_tour.gd:74)
+SCRIPT ERROR: Cannot call method 'instantiate' on a null value.
+   at: _build_hero (res://src/world/kit_lib.gd:440)
+   GDScript backtrace (most recent call first):
+       [0] _build_hero (res://src/world/kit_lib.gd:440)
+       [1] instance (res://src/world/kit_lib.gd:423)
+       [2] _piece (res://src/world/area_builder.gd:688)
+       [3] build (res://src/world/area_builder.gd:58)
+       [4] _front_door (res://src/core/world_root.gd:120)
+       [5] _ready (res://src/core/world_root.gd:16)
+       [6] _ready (res://src/debug/perf_tour.gd:74)
+WARNING: 'res://assets/models/kit/kit_creel_stack_hero.glb': In external resource #0, invalid UID: 'uid://pymdvd8fmq2l' - using text path instead: 'res://assets/models/kit/kit_creel_stack_hero_T_kit_creel_stack_hero_BaseColor.jpg'.
+ERROR lines just before them (counts):
+```
+**Cause:**
+- The shot boots ran in worktrees where Godot's one-pass `--headless --import` had exited (rc 0) without importing everything.
+- In two fresh worktrees, `.godot/imported` held 2 of 5,254 files.
+- `ResourceLoader.exists()` is true (the `.import` remap is committed), but the `.scn` is missing, so `load()` returns null and `building_gen._hero_gable` / `kit_lib._build_hero` call `.instantiate()` on it.
+- Cloud sessions import fully, which is why the cloud never shows it.
+- Both worktrees are now fully imported (checked: 0 of 906 `dest_files` missing). I check this before every run from now on.
+
+**What it affected:**
+1. **Gallery v4 (gpu/gallery-v4, 0442c3c):** the shots were taken in a partly imported tree, so some hero props are missing: carved and shed gables, barrels, creel stacks, door leaves, fat lamps and feast horns. The lighting findings stand, but the shots need a re-shoot. I'll do it after job C.
+2. **Earlier gates:** fb_base, the gate worktree, is fully imported. Job C re-imports both gate trees before it starts.
+
+**Hardening, if you want it:** `area_builder` could `push_error` once and skip a kit whose `load()` is null. That's cheaper than an error per instance, but it's your call.
