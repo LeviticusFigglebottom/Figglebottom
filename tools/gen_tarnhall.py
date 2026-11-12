@@ -500,6 +500,17 @@ edges = {
     "gates": [],
 }
 
+# THAW shade fills (area_builder "shade_fills"): the top of the Tarn Steps, the
+# causeway and the hall's porch sit in the gorge's shade, which read murky on
+# the GPU. A soft cool light 4 m up at each, THAW only (RIME is unchanged).
+SHADE_FILLS = []
+_shade = [(x, z) for (x, z, _y) in T.STEPS[3:]]
+(_cax, _caz), (_cbx, _cbz) = T.CAUSEWAY
+_shade += [((_cax + _cbx) / 2, (_caz + _cbz) / 2), (_cbx, _cbz)]
+_shade += [(HALL_X0 - 3.0, DOOR_Z), (139.0, -300.0), (150.0, -306.0)]   # the porch; the board on the shore walk
+for (_px, _pz) in _shade:
+    SHADE_FILLS.append({"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 3.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"})
+
 D = {
     "id": "tarnhall",
     "name": "Tarnhall",
@@ -557,6 +568,7 @@ D = {
         ],
     },
     "edges": edges,
+    "shade_fills": SHADE_FILLS,
 }
 
 # --- progression gates (ADR 0015) ---------------------------------------------

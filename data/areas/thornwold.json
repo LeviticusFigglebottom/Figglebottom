@@ -17720,5 +17720,6 @@
    "open_flag": "ks_hedgelayer_released",
    "gate": "fell_hedge"
   }
- ]
+ ],
+ "blockers": []
 }
