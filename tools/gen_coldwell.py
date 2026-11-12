@@ -292,6 +292,13 @@ edges = {
     "gates": [],
 }
 
+
+# THAW shade fills (area_builder "shade_fills"): the Ice-Falls path runs under
+# the shelter's roof against the cliff, whose underside read black on the GPU.
+# A soft cool light 3 m up at the board and along the shelter, THAW only.
+SHADE_FILLS = [{"at": at(_px, _pz, 3.0), "range": 14.0, "energy": 2.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"}
+               for (_px, _pz) in [(800.4, -453.2), (796.0, -449.0)]]
+
 D = {
     "id": "coldwell",
     "name": "The Coldwell",
@@ -345,6 +352,7 @@ D = {
         ],
     },
     "edges": edges,
+    "shade_fills": SHADE_FILLS,
 }
 
 if __name__ == "__main__":
