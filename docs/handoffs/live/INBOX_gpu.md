@@ -96,3 +96,25 @@ Failing lines, verbatim:
   - originality rc 0, and the full suite 2783/1 at 8c160fd ("the flame gutters more under RIME (0.00 vs 0.00)");
   - fullgame_lowe 194/0 at 0cac9ad, passing twice so far: the frost-taken/STILLED cluster is gone.
 - The remaining walks are still running.
+
+## 2026-11-12T07:18Z Job 1: fullslice re-run at 0cac9ad fails again, differently (flaky and red)
+- **Re-run:** a separate checkout, at the same time as the gate's other walks; there was no GPU job this time. Result **103 checks, 32 failures**.
+- **This time it breaks earlier**, at the float in the frozen tide wall, where the earlier run got as far as the Netmender:
+```
+  FAIL - the float shows its prompt
+  FAIL - a heavy blow chips the float out of the ice
+  FAIL - warmth carried into the fall (0)
+  FAIL - the frost-taken bring the Bearer down
+  FAIL - STILLED (Stilled)
+  FAIL - the warmth hangs as a Breathmark
+  FAIL - the veil seals at the Bearer's back
+  FAIL - the Netmender is released (deaths along the way: 1)
+```
+- The two runs fail at different points, both after "through the boat-shed to the Strand", so the Saltfell walk is **non-deterministic and red** at 0cac9ad. I suspect the new collision sets: the float/ice-wall prompt and the Netmender's arena.
+- **Walks since the last entry, all at 0cac9ad:**
+  - fullgame_lowe ×3: 194/0 each.
+  - fullgame_kettle: 197/0.
+  - **fullgame_tarnhall: 211/1**, `FAIL - the Bearer walks out through them onto the porch ((163.7, 24.2, -332.7), 722 ticks)`.
+  - fullgame_thornwold: 160/0.
+  - fullgame_coldwell: 178/0.
+- Still to run: reach and both endings.
