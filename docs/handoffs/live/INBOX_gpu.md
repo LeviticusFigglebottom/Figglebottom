@@ -258,3 +258,16 @@ a37afed differs from 740ca4d only in ci.yml. Tarnhall #3 is running now, alone.
 - Against that, the paired check in step 2 (fullslice plus lowe) passed. So contention doesn't always break it, but under load it isn't safe.
 - **Next:** I'm re-running `tools/test.sh` (the full suite) alone and fullgame_kettle alone. I'll export only if both come back green.
 - Full logs: `docs/qa/gpu/suite_740ca4d_paired.log` and `fullgame_kettle_740ca4d_paired.log`.
+
+## 2026-11-12T12:01Z Windows release build of main 4e8ea09: READY for the owner
+- **Exe:** `C:\Users\Aaron\Documents\Rimeholt_Windows_main_4e8ea09\Rimeholt.exe`, **1,527,581,152 bytes** (1.53 GB, a single exe with the pack embedded).
+- **Built from:** main 4e8ea09, a separate worktree. The tree is the same as a37afed and feat/integration-1112.
+- **Imports:** fully imported, checked (0 of 906 `dest_files` missing). The 1,812 textures that Godot extracts from the .glb files are present.
+  - A first export from the bare import cache lacked them: 531 MB, with 6 "Failed loading resource" and 6 "invalid UID" warnings for the mask props. That exe was replaced.
+- **Export:** `--headless --export-release "Windows"`, rc 0, **no warnings or errors** in the export log.
+- **Boot check:** off-screen at below-normal priority.
+  - Frame 450: the "Figglebottom Productions" studio card.
+  - Frame 2000: the title, "RIMEHOLT / The Winter That Would Not End", New journey / Settings, over the Saltfell steading at dusk (1,356 draws, 4.4 M prims).
+  - At exit: only `WARNING: 7 RIDs of type "Texture" were leaked`, the same as every earlier build.
+- **Job C so far:** fullgame_tarnhall #3 passed, **211/0** (a37afed, partly overlapping the export). Tarnhall is green 3 of 3 here.
+- **Now running, each alone:** fullgame_kettle, then the full `tools/test.sh`, to settle the two red results from paired runs.
