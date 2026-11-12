@@ -693,10 +693,14 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 	if spec.has("lift"):
 		piece.position.y += float(spec["lift"])    # set on top of another piece (a cup on a stone)
 	if spec.has("tilt"):
-		# [pitch, roll] in degrees: long pieces laid on a slope (rollers up a beach)
-		var tl: Array = spec["tilt"]
-		piece.rotation_degrees.x = float(tl[0])
-		piece.rotation_degrees.z = float(tl[1])
+		# degrees: a pitch alone (hurdles leaned against a hedge), or [pitch,
+		# roll] for long pieces laid on a slope (rollers up a beach)
+		var tl = spec["tilt"]
+		if tl is Array:
+			piece.rotation_degrees.x = float(tl[0])
+			piece.rotation_degrees.z = float(tl[1])
+		else:
+			piece.rotation_degrees.x = float(tl)
 	if collide and spec.get("collide", true):
 		if String(spec["kit"]) == "stair_4m":
 			_stair_ramp(piece, tag, "stair_4m")   # ramp-only: step trimesh would wall off the climb
@@ -706,8 +710,6 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 			# is a solid convex blocker so the capsule never wedges inside it
 			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]), String(spec.get("surface", "")))
 	_range_by_size(piece, String(spec["kit"]), spec)
-	if spec.has("tilt"):
-		piece.rotation_degrees.x = float(spec["tilt"])     # leaned on something (hurdles against a hedge)
 	if spec.has("smoke"):
 		# a lit charcoal clamp set as a prop (THAW only, like a landmark's)
 		_smoke(area, _v3(spec["at"]) + Vector3(0, float(spec["smoke"]), 0))
