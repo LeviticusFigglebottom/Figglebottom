@@ -271,3 +271,47 @@ a37afed differs from 740ca4d only in ci.yml. Tarnhall #3 is running now, alone.
   - At exit: only `WARNING: 7 RIDs of type "Texture" were leaked`, the same as every earlier build.
 - **Job C so far:** fullgame_tarnhall #3 passed, **211/0** (a37afed, partly overlapping the export). Tarnhall is green 3 of 3 here.
 - **Now running, each alone:** fullgame_kettle, then the full `tools/test.sh`, to settle the two red results from paired runs.
+
+## 2026-11-12T13:46Z Job C DONE: RED. The full suite's fullslice test fails ALONE (20 FAIL); everything else is green
+| stage | commit | checks | failures | conditions |
+|---|---|---:|---:|---|
+| `tools/test.sh fullslice` ×3 | 740ca4d | 108 each | 0 | alone |
+| `tools/test.sh fullslice` | 740ca4d | 108 | 0 | beside fullgame_lowe |
+| **full `tools/test.sh`** | a37afed | 2901 | **20** (rc 1) | **alone**: the 20 are all in its `fullslice` test |
+| full `tools/test.sh` | 740ca4d | 2902 | 27 | beside walks |
+| fullgame_kettle | a37afed | 197 | 0 | alone (the 4 Breathmark FAILs while paired did not repeat) |
+| fullgame_tarnhall ×3 | 740ca4d / a37afed | 211 each | 0 | |
+| fullgame_reach ×2, lowe ×2, coldwell, thornwold, ending_outsong, ending_kept | 740ca4d / a37afed | | 0 | |
+
+a37afed is the same tree as 740ca4d apart from ci.yml, and the same as main 4e8ea09.
+
+**The suite's fullslice FAILs (alone), verbatim** (full log: `docs/qa/gpu/suite_a37afed_alone.log`):
+```
+  FAIL - the float shows its prompt
+  FAIL - a heavy blow chips the float out of the ice
+  FAIL - warmth carried into the fall (0)
+  FAIL - the frost-taken bring the Bearer down
+  FAIL - STILLED (Stilled)
+  FAIL - the warmth hangs as a Breathmark
+  FAIL - the Long Hearth offers to turn the memory
+  FAIL - warmed: THAW again
+  FAIL - the Long Hearth is lit and kept
+  FAIL - Ingra, in THAW again
+  FAIL - the rye is home
+  FAIL - Ingra, a second time
+  FAIL - Ingra's thread is whole (2)
+  FAIL - down to the Strand for Brede
+  FAIL - Brede, a second time
+  FAIL - Brede's thread is whole (1)
+  FAIL - stilled again: RIME
+  FAIL - and warmed once more
+  FAIL - Saltfell cleared and warm
+  FAIL - story flags kept
+```
+**Reading:**
+1. **It is not the save slot.** The suite runs each test as its own process, and 740ca4d gives each process its own `test_fullslice_<pid>` directory. No settings.cfg is written anywhere in user://.
+2. **The first failure is the same as in my 0cac9ad re-run:** the ice-wall float never shows its prompt. That would be `nearest_interactable()` not finding the float from where the walk stands. The rest cascades: no float, no Breathmark beat, no Long Hearth turn.
+3. **The difference from the green runs** is only that 40 other tests ran first in the same `test.sh`, each in its own process. Stand-alone fullslice is green 4 of 4. So either the walk is flaky, failing about 1 in 3 here (my count: 3 red of 8 runs, 2 of them under load), or something earlier leaves a file in `user://` or `res://`. The cache, prof_cache and shader_cache are shared across processes.
+4. **Suggestion:** have the walk log the Bearer's position and the float's position and distance when the prompt check fails. That separates "stood in the wrong place" (a physics or real-time timing issue) from "the float isn't interactable" (state).
+
+**The gate is stopped here,** as you asked. The other suite failure while paired, "no prop burst for a foe (1)", did not repeat alone.
