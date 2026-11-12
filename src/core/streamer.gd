@@ -46,6 +46,10 @@ class Prep:
 	var warm_found: Dictionary = {}
 	var warm_mats: Array = []
 	var warm_i := 0
+	var model_i := 0                 # the next of `preloaded` stood up unseen
+	var model_ids: Array = []        # humanoid models what acts will wear
+	var rig_i := 0
+	var max_pump: Array = [0.0, ""]  # the dearest single flush, [ms, phase]
 	var warm_holders: Array = []     # [[holder, frames left]]
 	var far_s := 0.0
 	var dropped := false
@@ -72,6 +76,11 @@ var _held: Array = []          # model scenes read ahead for the live area's cas
 var _foe_est_ms := 12.0
 var _heavy_est_ms := 12.0      # likewise a soul, a hearth, a veil
 var _foes_this_frame := 0
+## What acts in the live area, walked a little a frame once it has joined,
+## so the shaders its models draw with outlive it (ShaderWarm.retain).
+var _keep_stack: Array[Node] = []
+var _keep_found: Dictionary = {}
+var _keep_mats: Array = []
 
 var _crossing := false
 var _cold := false
@@ -388,6 +397,7 @@ func _process(dt: float) -> void:
 	if _prep != null:
 		_advance(_prep, t0, budget)
 	_tick_warm()
+	_tick_keep(budget - (Time.get_ticks_usec() - t0))
 	_tick_rebake(budget - (Time.get_ticks_usec() - t0))
 	_tick_cache_warm(dt)
 	if not _crossing and look_ahead and enabled():
@@ -496,10 +506,12 @@ func _build_worker(prep: Prep) -> void:
 	var t := Time.get_ticks_usec()
 	var out := AreaBuilder.build_detached(prep.area_id)
 	t = Time.get_ticks_usec()
-	var held: Array = [] if out.is_empty() else _preload_actors(def)
+	var ids: Array = []
+	var held: Array = [] if out.is_empty() else _preload_actors(def, ids)
 	BuildProf.add(prep.area_id, "worker: models read ahead", Time.get_ticks_usec() - t)
 	prep.mx.lock()
 	prep.preloaded = held
+	prep.model_ids = ids
 	prep.result = out
 	prep.flag_names = names
 	prep.flag_sig = sig
@@ -509,7 +521,7 @@ func _build_worker(prep: Prep) -> void:
 ## tree, loaded here (worker thread) so they are in the resource cache by
 ## then. Paths come from the same tables the actors read. (Scenes only: the
 ## scripts are compiled at boot, _load_scripts.)
-static func _preload_actors(def: Dictionary) -> Array:
+static func _preload_actors(def: Dictionary, ids_out: Array = []) -> Array:
 	var paths := {}
 	var models := {}
 	var enemies: Dictionary = DB.table("enemies")
@@ -527,6 +539,8 @@ static func _preload_actors(def: Dictionary) -> Array:
 	for k in def.get("pickups", []):
 		if String(k.get("scene", "")) != "":
 			paths[String(k["scene"])] = true
+	for m in models:
+		ids_out.append(m)
 	if not models.is_empty():
 		# (read here, not through HumanoidLib: its table is the main thread's)
 		var parsed = JSON.parse_string(FileAccess.get_file_as_string(HumanoidLib.META_PATH))
@@ -606,17 +620,17 @@ func _advance(prep: Prep, t0: int, budget: int) -> void:
 				# made of), each answered only here: so while it is in a phase
 				# that asks, this frame's budget is spent answering.
 				var tp := Time.get_ticks_usec()
-				BuildLock.pump()
+				_pump_timed(prep)
 				while not BuildLock.computing and Time.get_ticks_usec() - t0 < budget * 3 / 4 \
 						and not WorkerThreadPool.is_task_completed(prep.task):
 					OS.delay_usec(250)
-					BuildLock.pump()
+					_pump_timed(prep)
 				BuildProf.slice(prep.area_id, "flush: worker's render commands", tp)
 				return
 			# everything the worker queued for the renderer is carried out
 			# before anything it made is grafted or found in a cache
 			var tf := Time.get_ticks_usec()
-			BuildLock.pump()
+			_pump_timed(prep)
 			BuildProf.slice(prep.area_id, "flush: worker's render commands", tf)
 			BuildLock.worker_busy = not _orphans.is_empty()
 			prep.built = true     # (the worker's own flag, seen from here now)
@@ -671,20 +685,71 @@ func _advance(prep: Prep, t0: int, budget: int) -> void:
 		St.WARM:
 			var cam := get_viewport().get_camera_3d()
 			var headless := DisplayServer.get_name() == "headless"
-			if cam == null or headless or prep.warm_i >= prep.warm_mats.size():
-				if prep.warm_holders.is_empty():
-					prep.warm_mats = []
-					prep.stage = St.READY
-					prep.ready_us = Time.get_ticks_usec()
-				return
+			var draws := cam != null and not headless
 			var ts := Time.get_ticks_usec()
-			var n := int(cfg("warm_batch", 32))
-			var batch := prep.warm_mats.slice(prep.warm_i, prep.warm_i + n)
-			prep.warm_i += n
-			var holder := ShaderWarm.draw(cam, batch)
-			if holder != null:
-				prep.warm_holders.append([holder, int(cfg("warm_frames", 4))])
-			BuildProf.slice(prep.area_id, "warm: draw materials", ts)
+			var frames := int(cfg("warm_frames", 4))
+			if prep.warm_i < prep.warm_mats.size():
+				# the static world's materials: kept (ShaderWarm.retain) and
+				# drawn, a batch a frame (with nothing to draw, as many as fit)
+				var n := int(cfg("warm_batch", 32))
+				while prep.warm_i < prep.warm_mats.size():
+					var batch := prep.warm_mats.slice(prep.warm_i, prep.warm_i + n)
+					prep.warm_i += n
+					ShaderWarm.retain(batch)
+					var holder := ShaderWarm.draw(cam, batch) if draws else null
+					if holder != null:
+						prep.warm_holders.append([holder, frames])
+					if draws or Time.get_ticks_usec() - t0 > budget:
+						break
+				BuildProf.slice(prep.area_id, "warm: draw materials", ts)
+				return
+			if prep.rig_i < prep.model_ids.size():
+				# each humanoid model's clip tables (HumanoidLib: built once a
+				# run, on the first soul or foe that wears it: 10 to 14 ms in
+				# that one's _ready, in the crossing's first frames), one a frame
+				var id := String(prep.model_ids[prep.rig_i])
+				prep.rig_i += 1
+				if HumanoidLib.has_model(id) and String(HumanoidLib.model_cfg(id).get("rig", "")) != "quadruped":
+					HumanoidLib.shared_library()
+					HumanoidLib.own_library(id)
+					HumanoidLib.hips_height(id)
+				BuildProf.slice(prep.area_id, "warm: what acts' clips", ts)
+				return
+			if prep.model_i <= prep.preloaded.size():
+				# then what acts, which the material pass cannot see (its models
+				# are made in _ready, after the swap): each foe's, soul's and
+				# find's model stood up unseen, one a frame, and its shaders
+				# kept; and the wave's particles, for the first turn here
+				var holder: Node3D = null
+				if prep.model_i == prep.preloaded.size():
+					ShaderWarm.retain(StateDirector.wave_materials())
+					if draws:
+						holder = ShaderWarm.draw_particles(cam, StateDirector.wave_materials())
+				elif prep.preloaded[prep.model_i] is PackedScene and draws:
+					holder = ShaderWarm.draw_model(cam, prep.preloaded[prep.model_i])
+					if holder != null:
+						var found := {}
+						ShaderWarm.collect([holder] as Array[Node], found, 1 << 30)
+						ShaderWarm.retain(ShaderWarm.materials(found))
+				prep.model_i += 1
+				if holder != null:
+					prep.warm_holders.append([holder, frames])
+				BuildProf.slice(prep.area_id, "warm: what acts, unseen", ts)
+				return
+			if prep.warm_holders.is_empty():
+				prep.warm_mats = []
+				prep.stage = St.READY
+				prep.ready_us = Time.get_ticks_usec()
+
+## One flush of what the worker queued for the renderer, the dearest kept
+## with the build phase it came from (a real GPU's cold Saltfell flush had a
+## 238 ms frame; which phase queued it is what the next measure should say).
+func _pump_timed(prep: Prep) -> void:
+	var t := Time.get_ticks_usec()
+	BuildLock.pump()
+	var ms := (Time.get_ticks_usec() - t) / 1000.0
+	if ms > float(prep.max_pump[0]):
+		prep.max_pump = [snappedf(ms, 0.1), "after " + BuildProf.worker_last_lap]
 
 func _tick_warm() -> void:
 	if _prep == null:
@@ -696,6 +761,29 @@ func _tick_warm() -> void:
 			if is_instance_valid(h[0]):
 				(h[0] as Node).queue_free()
 			_prep.warm_holders.remove_at(i)
+
+func _tick_keep(budget: int) -> void:
+	if _keep_stack.is_empty() and _keep_mats.is_empty():
+		return
+	if _crossing:
+		return     # (after the crossing: it is nobody's hurry)
+	var t0 := Time.get_ticks_usec()
+	var left := maxi(mini(budget, 1500), 300)
+	if not _keep_stack.is_empty():
+		# (nodes freed meanwhile are dropped: collect reads only live ones)
+		var live: Array[Node] = []
+		for n in _keep_stack:
+			if is_instance_valid(n):
+				live.append(n)
+		_keep_stack = live
+		if ShaderWarm.collect(_keep_stack, _keep_found, left):
+			_keep_mats = ShaderWarm.materials(_keep_found)
+			_keep_found = {}
+	else:
+		while not _keep_mats.is_empty() and Time.get_ticks_usec() - t0 < left:
+			ShaderWarm.retain(_keep_mats.slice(maxi(_keep_mats.size() - 8, 0)))
+			_keep_mats.resize(maxi(_keep_mats.size() - 8, 0))
+	BuildProf.slice(Game.current_area_id, "keep: what acts' shaders", t0)
 
 ## Let the neighbour go (the Bearer walked away, or the story moved on).
 func _drop_prep() -> void:
@@ -788,6 +876,9 @@ func reset() -> void:
 	_late = []
 	_late_i = 0
 	_held = []
+	_keep_stack = []
+	_keep_found = {}
+	_keep_mats = []
 	for d in _dying:
 		if is_instance_valid(d["root"]):
 			(d["root"] as Node).queue_free()
@@ -876,6 +967,7 @@ func swap() -> Area:
 	BuildProf.slice(next.area_id, "swap", ts)
 	last_report["swap_ms"] = (Time.get_ticks_usec() - ts) / 1000.0
 	last_report["prep_ms"] = (prep.ready_us - prep.t0_us) / 1000.0
+	last_report["max_pump"] = prep.max_pump
 	return next
 
 ## An area being left: out of sight and hearing at once, freed over the next
@@ -906,6 +998,10 @@ func settle(area: Area) -> void:
 	while _late_i < _late.size():
 		await get_tree().process_frame     # (never in the swap's own frame)
 		_graft_late(area)
+	# what acts has made its models now: its shaders are kept (_tick_keep)
+	for e in _late:
+		if is_instance_valid(e[1]):
+			_keep_stack.append(e[1])
 	_late = []
 	_late_i = 0
 	# (_held stays until the next swap: the neighbour made ready from here
@@ -977,12 +1073,28 @@ func _graft_late(area: Area) -> void:
 		if heavy:
 			_heavy_est_ms = maxf((Time.get_ticks_usec() - th) / 1000.0, lerpf(_heavy_est_ms, (Time.get_ticks_usec() - th) / 1000.0, 0.25))
 		area.settle_new(e[1], "thaw" if e[0] == area.thaw_layer else ("rime" if e[0] == area.rime_layer else "base"))
+		_note_item(e[1], Time.get_ticks_usec() - th)
 		if e[1] is Spawner:
 			_foes_this_frame += 1
 		if Time.get_ticks_usec() - t0 + int(_foes_this_frame * _foe_est_ms * 1000.0) > budget:
 			break
 	BuildProf.slice(area.area_id, "graft: what acts", t0)
 	_stamp_close.call_deferred(area.area_id)
+
+## The dearest single grafts of this crossing, so one run on a real GPU
+## names the node that costs a frame: last_report["graft_items"], [[ms, what]].
+func _note_item(n: Node, us: int) -> void:
+	var items: Array = last_report.get_or_add("graft_items", [])
+	var ms := us / 1000.0
+	if items.size() >= 8 and ms <= float(items[-1][0]):
+		return
+	var what := "%s %s" % [n.get_class(), n.name]
+	if n.get_script() != null:
+		what = "%s %s" % [(n.get_script() as Script).resource_path.get_file().get_basename(), n.name]
+	items.append([snappedf(ms, 0.1), what])
+	items.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) > float(b[0]))
+	if items.size() > 8:
+		items.resize(8)
 
 func _stamp_open() -> void:
 	_stamp_us = Time.get_ticks_usec()

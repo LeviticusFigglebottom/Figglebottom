@@ -53,8 +53,14 @@ static func lap(phase: String) -> void:
 	var sc := String(st[0])
 	var since := t - int(st[1])
 	_laps[tid] = [sc, t]
+	if tid != OS.get_main_thread_id():
+		worker_last_lap = phase
 	_mx.unlock()
 	add(sc, phase, since, true)
+
+## The phase a worker build last finished (so the one it is in is the next):
+## named beside the dearest flush of its render commands (Streamer).
+static var worker_last_lap := ""
 
 ## Book `usec` of `phase` under `scope`. `sync` marks work that ran as one
 ## unsliced block (a synchronous build phase), as against a budgeted slice.

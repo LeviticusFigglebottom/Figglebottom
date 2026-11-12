@@ -232,6 +232,23 @@ func _run_stream() -> void:
 		out += "| %s | %d | %.1f | %d | %.1f | %.1f | %s |\n" % [aid, int(w["foes"]), float((w["free"] as Dictionary).get("max_ms", 0.0)),
 			int((w["free"] as Dictionary).get("frames", 0)), float((w["rest"] as Dictionary).get("max_work_ms", 0.0)),
 			float((w["flip"] as Dictionary).get("max_work_ms", 0.0)), held]
+	# which single node the "graft: what acts" frame went on (a real GPU
+	# compiles what a _ready first draws)
+	out += "\n### The dearest single grafts of what acts, and the dearest single flush, main-thread ms\n\n| area | cold | warm |\n|---|---|---|\n"
+	for aid in _areas:
+		var c: Dictionary = rows.get("cold|%s" % aid, {})
+		var w: Dictionary = rows.get("warm|%s" % aid, {})
+		if c.is_empty() or w.is_empty():
+			continue
+		var cells: Array = []
+		for r in [c, w]:
+			var txt := ""
+			for it in ((r["rep"] as Dictionary).get("graft_items", []) as Array).slice(0, 5):
+				txt += "%s %.1f; " % [it[1], float(it[0])]
+			var mp: Array = (r["rep"] as Dictionary).get("max_pump", [0.0, ""])
+			txt += "(dearest flush of the worker's commands: %.1f ms, %s)" % [float(mp[0]), str(mp[1])]
+			cells.append(txt)
+		out += "| %s | %s | %s |\n" % [aid, cells[0], cells[1]]
 	out += "\nMain thread waited at most %.1f ms for a cache a worker build held (BuildLock). Cache: %d hits, %d misses.\n" % [
 		BuildLock.max_wait_ms, StreamCache.hits, StreamCache.misses]
 	_emit(out + phase_tables)

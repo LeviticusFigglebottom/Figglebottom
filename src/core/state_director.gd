@@ -107,24 +107,32 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 ## frost line and a glitter of ice. To THAW: pollen and warm dust rising,
 ## steam off the wet ground, meltwater dripping from everything above.
 func _spawn_wave_particles(area: Area, origin: Vector3, duration: float, max_r: float, to_rime: bool) -> void:
+	var mats := wave_materials()
 	var sets: Array = []
 	if to_rime:
-		sets.append(_ring_emitter(700, 2.4, 0.3, Vector3(0, -0.35, 0), 0.6, 2.0, 0.16, 0.5, 1.3,
-				FrostFX.material(FrostFX.crystal_tex(), Color(0.86, 0.93, 1.0, 0.95)), true))
-		sets.append(_ring_emitter(260, 0.9, 0.2, Vector3(0, -0.1, 0), 0.4, 1.6, 0.05, 0.4, 1.0,
-				FrostFX.material(FrostFX.soft_tex(), Color(0.75, 0.88, 1.0, 0.85), true)))
+		sets.append(_ring_emitter(700, 2.4, 0.3, Vector3(0, -0.35, 0), 0.6, 2.0, 0.16, 0.5, 1.3, mats[0], true))
+		sets.append(_ring_emitter(260, 0.9, 0.2, Vector3(0, -0.1, 0), 0.4, 1.6, 0.05, 0.4, 1.0, mats[1]))
 	else:
-		sets.append(_ring_emitter(520, 3.2, 0.2, Vector3(0, 0.18, 0), 0.25, 0.9, 0.07, 0.5, 1.2,
-				FrostFX.material(FrostFX.soft_tex(), Color(1.0, 0.84, 0.52, 0.75), true)))
-		sets.append(_ring_emitter(90, 2.6, 0.1, Vector3(0, 0.5, 0), 0.2, 0.6, 0.7, 0.6, 1.6,
-				FrostFX.material(FrostFX.soft_tex(), Color(0.95, 0.95, 0.92, 0.16))))
-		var drips := _ring_emitter(240, 0.7, 2.6, Vector3(0, -9.0, 0), 0.0, 0.2, 0.09, 0.7, 1.0,
-				FrostFX.material(FrostFX.drip_tex(), Color(0.80, 0.90, 1.0, 0.75), false, true))
+		sets.append(_ring_emitter(520, 3.2, 0.2, Vector3(0, 0.18, 0), 0.25, 0.9, 0.07, 0.5, 1.2, mats[2]))
+		sets.append(_ring_emitter(90, 2.6, 0.1, Vector3(0, 0.5, 0), 0.2, 0.6, 0.7, 0.6, 1.6, mats[3]))
+		var drips := _ring_emitter(240, 0.7, 2.6, Vector3(0, -9.0, 0), 0.0, 0.2, 0.09, 0.7, 1.0, mats[4])
 		drips.emission_ring_height = 1.6
 		drips.direction = Vector3.DOWN
 		sets.append(drips)
-	for p in sets:
-		var cp := p as CPUParticles3D
+	# one emitter a frame: the wave starts small, so nobody sees the second
+	# set begin a frame after the first, and no frame carries them all
+	_start_wave_sets(area, sets, origin, duration, max_r)
+
+func _start_wave_sets(area: Area, sets: Array, origin: Vector3, duration: float, max_r: float) -> void:
+	for i in sets.size():
+		if i > 0:
+			await get_tree().process_frame
+		if not is_instance_valid(area) or not area.is_inside_tree():
+			for k in range(i, sets.size()):
+				(sets[k] as Node).free()
+			return
+		var ts := BuildProf.now()
+		var cp := sets[i] as CPUParticles3D
 		cp.position = origin + Vector3(0, cp.position.y, 0)
 		area.add_child(cp)
 		cp.emitting = true
@@ -136,6 +144,23 @@ func _spawn_wave_particles(area: Area, origin: Vector3, duration: float, max_r: 
 		tw.tween_callback(func(): cp.emitting = false)
 		tw.tween_interval(cp.lifetime + 0.5)
 		tw.tween_callback(cp.queue_free)
+		BuildProf.slice("flip", "flip: wave particles", ts)
+
+## The wave's particle materials, made once and kept: made fresh each turn,
+## their shaders and pipelines were freed with them and built again at the
+## next turn, in its first frame. ShaderWarm draws them ahead (Streamer).
+## Order: RIME crystals, RIME glitter, THAW dust, THAW steam, THAW drips.
+static var _wave_mats: Array = []
+
+static func wave_materials() -> Array:
+	if _wave_mats.is_empty():
+		_wave_mats = [
+			FrostFX.material(FrostFX.crystal_tex(), Color(0.86, 0.93, 1.0, 0.95)),
+			FrostFX.material(FrostFX.soft_tex(), Color(0.75, 0.88, 1.0, 0.85), true),
+			FrostFX.material(FrostFX.soft_tex(), Color(1.0, 0.84, 0.52, 0.75), true),
+			FrostFX.material(FrostFX.soft_tex(), Color(0.95, 0.95, 0.92, 0.16)),
+			FrostFX.material(FrostFX.drip_tex(), Color(0.80, 0.90, 1.0, 0.75), false, true)]
+	return _wave_mats
 
 func _ring_emitter(amount: int, life: float, height: float, gravity: Vector3, v_min: float, v_max: float,
 		size: float, s_min: float, s_max: float, mat: Material, spin := false) -> CPUParticles3D:

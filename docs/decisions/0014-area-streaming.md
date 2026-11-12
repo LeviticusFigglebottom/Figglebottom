@@ -96,6 +96,30 @@ Every key also hashes the **source of the builder scripts** (their `.gd`, or `.g
 
 **New rule for builders:** a scene is loaded with `BuildLock.wload`, never `load`, in anything a build runs.
 
+### Hitches on a real GPU (added 2026-11-12, after the GPU worker's 05:09Z report)
+
+**Context.** On the owner's GPU (RX 9070 XT, Windows) every crossing had one 83 to 107 ms frame in "graft: what acts", **as bad with a warm cache as with a cold one**, while headless it was within budget. Every turn to RIME cost about 50 ms in "flip: wave particles", every time. With the renderer on the main thread (thread model "safe"), both are CPU time spent inside a `_ready` or an `add_child`, and only a real driver makes it dear.
+
+**Diagnosis (inferred, not measured on a GPU).** No box here has a GPU. Under lavapipe no single graft is dear; Mesa caches its own compiles, so lavapipe cannot show this. What fits all three facts (GPU only; warm as bad as cold; every turn, not only the first): **a shader lives only while some material uses it.** When the area left is freed, or the wave's particles end, the renderer frees the shader and every pipeline built for it, and the next material of that kind compiles them all again in the frame it first appears. The wave's particle materials were made new on every turn, so they always compiled.
+
+**Options.** (a) Spread the actor graft over more frames: already one dear actor a frame, so it cannot split a single 90 ms `_ready`. (b) Graft what acts before the swap, into the hidden area: its `_ready`s join groups, raise foes and read story flags, so this is unsafe. (c) Keep the shaders alive and build what acts' visuals unseen before the swap. **(c), with per-item timing so the next GPU run can prove or refute it.**
+
+**Decision.**
+- `ShaderWarm.retain(materials)` keeps one stand-in per kind of shader for the run: a `ShaderMaterial`'s `Shader`, or a copy of a `BaseMaterial3D` with its textures swapped for one shared blank pixel. The key is the material's int and bool properties plus which textures are set, so colours make no new entry. It is capped at 1,024 entries and uses no texture memory.
+- What retains:
+  - the prep's material pass (every batch);
+  - the title's warm-up;
+  - after a crossing, a background walk of what acts (`_tick_keep`, about 1.5 ms a frame, never during a crossing);
+  - the wave's materials.
+- The prep's WARM stage now goes on past the materials, one item a frame:
+  - each humanoid model's clip tables (`HumanoidLib.own_library` and `hips_height`, 10 to 14 ms the first time on the CPU alone, which used to land in the first soul's `_ready`);
+  - then each read-ahead model scene (`.glb` only: no script), stood up tiny 40 m ahead of the camera for `warm_frames`, its materials retained;
+  - then the wave's particles, as one-particle `CPUParticles3D`, so the instanced pipeline is built.
+- `StateDirector.wave_materials()` makes the five wave materials once. The emitters start one a frame.
+- `last_report.graft_items` names the dearest single grafts of each crossing. `last_report.max_pump` names the dearest single flush of a worker's render commands and the build phase it followed (the cold Saltfell peak, 238 ms). `stream_prof` prints both.
+
+**Consequences.** Some stand-in materials and shaders stay in memory for the run (a few hundred, no textures). A prepared neighbour takes a few more frames to be ready (one per humanoid model and per model scene). If the GPU re-measure still shows the frame, the per-item table names the node, and this diagnosis was wrong.
+
 ## Consequences
 
 - A seam crossed with the neighbour ready is a dip to black of a few tenths of a second with no frame over the budget; the numbers, per area, are in STREAMING.md.
