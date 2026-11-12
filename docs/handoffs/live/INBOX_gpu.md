@@ -196,3 +196,65 @@ ERROR lines just before them (counts):
 - Full logs are in `docs/qa/gpu/fullslice_740ca4d_{solo1,solo2,solo3,paired}.log` and `fullgame_lowe_740ca4d_paired.log`.
 - The save-directory fix holds under the conditions that failed before.
 - Step 3 is running now, two lanes: the full suite, Tarnhall ×3 (per your note), Reach ×2 and the rest once each.
+
+## 2026-11-12T11:51Z Job C, step 3 (two lanes at once): two red results, both while paired. Re-running each alone
+| stage | commit | checks | failures | lane |
+|---|---|---:|---:|---|
+| originality | 740ca4d | n/a | 0 (rc 0) | 1 |
+| **full suite** | 740ca4d | 2902 | **27** (rc 1) | 1, beside lane 2's walks |
+| fullgame_tarnhall #1 | a37afed | 211 | 0 | 1 |
+| fullgame_tarnhall #2 | 740ca4d | 211 | 0 | 2 |
+| fullgame_reach #1 | a37afed | 195 | 0 | 1 |
+| fullgame_reach #2 | 740ca4d | 195 | 0 | 2 |
+| fullgame_coldwell | a37afed | 178 | 0 | 1 |
+| fullgame_lowe | 740ca4d | 194 | 0 | 2 |
+| **fullgame_kettle** | 740ca4d | 197 | **4** | 2, beside the suite |
+| fullgame_thornwold | a37afed | 160 | 0 | 2 |
+| fullgame_ending_outsong | a37afed | 160 | 0 | 2 |
+| fullgame_ending_kept | a37afed | 193 | 0 | 2 |
+
+a37afed differs from 740ca4d only in ci.yml. Tarnhall #3 is running now, alone.
+
+**The suite's 27 failures, verbatim.** 26 are in its `fullslice` test (log lines 1201–1339) and 1 in a surfaces/prop-strike test:
+```
+  FAIL - the Netmender is released (deaths along the way: 0)
+  FAIL - her AI ran all three phases ([1])
+  FAIL - the Outsong is sung (res://assets/audio/music/boss_netmender.ogg)
+  FAIL - the quiet card (THE LONGHOUSE)
+  FAIL - Saltfell is cleared
+  FAIL - the veil falls
+  FAIL - the mending needle lies where she sat
+  FAIL - the needle is taken
+  FAIL - the Long Hearth wakes
+  FAIL - the Long Hearth offers to turn the memory
+  FAIL - warmed: THAW again
+  FAIL - the Long Hearth is lit and kept
+  FAIL - Ingra, in THAW again
+  FAIL - the rye is home
+  FAIL - Ingra, a second time
+  FAIL - Ingra's thread is whole (2)
+  FAIL - down to the Strand for Brede
+  FAIL - Brede, a second time
+  FAIL - Brede's thread is whole (2)
+  FAIL - the Boat-Shed turns freely too
+  FAIL - she does not come back
+  FAIL - and warmed once more
+  FAIL - the Pack kept
+  FAIL - Saltfell cleared and warm
+  FAIL - the Long Hearth still burns
+  FAIL - story flags kept
+  FAIL - no prop burst for a foe (1)
+```
+**Kettle's 4 failures, verbatim:**
+```
+  FAIL - the Breathmark offers itself
+  FAIL - the warmth is taken back (+0 of 1454, first fall carried 1454, 3 tries)
+  FAIL - levels bought with what the fjord gave (10 -> 10, 16 warmth left)
+  FAIL - no Breathmark is left lying behind ({ "area": "kettle_fjord", "pos": [-51.2584075927734, 0.02518211305141, -330.735656738281], "amount": 1454 })
+```
+**Reading:**
+- The suite's fullslice fails differently from this morning's run: **deaths 0**, and "her AI ran all three phases ([1])". The Netmender stays in phase 1 and the fight seems to run out of time.
+- The walks run in real time (test.sh: "plays the whole 20-minute slice in real time"). Two below-normal Godot processes on this CPU, with its E-cores, can slow the frames enough to change fight timing. That would be separate from the save-directory fault 740ca4d fixed.
+- Against that, the paired check in step 2 (fullslice plus lowe) passed. So contention doesn't always break it, but under load it isn't safe.
+- **Next:** I'm re-running `tools/test.sh` (the full suite) alone and fullgame_kettle alone. I'll export only if both come back green.
+- Full logs: `docs/qa/gpu/suite_740ca4d_paired.log` and `fullgame_kettle_740ca4d_paired.log`.

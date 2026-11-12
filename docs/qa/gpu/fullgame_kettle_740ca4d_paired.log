@@ -1,0 +1,291 @@
+=== test: fullgame_kettle
+  ok  - the starting save exists (fullgame_after_lowe)
+== resume from fullgame_after_lowe
+  ok  - the hearth resumes: the Bearer stands in the world
+  ok  - the HUD is raised
+== the Kettle Road: the Lowe to the fjord
+  ok  - the walk starts in the Lowe (lowe_barrows)
+  ok  - the Lowe is released and warm
+  ok  - Kettle Fjord has not been seen yet
+  ok  - the Kettle Road seam stands, and asks nothing
+  ok  - the Kettle Road can be walked from hs_open_barrow (157 m)
+WARNING: Navigation map synchronization had 266 edge error(s).
+More than 2 edges tried to occupy the same map rasterization space.
+This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.
+Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.
+Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.
+This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.
+   at: _build_step_find_edge_connection_pairs (modules/navigation_3d/3d/nav_map_builder_3d.cpp:149)
+  ok  - the Bearer walks down the road into Kettle Fjord ((-70.0, 35.0, -258.0))
+== the Landing Ice, in THAW
+  ok  - first arrival is THAW
+  ok  - no enemies in THAW (0)
+  ok  - the region's card, then THE LANDING ICE (["THE OPEN BARROW", "Kettle Fjord", "THE LANDING ICE"])
+  ok  - the card shows it (THE LANDING ICE)
+  ok  - no thin ice in THAW: the fjord is open water
+  ok  - two hearths: the Landing Ice and the Fish-Houses
+  ok  - down the cleft to the Landing Ice ((-105.0, 2.0, -304.0))
+  ok  - the plaque at the road's foot reads KETTLE FJORD
+  ok  - and can be read
+  ok  - the Landing Ice offers its hearth
+  ok  - uncleared THAW: rest only, no turning back
+  ok  - Rise leaves the evening as it is
+== THAW: open water, and the jetties round the spur
+  ok  - THAW: no way over the water to the north shore
+  ok  - THAW: nor out onto the fjord between the hearths
+  ok  - THAW: the way to the Fish-Houses goes out round the spur on the jetty (72 m, out to z -327)
+  ok  - the Bearer walks the jetty round the spur ((-61.0, 2.0, -321.0))
+  ok  - to the Fish-Houses ((-58.0, 2.0, -315.0))
+  ok  - THE FISH-HOUSES is named (["THE FISH-HOUSES"])
+== Ivo, Halla and Sten
+  ok  - no Old Pell yet
+  ok  - Ivo stands by the dogs
+  ok  - Ivo's first lines, in order (4)
+  ok  - Ivo's thread begins
+  ok  - his first journal line
+  ok  - Leave closes the talk and hands control back
+  ok  - Ivo again: he is not going anywhere (["I\'m not going anywhere. That\'s what he said to say."])
+  ok  - the Bearer speaks with Halla
+  ok  - Halla's first lines, in order (4)
+  ok  - she sells iron, a harpoon and a flask (["buy_bog_iron", "buy_harpoon", "buy_flask", "leave"])
+  ok  - labels as KETTLE.md gives them
+  ok  - the flask deepens the gourd for 320 warmth
+  ok  - her line on the flask
+  ok  - Halla's thread begins
+  ok  - the Bearer speaks with Sten
+  ok  - Sten's first lines, in order (4)
+  ok  - he offers his coat
+  ok  - labelled as KETTLE.md gives it
+  ok  - his line on the coat
+  ok  - the Ice-Fur Coat is in the Pack
+  ok  - and can be worn
+  ok  - Sten again: sorry (["Sorry."])
+  ok  - two threads, one line each
+== the first rest: the Landing Ice forces RIME
+  ok  - back along the jetty to the Landing Ice ((-103.0, 2.0, -304.0))
+  ok  - the hearth again
+  ok  - Kettle Fjord is RIME now
+  ok  - the Landing Ice is lit and kept
+  ok  - ivo is gone in RIME
+  ok  - halla is gone in RIME
+  ok  - sten is gone in RIME
+  ok  - the frost-taken stand where they froze ({ "ice_fisher": 6, "sledge_dog": 2, "sealer": 3, "ice_cutter": 1 })
+  ok  - RIME: crevasses, cut holes and the Breathing Hole give underfoot (7 thin volumes)
+  ok  - the Ice-Cutter kneels at the Breathing Hole
+  ok  - the hole is open water under thin ice
+  ok  - uncleared RIME: rest only
+== RIME: the ice, wall to wall
+  ok  - RIME: the navmesh crosses the ice, to the north shore and anywhere between
+  ok  - RIME: the short way to the Fish-Houses is straight over the ice (54 m, 72 m by the jetty)
+  ok  - out onto the ice to the boat that was leaving
+  ok  - the Sealer's Harpoon is worked free
+  ok  - the Bearer stands on the fjord (y 0.03)
+  ok  - the Bearer walks the ice to the north shore
+  ok  - what the ice held there (bog-iron 5)
+  ok  - the fallen give up warmth (102)
+== the Fish-Houses in RIME: the ladle, the cord, the auger
+  ok  - up the walk and into the westmost house, to the pot on its hook
+  ok  - standing on its floor (y 2.10)
+  ok  - the ladle is taken from the frozen pot
+  ok  - Ivo's supper is remembered
+  ok  - out to the mooring post at the middle house
+  ok  - Halla's cord is untied
+  ok  - the last knot is remembered
+  ok  - up the walk and into the eastmost house, to the tool bench
+  ok  - standing on its floor (y 2.09)
+  ok  - the spare Ice-Cutter's Auger is taken
+  ok  - the Fish-Houses hearth is kept
+  ok  - lit, the anchor, and still RIME
+  (falls so far, none of them planned: 0)
+== STILLED on the ice, and the Breathmark
+  ok  - warmth carried into the fall (1454)
+  ok  - a frost-taken stands near (sledge_dog)
+  (stilled #1: kettle_fjord at (-51.3, 0.0, -330.7), RIME, carrying 1454)
+  (stilled at (-51.3, 0.0, -330.7), in kettle_fjord, RIME; on thin ice: false; nearest foe: sledge_dog, state 4, snap, 0.7 m)
+  ok  - the frost-taken bring the Bearer down
+  ok  - STILLED (Stilled)
+  ok  - the warmth hangs as a Breathmark in this region
+  ok  - the Bearer wakes at the hearth
+  ok  - at hs_fish_houses
+  ok  - the mark waits on ground the Bearer can reach (y 0.03)
+  ok  - with nothing carried
+  (fight, 15 s: at (-49.5, 2.1, -323.0); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 4.0 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.8, 2.1, -326.8); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.8, 2.1, -326.8); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.8, 2.1, -326.8); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 15 s: at (-48.0, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-48.0, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-48.0, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-48.0, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 15 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (breathmark, try 1: at (-48.2, 2.1, -326.7), 5.5 m off the mark)
+  (fight, 15 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.9, 2.1, -326.6); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 15 s: at (-47.8, 2.1, -326.4); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.3 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.8, 2.1, -327.0); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.4 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.8, 2.1, -326.4); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.3 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.8, 2.1, -327.0); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.4 m, hp 38/38, state 2; my hp 159)
+  (fight, 15 s: at (-47.8, 2.1, -326.7); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.8, 2.1, -326.7); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.8, 2.1, -326.7); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.8, 2.1, -326.7); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (breathmark, try 2: at (-47.9, 2.1, -327.0), 5.4 m off the mark)
+  (fight, 15 s: at (-47.8, 2.1, -326.4); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.8, 2.1, -326.8); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.8, 2.1, -326.4); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.8, 2.1, -326.8); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 15 s: at (-47.8, 2.1, -326.7); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.0 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.8, 2.1, -326.5); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.8, 2.1, -326.7); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.0 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.8, 2.1, -326.5); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 15 s: at (-47.8, 2.1, -326.3); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.3 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.8, 2.1, -326.9); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.8, 2.1, -326.3); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.3 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.8, 2.1, -326.9); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  FAIL - the Breathmark offers itself
+  FAIL - the warmth is taken back (+0 of 1454, first fall carried 1454, 3 tries)
+== grown by warmth at the Fish-Houses
+  (fight, 15 s: at (-47.8, 2.1, -326.4); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 30 s: at (-47.8, 2.1, -326.8); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (fight, 45 s: at (-47.8, 2.1, -326.4); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.2 m, hp 38/38, state 2; my hp 159)
+  (fight, 60 s: at (-47.8, 2.1, -326.8); sledge_dog @CharacterBody3D@3351 at (-47.8, 0.0, -326.6), 0.1 m, hp 38/38, state 2; my hp 159)
+  (hearth hs_fish_houses, try 1: at (-53.8, 1.8, -317.5), 4.7 m off, nearest nothing)
+  ok  - the hearth offers to grow by warmth
+  FAIL - levels bought with what the fjord gave (10 -> 10, 16 warmth left)
+  ok  - Rise hands control back
+== the frost veil
+  ok  - a rest first, to fill the gourd
+  ok  - one veil, across the gap in the pressure ridges
+  ok  - the veil seals at the Bearer's back
+  ok  - THE BREATHING HOLE is named (["THE BREATHING HOLE"])
+== the Ice-Cutter
+  ok  - he kneels at the rim, drilling
+  ok  - no bar until he stands
+  (duel 16 s: he is at (19.8, 0.0, -321.9), 5.3 m from the hole, phase 1, state 3, hp 1043/1250; the Bearer at (20.1, 0.0, -324.4), hp 172, gourds 4, locked true)
+  (duel 32 s: he is at (19.9, 0.0, -329.1), 12.1 m from the hole, phase 1, state 4, hp 1043/1250; the Bearer at (18.3, 0.1, -330.4), hp 172, gourds 4, locked true)
+  (duel 48 s: he is at (17.8, 0.0, -335.1), 18.4 m from the hole, phase 1, state 4, hp 835/1250; the Bearer at (15.7, 0.0, -336.1), hp 172, gourds 4, locked true)
+  (duel 64 s: he is at (10.5, 0.0, -339.3), 25.0 m from the hole, phase 1, state 3, hp 835/1250; the Bearer at (9.5, 0.0, -337.5), hp 172, gourds 4, locked true)
+  (duel 80 s: he is at (5.1, 0.0, -337.7), 26.5 m from the hole, phase 1, state 3, hp 835/1250; the Bearer at (3.0, 0.0, -336.5), hp 172, gourds 4, locked true)
+  (duel 96 s: he is at (-1.2, 0.0, -334.6), 29.0 m from the hole, phase 1, state 4, hp 835/1250; the Bearer at (-1.6, 0.0, -332.6), hp 172, gourds 4, locked true)
+  (duel 112 s: he is at (-2.4, 0.0, -329.6), 27.4 m from the hole, phase 1, state 4, hp 835/1250; the Bearer at (0.6, 0.0, -325.8), hp 154, gourds 4, locked true)
+  ok  - the Ice-Cutter is released (falls along the way: 0)
+  ok  - the bar named him: THE ICE-CUTTER
+  ok  - his AI ran all three phases ([1, 2, 3])
+  ok  - phase two cut the ring round the arena
+  ok  - he broke the floor (2 holes open at once; moves seen: ["drill_down", "auger_thrust", "trace"])
+== the release
+  ok  - the Outsong is sung (res://assets/audio/music/outsong.ogg)
+  ok  - the quiet card (THE ICE-CUTTER — RELEASED)
+  ok  - Kettle Fjord is cleared
+  ok  - the veil falls
+  ok  - he kneels at the rim and lets the auger rest
+  ok  - the hole skins over: no thin ice left under it
+  ok  - the ring and every broken patch close
+  ok  - no hearth wakes here
+  ok  - Ivo's mitten is frozen into the new ice, in the middle of the hole
+  ok  - one mitten (1)
+  ok  - the Bearer walks out onto the new ice
+  ok  - and it holds (0.4 m from the middle)
+  ok  - the mitten is chipped free
+  ok  - and remembered
+== after the release, THAW: Old Pell and Ivo at the fish-kettle
+  ok  - the Fish-Houses now offers to turn the memory
+  ok  - warmed: THAW again
+  ok  - nobody frost-taken in THAW
+  ok  - Old Pell sits at the westmost fish-kettle
+  ok  - one Ivo, sitting (1)
+  ok  - across the fire from each other
+  ok  - Ivo has moved from the dogs
+  ok  - Pell cannot be spoken to
+  ok  - the Bearer stands within earshot
+  ok  - overheard, in order: ["I am stirring ", "Then from lowe", "The ice\'ll be ", "I said maybe. ", "Fish again.", "Sixty years. I", "Stir it from t"]
+  ok  - low over the belt, with who said it (Pell: Stir it from the bottom. It catches.)
+== both threads close
+  ok  - Ivo takes his mitten (["That\'s mine. Where was it? I had it this morning."])
+  ok  - the mitten is home
+  ok  - he talks from where he sits
+  ok  - Ivo's mitten: four lines, in order (4)
+  ok  - Halla reads the last knot (["That\'s not my knot. I don\'t tie it like that. One man, sick."])
+  ok  - she takes the cord
+  ok  - the end house waits for the next talk
+  ok  - Halla, a second time: Sten is by the fire (["I\'ve put him in the end house by the fire. He can come down on the next boat. There\'s always a next boat."])
+  ok  - Halla's cord: four lines, in order (4)
+  ok  - the flask is bought
+== turning freely, and the last rest
+  ok  - the Fish-Houses turns the memory back
+  ok  - stilled again: RIME
+  ok  - he does not come back
+  ok  - the hole stays closed; the crevasses do not (6)
+  ok  - no veil to part
+  ok  - and warms it once more
+  ok  - THAW at the end
+  ok  - the Tarn Steps seam stands, for the next walk
+  ok  - the Fish-Houses is the hearth nearest it (108 m; the Landing Ice 154 m)
+  ok  - the last rest, at the Fish-Houses
+  ok  - the kept hearth is the Fish-Houses
+  ok  - a rest in a released region turns nothing
+  (falls in all: 1, planned: 1; lowest health 83%)
+  FAIL - no Breathmark is left lying behind ({ "area": "kettle_fjord", "pos": [-51.2584075927734, 0.02518211305141, -330.735656738281], "amount": 1454 })
+== save, the title, and back
+  ok  - the pause sheet offers the title (["Return to the World", "Settings", "Return to the Title", "Begin the Journey Anew", "Leave the Highland"])
+  ok  - back at the title
+  ok  - the world is put away
+  ok  - Resume the hearth is offered
+  ok  - first choice is Resume
+  ok  - the hearth resumes
+  ok  - in the kept hearth's region (kettle_fjord)
+  ok  - level kept (10)
+  ok  - the Pack kept
+  ok  - kettle_fjord cleared, its memory as it was left
+  ok  - the Keepsakes kept, in order
+  ok  - story flags kept ([])
+  ok  - every region's flags kept ([])
+  ok  - back at the kept hearth
+== Kettle Fjord after the load
+  ok  - the hearth resumes in Kettle Fjord
+  ok  - one fjord stands: the one that was left was put away (1)
+  ok  - its hearth is this fjord's
+  ok  - both hearths stay lit
+  ok  - the Fish-Houses is still the anchor
+  ok  - the Ice-Cutter stays released
+  ok  - the fjord stays warm
+  ok  - sealer_harpoon stays taken
+  ok  - north_shore_cache stays taken
+  ok  - kettle_ladle stays taken
+  ok  - halla_cord stays taken
+  ok  - ice_auger stays taken
+  ok  - ivo_mitten stays taken
+  ok  - the harpoon, the auger, the coat and the ladle are in the Pack
+  ok  - the mitten and the cord stay given
+  ok  - what the Lowe left is still carried
+  ok  - Sten's coat is still worn
+  ok  - both threads whole
+  ok  - the flask and the coat stay bought and given
+  ok  - Pell and Ivo are at the kettle still
+  ok  - the sealed hole stays sealed in the rebuilt fjord
+  ok  - the memory still turns freely
+  ok  - RIME after the load
+  ok  - no Ice-Cutter, no hole (6 thin volumes live of 6, 11 frost-taken)
+  ok  - the veil stays down
+  ok  - the Bearer stands on the new ice where the hole was ((21.7, 0.0, -317.0))
+  ok  - back to the Fish-Houses, and warm again
+  ok  - the walk ends in THAW at the Fish-Houses
+RESULT: 197 checks, 4 failures
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.
+ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.
+ERROR: 2 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 3 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 4 RID allocations of type 'N17RendererSceneCull8InstanceE' were leaked at exit.
+ERROR: Pages in use exist at exit in PagedAllocator: N20RasterizerSceneDummy21GeometryInstanceDummyE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)
+WARNING: Leaked instance dependency: Bug - did not call instance_notify_deleted when freeing.
+   at: ~Dependency (servers/rendering/storage/utilities.cpp:56)
+WARNING: 17 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 6 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
