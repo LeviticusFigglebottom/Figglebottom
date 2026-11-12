@@ -835,6 +835,12 @@ func _release() -> void:
 	var t0 := Engine.get_physics_frames()
 	await _walk_to(DOOR + Vector3(1.2, 0, 0), 300, 0.5, true)   # square to the doorway, then out
 	var walked := await _walk_to(PORCH, 600, 1.0, true)
+	if not walked and not player.dead and player.global_position.x < DOOR.x - 1.5:
+		# (out through the doors, and then drawn off down the shore by a fight
+		# until the leg's time was spent: he comes back to the porch)
+		print("  (drawn off the porch to %s: coming back)" % str(player.global_position.snapped(Vector3.ONE * 0.1)))
+		await _fight(16.0, 60.0)
+		walked = await _walk_path(PORCH, 1200, true)
 	check(walked and player.global_position.x < DOOR.x - 1.5, "the Bearer walks out through them onto the porch (%s, %d ticks)" % [
 		str(player.global_position.snapped(Vector3.ONE * 0.1)), Engine.get_physics_frames() - t0])
 	if not walked:

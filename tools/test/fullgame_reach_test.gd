@@ -554,7 +554,10 @@ func _leg_ice() -> bool:
 		if _flat(player.global_position - ice_s).length() < 1.5:
 			break
 	var t0 := Engine.get_physics_frames()
-	walked = await _walk_to(ice_n, 600, 0.9, false)
+	# (along the path just measured, not blind at the far bank: a stone of the
+	# scatter stands on the straight line, solid since the collision audit,
+	# and the arrival at 0.9 m from behind it was a matter of a hand's breadth)
+	walked = await _walk_path(ice_n, 600, false)
 	check(walked and not player.dead, "the Bearer walks over the ice, nowhere near the bridge (%d ticks, %s)" % [
 		Engine.get_physics_frames() - t0, str(player.global_position.snapped(Vector3.ONE * 0.1))])
 	await _shot("beck_ice")
@@ -566,8 +569,16 @@ func _leg_slope() -> bool:
 	await _clear_at(_g(642.0, -358.0))
 	var iron0 := int(player.inventory.get("bog_iron", 0))
 	took = await _take("fold_cache", "Pry up what the frost holds")
-	if not took and player.dead:
-		await _wake_up()
+	# (the cache lies in the Drift Lane now, between its walls: a Drover or a
+	# ram on the far side of a wall holds the steered Bearer against it until
+	# the leg's time is spent. He goes back for it, as a player would.)
+	for again in 2:
+		if took:
+			break
+		if player.dead:
+			await _wake_up()
+		print("  (the cache was not reached from %s: going back for it)" % str(player.global_position.snapped(Vector3.ONE * 0.1)))
+		await _fight(16.0, 60.0)
 		took = await _take("fold_cache", "Pry up what the frost holds")
 	check(took and int(player.inventory.get("bog_iron", 0)) == iron0 + 2, "what the frost holds below the fold: bog-iron (%s)" % str(player.global_position.snapped(Vector3.ONE * 0.1)))
 	# the seventy are obstacles: every one of them solid, and the way goes between
