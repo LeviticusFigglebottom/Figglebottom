@@ -165,7 +165,8 @@ func _run() -> void:
 	var houses_h := Game.find_hearth("hs_fish_houses").respawn_point()
 
 	print("== 4.1 the Turn in the Road")
-	check(absf(_ray_y(turn_at.x, turn_at.z, 30.0) - turn_at.y) < 0.4, "the board stands on the bay's level ground")
+	# (beside the board: the stone itself is solid now, and a ray down its middle meets its top)
+	check(absf(minf(_ray_y(turn_at.x + 0.9, turn_at.z, 30.0), _ray_y(turn_at.x - 0.9, turn_at.z, 30.0)) - turn_at.y) < 0.4, "the board stands on the bay's level ground")
 	var ys: Array = []
 	var rot := deg_to_rad(float(turn["rot"]))
 	var fwd := Vector3(-sin(rot), 0, -cos(rot))          # the board faces the road

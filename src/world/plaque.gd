@@ -9,6 +9,9 @@ var text := "..."
 var set_flag := ""      # a read that MEANS something: swearing the amend
 var flag_toast := ""
 var style := "plaque"   # "plaque" | "note"
+## A board that stands in one state only (a caption per state) is solid in
+## that state only: on the base layer it stood unseen in the other.
+var layer_bit := RH.L_WORLD_BASE
 
 var _paper: Node3D = null
 
@@ -75,7 +78,7 @@ func _ready() -> void:
 		add_child(stone)
 		# a carved stone 1.4 m tall stands in the way like any other stone
 		# (the collision audit found every one of them walked through)
-		KitLib.add_collision(stone, RH.L_WORLD_BASE, true)
+		KitLib.add_collision(stone, layer_bit, true)
 		zone.prompt = "Read"
 	zone.setup_zone(1.3, 1.4)
 	zone.activated.connect(func(_p):

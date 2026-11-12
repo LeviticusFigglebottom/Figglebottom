@@ -340,7 +340,7 @@ def board(pos, rot, thaw=None, rime=None):
             PLAQUES.append(dict(POI, at=pos, rot=rot, tag=tag, text=text))
     other = "rime" if rime is None else ("thaw" if thaw is None else None)
     if other:           # the board itself still stands in the state that has no caption
-        prop("plaque", pos, rot, tag=other, collide=False)
+        prop("plaque", pos, rot, tag=other)   # solid, as the board that reads is (LorePlaque)
 
 
 def face(frm, to):

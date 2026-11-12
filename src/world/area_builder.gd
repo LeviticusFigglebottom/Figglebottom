@@ -225,6 +225,7 @@ static func build(area_id: String) -> Area:
 		p.set_flag = spec.get("set_flag", "")
 		p.flag_toast = spec.get("flag_toast", "")
 		p.style = spec.get("style", "plaque")
+		p.layer_bit = _tag_bit(String(spec.get("tag", "base")))
 		area.attach(p, spec.get("tag", "base"))
 		_place(p, spec)
 	for spec in def.get("scripted", []):

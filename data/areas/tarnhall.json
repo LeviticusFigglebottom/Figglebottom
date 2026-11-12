@@ -5210,8 +5210,7 @@
     -299.82
    ],
    "rot": 125.51,
-   "tag": "thaw",
-   "collide": false
+   "tag": "thaw"
   },
   {
    "kit": "th_horn_rack",
