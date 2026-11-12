@@ -2,7 +2,47 @@
 
 Newest entry at the top. Branch `feat/streaming`.
 
-## 2026-11-12: follow-ups merged (73013bf); **do not merge to main yet: exit hang found**
+## 2026-11-12: exit hang fixed (64147e8); branch is ready for review
+
+**The warning in the entry below is lifted.** Quitting with streaming work in flight now exits in 0.3 to 0.7 s; `fullgame_tarnhall` and `fullgame_reach` exit normally.
+
+**Cause.** A scene (`.glb`) `load()` called from a WorkerThreadPool task does not return until the main thread runs a frame. The worker had already seen the cancel and was reading models ahead; the main thread was waiting for it outside the frame loop (`BuildLock.wait_idle`), so neither moved. Found by experiment (`tools/qa/quit_probe.gd`); the engine-side reason is not named, the binary has no symbols. A quit, a return to the title and a synchronous build could all freeze this way in the real game.
+
+**Fix.**
+- Builders a worker can reach load scenes with `BuildLock.wload(path)`, never `load` (rule recorded in ADR 0014, "Quitting").
+- The build task is posted at high priority: at low priority the threaded loads it asked for never started (inferred: the pool's limit on low-priority tasks).
+- `Game.quit(code)` calls the workers off and sees them end while the main loop runs, then quits. The pause sheet, the window close request, `TestBase.finish` and the QA tools use it. **`auto_accept_quit` is now off**; `Game` handles the close request.
+- Debug tools in `src/debug/` still call `get_tree().quit()` directly; that path is tested too and exits.
+
+**Guard.** `tools/qa/quit_check.sh`: four kinds of in-flight work × three ways of quitting × two delays, each its own process, fails above 3 s. The `streaming` suite runs three of the cases under `timeout 60`.
+
+**Suites on 64147e8, run here.**
+| suite | checks | failures | note |
+|---|---:|---:|---|
+| `streaming` | 108 | 0 | |
+| `smoke` | 11 | 0 | |
+| `gates` | 151 | 0 | 3 engine navigation errors logged from the test's own route queries ("most reachable polygons"); nothing failed |
+| `deathloop` | 26 | 0 | |
+| `fullslice` | 112 | 0 | |
+| `fullgame_tarnhall` | 213 | 0 | exits normally |
+| `fullgame_reach` | 197 | 0 | exits normally |
+| `fullgame_lowe`, run 1 | 193 | 23 | see below |
+| `fullgame_lowe`, run 2 | 196 | 0 | |
+| `quit_check.sh` | 24 cases | 0 | 276 to 708 ms; two crossing cases logged one engine error each, not looked into |
+
+Not rerun on 64147e8: `fullgame_thornwold`, `fullgame_coldwell`, both endings (all 0 failures on 73013bf, table below), `fullgame_kettle` (fails the same 17 at base).
+
+**Walk variance, for the QA env.**
+- `fullgame_lowe` run 1: the frost-taken did not bring the Bearer down in the first barrow ("STILLED, and the Breathmark"), and 22 later checks fell with it. One run at base `c3721bb` failed the same way, so I take it as the walk's own, not this branch's. Two runs do not prove that.
+- `fullgame_reach`: one of the agent's two runs failed "in the count she kept by her father" (9.8 m against 9.5 m). Passed here.
+
+**Still open (unchanged unless noted).**
+- No real-GPU measurement of any of this.
+- Once in the agent's `fullgame_tarnhall` run, the headless renderer logged `uninitialized RID` / `Parameter "m" is null` while the main thread flushed a worker build's commands; one mesh of that build was lost, the walk passed. Unproven guess: mesh RIDs made on a worker and the main thread at once under the dummy renderer. Not seen in the runs above. Whether a real renderer can do it is unknown.
+- Made-ready times in `docs/qa/STREAMING.md` predate the fix (worker builds no longer wait a frame per scene load); not re-measured.
+- Release frame 30 to 38 ms; the swap is a dip to black, not a crossfade; the rest as in the entries below.
+
+## 2026-11-12: follow-ups merged (73013bf); exit hang found (fixed, see above)
 
 **Known breakage on this branch.** The process can hang on quit while a worker build is in flight. `fullgame_tarnhall` and `fullgame_reach` both reported 0 failures and then never exited (killed by the 45-minute limit). After the result line the log repeats `BuildLock: a worker build did not end in 120 s` from `Streamer.reset` in `_exit_tree`. Both walks end beside a seam. The same would hang the real game when the player quits near a seam. Cause not yet found; the fix and a fast-failing regression test are in work now.
 
