@@ -242,6 +242,47 @@
    "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb"
   },
   {
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her"
+  },
+  {
+   "id": "kit:sr_smudge",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py: Smudge is \"collide\": false: give her a blocker where she stands"
+  },
+  {
+   "id": "kit:sr_*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py places it with \"collide\": false, or its hull misses the drawn frame: drop that, or box it"
+  },
+  {
+   "id": "kit:sf_*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_steading.py: the drawn piece and its collider do not cover the same ground (a half boat's thwarts read as a floor)"
+  },
+  {
+   "id": "kit:lw_*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_lowe.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:creel_stack",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:boat",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "the boat model was replaced: its convex hull now stands over the open hull (a floor with nothing drawn under it) and its thwarts read as a floor: fit the collider to the new mesh"
+  },
+  {
+   "check": "invisible",
+   "id": "blocker#*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_lowe.py: the round blocker stands clear of the piece it was set for"
+  },
+  {
    "id": "kit:tw_*",
    "owner": "POI agent (Thornwold)",
    "fix": "gen_thornwold.py places it with \"collide\": false (a burnt-out clamp's ring stands 1 m high): drop that, or keep it under 0.6 m"

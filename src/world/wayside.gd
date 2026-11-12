@@ -32,6 +32,8 @@ const LM := "res://assets/models/landmarks/"
 
 static func build(area: Area, def: Dictionary) -> int:
 	var rec: Dictionary = RECIPES.get(area.area_id, {})
+	if not bool(def.get("wayside", true)):
+		return 0      # a region dressed wholly by hand in its generator (Saltfell, the Lowe, the Reach)
 	var t := area.terrain
 	if rec.is_empty() or t == null or not def.has("nav_bounds"):
 		return 0

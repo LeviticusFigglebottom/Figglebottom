@@ -194,7 +194,8 @@ func _come_near(n: NPC, r := 4.0) -> void:
 
 func _flock_standing() -> Array:
 	return get_tree().get_nodes_in_group("flock_rime").filter(func(n):
-		return is_instance_valid(n) and area.is_ancestor_of(n) and (n as Node3D).is_visible_in_tree())
+		# (the slope's seventy: Smudge, at the sheiling door, is in the group and is not one of them)
+		return is_instance_valid(n) and area.is_ancestor_of(n) and (n as Node3D).is_visible_in_tree() and String(n.get_meta("kit_id", "")) == "sheep")
 
 ## The sheep of the RIME layer that lie (the area's flagged props, or the
 ## standing ones the release has laid down).
@@ -373,7 +374,8 @@ func _leg_seam() -> bool:
 	walked = await _walk_path(h.respawn_point(), 5400, false)
 	check(walked, "up the fell path to where it comes out onto the grass (%s)" % str(player.global_position.snapped(Vector3.ONE)))
 	var plaques := area.find_children("*", "LorePlaque", true, false)
-	check(plaques.size() == 1 and String((plaques[0] as LorePlaque).text).begins_with("SHEPHERD'S REACH\n"), "the plaque at the path's head names the Reach")
+	# (the Counting Stone has boards of its own now: one of them all names the region)
+	check(plaques.filter(func(p): return String((p as LorePlaque).text).begins_with("SHEPHERD'S REACH\n")).size() == 1, "the plaque at the path's head names the Reach")
 	return true
 
 func _leg_sheilings_thaw() -> bool:

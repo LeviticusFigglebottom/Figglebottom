@@ -45,6 +45,9 @@ LONG_BARROWS = [("kin_a", -62, -127, 6, 14), ("kin_b", -24, -112, 6, 13),
 ARENA = (46.0, -198.0, 21.0)          # cx, cz, radius
 TWIN = ("twin", 46.0, -222.0, 10, 16)  # the twin barrow, door facing the arena
 
+# the Cutter's Bothy (POI.md 3.4): a level pad 6 x 5 m cut into the slope
+# below the Drying Stacks hearth (cx, cz, half x, half z, yaw)
+BOTHY = (25.0, -171.0, 3.0, 2.5, 0.0)
 BOG = (-40.0, -190.0, 19.0)           # cx, cz, radius
 ISLAND = (-40.0, -190.0, 4.5)
 BOG_RIM = 30.0                        # the level water / ice disc never passes this
@@ -99,6 +102,17 @@ def arena_level():
     return _base_at(ARENA[0], ARENA[1]) - 1.5
 
 
+_BOTHY_Y = None
+
+
+def bothy_level():
+    """The pad stands at the moor's own height on its downhill edge."""
+    global _BOTHY_Y
+    if _BOTHY_Y is None:
+        _BOTHY_Y = height_no_road(BOTHY[0], BOTHY[1] + 1.5)
+    return _BOTHY_Y
+
+
 def bog_radius(x, z):
     th = math.atan2(z - BOG[1], x - BOG[0])
     return BOG[2] * (1.0 + 0.16 * math.sin(3 * th + 0.4) + 0.1 * math.sin(5 * th + 1.9)
@@ -134,6 +148,10 @@ def height(x, z):
         wpad = _pad_weight(x, z, (px, pz, hx, hz, yaw, 0, 4.0))
         if wpad > 0:
             h = _lerp(h, _base_at(px, pz), wpad)
+    # the Cutter's Bothy: cut level into the slope, the bank battered back
+    wb = _pad_weight(x, z, (BOTHY[0], BOTHY[1], BOTHY[2], BOTHY[3], BOTHY[4], 0, 2.2))
+    if wb > 0:
+        h = _lerp(h, bothy_level(), wb)
     # the peat bog: black water in the cuttings, a shore of wet moss
     d = math.hypot(x - BOG[0], z - BOG[1])
     if d < BOG_RIM + 30:

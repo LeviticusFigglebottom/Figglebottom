@@ -11,7 +11,7 @@ class_name Scatter
 ##   "fences": [{"kind": "drystone"|"wattle", "points": [[x, z], ...], "tag"}]}
 
 const KINDS := ["rock", "boulder", "hummock", "driftwood", "peat_stack", "stone_fence", "wattle_fence",
-	"standing_stone", "ice_floe"]
+	"standing_stone", "ice_floe", "peat_wall", "peat_row"]
 
 static var _mesh_cache: Dictionary = {}
 
@@ -158,12 +158,19 @@ static func _fence(groups: Dictionary, terrain: Terrain, f: Dictionary, rng: Ran
 const HERO := {
 	"rock": [["sc_stone", "M_stone_dark", 1.0], ["sc_slab", "M_stone_dark", 0.6], ["sc_cliffchunk", "M_stone_dark", 0.62]],
 	"boulder": [["sc_boulder", "M_stone_dark", 1.0], ["sc_cliffchunk", "M_stone_dark", 1.1], ["sc_slab", "M_stone_dark", 1.05]],
-	"driftwood": [["sc_driftlog", "M_drift", 1.0]],
+	# the wrack line's wood: the Tripo log at under half its 3 m, and four small
+	# modelled pieces (tools/art/procedural/props_saltfell.py), taken in turn
+	"driftwood": [["sc_driftlog", "M_drift", 0.5], ["sc_drift_branch", "M_drift", 1.0], ["sc_drift_billet", "M_drift", 1.0],
+		["sc_drift_plank", "M_drift", 1.0], ["sc_drift_stump", "M_drift", 1.0]],
 	# 2 m sections laid end to end: a little oversize so each buries its
 	# square end in the next
 	"stone_fence": [["sc_dyke", "M_drystone", 1.16]],
 	"wattle_fence": [["sc_wattle", "M_wood", 0.98]],
-	"peat_stack": [["sc_peatstack", "M_peat", 1.25]],
+	# the Lowe's own stacks (BIOMES.md): cut peats laid herringbone, modelled
+	# (tools/art/procedural/props_lowe.py); a straight wall and a footed row beside it
+	"peat_stack": [["res://assets/models/kit/kit_lw_peat_stack_p.glb", "M_peat", 0.85]],
+	"peat_wall": [["res://assets/models/kit/kit_lw_peat_wall_p.glb", "M_peat", 1.0]],
+	"peat_row": [["res://assets/models/kit/kit_lw_peat_row_p.glb", "M_peat", 1.0]],
 	# the Lowe's carved stone, already made for the lineups
 	"standing_stone": [["res://assets/models/landmarks/lm_standing_stone.glb", "M_drystone", 0.78]],
 }
@@ -235,7 +242,7 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 				bx.size = Vector3(2.0, 1.3, 0.55) * sv
 				shape = bx
 				off = Vector3(0, 0.62, 0)
-			"rock", "boulder", "driftwood", "peat_stack", "standing_stone", "ice_floe":
+			"rock", "boulder", "driftwood", "peat_stack", "peat_wall", "peat_row", "standing_stone", "ice_floe":
 				if kind == "ice_floe" and sv.y < 1.0:
 					continue      # flat channel floes: the ice sheet carries you
 				# what is drawn is what stops you: the hull of this instance's
@@ -345,7 +352,7 @@ static func _mesh(kind: String, mode: int) -> Mesh:
 		"ice_floe": m = _rock_mesh(1.0, 31, "M_ice", mode, 0.3)
 		"standing_stone": m = _rock_mesh(0.55, 41, "M_drystone", mode, 2.6)
 		"driftwood": m = _driftwood(mode)
-		"peat_stack": m = _peat(mode)
+		"peat_stack", "peat_wall", "peat_row": m = _peat(mode)
 		"stone_fence": m = _drystone(mode)
 		"wattle_fence": m = _wattle(mode)
 	_mesh_cache[key] = m

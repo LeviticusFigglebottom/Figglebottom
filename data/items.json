@@ -298,5 +298,33 @@
  "item_melt_flowers": {
   "name": "Melt Flowers",
   "desc": "Marsh marigold and lady's smock, picked on the way up and tied with a stem of grass. They are thrown in at the wellhead for the year's dead. You are meant to turn round before they are out of sight."
+ },
+ "item_thole_pin": {
+  "name": "Thole Pin",
+  "desc": "An ash thole pin, whittled to fit Brede's boat and no other. He went round all four the evening before he rowed out. This one was in the shingle halfway up the beach, where the boat was dragged past its own rollers."
+ },
+ "item_pan_salt": {
+  "name": "Cake of Pan Salt",
+  "desc": "A cake of grey salt the size of a loaf, scorched brown underneath. The pan it came out of had boiled dry and split along the bottom. The firebox under it is packed with ash to the door, from a fire that was fed for days by somebody who never looked in the pan."
+ },
+ "item_three_bowls": {
+  "name": "Three Bowls",
+  "desc": "Three wooden bowls from the Longhouse, frozen one inside the next, each with fish stew in it. They were on the flat stone on the headland, the one that faces Kettle Fjord. Ingra said she was not keeping anyone's supper, and carried it out three evenings running."
+ },
+ "item_birch_cup": {
+  "name": "Birch Cup",
+  "desc": "A small birch cup, left upside down on a kin-mound so it would not fill with dew. It has frozen to the turf by its rim. Inside, where the frost never got in, the wood is still the colour of bread."
+ },
+ "item_spade_iron": {
+  "name": "Spade-Iron",
+  "desc": "The blade of a turf spade with no handle in it, left at a smith's fire to be edged. One face is ground bright and the other has not been started. It was wanted before the Melt."
+ },
+ "item_small_spades": {
+  "name": "Two Small Spades",
+  "desc": "Two turf spades with blades a hand wide, on handles cut down from a broken rake. Arne Holm made them so his girls would leave his alone. Each handle has been notched once by one hand and twice by another, and nobody could have said which spade was whose."
+ },
+ "item_calder_blanket": {
+  "name": "Calder's Blanket",
+  "desc": "A grey wool blanket folded in four on a bed of heather, with the corners squared. The bed across from it was left thrown back and its blankets are on the floor. He was never known to fold a thing in his life."
  }
 }

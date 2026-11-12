@@ -56,7 +56,7 @@ static func build(area_id: String) -> Area:
 	var ewes: Array = []
 	for spec in def.get("props", []):
 		var pp := _piece(area, spec, _prop_collides(spec))
-		if pp != null and String(spec["kit"]) == "sheep" and String(spec.get("tag", "base")) == "thaw":
+		if pp != null and (String(spec["kit"]) == "sheep" or bool(spec.get("wander", false))) and String(spec.get("tag", "base")) == "thaw":
 			ewes.append(pp)
 	if not ewes.is_empty():
 		# the living flock ambles (the frozen one in RIME stays as set)
@@ -575,11 +575,19 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 	k.set_flag = spec.get("set_flag", "")
 	k.look_text = spec.get("look", "")
 	k.display_lift = float(spec.get("lift", 0.0))
-	if spec.has("show_off"):
-		k.display_offset = Vector2(float(spec["show_off"][0]), float(spec["show_off"][1]))
+	# (two names for one thing: "show_off" from Thornwold's places, "show_at" from Saltfell's)
+	for off_key in ["show_off", "show_at"]:
+		if spec.has(off_key):
+			k.display_offset = Vector2(float(spec[off_key][0]), float(spec[off_key][1]))
 	k.chip_heavy = bool(spec.get("chip_heavy", false))
+	k.bare = bool(spec.get("bare", false))
+	k.needs_item = String(spec.get("needs_item", ""))
 	area.attach(k, spec.get("tag", "base"))
 	_place(k, spec)
+	if spec.has("raise"):
+		k.position.y += float(spec["raise"])        # up on something (the crown of a kin-mound)
+	if spec.get("settle", false):
+		k.add_child(SettleDown.new())
 	return k
 
 ## A rest is a new visit too. Souls and finds gated on a story flag are
@@ -682,6 +690,17 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 	if spec.has("scale"):
 		var sc = spec["scale"]
 		piece.scale = _v3(sc) if sc is Array else Vector3.ONE * float(sc)
+	if spec.has("lift"):
+		piece.position.y += float(spec["lift"])    # set on top of another piece (a cup on a stone)
+	if spec.has("tilt"):
+		# degrees: a pitch alone (hurdles leaned against a hedge), or [pitch,
+		# roll] for long pieces laid on a slope (rollers up a beach)
+		var tl = spec["tilt"]
+		if tl is Array:
+			piece.rotation_degrees.x = float(tl[0])
+			piece.rotation_degrees.z = float(tl[1])
+		else:
+			piece.rotation_degrees.x = float(tl)
 	if collide and spec.get("collide", true):
 		if String(spec["kit"]) == "stair_4m":
 			_stair_ramp(piece, tag, "stair_4m")   # ramp-only: step trimesh would wall off the climb
@@ -691,8 +710,6 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 			# is a solid convex blocker so the capsule never wedges inside it
 			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]), String(spec.get("surface", "")))
 	_range_by_size(piece, String(spec["kit"]), spec)
-	if spec.has("tilt"):
-		piece.rotation_degrees.x = float(spec["tilt"])     # leaned on something (hurdles against a hedge)
 	if spec.has("smoke"):
 		# a lit charcoal clamp set as a prop (THAW only, like a landmark's)
 		_smoke(area, _v3(spec["at"]) + Vector3(0, float(spec["smoke"]), 0))
@@ -712,6 +729,8 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 		piece.add_child(gl)
 	if spec.has("group"):
 		piece.add_to_group(String(spec["group"]))   # (the Reach's frozen flock, which lies down)
+	if spec.get("settle", false):
+		piece.add_child(SettleDown.new())           # seated on what is under it (a mound's crown)
 	area.attach(piece, tag)
 	return piece
 

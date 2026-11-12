@@ -290,6 +290,19 @@ def height(x, z):
         # legs keep a gentle tread; the walls between them are broken rock
         on_leg = path_weight_terrace(x, z)
         h = t + 0.15 * fbm(x * 0.3, z * 0.3, 2, 6) + (1.0 - on_leg) * (1.0 * fbm(x * 0.35, z * 0.35, 2, 25) + 1.4 * fbm(x * 0.12, z * 0.5, 2, 26))
+    # the lip of the shelf above the switchbacks. The plateau's outline and the
+    # terrace's own top row did not meet: a trench up to 7 m deep ran along the
+    # cliff top at z 28-30, and a slot down the terrace's west end. Close both:
+    # the shelf runs out to the terrace's top wall as one broken turf lip.
+    xw = x + 2.5 * fbm(0.4, z * 0.08, 2, 24)
+    if TER_X0 - 3.5 <= xw < TER_X0 and 31.0 <= z <= 54.5:
+        tw = _terrace(x + (TER_X0 - xw) + 0.05, z)
+        if tw is not None:
+            h = max(h, tw + 0.15 * fbm(x * 0.3, z * 0.3, 2, 6))
+    if TER_X0 - 3.5 <= xw <= TER_X1 + 1.0 and 24.0 <= z <= 32.5:
+        lip = SHELF_Y - 0.28 + 0.3 * fbm(x * 0.11, z * 0.11, 2, 44) + 0.12 * fbm(x * 0.4, z * 0.4, 1, 45)
+        w = smooth(24.0, 26.5, z) * (1.0 - smooth(31.0, 32.5, z))
+        h = max(h, _lerp(h, lip, w))
     # flatten the pads people built on
     for name, pad in PADS.items():
         w = _pad_weight(x, z, pad)
