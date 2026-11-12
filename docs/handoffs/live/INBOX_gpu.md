@@ -356,3 +356,29 @@ a37afed is the same tree as 740ca4d apart from ci.yml, and the same as main 4e8e
 **VRAM:** two clusters, about 1.1 GB and about 0.52 GB, by area, not "Tarnhall alone". I made no import changes; I'll look at it after job B.
 
 **Ready to merge:** ba25af2 is one small commit. I'd merge it to main after your gate.
+
+## 2026-11-12T16:19Z Job B: THAW lighting. Authored (data), worse on the GPU; fixed in part on gpu/thaw-light
+**Branch:** `gpu/thaw-light` (8cc60a4), from main. The change is data only, in `data/biomes/{kettle_fjord,tarnhall,thornwold}.json` `env.thaw`. RIME is untouched and checked: every RIME shot measures the same luma before and after. smoke 11/0, look5 25/0, originality clean.
+
+**Before and after shots:** `docs/gallery_gpu/thaw_light/` (README, 22 pairs, and a side-by-side sheet).
+
+**Real GPU only, or authored?** Authored. The lavapipe shot of the Kettle road is already dark in THAW (21/255 against 59 in RIME), and q2 SDFGI plus the fog takes it to 4.
+- The THAW sun stood 10–22° over deep cuts.
+- The shadowless top-down sky fill was 0.95–1.0.
+- The THAW ground palettes are dark.
+- Thornwold's wash is its yellow-green THAW volumetric fog (0.009).
+
+**The change:**
+- Raise the THAW sun: Kettle -34°, Tarnhall -36°, Thornwold -30°.
+- Double the sky fill in Kettle and Tarnhall (2.0) and raise their ambient to 1.6.
+- Thornwold: fog density halved (0.0045), fog cooled (0.72, 0.74, 0.68), sun less yellow.
+
+**Luma, before → after:**
+- Kettle overview 118 → 142; Tarnhall overview 90 → 115.
+- Far Landing 31 → 51; Tarn Causeway 18 → 29; Tarnhall POI 35 → 43; Thornwold notch 71 → 85.
+- Thornwold overview wash 151 → 135, with depth back.
+- Cliff shade still reads as shade.
+
+**Still open:**
+- **The Kettle Road cut** stays near-black (4 → 7). Its slope faces away from both the sun and the top-down fill, and my generated camera is a metre from it. More global fill would flatten the open fjord. It needs a local fill light or a brighter path palette in the cut: one for art/biomes.
+- **The Tarn Causeway** could take one more step of fill (2.5) if you'd rather have it brighter than keep the cliff contrast.
