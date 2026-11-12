@@ -68,6 +68,12 @@ func _is_open() -> bool:
 	return World.area_flag(area_id, "gate_" + gate_id)
 
 func _on_unbar(_p) -> void:
+	# a gate inside a sealed arena (Tarnhall's hall doors, barred from the
+	# inside) is no way out of the duel: the Host's own veil has no other
+	# seal, and the Bearer could lift the bar and walk out past it
+	if Game.arena_locked:
+		Game.toast.emit("The bar is frozen in its brackets.")
+		return
 	World.set_area_flag(area_id, "gate_" + gate_id)
 	World.save_game()
 	_apply_open(false)

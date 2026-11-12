@@ -103,6 +103,42 @@ Playtest 2 (enemy leftovers), 3 (prop hit effects), 4 (collision audit): one age
 ### `feat/intro` after the five bug fixes (walks run there before this branch was cut)
 Coldwell 178/0, Outsong 160/0, Hearth Kept 193/0, Kettle 197/0, Thornwold 160/0. **Reach 195/1:** a stale check ("Sigga cannot be spoken to here") that the bug-4 fix deliberately changed; not yet updated. **Tarnhall 211/1:** after leaving by the front doors the Bearer did not settle on the porch inside the walk's time limit (he was out through them, 15 m on); not re-run, so I cannot say flake or effect of the new navmesh rebake when a veil falls. **Lowe 194/2:** the main regression above. So `feat/intro` is not fully green on the walks yet.
 
+## 2026-11-11 (later): the intro — `feat/intro`
+
+**Branch:** `feat/intro` from `origin/main` a8092e4, pushed. Messaging to the lead is still refused, so this is the report.
+
+**What it is.** A new journey opens, once, on a skippable opening of nine cards (84 s of beats, about 85 s with the fades), after the winter is chosen and before the Strand. There was no earlier intro to replace: New journey went title → slot → difficulty → the Strand. It is `IntroDirector` (`src/core/intro_director.gd`), started from `world_root` on a fresh, interactive journey; every beat is data (`data/game.json` `intro`: text, seconds, camera, what turns). Lore doc: `docs/lore/INTRO.md`.
+
+**How it is filmed.** In the real Saltfell, with a camera of its own: the Longhouse in THAW down the long tables; the same room held while the frost wave comes down the hall; the room in RIME; up the hall to the Netmender mending (unnamed); the Bearer kneeling at the cold Salt House hearth; the coal taking and the melt going out across the yard; inland over the barrow hills; the Bearer on the Strand under the cliff. Music is the world's own: the THAW theme, dying under the frost wave into the RIME theme, and back with the coal. The HUD is away throughout.
+
+**It keeps nothing.** The waves run through `StateDirector.transition(..., persist=false)` (new: no World state written, no save) and can be cancelled mid-wave (`StateDirector.cancel()`, new). The hearth it kneels at is not lit. The frost-taken that stand while RIME is shown are held still and given back. It ends, sat through or skipped, with Saltfell in THAW, the Bearer on the Strand with his own camera, control and the HUD back; then SALTFELL and THE STRAND are named as before (`ZoneTitles` waits for it).
+
+**Once.** World flag `intro_seen`, raised as it begins and carried by the save. A load never plays it. A new journey on any hearth does (the flag is the journey's, not the machine's).
+
+**Skip.** Hold E, Enter or Esc for 0.9 s at any card. Any key shows *Hold E to skip* in the corner for 3.5 s.
+
+**The cards** (lower third, body serif, bone on coal; facts from `SPEC.md` §2 and `WORLD.md` §1–2 only, nothing from §3–4; the last Holdfast is "the one who stopped the singing first", as SPEC puts it):
+
+1. **`hearth_law`** (9 s) — In Rimeholt a hearth is not let out while one of its household lives. When the last one dies, the neighbours let it go on purpose, with a song.
+2. **`outsong`** (9 s) — The song is the Outsong. It is sung the night after a burial, in masks, so the dead cannot find the face they loved best, and go.
+3. **`sickness`** (10 s) — One midsummer a coughing sickness came up the fjords. House by house, nobody could bear to start the song. They kept their dead by the fire one more night, then one more.
+4. **`frost`** (8 s) — The warmth of the world went into keeping them. The frost came in the middle of summer and has not left.
+5. **`holdfasts`** (10 s) — Those who would not let go are the Holdfasts. They have grown into what they kept hold of. To release one is to sing the song they could not, for their dead.
+6. **`bearer`** (9 s) — You were sent down the coast as a child, before the sickness, with a coal from the hearth in a horn. You kept it fed. It is the last live coal in Rimeholt.
+7. **`hearthstone`** (10 s) — Set the coal on a cold hearthstone and the stone remembers its last warm evening, and whoever sat at it. Leave the stone cold and the place is as the frost left it.
+8. **`coldwell`** (9 s) — Every river in Rimeholt starts at one spring under the ice, the Coldwell. The one who stopped the singing first is up there.
+9. **`choice`** (10 s) — When you reach it you can sing, and the spring comes, and the remembered evening is gone for good. Or you can keep the coal, and the evening, and the winter.
+
+**Screenshots:** `docs/screens/intro_01_hearth_law.png` … `intro_09_choice.png`, 1280x720, each card held in the intro's own camera (`tools/qa/intro_shots.sh`). I looked at all nine. Two were reframed after the first look (card 9 had the text over the Bearer; card 8 had a wall at the frame edge). Things to know: the Coldwell cannot be seen from Saltfell, so card 8 is the hills the road climbs toward; the Bearer kneels at the hearth with blade and shield in hand, as at any rest; card 3's capture shows the room already frozen (the capture snaps the wave; in play the wave crosses it).
+
+**Tests.**
+- New suite `intro`: **65 checks, 0 failures**. Through the real front door: plays once after the difficulty pick (The Hard Frost holds); every card in order and whole; HUD away; the frost wave shown and not kept (World never says RIME, nothing saved); nothing frost-taken turns to the Bearer; no prompt until a key; the camera never under the ground; hand-over on the Strand; no replay on Resume; plays again for a new journey on Hearth II; held mid-wave it lets go; and let go at each of the nine cards in turn.
+- `fullslice` skips it at the first card and asserts it (now 108 checks): **0 failures** run on its own.
+- `smoke`, `endings`, `deltas`, `steading`: pass. The `fullgame_*` chain starts from saves, so it never meets the intro; not re-run.
+- **One unexplained failure to watch:** an earlier `fullslice` run on this branch, while a screenshot render was using the other cores, never released the Netmender (0 deaths, the 480 s limit ran out) and failed 25 checks from there on. The intro step had already passed in that run and the rerun alone was clean. I have not found the cause.
+
+**Not done yet:** open bugs 1–5 from the ranked list (next).
+
 ## 2026-11-11: clean stopping point — report for the lead
 
 **Branch:** `fix/qa-regions`, with `origin/main` fb1b369 merged in. The sha is the branch head on the remote. **Messaging is still one-way**: every `send_message` to the lead is refused (`elevated_session_untrusted_device`), so this file is the report.

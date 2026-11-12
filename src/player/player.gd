@@ -1487,6 +1487,24 @@ func knows_any_song() -> bool:
 
 ## The learned songs. Cast from the hotbar; each takes the whole hearth-bar
 ## economy seriously: breath gates it, a short cooldown stops mashing.
+## Any Song is heard (COLDWELL.md 5: "Any Song breaks one outright"): whoever
+## breaks to one ("breaks_to" holds "song") and stands within its own
+## "song_hear" metres breaks, whether the Song strikes, wards or mends. Only
+## the Songs that strike used to reach them, and the first Song a Bearer
+## learns, which attunes itself, is a ward.
+func _song_heard() -> void:
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		var en := e as Enemy
+		if en == null or en.dead or not en.is_inside_tree() or not en.can_process():
+			continue
+		if not ("song" in en.cfg.get("breaks_to", [])):
+			continue
+		if en.global_position.distance_to(global_position) > float(en.cfg.get("song_hear", 6.0)):
+			continue
+		var pk := DamagePacket.new(0.0, 0, self)
+		pk.kind = "song"
+		en.take_hit(pk)
+
 func cast_song(id: String) -> void:
 	var sp := DB.song(id)
 	if sp.is_empty() or dead or int(inventory.get(id, 0)) < 1:
@@ -1510,6 +1528,7 @@ func cast_song(id: String) -> void:
 			if vis != null and is_instance_valid(vis) and vis.shield_mount != null and state != S.GOURD:
 				vis.shield_mount.visible = not bool(weapon_data().get("two_handed", false)))
 	var dev: float = 1.0 + _over_base("kinship") * 0.025   # songs.json is rebalanced for (stat - base)
+	_song_heard()
 	match String(sp.get("type", "")):
 		"heal":
 			vis.play("cast_self", 0.1)

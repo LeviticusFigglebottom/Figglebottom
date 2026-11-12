@@ -548,12 +548,39 @@ func _reach() -> void:
 	ui = _talk("old_calder")
 	await ticks(2)
 	check(_all_lines(ui) == DB.npc("old_calder")["lines_when"][1]["lines"], "he answers the boots before he starts his tale")
-	check(World.flag("ks_calder_boots_shown") and not World.flag("ks_calder_met") and int(World.flag_val("chapter_old_calder", 0)) == 0,
-		"and the tale has not moved on")
+	check(World.flag("ks_calder_boots_shown") and not World.flag("ks_calder_met") and not World.flag("ks_calder_hum"),
+		"and nothing of the tale has been told yet")
 	await _close(ui)
 	ui = _talk("old_calder")
 	await ticks(2)
-	check(ui.text_label.text.begins_with("Hold still, Brokenhorn."), "the first audience comes next")
+	check(ui.text_label.text.begins_with("Old Leadvoice's lass came up this way at the Melt."),
+		"then who came up the fell: not his lass calling the flock in, with the wall done and her beside him (%s)" % ui.text_label.text.left(40))
 	await _close(ui)
-	check(World.flag("ks_calder_met") and _lines_of("calder_boots") == _expected("calder_boots", 4), "and its line heads the thread again")
+	check(not World.flag("ks_calder_met") and World.flag("ks_calder_hum") and int(World.flag_val("chapter_old_calder", 0)) == 2,
+		"the first audience is passed over, the second told")
+	check(_lines_of("calder_boots") == _expected("calder_boots", 4).slice(1), "the thread holds what he did hear: three lines")
+	ui = _talk("old_calder")
+	await ticks(2)
+	check(ui.text_label.text.begins_with("Wall's done."), "and after it, the wall is done by dark")
+	await _close(ui)
+	# Sigga at the fold: her own words from the slope, and the fleece still to give
+	var sf := DB.npc("sigga_fold")
+	check(not bool(sf.get("mute", false)) and (sf.get("services", []) as Array).size() == 1
+			and String(sf["services"][0]["once_flag"]) == String(DB.npc("sigga")["services"][0]["once_flag"])
+			and String(sf["lines_first"][0]) in (DB.npc("sigga")["lines_repeat"] as Array),
+		"Sigga at the fold speaks, and gives the same one fleece")
+	World.flags.erase("got_fleece")
+	World.flags.erase("met_sigga_fold")
+	var had := int(player.inventory.get("armour_fleece", 0))
+	ui = _talk("sigga_fold")
+	await ticks(2)
+	check(ui != null and ui.text_label.text == "They come to a call. Dogs are for people who can't call.", "she can be spoken with there")
+	if ui != null:
+		var sids: Array = _service_ids(ui)
+		check(sids.has("give_fleece"), "and offers the spare fleece (%s)" % str(sids))
+		if sids.has("give_fleece"):
+			ui.choose(sids.find("give_fleece"))
+			await ticks(3)
+		check(int(player.inventory.get("armour_fleece", 0)) == had + 1 and World.flag("got_fleece"), "the fleece is given")
+		await _close(ui)
 	player.invulnerable = false

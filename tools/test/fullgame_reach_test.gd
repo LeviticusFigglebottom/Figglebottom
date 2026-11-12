@@ -709,7 +709,9 @@ func _leg_fold_thaw() -> bool:
 		"his boots off beside him (%d seen)" % boots.size())
 	await _shot("fold_thaw")
 	if sig != null:
-		check(sig.find_children("*", "Interactable", true, false).is_empty(), "Sigga cannot be spoken to here")
+		# (she was silent here; a Bearer who rested before he met her on the
+		# slope then had no way to her lines or the fleece)
+		check(not sig.find_children("*", "Interactable", true, false).is_empty(), "Sigga can be spoken with at the fold")
 		_heard = []
 		sig.overheard.connect(_on_heard)
 		await _come_near(sig, 5.0)

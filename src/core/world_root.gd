@@ -26,6 +26,8 @@ func return_to_title() -> void:
 	get_tree().paused = false
 	if EndingDirector.active != null and is_instance_valid(EndingDirector.active):
 		EndingDirector.active.stop()
+	if IntroDirector.active != null and is_instance_valid(IntroDirector.active):
+		IntroDirector.active.queue_free()
 	# (a seam, a door or a death may have raised another area since the front
 	# door raised one: put away the one that stands now. Left standing, the
 	# resumed journey was built on top of it, and its hearths turned the
@@ -151,4 +153,11 @@ func _front_door(returning: bool) -> void:
 	if World.kept() and area_id == World.KEPT_AREA:
 		EndingDirector.resume_kept(player, area)
 	Game.refresh_breathmark()
+	# a new journey opens on the intro, once (docs/lore/INTRO.md); the Strand
+	# is named when it hands the Bearer over
+	if interactive and IntroDirector.wanted(fresh):
+		var intro := IntroDirector.begin(player, area)
+		await intro.finished
+		if not is_instance_valid(area) or not is_instance_valid(player):
+			return   # the world was put away under it
 	Game.area_title.emit(area.arrival_title(spawn))

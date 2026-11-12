@@ -21,6 +21,14 @@ func _set_g(param: String, v) -> void:
 		state_blend = float(v)
 	RenderingServer.global_shader_parameter_set(param, v)
 
+## Give up a wave that is running (the intro, skipped mid-wave). The caller
+## then snaps the area to the state it wants.
+var _cancelled := false
+func cancel() -> void:
+	if transitioning:
+		_cancelled = true
+		transitioning = false
+
 ## Instant state application (loads, tools). No spectacle.
 func snap(area: Area, to_state: RH.WState) -> void:
 	if area == null:
@@ -36,9 +44,12 @@ func snap(area: Area, to_state: RH.WState) -> void:
 ## endings: the flag has turned the answer before the world has turned).
 ## `keep_music` leaves whatever is playing alone (the Outsong is sung
 ## through the melt it brings; the wave used to cut it off at the coal).
-func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false, keep_music := false) -> void:
+## `persist` false shows the wave without keeping it: World's answer for the
+## area is not changed and nothing is saved (the intro's waves).
+func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false, keep_music := false, persist := true) -> void:
 	if transitioning or area == null:
 		return
+	_cancelled = false
 	if not force and World.get_area_state(area.area_id) == to_state:
 		return
 	transitioning = true
@@ -83,13 +94,19 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 		area.env.blend(state_blend)
 		AudioDirector.wave_update(_wave_r, dt)
 		await get_tree().process_frame
+		if _cancelled or not is_instance_valid(area):
+			# given up part-way (cancel()): whoever cancelled settles the world
+			AudioDirector.wave_end()
+			transitioning = false
+			return
 
 	# settle
 	_set_g("rh_state_blend", 1.0 if to_rime else 0.0)
 	_set_g("rh_wave_r", -1000.0)
 	area.apply_state(to_state)
-	World.set_area_state(area.area_id, to_state)
-	World.save_game()
+	if persist:
+		World.set_area_state(area.area_id, to_state)
+		World.save_game()
 	# the bed already changed hands with the front; this only finishes it
 	AudioDirector.wave_end()
 	if not keep_music:

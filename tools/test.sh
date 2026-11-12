@@ -28,6 +28,7 @@ for scene in tools/test/*_test.tscn; do
   case "$name" in leftovers*) limit=600 ;; esac
   # the collision audit builds every area five times over (about 5 minutes)
   [ "$name" = "collision_audit" ] && limit=900
+  [ "$name" = "intro" ] && limit=900   # sits through the opening once
   # the full-game region walks (fullgame_<region>) each play a whole region
   case "$name" in fullgame_*) limit=2700 ;; esac
   timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \
