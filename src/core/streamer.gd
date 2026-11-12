@@ -36,6 +36,8 @@ class Prep:
 	var world: Array = []
 	var wi := 0
 	var late: Array = []
+	var steps: Array = []          # what the build left for the main thread
+	var si := 0
 	## Scenes what acts will load (foe and soul models, finds):
 	## read on the worker and held until the crossing is over, so no _ready
 	## reads a GLB on the main thread.
@@ -64,7 +66,7 @@ var _late: Array = []
 var _late_i := 0
 var _nav: NavBaker = null
 var _nav_area: Area = null
-var _held: Array = []          # resources read ahead for what acts (until settled)
+var _held: Array = []          # model scenes read ahead for the live area's cast
 ## What raising one foe costs (its spawner defers it past our timer), learnt
 ## from the frames it happened in; ms.
 var _foe_est_ms := 12.0
@@ -310,7 +312,9 @@ func _scan(dt: float) -> void:
 		else:
 			_prep.far_s = 0.0
 		return
-	if want != "" and _dying.is_empty() and _garbage.is_empty() and _orphans.is_empty():
+	# (not during a duel behind a sealed veil: no door opens until it is over,
+	# and the fight should have the cores to itself)
+	if want != "" and not Game.arena_locked and _dying.is_empty() and _garbage.is_empty() and _orphans.is_empty():
 		_start_prep(want)
 
 # ---------------------------------------------------------------- making ready
@@ -416,6 +420,8 @@ func _poll_orphans() -> void:
 		if _task_done(o):
 			_orphans.remove_at(i)
 			_bin_result(o.result)
+		else:
+			BuildLock.pump()     # it may be waiting on the main thread to give up
 	if _orphans.is_empty() and (_prep == null or _prep.task < 0):
 		BuildLock.worker_busy = false
 
@@ -461,6 +467,7 @@ func _advance(prep: Prep, t0: int, budget: int) -> void:
 			prep.area = res["area"]
 			prep.world = res["world"]
 			prep.late = res["late"]
+			prep.steps = res.get("main_steps", [])
 			prep.area.set_inert(true)
 			prep.area.quiet_state(World.get_area_state(prep.area_id))
 			Game.world_root.add_child(prep.area)
@@ -475,8 +482,19 @@ func _advance(prep: Prep, t0: int, budget: int) -> void:
 				if Time.get_ticks_usec() - t0 > budget:
 					break
 			BuildProf.slice(prep.area_id, "graft: static world", ts)
-			if prep.wi >= prep.world.size():
+			if prep.wi >= prep.world.size() and prep.si < prep.steps.size():
+				# particles, smoke, weather, fog: made here, not on the worker
+				# (AreaBuilder._for_main)
+				ts = Time.get_ticks_usec()
+				while prep.si < prep.steps.size() and Time.get_ticks_usec() - t0 <= budget:
+					var step: Callable = prep.steps[prep.si]
+					prep.si += 1
+					if step.is_valid():
+						AreaBuilder.run_main_step(prep.area, step)
+				BuildProf.slice(prep.area_id, "graft: particles, weather (main-thread steps)", ts)
+			if prep.wi >= prep.world.size() and prep.si >= prep.steps.size():
 				prep.world = []
+				prep.steps = []
 				prep.warm_stack = [prep.area]
 				for e in prep.late:
 					prep.warm_stack.append(e[1])   # what acts draws too
@@ -693,7 +711,8 @@ func settle(area: Area) -> void:
 		_graft_late(area)
 	_late = []
 	_late_i = 0
-	_held = []
+	# (_held stays until the next swap: the neighbour made ready from here
+	# shares most of its cast with this area, and finds the models loaded)
 	if is_instance_valid(area) and area.is_inside_tree():
 		_nav = NavBaker.new(area)
 		_nav_area = area
@@ -840,9 +859,17 @@ func _free_some(root: Node, t0: int, budget: int) -> void:
 ## Game used to do in one call_group. Returns when all have.
 func respawn_all() -> void:
 	var list: Array = []
+	var veil_of := {}     # a Holdfast's spawner -> its veil: reset in the same frame
 	for n in get_tree().get_nodes_in_group(RH.GROUP_RESPAWN_ON_REST):
-		if not foreign(n):
+		if foreign(n):
+			continue
+		if n is FrostVeil and (n as FrostVeil).boss_spawner != null:
+			veil_of[(n as FrostVeil).boss_spawner] = n
+		else:
 			list.append(n)
+	for v in veil_of.values():
+		if not list.has((v as FrostVeil).boss_spawner):
+			list.append(v)     # (its spawner is not on the list: by itself, then)
 	var i := 0
 	while i < list.size():
 		var budget := _budget("respawn_budget_ms", 4.0)
@@ -852,6 +879,9 @@ func respawn_all() -> void:
 			i += 1
 			if is_instance_valid(n) and (n as Node).is_inside_tree():
 				n.call("respawn")
+				var veil = veil_of.get(n)
+				if veil != null and is_instance_valid(veil) and (veil as Node).is_inside_tree():
+					veil.call("respawn")
 			if Time.get_ticks_usec() - t0 > budget:
 				break
 		BuildProf.slice("respawn", "respawn: foes", t0)

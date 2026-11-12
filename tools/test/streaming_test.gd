@@ -211,6 +211,11 @@ func _run() -> void:
 	var pend := st.pending_area()
 	check(pend != null and pend.is_inside_tree() and pend.inert and not pend.visible and not pend.can_process(), "unseen and unprocessing")
 	check(pend != null and _count(pend) > 500, "its static world is in the tree (%d nodes)" % (_count(pend) if pend != null else 0))
+	# what makes a StandardMaterial3D is left out of the worker build and made
+	# on the main thread during the graft (AreaBuilder._for_main)
+	var emitters := pend.find_children("*", "CPUParticles3D", true, false).size() + pend.find_children("*", "GPUParticles3D", true, false).size() if pend != null else 0
+	check(emitters >= 5 and BuildProf.phases("kettle_fjord").has("graft: particles, weather (main-thread steps)"),
+		"its particles and weather were made on the main thread (%d emitters)" % emitters)
 	check(Game.current_area == lowe and Game.current_area_id == "lowe_barrows", "it is not the current area")
 	if pend != null:
 		var leaked := 0

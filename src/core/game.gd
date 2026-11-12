@@ -111,6 +111,11 @@ func respawn_player() -> void:
 	elif current_area != null and current_area.has_method("default_spawn"):
 		pos = current_area.default_spawn()
 	if not fresh_area:
+		# he is carried to the hearth before anything returns: the foes (a
+		# Holdfast above all) come back over several frames now, and none of
+		# them may find him still lying where he fell, in its arena
+		player.global_position = pos
+		player.velocity = Vector3.ZERO
 		await respawn_dead()
 	if own_window:
 		last_respawn_report = BuildProf.window_close()

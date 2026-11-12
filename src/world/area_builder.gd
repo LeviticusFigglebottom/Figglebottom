@@ -17,12 +17,14 @@ static func build(area_id: String) -> Area:
 
 ## The streamed build (ADR 0014), for a worker thread: the same area, taken
 ## apart so the main thread can graft it into the tree a little a frame.
-## Returns {area, world: [[parent, node]...], late: [[parent, node]...]}:
+## Returns {area, world: [[parent, node]...], late: [[parent, node]...],
+## main_steps: [Callable...]}:
 ##   area   the bare Area (its three layers, empty)
 ##   world  the static world in build order: ground, houses, props, cover.
 ##          The Terrain comes childless, its chunks after it.
 ##   late   what acts (hearths, gates, spawners, souls, finds, portals,
 ##          hazards, the env rig): grafted only once the area is the live one
+##   main_steps  what the build left for the main thread (_for_main)
 ## No navmesh is baked (NavBaker does that once it stands in the tree).
 static func build_detached(area_id: String) -> Dictionary:
 	var area := _build(area_id)
@@ -35,6 +37,9 @@ static func build_detached(area_id: String) -> Dictionary:
 	for n in area.get_meta("stream_late", []):
 		late_set[n] = true
 	area.remove_meta("stream_late")
+	var main_steps: Array = area.get_meta("stream_main_steps", [])
+	if area.has_meta("stream_main_steps"):
+		area.remove_meta("stream_main_steps")
 	var world: Array = []
 	var late: Array = []
 	for layer in [area.base, area.thaw_layer, area.rime_layer]:
@@ -52,7 +57,7 @@ static func build_detached(area_id: String) -> Dictionary:
 		if c != area.base and c != area.thaw_layer and c != area.rime_layer:
 			area.remove_child(c)
 			late.append([area, c])
-	return {"area": area, "world": world, "late": late}
+	return {"area": area, "world": world, "late": late, "main_steps": main_steps}
 
 ## Set (main thread) to have a worker's build_detached give up at its next
 ## phase: the neighbour was let go, or the game is closing. Streamer clears
@@ -61,6 +66,42 @@ static var cancel_worker := false
 
 static func _cancelled() -> bool:
 	return cancel_worker and not BuildProf.is_main()
+
+## What a build leaves for the main thread: whatever makes a
+## StandardMaterial3D, a ParticleProcessMaterial, a FogMaterial or a
+## GradientTexture2D (particles, smoke, spray, weather, fog pockets). Those
+## classes keep engine-wide lists that the main thread works through every
+## frame, and making one beside it can corrupt the heap. On the main thread
+## (the synchronous build) the step simply runs, in place. On a worker it is
+## kept on the area ("stream_main_steps") and the Streamer runs it during
+## the graft.
+static func _for_main(area: Area, step: Callable) -> void:
+	if BuildProf.is_main():
+		step.call()
+		return
+	var steps: Array = area.get_meta("stream_main_steps", [])
+	steps.append(step)
+	area.set_meta("stream_main_steps", steps)
+
+## A main-thread step of a streamed build (Streamer runs them in order):
+## what it adds to the layers is remembered, so the indoor marking can reach
+## it as it reaches everything else in the synchronous build.
+static func run_main_step(area: Area, step: Callable) -> void:
+	var before := _counts(area)
+	step.call()
+	var layers: Array = [area.base, area.thaw_layer, area.rime_layer]
+	for i in 3:
+		for k in range(int(before[i]), (layers[i] as Node).get_child_count()):
+			(layers[i] as Node).get_child(k).set_meta("made_on_main", true)
+
+static func _mark_indoors_made(area: Area, houses: Array) -> void:
+	var roots: Array[Node] = []
+	for layer in [area.base, area.thaw_layer, area.rime_layer]:
+		for c in layer.get_children():
+			if c.has_meta("made_on_main"):
+				roots.append(c)
+	if not roots.is_empty():
+		_mark_indoors(area, houses, roots)
 
 ## Children each layer holds now: _late_since marks what was added after.
 static func _counts(area: Area) -> Array:
@@ -88,7 +129,7 @@ static func _build(area_id: String) -> Area:
 	area.set_meta("def", def)
 
 	area.env.set_overrides(def.get("env", {}))
-	area.env.build_fog_pockets(def.get("fog_pockets", []))
+	_for_main(area, area.env.build_fog_pockets.bind(def.get("fog_pockets", [])))
 	# the land first: buildings sit on it, they are not it (ADR 0003)
 	if def.has("terrain"):
 		var t := Terrain.new()
@@ -105,7 +146,7 @@ static func _build(area_id: String) -> Area:
 	for spec in def.get("water", []):
 		_water(area, spec)
 	for spec in def.get("falls", []):
-		_falls(area, spec)
+		_for_main(area, _falls.bind(area, spec))
 	var before_hazards := _counts(area)
 	for spec in def.get("hazards", []):
 		var hz := HazardVolume.new()
@@ -357,7 +398,7 @@ static func _build(area_id: String) -> Area:
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
 	BuildProf.lap("forest")
 	if area.terrain != null:
-		Weather.build(area, area.terrain, def)
+		_for_main(area, Weather.build.bind(area, area.terrain, def))
 		TrapWarden.build(area)      # no ditch keeps the Bearer (tools/fix_traps.py)
 		var wayside_n := Wayside.build(area, def)   # cairns, stone rows, racks, boats: things met along the way
 		if "--house-stats" in OS.get_cmdline_user_args():
@@ -365,20 +406,23 @@ static func _build(area_id: String) -> Area:
 
 	BuildProf.lap("weather, traps, wayside")
 	_mark_indoors(area, def.get("houses", []))
+	if not BuildProf.is_main():
+		# (smoke, spray and weather are not made yet on a worker: _for_main)
+		_for_main(area, _mark_indoors_made.bind(area, def.get("houses", [])))
 
 	# ambient mood: gold motes in thaw, ash in rime, sized to the area
 	var ext := _extent(def)
-	area.add_ambient(ext[0], ext[1])
+	_for_main(area, area.add_ambient.bind(ext[0], ext[1]))
 
 	BuildProf.lap("indoor marks, ambient")
 	return area
 
 ## Snow settles on what faces the sky, but not under a roof: everything
 ## standing inside a house footprint (below its eaves) is masked indoor.
-static func _mark_indoors(area: Area, houses: Array) -> void:
+static func _mark_indoors(area: Area, houses: Array, roots: Array[Node] = []) -> void:
 	if houses.is_empty():
 		return
-	var stack: Array[Node] = [area]
+	var stack: Array[Node] = roots if not roots.is_empty() else ([area] as Array[Node])
 	while not stack.is_empty():
 		var n: Node = stack.pop_back()
 		if n is Terrain or String(n.name).begins_with("House_") or n is MultiMeshInstance3D:
@@ -512,6 +556,9 @@ static func _falls(area: Area, spec: Dictionary) -> void:
 
 ## Smoke rising slow and thick from a clamp or a fire (THAW only).
 static func _smoke(area: Area, at: Vector3) -> void:
+	if not BuildProf.is_main():
+		_for_main(area, _smoke.bind(area, at))
+		return
 	var p := CPUParticles3D.new()
 	p.amount = 28
 	p.lifetime = 6.0

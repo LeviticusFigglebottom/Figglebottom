@@ -218,9 +218,12 @@ static var _ph_mats: Dictionary = {}
 
 static func _ph(fam: String) -> Material:
 	if not _ph_mats.has(fam):
-		var m := StandardMaterial3D.new()
-		m.resource_name = fam
-		_ph_mats[fam] = m
+		# (made on the main thread, and its shader settled there: BuildLock.on_main)
+		BuildLock.on_main(func() -> void:
+			var m := StandardMaterial3D.new()
+			m.resource_name = fam
+			m.get_rid()
+			_ph_mats[fam] = m)
 	return _ph_mats[fam]
 
 static func _box(parent: Node3D, size: Vector3, pos: Vector3, fam: String, nm := "box", rot := Vector3.ZERO) -> MeshInstance3D:
@@ -350,12 +353,14 @@ static var _ember_mat: StandardMaterial3D = null
 ## go out. CPU particles: a dozen per fire is cheaper than a GPU system each.
 static func _embers(parent: Node3D, pos: Vector3, spread: float, amount := 10) -> CPUParticles3D:
 	if _ember_mat == null:
-		_ember_mat = StandardMaterial3D.new()
-		_ember_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_ember_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-		_ember_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-		_ember_mat.vertex_color_use_as_albedo = true
-		_ember_mat.albedo_color = Color(1.0, 0.55, 0.2)
+		BuildLock.on_main(func() -> void:     # (see _ph)
+			_ember_mat = StandardMaterial3D.new()
+			_ember_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			_ember_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+			_ember_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+			_ember_mat.vertex_color_use_as_albedo = true
+			_ember_mat.albedo_color = Color(1.0, 0.55, 0.2)
+			_ember_mat.get_rid())
 	var p := CPUParticles3D.new()
 	p.name = "embers"
 	p.amount = amount

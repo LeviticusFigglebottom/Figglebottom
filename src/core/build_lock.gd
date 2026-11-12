@@ -52,9 +52,37 @@ static func unlock(locked: bool) -> void:
 	if locked:
 		_mx.unlock()
 
-## Answer whatever the worker is waiting on the main thread for.
+## Answer whatever the worker is waiting on the main thread for: renderer
+## reads, and what it has asked to have done here (on_main).
 static func pump() -> void:
 	RenderingServer.force_sync()
+	if _asked.is_empty():
+		return
+	_ask_mx.lock()
+	var todo := _asked
+	_asked = []
+	_ask_mx.unlock()
+	for e in todo:
+		(e[0] as Callable).call()
+		(e[1] as Semaphore).post()
+
+static var _asked: Array = []       # [[callable, semaphore]]
+static var _ask_mx := Mutex.new()
+
+## Run `fn` on the main thread and wait for it (on the main thread: just run
+## it). For the few things a build must not make beside the main thread: a
+## StandardMaterial3D joins an engine-wide list the main thread works
+## through every frame, updating each material's shader as it goes, and a
+## worker touching the same material at that moment corrupts the heap.
+static func on_main(fn: Callable) -> void:
+	if OS.get_thread_caller_id() == OS.get_main_thread_id():
+		fn.call()
+		return
+	var sem := Semaphore.new()
+	_ask_mx.lock()
+	_asked.append([fn, sem])
+	_ask_mx.unlock()
+	sem.wait()
 
 ## Main thread: wait (pumping) until no worker build runs. The synchronous
 ## AreaBuilder.build calls this, so two builds never share the builders'
