@@ -2,6 +2,53 @@
 
 Newest entry at the top. Branch `feat/streaming`.
 
+## 2026-11-12: main merged (a6a45f6); full suite and every walk run, one at a time
+
+**Branch is ready for review**, with the GPU re-measure in the entry below still wanted (`stream_prof --prof-stream`, run alone).
+
+**Main merged.**
+- `origin/main` a6a45f6, which holds all of integration, merged without conflicts.
+- The Map sheets are rebaked from this branch's ground (`tools/ui/build_map.py`): six regions show their way-on gate's worn track. Coldwell and the base sheet are unchanged. `journal_map` 74/0.
+
+**Fixed since the last entry.**
+- **Integration's suites against streaming and the way-on gates:**
+  - `grounded`: it waited 90 ticks for a crossing that is no longer instant.
+  - `leftovers_longhouse`: the Saltfell gate's coil of rope, left as it opens, is the gate's, not the Netmender's. Layer-attached gate dressing now carries `gate_piece`.
+  - `poi_reach` and `tarnhall_encounters`: each took the first gate found. They now find their gate by id.
+- **Collision audit:**
+  - The cairn at the Reach's way on had no collider; it has a landmark blocker now.
+  - The Kettle flank cores are now navmesh-only boxes (no invisible wall).
+  - The baseline is updated for Kettle, Tarnhall, Thornwold and the Reach only. Eleven offenders at the gates are owned by this env, each with a fix: open-state gate dressing with no collider, and the Thornwold hedge gate's body is wider than the hedge. The rest are known offenders at shifted positions, with the same ids and owners.
+- **Cold crossing:** the heightmap is parsed once for both navmeshes, not once per state. Worst frame 36.9 → 23.5 ms.
+
+**Results on this box (headless), suites one at a time.**
+| suite | commit | checks | failures | note |
+|---|---|---:|---:|---|
+| `tools/test.sh` (full) | 20cb34d + integration merge, before the fixes above | 3,245 | 42 | in 6 suites: `collision_audit`, `fullslice`, `grounded`, `leftovers_longhouse`, `poi_reach`, `tarnhall_encounters`; each was rerun after its fix (below) |
+| `collision_audit` | after the fixes | 45 | 0 | |
+| `grounded`, `leftovers_longhouse`, `poi_reach`, `tarnhall_encounters` | after the fixes | 304, 28, 64, 110 | 0 | |
+| `fullslice` | after the fixes, alone | 114 | 0 | the full run's failure (the Netmender never left phase one) came while I ran two other tests beside it |
+| `gates` | after the main merge | 151 | 0 | |
+| `streaming` | the head | 113 | 0 | one earlier run failed the cold crossing (35.0 against 30); fixed by the heightmap change |
+| `smoke` | after the main merge | 11 | 0 | |
+| `fullgame_lowe` | after the main merge | 196 | 0 | the brief's peat-island and black-water failures are gone |
+| `fullgame_kettle` | after the main merge | 199 | 0 | the Ice-Cutter duel is won |
+| `fullgame_tarnhall` | after the main merge | 213 | 0 | |
+| `fullgame_thornwold` | after the main merge | 163 | 0 | |
+| `fullgame_reach`, run 1 | after the main merge | 114 | 19 | after the scripted death, the Bearer made no progress at the Sheilings; nowhere near anything this branch added in the Reach |
+| `fullgame_reach`, run 2 | the head | 197 | 0 | |
+| `fullgame_coldwell` | after the main merge | 179 | 0 | |
+| `fullgame_ending_outsong` | after the main merge | 161 | 0 | |
+| `fullgame_ending_kept` | after the main merge | 193 | 0 | |
+
+**Still open.**
+- **No GPU numbers** for any of the hitch work. The new report tables will prove the diagnosis right or wrong.
+- **Cold Saltfell flush (238 ms on the GPU):** not addressed beyond naming its phase in the report.
+- **A first visit's navmesh parse** still has one ~23 ms frame (the heightmap), behind the black.
+- **`fullgame_reach` is flaky**, as main's handoff already says of its driving.
+- **Gate offenders in the baseline:** open dressing needs colliders; owned here, not done.
+- **ADR numbers collide** (0014 and 0015 on both sides), as in the entry below.
+
 ## 2026-11-12: hitch fixes in, integration merged; GPU re-measure wanted
 
 Branch head after this entry: see `git log origin/feat/streaming`. Full `tools/test.sh` and the walks are running now, one at a time. Their results follow in the next entry.
