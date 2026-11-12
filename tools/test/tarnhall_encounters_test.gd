@@ -620,6 +620,23 @@ func _hall() -> void:
 	check(Game.find_hearth("hs_long_table") != null, "the hearth wakes at the cold fire")
 	var cup := _pickup("host_cup")
 	check(cup != null and cup.global_position.distance_to(host.global_position) < 3.5, "his cup is left beside him")
+	# the Bearer across the board when he falls: the cup is set down on his
+	# side of the bench, on open floor, not in the gap under the table edge
+	var north := Vector3(0, 0, -1)
+	var rd: Dictionary = host.cfg["release_drop"]
+	var ahead := float(rd["ahead"])
+	if rd.has("clear"):
+		ahead = Game._drop_reach(host, north, ahead, float(rd["clear"]))
+	var at: Vector3 = host.global_position + north * ahead
+	var nav_at := NavigationServer3D.map_get_closest_point(area.get_world_3d().navigation_map, at)
+	# nothing over it (not in under the table), and the navmesh there itself
+	# (measured on the flat: the navmesh rides up over the bench's step)
+	var q := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.6, at + Vector3.DOWN * 0.3, RH.M_WORLD_ALL)
+	var down := area.get_world_3d().direct_space_state.intersect_ray(q)
+	var top: float = (down["position"] as Vector3).y if not down.is_empty() else -INF
+	check(absf(top - at.y) < 0.15 and Vector2(nav_at.x - at.x, nav_at.z - at.z).length() < 0.3,
+		"across the board, the cup would still lie on open floor (%s; a stone dropped there lands at %.2f; the navmesh at %s)" % [
+		at.snapped(Vector3.ONE * 0.01), top, nav_at.snapped(Vector3.ONE * 0.01)])
 	if cup != null:
 		cup._on_take(player)
 	check(int(player.inventory.get("item_host_cup", 0)) == 1, "the Bearer takes the Host's cup")
