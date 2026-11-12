@@ -115,12 +115,15 @@ def gate(area_id, gate_id, sample, at, toward, flag, name, to, seam_at, width=3.
                     # a boulder's collider is the hull of its rounded mesh: low
                     # enough that the navmesh baked a step over its top though
                     # nobody can climb it (Kettle, after the landing was widened).
-                    # A tall core inside it keeps the routes where the feet are.
+                    # A tall box over it that only the navmesh sees keeps the
+                    # routes where the feet are (no invisible wall for the body).
                     bx, bz = p["at"]
-                    core = {"at": [bx, r2(sample(bx, bz) + 2.0), bz], "radius": r2(0.42 * p["scale"]), "height": 4.0}
-                    if flank_tag != "base":
-                        core["tag"] = flank_tag
-                    cores.append(core)
+                    hr, gy = 0.42 * p["scale"], sample(bx, bz)
+                    core = {"min": [r2(bx - hr), r2(gy - 1.0), r2(bz - hr)], "max": [r2(bx + hr), r2(gy + 8.0), r2(bz + hr)],
+                            "nav_only": True}
+                    # (a nav-only box keeps one state's navmesh off: both, for a base flank)
+                    for st in (("thaw", "rime") if flank_tag == "base" else (flank_tag,)):
+                        cores.append(dict(core, tag=st))
                 t += pitch
                 k += 1
 
