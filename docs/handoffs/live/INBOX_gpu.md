@@ -418,3 +418,16 @@ a37afed is the same tree as 740ca4d apart from ci.yml, and the same as main 4e8e
 **Process note:** a shoot script of mine ended in `git checkout -- .` and wiped one uncommitted pass of this work. It was redone from the same edits, and I now commit before every run.
 
 Next: item 3 (trails, gpu/trail-fix, code ready), then item 2 (Lowe physics, ablation hooks in), then item 4 (full-suite fullslice, gpu/test-seed: an unseeded RNG is the lead suspect).
+
+## 2026-11-12T17:48Z Item 3 DONE: swing trails, on gpu/trail-fix (480a3f3), from main
+**Unlit torch:**
+- New key `clip_meta.json` `weapons.torch.trail_unlit`: no ember style, a grey tint, low energy and opacity.
+- `CharVisual._on_trail_shown` re-applies the trail look as each swing's trail appears, and uses those keys while `brand.is_lit()` is false.
+- The put-out brand now leaves a faint grey arc. The lit torch is unchanged.
+
+**Greatblade in THAW:**
+- The cause is in the shader: the leading edge's opacity and whiteness ignored all weapon data, and a wide blade's young arc is nearly all leading edge.
+- `trail.gdshader` gains an `edge` uniform, default 1.0, so every other weapon is untouched. It is set from a new data key, `trail_edge`.
+- The greatblade gets `trail_edge` 0.35, `trail_weight` 0.4 and a steel tint. The arc is now a translucent steel smear in THAW and still reads over RIME snow.
+
+No timing change. smoke 11/0, anim 229/0, combat 22/0, body 8/0. Before/after shots, both states, are in `docs/gallery_gpu/trail_fix/`.
