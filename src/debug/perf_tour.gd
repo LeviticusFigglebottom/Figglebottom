@@ -450,7 +450,7 @@ func _hearth_census() -> void:
 func _clear_spot(rp: Vector3, out_dir: Vector3) -> Vector3:
 	var space := get_viewport().get_world_3d().direct_space_state
 	var cap := CapsuleShape3D.new()
-	cap.radius = 0.34
+	cap.radius = 0.6                 # the capsule and a hand's breadth of room
 	cap.height = 1.8
 	var q := PhysicsShapeQueryParameters3D.new()
 	q.shape = cap
@@ -459,7 +459,12 @@ func _clear_spot(rp: Vector3, out_dir: Vector3) -> Vector3:
 		q.exclude = [Game.player.get_rid()]
 	for d in [2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 0.0]:
 		var p: Vector3 = rp + out_dir * float(d)
-		q.transform = Transform3D(Basis.IDENTITY, p + Vector3(0, 1.0, 0))   # lifted clear of the ground it stands on
+		# on the ground there, not at the hearth's height: out on a slope the
+		# hearth's height is underground (he was held half in the hill)
+		var dn := space.intersect_ray(PhysicsRayQueryParameters3D.create(p + Vector3.UP * 6.0, p + Vector3.DOWN * 6.0, q.collision_mask, q.exclude))
+		if not dn.is_empty():
+			p.y = (dn["position"] as Vector3).y + 0.05
+		q.transform = Transform3D(Basis.IDENTITY, p + Vector3(0, 1.0, 0))   # the capsule's centre, its foot just over the ground
 		var solid := false
 		for r in space.intersect_shape(q, 8):
 			if not (r["collider"] is Node and String((r["collider"] as Node).name) == "TerrainBody"):
