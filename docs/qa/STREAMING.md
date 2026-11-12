@@ -338,12 +338,12 @@ After the follow-up (runtime re-bakes, cache warming), on the merged `feat/strea
 
 | suite | result | note |
 |---|---|---|
-| streaming | 102 checks, 0 failures, three runs on the final code | an earlier run failed one check, "calls the warming off at once (33.5 ms)" against 30 ms; the cancel checks were made finer and the limit for a synchronous build set to 250 ms. In one of the three runs the dummy renderer logged `Parameter "m" is null` (`mesh_get_surface_count`) once, from `Weather._gpu` freeing a `CPUParticles3D` on the main thread during a graft; nothing failed. Not explained. |
+| streaming | 102 checks, 0 failures in the last three runs, the last of them on the final code | an earlier run failed one check, "calls the warming off at once (33.5 ms)" against 30 ms; the cancel checks were made finer and the limit for a synchronous build set to 250 ms. In the final-code run the dummy renderer logged `Parameter "m" is null` (`mesh_get_surface_count`) once, from `Weather._gpu` freeing a `CPUParticles3D` on the main thread during a graft; nothing failed. Not explained. |
 | gates | 151 checks, 0 failures | (synchronous path: see "Runtime re-bakes") |
-| smoke, steading, lowe, tarnhall, deathloop, traps | 11, 49, 25, 39, 26, 22 checks, 0 failures | run twice |
-| release_scenes, kettle, endings, keepsakes, encounters, boss, lowe_encounters | 32, 34, 85, 64, 66, 27, 98 checks, 0 failures | after the release's souls were spread over frames |
-| fullslice | 112 checks, 0 failures | one run, before the souls were spread and the cancel checks made finer; not run again after |
-| fullgame_lowe | 196 checks, 0 failures | one run on the final code (the bridge and a release gate re-baked in the background) |
+| smoke, steading, lowe, tarnhall, deathloop, traps | 11, 49, 25, 39, 26, 22 checks, 0 failures | run twice, the second time before the last change (a release's souls spread over frames) |
+| release_scenes, kettle, endings, keepsakes, encounters, boss, lowe_encounters | 32, 34, 85, 64, 66, 27, 98 checks, 0 failures | on the final code |
+| fullslice | 112 checks, 0 failures | two runs, the second on the final code |
+| fullgame_lowe | 196 checks, 0 failures | one run, on the final code (the bridge and a release gate re-baked in the background) |
 | fullgame_kettle, fullgame_tarnhall, fullgame_thornwold, fullgame_reach, fullgame_coldwell, fullgame_ending_kept, fullgame_ending_outsong; houses, thornwold, reach, coldwell, combat, controller, deltas, anim, audio, body, look5, the other five `*_encounters` | not run after the follow-up | before it: see the earlier table in git history (`a9cffc4`); `fullgame_kettle` stalled in the Ice-Cutter duel then, with and without streaming |
 
 
