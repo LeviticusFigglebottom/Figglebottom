@@ -242,7 +242,7 @@ static func _emit(area: Area, kind: String, tag: String, xfs: Array) -> void:
 				bx.size = Vector3(2.0, 1.3, 0.55) * sv
 				shape = bx
 				off = Vector3(0, 0.62, 0)
-			"rock", "boulder", "driftwood", "peat_stack", "peat_wall", "standing_stone", "ice_floe":
+			"rock", "boulder", "driftwood", "peat_stack", "peat_wall", "peat_row", "standing_stone", "ice_floe":
 				if kind == "ice_floe" and sv.y < 1.0:
 					continue      # flat channel floes: the ice sheet carries you
 				# what is drawn is what stops you: the hull of this instance's
