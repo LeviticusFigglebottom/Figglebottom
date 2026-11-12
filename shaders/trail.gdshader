@@ -16,6 +16,9 @@ uniform float energy = 0.6;
 uniform float ember = 0.0;
 // opacity of the wake: a maul drags a heavy smear, a spear point barely marks the air
 uniform float weight = 1.0;
+// opacity of the leading edge's flash (1 = as before): a wide blade's young
+// arc is nearly all leading edge, and at full strength it read as a white slab
+uniform float edge = 1.0;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -42,12 +45,12 @@ void fragment() {
 	vec3 wake_col = mix(tint * vec3(1.0, 0.72, 0.42), tint, along);
 	// how white the leading edge flashes follows `energy`: steel catches the
 	// light (0.6 and up is the full flash), a wooden maul head only smears
-	vec3 col = mix(wake_col, vec3(1.0, 0.99, 0.95), clamp(lead_edge, 0.0, 1.0) * clamp(energy * 1.7, 0.0, 1.0));
+	vec3 col = mix(wake_col, vec3(1.0, 0.99, 0.95), clamp(lead_edge, 0.0, 1.0) * clamp(energy * 1.7, 0.0, 1.0) * edge);
 	// unshaded materials output ALBEDO only (EMISSION is dropped): the glow
 	// rides the albedo, a little over 1 at the leading edge so it blooms
 	ALBEDO = col * (1.0 + energy * lead_edge * tip_weight);
 	float body = pow(along, 0.9) * streak * tip_weight;
-	ALPHA = clamp((body + tip_trace * tip_weight) * 0.62 * weight + lead_edge * tip_weight * 0.5, 0.0, 0.9);
+	ALPHA = clamp((body + tip_trace * tip_weight) * 0.62 * weight + lead_edge * tip_weight * 0.5 * edge, 0.0, 0.9);
 	if (ember > 0.5) {
 		// fire left in the air: tongues that tear apart as they age, hottest
 		// at the head, cooling to a dull red; sparks scattered through it
