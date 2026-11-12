@@ -15,6 +15,20 @@ extends Node
 ##   --hearth-frame=N       rest at the first hearth on frame N; with
 ##   --shot-seq=s1,s2,...   captures PATH_0.png.. that many seconds after it
 ##   --hearth-toggle        make that rest turn the world (THAW <-> RIME)
+##   --shot-stage=NAME      a staged scene (see _stage_tick). The weapon stages:
+##       bearer_hold                      the weapon carried, nobody to hit
+##       bearer_light1 | bearer_light2 | bearer_heavy | bearer_sprint   a strike, frozen in its active window
+##       bearer_bow                       the full draw, held
+##     They work in THAW and in RIME: with a foe in the area the Bearer is
+##     stood in front of it, with none (THAW) he strikes the air where he
+##     stands. They put the area's title card away themselves.
+##   --shot-weapon=ID       arm the Bearer for a weapon stage (torch, spear, greatblade, bow, ...)
+##   --shot-torch=lit|unlit with --shot-weapon=torch: the brand burning (default) or
+##                          put out, a coal on the head and no light
+##   --shot-beat=S          strike stages: capture S seconds after the windup ends (default 0.04)
+##   --shot-map-here        map / map_zoom stages: the area on screen counts as walked
+##                          too, all its Hearthstones and places found (to check a
+##                          region's sheet against its markers)
 
 var _shot_path := ""
 var _frames_left := -1
@@ -390,6 +404,8 @@ func _stage_tick() -> void:
 			# the Map after three regions: two released, the third walked into
 			if _stage_frame == 8:
 				_walked_world()
+				if OS.get_cmdline_user_args().has("--shot-map-here"):
+					_walked_here()
 				World.set_flag("ks_ingra_met")
 				Journal.set_pin("ingra_rye")
 				InventoryUI.open_for(p, "map")
@@ -429,6 +445,17 @@ func _walked_world() -> void:
 	World.set_area_flag("kettle_fjord", "lit_hs_landing_ice")
 	World.last_hearth = {"area": "saltfell_steading", "hearth": "hs_salt_house"}
 
+## --shot-map-here: the area on screen walked end to end, so its sheet can be
+## checked against every marker the Map would ever put on it.
+func _walked_here() -> void:
+	var a := Game.current_area_id
+	MapState._mark("regions", a)
+	for h in DB.area_def(a).get("hearths", []):
+		MapState._mark("hearths", "%s/%s" % [a, h["id"]])
+	for pl in MapState.places_def(a):
+		MapState._mark("places", "%s/%s" % [a, pl["id"]])
+	MapState._mark("veils", a)
+
 ## A traveller's Pack for the UI photographs: arms on the belt, two songs,
 ## armour and a handful of goods.
 func _stock_pack(p: Player) -> void:
@@ -459,17 +486,21 @@ func _char_stage(p: Player) -> void:
 			if bool(en.cfg.get("is_boss", false)) == (_stage == "boss"):
 				_foe = en
 				break
-		if _foe == null:
+		if _foe == null and not _stage.begins_with("bearer_"):
 			push_warning("Shot: no foe for stage %s" % _stage)
 			_frames_left = 1
 			return
 		p.invulnerable = true
 		p.velocity = Vector3.ZERO
-		if _stage != "boss":
+		if _foe != null and _stage != "boss":
 			var fwd := -(_foe as Enemy).vis.global_transform.basis.z
 			fwd.y = 0.0
 			p.global_position = _foe.global_position + fwd.normalized() * 1.9 + Vector3.UP * 0.1
 		_frames_total = _frames_left
+	if _stage.begins_with("bearer_") and (_foe == null or not is_instance_valid(_foe)):
+		# THAW: nothing stands against him. The weapon is shown all the same.
+		_bearer_stage(p, null)
+		return
 	if _foe == null or not is_instance_valid(_foe):
 		return
 	var foe := _foe as Enemy
@@ -511,22 +542,34 @@ func _char_stage(p: Player) -> void:
 ##   bearer_bow (the full draw, held) / bearer_hold (the weapon carried, no foe)
 ## --shot-weapon=<id> arms him first; --shot-beat=<s> moves the capture
 ## (seconds after the windup ends; negative looks at the wind-up).
+## --shot-torch=unlit puts the brand out. `foe` is null where the area has
+## none to give (THAW): the stage is the same with nobody in front of him.
 func _bearer_stage(p: Player, foe: Enemy) -> void:
-	foe.set_physics_process(false)   # the foe stands and takes it
+	if foe != null:
+		foe.set_physics_process(false)   # the foe stands and takes it
+	# the place-name card is still up when a fast machine reaches the beat
+	var hud := get_tree().get_first_node_in_group("hud")
+	if hud != null and hud.get("_title_layer") != null and is_instance_valid(hud._title_layer):
+		hud._title_layer.visible = false
 	if _stage_frame == 8:
 		for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
 			if e != foe and e is Node3D:
 				(e as Node3D).visible = false   # its packmates would crowd the lens
 	var beat := 0.04
 	var wpn := ""
+	var unlit := false
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--shot-beat="):
 			beat = float(a.get_slice("=", 1))
 		elif a.begins_with("--shot-weapon="):
 			wpn = a.get_slice("=", 1)
+		elif a.begins_with("--shot-torch="):
+			unlit = a.get_slice("=", 1) == "unlit"
 	if _stage_frame == 12 and wpn != "":
 		p.inventory[wpn] = 1
 		p.equip_weapon(wpn)
+	if unlit and _stage_frame >= 12 and p.vis.brand != null and p.vis.brand.is_lit():
+		p.vis.brand.set_lit(false, true)   # out at once: no dying flame in the frame
 	if _stage_frame == 30:
 		p.sim_active = true
 		match _stage:
@@ -544,17 +587,21 @@ func _bearer_stage(p: Player, foe: Enemy) -> void:
 				# the draw, driven by hand (no key is held in a shot): nock,
 				# pull, and hold at the cheek
 				p.inventory["arrows"] = 12
+				p.inventory_changed.emit()   # (the HUD's arrow count reads it)
 				p.set_physics_process(false)
 				p.vis.play("bow_draw", 0.1)
 				p._nock_arrow(true)
 			"bearer_hold":
-				foe.visible = false   # the weapon carried, nobody to hit
+				if foe != null:
+					foe.visible = false   # the weapon carried, nobody to hit
 	if _stage == "bearer_bow" or _stage == "bearer_hold":
 		_frame_char_cam(p, foe)
 		if _stage == "bearer_bow" and _stage_frame > 30 and p.vis.rig.action_time() > 0.74 and p.vis.current_clip() != "bow_hold":
 			p.vis.play("bow_hold", 0.08)
 		# (software frames in a full area take seconds each: wait on game time, not on many frames)
-		var settled := (_stage == "bearer_hold" and p.vis.brand != null and p.vis.brand.lit > 0.98) \
+		# (a brand has caught, or is out; any other weapon is simply in hand)
+		var settled := (_stage == "bearer_hold" and (p.vis.brand == null or p.vis.brand.lit > 0.98 \
+				or (unlit and p.vis.brand.lit < 0.02))) \
 				or (_stage == "bearer_bow" and p.vis.current_clip() == "bow_hold")
 		if settled and not get_tree().paused and _stage_frame > 40:
 			_hold_frames += 1
@@ -676,6 +723,9 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 		cam.name = "ShotCam"
 		get_tree().current_scene.add_child(cam)
 		cam.current = true
+	if foe == null:
+		_frame_bearer_cam(cam, p, p.global_position - p.vis.global_transform.basis.z * 1.9)
+		return
 	var h := maxf(float(foe.cfg.get("hurt_h", 1.6)), 1.2)
 	if _stage == "boss":
 		var fwd := -foe.vis.global_transform.basis.z
@@ -686,8 +736,13 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 		cam.look_at(tgt, Vector3.UP)
 		cam.fov = 55.0
 		return
-	var mid := (p.global_position + foe.global_position) * 0.5
-	var axis := foe.global_position - p.global_position
+	_frame_bearer_cam(cam, p, foe.global_position)
+
+## The side-on framing of the Bearer and whatever stands at `other` (a foe,
+## or the empty ground a foe would stand on).
+func _frame_bearer_cam(cam: Camera3D, p: Player, other: Vector3) -> void:
+	var mid := (p.global_position + other) * 0.5
+	var axis := other - p.global_position
 	axis.y = 0.0
 	var side := axis.normalized().cross(Vector3.UP)
 	var tgt := mid + Vector3.UP * 0.95
