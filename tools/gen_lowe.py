@@ -346,7 +346,16 @@ for sp in spawners:
     if sp["id"] == "keener_mounds":
         vx, vz = sp["at"][0] - HEAP[0], sp["at"][2] - HEAP[1]
         sp["face"] = r2(math.degrees(math.atan2(-vx, -vz)) % 360)
-pickups += [BREAD_CUP, SPADE_IRON, SMALL_SPADES]
+# --- the spear at the first mound's kin-post (ADR 0015: a weapon to be found) ---
+# Carried up behind the bier that still stands at kin_a's door, and stood
+# against the kin-post for the household to carry down. Nobody did: it is
+# there in both states, 5 m off the road, the first thing past the hearth.
+# The prompt stands on the road side of the post; the spear leans on it.
+SPEAR_LEAN = 20.0                                      # degrees off upright, head to the post
+_px, _pz = barrow_at("kin_a", 3.9, BY["kin_a"][4] * 0.5 + 0.9 + 0.9)
+KIN_SPEAR = {"id": "kin_spear", "at": at(_px, _pz), "rot": DOORS["kin_a"][0], "item": "spear", "tag": "base",
+             "label": "Take the spear from the post", "pose": [-SPEAR_LEAN, 0, 0], "show_at": [0.0, -0.43], "lift": 0.5}
+pickups += [BREAD_CUP, SPADE_IRON, SMALL_SPADES, KIN_SPEAR]
 
 portals, bridge = seams("lowe_barrows")
 START = [PASS["x"], r2(L.sample(PASS["x"], PASS["z"] - 5.0) + 0.2), PASS["z"] - 5.0]

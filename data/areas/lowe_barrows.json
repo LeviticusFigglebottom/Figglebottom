@@ -1096,6 +1096,28 @@
     -0.55
    ],
    "rot": 0
+  },
+  {
+   "id": "kin_spear",
+   "at": [
+    -54.58,
+    31.6,
+    -120.87
+   ],
+   "rot": 26.57,
+   "item": "spear",
+   "tag": "base",
+   "label": "Take the spear from the post",
+   "pose": [
+    -20.0,
+    0,
+    0
+   ],
+   "show_at": [
+    0.0,
+    -0.43
+   ],
+   "lift": 0.5
   }
  ],
  "portals": [

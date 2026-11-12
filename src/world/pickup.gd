@@ -25,6 +25,10 @@ var display_lift := 0.0
 ## and this far to the side (the latch on top of a gatepost: the prompt zone
 ## stands clear of the post, the thing is shown on it)
 var display_offset := Vector2.ZERO
+## how the shown thing is set when it does not lie flat, in degrees (a spear
+## stood against a post, a bow hung on a peg); the lift is then the height of its grip
+var display_pose := Vector3.ZERO
+var posed := false
 ## frozen in: only a heavy blow from close in front frees it (the Bearer's
 ## heavy swing calls chip()); using it only says so
 var chip_heavy := false
@@ -63,10 +67,12 @@ func _ready() -> void:
 		display_scene = String(HumanoidLib.weapon_cfg(kit).get("scene", ""))
 	if display_scene != "" and ResourceLoader.exists(display_scene):
 		var mesh := (load(display_scene) as PackedScene).instantiate() as Node3D
-		if not mesh.get_meta("upright", false):
+		if posed:
+			mesh.rotation_degrees = display_pose
+		elif not mesh.get_meta("upright", false):
 			mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
 		# (a thing that stands, like the Host's cup, says so: metadata/upright)
-		mesh.position = Vector3(display_offset.x, 0.05 + display_lift, display_offset.y)
+		mesh.position = Vector3(display_offset.x, (0.0 if posed else 0.05) + display_lift, display_offset.y)
 		add_child(mesh)
 		var gl := OmniLight3D.new()
 		gl.light_color = Color(0.95, 0.93, 0.86)

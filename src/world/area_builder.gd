@@ -579,6 +579,9 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 	for off_key in ["show_off", "show_at"]:
 		if spec.has(off_key):
 			k.display_offset = Vector2(float(spec[off_key][0]), float(spec[off_key][1]))
+	if spec.has("pose"):      # stood or hung, not lying: [x, y, z] degrees
+		k.display_pose = Vector3(float(spec["pose"][0]), float(spec["pose"][1]), float(spec["pose"][2]))
+		k.posed = true
 	k.chip_heavy = bool(spec.get("chip_heavy", false))
 	k.bare = bool(spec.get("bare", false))
 	k.needs_item = String(spec.get("needs_item", ""))
