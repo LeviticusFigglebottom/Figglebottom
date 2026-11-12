@@ -5883,6 +5883,29 @@
    "tag": "rime",
    "scene": "res://assets/models/props/vat_dipper.tscn",
    "label": "Take the dipper"
+  },
+  {
+   "wayside": false,
+   "id": "oar_greatblade",
+   "at": [
+    139.27,
+    24.26,
+    -324.36
+   ],
+   "rot": 93.5,
+   "item": "greatblade",
+   "tag": "base",
+   "label": "Take the blade from the oar-stand",
+   "pose": [
+    0,
+    0,
+    12
+   ],
+   "show_at": [
+    -0.8,
+    0.0
+   ],
+   "lift": 0.3
   }
  ],
  "portals": [

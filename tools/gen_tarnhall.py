@@ -384,7 +384,18 @@ LANDING_GUESTS = [
 ]
 # the oars of the six boats that were drawn up properly, each neighbourhood's own cut
 _sx, _sz = shore(176.5, 1.07)
-prop("th_oar_stand", at(_sx, _sz), face((_sx, _sz), shore(176.5, 0.8)) + 180)
+OAR_STAND_ROT = face((_sx, _sz), shore(176.5, 0.8)) + 180
+prop("th_oar_stand", at(_sx, _sz), OAR_STAND_ROT)
+# the greatblade stood in the oar-stand (ADR 0015: a weapon to be found).
+# Blades stay down at the boats at a feast; this one waits with the oars to be
+# picked up on the way home. In both states, on the causeway side of the
+# stand, 10 m off the causeway's land end and in sight of its hearth. The
+# prompt is on the grass in front; the blade leans in against the rack.
+_ra = math.radians(OAR_STAND_ROT)                      # 1.7 m along the stand's own x, 0.4 m along its z
+_gx = _sx + 1.7 * math.cos(_ra) + 0.4 * math.sin(_ra)
+_gz = _sz - 1.7 * math.sin(_ra) + 0.4 * math.cos(_ra)
+OAR_BLADE = dict(POI, id="oar_greatblade", at=at(_gx, _gz), rot=r2(OAR_STAND_ROT), item="greatblade", tag="base",
+                 label="Take the blade from the oar-stand", pose=[0, 0, 12], show_at=[-0.8, 0.0], lift=0.3)
 for a in (161.5, 140.5):
     _cx, _cz = shore(a, 1.02)
     prop("rope_coil", at(_cx, _cz), a * 3 % 360, collide=False)
@@ -460,7 +471,7 @@ while x < SW[2]:
     WAYSIDE_CLEAR.append([r2(x), r2((SW[1] + SW[3]) * 0.5), 3.4])
     x += 5.0
 
-pickups += [ROWAN, DIPPER]
+pickups += [ROWAN, DIPPER, OAR_BLADE]
 spawners += CUPBEARERS
 npcs += LANDING_GUESTS + COOKS
 # --- end of points of interest ------------------------------------------------
