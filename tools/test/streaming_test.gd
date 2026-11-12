@@ -65,6 +65,8 @@ func _check_report(rep: Dictionary, what: String) -> void:
 		float(rep.get("max_work_ms", 0.0)), float(rep.get("second_work_ms", 0.0)), int(rep.get("work_frames", 0)),
 		float(rep.get("max_frame_ms", 0.0)), str(rep.get("sync", []))])
 	print("      worst frame: %s" % str(rep.get("worst", {})))
+	if rep.has("graft_items"):
+		print("      dearest grafts: %s" % str(rep["graft_items"]))
 	check((rep.get("sync", []) as Array).is_empty(), "%s: no synchronous build phase on the main thread" % what)
 	check(float(rep.get("second_work_ms", 999.0)) <= hitch_ms,
 		"%s: streaming work per frame within %.0f ms (%.1f)" % [what, hitch_ms, float(rep.get("second_work_ms", 0.0))])
@@ -344,10 +346,40 @@ func _run() -> void:
 	await _settle_idle(60.0)
 	await _warms(cache_dir)
 	await _settle_idle(60.0)
+	_keeping()
 	_quits()
 	check(max_alive <= 2 and st.areas_alive() == 1, "one area stands at the end (max ever %d)" % max_alive)
 	print("    main thread waited at most %.1f ms on a worker build's lock" % BuildLock.max_wait_ms)
 	finish()
+
+## Shaders outlive the materials that made them (ShaderWarm.retain): the
+## area left takes no shader with it, so the next one compiles nothing anew.
+func _keeping() -> void:
+	print("== shaders kept for the run")
+	check(ShaderWarm.retained() > 0, "the crossings kept shaders (%d kinds)" % ShaderWarm.retained())
+	var a := StandardMaterial3D.new()
+	a.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	a.albedo_texture = FrostFX.soft_tex()
+	a.cull_mode = BaseMaterial3D.CULL_FRONT
+	a.albedo_color = Color(0.3, 0.2, 0.1)
+	var b := a.duplicate() as StandardMaterial3D
+	b.albedo_color = Color(0.9, 0.9, 0.9)      # a uniform: the same shader
+	var c := a.duplicate() as StandardMaterial3D
+	c.albedo_texture = null                    # no texture: another shader
+	var n0 := ShaderWarm.retained()
+	var added := ShaderWarm.retain([a, b, c, a])
+	check(added == 2 and ShaderWarm.retained() == n0 + 2, "one stand-in per kind of shader (%d new of 3 materials)" % added)
+	var key := ShaderWarm._base_key(a)
+	var stand: BaseMaterial3D = ShaderWarm._kept.get(key)
+	check(stand != null and stand != a and stand.albedo_texture != null and stand.albedo_texture != a.albedo_texture
+		and stand.albedo_texture.get_width() == 1 and ShaderWarm._base_key(stand) == key,
+		"the stand-in holds one blank pixel, not the texture, and compiles to the same shader")
+	var sm := ShaderMaterial.new()
+	sm.shader = load("res://shaders/frost_veil.gdshader")
+	ShaderWarm.retain([sm])
+	check(ShaderWarm._kept.get(sm.shader.get_instance_id()) == sm.shader, "a ShaderMaterial's shader itself is kept")
+	check(StateDirector.wave_materials()[0] == StateDirector.wave_materials()[0] and StateDirector.wave_materials().size() == 5,
+		"the wave's particle materials are made once")
 
 ## The game is quit while a neighbour is on a worker thread: the process
 ## must go, promptly (it once never did: ADR 0014, "Quitting"). Each case is
@@ -442,6 +474,9 @@ func _rebakes() -> void:
 		var near: Vector3 = br.global_position + br.global_transform.basis.z * 2.0
 		# (the Lowe's nav bounds end 2.5 m out along the deck: Saltfell has the rest)
 		var on_deck: Vector3 = br.global_position - br.global_transform.basis.z * 1.6
+		# (the map takes in a new navmesh on the navigation server's own
+		# thread, some frames after it is set: on a loaded box, more than a few)
+		await _until(func(): return _nav_gap(near) < 1.0, 5.0)
 		var d_up := _nav_gap(on_deck)
 		var old_thaw := lowe.nav_thaw
 		br._on_lower(player)
@@ -454,7 +489,7 @@ func _rebakes() -> void:
 		_check_report(st.last_rebake, "bridge re-bake")
 		print("    bridge re-bake: %.0f ms from the windlass to the map (the deck takes %.1f s), bake %s ms in the background, cache %s" % [
 			float(st.last_rebake.get("ms", 0.0)), DrawBridge.LOWER_S, str(st.last_rebake.get("bake_ms", [])), str(st.last_rebake.get("from_cache", []))])
-		await ticks(4)
+		await _until(func(): return _nav_gap(on_deck) < 0.6 and _route(near, on_deck, 0.6), 5.0)
 		var d_down := _nav_gap(on_deck)
 		check(d_down < 0.6 and d_down < d_up - 0.5 and _route(near, on_deck, 0.6),
 			"and a route runs out onto the deck (navmesh %.2f m from a point 1.6 m along it; raised: %.2f m)" % [d_down, d_up])
@@ -493,7 +528,7 @@ func _rebakes() -> void:
 	_check_report(rel, "release: slain to routes open")
 	print("    release: %.0f ms from the Holdfast's fall to the new routes; re-bake %s ms in the background; Game.on_boss_slain itself (save, leavings, song: not streaming work) %.0f ms" % [
 		(Time.get_ticks_usec() - t_rel) / 1000.0, str(st.last_rebake.get("bake_ms", [])), slain_ms])
-	await ticks(4)
+	await _until(func(): return _route(front, beyond), 5.0)
 	check(_route(front, beyond), "and a route runs through the opened gate")
 
 ## Where a crossing set the Bearer down (the seam's spawn on the far side).
