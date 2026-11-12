@@ -251,6 +251,12 @@ func _parse(t0: int, budget_us: int) -> void:
 		if _src[si] == null:
 			continue
 		var nodes: Array = sl[0]
+		# the heightmap is on the base layer and the same in both states, and
+		# its parse is the dearest single step (35 ms headless): parsed once,
+		# for both (the next turn of this loop then finds it done)
+		if si == 1 and nodes.size() == 1 and nodes[0] is Terrain and _src[0] != null:
+			continue
+		var both := si == 0 and nodes.size() == 1 and nodes[0] is Terrain and _src[1] != null
 		var live: Array = []
 		for n in nodes:
 			if is_instance_valid(n) and (n as Node).is_inside_tree():
@@ -271,6 +277,8 @@ func _parse(t0: int, budget_us: int) -> void:
 		var part := NavigationMeshSourceGeometryData3D.new()
 		NavigationServer3D.parse_source_geometry_data(pm, part, area)
 		(_src[si] as NavigationMeshSourceGeometryData3D).merge(part)
+		if both:
+			(_src[1] as NavigationMeshSourceGeometryData3D).merge(part)
 		if put_away:
 			for n in live:
 				area._set_layer_collision(n, false)
