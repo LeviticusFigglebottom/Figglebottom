@@ -160,6 +160,14 @@ func _apply_ablation(n: Node) -> void:
 	if _ablate.is_empty():
 		return
 	var hit := false
+	if "scatter_bodies" in _ablate and n is StaticBody3D and n.is_in_group("scatter_body"):
+		(n as StaticBody3D).collision_layer = 0   # price the scatter colliders by difference
+		return
+	if "areas" in _ablate and n is Area3D:
+		(n as Area3D).monitoring = false
+		(n as Area3D).monitorable = false
+	if "camera_arm" in _ablate and n is SpringArm3D:
+		(n as SpringArm3D).collision_mask = 0
 	if "enemies" in _ablate and (n is Enemy):
 		hit = true
 	elif "npcs" in _ablate and (n is NPC):
