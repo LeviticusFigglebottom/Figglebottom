@@ -46,8 +46,9 @@ func _ready() -> void:
 
 func _physics_process(dt: float) -> void:
 	super._physics_process(dt)
-	if not dead:
-		_sync_blade()
+	# dead too: the oar is grown to his hands and falls with them (it used
+	# to hang in the air where the last stroke left it until the body went)
+	_sync_blade()
 
 ## The oar's frame this tick: origin at the left hand, +Y out through the
 ## right hand toward the blade.

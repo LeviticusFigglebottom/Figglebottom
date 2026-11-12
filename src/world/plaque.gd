@@ -71,7 +71,11 @@ func _ready() -> void:
 		_paper.add_child(motes)
 		zone.prompt = "Read the note"
 	else:
-		add_child(KitLib.instance("plaque"))
+		var stone := KitLib.instance("plaque")
+		add_child(stone)
+		# a carved stone 1.4 m tall stands in the way like any other stone
+		# (the collision audit found every one of them walked through)
+		KitLib.add_collision(stone, RH.L_WORLD_BASE, true)
 		zone.prompt = "Read"
 	zone.setup_zone(1.3, 1.4)
 	zone.activated.connect(func(_p):

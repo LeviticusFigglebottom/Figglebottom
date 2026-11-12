@@ -395,9 +395,12 @@ func swing(weapon_class: String, heavy: bool, pos: Vector3, db := 0.0) -> void:
 ## A weapon (or anything else) striking a surface: wood, stone, metal,
 ## ice, cloth, turf, snow (data/audio.json "impacts"). Unknown surfaces
 ## fall back to the map's "default".
-func impact(surface: String, pos: Vector3, db := 0.0) -> void:
+func impact_key(surface: String) -> String:
 	var m: Dictionary = cfg("impacts", {})
-	play(String(m.get(surface, m.get("default", ""))), pos, db)
+	return String(m.get(surface, m.get("default", "")))
+
+func impact(surface: String, pos: Vector3, db := 0.0, pitch := 1.0) -> void:
+	play(impact_key(surface), pos, db, pitch)
 
 ## A foe family's sound for an event: alert, attack, hit, death (data/
 ## audio.json "families"; an enemy names its family with "sfx_family").

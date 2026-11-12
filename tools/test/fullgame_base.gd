@@ -168,11 +168,31 @@ func _walk_to(to: Vector3, max_ticks := 900, tol := 1.0, fight := true) -> bool:
 	player.sim_move = Vector3.ZERO
 	return false
 
+## True when a planned path does not arrive: it ends away from the goal's
+## own place on the navmesh, on some scrap of it the Bearer happens to stand
+## nearest (a barrow's passage has no navmesh floor, only fragments).
+func _stranded(p: PackedVector3Array, to: Vector3) -> bool:
+	if p.size() < 2:
+		return true
+	var goal := NavigationServer3D.map_get_closest_point(area.get_world_3d().navigation_map, to)
+	var end := p[p.size() - 1]
+	return Vector2(end.x - goal.x, end.z - goal.z).length() > 2.0
+
 func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
 	var p := _path(player.global_position, to)
+	var used := 0
+	# off the navmesh's joined-up ground a player just walks toward where he
+	# is going; so does this, a few seconds at a time, until a path arrives
+	var tries := 0
+	while _stranded(p, to) and tries < 4 and player.global_position.distance_to(to) > 1.5 and not player.dead:
+		tries += 1
+		var t1 := Engine.get_physics_frames()
+		await _walk_to(to, mini(240, max_ticks - used), 1.2, fight)
+		used += int(Engine.get_physics_frames() - t1) + 1
+		await ticks(1)
+		p = _path(player.global_position, to)
 	if p.size() < 2:
 		return player.global_position.distance_to(to) < 1.5
-	var used := 0
 	var k := 1
 	while k < p.size():
 		var t0 := Engine.get_physics_frames()
@@ -535,6 +555,13 @@ func _die_and_recover(hearth_id: String) -> void:
 		await ticks(3)
 		t_out += 3
 	player.sim_move = Vector3.ZERO
+	if _stilled == stilled0:
+		var fz := _foe_near(300.0, false, 60.0)
+		print("  (not brought down: the Bearer at %s, %.0f of %.0f hp, state %d; nearest %s at %s, %.1f m, state %d, target %s, hp %.0f)" % [
+			str(player.global_position.snapped(Vector3.ONE * 0.1)), player.hp, player.max_hp, player.state,
+			fz.id if fz != null else "none", str(fz.global_position.snapped(Vector3.ONE * 0.1)) if fz != null else "-",
+			fz.global_position.distance_to(player.global_position) if fz != null else -1.0,
+			fz.state if fz != null else -1, str(fz.target != null) if fz != null else "-", fz.hp if fz != null else -1.0])
 	check(_stilled > stilled0, "the frost-taken bring the Bearer down")
 	await _secs(1.2)
 	var death_seen := player.dead and hud.splash.modulate.a > 0.5

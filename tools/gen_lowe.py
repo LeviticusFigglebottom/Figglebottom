@@ -114,7 +114,10 @@ VEIL = [r2(CX), r2(A), r2(CZ + CR - 0.5)]
 
 # the frozen bog (RIME): an invisible sheet carries you; ice shows where
 # THAW: the AI must not path through the black water (nothing collides)
-BLOCKERS.append({"min": [L.BOG[0] - 24, r2(W - 3), L.BOG[1] - 24], "max": [L.BOG[0] + 24, r2(W + 2.5), L.BOG[1] + 24],
+# (tall: the navmesh bakes a floor on top of whatever it is told to keep off.
+# At 2.5 m over the water the box's lid was within a step of the rim's high
+# ground, and the THAW navmesh ran across it to the peat island.)
+BLOCKERS.append({"min": [L.BOG[0] - 24, r2(W - 3), L.BOG[1] - 24], "max": [L.BOG[0] + 24, r2(W + 14.0), L.BOG[1] + 24],
                  "tag": "thaw", "nav_only": True})
 BLOCKERS.append({"radius": L.BOG_RIM, "at": [L.BOG[0], r2(W - 0.3), L.BOG[1]], "height": 0.6, "tag": "rime"})
 

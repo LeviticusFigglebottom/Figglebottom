@@ -882,6 +882,7 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 			var hfam := String(mi.get_meta("hero_family"))
 			if mat_remap.has(hfam):
 				hfam = String(mat_remap[hfam])
+			mi.set_meta("family", hfam)   # what a blade meets here (Surfaces)
 			for s in mesh.get_surface_count():
 				var hm := MaterialLib.hero_mat(mesh.surface_get_material(s), hfam, state_mode,
 						float(mi.get_meta("hero_tint", 0.55)))
@@ -897,6 +898,8 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 			fam = fam.get_slice(".", 0)
 			if mat_remap.has(fam):
 				fam = String(mat_remap[fam])
+			if s == 0:
+				mi.set_meta("family", fam)   # what a blade meets here (Surfaces)
 			mi.set_surface_override_material(s, MaterialLib.get_mat(fam, state_mode))
 			if fam == "M_flame":
 				var aabb := mesh.get_aabb()
@@ -968,7 +971,9 @@ static func add_flame_lights(piece: Node3D, energy := 2.15, range_m := 7.6,
 ## convex=false -> trimesh (architecture with openings); true -> convex hull.
 static var _shape_cache: Dictionary = {}
 
-static func add_collision(piece: Node3D, layer_bit: int, convex := false) -> void:
+## Each collider is stamped with the surface a blade meets on it: `surface`
+## when the caller knows better, else the kit's own, else its mesh's family.
+static func add_collision(piece: Node3D, layer_bit: int, convex := false, surface := "") -> void:
 	var kit_id := str(piece.get_meta("kit_id", "?"))
 	for mi in _mesh_instances(piece):
 		if mi.mesh == null or String(mi.name).contains("flame"):
@@ -984,4 +989,6 @@ static func add_collision(piece: Node3D, layer_bit: int, convex := false) -> voi
 		var cs := CollisionShape3D.new()
 		cs.shape = shape
 		body.add_child(cs)
+		Surfaces.stamp(body, surface if surface != "" else Surfaces.for_kit(kit_id, String(mi.get_meta("family", ""))))
+		body.set_meta(PropStrike.META_GROUP, piece.get_instance_id())   # one piece, one burst
 		mi.add_child(body)

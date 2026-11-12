@@ -392,4 +392,5 @@ static func _landmark(area: Area, t: Terrain, file: String, p: Vector3, yaw: flo
 	body.add_child(cs)
 	body.position = Vector3(p.x, y + bx.size.y * 0.5, p.z)
 	body.rotation_degrees.y = yaw
+	Surfaces.stamp(body, Surfaces.for_landmark(file))
 	area.attach(body, "base")

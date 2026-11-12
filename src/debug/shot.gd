@@ -277,6 +277,9 @@ func _stage_tick() -> void:
 	if _stage in ["swing", "foe_death", "boss"] or _stage.begins_with("bearer_"):
 		_char_stage(p)
 		return
+	if _stage.begins_with("prop_"):
+		_prop_stage(p)
+		return
 	match _stage:
 		"combat":
 			if _stage_frame == 6:
@@ -567,6 +570,105 @@ func _bearer_stage(p: Player, foe: Enemy) -> void:
 
 var _hold_frames := 0
 
+## The blade on the world (PropStrike / PropHitFX), for looking at:
+##   prop_sheet: one burst of every surface in a row, each on a thing of
+##               that surface, frozen a beat after they are raised
+##   prop_swing: the Bearer swings at a kit piece set down in front of him
+##               (--shot-prop=<kit>, default crate; --shot-heavy), frozen
+##               as the burst flies; a brazier beside it takes a burst of
+##               sparks raised directly at the same beat
+## Use --shot-frames=60 or more: the row is set at frame 10.
+var _prop_at := Vector3.ZERO
+var _prop_frozen := -1
+var _prop_seen := -1
+
+func _prop_stage(p: Player) -> void:
+	var fwd := -p.vis.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var side := fwd.cross(Vector3.UP)
+	var kit := "crate"
+	var heavy := false
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--shot-prop="):
+			kit = a.get_slice("=", 1)
+		elif a == "--shot-heavy":
+			heavy = true
+	var scene := get_tree().current_scene
+	var terrain: Terrain = Game.current_area.terrain if Game.current_area != null else null
+	if _stage_frame == 10:
+		p.invulnerable = true
+		_prop_at = p.global_position + fwd * (3.2 if _stage == "prop_sheet" else 1.35)
+		var cam := Camera3D.new()
+		cam.name = "ShotCam"
+		scene.add_child(cam)
+		cam.current = true
+		if _stage == "prop_sheet":
+			p.visible = false
+			var row: Array = [["crate", "wood"], ["hearthstone", "stone"], ["brazier", "metal"], ["rime_spike", "ice"],
+					["rye_sack", "cloth"], ["", "turf"], ["", "snow"]]
+			for i in row.size():
+				var at := _prop_at + side * (float(i) - 3.0) * 1.05
+				if terrain != null:
+					at.y = terrain.height_at(at.x, at.z)
+				if String(row[i][0]) != "":
+					var piece := KitLib.instance(String(row[i][0]))
+					scene.add_child(piece)
+					piece.global_position = at
+				row[i].append(at)
+			set_meta("prop_row", row)
+			var tgt := _prop_at + Vector3.UP * 0.75
+			cam.global_position = tgt - fwd * 4.4 + Vector3.UP * 0.9
+			cam.look_at(tgt, Vector3.UP)
+			cam.fov = 50.0
+		else:
+			var piece := KitLib.instance(kit)
+			KitLib.add_collision(piece, RH.L_WORLD_BASE, true)
+			scene.add_child(piece)
+			if terrain != null:
+				_prop_at.y = terrain.height_at(_prop_at.x, _prop_at.z)
+			piece.global_position = _prop_at
+			# a brazier beside it takes a burst of its own at the same beat,
+			# so one frame shows chips and sparks at the same scale
+			var other := KitLib.instance("brazier")
+			scene.add_child(other)
+			var oat := _prop_at + side * 1.4
+			if terrain != null:
+				oat.y = terrain.height_at(oat.x, oat.z)
+			other.global_position = oat
+			set_meta("prop_other", oat)
+			var tgt := _prop_at + side * 0.7 + Vector3.UP * 0.8
+			cam.global_position = tgt + side * 1.3 - fwd * 3.1 + Vector3.UP * 0.6
+			cam.look_at(tgt, Vector3.UP)
+			cam.fov = 45.0
+	if _prop_frozen >= 0:
+		return
+	if _stage == "prop_sheet":
+		if _stage_frame == _frames_total - 8:
+			for r in get_meta("prop_row"):
+				var has_kit := String(r[0]) != ""
+				var n := (-fwd * 0.5 + side * 0.6 + Vector3.UP * 0.35).normalized() if has_kit else Vector3.UP
+				var at: Vector3 = (r[2] as Vector3) + (Vector3.UP * 0.7 - fwd * 0.3 if has_kit else Vector3.ZERO)
+				PropHitFX.burst(p, at, n, String(r[1]), side)
+		elif _stage_frame == _frames_total - 7:
+			_prop_frozen = _stage_frame
+			get_tree().paused = true
+			_frames_left = mini(_frames_left, 4)
+	else:
+		if _stage_frame == 30:
+			p.sim_active = true
+			p.try_attack(heavy)
+		# freeze one drawn frame after the burst is raised: its emitters have
+		# then had one step (about an eighth of a second under lavapipe)
+		if _prop_seen < 0 and not get_tree().get_nodes_in_group(PropHitFX.GROUP).is_empty():
+			_prop_seen = _stage_frame
+			var oat: Vector3 = get_meta("prop_other")
+			PropHitFX.burst(p, oat + Vector3.UP * 0.75 - fwd * 0.3, (-fwd + Vector3.UP * 0.3).normalized(), "metal", side)
+		elif _prop_seen >= 0 and _stage_frame > _prop_seen:
+			_prop_frozen = _stage_frame
+			get_tree().paused = true
+			_frames_left = mini(_frames_left, 4)
+
 func _frame_char_cam(p: Player, foe: Enemy) -> void:
 	var cam := get_tree().current_scene.find_child("ShotCam", false, false) as Camera3D
 	if cam == null:
@@ -604,4 +706,5 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 func _exit_tree() -> void:
 	AmbientLife._mote_tex = null
 	FrostFX.clear_cache()
+	PropHitFX.clear_cache()
 	EnvRig.active_instance = null

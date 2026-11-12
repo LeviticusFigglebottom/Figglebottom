@@ -443,9 +443,7 @@ func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
 	_end_all_swings()
-	if hook_hold != null:
-		hook_hold.end(false)
-	_pull_t = 0.0
+	_fight_over()
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	var to := _table_dir()
@@ -498,4 +496,13 @@ func _exit_tree() -> void:
 		if is_instance_valid(s):
 			s.queue_free()
 	filled.clear()
+	# and a fight reset before his release seats them again: the stills that
+	# stood up are back in their places (they stayed gone, the bench empty,
+	# with nobody left for the next Host to raise)
+	if not released:
+		for n in _places_cache:
+			if is_instance_valid(n) and not (n is Enemy) and n.has_meta("risen"):
+				(n as Node3D).visible = true
+				n.remove_meta("risen")
+				n.remove_meta("refilled")
 	super._exit_tree()

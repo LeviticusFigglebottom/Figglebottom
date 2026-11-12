@@ -56,6 +56,7 @@ var hitbox_shape: CollisionShape3D
 ## chest-projected `hitbox` remains for the unarmed and for attacks flagged
 ## "body_hitbox" (charges, horn butts).
 var blade_hitbox: Hitbox
+var _prop_strike: PropStrike = null   # the blade against props and walls (armed foes only)
 ## Unarmed humanoids (the rimewalker's grown ice clubs) strike with their
 ## hands: one hit volume whose sphere shapes ride the hand bones each tick
 ## (clip_meta.json models.<id>.unarmed). One Area per swing, so a two-handed
@@ -67,6 +68,65 @@ var hpbar: EnemyHealthBar
 ## How far the last _stagger() stretched the punishable state (a parry buys
 ## a longer breath than a poise break).
 var _stagger_mult := 1.0
+
+## Everything this foe has put into the area: ridges, pools, holes, tells,
+## thrown things, the summoned. They are the area's children, not the body's,
+## so they outlived it: a wall stood on after its maker was reset, a tell
+## glowed for a blow that would never land. _own() keeps each one;
+## _fight_over() puts them away as each goes (death, release), and leaving
+## the scene (a rest, the Bearer's death: the spawner's respawn) frees them.
+var _made: Array = []
+
+func _own(n: Node) -> Node:
+	_made = _made.filter(func(m): return is_instance_valid(m) and not m.is_queued_for_deletion())
+	if n != null:
+		_made.append(n)
+	return n
+
+func _unmake(at_once := false) -> void:
+	for n in _made:
+		if not is_instance_valid(n) or n.is_queued_for_deletion():
+			continue
+		if at_once:
+			n.queue_free()
+		else:
+			put_away(n)
+	_made.clear()
+
+## One made thing goes the way it goes: a ridge shatters, a pool or a hole
+## greys over, thorn sinks, the summoned fall, a thrown thing breaks in the
+## air. A tell on the floor is only light: it is gone.
+static func put_away(n: Node) -> void:
+	if n is Enemy:
+		var e := n as Enemy
+		if e.dead:
+			return
+		if e.is_in_group(RH.GROUP_ENEMIES):
+			e._die()
+			return
+	elif n.has_method("shatter"):
+		n.shatter()
+		return
+	elif n.has_method("close"):
+		n.close()
+		return
+	elif n.has_method("sink"):
+		n.sink()
+		return
+	elif n.has_method("dispel"):
+		n.dispel()
+		return
+	if n is Node3D and not (n is FloorTelegraph or n is IceCrack) and n.is_inside_tree():
+		FrostDissolve.shards(n.get_parent(), (n as Node3D).global_position, 0.5)
+	n.queue_free()
+
+## The fight is over for this one (death or release): it holds nobody, hauls
+## nobody, and nothing it made is left standing.
+func _fight_over() -> void:
+	if hook_hold != null:
+		hook_hold.end(false)
+	_pull_t = 0.0
+	_unmake()
 
 ## The ring the Bearer is kept out of (player._part_from_foes): the
 ## visible body, not the thin nav capsule ("push_r" in enemies.json,
@@ -583,8 +643,8 @@ func _st_attack(dt: float) -> void:
 		if not _crack_shown and t >= w - lead:
 			_crack_shown = true
 			var ic: Dictionary = _atk.get("ice", {})
-			_crack = IceCrack.spawn(get_parent(), _ice_centre(), String(ic.get("shape", "disc")),
-					float(ic.get("radius", 2.0)), float(ic.get("inner", 0.0)), w - t)
+			_crack = _own(IceCrack.spawn(get_parent(), _ice_centre(), String(ic.get("shape", "disc")),
+					float(ic.get("radius", 2.0)), float(ic.get("inner", 0.0)), w - t))
 		elif _crack != null and is_instance_valid(_crack) and t < w * 0.7:
 			(_crack as IceCrack).follow(_ice_centre())
 	var in_strike := false
@@ -592,6 +652,8 @@ func _st_attack(dt: float) -> void:
 		var ht := w + float(h) / sm
 		if t >= ht and t < ht + act:
 			in_strike = true
+	if in_strike and _prop_strike != null and _prop_strike.live():
+		_sweep_props()
 	if in_strike:
 		var lunge := float(_atk.get("lunge", 1.5))
 		velocity.x = _atk_dir.x * lunge
@@ -653,6 +715,7 @@ func _strike() -> void:
 		"none": pass
 		_:
 			_open_hitbox()
+			_begin_prop_strike()
 			if vis.trail != null:
 				vis.trail.visible = true
 			AudioDirector.foe(sfx_family(), "attack", global_position)
@@ -679,6 +742,7 @@ func _break_ice() -> void:
 	for c in holes:
 		var b := BrokenIce.open(get_parent(), c, shape, float(ic.get("radius", 2.0)), float(ic.get("inner", 0.0)),
 				float(ic.get("life", 6.0)), float(ic.get("sink", 1.0)))
+		_own(b)
 		_on_broken_ice(b)
 		var p := _player()
 		if p != null and not p.get("dead") and b.covers(p.global_position) and float(ic.get("shock", 0.0)) > 0.0:
@@ -783,8 +847,8 @@ func _spawn_telegraph(remaining: float) -> Node:
 	var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
 	# a lobbed thing lands after its flight: the glow holds until then
 	var flight := float((_atk.get("lob", {}) as Dictionary).get("flight", 0.0))
-	return FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1) + flight,
-			Color(tint[0], tint[1], tint[2]))
+	return _own(FloorTelegraph.spawn(get_parent(), xf, kind, size, maxf(remaining, 0.1) + flight,
+			Color(tint[0], tint[1], tint[2])))
 
 ## The frost-breath tell (SPEC.md 7): a plume from the mask a beat before a
 ## move. kind: "up" (rises straight up: Ship oars), "forward" (a snort),
@@ -856,6 +920,7 @@ func _line_strike() -> void:
 		get_parent().add_child(r)
 		var fwd := Vector3(_atk_dir.x, 0, _atk_dir.z).normalized()
 		r.global_transform = Transform3D(Basis.looking_at(fwd, Vector3.UP), global_position + fwd * offset)
+		_own(r)
 		_on_ridge(r)
 	Juice.shake(float(_atk.get("shake", 0.35)), 0.25)
 	AudioDirector.play("foe/ground_slam", global_position)
@@ -982,8 +1047,8 @@ func _lob() -> void:
 		if i > 0 and _atk.has("telegraph"):
 			var tg: Dictionary = _atk["telegraph"]
 			var tint: Array = tg.get("color", [0.55, 0.8, 1.0])
-			FloorTelegraph.spawn(get_parent(), Transform3D(Basis(), at), "ring", tg.get("size", [2.0]),
-					flight + 0.15 * i, Color(tint[0], tint[1], tint[2]))
+			_own(FloorTelegraph.spawn(get_parent(), Transform3D(Basis(), at), "ring", tg.get("size", [2.0]),
+					flight + 0.15 * i, Color(tint[0], tint[1], tint[2])))
 		_throw_one(from, at, flight + 0.15 * i, lb)
 	AudioDirector.play("foe/heavy_whoosh", global_position, -2.0)
 
@@ -1001,6 +1066,7 @@ func _throw_one(from: Vector3, at: Vector3, flight: float, lb: Dictionary) -> vo
 	get_parent().add_child(body)
 	body.global_position = from
 	lobbed.append(body)
+	_own(body)
 	var peak := maxf(from.y, at.y) + float(lb.get("arc", 2.4))
 	var fly := func(k: float) -> void:
 		if not is_instance_valid(body):
@@ -1064,6 +1130,7 @@ func _pour_pool() -> void:
 	var fp := FrostPool.spawn(get_parent(), at, float(pl.get("from", 1.2)), float(pl.get("to", 6.0)),
 			float(pl.get("grow", 3.0)), float(pl.get("life", 8.0)), float(pl.get("dmg", 6.0)),
 			float(pl.get("tick", 0.5)), self)
+	_own(fp)
 	_on_pool(fp)
 	AudioDirector.play("foe/cast", at, -3.0)
 
@@ -1220,6 +1287,26 @@ func _sync_fists() -> void:
 func fist_position(side: String) -> Vector3:
 	return fist_hitbox.global_position + (_fists[side]["shape"] as CollisionShape3D).position
 
+## An armed foe's blade raises chips and sparks from the world as the
+## Bearer's does (game.json prop_hit foe_weapons), when he is near enough
+## to see it. The unarmed and the far away trace nothing.
+func _begin_prop_strike() -> void:
+	if vis.weapon_mount == null or vis.trail == null or not bool(DB.tuning("prop_hit/foe_weapons", true)):
+		return
+	if target == null or not is_instance_valid(target) \
+			or global_position.distance_to(target.global_position) > float(DB.tuning("prop_hit/foe_range", 28.0)):
+		if _prop_strike != null:
+			_prop_strike.end()
+		return
+	if _prop_strike == null:
+		_prop_strike = PropStrike.new(self)
+	_prop_strike.begin(false)
+
+func _sweep_props() -> void:
+	var xf := vis.weapon_xform()
+	_prop_strike.sweep(get_world_3d().direct_space_state,
+			xf * Vector3(0, float(vis.trail.get("base_up")), 0), xf * Vector3(0, float(vis.trail.get("tip_up")), 0))
+
 func _end_all_swings() -> void:
 	if fist_hitbox != null:
 		fist_hitbox.end_swing()
@@ -1287,17 +1374,17 @@ func _fire_projectiles() -> void:
 		# per-attack tint (ember rings burn gold; default frost-blue)
 		var pc = _atk.get("proj_color", null)
 		var tint := Color(0.62, 0.75, 1.0) if pc == null else Color(pc[0], pc[1], pc[2])
-		Projectile.launch(get_parent(), from, d, float(_atk.get("proj_speed", 9.0)), pk, tint)
+		_own(Projectile.launch(get_parent(), from, d, float(_atk.get("proj_speed", 9.0)), pk, tint))
 	AudioDirector.sfx_at(cfg.get("sfx_cast", "foe/cast"),
 			global_position, -8.0, 1.4)
 
 ## Summons: raise minions around the caster, capped alive.
 var _minions: Array = []
 
+## Leaving the scene (the spawner's respawn, the area put away): what it
+## made goes with it, at once (nothing may be added to a tree being left).
 func _exit_tree() -> void:
-	for m in _minions:
-		if is_instance_valid(m):
-			m.queue_free()
+	_unmake(true)
 	_minions.clear()
 
 func _summon() -> void:
@@ -1316,6 +1403,7 @@ func _summon() -> void:
 		e.target = target
 		e._set_state(ES.ALERT)
 		_minions.append(e)
+		_own(e)
 		placed += 1
 	if placed > 0:
 		Juice.shake(0.3, 0.3)
@@ -1551,9 +1639,7 @@ func on_parried(_host) -> void:
 func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
-	if hook_hold != null:
-		hook_hold.end(false)
-	_pull_t = 0.0
+	_fight_over()
 	if hpbar != null:
 		hpbar.set_ratio(0.0)
 		hpbar.dismiss()

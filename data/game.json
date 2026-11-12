@@ -351,5 +351,20 @@
    "knot",
    ""
   ]
- ]
+ ],
+ "prop_hit": {
+  "_doc": "The blade against the world (PropStrike): while a swing is live its edge is traced each physics tick (grip to tip, plus the path each sample point along it swept since the last tick) against the world layers; the first collider met takes one burst of its surface (data/surfaces.json). No damage and no hit-stop. cooldown: seconds before the same collider can burst again; max_per_swing: bursts one swing may raise; tip_pad: metres the trace runs past the tip; samples: points along the blade (0 grip, 1 tip) whose paths are traced; lift: metres the burst stands off the surface; carry: how much of the blade's direction the debris keeps beside the surface normal; up: upward bias on the debris; heavy_scale: a heavy blow's factor on particle counts and shake; heavy_pitch: its factor on the sound's pitch; foe_weapons: the frost-taken's blades raise bursts too, within foe_range metres of the Bearer.",
+  "enabled": true,
+  "cooldown": 0.3,
+  "max_per_swing": 2,
+  "tip_pad": 0.12,
+  "samples": [0.5, 1.0],
+  "lift": 0.04,
+  "carry": 0.55,
+  "up": 0.3,
+  "heavy_scale": 1.5,
+  "heavy_pitch": 0.88,
+  "foe_weapons": true,
+  "foe_range": 28.0
+ }
 }

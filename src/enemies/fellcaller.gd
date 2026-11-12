@@ -218,6 +218,7 @@ func bring_rams(n: int, cap: int) -> int:
 		e.target = target
 		e._set_state(ES.ALERT)
 		_minions.append(e)
+		_own(e)
 		placed += 1
 	if placed > 0:
 		Juice.shake(0.3, 0.3)
@@ -293,9 +294,9 @@ func _spawn_telegraph(remaining: float) -> Node:
 		var b := Basis.looking_at(pl[1], Vector3.UP)
 		# the second strip glows on until its own flock comes
 		var extra := float(hd.get("cross_delay", 0.7)) * float(k) + float(hd.get("run", 1.3)) * 0.5
-		last = FloorTelegraph.spawn(get_parent(), Transform3D(b, pl[0]), "rect",
+		last = _own(FloorTelegraph.spawn(get_parent(), Transform3D(b, pl[0]), "rect",
 				[float(hd.get("width", 3.2)), float(hd.get("length", 20.0))], maxf(remaining, 0.1) + extra,
-				Color(tint[0], tint[1], tint[2]))
+				Color(tint[0], tint[1], tint[2])))
 		k += 1
 	return last
 
@@ -368,6 +369,7 @@ func _die() -> void:
 	Game.add_warmth(int(cfg.get("warmth", 10)))
 	for m in rams_up():
 		(m as Enemy)._die()   # the tups go down with the call
+	_fight_over()
 	for h in herds:
 		if is_instance_valid(h):
 			(h as Node).queue_free()

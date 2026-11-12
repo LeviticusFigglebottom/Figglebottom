@@ -82,6 +82,7 @@ func _ready() -> void:
 	cs.shape = box
 	cs.position.y = 1.7
 	_seal.add_child(cs)
+	Surfaces.stamp_kind(_seal, "frost_veil")
 	add_child(_seal)
 
 	_zone = Interactable.new()
@@ -225,6 +226,7 @@ func _build_aux_seals() -> void:
 		cs.shape = box
 		cs.position.y = float(size[1]) * 0.5
 		wall.add_child(cs)
+		Surfaces.stamp_kind(wall, "frost_veil")
 		holder.add_child(wall)
 		_aux_walls.append(wall)
 		_aux_planes.append(plane)

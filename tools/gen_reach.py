@@ -84,13 +84,23 @@ while bx < 704.0:
     # THAW: the water in the cut takes whoever falls in
     hazards.append({"kind": "drown", "tag": "thaw", "min": [r2(bx), r2(bed - 2.0), r2(bz - H.BECK_HALF - 0.6)],
                     "max": [r2(bx + 4.0), r2(bed + 1.2), r2(bz + H.BECK_HALF + 0.6)]})
-    # RIME: frozen to the brim; the ice carries you over
-    top = r2(min(H.pasture_y(bx, bz - H.BECK_HALF - 2.5), H.pasture_y(bx, bz + H.BECK_HALF + 2.5)) - 0.15)
-    BLOCKERS.append({"min": [r2(bx), r2(bed - 0.5), r2(bz - H.BECK_HALF - 2.0)], "max": [r2(bx + 4.0), top, r2(bz + H.BECK_HALF + 2.0)],
-                     "tag": "rime"})
-    BOXES.append({"min": [r2(bx), r2(top - 0.06), r2(bz - H.BECK_HALF - 1.0)], "max": [r2(bx + 4.0), top, r2(bz + H.BECK_HALF + 1.0)],
-                  "mat": "M_ice", "tag": "rime", "collide": False})
-    STATE_FLOORS.append({"tag": "rime", "min": [r2(bx), r2(bz - H.BECK_HALF - 2.0)], "max": [r2(bx + 4.0), r2(bz + H.BECK_HALF + 2.0)], "y": top})
+    # RIME: frozen to the brim; the ice carries you over. Laid in 2 m lengths,
+    # each centred on the beck where it runs and reaching past the cut's rim
+    # (BECK_HALF + 2.5): in 4 m lengths on the section's first z, an edge of
+    # the ice stood up to 0.8 m inside the cut, with a ditch a metre deep
+    # between it and the bank that the navmesh crossed and the Bearer could
+    # not climb out of toward the path (at 625.7, -334.6).
+    for sx in (bx, bx + 2.0):
+        sz = H.beck_z(sx + 1.0)
+        reach = H.BECK_HALF + 2.7
+        top = r2(min(g(xx, sz + side * (H.BECK_HALF + 2.5)) for xx in (sx, sx + 1.0, sx + 2.0) for side in (-1.0, 1.0)) - 0.15)
+        BLOCKERS.append({"min": [r2(sx), r2(bed - 0.5), r2(sz - reach)], "max": [r2(sx + 2.0), top, r2(sz + reach)], "tag": "rime"})
+        # the sheet is drawn as wide as the floor that carries: a metre
+        # narrower each side, the Bearer walked on air over the bank between
+        # the two (tools/audit_collision.sh, "floating")
+        BOXES.append({"min": [r2(sx), r2(top - 0.06), r2(sz - reach)], "max": [r2(sx + 2.0), top, r2(sz + reach)],
+                      "mat": "M_ice", "tag": "rime", "collide": False})
+        STATE_FLOORS.append({"tag": "rime", "min": [r2(sx), r2(sz - reach)], "max": [r2(sx + 2.0), r2(sz + reach)], "y": top})
     # THAW: the AI keeps out of the cut
     BLOCKERS.append({"min": [r2(bx), r2(bed - 1.0), r2(bz - H.BECK_HALF)], "max": [r2(bx + 4.0), r2(fl + 6.0), r2(bz + H.BECK_HALF)],
                      "tag": "thaw", "nav_only": True})

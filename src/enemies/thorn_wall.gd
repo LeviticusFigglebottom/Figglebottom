@@ -117,6 +117,7 @@ func _build_run(run: Array) -> void:
 		cs.shape = bx
 		body.add_child(cs)
 		body.transform = Transform3D(cb, Vector3(mid.x, height * 0.5, mid.y))
+		Surfaces.stamp_kind(body, "thorn_wall")
 		add_child(body)
 		bodies.append(body)
 	# the modelled wall (tools/art/procedural/thorn_rime.py): two sections a
