@@ -27,6 +27,9 @@ godot --path . --rendering-driver vulkan --resolution 1920x1080 \
 # the suite (asserts on the budget; prints the re-bake, release and warming numbers too)
 tools/test.sh streaming
 
+# quitting with streaming work in flight: must exit, promptly
+tools/qa/quit_check.sh
+
 # fill the cache for every area ahead of time (see "Warming the cache")
 tools/qa/warm_cache.sh [--cache-dir=PATH]
 
@@ -314,9 +317,44 @@ Added 2026-11-12. A first visit to an area computed its ground cover at the seam
 
 Checked here with the editor binary only (`--cache-seed=` pointing at a filled directory: every entry found, nothing computed). **Not checked with an exported build.**
 
+## Quitting with work in flight
+
+Added 2026-11-12. `fullgame_tarnhall` and `fullgame_reach` printed their result and then never exited (killed at 2,700 s): a neighbour was on a worker when the test quit. Cause and fix are in ADR 0014, "Quitting"; in one line, a scene `load()` on a worker waits for a main-thread frame, and the quit waited for the worker outside the frame loop.
+
+```
+tools/qa/quit_check.sh            # every case, every way of quitting; fails on a hang or a slow exit
+tools/qa/quit_check.sh preload    # one kind of work
+```
+
+Before the fix, `preload` quit by a bare `get_tree().quit()` did not exit within 60 s, every time it was tried. After, from the asking to the process being gone (headless, this box, each case twice: 0.15 s and 1.5 s into the work):
+
+| in flight | `Game.quit` | bare `get_tree().quit()` | window close request |
+|---|---|---|---|
+| a neighbour being built on a worker | 519, 364 ms | 643, 332 ms | 610, 314 ms |
+| idle-time cache warming | 326, 332 ms | 460, 277 ms | 391, 265 ms |
+| a background navmesh re-bake | 401, 312 ms | 357, 362 ms | 385, 357 ms |
+| a crossing, in the black | 566, 292 ms | 535, 315 ms | 553, 329 ms |
+
+All 24 exit 0 with no error logged. Most of each figure is the engine's own teardown: a suite with nothing in flight takes 0.33 to 0.41 s from `RESULT` to exit.
+
+Suites after the fix, with the time from `RESULT` to the process being gone:
+
+| suite | result | exit | RESULT to exit |
+|---|---|---|---|
+| streaming | 108 checks, 0 failures | 0 | 409 ms |
+| smoke | 11 checks, 0 failures | 0 | 336 ms |
+| deathloop | 26 checks, 0 failures | 0 | 341 ms |
+| gates | 151 checks, 0 failures | 0 | 514 ms |
+| fullgame_tarnhall | 213 checks, 0 failures | 0 | 538 ms |
+| fullgame_reach | two runs: 197 checks, 1 failure; then 197 checks, 0 failures | 1, then 0 | 463 ms, 434 ms |
+
+The one `fullgame_reach` failure was a duel measure ("in the count she kept by her father": 9.8 m against a limit of 9.5; 3.1 m in the second run, 3.2 m in the coordinator's earlier run). The duel is behind a sealed veil, where the streamer does nothing, and the bot's fight rolls dice; it is taken for the walk's own variance, which one passing re-run does not prove.
+
+Seen in the `fullgame_tarnhall` run and not explained: once, while the main thread flushed a worker build's queued render commands (`BuildLock.pump`), the headless renderer logged `Attempting to use an uninitialized RID`, `Parameter "m" is null` (`mesh_clear`, `mesh_add_surface`) and `unimplemented base type` (`instance_set_base`): one mesh of that build was lost to it. The walk passed. Together with the `Weather._gpu` line noted below it points at mesh RIDs going wrong when a worker and the main thread make meshes at once under the headless (dummy) renderer; whether a real renderer can do the same is not known, and the one renderer run made earlier (llvmpipe) logged nothing of the kind. Not seen in the six other suites of this pass or in the coordinator's two earlier walks.
+
 ## What the suite asserts (`tools/test.sh streaming`)
 
-102 checks, from an empty scratch cache (`user://test_streaming`), headless:
+108 checks, from an empty scratch cache (`user://test_streaming`), headless:
 
 - a cold crossing (nothing ready, empty cache) arrives, with both navmeshes baked in the background and no synchronous build phase on the main thread;
 - 25 m from a seam the neighbour starts being made ready; it stands in the tree unseen, unprocessing, in none of the groups play reads, with no hearth, foe, seam or navmesh in the world and none of its colliders in the physics space;
@@ -328,7 +366,8 @@ Checked here with the editor binary only (`--cache-seed=` pointing at a filled d
 - a rest, the turn to RIME and a cross-area respawn stay within `hitch_ms` with no synchronous phase;
 - the bridge lowered: a re-bake is asked for, the old navmesh answers meanwhile, `nav_ready` fires, no frame over `hitch_ms` and no synchronous phase, the navmesh then reaches out onto the deck, two regions stand and no more;
 - a release: the way-on gate answers the flag, the old navmesh still says shut, `nav_ready` fires within the budget, and a route runs through the opened gate;
-- idle time: from an empty cache both neighbours' ground cover and terrain appear on disk with nothing built or grafted, the next crossing reads them (no miss), and a wanted build calls the warming off.
+- idle time: from an empty cache both neighbours' ground cover and terrain appear on disk with nothing built or grafted, the next crossing reads them (no miss), and a wanted build calls the warming off;
+- quitting: three child processes quit with a preload or a crossing in flight (bare tree quit, `Game.quit`, the close request) and each must be gone within 3 s with exit 0.
 
 The budget assertion is on the **second-worst** frame's streaming work: on a shared box one frame can be taken by the OS in the middle of a 4 ms slice, and that is not a hitch of ours. The worst frame is printed beside it.
 

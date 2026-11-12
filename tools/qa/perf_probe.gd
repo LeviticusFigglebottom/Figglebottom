@@ -73,4 +73,4 @@ func _run() -> void:
 		var f := FileAccess.open(_out, FileAccess.WRITE)
 		f.store_string(JSON.stringify(rows, "\t"))
 	AudioDirector.shutdown()
-	get_tree().quit()
+	Game.quit()

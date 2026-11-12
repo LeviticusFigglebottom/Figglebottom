@@ -46,7 +46,7 @@ static func _hero_gable(root: Node3D, style: String, w: float, h: float, zoff: f
 		return false
 	var key := "%s|%d" % [style, mode]
 	if not _gable_cache.has(key):
-		var inst := (load(String(g["glb"])) as PackedScene).instantiate()
+		var inst := (BuildLock.wload(String(g["glb"])) as PackedScene).instantiate()
 		var found: Mesh = null
 		for c in inst.find_children("*", "MeshInstance3D", true, false):
 			var src := (c as MeshInstance3D).mesh
@@ -610,7 +610,7 @@ static func _stone(buf: MeshBuf, size: Vector3, pos: Vector3, rot_deg: Vector3, 
 static func _landmark(path: String, family := "", mode := 0) -> Node3D:
 	if not ResourceLoader.exists(path):
 		return null
-	var n := (load(path) as PackedScene).instantiate() as Node3D
+	var n := (BuildLock.wload(path) as PackedScene).instantiate() as Node3D
 	# set pieces (lm_*) are world meshes: shade them through the hall shader so
 	# they take the RIME snow crust, the wavefront and the same grade as the
 	# ground they stand on. Their baked colour is kept (a light pull only).

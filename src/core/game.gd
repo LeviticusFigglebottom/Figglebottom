@@ -38,6 +38,8 @@ var last_rest_report: Dictionary = {}
 var last_respawn_report: Dictionary = {}
 
 func _ready() -> void:
+	# closing the window goes through quit() too (see there)
+	get_tree().auto_accept_quit = false
 	stream = Streamer.new()
 	stream.name = "Streamer"
 	add_child(stream)
@@ -341,8 +343,8 @@ func travel_to(area_id: String, spawn_pos: Vector3, spawn_yaw := 1e9) -> void:
 	arena_locked = false   # no lock survives leaving the room that set it
 	player.lock_control(true)
 	if not await stream.prepare(area_id):
-		if player == null or not is_instance_valid(player):
-			return    # the world was put away under the crossing (title)
+		if player == null or not is_instance_valid(player) or stream.closing:
+			return    # the world was put away under the crossing (title, quit)
 		push_error("Game.travel_to: area '%s' could not be built" % area_id)
 		stream.reveal()
 		if player != null and is_instance_valid(player):
@@ -494,8 +496,29 @@ func hearth_flow(hearth: Hearthstone, p, choice := "auto") -> void:
 		p.exit_rest()
 		p.lock_control(false)
 
+## Leave the game. Everything that quits goes through here (the pause
+## sheet, the window's close button, the tests): a neighbour may be on a
+## worker thread at that moment, and it is called off and seen to end while
+## the main loop still runs (Streamer.shutdown, ADR 0014 "Quitting").
+var quitting := false
+
+func quit(code := 0) -> void:
+	if quitting:
+		return
+	quitting = true
+	if stream != null:
+		await stream.shutdown()
+	get_tree().quit(code)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		quit()
+
 func _exit_tree() -> void:
 	if stream != null:
+		# (a bare get_tree().quit() from a debug tool lands here with a worker
+		# possibly still building: reset waits for it, pumping what it needs
+		# of the main thread, BuildLock.wait_idle)
 		stream.reset()    # no worker build outlives the caches cleared below
 	AudioDirector.shutdown()
 	KitLib._scene_cache.clear()

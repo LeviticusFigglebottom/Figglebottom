@@ -29,12 +29,11 @@ func nav_wait(a: Area = null, max_s := 30.0) -> void:
 		await get_tree().physics_frame
 
 func finish() -> void:
-	if Game.stream != null:
-		Game.stream.reset()    # no worker build outlives the test
 	AudioDirector.shutdown()
 	print("")
 	print("RESULT: %d checks, %d failures" % [checks, fails])
-	get_tree().quit(1 if fails > 0 else 0)
+	# (Game.quit calls any worker build off and sees it end before the tree goes)
+	Game.quit(1 if fails > 0 else 0)
 
 func _exit_tree() -> void:
 	if Game.stream != null:

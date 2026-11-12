@@ -84,6 +84,38 @@ static func on_main(fn: Callable) -> void:
 	_ask_mx.unlock()
 	sem.wait()
 
+## load() for code a worker build runs. A scene (a GLB) loaded from a
+## WorkerThreadPool task does not come back until the main thread has run a
+## frame: ResourceLoader finishes such a load on the main loop's turn, and
+## neither flushing the RenderingServer nor anything else reachable from a
+## script stands in for that. A main thread that waits for the worker outside
+## the frame loop (a quit, a return to the title, a synchronous build) would
+## wait for ever: the hang on exit of 2026-11-12 (ADR 0014, "Quitting").
+## So the worker asks for a threaded load, which does complete by itself,
+## polls it, and has the main thread collect the result (on_main: a fraction
+## of a millisecond there, done by every pump).
+## What was loaded is kept until the next build starts, so a piece set down
+## two hundred times is one round trip.
+static var _wloaded: Dictionary = {}
+
+static func wload(path: String) -> Resource:
+	if OS.get_thread_caller_id() == OS.get_main_thread_id():
+		return load(path)
+	if _wloaded.has(path):
+		return _wloaded[path]
+	if ResourceLoader.load_threaded_request(path) != OK:
+		return null
+	while ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		OS.delay_usec(300)
+	var box: Array = [null]
+	on_main(func() -> void: box[0] = ResourceLoader.load_threaded_get(path))
+	_wloaded[path] = box[0]
+	return box[0]
+
+## Main thread, with no worker running: let go of what wload kept.
+static func forget_loaded() -> void:
+	_wloaded = {}
+
 ## Main thread: wait (pumping) until no worker build runs. The synchronous
 ## AreaBuilder.build calls this, so two builds never share the builders'
 ## own statics. `done` reports whether the worker has ended.

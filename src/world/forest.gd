@@ -261,7 +261,7 @@ static func _hero(name: String, fam: String, mode: int, sway: float, sway_h: flo
 	var path := HERO_DIR + name + ".glb"
 	if not ResourceLoader.exists(path):
 		return null
-	var inst := (load(path) as PackedScene).instantiate()
+	var inst := (BuildLock.wload(path) as PackedScene).instantiate()
 	var out: Mesh = null
 	for c in inst.find_children("*", "MeshInstance3D", true, false):
 		var src := (c as MeshInstance3D).mesh

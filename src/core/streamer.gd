@@ -478,8 +478,14 @@ func _start_prep(area_id: String) -> void:
 	prep.t0_us = Time.get_ticks_usec()
 	_prep = prep
 	AreaBuilder.cancel_worker = false
+	if _orphans.is_empty():
+		BuildLock.forget_loaded()
 	BuildLock.worker_busy = true
-	prep.task = WorkerThreadPool.add_task(_build_worker.bind(prep), false, "area build " + area_id)
+	# High priority, though nothing hurries it: posted low, the threaded
+	# loads a build asks for (BuildLock.wload) never started and it waited
+	# on them for ever (the pool's limit on low-priority tasks at once,
+	# most likely: ADR 0014, "Quitting").
+	prep.task = WorkerThreadPool.add_task(_build_worker.bind(prep), true, "area build " + area_id)
 
 ## Worker thread: the whole build, off the tree.
 func _build_worker(prep: Prep) -> void:
@@ -490,7 +496,7 @@ func _build_worker(prep: Prep) -> void:
 	var t := Time.get_ticks_usec()
 	var out := AreaBuilder.build_detached(prep.area_id)
 	t = Time.get_ticks_usec()
-	var held := _preload_actors(def)
+	var held: Array = [] if out.is_empty() else _preload_actors(def)
 	BuildProf.add(prep.area_id, "worker: models read ahead", Time.get_ticks_usec() - t)
 	prep.mx.lock()
 	prep.preloaded = held
@@ -531,8 +537,10 @@ static func _preload_actors(def: Dictionary) -> Array:
 				paths[scene] = true
 	var held: Array = []
 	for path in paths:
+		if AreaBuilder._cancelled():
+			break     # (nobody waits for this build any more)
 		if ResourceLoader.exists(path):
-			var r: Resource = load(path)
+			var r: Resource = BuildLock.wload(path)   # (never a plain load on a worker: see there)
 			if r != null:
 				held.append(r)
 	return held
@@ -729,6 +737,36 @@ func yield_to_sync_build() -> void:
 			if not WorkerThreadPool.is_task_completed(t):
 				return false
 		return true)
+
+## The game is closing (Game.quit): call every worker off and see them end
+## while the main loop still runs, a frame at a time, so nothing is left for
+## the engine to wait on at exit. Then drop everything (reset).
+var closing := false
+
+func shutdown(max_s := 5.0) -> void:
+	closing = true
+	look_ahead = false
+	warm_ahead = false
+	_epoch += 1
+	_drop_prep()
+	AreaBuilder.cancel_worker = true
+	var t0 := Time.get_ticks_msec()
+	while workers_running() and Time.get_ticks_msec() - t0 < int(max_s * 1000.0):
+		BuildLock.pump()
+		_poll_orphans()
+		await get_tree().process_frame
+	reset()
+
+## A build or a cache warming is on a worker thread now.
+func workers_running() -> bool:
+	if _wc_task >= 0 and not WorkerThreadPool.is_task_completed(_wc_task):
+		return true
+	if _prep != null and _prep.task >= 0 and not WorkerThreadPool.is_task_completed(_prep.task):
+		return true
+	for o in _orphans:
+		if o.task >= 0 and not WorkerThreadPool.is_task_completed(o.task):
+			return true
+	return false
 
 ## Drop everything at once (the return to the title: the world is torn down
 ## behind its veil, so nothing here needs spreading out).

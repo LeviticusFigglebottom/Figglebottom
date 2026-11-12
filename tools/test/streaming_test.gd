@@ -344,9 +344,33 @@ func _run() -> void:
 	await _settle_idle(60.0)
 	await _warms(cache_dir)
 	await _settle_idle(60.0)
+	_quits()
 	check(max_alive <= 2 and st.areas_alive() == 1, "one area stands at the end (max ever %d)" % max_alive)
 	print("    main thread waited at most %.1f ms on a worker build's lock" % BuildLock.max_wait_ms)
 	finish()
+
+## The game is quit while a neighbour is on a worker thread: the process
+## must go, promptly (it once never did: ADR 0014, "Quitting"). Each case is
+## its own process (tools/qa/quit_probe.gd) under `timeout`, so a hang fails
+## here in a minute and not at the suite's time limit. The whole matrix
+## (four kinds of work, three ways of quitting) is tools/qa/quit_check.sh.
+func _quits() -> void:
+	print("== quitting with a build in flight")
+	for c in [["preload", "tree"], ["preload", "game"], ["crossing", "close"]]:
+		var out: Array = []
+		var code := OS.execute("timeout", ["60", OS.get_executable_path(), "--headless", "--path", ProjectSettings.globalize_path("res://"),
+			"--", "--scene=res://tools/qa/quit_probe.tscn", "--quit-case=" + String(c[0]), "--quit-how=" + String(c[1]),
+			"--quit-after-ms=1500", "--cache-dir=user://quit_probe/cache"], out, true)
+		var gone_ms := int(Time.get_unix_time_from_system() * 1000.0)
+		var text := "\n".join(out)
+		var asked := -1
+		for line in text.split("\n"):
+			if line.begins_with("[quit] asked at "):
+				asked = int(line.trim_prefix("[quit] asked at "))
+		var took := gone_ms - asked if asked > 0 else -1
+		check(code == 0 and asked > 0 and took < 3000,
+			"%s in flight, quit by %s: the process is gone %d ms after the asking (exit %d)" % [c[0], c[1], took, code])
+		check(not text.contains("did not end"), "and no worker had to be given up on")
 
 ## Idle time warms the cache: a neighbour never visited on this machine has
 ## its ground cover and terrain computed before the Bearer walks to its seam.
