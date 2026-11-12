@@ -4187,6 +4187,666 @@
    "texture_max": 1024,
    "collision": null,
    "output": "assets/models/kit/kit_tw_wood_shelter.glb"
+  },
+  {
+   "name": "kit_sf_capstan",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "1f8d4084-5e7a-4be2-bbd4-e6cdfb281416",
+    "task_id": "0308fda3-97b7-47b8-9ec8-633e7f7e6e48",
+    "remesh_operator": "c8b01d87-13ec-4ece-aae7-00803815bc2b",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sf_capstan/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.2
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_capstan.glb"
+  },
+  {
+   "name": "kit_sf_salt_basket",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "2279d5c6-a7c8-48b1-a198-764cb0bf6855",
+    "task_id": "e978385e-ded3-4535-baf8-12181d534357",
+    "remesh_operator": "0868d781-43bf-408e-a346-521110111135",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sf_salt_basket/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.35
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_salt_basket.glb"
+  },
+  {
+   "name": "kit_sf_gutting_bench",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "873f39b1-7ac3-423a-ad31-3d17afa5f251",
+    "task_id": "b6f6a7b9-9dec-4a17-895a-be69587c6d06",
+    "remesh_operator": "7bedf177-87e9-4633-881e-f6f7fb400300",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sf_gutting_bench/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "fit": {
+     "x": 2.3,
+     "y": 0.9,
+     "z": 1.02
+    }
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_gutting_bench.glb"
+  },
+  {
+   "name": "kit_sf_tar_pot",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "9c18e42e-4b37-44ab-b467-1a02c69efb1e",
+    "task_id": "a9a7756b-a9e2-41fe-99d3-0fcb0aacb4c7",
+    "remesh_operator": "6ddb3eeb-86da-42fc-9d91-ce315eab8907",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/sf_tar_pot/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_tar_pot.glb"
+  },
+  {
+   "name": "kit_lw_peat_sled",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "109999d4-3589-4e13-b957-18146092ede4",
+    "task_id": "965d4ce9-8ed5-44ba-a150-84d1e8cae3c9",
+    "remesh_operator": "e1f6fb3c-e4ba-4d84-8be0-4df27a467826",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/lw_peat_sled/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.8
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_peat_sled.glb"
+  },
+  {
+   "name": "kit_lw_bier",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "202f7f0c-f28e-4690-862c-221e2317f5f8",
+    "task_id": "21bd2c91-411f-414a-8e6e-c2b3a5ee953a",
+    "remesh_operator": "564bdbea-0235-41a2-b495-8132f1b7ec84",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/lw_bier/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.9
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_bier.glb"
+  },
+  {
+   "name": "kit_lw_kin_post",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "8fc9cf4f-df71-44c7-b81b-aec41292a4e7",
+    "task_id": "0e15b816-5876-4122-909c-2eecf80716db",
+    "remesh_operator": "8fc68c26-a6d0-4e32-8cb5-5f1157b4f1d7",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 3000
+   },
+   "input": "raw/lw_kin_post/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.15
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_kin_post.glb"
+  },
+  {
+   "name": "kit_lw_bloomery",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "738337c0-03b9-4735-a5a9-064beb46e74f",
+    "task_id": "697d5ac5-4359-4fd1-be5b-cd60d99c14f3",
+    "remesh_operator": "9e3237d2-4045-43b9-865c-b392dbc3d90e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/lw_bloomery/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_bloomery.glb"
+  },
+  {
+   "name": "lm_cutters_bothy",
+   "category": "landmarks",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "6c9d1c69-3f2a-4f0a-bbd6-0d08b8fa80e7",
+    "task_id": "c714186f-25e7-4fa9-bf89-e905364348a7",
+    "remesh_operator": "1638ddb9-fea6-44a7-9a1b-95b2766e7a59",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 10000
+   },
+   "input": "raw/lm_cutters_bothy/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 4.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 2048,
+   "collision": null,
+   "output": "assets/models/landmarks/lm_cutters_bothy.glb"
+  },
+  {
+   "name": "kit_sf_boat",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "a24b0953-dd7e-46a8-af7d-7a92ac173ff3",
+    "task_id": "db0a9947-b8dc-47f1-95a7-d168ffe0a19c",
+    "remesh_operator": "c5b218ba-976f-47e3-99e1-81eba825bc04",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 8000
+   },
+   "input": "raw/sf_boat/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 6.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 2048,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_boat.glb"
+  },
+  {
+   "name": "kit_sr_shearing_stool",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "b99c90e1-7256-40af-a366-dd70c40c08dd",
+    "task_id": "f02d9d6f-16d0-47c0-b309-43c8ea53eacf",
+    "remesh_operator": "294bd5f8-342d-41ae-80b3-2ee349a91180",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/sr_shearing_stool/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_shearing_stool.glb"
+  },
+  {
+   "name": "kit_sr_cheese_press",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "edfdb2fd-72f3-4d26-a306-64ccd0dd98ad",
+    "task_id": "6956b692-5036-4983-b813-f97792eb64a5",
+    "remesh_operator": "d98b876a-1cdf-4986-b3ee-b2d3f8834271",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sr_cheese_press/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.05
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_cheese_press.glb"
+  },
+  {
+   "name": "kit_sr_wool_frame",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "812e5988-7d3b-4bb9-8a8a-21c9ba9fdfda",
+    "task_id": "ecedb316-d7ed-4c4c-9f80-7d353cbc1b30",
+    "remesh_operator": "f20c69dc-deaf-42b3-af96-9fe0c75a064a",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/sr_wool_frame/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 3.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_wool_frame.glb"
+  },
+  {
+   "name": "kit_sr_ewe",
+   "category": "kit",
+   "kind": "character",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "77fc88d9-3fa5-4172-9333-2e91a28fa06b",
+    "task_id": "bc47e9d1-aa6e-4c0c-9ca1-b3fd05cbd7d1",
+    "remesh_operator": "8bcc8b4d-6a88-4616-a90e-d829d44cafbc",
+    "model_version": "v3.1-20260211; rig v3.0-20260909",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000,
+    "rig_operator": "7e681723-efab-4e12-8227-ae1a5ae08df0",
+    "rig": "quadruped"
+   },
+   "input": "raw/kit_sr_ewe/rigged.fbx",
+   "anims": {
+    "walk": "raw/kit_sr_ewe/anims/walk.fbx"
+   },
+   "loop": [
+    "walk"
+   ],
+   "in_place": [
+    "walk"
+   ],
+   "collision": null,
+   "texture_max": 1024,
+   "yaw_deg": 180,
+   "root_bone": "Root",
+   "target": {
+    "height": 0.94
+   },
+   "origin": "bottom_center",
+   "output": "assets/models/kit/kit_sr_ewe.glb"
+  },
+  {
+   "name": "kit_sf_rack_tall",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "fdeca51f-b71b-4a72-99c4-8aed6de09f55",
+    "task_id": "4cdaa2b9-90b0-4b04-a7b3-468286a4c206",
+    "remesh_operator": "63fd5542-d544-46a7-b8ff-da07b2cefaa1",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/sf_rack_tall/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 3.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_rack_tall.glb"
+  },
+  {
+   "name": "kit_sf_rack_low",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "a42e36e2-9ed7-46d7-b8c0-e435bc5abc54",
+    "task_id": "cf00ff71-cf9a-44a7-95f1-d1257982d759",
+    "remesh_operator": "0e238164-8991-41a7-b167-58c5b3c69d5c",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sf_rack_low/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_rack_low.glb"
+  },
+  {
+   "name": "kit_sf_net_pile",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "3080f746-34fb-4076-9e0e-1e74f9fd6ef7",
+    "task_id": "1cb27e74-1c0b-447f-9ee2-5262415eef14",
+    "remesh_operator": "5f05a06b-97f8-45be-82cd-a261255cb228",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sf_net_pile/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 0.85
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_net_pile.glb"
+  },
+  {
+   "name": "kit_sf_fish_barrels",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "d8a56b80-df48-4d32-aa43-106a2dc246bf",
+    "task_id": "2f43c456-24bb-4ffd-a7bf-9b05f37eec3c",
+    "remesh_operator": "1a4eaf06-8c9c-461f-89c6-58ec30728ec1",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sf_fish_barrels/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.15
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_fish_barrels.glb"
+  },
+  {
+   "name": "kit_sf_salt_sacks",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "a4cf0291-a65c-48c5-adba-5067954c30b6",
+    "task_id": "4e2c921b-6593-4c7d-b601-1e92c785a5ae",
+    "remesh_operator": "e30565f2-7b11-4297-9a86-2c7e29eb5b5c",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/sf_salt_sacks/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_salt_sacks.glb"
+  },
+  {
+   "name": "kit_sf_mooring_post",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "3f0cc1ce-1806-4070-b18a-b4d305dda884",
+    "task_id": "280b1503-bab9-4b96-94ae-74ccdc88f9b5",
+    "remesh_operator": "59321c1a-2662-4c8c-b278-9bf0c755569b",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/sf_mooring_post/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.3
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_mooring_post.glb"
+  },
+  {
+   "name": "kit_sf_boat_half",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "592e8852-c32e-464d-8c88-dee829633e27",
+    "task_id": "cf3496bd-5321-424f-8e69-89a875d2db9d",
+    "remesh_operator": "15947c24-72fe-4a4b-a377-d9298df2ec75",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 8000
+   },
+   "input": "raw/sf_boat_half/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 6.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_boat_half.glb"
+  },
+  {
+   "name": "kit_lw_stone_b",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "561165d4-f1dc-453a-b113-5c92ad0f8cb3",
+    "task_id": "26fea531-fcc5-4634-a9b2-4096e5a0200a",
+    "remesh_operator": "c33cc32d-15d5-42c9-8f20-6f3377c03c52",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 3000
+   },
+   "input": "raw/lw_stone_b/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_stone_b.glb"
+  },
+  {
+   "name": "kit_lw_stone_c",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "4fba2952-27a6-4768-b910-e94115eb8952",
+    "task_id": "f0df91f4-b1fc-481c-b243-59e434e58b8e",
+    "remesh_operator": "5e76a3d7-6360-4ab7-8b13-96b736e951a5",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/lw_stone_c/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_stone_c.glb"
+  },
+  {
+   "name": "kit_lw_turf_barrow",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "afe2f08f-879e-4060-bb9f-58fa879e48db",
+    "task_id": "a74ff665-591d-4f04-9b25-0d5dae3bd960",
+    "remesh_operator": "3d524b2b-975a-4cf6-9e4e-74e4ecc94bcf",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/lw_turf_barrow/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.2
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_turf_barrow.glb"
+  },
+  {
+   "name": "kit_lw_offering_slab",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "5b9c58a7-d426-4eac-8883-13496945b9d4",
+    "task_id": "58886fa1-bdb8-4c87-b1ea-143043aeed1f",
+    "remesh_operator": "2c231ff8-5c5a-43b6-8b66-6a938e78a64a",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/lw_offering_slab/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.7
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_offering_slab.glb"
+  },
+  {
+   "name": "kit_sr_fodder_rack",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "e8acbebe-4de7-4920-a5a2-eea752a76bdb",
+    "task_id": "10a785b1-a67a-4e38-b3a9-72966d6d83cb",
+    "remesh_operator": "9b5b5481-06c1-4a24-a142-ad0f80caaf44",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sr_fodder_rack/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.5
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_fodder_rack.glb"
+  },
+  {
+   "name": "kit_sr_stone_trough",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "7fc5ca73-378c-4c80-be11-9a26073810ee",
+    "task_id": "2ba0345f-36a6-4f0c-abc5-381fc0b2c608",
+    "remesh_operator": "b412b06f-bd77-40df-b7a3-f898e8fe1b24",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 3000
+   },
+   "input": "raw/sr_stone_trough/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_stone_trough.glb"
+  },
+  {
+   "name": "kit_sr_lamb_pen",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "1d4ed8aa-d563-4b90-9601-15ec56ea2f1d",
+    "task_id": "1a0ea1c9-3223-46d5-b1b9-5bd72a0cdd0c",
+    "remesh_operator": "d3cb0be0-93cd-42f5-b28a-9d384752148e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/sr_lamb_pen/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_lamb_pen.glb"
   }
  ]
 }

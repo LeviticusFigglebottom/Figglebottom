@@ -476,7 +476,7 @@ func _reach() -> void:
 	check(kinds.has("drover") and kinds.has("frost_ram") and kinds.has("fellcaller") and not kinds.has("rimewalker")
 		and not kinds.has("hearthhound") and not kinds.has("netmender"), "the Reach's own foes, no stand-ins (%s)" % str(kinds.keys()))
 	var standing := get_tree().get_nodes_in_group("flock_rime").filter(func(n): return area.is_ancestor_of(n))
-	check(standing.size() == 70, "seventy sheep stand on the slope (%d)" % standing.size())
+	check(standing.size() == 71, "seventy sheep stand on the slope, and Smudge at the sheiling door (%d)" % standing.size())
 	var fc: Fellcaller = null
 	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
 		if e is Fellcaller and e.can_process():
@@ -514,7 +514,7 @@ func _reach() -> void:
 		"in a rebuilt Reach nothing is left standing")
 	var lying := area.find_children("*", "Node3D", true, false).filter(func(n):
 		return absf((n as Node3D).scale.y - 0.58) < 0.001 and absf((n as Node3D).scale.x - 1.0) < 0.001)
-	check(lying.size() == 70, "the seventy lie where they stood (%d)" % lying.size())
+	check(lying.size() == 71, "the seventy lie where they stood, and Smudge (%d)" % lying.size())
 	check(Game.find_hearth("hs_high_fold") != null, "and the High Fold stays lit")
 
 	print("== after: in the fold, in the thaw")

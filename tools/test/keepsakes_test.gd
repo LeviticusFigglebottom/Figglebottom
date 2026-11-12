@@ -52,10 +52,12 @@ func _journal_lines(thread_id: String) -> Array:
 			return t["lines"]
 	return []
 
-func _expected(thread_id: String, n: int) -> Array:
+## The thread's first n lines. `without`: a step this walk does not take (the
+## points of interest add one to a thread, found off the thread's own road).
+func _expected(thread_id: String, n: int, without := "") -> Array:
 	for t in Keepsakes.threads_def():
 		if t["id"] == thread_id:
-			return (t["steps"] as Array).slice(0, n).map(func(s): return String(s["line"]))
+			return (t["steps"] as Array).filter(func(s): return String(s["flag"]) != without).slice(0, n).map(func(s): return String(s["line"]))
 	return []
 
 func _save_and_reload() -> void:
@@ -211,7 +213,7 @@ func _run() -> void:
 	await ticks(2)
 	check(ui.text_label.text == "She does this faster. I don't know how she does it.", "Brede mends, badly")
 	await _close(ui)
-	check(_journal_lines("ingra_rye") == _expected("ingra_rye", 4), "Ingra's thread is whole, in order")
+	check(_journal_lines("ingra_rye") == _expected("ingra_rye", 4, "ks_ingra_bowls"), "Ingra's thread is whole, in order")
 	check(_journal_lines("brede_float") == _expected("brede_float", 4), "Brede's thread is whole, in order")
 
 	print("== save and load the whole journal")

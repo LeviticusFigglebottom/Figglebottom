@@ -34,6 +34,13 @@ var chip_hint := "The ice holds it fast. A heavy blow might chip it free."
 ## the words go up on the reading panel, the flag is raised, and it stays
 var look_text := ""
 
+## nothing of its own is shown: the thing looked at or used is already
+## standing there as a prop (a ewe at a sheiling door)
+var bare := false
+## only offered to a Bearer who has this with him, worn or carried (the
+## Shepherd's Fleece, whose pocket Smudge comes to)
+var needs_item := ""
+
 var _zone: Interactable
 var _shown := true
 
@@ -72,24 +79,33 @@ func _ready() -> void:
 		# a relic shows ITSELF — its own shape on the stones, kept in a
 		# small gold shimmer instead of the brazier
 		var relic := KitLib.instance(display_kit)
-		relic.position.y = display_lift
+		relic.position = Vector3(display_offset.x, display_lift, display_offset.y)
 		add_child(relic)
 		var l := OmniLight3D.new()
 		l.light_color = Color(1.0, 0.88, 0.58)
 		l.light_energy = 1.3
 		l.omni_range = 3.2
 		l.shadow_enabled = false
-		l.position.y = 0.7 + display_lift * 0.8
+		l.position = Vector3(display_offset.x, 0.7 + display_lift * 0.8, display_offset.y)
 		add_child(l)
 		var tw := l.create_tween()
 		tw.set_loops(0)
 		tw.tween_property(l, "light_energy", 0.8, 1.3).set_trans(Tween.TRANS_SINE)
 		tw.tween_property(l, "light_energy", 1.3, 1.3).set_trans(Tween.TRANS_SINE)
+	elif bare:
+		pass
 	else:
 		var brazier := KitLib.instance("brazier")
 		brazier.scale = Vector3(0.55, 0.55, 0.55)
 		add_child(brazier)
 		KitLib.add_flame_lights(brazier, 1.4, 3.5)
+	if needs_item != "":
+		_zone.enabled = false
+		var nt := Timer.new()
+		nt.wait_time = 0.4
+		nt.timeout.connect(func(): _zone.enabled = _shown and _has_needed())
+		add_child(nt)
+		nt.start()
 	if appear_flag != "" and not World.flag(appear_flag):
 		visible = false
 		_zone.enabled = false
@@ -104,6 +120,15 @@ func _ready() -> void:
 				t.queue_free())
 		add_child(t)
 		t.start()
+
+func _has_needed() -> bool:
+	var p = Game.player
+	if p == null or not is_instance_valid(p):
+		return false
+	if int(p.inventory.get(needs_item, 0)) > 0:
+		return true
+	var worn = p.get("armour")
+	return worn is Dictionary and needs_item in (worn as Dictionary).values()
 
 ## A heavy blow landed on it (player.gd, the heavy swing's contact).
 func chip(player) -> void:

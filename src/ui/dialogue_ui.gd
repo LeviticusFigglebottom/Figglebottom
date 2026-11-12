@@ -150,18 +150,21 @@ func _repeat_lines() -> Array:
 	if not closing.is_empty():
 		return closing
 	for w in npc_cfg.get("lines_when", []):
+		if w.get("closing_only", false):
+			continue    # said once, when the thing is shown; not a new habit of speech
 		if World.flag(String(w.get("flag", ""))):
 			if String(w.get("set_flag", "")) != "":
 				World.set_flag(String(w["set_flag"]))
 			return w.get("lines", [])
 	return npc_cfg.get("lines_repeat", [])
 
-## The "lines_when" lines of an errand closed in this talk, or none.
+## The "lines_when" lines of every errand closed in this talk, or none.
 func _closing_lines() -> Array:
+	var out: Array = []
 	for w in npc_cfg.get("lines_when", []):
 		if _closed_now.has(String(w.get("flag", ""))):
-			return w.get("lines", [])
-	return []
+			out.append_array(w.get("lines", []))    # (two things shown at once are both answered)
+	return out
 
 ## Things handed over just by talking (SLICE.md: "talk to Ingra carrying the
 ## sack"): no menu entry, the errand closes when you arrive with it.
@@ -218,6 +221,11 @@ func _show_line() -> void:
 	if _line_i < _lines.size():
 		text_label.text = String(_lines[_line_i])
 		_speak(String(_lines[_line_i]))
+		# a line that is itself a Keepsakes step when it is heard ("line_flags":
+		# {line: flag}): Calder counting Smudge last (POI.md 7.2)
+		var lf: Dictionary = npc_cfg.get("line_flags", {})
+		if lf.has(text_label.text) and not World.flag(String(lf[text_label.text])):
+			World.set_flag(String(lf[text_label.text]))
 		# a line may carry a sound of its own ("line_sfx": {line: [path, db,
 		# pitch]}): Old Calder humming three notes (REACH.md 7)
 		var ls: Dictionary = npc_cfg.get("line_sfx", {})
