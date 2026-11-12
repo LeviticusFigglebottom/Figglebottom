@@ -44,6 +44,8 @@ poi_thornwold_thornwold_thaw                 mean   70.6  <10  10.7%   | before 
 - **Just under:** the Tarn Causeway 68.2, the Kettle Road 66.1 (it was 7.2 with 84% black), the Last Mound 64.4, the Hedge 68.1.
 - **Very dark pixels:** every cut view is at 0.2% or less below 10.
 - **Thornwold's canopy** keeps 7–11% of pixels below 10. That is leaf shadow under the trees, and in `thornwold_thornwold` my camera has a branch at the lens. To lift it further, its leaves' own shade, or a canopy fill, is the next step.
-- **The other regions' THAW under overhangs:**
-  - From the gallery v4 THAW set: Saltfell and Coldwell are at 0% below 10 and Shepherd's Reach at 0%, so nothing there needs a fill.
-  - Lowe's Last Mound was the one dark spot, and it is fixed above.
+- **The other regions' THAW under overhangs** (from the gallery v4 THAW set, main):
+  - **Coldwell, `the_ice_falls`:** 8.0% below 10. That is the underside of the shelter's roof over the path. This is the one left over the 5% line, and the next candidate for a fill (Coldwell is not generated: `data/areas/coldwell.json` takes a `shade_fills` entry directly).
+  - **Saltfell:** `the_cliff_graves` 55 and `cliff_top_start` 57 mean, with 0.0–0.3% below 10. They are dim rather than black: a low dusk sun on dark turf.
+  - **Lowe:** the Last Mound is fixed above. The rest of Lowe is ≥ 74 with ≤ 0.8% below 10.
+  - **Shepherd's Reach:** every view is ≥ 99 with ≤ 0.1% below 10.
