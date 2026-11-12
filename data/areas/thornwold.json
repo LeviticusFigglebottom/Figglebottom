@@ -168,7 +168,8 @@
    ],
    "rot": 68.0,
    "tag": "thaw",
-   "smoke": 2.2
+   "smoke": 2.2,
+   "range": 75.0
   },
   {
    "kit": "tw_clamp_c",
@@ -179,7 +180,8 @@
    ],
    "rot": 130.0,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "range": 75.0
   },
   {
    "kit": "tw_clamp_b",
@@ -190,7 +192,8 @@
    ],
    "rot": 187.0,
    "tag": "thaw",
-   "smoke": 2.2
+   "smoke": 2.2,
+   "range": 75.0
   },
   {
    "kit": "tw_clamp_c",
@@ -201,7 +204,8 @@
    ],
    "rot": 200.0,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "range": 75.0
   },
   {
    "kit": "tw_clamp_b",
@@ -211,7 +215,8 @@
     -309.42
    ],
    "rot": 340.0,
-   "smoke": 2.2
+   "smoke": 2.2,
+   "range": 75.0
   },
   {
    "kit": "tw_clamp_b",
@@ -221,7 +226,8 @@
     -315.4
    ],
    "rot": 133.0,
-   "smoke": 2.2
+   "smoke": 2.2,
+   "range": 75.0
   },
   {
    "kit": "tw_clamp_a",
@@ -230,7 +236,8 @@
     34.2,
     -309.6
    ],
-   "rot": 25
+   "rot": 25,
+   "range": 75.0
   },
   {
    "kit": "tw_cordwood",
@@ -239,7 +246,8 @@
     34.39,
     -294.27
    ],
-   "rot": -58.0
+   "rot": -58.0,
+   "range": 75.0
   },
   {
    "kit": "tw_cordwood",
@@ -248,7 +256,8 @@
     35.11,
     -317.73
    ],
-   "rot": -238.0
+   "rot": -238.0,
+   "range": 75.0
   },
   {
    "kit": "tw_wood_shelter",
@@ -257,7 +266,8 @@
     34.35,
     -310.5
    ],
-   "rot": 90
+   "rot": 90,
+   "range": 75.0
   },
   {
    "kit": "tw_sledge",
@@ -266,7 +276,8 @@
     35.24,
     -319.2
    ],
-   "rot": 74
+   "rot": 74,
+   "range": 75.0
   },
   {
    "kit": "tw_charcoal_sacks",
@@ -275,7 +286,8 @@
     35.0,
     -318.6
    ],
-   "rot": 200
+   "rot": 200,
+   "range": 75.0
   },
   {
    "kit": "creel_stack",
@@ -304,7 +316,8 @@
     33.58,
     -313.85
    ],
-   "rot": 4
+   "rot": 4,
+   "range": 75.0
   },
   {
    "kit": "tw_hurdle",
@@ -313,7 +326,8 @@
     33.55,
     -313.85
    ],
-   "rot": -3
+   "rot": -3,
+   "range": 75.0
   },
   {
    "kit": "tw_hurdle",
@@ -322,7 +336,8 @@
     33.53,
     -313.85
    ],
-   "rot": 5
+   "rot": 5,
+   "range": 75.0
   },
   {
    "kit": "tw_cordwood",
@@ -331,7 +346,8 @@
     33.62,
     -315.7
    ],
-   "rot": 84
+   "rot": 84,
+   "range": 75.0
   },
   {
    "kit": "tw_collier_hut",
@@ -340,7 +356,8 @@
     34.29,
     -293.0
    ],
-   "rot": 141.07
+   "rot": 141.07,
+   "range": 75.0
   },
   {
    "kit": "tw_hut_yard",
@@ -350,7 +367,8 @@
     -295.55
    ],
    "rot": 141.07,
-   "collide": false
+   "collide": false,
+   "range": 45.0
   },
   {
    "kit": "tw_hut_thaw",
@@ -366,7 +384,8 @@
     0.8,
     0.9,
     3.2
-   ]
+   ],
+   "range": 45.0
   },
   {
    "kit": "tw_hut_rime",
@@ -377,7 +396,8 @@
    ],
    "rot": 141.07,
    "tag": "rime",
-   "collide": false
+   "collide": false,
+   "range": 45.0
   },
   {
    "kit": "tw_riddle_stand",
@@ -386,7 +406,8 @@
     34.28,
     -296.56
    ],
-   "rot": 181.07
+   "rot": 181.07,
+   "range": 75.0
   },
   {
    "kit": "tw_charcoal_sacks",
@@ -395,7 +416,8 @@
     34.45,
     -292.78
    ],
-   "rot": 116.07
+   "rot": 116.07,
+   "range": 75.0
   },
   {
    "kit": "tw_gatepost",
@@ -404,7 +426,8 @@
     35.83,
     -303.5
    ],
-   "rot": 98
+   "rot": 98,
+   "range": 45.0
   },
   {
    "kit": "tw_gatepost",
@@ -413,7 +436,8 @@
     35.81,
     -300.5
    ],
-   "rot": 84
+   "rot": 84,
+   "range": 45.0
   },
   {
    "kit": "tw_gatepost",
@@ -422,7 +446,8 @@
     36.66,
     -303.5
    ],
-   "rot": -85
+   "rot": -85,
+   "range": 45.0
   },
   {
    "kit": "tw_gatepost",
@@ -431,7 +456,8 @@
     36.55,
     -300.5
    ],
-   "rot": -99
+   "rot": -99,
+   "range": 45.0
   },
   {
    "kit": "tw_hedging_tools",
@@ -440,7 +466,8 @@
     36.02,
     -308.4
    ],
-   "rot": 200
+   "rot": 200,
+   "range": 45.0
   },
   {
    "kit": "tw_stake_bundle",
@@ -450,7 +477,8 @@
     -306.6
    ],
    "rot": 96,
-   "collide": false
+   "collide": false,
+   "range": 45.0
   },
   {
    "kit": "tw_shaving_horse",
@@ -459,7 +487,8 @@
     36.15,
     -307.4
    ],
-   "rot": 150
+   "rot": 150,
+   "range": 45.0
   },
   {
    "kit": "tw_hurdle",
@@ -470,7 +499,8 @@
    ],
    "rot": 90,
    "tilt": -14,
-   "collide": false
+   "collide": false,
+   "range": 75.0
   },
   {
    "kit": "tw_hurdle",
@@ -481,7 +511,8 @@
    ],
    "rot": 94,
    "tilt": -17,
-   "collide": false
+   "collide": false,
+   "range": 75.0
   },
   {
    "kit": "tw_stile",
@@ -491,7 +522,8 @@
     -303.7
    ],
    "rot": -35.0,
-   "collide": false
+   "collide": false,
+   "range": 45.0
   },
   {
    "kit": "tw_stile",
@@ -501,7 +533,8 @@
     -309.44
    ],
    "rot": -35.0,
-   "collide": false
+   "collide": false,
+   "range": 45.0
   }
  ],
  "landmarks": [
@@ -574,7 +607,8 @@
     "rot": 0,
     "scale": 1.0,
     "family": "M_thorn_rime",
-    "range": 70.0
+    "range": 40.0,
+    "shadow": false
    }
   },
   {
@@ -602,7 +636,8 @@
     "rot": 0,
     "scale": 1.0,
     "family": "M_thorn_rime",
-    "range": 70.0
+    "range": 40.0,
+    "shadow": false
    }
   }
  ],

@@ -78,7 +78,7 @@
     944,
     -456
    ],
-   "density": 1.92,
+   "density": 1.34,
    "tag": "thaw",
    "near": [
     [
@@ -92,7 +92,11 @@
     0.75,
     1.0
    ],
-   "range": 40
+   "range": 40,
+   "scale": [
+    0.5,
+    1.0
+   ]
   },
   {
    "kind": "starmoss",
@@ -102,7 +106,7 @@
     964,
     -364
    ],
-   "density": 1.0,
+   "density": 0.7,
    "tag": "thaw",
    "splat": [
     [
@@ -116,7 +120,11 @@
     0.75,
     1.0
    ],
-   "range": 40
+   "range": 40,
+   "scale": [
+    0.5,
+    1.0
+   ]
   },
   {
    "kind": "hoarfeather",

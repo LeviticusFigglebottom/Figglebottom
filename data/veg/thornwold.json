@@ -14,7 +14,7 @@
     -276.0
    ],
    "density": 0.6,
-   "range": 45
+   "range": 40
   },
   {
    "kind": "bilberry",
@@ -25,7 +25,7 @@
     -276.0
    ],
    "density": 1.0,
-   "range": 34
+   "range": 30
   },
   {
    "kind": "moss_cushion",
@@ -36,7 +36,7 @@
     -276.0
    ],
    "density": 0.5,
-   "range": 36,
+   "range": 30,
    "splat": [
     [
      2,
@@ -66,7 +66,7 @@
     0.8,
     1.2
    ],
-   "range": 60
+   "range": 45
   },
   {
    "kind": "birch_sapling",
@@ -89,7 +89,7 @@
     0.7,
     1.25
    ],
-   "range": 60
+   "range": 45
   },
   {
    "kind": "bracken",
@@ -104,7 +104,7 @@
     0.6,
     0.8
    ],
-   "range": 45
+   "range": 40
   }
  ]
 }

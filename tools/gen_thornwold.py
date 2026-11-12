@@ -319,13 +319,21 @@ for gid, r in (("stile_outer", R3), ("stile_inner", R2)):
     GATES.append({"id": gid, "at": at(sx, sz), "rot": rot, "width": STILE_GAP - 0.4, "tag": "rime", "leaves": False, "height": 2.6,
                   "locked_prompt": "Grown over", "open_prompt": "Break the thorn off the stile", "open_toast": "The thorn comes away.",
                   "dressing": {"scene": "res://assets/models/landmarks/lm_thorn_stile.glb", "offset": [0, -0.05, 0.25], "rot": 0,
-                               "scale": 1.0, "family": "M_thorn_rime", "range": 70.0}})
+                               "scale": 1.0, "family": "M_thorn_rime", "range": 40.0, "shadow": False}})
     # the audit's wall for a barred stile (RIME, until it is broken open)
     THICKETS.append({"poly": poly_of([list(ring_pt(r, STILE_A - math.degrees(1.6 / r))), list(ring_pt(r, STILE_A + math.degrees(1.6 / r)))], 1.9)[0],
                      "tag": "rime"})
 _px, _pz = ring_pt(R3 - 2.6, STILE_A + 4.5)
 PLAQUES.append({"at": at(_px, _pz, 0.0), "rot": r2(270.0 - STILE_A), "tag": "rime",
                 "text": "THE HEDGE\n\nThere is a stile in every ring, built the proper way.\nThen he let the thorn grow over them."})
+
+# Draw budget: the wood closes every view at about 70 m, so none of the
+# region's own pieces is drawn from further (the hedge maze's view is already
+# at its primitive budget; docs/art/LOOK_PASS.md pass 5).
+for p in PROPS:
+    if str(p.get("kit", "")).startswith("tw_"):
+        p["range"] = 45.0 if p["kit"] in ("tw_stake_bundle", "tw_gatepost", "tw_hut_yard", "tw_hut_thaw", "tw_hut_rime", "tw_hedging_tools",
+                                          "tw_shaving_horse", "tw_stile") else 75.0
 
 # --- forest -------------------------------------------------------------------
 FOREST_CLEAR = [[CX, CZ, CR], [GX, GZ, R3 + 3.0], [481.0, -331.0, 6.0]] + POI_CLEAR

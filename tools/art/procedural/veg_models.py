@@ -259,7 +259,7 @@ PIECES = {
     "veg_birch_sapling_bare": birch_sapling(True),
     "veg_juniper": juniper,
     "veg_saxifrage": cushion("veg_saxifrage", "saxifrage", 0.27, 0.11, 241, lobes=2, tile=2.4),
-    "veg_starmoss": cushion("veg_starmoss", "starmoss", 0.5, 0.05, 251, lobes=3, lump=0.24, bright=0.9, tile=2.0),
+    "veg_starmoss": cushion("veg_starmoss", "starmoss", 0.42, 0.09, 251, lobes=4, lump=0.3, bright=0.55, sat=0.75, tile=2.0),
 }
 
 

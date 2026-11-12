@@ -146,6 +146,9 @@ static func build(area_id: String) -> Area:
 					for gi in lm.find_children("*", "GeometryInstance3D", true, false):
 						(gi as GeometryInstance3D).visibility_range_end = float(dr["range"])
 						(gi as GeometryInstance3D).visibility_range_end_margin = 6.0
+				if not bool(dr.get("shadow", true)):
+					for gi in lm.find_children("*", "GeometryInstance3D", true, false):
+						(gi as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 				lm.position = _v3(dr.get("offset", [0, 0, 0]))
 				lm.rotation.y = deg_to_rad(float(dr.get("rot", 0)))
 				lm.scale = Vector3.ONE * float(dr.get("scale", 1.0))
@@ -644,6 +647,8 @@ static func _range_by_size(piece: Node3D, kit: String, spec: Dictionary) -> void
 		sc = maxf(maxf(float(v[0]), float(v[1])), float(v[2])) if v is Array else float(v)
 	var big := maxf(maxf(float(sz[0]), float(sz[1])), float(sz[2])) * sc
 	var end := float(r[1]) if big <= float(r[0]) else (float(r[3]) if big <= float(r[2]) else 0.0)
+	if spec.has("range"):
+		end = float(spec["range"])      # a piece no one can see from further (a wood closes in at 70 m)
 	if end <= 0.0:
 		return
 	for gi in piece.find_children("*", "GeometryInstance3D", true, false):
