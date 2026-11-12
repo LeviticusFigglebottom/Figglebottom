@@ -193,6 +193,7 @@ func _apply_ablation(n: Node) -> void:
 ## --perf-census: print how many nodes of each script process per frame, so
 ## script time can be priced by script ("--perf-ablate=script:<path part>").
 func _census(root: Node) -> void:
+	_area_census(root)
 	var counts := {}
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
@@ -362,3 +363,40 @@ static func _pct(a: Array, q: float) -> float:
 	var s := a.duplicate()
 	s.sort()
 	return float(s[clampi(int(ceil(q * s.size())) - 1, 0, s.size() - 1)])
+
+
+## --perf-census: every monitoring Area3D whose mask takes the scatter
+## colliders' layers, with how many scatter hulls its shapes overlap. A static
+## volume monitors static bodies too, every physics step.
+func _area_census(root: Node) -> void:
+	var smask := 0
+	var bodies: Array = get_tree().get_nodes_in_group("scatter_body")
+	for b in bodies:
+		smask |= (b as StaticBody3D).collision_layer
+	var rows := {}
+	for a in root.find_children("*", "Area3D", true, false):
+		var ar := a as Area3D
+		if not ar.monitoring or (ar.collision_mask & smask) == 0:
+			continue
+		var aabb := AABB()
+		var first := true
+		for cs in ar.find_children("*", "CollisionShape3D", false, false):
+			var sh := (cs as CollisionShape3D).shape
+			if sh == null:
+				continue
+			var bb := (cs as CollisionShape3D).global_transform * sh.get_debug_mesh().get_aabb()
+			aabb = bb if first else aabb.merge(bb)
+			first = false
+		var hits := 0
+		for b in bodies:
+			if aabb.has_point((b as Node3D).global_position):
+				hits += 1
+		var sc: Script = ar.get_script()
+		var key := "%s (%s)" % [sc.resource_path.get_file() if sc != null else "Area3D", ar.get_parent().name]
+		var r: Array = rows.get(key, [0, 0, Vector3.ZERO])
+		rows[key] = [int(r[0]) + 1, int(r[1]) + hits, aabb.size if aabb.size.length() > (r[2] as Vector3).length() else r[2]]
+	var keys := rows.keys()
+	keys.sort_custom(func(x, y): return rows[x][1] > rows[y][1])
+	print("[areas] %d scatter bodies, mask %d" % [bodies.size(), smask])
+	for k in keys:
+		print("[areas] %4d areas  %5d hulls inside  largest %s  %s" % [rows[k][0], rows[k][1], rows[k][2], k])
