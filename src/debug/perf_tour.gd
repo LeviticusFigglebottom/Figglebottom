@@ -139,7 +139,7 @@ func _build_views() -> void:
 		n_hearths += 1
 		var out_dir: Vector3 = h.global_transform.basis.z
 		_views.append({"name": String(hd["id"]), "kind": "player",
-				"pos": h.respawn_point() + out_dir * 2.0, "yaw": atan2(-out_dir.x, -out_dir.z)})
+				"pos": _clear_spot(h.respawn_point(), out_dir), "yaw": atan2(-out_dir.x, -out_dir.z)})
 	var veils: Array = def.get("frost_veils", [])
 	if not veils.is_empty():
 		var v := AreaBuilder._v3(veils[0]["at"])
@@ -439,3 +439,31 @@ func _hearth_census() -> void:
 				var c = r["collider"]
 				names.append("%s%s" % [c.name, " [scatter]" if c is Node and (c as Node).is_in_group("scatter_body") else ""])
 			print("[hearth] %-18s %-7s at %s overlaps %d %s" % [hd["id"], tag, p, hits.size(), names])
+
+
+## Where the tour stands the Bearer at a hearth: 2 m out from its respawn
+## point, stepped further out until his capsule is clear of every solid but
+## the ground. _hold_player pins him there every frame, and a capsule held
+## inside a convex hull made the physics server work milliseconds a tick
+## (Lowe's hs_drying_stacks, inside a peat stack: 16 ms of physics, the whole
+## of the "Lowe physics" regression). Falls back to the respawn point.
+func _clear_spot(rp: Vector3, out_dir: Vector3) -> Vector3:
+	var space := get_viewport().get_world_3d().direct_space_state
+	var cap := CapsuleShape3D.new()
+	cap.radius = 0.34
+	cap.height = 1.8
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = cap
+	q.collision_mask = Game.player.collision_mask if Game.player != null else 1
+	if Game.player != null:
+		q.exclude = [Game.player.get_rid()]
+	for d in [2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 0.0]:
+		var p := rp + out_dir * d
+		q.transform = Transform3D(Basis.IDENTITY, p + Vector3(0, 1.0, 0))   # lifted clear of the ground it stands on
+		var solid := false
+		for r in space.intersect_shape(q, 8):
+			if not (r["collider"] is Node and String((r["collider"] as Node).name) == "TerrainBody"):
+				solid = true
+		if not solid:
+			return p
+	return rp
