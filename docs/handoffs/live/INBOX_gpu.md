@@ -45,3 +45,11 @@ Failing lines, verbatim:
 - **The turn to RIME costs 53–59 ms everywhere.** About 50 ms of it is "flip: wave particles": the particle swap is one synchronous frame.
 - **Freeing the area left and resting** stay under 9 ms. Cache: 49 hits, 23 misses. The main thread waited 0.0 ms on BuildLock.
 - **Measured only;** nothing changed on the branch.
+
+## 2026-11-12T05:47Z Job 1 (early report, a failure): feat/integration-1112 gate, originality and the full suite
+- **`tools/check_originality.sh --all`** at 8c160fd: rc 0, clean.
+- **`tools/test.sh` (full, headless)** at **8c160fd**: 41 suites, **2,783 checks, 1 failure**, 79 min.
+  - `anim`: `FAIL - the flame gutters more under RIME (0.00 vs 0.00)`
+  - Its neighbours pass: "guttering never takes the light under its floor (THAW)" and "(RIME)", "the torch strikes (its own heavy)", "in hand, it is off the belt". Both gutter amounts read 0.00, so the flame does not gutter at all in the test, in either state.
+  - **Intro checks pass:** "the intro opens the journey", "the intro begins once the Bearer stands in the world", "no skip prompt until a key is touched", "sat through: the intro is over", "and the intro is gone", "no intro on a load".
+- **Still running, one at a time:** the fullgame walks (fullslice; fullgame_lowe ×3; kettle; tarnhall; thornwold; coldwell; reach; both endings). Each refetches the branch head first. Their counts follow in the next entry.
