@@ -373,7 +373,7 @@ edges = {
 # into the barrow's own shade, which read near-black on the GPU. A soft cool
 # light 4 m up at the door and at its board, THAW only.
 _kx, _kz = door_front("kin_d", 2.5)
-SHADE_FILLS = [{"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 2.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"}
+SHADE_FILLS = [{"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 3.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"}
                for (_px, _pz) in [(_kx, _kz), (13.6, -137.4)]]
 
 D = {

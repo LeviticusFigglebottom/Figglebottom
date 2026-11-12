@@ -547,7 +547,7 @@ for _i, (_x, _z) in enumerate(L.KETTLE_ROAD):
     else:
         _pts += [(-48.4, -340.0), (-56.0, -336.0)]
     for (_px, _pz) in _pts:
-        SHADE_FILLS.append({"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 2.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"})
+        SHADE_FILLS.append({"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 3.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"})
 
 D = {
     "id": "kettle_fjord",
