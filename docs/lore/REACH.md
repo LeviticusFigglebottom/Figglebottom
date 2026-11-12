@@ -42,6 +42,7 @@ Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
 - Sheep all over the grass, none of them in a hurry.
 - A long rising call from up the fell. Every sheep looks up at once and goes on eating.
 - Pickup: the **shepherd's whistle** on its nail at the lower sheiling (`item_shepherd_whistle`).
+- In both states: the **Bow** on a peg on the lower sheiling's north wall, the side facing the hearth, with twenty arrows (`sheiling_bow`, `bow`; ADR 0015). Left strung since the lambing.
 - No enemies.
 
 ### RIME

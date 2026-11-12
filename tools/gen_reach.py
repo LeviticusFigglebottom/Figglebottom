@@ -305,6 +305,14 @@ in_s0("sr_shearing_stool", 0.2, 0.9, 25)
 _bx, _bz = rot_off(S0X, S0Z, S0R, BED_A[0] + 0.35, BED_A[1] + 0.85)
 pickups.append({"id": "calder_blanket", "at": [r2(_bx), S0Y, r2(_bz)], "rot": r2(S0R), "item": "item_calder_blanket", "kit": "sr_blanket",
                 "tag": "rime", "label": "Take the blanket", "lift": 0.31, "show_at": [r2(rot_off(0, 0, S0R, 0.0, -0.85)[0]), r2(rot_off(0, 0, S0R, 0.0, -0.85)[1])]})
+# the bow on its peg (ADR 0015: a weapon to be found): on the outside of the
+# north wall, the side the Sheilings hearth and the way to the bridge look at,
+# 10 m from the hearth. Kept for the crows at lambing and left strung since.
+# In both states. The prompt stands on the grass; the bow hangs flat to the wall.
+BOW_PEG = (1.4, -3.2)
+_px, _pz = rot_off(S0X, S0Z, S0R, BOW_PEG[0], BOW_PEG[1])
+pickups.append({"id": "sheiling_bow", "at": at(_px, _pz), "rot": r2(S0R), "item": "bow", "also": {"arrows": 20}, "tag": "base",
+                "label": "Take the bow off its peg", "pose": [0, 90, 4], "show_at": [0.0, 0.92], "lift": 1.35})
 
 # --- 7.2 sr_smudge: Smudge (at the lower sheiling's door) -----------------------
 # One ewe did not answer the call. THAW: grazing by the door and nowhere else;
