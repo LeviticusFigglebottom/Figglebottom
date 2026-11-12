@@ -83,7 +83,8 @@
     0.78
    ],
    "fill_energy": 2.0,
-   "sky_contribution": 0.4
+   "sky_contribution": 0.4,
+   "exposure": 1.22
   },
   "rime": {
    "sun_rot": [

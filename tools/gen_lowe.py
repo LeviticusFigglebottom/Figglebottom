@@ -369,6 +369,13 @@ edges = {
     "gates": [],
 }
 
+# THAW shade fills (area_builder "shade_fills"): the Last Mound's door faces
+# into the barrow's own shade, which read near-black on the GPU. A soft cool
+# light 4 m up at the door and at its board, THAW only.
+_kx, _kz = door_front("kin_d", 2.5)
+SHADE_FILLS = [{"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 2.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"}
+               for (_px, _pz) in [(_kx, _kz), (13.6, -137.4)]]
+
 D = {
     "id": "lowe_barrows",
     "name": "The Lowe",
@@ -445,6 +452,7 @@ D = {
         ],
     },
     "edges": edges,
+    "shade_fills": SHADE_FILLS,
 }
 
 if __name__ == "__main__":

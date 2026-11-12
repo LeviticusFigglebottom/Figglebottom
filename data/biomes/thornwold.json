@@ -63,8 +63,8 @@
     0.4,
     0.3
    ],
-   "ambient_energy": 1.2,
-   "fill_energy": 0.85,
+   "ambient_energy": 1.5,
+   "fill_energy": 1.15,
    "fog_color": [
     0.72,
     0.74,

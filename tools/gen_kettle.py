@@ -533,6 +533,22 @@ edges = {
     "gates": [{"id": g_["id"], "at": g_["at"], "span": "z"} for g_ in GATES],
 }
 
+# THAW shade fills down the Kettle Road (area_builder "shade_fills"): the road
+# comes down a cleft whose slopes face away from both the THAW sun and the
+# top-down sky fill, so its floor read black on the GPU. A soft cool light at
+# each bend and between them, 4 m up, THAW only (RIME's snow carries the cut);
+# and two at the Far Landing, under the south wall.
+SHADE_FILLS = []
+for _i, (_x, _z) in enumerate(L.KETTLE_ROAD):
+    _pts = [(_x, _z)]
+    if _i + 1 < len(L.KETTLE_ROAD):
+        _nx, _nz = L.KETTLE_ROAD[_i + 1]
+        _pts.append(((_x + _nx) / 2, (_z + _nz) / 2))
+    else:
+        _pts += [(-48.4, -340.0), (-56.0, -336.0)]
+    for (_px, _pz) in _pts:
+        SHADE_FILLS.append({"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 2.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"})
+
 D = {
     "id": "kettle_fjord",
     "name": "Kettle Fjord",
@@ -590,6 +606,7 @@ D = {
         ],
     },
     "edges": edges,
+    "shade_fills": SHADE_FILLS,
 }
 
 if __name__ == "__main__":

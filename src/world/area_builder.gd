@@ -105,6 +105,8 @@ static func build(area_id: String) -> Area:
 		_piece(area, sk, false)
 	for spec in def.get("vault_fields", []):
 		_vault_field(area, spec)
+	for spec in def.get("shade_fills", []):
+		area.attach(_shade_fill(spec), String(spec.get("tag", "thaw")))
 	for spec in def.get("blockers", []):
 		if not _flag_ok(spec):
 			continue    # a blocked way may open when the story turns
@@ -1116,3 +1118,23 @@ static func _all_spawners(area: Area) -> Array:
 		for c in n.get_children():
 			stack.append(c)
 	return out
+
+## "shade_fills": [{at, range, energy, color, tag}]: a soft, shadowless,
+## non-specular light where the sun and the sky fill cannot reach (the floor
+## of a cut under a cliff). Tagged by state: the THAW ones are built only into
+## the THAW layer, so RIME is unchanged. Look data, written by the generators.
+static func _shade_fill(spec: Dictionary) -> OmniLight3D:
+	var l := OmniLight3D.new()
+	l.name = "ShadeFill"
+	l.position = _v3(spec["at"])
+	var c: Array = spec.get("color", [0.86, 0.9, 1.0])
+	l.light_color = Color(float(c[0]), float(c[1]), float(c[2]))
+	l.light_energy = float(spec.get("energy", 0.8))
+	l.omni_range = float(spec.get("range", 14.0))
+	l.omni_attenuation = 0.6       # soft fall-off: it fills, it is not a lamp
+	l.light_specular = 0.0          # no hot spot on wet rock
+	l.shadow_enabled = false
+	l.distance_fade_enabled = true  # off the frame budget beyond the near views
+	l.distance_fade_begin = 80.0
+	l.distance_fade_length = 20.0
+	return l
