@@ -118,3 +118,28 @@ Failing lines, verbatim:
   - fullgame_thornwold: 160/0.
   - fullgame_coldwell: 178/0.
 - Still to run: reach and both endings.
+
+## 2026-11-12T07:40Z Job 1 DONE: pre-merge gate on feat/integration-1112, verdict RED
+| stage | commit | checks | failures |
+|---|---|---:|---:|
+| originality | 8c160fd | n/a | 0 (rc 0) |
+| full suite (41 suites) | 8c160fd | 2783 | 1 |
+| fullslice (Saltfell) | 0cac9ad | 104 | **25** |
+| fullslice re-run | 0cac9ad | 103 | **32** |
+| fullgame_lowe ×3 | 0cac9ad | 194 each | 0 |
+| fullgame_kettle | 0cac9ad | 197 | 0 |
+| fullgame_tarnhall | 0cac9ad | 211 | **1** |
+| fullgame_thornwold | 0cac9ad | 160 | 0 |
+| fullgame_coldwell | 0cac9ad | 178 | 0 |
+| fullgame_reach | 0cac9ad | 195 | 0 |
+| fullgame_ending_outsong | 0cac9ad | 160 | 0 |
+| fullgame_ending_kept | 0cac9ad | 193 | 0 |
+
+**FAIL lines, verbatim:**
+- suite: `FAIL - the flame gutters more under RIME (0.00 vs 0.00)`
+- tarnhall: `FAIL - the Bearer walks out through them onto the porch ((163.7, 24.2, -332.7), 722 ticks)`
+- fullslice: see the two entries above. The run fails at the float prompt or at "the Netmender is released (deaths along the way: 6)", and everything after cascades.
+
+**Notes:**
+- The suite and originality ran at 8c160fd. The branch then moved, and every walk ran at 0cac9ad.
+- I wouldn't merge yet. The Saltfell walk, the game's opening, is red and non-deterministic. The Tarnhall porch and the anim flame check are single failures.
