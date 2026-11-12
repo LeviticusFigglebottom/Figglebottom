@@ -603,6 +603,7 @@ func _unwedge(dt: float) -> void:
 var _pin_ticks := 0
 const _PIN_TICKS := 3
 const _PIN_LIFT := 0.02
+const _PIN_BACK := 0.05
 func _unpin() -> void:
 	var want := Vector2(velocity.x, velocity.z).length()
 	var real := get_real_velocity()
@@ -611,8 +612,20 @@ func _unpin() -> void:
 		return
 	_pin_ticks += 1
 	if _pin_ticks >= _PIN_TICKS:
-		global_position.y += _PIN_LIFT
 		_pin_ticks = 0
+		# held, or only walking into something? A pin holds him in every
+		# direction; a wall the solver did not name (the slanted side of a
+		# tent's hull) lets him back off. Lifting him at such a wall put the
+		# capsule inside the hull, where the motion cast skips it: he walked
+		# through an ice hut.
+		var p := PhysicsTestMotionParameters3D.new()
+		p.from = global_transform
+		p.motion = -Vector3(velocity.x, 0.0, velocity.z).normalized() * _PIN_BACK
+		p.margin = safe_margin
+		var r := PhysicsTestMotionResult3D.new()
+		if not PhysicsServer3D.body_test_motion(get_rid(), p, r) or r.get_travel().length() > _PIN_BACK * 0.5:
+			return
+		global_position.y += _PIN_LIFT
 
 func _face(dir: Vector3, dt: float, speed := 11.0) -> void:
 	if dir.length_squared() < 0.0001:
