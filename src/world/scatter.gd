@@ -622,6 +622,11 @@ static func region_recipe(area_id: String) -> Dictionary:
 ##      are appended as written, unscaled.
 ## A kind both files remove is simply gone; plants are added by the recipe,
 ## so a biome's "add" stays empty unless a species is its alone.
+## The rules a region's ground cover is really grown by: its recipe's, with
+## its biome's laid over (the cache key is made of these).
+static func rules_for(area_id: String, rules: Array) -> Array:
+	return Biome.veg_rules(area_id, region_rules(area_id, rules))
+
 static func region_rules(area_id: String, rules: Array) -> Array:
 	var recipe := region_recipe(area_id)
 	if recipe.is_empty():
@@ -685,11 +690,15 @@ const SCATTER_CHUNK := 32.0
 ##   "level": y            stands on a level at y where the land is under it (on the ice)
 ##   "even": true          no drifts: spread evenly;  "scale": [a, b] clump size
 ##   "clear": true         keeps out of the area's scatter "clear" circles (clearings)
-static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> void:
+## `area` null: cache warming (the buffers only); `area_id` then names whose
+## rules these are.
+static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array, area_id := "") -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
-	rules = Biome.veg_rules(area.area_id, region_rules(area.area_id, rules))
-	var def: Dictionary = area.get_meta("def", {})
+	if area != null:
+		area_id = area.area_id
+	rules = rules_for(area_id, rules)
+	var def: Dictionary = area.get_meta("def", {}) if area != null else DB.area_def(area_id)
 	var area_clear: Array = def.get("scatter", {}).get("clear", [])
 	var ground := Color(0.1, 0.11, 0.05)
 	if area != null and terrain.has_method("palette_color"):

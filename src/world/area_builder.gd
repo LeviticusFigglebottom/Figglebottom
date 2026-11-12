@@ -77,7 +77,7 @@ static func warm_cache(area_id: String) -> bool:
 	BuildProf.begin("warm:" + area_id)
 	var t := Terrain.new()
 	var did := false
-	if t.setup(def["terrain"]):
+	if t.setup(def["terrain"], area_id):    # (with its biome, as the build does: the same key)
 		if not StreamCache.has_var("terrain", t.cache_key()):
 			t.cache_only = true
 			t.build(RH.L_WORLD_BASE)
@@ -86,8 +86,8 @@ static func warm_cache(area_id: String) -> bool:
 			var veg: Array = def["scatter"].get("veg", [])
 			var seed := int(def["scatter"].get("seed", 1)) + 7
 			var clear := _keep_clear(def)
-			if not StreamCache.has_var("veg", Scatter.veg_key(t, veg, seed, clear)):
-				Scatter.build_veg(null, t, veg, seed, clear)
+			if not StreamCache.has_var("veg", Scatter.veg_key(t, Scatter.rules_for(area_id, veg), seed, clear)):
+				Scatter.build_veg(null, t, veg, seed, clear, area_id)
 				did = not _cancelled()
 	t.free()
 	return did
