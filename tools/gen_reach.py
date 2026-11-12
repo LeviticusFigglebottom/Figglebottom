@@ -307,7 +307,7 @@ pickups.append({"id": "calder_blanket", "at": [r2(_bx), S0Y, r2(_bz)], "rot": r2
                 "tag": "rime", "label": "Take the blanket", "lift": 0.31, "show_at": [r2(rot_off(0, 0, S0R, 0.0, -0.85)[0]), r2(rot_off(0, 0, S0R, 0.0, -0.85)[1])]})
 # the bow on its peg (ADR 0015: a weapon to be found): on the outside of the
 # north wall, the side the Sheilings hearth and the way to the bridge look at,
-# 10 m from the hearth. Kept for the crows at lambing and left strung since.
+# 10 m from the hearth. Kept for the crows at lambing; the peg beside it is empty.
 # In both states. The prompt stands on the grass; the bow hangs flat to the wall.
 BOW_PEG = (1.4, -3.2)
 _px, _pz = rot_off(S0X, S0Z, S0R, BOW_PEG[0], BOW_PEG[1])

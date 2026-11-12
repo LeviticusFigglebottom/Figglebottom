@@ -187,7 +187,7 @@
  },
  "bow": {
   "name": "Bow",
-  "desc": "A short yew bow for fowling on the fells. It was hung on a peg on the back wall of the lower sheiling still strung, and had been since the spring. The stave has taken the bend.",
+  "desc": "A short yew bow for fowling on the fells. It hung on a peg on the back wall of the lower sheiling with its arrows, kept there for the crows at lambing. There is a second peg beside it, and nothing on it.",
   "class": "bow",
   "kit": "bow",
   "damage": 38.352,
