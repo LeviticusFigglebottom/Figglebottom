@@ -168,11 +168,17 @@ func _run() -> void:
 	var walked: bool = await _walk_path(HALL_IN)
 	check(walked and not player.dead, "the Bearer walks the causeway and into the feast")
 	var wood_seam: Node3D = area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto and p.to_area == "thornwold")[0]
-	var notch := wood_seam.global_position + Vector3(-3.0, 0, 0)
+	# ADR 0015: the drove-road runs round the shore to the drove gate in the
+	# mouth of the notch, barred until the Host is released (gates_test.gd)
+	var dg: Array = area.find_children("*", "ShortcutGate", true, false).filter(func(g): return g.gate_id == "drove_gate")
+	check(dg.size() == 1 and (dg[0].get_node("GateBody") as StaticBody3D).collision_layer != 0, "the drove gate stands barred in the notch")
+	var notch: Vector3 = dg[0].global_position + dg[0].global_transform.basis.z.normalized() * 2.5 if dg.size() == 1 else wood_seam.global_position
 	var pn := _path(shore, notch)
-	check(_reaches(pn, notch, 3.0), "the drove-road leaves the tarn's far shore (thaw: round by the shore)")
+	check(_reaches(pn, notch, 3.0), "the drove-road leaves the tarn's far shore for the drove gate (thaw: round by the shore)")
 	if not _reaches(pn, notch, 3.0):
 		print("    ends ", pn[pn.size() - 1] if pn.size() > 0 else Vector3.ZERO, " notch ", notch)
+	var past := wood_seam.global_position + Vector3(-3.0, 0, 0)
+	check(not _reaches(_path(shore, past), past, 3.0), "and no further, on a new journey")
 	player.global_position = Vector3(165.0, 22.4, -345.0)
 	var died := false
 	for i in 40:
@@ -245,6 +251,7 @@ func _run() -> void:
 	if it != null:
 		it.activate(player)
 	await ticks(30)
+	await nav_wait(area)
 	check(World.area_flag("tarnhall", "gate_hall_doors"), "the doors stand open for good (a shortcut to the causeway)")
 	player.invulnerable = false
 

@@ -4,6 +4,11 @@ extends PoiBase
 ## and used: the pickup can be taken, the plaques read, the shortcut opens
 ## from the lane side only, the Smudge thread's four steps set.
 
+const LANE_GATE := "gate_drift_lane"
+
+func _lane_gates() -> Array:
+	return area.find_children("*", "ShortcutGate", true, false).filter(func(g): return (g as ShortcutGate).gate_id == LANE_GATE)
+
 func _ready() -> void:
 	_run.call_deferred()
 
@@ -26,7 +31,8 @@ func _run() -> void:
 	var def: Dictionary = area.get_meta("def")
 	var hearth := ground(604.0, -303.5)
 	var lane: Array = [Vector2(607.0, -340.5), Vector2(615.0, -347.5), Vector2(625.0, -354.5), Vector2(636.0, -361.0), Vector2(645.0, -366.2)]
-	var gate_spec: Dictionary = def["gates"][0]
+	# (the Drift Lane's; the Reach's way on, ADR 0015, is a gate of its own)
+	var gate_spec: Dictionary = (def["gates"] as Array).filter(func(g): return String(g.get("id", "")) == LANE_GATE)[0]
 	var gate_at := AreaBuilder._v3(gate_spec["at"])
 	var up: Vector2 = ((lane[1] as Vector2) - (lane[0] as Vector2)).normalized()
 	var below := ground(gate_at.x - up.x * 2.2, gate_at.z - up.y * 2.2)      # on the beck side of the gate
@@ -41,7 +47,7 @@ func _run() -> void:
 		check(prop(kit) != null and prop(kit).find_children("*", "MeshInstance3D", true, false).size() > 0, "%s is out, modelled" % kit)
 	check(not bool(def.get("wayside", true)), "nothing strewn: the Reach is dressed by hand")
 	check(pickup("calder_blanket") == null and pickup("smudge_look") == null and pickup("fold_cache") == null, "RIME's finds are not here yet")
-	check(area.find_children("*", "ShortcutGate", true, false).filter(func(g): return (g as Node3D).is_visible_in_tree()).is_empty(),
+	check(_lane_gates().filter(func(g): return (g as Node3D).is_visible_in_tree()).is_empty(),
 		"the Drift Lane's gate stands open in THAW (no gate there)")
 	check(reaches(below, lane_top) and _plen(_path(below, lane_top)) < 60.0, "and the lane runs from the beck's bank to the fold wall (%.0f m)" % _plen(_path(below, lane_top)))
 
@@ -95,7 +101,7 @@ func _run() -> void:
 
 	print("== RIME")
 	await turn(RH.WState.RIME)
-	var gate: ShortcutGate = area.find_children("*", "ShortcutGate", true, false)[0]
+	var gate: ShortcutGate = _lane_gates()[0]
 	check(gate.is_visible_in_tree() and not gate._is_open(), "the lane's gate is tied shut")
 	var flock := get_tree().get_nodes_in_group("flock_rime")
 	var in_lane := 0

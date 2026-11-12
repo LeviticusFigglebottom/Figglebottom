@@ -227,7 +227,7 @@ func _build() -> void:
 	main.add_child(_button("Settings", func(): _show_page("settings")))
 	main.add_child(_button("Return to the Title", return_to_title))
 	main.add_child(_button("Begin the Journey Anew", func(): _show_page("confirm")))
-	main.add_child(_button("Leave the Highland", func(): get_tree().quit()))
+	main.add_child(_button("Leave the Highland", func(): Game.quit()))
 	_pages["main"] = main
 	_first_button["main"] = main.get_child(0)
 

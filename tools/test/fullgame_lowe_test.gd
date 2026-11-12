@@ -283,6 +283,7 @@ func _region() -> void:
 	await _shot("windlass")
 	player.try_interact()
 	await _secs(3.2)
+	await nav_wait()
 	check(World.flag("lowe_bridge_down") and bridge.is_down(), "the bridge is down for good (world flag)")
 	check(absf(_ray_y(-8, -76.0, 30) - bridge.global_position.y) < 0.4, "the deck spans the ravine")
 	check(_near_interact("Lower the bridge") == null, "the windlass has nothing more to give")

@@ -32,6 +32,13 @@ def path_weight(x, z):
                              (T.BRIDGE_X, T.beck_z(T.BRIDGE_X) - 6.0, T.HIGH_FOLD[0] - 10.0, T.HIGH_FOLD[1] + 10.0)):
         d, _ = T._seg(x, z, ax, az, bx, bz)
         best = max(best, 0.8 * (1.0 - smooth(0.8, 2.2, d)))
+    # --- progression gates (ADR 0015): the way on, the fold gap to the foot of the Upwater
+    for (ax, az, bx, bz) in ((650.8, -362.8, 660.0, -356.0), (660.0, -356.0, 676.0, -366.0), (676.0, -366.0, 686.0, -382.0)):
+        d, _ = T._seg(x, z, ax, az, bx, bz)
+        best = max(best, 0.85 * (1.0 - smooth(0.9, 2.3, d)))
+    ud, _, _ = T.poly_road(T.UPWATER, x, z)
+    best = max(best, 1.0 - smooth(1.4, 3.0, ud))
+    # --- end progression gates
     return best
 
 def splat(x, z, h):

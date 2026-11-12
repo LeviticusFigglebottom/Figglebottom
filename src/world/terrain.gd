@@ -180,24 +180,43 @@ func contains(x: float, z: float) -> bool:
 	return x >= origin.x and z >= origin.y and x <= origin.x + (nx - 1) * cell \
 		and z <= origin.y + (nz - 1) * cell
 
+## Cache warming (AreaBuilder.warm_cache): build() computes and stores the
+## arrays and makes no mesh and no collider.
+var cache_only := false
+
+func cache_key() -> String:
+	return StreamCache.key(["terrain", origin, cell, nx, nz, int(spec.get("chunk", 32)), LOD1_STRIDE, heights, splat])
+
 func build(layer_bit: int) -> void:
+	BuildProf.lap("terrain setup")
 	var chunk := int(spec.get("chunk", 32))
+	# the chunk arrays are a pure function of the grids: kept on disk
+	var ck := cache_key()
+	var cached: Variant = StreamCache.load_var("terrain", ck)
+	var hit: bool = cached is Array
+	var store: Array = []
+	var k := 0
 	var cj := 0
 	while cj < nz - 1:
+		if AreaBuilder._cancelled():
+			return     # (a worker build nobody waits for; nothing is cached)
 		var ci := 0
 		while ci < nx - 1:
+			if cache_only and AreaBuilder._cancelled():
+				return
 			var w := mini(chunk, nx - 1 - ci)
 			var d := mini(chunk, nz - 1 - cj)
 			var lod0 := MeshInstance3D.new()
 			lod0.name = "chunk_%d_%d" % [ci / chunk, cj / chunk]
-			lod0.mesh = _chunk_mesh(ci, cj, w, d, 1)
+			lod0.mesh = _chunk_mesh(ci, cj, w, d, 1, cached[k] if hit and k < cached.size() else null, store)
 			lod0.visibility_range_end = LOD_SWITCH
 			lod0.visibility_range_end_margin = 8.0
 			lod0.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
 			add_child(lod0)
 			var lod1 := MeshInstance3D.new()
 			lod1.name = lod0.name + "_lod1"
-			lod1.mesh = _chunk_mesh(ci, cj, w, d, LOD1_STRIDE)
+			lod1.mesh = _chunk_mesh(ci, cj, w, d, LOD1_STRIDE, cached[k + 1] if hit and k + 1 < cached.size() else null, store)
+			k += 2
 			lod1.visibility_range_begin = LOD_SWITCH
 			lod1.visibility_range_begin_margin = 8.0
 			lod1.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
@@ -209,8 +228,15 @@ func build(layer_bit: int) -> void:
 			lod1.position = c
 			ci += chunk
 		cj += chunk
+	if not hit:
+		StreamCache.store_var("terrain", ck, store)
+	BuildProf.lap("terrain mesh")
 	_build_far()
+	BuildProf.lap("terrain horizon")
+	if cache_only:
+		return
 	_build_collider(layer_bit)
+	BuildProf.lap("terrain collider")
 
 func _vertex(i: int, j: int, center: Vector3, st: SurfaceTool) -> void:
 	var x := origin.x + i * cell
@@ -226,7 +252,12 @@ func _vertex(i: int, j: int, center: Vector3, st: SurfaceTool) -> void:
 	st.set_uv(Vector2(lip_at(i, j), 0.0))
 	st.add_vertex(Vector3(x, h_at(i, j), z) - center)
 
-func _chunk_mesh(ci: int, cj: int, w: int, d: int, stride: int) -> ArrayMesh:
+## `arrays`: the cached surface (null: build it). What was built or read is
+## appended to `store`.
+func _chunk_mesh(ci: int, cj: int, w: int, d: int, stride: int, arrays: Variant = null, store: Array = []) -> ArrayMesh:
+	if arrays is Array and (arrays as Array).size() == Mesh.ARRAY_MAX:
+		store.append(arrays)
+		return _surface(arrays)
 	var center := Vector3(origin.x + (ci + w * 0.5) * cell, 0, origin.y + (cj + d * 0.5) * cell)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -254,7 +285,17 @@ func _chunk_mesh(ci: int, cj: int, w: int, d: int, stride: int) -> ArrayMesh:
 			var d2 := c2 + 1
 			st.add_index(a); st.add_index(b); st.add_index(c2)
 			st.add_index(b); st.add_index(d2); st.add_index(c2)
-	var mesh := st.commit()
+	var built := st.commit_to_arrays()
+	store.append(built)
+	return _surface(built)
+
+## What SurfaceTool.commit() does with the arrays, in two steps so the arrays
+## can come from disk.
+func _surface(arrays: Array) -> ArrayMesh:
+	if cache_only:
+		return null
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	mesh.surface_set_material(0, material())
 	return mesh
 
@@ -269,6 +310,11 @@ func _build_far() -> void:
 		return
 	var fo: Array = spec.get("far_origin", [0, 0])
 	var fc := float(spec.get("far_cell", 8.0))
+	var ck := StreamCache.key(["horizon", fh, n, fo, fc])
+	var cached: Variant = StreamCache.load_var("horizon", ck)
+	if cached is Array and (cached as Array).size() == Mesh.ARRAY_MAX:
+		_add_far(_surface(cached))
+		return
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for j in n:
@@ -286,8 +332,11 @@ func _build_far() -> void:
 			var a := j * n + i
 			st.add_index(a); st.add_index(a + 1); st.add_index(a + n)
 			st.add_index(a + 1); st.add_index(a + n + 1); st.add_index(a + n)
-	var mesh := st.commit()
-	mesh.surface_set_material(0, material())
+	var built := st.commit_to_arrays()
+	StreamCache.store_var("horizon", ck, built)
+	_add_far(_surface(built))
+
+func _add_far(mesh: ArrayMesh) -> void:
 	var mi := MeshInstance3D.new()
 	mi.name = "Horizon"
 	mi.mesh = mesh

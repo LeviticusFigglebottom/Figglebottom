@@ -5,7 +5,148 @@ class_name AreaBuilder
 ## portals, cameos). Everything carries a state tag: base | thaw | rime.
 
 static func build(area_id: String) -> Area:
+	# a neighbour being built on a worker (Streamer) ends first: the builders'
+	# own statics are not shared between two builds
+	if Game.stream != null:
+		Game.stream.yield_to_sync_build()
+	var area := _build(area_id)
+	if area != null:
+		area.remove_meta("stream_late")
+		area.bake_navmeshes.call_deferred()
+	return area
+
+## The streamed build (ADR 0014), for a worker thread: the same area, taken
+## apart so the main thread can graft it into the tree a little a frame.
+## Returns {area, world: [[parent, node]...], late: [[parent, node]...],
+## main_steps: [Callable...]}:
+##   area   the bare Area (its three layers, empty)
+##   world  the static world in build order: ground, houses, props, cover.
+##          The Terrain comes childless, its chunks after it.
+##   late   what acts (hearths, gates, spawners, souls, finds, portals,
+##          hazards, the env rig): grafted only once the area is the live one
+##   main_steps  what the build left for the main thread (_for_main)
+## No navmesh is baked (NavBaker does that once it stands in the tree).
+static func build_detached(area_id: String) -> Dictionary:
+	var area := _build(area_id)
+	if area != null and cancel_worker:
+		area.free()     # nobody is waiting for it any more
+		area = null
+	if area == null:
+		return {}
+	var late_set := {}
+	for n in area.get_meta("stream_late", []):
+		late_set[n] = true
+	area.remove_meta("stream_late")
+	var main_steps: Array = area.get_meta("stream_main_steps", [])
+	if area.has_meta("stream_main_steps"):
+		area.remove_meta("stream_main_steps")
+	var world: Array = []
+	var late: Array = []
+	for layer in [area.base, area.thaw_layer, area.rime_layer]:
+		for c in layer.get_children():
+			layer.remove_child(c)
+			if late_set.has(c):
+				late.append([layer, c])
+				continue
+			world.append([layer, c])
+			if c is Terrain:
+				for tc in c.get_children():
+					c.remove_child(tc)
+					world.append([c, tc])
+	for c in area.get_children():
+		if c != area.base and c != area.thaw_layer and c != area.rime_layer:
+			area.remove_child(c)
+			late.append([area, c])
+	return {"area": area, "world": world, "late": late, "main_steps": main_steps}
+
+## Set (main thread) to have a worker's build_detached give up at its next
+## phase: the neighbour was let go, or the game is closing. Streamer clears
+## it before it starts another.
+static var cancel_worker := false
+
+## Idle-time cache warming (Streamer, ADR 0014), for a worker thread: compute
+## the two cache entries a build of `area_id` would otherwise compute at the
+## seam, its terrain arrays and its ground cover, and store them. Nothing is
+## made of them and nothing joins the tree. True when something was
+## computed and stored; false when both were there (or the job was called
+## off: cancel_worker).
+static func warm_cache(area_id: String) -> bool:
 	var def := DB.area_def(area_id)
+	if def.is_empty() or not def.has("terrain"):
+		return false
+	BuildProf.begin("warm:" + area_id)
+	var t := Terrain.new()
+	var did := false
+	if t.setup(def["terrain"], area_id):    # (with its biome, as the build does: the same key)
+		if not StreamCache.has_var("terrain", t.cache_key()):
+			t.cache_only = true
+			t.build(RH.L_WORLD_BASE)
+			did = not _cancelled()
+		if def.has("scatter") and not _cancelled():
+			var veg: Array = def["scatter"].get("veg", [])
+			var seed := int(def["scatter"].get("seed", 1)) + 7
+			var clear := _keep_clear(def)
+			if not StreamCache.has_var("veg", Scatter.veg_key(t, Scatter.rules_for(area_id, veg), seed, clear)):
+				Scatter.build_veg(null, t, veg, seed, clear, area_id)
+				did = not _cancelled()
+	t.free()
+	return did
+
+static func _cancelled() -> bool:
+	return cancel_worker and not BuildProf.is_main()
+
+## What a build leaves for the main thread: whatever makes a
+## StandardMaterial3D, a ParticleProcessMaterial, a FogMaterial or a
+## GradientTexture2D (particles, smoke, spray, weather, fog pockets). Those
+## classes keep engine-wide lists that the main thread works through every
+## frame, and making one beside it can corrupt the heap. On the main thread
+## (the synchronous build) the step simply runs, in place. On a worker it is
+## kept on the area ("stream_main_steps") and the Streamer runs it during
+## the graft.
+static func _for_main(area: Area, step: Callable) -> void:
+	if BuildProf.is_main():
+		step.call()
+		return
+	var steps: Array = area.get_meta("stream_main_steps", [])
+	steps.append(step)
+	area.set_meta("stream_main_steps", steps)
+
+## A main-thread step of a streamed build (Streamer runs them in order):
+## what it adds to the layers is remembered, so the indoor marking can reach
+## it as it reaches everything else in the synchronous build.
+static func run_main_step(area: Area, step: Callable) -> void:
+	var before := _counts(area)
+	step.call()
+	var layers: Array = [area.base, area.thaw_layer, area.rime_layer]
+	for i in 3:
+		for k in range(int(before[i]), (layers[i] as Node).get_child_count()):
+			(layers[i] as Node).get_child(k).set_meta("made_on_main", true)
+
+static func _mark_indoors_made(area: Area, houses: Array) -> void:
+	var roots: Array[Node] = []
+	for layer in [area.base, area.thaw_layer, area.rime_layer]:
+		for c in layer.get_children():
+			if c.has_meta("made_on_main"):
+				roots.append(c)
+	if not roots.is_empty():
+		_mark_indoors(area, houses, roots)
+
+## Children each layer holds now: _late_since marks what was added after.
+static func _counts(area: Area) -> Array:
+	return [area.base.get_child_count(), area.thaw_layer.get_child_count(), area.rime_layer.get_child_count()]
+
+static func _late_since(area: Area, counts: Array) -> void:
+	var late: Array = area.get_meta("stream_late", [])
+	var layers: Array = [area.base, area.thaw_layer, area.rime_layer]
+	for i in 3:
+		for k in range(int(counts[i]), (layers[i] as Node).get_child_count()):
+			late.append((layers[i] as Node).get_child(k))
+	area.set_meta("stream_late", late)
+
+static func _build(area_id: String) -> Area:
+	BuildProf.begin(area_id)
+	var def := DB.area_def(area_id)
+	BuildProf.lap("def parse")
 	if def.is_empty():
 		push_error("AreaBuilder: no def for area '%s'" % area_id)
 		return null
@@ -18,21 +159,25 @@ static func build(area_id: String) -> Area:
 	# the region's own look (data/biomes): light, ground, weather, ground cover
 	var biome := Biome.of(area_id)
 	area.env.set_overrides(Biome.over(def.get("env", {}), biome.get("env", {})))
-	area.env.build_fog_pockets(def.get("fog_pockets", []))
+	_for_main(area, area.env.build_fog_pockets.bind(def.get("fog_pockets", [])))
 	# the land first: buildings sit on it, they are not it (ADR 0003)
 	if def.has("terrain"):
 		var t := Terrain.new()
 		if t.setup(def["terrain"], area_id):
 			area.base.add_child(t)
+			BuildLock.computing = true
 			t.build(RH.L_WORLD_BASE)
+			BuildLock.computing = false
 			area.terrain = t
+	BuildProf.lap("terrain (other)")
 	if def.has("nav_bounds"):
 		var nb: Array = def["nav_bounds"]
 		area.nav_aabb = AABB(Vector3(nb[0], nb[1], nb[2]), Vector3(nb[3] - nb[0], nb[4] - nb[1], nb[5] - nb[2]))
 	for spec in def.get("water", []):
 		_water(area, spec)
 	for spec in def.get("falls", []):
-		_falls(area, spec)
+		_for_main(area, _falls.bind(area, spec))
+	var before_hazards := _counts(area)
 	for spec in def.get("hazards", []):
 		var hz := HazardVolume.new()
 		hz.kind = String(spec.get("kind", "fall"))
@@ -44,9 +189,15 @@ static func build(area_id: String) -> Area:
 		hz.position = (hmn + hmx) * 0.5
 		hz.name = "Hazard_" + hz.kind
 		area.attach(hz, spec.get("tag", "base"))
+	_late_since(area, before_hazards)
+	BuildProf.lap("water, hazards")
 	for spec in def.get("houses", []):
 		if _flag_ok(spec):
 			BuildingGen.build(area, spec)
+	BuildProf.lap("houses")
+	if _cancelled():
+		area.free()
+		return null
 	for spec in def.get("fills", []):
 		_fill(area, spec)
 	for spec in def.get("rows", []):
@@ -112,6 +263,11 @@ static func build(area_id: String) -> Area:
 	for spec in def.get("boxes", []):
 		_solid_box(area, spec)
 
+	BuildProf.lap("pieces, props, landmarks")
+	if _cancelled():
+		area.free()
+		return null
+	var before_entities := _counts(area)
 	for spec in def.get("hearths", []):
 		if not _flag_ok(spec):
 			continue   # a hearth that wakes later (the Long Hearth, on release)
@@ -127,11 +283,15 @@ static func build(area_id: String) -> Area:
 		g.area_id = area_id
 		g.locked_prompt = spec.get("locked_prompt", "Barred from the other side")
 		g.door_width = float(spec.get("width", 3.6))
-		# a way grown shut, not a door (Thornwold's stiles): no leaves, its
-		# own words, and the dressing is what blocks it
-		g.door_height = float(spec.get("height", 2.5))
+		# progression gates (ADR 0015): opened by a release's world flag
+		g.open_flag = spec.get("open_flag", "")
+		# a way grown shut, not a door (Thornwold's stiles, a net, a hedge): no
+		# leaves, its own words, and the dressing is what blocks it
+		g.door_height = float(spec.get("height", g.door_height))
+		g.body_depth = float(spec.get("depth", g.body_depth))
 		g.has_leaves = bool(spec.get("leaves", true))
-		g.open_prompt = String(spec.get("open_prompt", g.open_prompt))
+		# ("unbar_prompt": the progression gates' generators; same thing)
+		g.open_prompt = String(spec.get("open_prompt", spec.get("unbar_prompt", g.open_prompt)))
 		g.open_toast = String(spec.get("open_toast", g.open_toast))
 		g.leaf_kit = spec.get("leaf", g.leaf_kit)
 		if spec.has("tag"):
@@ -139,7 +299,10 @@ static func build(area_id: String) -> Area:
 			area.attach(g, String(spec["tag"]))    # (Tarnhall's doors: barred in RIME only)
 		else:
 			area.base.add_child(g)
-		if spec.has("dressing"):
+		if spec.get("dressing") is Array:
+			_place(g, spec)
+			g.dress(area, spec["dressing"])     # (placed first: its pieces sit in world space)
+		elif spec.has("dressing"):
 			# the gate's look (a Tripo pair of doors): shown while it is barred
 			var dr: Dictionary = spec["dressing"]
 			var lm := BuildingGen._landmark(String(dr["scene"]), String(dr.get("family", "")),
@@ -268,6 +431,8 @@ static func build(area_id: String) -> Area:
 		area.attach(pt, spec.get("tag", "base"))
 		_place(pt, spec)
 
+	_late_since(area, before_entities)
+	BuildProf.lap("entities, spawners")
 	if def.has("zones"):
 		var zt := ZoneTitles.new()
 		zt.name = "ZoneTitles"
@@ -275,36 +440,51 @@ static func build(area_id: String) -> Area:
 		area.add_child(zt)
 	if area.terrain != null and def.has("scatter"):
 		Scatter.build(area, area.terrain, def["scatter"], _keep_clear(def))
+		BuildProf.lap("scatter stones, fences")
+		if _cancelled():
+			area.free()
+			return null
+		BuildLock.computing = true
 		Scatter.build_veg(area, area.terrain, def["scatter"].get("veg", []),
 				int(def["scatter"].get("seed", 1)) + 7, _keep_clear(def))
+		BuildLock.computing = false
+	BuildProf.lap("scatter ground cover")
+	if _cancelled():
+		area.free()
+		return null
 	if area.terrain != null and def.has("forest"):
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
+	BuildProf.lap("forest")
 	if area.terrain != null:
 		var wdef := def
 		if biome.has("weather"):
 			wdef = def.duplicate()
 			wdef["weather"] = Biome.over({"w": def.get("weather", {})}, {"w": biome["weather"]})["w"]
-		Weather.build(area, area.terrain, wdef)
+		_for_main(area, Weather.build.bind(area, area.terrain, wdef))
 		TrapWarden.build(area)      # no ditch keeps the Bearer (tools/fix_traps.py)
 		var wayside_n := Wayside.build(area, def)   # cairns, stone rows, racks, boats: things met along the way
 		if "--house-stats" in OS.get_cmdline_user_args():
 			print("[wayside] %s: %d groups" % [area_id, wayside_n])
 
+	BuildProf.lap("weather, traps, wayside")
 	_mark_indoors(area, def.get("houses", []))
+	if not BuildProf.is_main():
+		# (smoke, spray and weather are not made yet on a worker: _for_main)
+		_for_main(area, _mark_indoors_made.bind(area, def.get("houses", [])))
 
 	# ambient mood: gold motes in thaw, ash in rime, sized to the area
 	var ext := _extent(def)
-	area.add_ambient(ext[0], ext[1])
+	_for_main(area, area.add_ambient.bind(ext[0], ext[1]))
 
-	area.bake_navmeshes.call_deferred()
+	BuildProf.lap("indoor marks, ambient")
 	return area
 
 ## Snow settles on what faces the sky, but not under a roof: everything
 ## standing inside a house footprint (below its eaves) is masked indoor.
-static func _mark_indoors(area: Area, houses: Array) -> void:
+static func _mark_indoors(area: Area, houses: Array, roots: Array[Node] = []) -> void:
 	if houses.is_empty():
 		return
-	var stack: Array[Node] = [area]
+	var stack: Array[Node] = roots if not roots.is_empty() else ([area] as Array[Node])
 	while not stack.is_empty():
 		var n: Node = stack.pop_back()
 		if n is Terrain or String(n.name).begins_with("House_") or n is MultiMeshInstance3D:
@@ -438,6 +618,9 @@ static func _falls(area: Area, spec: Dictionary) -> void:
 
 ## Smoke rising slow and thick from a clamp or a fire (THAW only).
 static func _smoke(area: Area, at: Vector3) -> void:
+	if not BuildProf.is_main():
+		_for_main(area, _smoke.bind(area, at))
+		return
 	var p := CPUParticles3D.new()
 	p.amount = 28
 	p.lifetime = 6.0
@@ -520,10 +703,13 @@ static func _v3(a) -> Vector3:
 ## when the area was built, so without this the scene a release earns (Old
 ## Pell and Ivo at the kettle, KETTLE.md 9) waited for the next load: the
 ## first warming after the duel still showed the evening before it.
+## One soul or find a frame: a release may bring back half a dozen, each
+## some 20 ms to instance, and the frame the Holdfast falls in is the one
+## everybody watches. (A rest, or the memory turning, places whatever is
+## still missing at once: sync_flagged.)
 static func refresh_flagged(area: Area) -> void:
-	if area == null or not is_instance_valid(area):
-		return
-	sync_flagged(area)
+	while area != null and is_instance_valid(area) and area.is_inside_tree() and sync_flagged(area, 1) > 0:
+		await area.get_tree().process_frame
 
 static func _place(n: Node3D, spec: Dictionary) -> void:
 	n.position = _v3(spec.get("at", [0, 0, 0]))
@@ -600,9 +786,12 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 ## outside the barrow) or its finds lay there (the twins' spindles).
 ## Game.hearth_flow calls this as he kneels: what the story has since
 ## allowed is placed, and a soul it no longer allows steps away.
-static func sync_flagged(area: Area) -> void:
+## `max_new`: place at most so many this call (-1: all). Returns how many
+## were placed.
+static func sync_flagged(area: Area, max_new := -1) -> int:
 	var def: Dictionary = area.get_meta("def", {})
 	var late: Dictionary = area.get_meta("flag_built", {})
+	var made_n := 0
 	for list in ["npcs", "pickups"]:
 		var specs: Array = def.get(list, [])
 		for i in specs.size():
@@ -614,17 +803,21 @@ static func sync_flagged(area: Area) -> void:
 			var node = late.get(key)
 			var there: bool = node != null and is_instance_valid(node) and not (node as Node).is_queued_for_deletion()
 			if ok and not there:
+				if max_new >= 0 and made_n >= max_new:
+					continue
 				if list == "pickups" and (_has_pickup(area, String(spec.get("id", "")))
 						or World.area_flag(area.area_id, "took_" + String(spec.get("id", "")))):
 					continue    # a release set it down itself (the tally-stick), or it is taken
 				var made: Node3D = _npc(area, spec) if list == "npcs" else _pickup(area, spec)
 				area.settle_new(made, String(spec.get("tag", "thaw" if list == "npcs" else "base")))
 				late[key] = made
+				made_n += 1
 			elif not ok and there and list == "npcs":
 				(node as Node3D).visible = false
 				(node as Node).queue_free()
 				late.erase(key)
 	area.set_meta("flag_built", late)
+	return made_n
 
 ## The memory turning is a new visit as well (Area.pre_transition and
 ## apply_state): a Holdfast released in RIME must not leave the old THAW

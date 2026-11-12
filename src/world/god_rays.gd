@@ -16,7 +16,14 @@ var sun := [-34.0, -40.0]     # pitch/yaw of the light the blades stream from
 var _blades: Array = []
 var _t := 0.0
 
+## Made once a run: each GradientTexture2D is filled and uploaded on the
+## main thread, and every area with shafts asked for its own (Streamer graft).
+static var _fade: GradientTexture2D = null
+static var _mote: GradientTexture2D = null
+
 static func _fade_tex() -> GradientTexture2D:
+	if _fade != null:
+		return _fade
 	# Soft vertical beam falloff so shafts dissolve into the air
 	var grad := Gradient.new()
 	grad.offsets = PackedFloat32Array([0.0, 0.22, 0.58, 1.0])
@@ -32,9 +39,12 @@ static func _fade_tex() -> GradientTexture2D:
 	gt.fill_to = Vector2(0.5, 1.0)
 	gt.width = 8
 	gt.height = 128
+	_fade = gt
 	return gt
 
 static func _mote_tex() -> GradientTexture2D:
+	if _mote != null:
+		return _mote
 	var grad := Gradient.new()
 	grad.offsets = PackedFloat32Array([0.0, 0.35, 0.70, 1.0])
 	grad.colors = PackedColorArray([
@@ -50,6 +60,7 @@ static func _mote_tex() -> GradientTexture2D:
 	gt.fill_to = Vector2(0.5, 0.0)
 	gt.width = 32
 	gt.height = 32
+	_mote = gt
 	return gt
 
 func _ready() -> void:

@@ -527,6 +527,11 @@ func _seam() -> void:
 	var sp: Array = (DB.area_def("saltfell_steading").get("start", {}) as Dictionary).get("pos", [0, 0.2, 0])
 	player.invulnerable = true
 	Game.travel_to("saltfell_steading", Vector3(sp[0], float(sp[1]) + 0.2, sp[2]))
+	# (a streamed crossing is not instant: the steading is built behind the
+	# black first, from an empty cache here; ADR 0014)
+	var t0 := Time.get_ticks_msec()
+	while not (Game.current_area_id == "saltfell_steading" and player.input_enabled) and Time.get_ticks_msec() - t0 < 180000:
+		await ticks(5)
 	area = Game.current_area
 	await ticks(90)
 	check(Game.current_area_id == "saltfell_steading" and player.is_on_floor(), "he stands in the steading")

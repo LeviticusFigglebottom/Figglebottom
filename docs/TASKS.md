@@ -33,6 +33,9 @@ Format: worktree → branch.
 - `/home/user/fb-anim` → `feat/combat-anims` (ready for review)
   - Player combat clips: shared combat library, weapon-class clip sets and grips (ADR 0011)
 
+- cloud streaming env → `feat/streaming` (pushed; ready for review; status in `docs/handoffs/live/INBOX_streaming.md`)
+  - Area streaming (ADR 0014): neighbours built on a worker and grafted under a frame budget, disk cache, gradual free, shader warm-up, prompt quit with work in flight. `tools/test.sh streaming`, `tools/qa/quit_check.sh`
+  - Progression gating (ADR 0015): one gate on every region's way on, opened by that region's release; tracks worn to each; `way_on` in every area def. `tools/test.sh gates`
 - `/home/user/fb-anim` → `feat/weapons-overhaul` (ready for review)
   - Every weapon has a model, its own grip, trail and strikes; the torch is a fire with a light; the bow is strung (ADR 0014)
 

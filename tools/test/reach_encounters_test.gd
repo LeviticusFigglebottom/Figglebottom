@@ -513,7 +513,8 @@ func _reach() -> void:
 	check(get_tree().get_nodes_in_group("flock_rime").filter(func(n): return area.is_ancestor_of(n)).is_empty(),
 		"in a rebuilt Reach nothing is left standing")
 	var lying := area.find_children("*", "Node3D", true, false).filter(func(n):
-		return absf((n as Node3D).scale.y - 0.58) < 0.001 and absf((n as Node3D).scale.x - 1.0) < 0.001)
+		# (not the three at the Upwater hurdles: those are the gate's, ADR 0015)
+		return absf((n as Node3D).scale.y - 0.58) < 0.001 and absf((n as Node3D).scale.x - 1.0) < 0.001 and not n.has_meta("gate_piece"))
 	check(lying.size() == 71, "the seventy lie where they stood, and Smudge (%d)" % lying.size())
 	check(Game.find_hearth("hs_high_fold") != null, "and the High Fold stays lit")
 

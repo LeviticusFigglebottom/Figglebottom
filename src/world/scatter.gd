@@ -327,7 +327,7 @@ static func _hero_mesh(name: String, family: String, mode: int) -> Mesh:
 	var path := name if name.begins_with("res://") else "res://assets/models/scatter/%s.glb" % name
 	var out: Mesh = null
 	if ResourceLoader.exists(path):
-		var inst := (load(path) as PackedScene).instantiate()
+		var inst := (BuildLock.wload(path) as PackedScene).instantiate()
 		for c in inst.find_children("*", "MeshInstance3D", true, false):
 			var src := (c as MeshInstance3D).mesh
 			if src == null:
@@ -622,6 +622,11 @@ static func region_recipe(area_id: String) -> Dictionary:
 ##      are appended as written, unscaled.
 ## A kind both files remove is simply gone; plants are added by the recipe,
 ## so a biome's "add" stays empty unless a species is its alone.
+## The rules a region's ground cover is really grown by: its recipe's, with
+## its biome's laid over (the cache key is made of these).
+static func rules_for(area_id: String, rules: Array) -> Array:
+	return Biome.veg_rules(area_id, region_rules(area_id, rules))
+
 static func region_rules(area_id: String, rules: Array) -> Array:
 	var recipe := region_recipe(area_id)
 	if recipe.is_empty():
@@ -685,14 +690,18 @@ const SCATTER_CHUNK := 32.0
 ##   "level": y            stands on a level at y where the land is under it (on the ice)
 ##   "even": true          no drifts: spread evenly;  "scale": [a, b] clump size
 ##   "clear": true         keeps out of the area's scatter "clear" circles (clearings)
-static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> void:
+## `area` null: cache warming (the buffers only); `area_id` then names whose
+## rules these are.
+static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, keep_clear: Array, area_id := "") -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
-	rules = Biome.veg_rules(area.area_id, region_rules(area.area_id, rules))
-	var def: Dictionary = area.get_meta("def", {})
+	if area != null:
+		area_id = area.area_id
+	rules = rules_for(area_id, rules)
+	var def: Dictionary = area.get_meta("def", {}) if area != null else DB.area_def(area_id)
 	var area_clear: Array = def.get("scatter", {}).get("clear", [])
 	var ground := Color(0.1, 0.11, 0.05)
-	if terrain.has_method("palette_color"):
+	if area != null and terrain.has_method("palette_color"):
 		ground = terrain.palette_color("turf_a")
 	# the sward rides on the grass rules, after them all, so adding it moved
 	# no existing clump
@@ -711,7 +720,17 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			bl["density"] = float(rule.get("density", 1.0)) * 6.0
 			bl["range"] = 11.0
 			all_rules.append(bl)
+	# where every clump stands is a pure function of the rules, the seed and
+	# the land: kept on disk (StreamCache) as one MultiMesh buffer per chunk
+	var ck := veg_key(terrain, rules, seed, keep_clear)
+	var cached: Variant = StreamCache.load_var("veg", ck)
+	var hit: bool = cached is Array and (cached as Array).size() == all_rules.size()
+	var store: Array = []
+	var ri := -1
 	for rule in all_rules:
+		if AreaBuilder._cancelled():
+			return     # (a worker build nobody waits for; nothing is cached)
+		ri += 1
 		var kind := String(rule.get("kind", "grass"))
 		var tag := String(rule.get("tag", "base"))
 		var reg: Array = rule.get("region", [-50, -50, 50, 50])
@@ -724,8 +743,10 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 		var upright := bool(kcfg.get("upright", false))
 		var flat := bool(kcfg.get("flat", false))
 		var chunks: Dictionary = {}
-		var x := float(reg[0])
+		var x := float(reg[2]) if hit else float(reg[0])   # (a hit walks nothing)
 		while x < float(reg[2]):
+			if AreaBuilder.cancel_worker and AreaBuilder._cancelled():
+				return
 			var z := float(reg[1])
 			while z < float(reg[3]):
 				var px := x + rng.randf() * step
@@ -818,25 +839,29 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 					var tall := rng.randf_range(0.8, 1.15)
 					chunks[key].append([Transform3D(b.scaled_local(Vector3(s, s if kcfg.has("glb") else s * tall, s)), Vector3(qx, qy - 0.02, qz)), custom])
 			x += step
+		if AreaBuilder._cancelled():
+			return
+		var bufs: Dictionary = cached[ri] if hit else _veg_buffers(chunks, terrain)
+		store.append(bufs)
+		if area == null:
+			continue     # (cache warming: the buffers, and nothing made of them)
 		var rng_end := float(rule.get("range", 55.0))
 		if kcfg.has("glb"):
-			_emit_veg_models(area, terrain, kind, kcfg, tag, chunks, rng_end)
+			# modelled plants: their transforms read back out of the buffers,
+			# so a cache hit serves them as it serves the cards
+			_emit_veg_models(area, terrain, kind, kcfg, tag, _chunks_of(bufs, terrain), rng_end)
 			continue
 		var mesh := _veg_mesh(kind, tag, ground)
-		for key in chunks:
-			var xfs: Array = chunks[key]
+		for key in bufs:
+			var buf: PackedFloat32Array = bufs[key]
 			var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
 			c.y = terrain.height_at(c.x, c.z)
 			var mm := MultiMesh.new()
 			mm.transform_format = MultiMesh.TRANSFORM_3D
 			mm.use_custom_data = true
 			mm.mesh = mesh
-			mm.instance_count = xfs.size()
-			for i in xfs.size():
-				var t: Transform3D = xfs[i][0]
-				t.origin -= c
-				mm.set_instance_transform(i, t)
-				mm.set_instance_custom_data(i, xfs[i][1])
+			mm.instance_count = buf.size() / 16
+			mm.buffer = buf
 			var mmi := MultiMeshInstance3D.new()
 			mmi.name = "Veg_%s_%d_%d" % [kind, key.x, key.y]
 			mmi.multimesh = mm
@@ -847,6 +872,54 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			mmi.visibility_range_end_margin = 6.0
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			area.attach(mmi, tag)
+	if not hit and not AreaBuilder._cancelled():
+		StreamCache.store_var("veg", ck, store)
+
+static func veg_key(terrain: Terrain, rules: Array, seed: int, keep_clear: Array) -> String:
+	return StreamCache.key(["veg", rules, seed, keep_clear, terrain.origin, terrain.cell, terrain.nx, terrain.nz,
+			terrain.heights, terrain.splat])
+
+## _veg_buffers undone: each chunk's clumps as [world transform, custom].
+static func _chunks_of(bufs: Dictionary, terrain: Terrain) -> Dictionary:
+	var out := {}
+	for key in bufs:
+		var buf: PackedFloat32Array = bufs[key]
+		var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
+		c.y = terrain.height_at(c.x, c.z)
+		var xfs: Array = []
+		for o in range(0, buf.size(), 16):
+			var b := Basis(Vector3(buf[o], buf[o + 4], buf[o + 8]), Vector3(buf[o + 1], buf[o + 5], buf[o + 9]),
+					Vector3(buf[o + 2], buf[o + 6], buf[o + 10]))
+			xfs.append([Transform3D(b, Vector3(buf[o + 3], buf[o + 7], buf[o + 11]) + c),
+					Color(buf[o + 12], buf[o + 13], buf[o + 14], buf[o + 15])])
+		out[key] = xfs
+	return out
+
+## Each chunk's clumps as the MultiMesh's own buffer (per instance: the
+## transform's three rows with the origin, relative to the chunk centre, then
+## the custom data), exactly what set_instance_transform and
+## set_instance_custom_data would have written.
+static func _veg_buffers(chunks: Dictionary, terrain: Terrain) -> Dictionary:
+	var out := {}
+	for key in chunks:
+		var xfs: Array = chunks[key]
+		var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
+		c.y = terrain.height_at(c.x, c.z)
+		var buf := PackedFloat32Array()
+		buf.resize(xfs.size() * 16)
+		var o := 0
+		for e in xfs:
+			var t: Transform3D = e[0]
+			t.origin -= c
+			var b := t.basis
+			var cu: Color = e[1]
+			buf[o] = b.x.x; buf[o + 1] = b.y.x; buf[o + 2] = b.z.x; buf[o + 3] = t.origin.x
+			buf[o + 4] = b.x.y; buf[o + 5] = b.y.y; buf[o + 6] = b.z.y; buf[o + 7] = t.origin.y
+			buf[o + 8] = b.x.z; buf[o + 9] = b.y.z; buf[o + 10] = b.z.z; buf[o + 11] = t.origin.z
+			buf[o + 12] = cu.r; buf[o + 13] = cu.g; buf[o + 14] = cu.b; buf[o + 15] = cu.a
+			o += 16
+		out[key] = buf
+	return out
 
 static func _circles(list: Array) -> Array:
 	var out: Array = []
@@ -912,7 +985,8 @@ static func _veg_model_mesh(name: String, family: String, mode: int, sway: float
 	var path := VEG_MODEL_DIR + name + ".glb"
 	var out: Mesh = null
 	if ResourceLoader.exists(path):
-		var inst := (load(path) as PackedScene).instantiate()
+		# (BuildLock.wload, never load: a streamed build runs this on a worker)
+		var inst := (BuildLock.wload(path) as PackedScene).instantiate()
 		for c in inst.find_children("*", "MeshInstance3D", true, false):
 			var src := (c as MeshInstance3D).mesh
 			if src == null:

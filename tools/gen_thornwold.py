@@ -465,6 +465,31 @@ D = {
     "edges": edges,
 }
 
+# --- progression gates (ADR 0015) ---------------------------------------------
+# Where the fell path leaves the wood's east side Eyvind's hedge runs straight
+# across it, with no gate in it: laid in THAW, frozen thorn in RIME. It comes
+# down with the rest when he is released (THORNWOLD.md 6: "the hedge unlays
+# itself stem by stem"). Parted from the fell side at any time. Wings of the
+# same hedge close the ground between it and the wood's edge thicket.
+import progress_gates as PG  # noqa: E402
+_FX, _FZ = 480.6, FELL_OUT_Z   # as far east as leaves standing room for someone set down by the seam
+FELL_GATE = PG.gate(
+    "thornwold", "fell_hedge", K.sample, at=(_FX, _FZ), toward=(1, 0),
+    flag="ks_hedgelayer_released", name="the fell path", to="shepherds_reach",
+    seam_at=high_seam("reach", "thornwold")["at"],
+    width=3.8, height=2.6, depth=1.0, flank=None, max_span=100.0,
+    dressing=[{"hedge": "hd_laid2", "family": "M_thorn", "fit": [4.2, 1.5, 1.2], "tag": "thaw"},
+              {"hedge": "hd_thorn3a", "family": "M_thorn_rime", "fit": [4.4, 3.0, 1.5], "tag": "rime"}],
+    locked_prompt="Laid shut from the other side", unbar_prompt="Pull the stakes", open_toast="The hedge comes apart.")
+FELL_GATE["gate"]["span"] = [-7.0, 7.0]      # (the wings and the edge thicket close it, not the land)
+PG.install(D, FELL_GATE)
+for _sgn in (-1, 1):
+    _wing = [[_FX, _FZ + _sgn * 2.3], [_FX + 1.2, _FZ + _sgn * 4.6], [x1 - inset + 0.4, _FZ + _sgn * 7.6]]
+    hedge(_wing, "laid", 1.35, 1.0, "thaw")
+    hedge(_wing, "thorn", 3.0, 1.3, "rime")
+FOREST_CLEAR.append([_FX, _FZ, 4.0])
+# --- end progression gates
+
 if __name__ == "__main__":
     out = os.path.join(ROOT, "data", "areas", "thornwold.json")
     json.dump(D, open(out, "w"), indent=1)

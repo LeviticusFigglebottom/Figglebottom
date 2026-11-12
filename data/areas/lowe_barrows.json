@@ -1423,6 +1423,11 @@
     -66.0,
     -228.0,
     2.6
+   ],
+   [
+    -66.0,
+    -241.0,
+    3.0
    ]
   ],
   "rules": [
@@ -2502,6 +2507,42 @@
      -156.5
     ],
     "rot": -8
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -67.86,
+     -242.06
+    ],
+    "rot": -29.85,
+    "scale": 1.0
+   },
+   {
+    "kind": "peat_stack",
+    "at": [
+     -64.14,
+     -239.94
+    ],
+    "rot": -18.07,
+    "scale": 1.0
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -72.47,
+     -234.82
+    ],
+    "scale": 1.3,
+    "rot": 55.04
+   },
+   {
+    "kind": "standing_stone",
+    "at": [
+     -66.25,
+     -232.06
+    ],
+    "scale": 1.3,
+    "rot": 77.04
    }
   ],
   "veg": [
@@ -2553,7 +2594,8 @@
     ],
     "range": 50
    }
-  ]
+  ],
+  "fences": []
  },
  "edges": {
   "doc": "tools/audit_edges.py classes every walkable boundary; seams to Saltfell are their own class.",
@@ -2681,5 +2723,120 @@
    }
   ],
   "gates": []
- }
+ },
+ "gates": [
+  {
+   "id": "kettle_sods",
+   "at": [
+    -66.0,
+    44.94,
+    -241.0
+   ],
+   "rot": -23.96,
+   "width": 2.8,
+   "height": 2.4,
+   "depth": 1.2,
+   "leaves": false,
+   "open_flag": "ks_turfwright_released",
+   "locked_prompt": "Stacked from the other side",
+   "unbar_prompt": "Pull the sods down",
+   "open_toast": "The stack comes down.",
+   "dressing": [
+    {
+     "scatter": "peat_stack",
+     "fit": [
+      1.5,
+      1.2,
+      1.15
+     ],
+     "rot": 4,
+     "offset": [
+      -0.72,
+      0.01,
+      0.0
+     ]
+    },
+    {
+     "scatter": "peat_stack",
+     "fit": [
+      1.5,
+      1.2,
+      1.15
+     ],
+     "rot": -5,
+     "offset": [
+      0.72,
+      -0.0,
+      0.0
+     ]
+    },
+    {
+     "scatter": "peat_stack",
+     "fit": [
+      1.45,
+      1.15,
+      1.05
+     ],
+     "rot": 9,
+     "offset": [
+      -0.3,
+      1.12,
+      0.0
+     ]
+    },
+    {
+     "scatter": "peat_stack",
+     "fit": [
+      1.3,
+      1.0,
+      1.0
+     ],
+     "rot": -12,
+     "offset": [
+      0.95,
+      1.12,
+      0.0
+     ]
+    },
+    {
+     "scatter": "peat_stack",
+     "fit": [
+      1.4,
+      0.3,
+      1.0
+     ],
+     "rot": 40,
+     "when": "open",
+     "offset": [
+      -0.9,
+      0.65,
+      1.6
+     ]
+    }
+   ],
+   "span": [
+    -1.0,
+    1.5
+   ]
+  }
+ ],
+ "way_on": [
+  {
+   "id": "kettle_sods",
+   "name": "the Kettle Road",
+   "to": "kettle_fjord",
+   "at": [
+    -66.0,
+    44.94,
+    -241.0
+   ],
+   "seam": [
+    -67.4,
+    36.43,
+    -255.4
+   ],
+   "open_flag": "ks_turfwright_released",
+   "gate": "kettle_sods"
+  }
+ ]
 }

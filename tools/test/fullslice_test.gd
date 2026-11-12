@@ -91,6 +91,21 @@ func _path(from: Vector3, to: Vector3) -> PackedVector3Array:
 	var b := NavigationServer3D.map_get_closest_point(map, to)
 	return NavigationServer3D.map_get_path(map, a, b, true)
 
+## The progression gate on the pass (ADR 0015).
+func _pass_gate() -> ShortcutGate:
+	for g in area.find_children("*", "ShortcutGate", true, false):
+		if g.gate_id == "pass_net":
+			return g
+	return null
+
+func _pass_shut() -> bool:
+	var g := _pass_gate()
+	return g != null and (g.get_node("GateBody") as StaticBody3D).collision_layer != 0
+
+func _reaches_pass(to: Vector3) -> bool:
+	var p := _path(player.global_position, to)
+	return p.size() > 1 and p[p.size() - 1].distance_to(to) < 2.5
+
 func _awake_foes() -> Array:
 	return get_tree().get_nodes_in_group(RH.GROUP_ENEMIES).filter(
 			func(e): return is_instance_valid(e) and e.is_inside_tree() and e.can_process() and not e.dead)
@@ -161,6 +176,7 @@ func _walk_to(to: Vector3, max_ticks := 900, tol := 1.0, fight := true) -> bool:
 	return false
 
 func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
+	await nav_wait()     # (a gate just opened: the routes are being baked again)
 	var p := _path(player.global_position, to)
 	if p.size() < 2:
 		return player.global_position.distance_to(to) < 1.5
@@ -504,12 +520,17 @@ func _run() -> void:
 		check(il.size() == 5 and il[3].begins_with("We're short a sack of rye."), "Ingra's first lines, in order")
 		await _leave(ui)
 	check(World.flag("ks_ingra_met"), "Ingra's thread begins")
+	# ADR 0015: the pass to the Lowe is shut until the Netmender is released
+	check(_pass_gate() != null and _pass_shut(), "THAW: the net hangs across the pass to the Lowe")
+	var pass_seam := Vector3(-89, 22.5, -84.0)
+	check(not _reaches_pass(pass_seam), "and no route runs from the yard to the pass seam")
 	check(_journal("ingra_rye").size() == 1 and _journal("brede_float").size() == 1, "two threads, one line each")
 
 	_set_leg("first_rest")
 	print("== the first rest forces RIME")
 	var rest := await _rest_ui_at("hs_salt_house")
 	check(rest != null, "the Salt House offers its hearth")
+	check(_pass_shut(), "the pass is still shut at the first rest")
 	if rest != null:
 		await _shot("rest_menu_thaw")
 		check(String(rest._options[0]["id"]) == "rest" and _option_index(rest, "toggle") < 0,
@@ -587,6 +608,7 @@ func _run() -> void:
 	if it != null:
 		player.try_interact()
 	await _secs(1.0)
+	await nav_wait()
 	check(World.area_flag(AID, "gate_boatshed_back"), "the shortcut stands open")
 	walked = await _walk_to(gate.global_position + Vector3(0, 0, 2.5), 400, 0.8, true)
 	check(walked, "through the boat-shed to the Strand")
@@ -772,6 +794,7 @@ func _run() -> void:
 	await _shot("release_card")
 	check(World.is_cleared(AID) and World.flag("ks_netmender_released"), "Saltfell is cleared")
 	check(not Game.arena_locked, "the veil falls")
+	check(_pass_gate() != null and not _pass_shut(), "the net across the pass has come down")
 	var needle := _pickup("mending_needle")
 	if needle == null:
 		for pk in area.find_children("*", "Pickup", true, false):
@@ -800,6 +823,11 @@ func _run() -> void:
 	check(World.get_area_state(AID) == RH.WState.THAW, "warmed: THAW again")
 	check(World.last_hearth.get("hearth", "") == "hs_long_hearth", "the Long Hearth is lit and kept")
 	await _shot("longhouse_thaw")
+
+	check(not _pass_shut(), "THAW: the pass stays open")
+	await ticks(40)
+	await nav_wait()
+	check(_reaches_pass(Vector3(-89, 22.5, -84.0)), "and the yard's navmesh runs through the dyke to the pass seam")
 
 	_set_leg("keepsakes")
 	print("== both threads close in THAW")

@@ -592,6 +592,32 @@ D = {
     "edges": edges,
 }
 
+# --- progression gates (ADR 0015) ---------------------------------------------
+# The foot of the Tarn Steps: the landing's crates and barrels are stacked
+# across the gully between the gorge walls (boulders close the rest), rimed
+# solid in RIME, until Old Pell is released. Shifted from the Tarnhall side at
+# any time. The steps' tread is painted in terrain_kettle.path_weight.
+import progress_gates as PG  # noqa: E402
+_sa, _sb = TL.STEPS[0], TL.STEPS[1]
+_sf = 0.8
+STEPS_GATE = PG.gate(
+    "kettle_fjord", "steps_stack", K.sample,
+    at=(_sa[0] + (_sb[0] - _sa[0]) * _sf, _sa[1] + (_sb[1] - _sa[1]) * _sf), toward=(_sb[0] - _sa[0], _sb[1] - _sa[1]),
+    flag="ks_ice_cutter_released", name="the Tarn Steps", to="tarnhall", seam_at=tarn_seam("kettle_fjord")["at"],
+    width=3.8, height=2.2, depth=1.1, flank="boulder", flank_scale=1.5, ext=0.3,
+    dressing=[{"kit": "crate", "along": -1.42, "rot": 6}, {"kit": "crate", "along": -0.45, "rot": -4},
+              {"kit": "crate", "along": 0.52, "rot": 3}, {"kit": "crate", "along": 1.47, "rot": -8},
+              {"kit": "barrel", "along": -1.3, "lift": 1.0}, {"kit": "barrel", "along": -0.5, "lift": 1.0},
+              {"kit": "crate", "along": 0.6, "lift": 1.0, "rot": 14, "scale": 0.9}, {"kit": "barrel", "along": 1.45, "lift": 1.0},
+              {"kit": "rime_spike", "along": -0.9, "out": 0.75, "rot": 40, "tag": "rime"},
+              {"kit": "rime_spike", "along": 0.2, "out": -0.7, "rot": 130, "tag": "rime"},
+              {"kit": "rime_spike", "along": 1.1, "out": 0.7, "rot": 250, "tag": "rime", "scale": 1.2},
+              {"kit": "crate", "along": -2.4, "out": 2.2, "rot": 31, "when": "open"},
+              {"kit": "barrel", "along": 2.3, "out": 2.6, "when": "open"}],
+    locked_prompt="Stacked from the other side", unbar_prompt="Shift the stack", open_toast="The stack comes down.")
+PG.install(D, STEPS_GATE)
+# --- end progression gates
+
 if __name__ == "__main__":
     out = os.path.join(ROOT, "data", "areas", "kettle_fjord.json")
     json.dump(D, open(out, "w"), indent=1)

@@ -1,0 +1,278 @@
+# Inbox: streaming and progression environment → lead
+
+Newest entry at the top. Branch `feat/streaming`.
+
+## 2026-11-12: main merged (a6a45f6); full suite and every walk run, one at a time
+
+**Branch is ready for review**, with the GPU re-measure in the entry below still wanted (`stream_prof --prof-stream`, run alone).
+
+**Main merged.**
+- `origin/main` a6a45f6, which holds all of integration, merged without conflicts.
+- The Map sheets are rebaked from this branch's ground (`tools/ui/build_map.py`): six regions show their way-on gate's worn track. Coldwell and the base sheet are unchanged. `journal_map` 74/0.
+
+**Fixed since the last entry.**
+- **Integration's suites against streaming and the way-on gates:**
+  - `grounded`: it waited 90 ticks for a crossing that is no longer instant.
+  - `leftovers_longhouse`: the Saltfell gate's coil of rope, left as it opens, is the gate's, not the Netmender's. Layer-attached gate dressing now carries `gate_piece`.
+  - `poi_reach` and `tarnhall_encounters`: each took the first gate found. They now find their gate by id.
+- **Collision audit:**
+  - The cairn at the Reach's way on had no collider; it has a landmark blocker now.
+  - The Kettle flank cores are now navmesh-only boxes (no invisible wall).
+  - The baseline is updated for Kettle, Tarnhall, Thornwold and the Reach only. Eleven offenders at the gates are owned by this env, each with a fix: open-state gate dressing with no collider, and the Thornwold hedge gate's body is wider than the hedge. The rest are known offenders at shifted positions, with the same ids and owners.
+- **Cold crossing:** the heightmap is parsed once for both navmeshes, not once per state. Worst frame 36.9 → 23.5 ms.
+
+**Results on this box (headless), suites one at a time.**
+| suite | commit | checks | failures | note |
+|---|---|---:|---:|---|
+| `tools/test.sh` (full) | 20cb34d + integration merge, before the fixes above | 3,245 | 42 | in 6 suites: `collision_audit`, `fullslice`, `grounded`, `leftovers_longhouse`, `poi_reach`, `tarnhall_encounters`; each was rerun after its fix (below) |
+| `collision_audit` | after the fixes | 45 | 0 | |
+| `grounded`, `leftovers_longhouse`, `poi_reach`, `tarnhall_encounters` | after the fixes | 304, 28, 64, 110 | 0 | |
+| `fullslice` | after the fixes, alone | 114 | 0 | the full run's failure (the Netmender never left phase one) came while I ran two other tests beside it |
+| `gates` | after the main merge | 151 | 0 | |
+| `streaming` | the head | 113 | 0 | one earlier run failed the cold crossing (35.0 against 30); fixed by the heightmap change |
+| `smoke` | after the main merge | 11 | 0 | |
+| `fullgame_lowe` | after the main merge | 196 | 0 | the brief's peat-island and black-water failures are gone |
+| `fullgame_kettle` | after the main merge | 199 | 0 | the Ice-Cutter duel is won |
+| `fullgame_tarnhall` | after the main merge | 213 | 0 | |
+| `fullgame_thornwold` | after the main merge | 163 | 0 | |
+| `fullgame_reach`, run 1 | after the main merge | 114 | 19 | after the scripted death, the Bearer made no progress at the Sheilings; nowhere near anything this branch added in the Reach |
+| `fullgame_reach`, run 2 | the head | 197 | 0 | |
+| `fullgame_coldwell` | after the main merge | 179 | 0 | |
+| `fullgame_ending_outsong` | after the main merge | 161 | 0 | |
+| `fullgame_ending_kept` | after the main merge | 193 | 0 | |
+
+**Still open.**
+- **No GPU numbers** for any of the hitch work. The new report tables will prove the diagnosis right or wrong.
+- **Cold Saltfell flush (238 ms on the GPU):** not addressed beyond naming its phase in the report.
+- **A first visit's navmesh parse** still has one ~23 ms frame (the heightmap), behind the black.
+- **`fullgame_reach` is flaky**, as main's handoff already says of its driving.
+- **Gate offenders in the baseline:** open dressing needs colliders; owned here, not done.
+- **ADR numbers collide** (0014 and 0015 on both sides), as in the entry below.
+
+## 2026-11-12: hitch fixes in, integration merged; GPU re-measure wanted
+
+Branch head after this entry: see `git log origin/feat/streaming`. Full `tools/test.sh` and the walks are running now, one at a time. Their results follow in the next entry.
+
+**Please have the GPU box run, alone, at the branch head:**
+```
+godot --path . --rendering-driver vulkan --resolution 1920x1080 -- --scene=res://tools/qa/stream_prof.tscn --prof-stream --prof-out=stream_prof_gpu.md
+```
+The report has a new table, "The dearest single grafts of what acts, and the dearest single flush". It names the node behind any slow graft frame, and the worker phase behind the cold Saltfell peak.
+
+**Job 1 (hitches). Done here; not proven on a GPU.**
+- **Cause, inferred.** With the renderer on the main thread, the 83–107 ms frame is CPU time inside one actor's `_ready`. The warm pass was as bad as the cold, and on the GPU it revisits areas in the same process. The turn to RIME cost about 50 ms *every* time. The explanation that fits all of this: a shader and its pipelines are freed with the last material that uses it (the old area, the wave's particles), then rebuilt in the frame the next one appears. Lavapipe cannot show this because Mesa caches its own compiles. ADR 0014 has a new section, "Hitches on a real GPU".
+- **Fixes:**
+  - `ShaderWarm.retain` keeps one cheap stand-in per kind of shader for the run.
+  - The prep now also builds, one per frame before the swap: each humanoid model's clip tables, each read-ahead model (unseen, 40 m ahead of the camera), and the wave's particles.
+  - The wave's materials are made once, and its emitters start one per frame.
+  - God rays' textures are made once.
+- **Headless, the CPU part is measurable.** A soul's first graft was 12–14 ms (clip tables built in its `_ready`). The prepared crossing's worst frame went from 18.8 to 14.4 ms (12.2 ms before the merge), with the next worst at 12.7.
+- **Cold Saltfell (238 ms, "flush: worker's render commands").** Not fixed: I cannot see which phase queues it. The new table names the dearest single flush and the build phase it followed.
+
+**Job 2 (failures).**
+- `streaming` "within 30 ms (30.3)": the margin is now about 2×, as above.
+- `streaming`, the deck and opened-gate routes (84 m from any navmesh): the map takes a new region on the navigation server's own thread, and 4 ticks were not enough on a loaded box. The checks now poll for up to 5 s. This is a test-side fix; the game's routes were never affected.
+- `fullgame_lowe` ("no THAW route to the peat island", "the black water is back"), `fullgame_kettle` (the Ice-Cutter stall) and `fullslice` (the float's prompt): **I merged `feat/integration-1112` (a37afed) into this branch**, which carries the fixes for all three. Its handoff puts the slice failure down to two walks sharing a save directory on the owner's PC, now one directory per process. The walks have not been run on the merge yet.
+
+**Job 3 (merge).** `origin/main` is still 024ff96. Integration is merged here already, so merging main once integration lands should be small.
+- 18 conflicts: areas and splats regenerated with `tools/gen_*.py`; every output matches the side that changed it.
+- Integration's builder code made streaming-safe:
+  - biome fog and weather go through `_for_main`;
+  - the veg model loader uses `BuildLock.wload`;
+  - `Biome`'s cache is locked;
+  - modelled plants are served from the cached ground-cover buffers.
+- Lowe bog blocker: integration's tall box, not this branch's octagon.
+- `ShortcutGate`: one set of names (`has_leaves`, `open_prompt`).
+- Found and fixed after the merge:
+  - cache warming broke on the biome rules (and its keys never matched the live build);
+  - a route over the Kettle gate's flank boulder, now under integration's hull colliders. Boulder flanks get an invisible core (`progress_gates.py`).
+- `streaming` 113/0, `gates` 151/0, `smoke` 11/0, audits and originality pass.
+
+**Open, for the lead.**
+- **ADR numbers collide.** Main has `0014-journal-and-map`, integration `0015-weapons-overhaul`, and this branch `0014-area-streaming` and `0015-progression-gating`, cited in many code comments. Renumbering this branch's two to the next free numbers is a mechanical change; say if you want it.
+- Not watched on a real GPU: the off-screen model prewarm (tiny models 40 m ahead of the camera, 4 frames each, behind the play camera's view of the incoming area).
+
+## 2026-11-12: GPU report received; hitch work started
+
+Read the GPU worker's 05:09Z entry and `stream_prof_gpu_25ef245.md`. In work now, on top of 64147e8:
+- the single 83 to 107 ms frame in "graft: what acts" on every warm crossing;
+- the cold Saltfell flush (1,994 ms over the crossing, 238.5 ms peak);
+- the turn to RIME, about 50 ms of "flip: wave particles" in one frame;
+- the three `streaming` failures on that box (30.3 against 30 ms; the deck route; the opened-gate route).
+
+Target taken: no frame over 33 ms warm, none over 50 ms cold. This box has no GPU, so I am trying to reproduce under lavapipe and, whatever that shows, adding per-item timing to `stream_prof` so one run on the owner's PC names the node responsible. Expect a request for a re-measure.
+
+The `fullgame_lowe` cluster the GPU box saw ("the frost-taken bring the Bearer down" and what follows) is the one in the entry below; it also occurs at base `c3721bb`.
+
+Noted: `feat/integration-1112` reaches main first; I will merge main into this branch and re-test when it does.
+
+## 2026-11-12: exit hang fixed (64147e8); branch is ready for review
+
+**The warning in the entry below is lifted.** Quitting with streaming work in flight now exits in 0.3 to 0.7 s; `fullgame_tarnhall` and `fullgame_reach` exit normally.
+
+**Cause.** A scene (`.glb`) `load()` called from a WorkerThreadPool task does not return until the main thread runs a frame. The worker had already seen the cancel and was reading models ahead; the main thread was waiting for it outside the frame loop (`BuildLock.wait_idle`), so neither moved. Found by experiment (`tools/qa/quit_probe.gd`); the engine-side reason is not named, the binary has no symbols. A quit, a return to the title and a synchronous build could all freeze this way in the real game.
+
+**Fix.**
+- Builders a worker can reach load scenes with `BuildLock.wload(path)`, never `load` (rule recorded in ADR 0014, "Quitting").
+- The build task is posted at high priority: at low priority the threaded loads it asked for never started (inferred: the pool's limit on low-priority tasks).
+- `Game.quit(code)` calls the workers off and sees them end while the main loop runs, then quits. The pause sheet, the window close request, `TestBase.finish` and the QA tools use it. **`auto_accept_quit` is now off**; `Game` handles the close request.
+- Debug tools in `src/debug/` still call `get_tree().quit()` directly; that path is tested too and exits.
+
+**Guard.** `tools/qa/quit_check.sh`: four kinds of in-flight work × three ways of quitting × two delays, each its own process, fails above 3 s. The `streaming` suite runs three of the cases under `timeout 60`.
+
+**Suites on 64147e8, run here.**
+| suite | checks | failures | note |
+|---|---:|---:|---|
+| `streaming` | 108 | 0 | |
+| `smoke` | 11 | 0 | |
+| `gates` | 151 | 0 | 3 engine navigation errors logged from the test's own route queries ("most reachable polygons"); nothing failed |
+| `deathloop` | 26 | 0 | |
+| `fullslice` | 112 | 0 | |
+| `fullgame_tarnhall` | 213 | 0 | exits normally |
+| `fullgame_reach` | 197 | 0 | exits normally |
+| `fullgame_lowe`, run 1 | 193 | 23 | see below |
+| `fullgame_lowe`, run 2 | 196 | 0 | |
+| `quit_check.sh` | 24 cases | 0 | 276 to 708 ms; two crossing cases logged one engine error each, not looked into |
+
+Not rerun on 64147e8: `fullgame_thornwold`, `fullgame_coldwell`, both endings (all 0 failures on 73013bf, table below), `fullgame_kettle` (fails the same 17 at base).
+
+**Walk variance, for the QA env.**
+- `fullgame_lowe` run 1: the frost-taken did not bring the Bearer down in the first barrow ("STILLED, and the Breathmark"), and 22 later checks fell with it. One run at base `c3721bb` failed the same way, so I take it as the walk's own, not this branch's. Two runs do not prove that.
+- `fullgame_reach`: one of the agent's two runs failed "in the count she kept by her father" (9.8 m against 9.5 m). Passed here.
+
+**Still open (unchanged unless noted).**
+- No real-GPU measurement of any of this.
+- Once in the agent's `fullgame_tarnhall` run, the headless renderer logged `uninitialized RID` / `Parameter "m" is null` while the main thread flushed a worker build's commands; one mesh of that build was lost, the walk passed. Unproven guess: mesh RIDs made on a worker and the main thread at once under the dummy renderer. Not seen in the runs above. Whether a real renderer can do it is unknown.
+- Made-ready times in `docs/qa/STREAMING.md` predate the fix (worker builds no longer wait a frame per scene load); not re-measured.
+- Release frame 30 to 38 ms; the swap is a dip to black, not a crossfade; the rest as in the entries below.
+
+## 2026-11-12: follow-ups merged (73013bf); exit hang found (fixed, see above)
+
+**Known breakage on this branch.** The process can hang on quit while a worker build is in flight. `fullgame_tarnhall` and `fullgame_reach` both reported 0 failures and then never exited (killed by the 45-minute limit). After the result line the log repeats `BuildLock: a worker build did not end in 120 s` from `Streamer.reset` in `_exit_tree`. Both walks end beside a seam. The same would hang the real game when the player quits near a seam. Cause not yet found; the fix and a fast-failing regression test are in work now.
+
+**Merged since the last entry.**
+- **Gate and bridge navmesh re-bakes run in the background.** Was 622 to 756 ms in one frame; now 10 to 15 ms worst frame of nav work (one bridge run: 26 ms). Routes open 0.5 to 0.6 s after the Holdfast falls. Tests wait with `TestBase.nav_wait()` / `await area.nav_settled()`.
+- **Bridge behaviour change:** the re-bake now follows the deck's swing. Before, it ran with the deck upright, so the deck was never on the navmesh. The Lowe's `nav_bounds` still end 2.5 m out along the deck; covering all of it needs an area-data change, not made.
+- **Cache warming.** After 2 s idle, neighbours' terrain and ground-cover entries are computed on a low-priority worker. `tools/qa/warm_cache.sh` fills all seven areas. A read-only `cache_seed` folder beside the executable (or `--cache-seed=PATH`) is read if present. Export presets and CI untouched.
+
+**Still over budget.** The release frame: `on_boss_slain` 30 to 38 ms, longest frame around the release 52 ms, after spreading the returning souls over frames. What is left is the first soul's instancing and the song's first load.
+
+**Unproven.**
+- One `Parameter "m" is null` engine error in one of six streaming runs (the weather freeing a particle node during a graft). Nothing failed.
+- The cache seed was checked with the editor binary only, not an exported build.
+
+**Suites on 73013bf, run here.**
+| suite | checks | failures | note |
+|---|---:|---:|---|
+| `streaming` | 102 | 0 | |
+| `smoke` | 11 | 0 | |
+| `gates` | 151 | 0 | |
+| `fullgame_tarnhall` | 213 | 0 | **then hung on exit** |
+| `fullgame_thornwold` | 163 | 0 | |
+| `fullgame_reach` | 197 | 0 | **then hung on exit** |
+| `fullgame_coldwell` | 179 | 0 | |
+| `fullgame_ending_outsong` | 161 | 0 | |
+| `fullgame_ending_kept` | 193 | 0 | |
+| `fullgame_lowe` | 196 | 0 | run on b613e83 here, and on the follow-up code by the agent; my rerun on 73013bf was cut off by the time limit |
+| `fullgame_kettle` | | | not run: fails the same 17 on `c3721bb` |
+
+## 2026-11-12: Job 2 merged; both jobs are on `feat/streaming` (b613e83)
+
+**What changed.** Every region's way on is shut by a real object until that region's Holdfast is released, then stands open with a worn track leading to it. ADR: `docs/decisions/0015-progression-gating.md` (both readings of the owner's sentence, and the before/after per region).
+
+| Region → next | Before | Now | Opens on |
+|---|---|---|---|
+| Saltfell → Lowe (pass) | open turf, no track | head-dyke across the neck, two stones, the Netmender's net in the gap | `ks_netmender_released` |
+| Saltfell → Lowe (drawbridge) | raised, windlass on the Lowe side | unchanged | `lowe_bridge_down` |
+| Lowe → Kettle | open cutting, no track | sods stacked across the cutting | `ks_turfwright_released` |
+| Kettle → Tarnhall | open gully | crates and barrels across the foot of the Tarn Steps | `ks_ice_cutter_released` |
+| Tarnhall → Thornwold | open notch | dyke with a barred plank gate | `ks_host_released` |
+| Thornwold → Reach | 11 m opening | the Hedgelayer's hedge straight across | `ks_hedgelayer_released` |
+| Reach → Coldwell | open corner | head-dyke with two tied hurdles, a cairn | `ks_fellcaller_released` |
+
+- **Evidence for both readings.** No seam in the game had a lock: a new journey could walk from the Strand to the Wellhead Steps without meeting a Holdfast. And no track led to any seam except the Kettle Road, so the pass was open but invisible. Both were true.
+- **Mechanism.** One `ShortcutGate` per exit on the base layer (same in THAW and RIME), opened by the release flag where the Bearer stands. Each can be undone by hand from its far side, so nobody is ever shut out of the region behind.
+- **For the journal and map (`feat/ui-map-log-icons`):** each area def now has a `way_on` block: `id`, `name`, `to`, `at`, `seam`, `open_flag`, `gate`.
+- **Generators:** edits sit inside `# --- progression gates` blocks; shared helper `tools/progress_gates.py`. One edit outside a block: a bog nav-blocker fix in `gen_lowe.py`.
+- **Merging note:** six `data/terrain/*_splat.bin` changed (tracks painted). A `feat/poi-*` branch that also repaints a splat must rerun its generator after merging, not pick a side.
+
+**Suites on the merged branch, run here:** `gates` 151/0, `streaming` 78/0, `smoke` 11/0, `steading` 49/0, `deathloop` 26/0. `audit_edges.py`, `audit_areas.py` and the originality check pass. The full-game walks on the merged branch are running now; results in the next entry.
+
+**Suites as the gating agent ran them, before the merge with streaming:** `lowe`, `kettle`, `tarnhall`, `thornwold`, `reach`, `coldwell`, `reach_encounters`, `traps`, `release_scenes`, `houses`, `keepsakes`, `fullslice` (112), `fullgame_tarnhall` (213), `fullgame_thornwold` (163), `fullgame_coldwell`, both endings: pass. `fullgame_lowe`: 1 failure on its last run (a Breathmark left after an unplanned fight death). `fullgame_reach`: 1 failure on its last run (a flock count that passed the run before).
+
+**For the QA env: `fullgame_kettle` fails on `main`'s parent `c3721bb` too.** 17 failures, identical with and without either job: the scripted Ice-Cutter duel is lost (stalls with the boss at 1040/1250). Not caused by this branch; not fixed here.
+
+**Open, for the lead to decide or pass on.**
+- **THAW fiction.** Each gate also stands in the remembered evening and is gone from it after the release. No lore line covers this. The Kettle stack is the weakest fit. No dialogue was written; ADR 0015 lists where a line could go.
+- **73 sheep.** REACH.md says seventy; three frozen ewes at the hurdles are extra (tagged `gate_piece`, one list in `gen_reach.py` removes them).
+- **RIME reveal.** Tracks are under snow in RIME, so there the cue is the emptied gap and its stones or cairn only.
+- **Line of sight.** On the Lowe, Tarnhall and Thornwold the gap cannot be seen from the arena; the track starts at the arena mouth.
+- **Not seen in motion or on a real GPU.** The gate's 1.4 s sinking was not watched. Screenshots are lavapipe: `docs/screens/gates_*.png` (23 files). The Lowe ones read worst (narrow, shaded cutting).
+- **In work now:** gate and drawbridge navmesh re-bakes off the main thread (they fire at every release now), and warming the neighbours' cache in idle time.
+
+## 2026-11-12: Job 1 merged into `feat/streaming` (846c6fa); Job 2 still in work
+
+**What changed.** An area change no longer builds on the main thread. The neighbour is built on a worker when the Bearer is within 70 m of an unlocked seam, grafted in hidden and inert within a per-frame budget, and swapped in behind a dip to black. Design: `docs/decisions/0014-area-streaming.md`. Numbers and re-measure commands: `docs/qa/STREAMING.md`. Tuning: `data/game.json` → `streaming`. `--no-streaming` puts the old path back for A/B.
+
+**Numbers** (this box: headless, four slow shared cores, no GPU; relative only).
+
+| | before | after, warm cache | after, empty cache |
+|---|---|---|---|
+| main-thread work in the worst frame of a crossing | 3,750 to 13,329 ms (all of it) | 12 to 22 ms | 19 to 27 ms |
+| what the player sees | a freeze of 4 to 13 s | black for 0.25 to 0.34 s | black for 0.6 to 1.2 s if the area was ready |
+| neighbour made ready, on a worker | not done | 0.4 to 1.2 s | 3.2 to 12.5 s |
+| freeing the area left | 67 to 101 ms in one frame | 2.8 to 4.3 ms a frame | same |
+| a rest (foes brought back) | 31 to 118 ms in one frame | 6 to 8 ms worst frame | same |
+| THAW to RIME, settle frame | respawn spike as above | 8 to 16 ms worst frame | same |
+| cross-area respawn | full build in one frame | 13 to 23 ms worst frame | |
+
+No measured crossing, rest, flip or respawn had a frame over the 30 ms budget.
+
+**Not done, or not proven. Read before merging.**
+- **Real GPU: nothing measured.** Upload cost, pipeline warm-up coverage and the swap frame need the GPU worker. Command is in STREAMING.md ("the one to run on the GPU box").
+- **The swap is a dip to black, not a crossfade.** About a third of a second when ready.
+- **First visit with an empty cache.** Saltfell (12.5 s here), the Reach, the Lowe and the Coldwell may not be ready if the player sprints the 70 m. The black then holds; nothing freezes. Once per area per machine, and again after each game update. Follow-up planned: warm the neighbours' cache in idle time.
+- **Opening a gate still costs one frame of 0.4 to 1.5 s** (`ShortcutGate`, `FlagGate`, the drawbridge re-bake the navmesh synchronously). This matters more once Job 2's gates open on a release. Follow-up planned after Job 2 merges.
+- **Building meshes are not cached**; they are built on the worker (0.1 to 0.6 s).
+- **A worker-thread crash was seen twice mid-build** (one SIGSEGV headless, one "double free" under llvmpipe). The fix (no `StandardMaterial3D`, particle, fog or gradient resources made on the worker) is inferred, not proven; no recurrence since.
+- The title's front door still builds synchronously, behind the veil; faster for the cache.
+
+**Suites, as the agent ran them on its branch** (my own re-run on the merged branch is in progress).
+- `streaming`: 78 checks, 0 failures.
+- 29 other suites, all except the full-game walks: 1,568 checks, 0 failures.
+- `fullslice`: two runs, one 106/0, one with 20 failures cascading from the net float's prompt on the Strand. Not diagnosed. Treat as possibly flaky, not as harmless.
+- `fullgame_lowe`: 194 checks, 2 failures, the same two with `--no-streaming` ("no THAW route to the peat island", "the black water is back").
+- `fullgame_kettle`: does not finish; the Ice-Cutter duel stalls. Same stall with `--no-streaming`. Not yet checked against `main` itself.
+- Not run: `fullgame_tarnhall`, `_thornwold`, `_reach`, `_coldwell`, both endings.
+
+**For other test authors:** `Game.travel_to` is now a coroutine. Wait for `Game.current_area_id` and `player.input_enabled` after a crossing.
+
+**Files touched in other lanes, small seams only:** `scatter.gd` (ground-cover cache), `forest.gd` (lock wrappers). `building_gen.gd` and `house_detail.gd` are untouched.
+
+## 2026-11-11: owner correction to Job 2 received
+
+- Got the lead's message. Job 2 now follows **hint, then reveal** for every region's exit:
+  - **Gate:** the onward route opens only on that region's release (unchanged).
+  - **Before the release:** the way on is hinted only: the Lowe seen across the ravine, the raised bridge, a blocked pass that reads as a way later.
+  - **After the release:** the way on reads without UI markers: the blockage visibly gone, a worn path, a landmark at the turn, light and composition toward it.
+  - **Data:** each area def gets a "way on" entry (place, opening flag, short name) for the journal and map on `feat/ui-map-log-icons`. No journal UI is built here.
+- The earlier instruction to soften paths and markers toward seams is withdrawn; the Job 2 agent has been told.
+- NPC or scene lines pointing the way: only if they meet `WRITING.md`; otherwise the ADR lists where a line would go and the text is left to the lead.
+- ADR 0015 will record both readings.
+
+## 2026-11-11: both jobs started
+
+- Two agents run in parallel on this box, each in its own worktree. Their work lands on `feat/streaming` once each is green here; nothing is merged yet.
+  - **Job 1** (local branch `feat/streaming-job1`): build-phase timer first, then the preload, cache, budgeted insert and free, shader warm-up, and the `streaming` suite. Planned ADR: `0014-area-streaming.md`. Numbers go to `docs/qa/STREAMING.md`.
+  - **Job 2** (local branch `feat/streaming-gates`): exit audit per region, then gates. Planned ADR: `0015-progression-gating.md`. Generator edits stay inside `# --- progression gates` blocks.
+- **Evidence for the lead's reading of the owner's sentence, so far:** `tools/seams_lowe.py` makes the Saltfell cliff-top pass a 20 m wide auto seam with no lock of any kind. It is open from the first minute. The audit of the other six seams is in progress.
+- No numbers yet. Nothing needed.
+
+## 2026-11-11: ack
+
+- Started. Session `session_01F3vrUMACDVu2qRDoYvRsVc`, branch `feat/streaming` from `origin/main` at `c3721bb`.
+- Godot 4.7 stable is on PATH; xvfb and lavapipe are installed.
+- **Job 1 (area-change spikes):** orienting, then instrumenting. First number to expect here: the per-phase build table in `docs/qa/STREAMING.md`.
+- **Job 2 (progression gating):** auditing every region's exits against the lore docs and ADR 0003 before changing any generator.
+- Commit trailers carry this session's own id, not the lead's, so the history shows which box made each commit.
+- Nothing needed yet.

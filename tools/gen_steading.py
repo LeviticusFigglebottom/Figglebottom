@@ -532,6 +532,22 @@ D = {
     "portals": seams("saltfell_steading")[0],
 }
 
+# --- progression gates (ADR 0015) ---------------------------------------------
+# The pass to the Lowe: a head-dyke crosses the neck of cliff top between the
+# sea cliff and the ravine head, and Gunna's net hangs across the gap in it
+# until she is released (WORLD.md 5.1: "the net falls open"). Undone from the
+# Lowe side at any time. The track to it is in terrain_saltfell.PATHS.
+import progress_gates as PG  # noqa: E402
+PASS_GATE = PG.gate(
+    "saltfell_steading", "pass_net", T.sample, at=(-89.0, -75.5), toward=(0, -1),
+    flag="ks_netmender_released", name="the cliff-top pass", to="lowe_barrows", seam_at=D["portals"][0]["at"],
+    flank="drystone", posts="standing_stone", post_scale=0.9, depth=0.3,
+    dressing=[{"kit": "net_frame"},
+              {"kit": "rope_coil", "along": -1.25, "out": 0.7, "rot": 30, "when": "open"}],
+    locked_prompt="Tied off on the far side", unbar_prompt="Untie the net", open_toast="The net comes down.")
+PG.install(D, PASS_GATE)
+# --- end progression gates
+
 if __name__ == "__main__":
     out = os.path.join(ROOT, "data", "areas", "saltfell_steading.json")
     json.dump(D, open(out, "w"), indent=1)

@@ -22,6 +22,7 @@ var _disc: MeshInstance3D
 var _pulse := 0.0
 
 func _ready() -> void:
+	add_to_group("area_portals")    # Streamer looks ahead through these
 	if auto:
 		var a := Area3D.new()
 		a.name = "Seam"

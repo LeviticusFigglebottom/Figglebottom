@@ -179,6 +179,7 @@ func _stranded(p: PackedVector3Array, to: Vector3) -> bool:
 	return Vector2(end.x - goal.x, end.z - goal.z).length() > 2.0
 
 func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
+	await nav_wait()     # (a gate just opened: the routes are being baked again)
 	var p := _path(player.global_position, to)
 	var used := 0
 	# off the navmesh's joined-up ground a player just walks toward where he
@@ -414,8 +415,29 @@ func _hearth_lit(hearth_id: String) -> bool:
 ## Walk into another area across a seam (auto portal) or through a door
 ## (prompted portal). `via` is a point on this side, at or just past the
 ## portal. Re-binds `area` once the new one stands. Returns true on arrival.
+## The progression gate on this area's way on to `to_area` (ADR 0015), or
+## null if the way there is not gated (the way back never is).
+func _way_gate(to_area: String) -> ShortcutGate:
+	if area == null or not is_instance_valid(area):
+		return null
+	for w in (area.get_meta("def", {}) as Dictionary).get("way_on", []):
+		if String(w.get("to", "")) != to_area:
+			continue
+		for g in area.find_children("*", "ShortcutGate", true, false):
+			if g.gate_id == String(w.get("gate", "")):
+				return g
+	return null
+
+func _gate_open(g: ShortcutGate) -> bool:
+	return g != null and (g.get_node("GateBody") as StaticBody3D).collision_layer == 0
+
 func _cross(to_area: String, via: Vector3, max_ticks := 9000, fight := false) -> bool:
 	var stilled0 := _stilled
+	var wg := _way_gate(to_area)
+	if wg != null:
+		await nav_wait()     # (the release's re-bake: the walk paths through the gate)
+		# the walk follows the gates: the way on opens with the release
+		check(_gate_open(wg) and World.flag(wg.open_flag), "the way on to %s stands open: %s" % [to_area, wg.open_flag])
 	_halt = func(): return Game.current_area_id == to_area
 	await _walk_path(via, max_ticks, fight)
 	if Game.current_area_id != to_area:
@@ -821,6 +843,14 @@ func _run() -> void:
 	check(hud != null, "the HUD is raised")
 
 	await _region()
+
+	# ADR 0015: this region's own way on answers its Holdfast and nothing else
+	if Game.current_area != null and Game.current_area_id == aid:
+		area = Game.current_area
+		for w in (area.get_meta("def", {}) as Dictionary).get("way_on", []):
+			var wg := _way_gate(String(w["to"]))
+			check(wg != null and _gate_open(wg) == World.flag(String(w["open_flag"])),
+				"the way on to %s is %s" % [String(w["to"]), "open" if World.flag(String(w["open_flag"])) else "shut"])
 
 	# the next region starts from this save: a fall the walk did not notice
 	# would leave its warmth lying behind for good

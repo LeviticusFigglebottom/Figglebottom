@@ -428,9 +428,17 @@ def height_no_road(x, z):
     return h + 1.8 * fbm(x * 0.025, z * 0.025, 3, 80) + 0.4 * fbm(x * 0.12, z * 0.12, 2, 79)
 
 
+# --- progression gates (ADR 0015): the way on to Kettle Fjord, worn into the moor
+KETTLE_TRACK_W = [(-62, -140), (-72, -160), (-77, -185), (-76, -210), (-70, -232)]      # off the bog path, west of the bog
+KETTLE_TRACK_N = [(36, -170), (22, -176), (14, -200), (6, -222), (-20, -232), (-48, -235), (-70, -232)]  # from the Open Barrow
+KETTLE_ROAD_TOP = [tuple(p) for p in KETTLE_ROAD[:3]]
+# --- end progression gates
+
+
 def path_weight(x, z):
     best = 0.0
-    for pts, w in ((ROAD, 2.4), (BRIDGE_PATH, 1.6), (BOG_PATH, 1.4)):
+    for pts, w in ((ROAD, 2.4), (BRIDGE_PATH, 1.6), (BOG_PATH, 1.4),
+                   (KETTLE_TRACK_W, 1.5), (KETTLE_TRACK_N, 1.5), (KETTLE_ROAD_TOP, 1.9)):
         for i in range(len(pts) - 1):
             dd = _seg_dist(x, z, *pts[i], *pts[i + 1])
             if dd < w + 1.5:

@@ -16,6 +16,7 @@ var operable := true            # the windlass is on this side
 var far_drop := 0.0
 var prompt := "Lower the bridge"
 
+const LOWER_S := 2.4             # the deck's swing down
 var _deck: Node3D
 var _body: StaticBody3D
 var _zone: Interactable
@@ -106,7 +107,7 @@ func _apply(down: bool, instant: bool) -> void:
 		_deck.rotation.x = target
 	else:
 		AudioDirector.play("world/bridge", global_position)
-		create_tween().tween_property(_deck, "rotation:x", target, 2.4)\
+		create_tween().tween_property(_deck, "rotation:x", target, LOWER_S)\
 			.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 	# raised, the deck stands on end over the hinge and is as solid as it
 	# looks: with its collider off the Bearer walked through the planks and
@@ -114,7 +115,8 @@ func _apply(down: bool, instant: bool) -> void:
 	_body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
 	_body.set_meta("orig_layer", _body.collision_layer)
 	if not instant and Game.current_area != null:
-		Game.current_area.bake_navmeshes.call_deferred()
+		# (once the deck lies across: its collider turns with it)
+		Game.current_area.rebake_navmeshes(LOWER_S + 0.1)
 
 func on_world_state(_area_id: String, _s) -> void:
 	pass

@@ -559,6 +559,24 @@ D = {
     "edges": edges,
 }
 
+# --- progression gates (ADR 0015) ---------------------------------------------
+# The drove gate in the mouth of the notch: a dyke across it and a plank gate,
+# barred from the Thornwold side like every other door Gaute barred. His
+# release lifts this bar with the rest (TARNHALL.md 9). The track to it is
+# terrain_tarnhall.DROVE_OUT.
+import progress_gates as PG  # noqa: E402
+import thorn_land as _TH  # noqa: E402
+_na, _nb = _TH.NOTCH[0], _TH.NOTCH[1]
+_nf = 0.87
+DROVE_GATE = PG.gate(
+    "tarnhall", "drove_gate", K.sample,
+    at=(_na[0] + (_nb[0] - _na[0]) * _nf, _na[1] + (_nb[1] - _na[1]) * _nf), toward=(_nb[0] - _na[0], _nb[1] - _na[1]),
+    flag="ks_host_released", name="the drove-road", to="thornwold", seam_at=wood_seam("tarnhall")["at"],
+    width=3.6, height=2.5, flank="drystone", floor=T.TARN_Y - 0.9, leaves=True,
+    locked_prompt="Barred from the other side", unbar_prompt="Unbar the gate", open_toast="The gate stands open.")
+PG.install(D, DROVE_GATE)
+# --- end progression gates
+
 if __name__ == "__main__":
     out = os.path.join(ROOT, "data", "areas", "tarnhall.json")
     json.dump(D, open(out, "w"), indent=1)

@@ -26,20 +26,30 @@ class_name Biome
 ## Every key is optional; a region with no file looks as its generator made it.
 
 static var _cache: Dictionary = {}
+## A streamed build reads biomes on a worker while play reads them here.
+static var _mx := Mutex.new()
 
 static func of(area_id: String) -> Dictionary:
+	_mx.lock()
+	var d0: Variant = _cache.get(area_id)
+	_mx.unlock()
+	if d0 != null:
+		return d0
+	var d := {}
+	var p := "res://data/biomes/%s.json" % area_id
+	# --no-biome: the regions as their generators made them (before/after shots)
+	if FileAccess.file_exists(p) and not ("--no-biome" in OS.get_cmdline_user_args()):
+		var j = JSON.parse_string(FileAccess.get_file_as_string(p))
+		if j is Dictionary:
+			d = j
+		else:
+			push_error("Biome: %s does not parse" % p)
+	_mx.lock()
 	if not _cache.has(area_id):
-		var d := {}
-		var p := "res://data/biomes/%s.json" % area_id
-		# --no-biome: the regions as their generators made them (before/after shots)
-		if FileAccess.file_exists(p) and not ("--no-biome" in OS.get_cmdline_user_args()):
-			var j = JSON.parse_string(FileAccess.get_file_as_string(p))
-			if j is Dictionary:
-				d = j
-			else:
-				push_error("Biome: %s does not parse" % p)
 		_cache[area_id] = d
-	return _cache[area_id]
+	d = _cache[area_id]
+	_mx.unlock()
+	return d
 
 ## `base` with the biome's block laid over it, one level deep per sub-key
 ## (so "env": {"thaw": {...}} replaces single profile keys, not the profile).

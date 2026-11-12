@@ -26,6 +26,8 @@ func return_to_title() -> void:
 	get_tree().paused = false
 	if EndingDirector.active != null and is_instance_valid(EndingDirector.active):
 		EndingDirector.active.stop()
+	if Game.stream != null:
+		Game.stream.reset()    # a neighbour made ready, an area half freed: all go
 	if IntroDirector.active != null and is_instance_valid(IntroDirector.active):
 		IntroDirector.active.queue_free()
 	# (a seam, a door or a death may have raised another area since the front

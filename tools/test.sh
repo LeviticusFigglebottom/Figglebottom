@@ -24,6 +24,11 @@ for scene in tools/test/*_test.tscn; do
   # the full-slice walk plays the whole 20-minute slice in real time
   limit=300
   [ "$name" = "fullslice" ] && limit=2700
+  # the streaming suite builds three areas from an empty cache, twice over
+  [ "$name" = "streaming" ] && limit=900
+  # the progression gates: six regions built several times over, a capsule
+  # steered at every metre of each neck in both states
+  [ "$name" = "gates" ] && limit=1800
   # the leftovers count fights every foe three times over: slow on a busy box
   case "$name" in leftovers*) limit=600 ;; esac
   # the collision audit builds every area five times over (about 5 minutes)

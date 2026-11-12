@@ -5428,6 +5428,28 @@
     "rot": 0,
     "scale": 0.4
    }
+  },
+  {
+   "id": "drove_gate",
+   "at": [
+    264.44,
+    24.38,
+    -324.69
+   ],
+   "rot": -97.13,
+   "width": 3.6,
+   "height": 2.5,
+   "depth": 0.14,
+   "leaves": true,
+   "open_flag": "ks_host_released",
+   "locked_prompt": "Barred from the other side",
+   "unbar_prompt": "Unbar the gate",
+   "open_toast": "The gate stands open.",
+   "dressing": [],
+   "span": [
+    -6.5,
+    6.5
+   ]
   }
  ],
  "hearths": [
@@ -5969,6 +5991,11 @@
     124.0,
     -331.0,
     4.0
+   ],
+   [
+    264.44,
+    -324.69,
+    3.4
    ]
   ],
   "rules": [
@@ -6248,6 +6275,58 @@
     ],
     "range": 40
    }
+  ],
+  "fences": [
+   {
+    "kind": "drystone",
+    "points": [
+     [
+      264.68,
+      -326.58
+     ],
+     [
+      264.9,
+      -328.34
+     ],
+     [
+      265.12,
+      -330.1
+     ],
+     [
+      265.34,
+      -331.86
+     ],
+     [
+      265.56,
+      -333.63
+     ]
+    ]
+   },
+   {
+    "kind": "drystone",
+    "points": [
+     [
+      264.2,
+      -322.81
+     ],
+     [
+      263.98,
+      -321.05
+     ],
+     [
+      263.76,
+      -319.29
+     ],
+     [
+      263.54,
+      -317.53
+     ],
+     [
+      263.32,
+      -315.76
+     ]
+    ]
+   }
   ]
  },
  "edges": {
@@ -6376,5 +6455,24 @@
    }
   ],
   "gates": []
- }
+ },
+ "way_on": [
+  {
+   "id": "drove_gate",
+   "name": "the drove-road",
+   "to": "thornwold",
+   "at": [
+    264.44,
+    24.38,
+    -324.69
+   ],
+   "seam": [
+    272.3,
+    26.45,
+    -323.82
+   ],
+   "open_flag": "ks_host_released",
+   "gate": "drove_gate"
+  }
+ ]
 }

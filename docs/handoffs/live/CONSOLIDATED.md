@@ -71,6 +71,20 @@ The whole game is on main, in structure:
 | Lead's agents (this box) | `feat/anims-4`, `art/look-pass-5` | See the task board |
 | Sound (this box) | `feat/sfx-redo` (ready for review) | Every sound effect and ambience bed rebuilt from CC0 recordings; the THAW/RIME bed handover follows the wave front. `docs/audio/SFX.md`. **Nobody has listened yet: the owner must.** Rebuild: `python3 tools/audio/build_sfx.py`; check: `tools/test.sh audio`. Hit-VFX sessions call `AudioDirector.impact(surface, position)`. |
 
+## Area streaming (`feat/streaming`, ADR 0014; not on main)
+- `Streamer` (`Game.stream`) builds the next area on a worker thread ahead of each seam, grafts it hidden under a per-frame budget, swaps behind a short dip to black and frees the old area over frames. `--no-streaming` falls back to the old synchronous build. Tuning: `data/game.json` → `streaming`.
+- `Game.travel_to` is a coroutine now: wait on `current_area_id` and `player.input_enabled`. Runtime navmesh re-bakes are in the background: tests use `TestBase.nav_wait()`.
+- Builders that a worker can reach load scenes with `BuildLock.wload`, never `load` (a plain scene load on a worker waits for a main-loop frame and froze quit). Everything that quits calls `Game.quit()`.
+- Numbers, open items and how to measure: `docs/qa/STREAMING.md`. Not yet measured on a real GPU.
+- Check: `tools/test.sh streaming`, `tools/qa/quit_check.sh`, then the `fullgame_*` walks.
+
+## Progression gating (`feat/streaming`, ADR 0015; not on main)
+- Every region's way on is shut by one `ShortcutGate` until that region's Holdfast is released: the net on the Saltfell pass, sods on the Kettle Road, a stack at the Tarn Steps, the drove gate, a hedge on the fell path, hurdles at the Upwater. Each can be undone from its far side.
+- Each area def has `way_on` (where, what to call it, the flag that opens it) for the journal and map.
+- Gates and tracks are placed by `tools/progress_gates.py` from marked blocks in each `tools/gen_*.py` and `tools/terrain_*.py`. After merging with a branch that repaints a splat, rerun that generator.
+- Check: `tools/test.sh gates` (about ten minutes), then the `fullgame_*` walks.
+- For the lead: the THAW half of each gate has no line of text behind it, and Kettle's is the thinnest (ADR 0015, Consequences).
+
 ## Open questions for the owner
 - **Tripo calls:** paid generation was blocked by this session's permission system on 2026-11-10. Eight prop references and the ewe rigs are waiting on it.
 - **Music:** nobody has listened to it yet.
