@@ -53,3 +53,15 @@ Failing lines, verbatim:
   - Its neighbours pass: "guttering never takes the light under its floor (THAW)" and "(RIME)", "the torch strikes (its own heavy)", "in hand, it is off the belt". Both gutter amounts read 0.00, so the flame does not gutter at all in the test, in either state.
   - **Intro checks pass:** "the intro opens the journey", "the intro begins once the Bearer stands in the world", "no skip prompt until a key is touched", "sat through: the intro is over", "and the intro is gone", "no intro on a load".
 - **Still running, one at a time:** the fullgame walks (fullslice; fullgame_lowe ×3; kettle; tarnhall; thornwold; coldwell; reach; both endings). Each refetches the branch head first. Their counts follow in the next entry.
+
+## 2026-11-12T05:47Z Job 5: integration export and boot (not a release)
+- **Export:** `godot --headless --export-release "Windows"` at **8c160fd**, rc 0, **no export warnings** in the log. Output `C:\Users\Aaron\Documents\Rimeholt_Windows_TEST_integration_8c160fd\Rimeholt.exe`, **1,566,860,536 bytes (1.57 GB**, the pck embedded; main's a8092e4 build was 1.14 GB).
+- **Boot, real GPU** (RX 9070 XT, window off-screen, `--shot-seq-now --shot-seq=3,12`): it boots cleanly to the studio card ("Figglebottom Productions", 3 s) and then the **title** (RIMEHOLT, "The Winter That Would Not End", New journey / Settings, over the Strand with the boats, 12 s).
+  - No Vulkan errors. At exit: `WARNING: 7 RIDs of type "Texture" were leaked`.
+- **The intro plays and skips:** the exe cannot press "New journey" from the command line, so this comes from the headless suite at the same commit. All intro checks pass:
+  - "the intro opens the journey" / "begins once the Bearer stands in the world";
+  - "no skip prompt until a key is touched";
+  - "a short press does not skip" / "any key shows the prompt … (Hold E to skip)";
+  - "skipped mid-wave: the intro is over / control, on his feet / on the Strand (-4.0, 2.7, 62.0) / his own camera is back / the HUD is up";
+  - "sat through: the intro is over";
+  - "no intro on a load".
