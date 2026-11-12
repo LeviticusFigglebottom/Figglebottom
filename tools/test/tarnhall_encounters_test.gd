@@ -504,9 +504,12 @@ func _pickup(id: String) -> Pickup:
 			return p
 	return null
 
+## The hall doors (Tarnhall's way on, ADR 0015, is a gate of its own).
 func _gate() -> ShortcutGate:
-	var gs := area.find_children("*", "ShortcutGate", true, false)
-	return gs[0] if gs.size() > 0 else null
+	for g in area.find_children("*", "ShortcutGate", true, false):
+		if (g as ShortcutGate).gate_id == "hall_doors":
+			return g
+	return null
 
 func _build(state: RH.WState) -> void:
 	if area != null and is_instance_valid(area):
