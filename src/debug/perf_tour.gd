@@ -166,6 +166,14 @@ func _apply_ablation(n: Node) -> void:
 	if "areas" in _ablate and n is Area3D:
 		(n as Area3D).monitoring = false
 		(n as Area3D).monitorable = false
+	if "player" in _ablate and n is Player:
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+		return
+	if "bodies" in _ablate and n is CharacterBody3D and not (n is Player):
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+		return
+	if "casts" in _ablate and (n is RayCast3D or n is ShapeCast3D):
+		n.set("enabled", false)
 	if "camera_arm" in _ablate and n is SpringArm3D:
 		(n as SpringArm3D).collision_mask = 0
 	if "enemies" in _ablate and (n is Enemy):
