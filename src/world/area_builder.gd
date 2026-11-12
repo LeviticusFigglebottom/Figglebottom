@@ -568,6 +568,7 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 	k.warmth = int(spec.get("warmth", 0))
 	k.item_id = spec.get("item", "")
 	k.item_count = int(spec.get("count", 1))
+	k.also = spec.get("also", {})
 	k.label = spec.get("label", "Take")
 	k.appear_flag = spec.get("appear_flag", "")
 	k.display_kit = spec.get("kit", "")
@@ -579,6 +580,9 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 	for off_key in ["show_off", "show_at"]:
 		if spec.has(off_key):
 			k.display_offset = Vector2(float(spec[off_key][0]), float(spec[off_key][1]))
+	if spec.has("pose"):      # stood or hung, not lying: [x, y, z] degrees
+		k.display_pose = Vector3(float(spec["pose"][0]), float(spec["pose"][1]), float(spec["pose"][2]))
+		k.posed = true
 	k.chip_heavy = bool(spec.get("chip_heavy", false))
 	k.bare = bool(spec.get("bare", false))
 	k.needs_item = String(spec.get("needs_item", ""))

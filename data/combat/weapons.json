@@ -134,7 +134,7 @@
  },
  "spear": {
   "name": "Spear",
-  "desc": "An ash-hafted spear with a leaf head. Keeps the cold at arm's length and a little more.",
+  "desc": "An ash-hafted spear with a leaf head. It came up behind the bier to the Holms' mound and was stood against the kin-post while the door was turfed, to be carried home after.",
   "class": "spear",
   "kit": "spear",
   "damage": 43.168,
@@ -161,7 +161,7 @@
  },
  "greatblade": {
   "name": "Greatblade",
-  "desc": "A two-handed blade as long as a door is tall. Swung, it makes its own weather.",
+  "desc": "A two-handed blade as long as a door is tall, the edge greased against the damp. Blades are left down at the boats at a feast. This one was stood in the oar-stand at the landing, to be picked up on the way home.",
   "class": "greatsword",
   "kit": "greatblade",
   "damage": 84.656,
@@ -187,7 +187,7 @@
  },
  "bow": {
   "name": "Bow",
-  "desc": "A short yew bow for fowling on the fells. Draws arrows from the quiver.",
+  "desc": "A short yew bow for fowling on the fells. It hung on a peg on the back wall of the lower sheiling with its arrows, kept there for the crows at lambing. There is a second peg beside it, and nothing on it.",
   "class": "bow",
   "kit": "bow",
   "damage": 38.352,

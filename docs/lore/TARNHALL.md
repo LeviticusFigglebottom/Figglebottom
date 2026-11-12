@@ -60,6 +60,7 @@ Title cards (first entry to each zone, the UI serif in small caps, no subtitle):
   - a Feast-guest on the island's south shore, looking at the water.
 - The doors are shut. The prompt is *Barred from the inside*.
 - Pickup: a guest's horn on the porch (`tarn_horn`, warmth).
+- In both states: the **Greatblade** stood in the oar-stand at the landing, on the causeway side (`oar_greatblade`, `greatblade`; ADR 0015). Blades are left at the boats at a feast.
 
 ---
 

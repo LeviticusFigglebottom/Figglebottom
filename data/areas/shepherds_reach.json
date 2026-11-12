@@ -7970,6 +7970,31 @@
    ]
   },
   {
+   "id": "sheiling_bow",
+   "at": [
+    600.7,
+    67.68,
+    -299.42
+   ],
+   "rot": 12.0,
+   "item": "bow",
+   "also": {
+    "arrows": 20
+   },
+   "tag": "base",
+   "label": "Take the bow off its peg",
+   "pose": [
+    0,
+    90,
+    4
+   ],
+   "show_at": [
+    0.0,
+    0.92
+   ],
+   "lift": 1.35
+  },
+  {
    "id": "smudge_look",
    "at": [
     600.72,
