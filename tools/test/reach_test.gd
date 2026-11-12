@@ -73,9 +73,14 @@ func _pickup(id: String) -> Dictionary:
 			return p
 	return {}
 
+## The path passes within tol of pt, measured to its legs and not only to its
+## corners: a straight run over the bridge has no corner on the deck.
 func _near_path(p: PackedVector3Array, pt: Vector3, tol: float) -> bool:
-	for q in p:
-		if Vector2(q.x - pt.x, q.z - pt.z).length() < tol:
+	var c := Vector2(pt.x, pt.z)
+	for i in p.size():
+		var a := Vector2(p[i].x, p[i].z)
+		var b := Vector2(p[i + 1].x, p[i + 1].z) if i + 1 < p.size() else a
+		if Geometry2D.get_closest_point_to_segment(c, a, b).distance_to(c) < tol:
 			return true
 	return false
 
