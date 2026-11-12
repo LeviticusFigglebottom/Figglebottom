@@ -46,7 +46,7 @@ Hearthstone (rest, level, Gourd refill, set THAW/RIME)
   → fight through RIME (frost-taken, shortcuts, the frost veil)
   → die → STILLED → your warmth hangs as a Breathmark → one chance to take it back
   → release the Holdfast (boss) → THAW/RIME toggles freely at that hearth
-  → the Keepsakes journal advances; the next steading opens
+  → the Journal advances; the next steading opens
 ```
 
 ## 6. Lexicon (systems)
@@ -66,7 +66,8 @@ Full lexicon: `docs/lore/LEXICON.md`.
 | boss | **Holdfast** |
 | boss gate | **frost veil** |
 | hotbar / inventory | **Belt** / **Pack** |
-| quest log | **Keepsakes** |
+| quest log | **Journal** (keepsakes are the things found; ADR 0014) |
+| map | **Map** |
 | stats | Heart (HP) · Wind (stamina) · Might · Craft · Kinship (song scaling) · Lungs (breath) |
 | difficulty | The Gentle Thaw · **The Long Winter** (default) · The Hard Frost |
 
@@ -84,7 +85,7 @@ These systems come from the survey. Δ marks a change from the source.
 8. **Two-state world:** layers, dual navmesh, the Hearthstone rule and the shader wave. 1:1 mechanism. Δ a frost/melt wavefront.
 9. **Loot:** hand-placed one-time finds and the Pack/Belt UI. Δ four armour slots.
 10. **Dialogue:** lines followed by services. 1:1. NPCs exist only in THAW.
-11. **Keepsakes journal:** Δ, new. Flag-chain questlines shown as lines of text.
+11. **Journal and Map:** Δ, new. Flag-chain questlines with a plain current objective and the steps done; a map baked from the terrain, marked from the save (ADR 0014).
 12. **World:** the area graph, the JSON level language, generator scripts and audits. 1:1.
 13. **Saves:** three JSON slots. 1:1. Δ a `save_version` field.
 14. **UI:** HUD, pause, rest, Pack and dialogue. Layout 1:1, new palette and type.

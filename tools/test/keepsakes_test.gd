@@ -52,10 +52,12 @@ func _journal_lines(thread_id: String) -> Array:
 			return t["lines"]
 	return []
 
-func _expected(thread_id: String, n: int) -> Array:
+## The thread's first n lines. `without`: a step this walk does not take (the
+## points of interest add one to a thread, found off the thread's own road).
+func _expected(thread_id: String, n: int, without := "") -> Array:
 	for t in Keepsakes.threads_def():
 		if t["id"] == thread_id:
-			return (t["steps"] as Array).slice(0, n).map(func(s): return String(s["line"]))
+			return (t["steps"] as Array).filter(func(s): return String(s["flag"]) != without).slice(0, n).map(func(s): return String(s["line"]))
 	return []
 
 func _save_and_reload() -> void:
@@ -84,8 +86,8 @@ func _run() -> void:
 	var defs := Keepsakes.threads_def()
 	var ids_def := defs.map(func(t): return String(t["id"]))
 	check(ids_def.slice(0, 2) == ["ingra_rye", "brede_float"], "the slice's two threads come first")
-	check(_expected("ingra_rye", 1) == ["Ingra is a sack of rye short and blames a dog."], "Ingra's first line is SLICE.md's")
-	check(_expected("brede_float", 4)[3] == "Brede is mending the net himself.", "Brede's last line is SLICE.md's")
+	check(_expected("ingra_rye", 1) == ["Met Ingra, the steward, in Saltfell yard. She is a sack of rye short and blames a dog."], "Ingra's first line, in the Journal's plain voice")
+	check(_expected("brede_float", 4)[3] == "Talked to Brede after the Netmender's release. He is sitting on his boat, mending the net himself.", "Brede's last line, in the Journal's plain voice")
 	check(Keepsakes.journal().is_empty(), "a new journey remembers nothing")
 	check(_pickup("rye_sack") != null and _pickup("net_float") != null, "the rye sack and the float are placed in Saltfell")
 
@@ -96,7 +98,7 @@ func _run() -> void:
 		"Ingra opens with her own first line")
 	check(World.flag("ks_ingra_met"), "meeting Ingra starts her thread")
 	check(_journal_lines("ingra_rye") == _expected("ingra_rye", 1), "the journal shows her first line")
-	check(hud._ks_label.text == "A keepsake is remembered.", "the keepsake toast is raised")
+	check(hud._ks_label.text == "Journal updated.", "the journal toast is raised")
 	var ids := _service_ids(ui)
 	check(ids.has("buy_mend") and ids.has("deep_gourd") and ids.has("rest_level"),
 		"Ingra offers the song, the Deep Gourd and the fire")
@@ -211,7 +213,7 @@ func _run() -> void:
 	await ticks(2)
 	check(ui.text_label.text == "She does this faster. I don't know how she does it.", "Brede mends, badly")
 	await _close(ui)
-	check(_journal_lines("ingra_rye") == _expected("ingra_rye", 4), "Ingra's thread is whole, in order")
+	check(_journal_lines("ingra_rye") == _expected("ingra_rye", 4, "ks_ingra_bowls"), "Ingra's thread is whole, in order")
 	check(_journal_lines("brede_float") == _expected("brede_float", 4), "Brede's thread is whole, in order")
 
 	print("== save and load the whole journal")
@@ -221,18 +223,29 @@ func _run() -> void:
 	check(int(player.inventory.get("armour_saltfell_oilskins", 0)) == 1, "the oilskins survive too")
 	check(String(player.armour.get("body", "")) == "armour_saltfell_oilskins", "still worn after the load")
 
-	print("== the Keepsakes leaf")
-	InventoryUI.open_for(player, "keepsakes")
+	print("== the Journal leaf")
+	InventoryUI.open_for(player, "keepsakes")     # the old name still lands on it
 	await ticks(3)
 	var inv: InventoryUI = get_tree().get_first_node_in_group("inventory_ui")
-	check(inv != null and inv._tab == "keepsakes", "J's leaf opens in the Pack")
+	check(inv != null and inv._tab == "journal", "J's leaf opens in the Pack")
 	var shown := []
 	if inv != null:
+		# both threads are finished: they sit folded under Done until opened
+		for r in inv._rows:
+			if r["kind"] == "done":
+				load("res://src/ui/pack/journal_leaf.gd").act(inv, r)
+		await ticks(3)
 		for l in inv._list.find_children("*", "Label", true, false):
 			shown.append((l as Label).text)
-	var want := ["Ingra's rye"] + _expected("ingra_rye", 4) + ["Brede's float"] + _expected("brede_float", 4)
-	check(shown == want, "the leaf shows each thread's title and lines in order")
-	check(InventoryUI.LEAVES.map(func(l): return l["key"]) == ["pack", "songs", "armour", "keepsakes"], "leaves come from the registry")
+	var at := 0
+	var in_order := true
+	for line in _expected("ingra_rye", 4) + _expected("brede_float", 4):
+		var i := shown.find(line, at)
+		in_order = in_order and i >= at
+		at = maxi(i, at)
+	check(in_order, "the leaf shows each finished thread's lines in order")
+	check(shown.any(func(t): return String(t).begins_with("Ingra's missing rye")) and shown.has("Done"), "titled, and folded under Done")
+	check(InventoryUI.LEAVES.map(func(l): return l["key"]) == ["pack", "songs", "armour", "journal", "map"], "leaves come from the registry")
 	if inv != null:
 		inv.close()
 	await ticks(3)

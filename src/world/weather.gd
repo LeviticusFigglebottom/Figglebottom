@@ -28,13 +28,22 @@ static func build(area: Area, terrain: Terrain, def: Dictionary) -> void:
 		area.thaw_layer.add_child(_gpu(gulls, Vector3(size.x * 0.6 + 70.0, 30.0, size.z * 0.6 + 70.0)))
 	var pollen := Weather.new()
 	pollen.follow = true
-	pollen.add_child(_gpu(_falling(140, Vector3(18, 2.0, 18), Vector3(0.3, 0.05, 0.1), 0.06, Color(1.0, 0.9, 0.55, 0.5), true), Vector3(24, 6, 24)))
+	# per region (data/biomes "weather"): what drifts in THAW, what falls in RIME
+	var pc: Array = wcfg.get("pollen_color", [1.0, 0.9, 0.55, 0.5])
+	var pd: Array = wcfg.get("pollen_drift", [0.3, 0.05, 0.1])
+	if int(wcfg.get("pollen", 140)) > 0:
+		pollen.add_child(_gpu(_falling(int(wcfg.get("pollen", 140)), Vector3(18, 2.0, 18), Vector3(pd[0], pd[1], pd[2]),
+			float(wcfg.get("pollen_size", 0.06)), Color(pc[0], pc[1], pc[2], pc[3]), true), Vector3(24, 6, 24)))
 	area.thaw_layer.add_child(pollen)
 	# RIME: snow and glitter that travel with the camera
 	var snow := Weather.new()
 	snow.follow = true
-	snow.add_child(_gpu(_falling(900, Vector3(26, 12, 26), Vector3(0.9, -1.6, 0.4), 0.11, Color(0.95, 0.97, 1.0, 0.85), false), Vector3(40, 30, 40)))
-	snow.add_child(_gpu(_falling(160, Vector3(14, 3, 14), Vector3(0.1, -0.1, 0.05), 0.05, Color(0.8, 0.9, 1.0, 0.9), true), Vector3(18, 6, 18)))
+	var sv: Array = wcfg.get("snow_fall", [0.9, -1.6, 0.4])
+	if int(wcfg.get("snow", 900)) > 0:
+		snow.add_child(_gpu(_falling(int(wcfg.get("snow", 900)), Vector3(26, 12, 26), Vector3(sv[0], sv[1], sv[2]),
+			float(wcfg.get("snow_size", 0.11)), Color(0.95, 0.97, 1.0, 0.85), false), Vector3(40, 30, 40)))
+	if int(wcfg.get("glitter", 160)) > 0:
+		snow.add_child(_gpu(_falling(int(wcfg.get("glitter", 160)), Vector3(14, 3, 14), Vector3(0.1, -0.1, 0.05), 0.05, Color(0.8, 0.9, 1.0, 0.9), true), Vector3(18, 6, 18)))
 	area.rime_layer.add_child(snow)
 	# spindrift: snow smoke peeling off a few cliff lips into the wind
 	var rng := RandomNumberGenerator.new()

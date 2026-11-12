@@ -70,7 +70,9 @@ func _run() -> void:
 	check(Game.find_hearth("hs_barrow_road") != null, "the Barrow Road hearth stands")
 	var houses := area.base.get_children().filter(func(n): return String(n.name).begins_with("House_"))
 	check(houses.size() == 5, "four kin-barrows and the twin barrow (%d)" % houses.size())
-	check(area.thaw_layer.find_children("*", "NPC", true, false).size() == 2, "Aud and Hesk keep the thaw")
+	# (the family going home from the Bread Mound are voices, never seen: POI.md 3.1)
+	check(area.thaw_layer.find_children("*", "NPC", true, false).filter(
+		func(n): return not DB.npc((n as NPC).npc_id).get("unseen", false)).size() == 2, "Aud and Hesk keep the thaw")
 	check(player.is_on_floor(), "the Bearer stands on the pass")
 	var seams := area.find_children("*", "AreaPortal", true, false).filter(func(p): return p.auto and p.to_area == "saltfell_steading")
 	check(seams.size() == 2, "two seams back to Saltfell: the pass and the bridge")

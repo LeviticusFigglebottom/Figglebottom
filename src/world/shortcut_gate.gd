@@ -7,6 +7,11 @@ var gate_id := "gate"
 var layer_bit := RH.L_WORLD_BASE   # a gate that stands in one state only takes that state's layer
 var area_id := ""
 var locked_prompt := "Barred from the other side"
+## A gate that is not a barred door (a lashed hurdle): its own prompt, its
+## own word when it opens, its own leaf from the kit.
+var open_prompt := "Unbar the gate"
+var open_toast := "The gate stands open."
+var leaf_kit := "door_leaf"
 ## Width of the opening the leaves fill (a house door is 1.9 m; the old
 ## yard gate 3.6 m). The leaves hinge at the jambs and swing to the far side.
 var door_width := 3.6
@@ -15,9 +20,9 @@ var door_height := 2.5
 ## open_flag is the release's world flag: the gate opens by itself when it
 ## turns, wherever the Bearer stands, and a rebuilt area builds it open.
 var open_flag := ""
-var unbar_prompt := "Unbar the gate"
-var open_toast := "The gate stands open."
-var plank_leaves := true        # false: the dressing is the whole gate (a net, a hedge)
+## A way that is grown or fallen shut has no leaves to swing: its dressing
+## is the barrier, and opening it clears the dressing away (a net, a hedge).
+var has_leaves := true
 var body_depth := 0.14          # how thick the thing in the gap is
 
 var _area: Area
@@ -30,12 +35,12 @@ var _back: Interactable
 
 func _ready() -> void:
 	# two plank leaves, each hung from its jamb on a pivot so it really swings
-	for side in ([-1.0, 1.0] if plank_leaves else []):
+	for side in ([-1.0, 1.0] if has_leaves else []):
 		var pivot := Node3D.new()
 		pivot.name = "gate_leaf_%s" % ("l" if side < 0 else "r")
 		pivot.position = Vector3(side * door_width * 0.5, 0, 0)
 		add_child(pivot)
-		var leaf := KitLib.instance("door_leaf")
+		var leaf := KitLib.instance(leaf_kit if KitLib.has_piece(leaf_kit) else "door_leaf")
 		leaf.scale = Vector3(door_width * 0.5 / 0.95, door_height / 2.5, 1.0)
 		leaf.position = Vector3(-side * door_width * 0.25, 0, 0)
 		pivot.add_child(leaf)
@@ -50,6 +55,7 @@ func _ready() -> void:
 	cs.shape = box
 	cs.position.y = door_height * 0.5
 	body.add_child(cs)
+	Surfaces.stamp_kind(body, "gate")
 	add_child(body)
 
 	# the locked face is +Z (local); the unbarring side is -Z
@@ -60,7 +66,7 @@ func _ready() -> void:
 	_front.activated.connect(func(_p): Game.toast.emit(locked_prompt + "."))
 	add_child(_front)
 	_back = Interactable.new()
-	_back.prompt = unbar_prompt
+	_back.prompt = open_prompt
 	_back.setup_zone(1.2, 1.6, Vector3(0, 0, -reach))
 	_back.activated.connect(_on_unbar)
 	add_child(_back)
@@ -149,11 +155,17 @@ func _build_dressing(when: String) -> void:
 			_dress_shut.append(n)
 
 func _on_unbar(_p) -> void:
+	# a gate inside a sealed arena (Tarnhall's hall doors, barred from the
+	# inside) is no way out of the duel: the Host's own veil has no other
+	# seal, and the Bearer could lift the bar and walk out past it
+	if Game.arena_locked:
+		Game.toast.emit("The bar is frozen in its brackets.")
+		return
 	World.set_area_flag(area_id, "gate_" + gate_id)
 	World.save_game()
 	_apply_open(false)
 	Game.toast.emit(open_toast)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -6.0, 0.55)
+	AudioDirector.play("world/bar_lift", global_position)
 
 ## A released Holdfast lifts the bar from wherever he is (TARNHALL.md 9):
 ## the flag is set and the leaves swing open by themselves.
@@ -162,7 +174,7 @@ func lift_bar() -> void:
 		return
 	World.set_area_flag(area_id, "gate_" + gate_id)
 	_apply_open(false)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -2.0, 0.4)
+	AudioDirector.play("world/bar_drop", global_position)
 
 func _apply_open(instant: bool) -> void:
 	_front.enabled = false

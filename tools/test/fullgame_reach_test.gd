@@ -194,7 +194,8 @@ func _come_near(n: NPC, r := 4.0) -> void:
 
 func _flock_standing() -> Array:
 	return get_tree().get_nodes_in_group("flock_rime").filter(func(n):
-		return is_instance_valid(n) and area.is_ancestor_of(n) and (n as Node3D).is_visible_in_tree())
+		# (the slope's seventy: Smudge, at the sheiling door, is in the group and is not one of them)
+		return is_instance_valid(n) and area.is_ancestor_of(n) and (n as Node3D).is_visible_in_tree() and String(n.get_meta("kit_id", "")) == "sheep")
 
 ## The sheep of the RIME layer that lie (the area's flagged props, or the
 ## standing ones the release has laid down).
@@ -375,7 +376,8 @@ func _leg_seam() -> bool:
 	walked = await _walk_path(h.respawn_point(), 5400, false)
 	check(walked, "up the fell path to where it comes out onto the grass (%s)" % str(player.global_position.snapped(Vector3.ONE)))
 	var plaques := area.find_children("*", "LorePlaque", true, false)
-	check(plaques.size() == 1 and String((plaques[0] as LorePlaque).text).begins_with("SHEPHERD'S REACH\n"), "the plaque at the path's head names the Reach")
+	# (the Counting Stone has boards of its own now: one of them all names the region)
+	check(plaques.filter(func(p): return String((p as LorePlaque).text).begins_with("SHEPHERD'S REACH\n")).size() == 1, "the plaque at the path's head names the Reach")
 	return true
 
 func _leg_sheilings_thaw() -> bool:
@@ -554,7 +556,10 @@ func _leg_ice() -> bool:
 		if _flat(player.global_position - ice_s).length() < 1.5:
 			break
 	var t0 := Engine.get_physics_frames()
-	walked = await _walk_to(ice_n, 600, 0.9, false)
+	# (along the path just measured, not blind at the far bank: a stone of the
+	# scatter stands on the straight line, solid since the collision audit,
+	# and the arrival at 0.9 m from behind it was a matter of a hand's breadth)
+	walked = await _walk_path(ice_n, 600, false)
 	check(walked and not player.dead, "the Bearer walks over the ice, nowhere near the bridge (%d ticks, %s)" % [
 		Engine.get_physics_frames() - t0, str(player.global_position.snapped(Vector3.ONE * 0.1))])
 	await _shot("beck_ice")
@@ -566,8 +571,16 @@ func _leg_slope() -> bool:
 	await _clear_at(_g(642.0, -358.0))
 	var iron0 := int(player.inventory.get("bog_iron", 0))
 	took = await _take("fold_cache", "Pry up what the frost holds")
-	if not took and player.dead:
-		await _wake_up()
+	# (the cache lies in the Drift Lane now, between its walls: a Drover or a
+	# ram on the far side of a wall holds the steered Bearer against it until
+	# the leg's time is spent. He goes back for it, as a player would.)
+	for again in 2:
+		if took:
+			break
+		if player.dead:
+			await _wake_up()
+		print("  (the cache was not reached from %s: going back for it)" % str(player.global_position.snapped(Vector3.ONE * 0.1)))
+		await _fight(16.0, 60.0)
 		took = await _take("fold_cache", "Pry up what the frost holds")
 	check(took and int(player.inventory.get("bog_iron", 0)) == iron0 + 2, "what the frost holds below the fold: bog-iron (%s)" % str(player.global_position.snapped(Vector3.ONE * 0.1)))
 	# the seventy are obstacles: every one of them solid, and the way goes between
@@ -711,7 +724,9 @@ func _leg_fold_thaw() -> bool:
 		"his boots off beside him (%d seen)" % boots.size())
 	await _shot("fold_thaw")
 	if sig != null:
-		check(sig.find_children("*", "Interactable", true, false).is_empty(), "Sigga cannot be spoken to here")
+		# (she was silent here; a Bearer who rested before he met her on the
+		# slope then had no way to her lines or the fleece)
+		check(not sig.find_children("*", "Interactable", true, false).is_empty(), "Sigga can be spoken with at the fold")
 		_heard = []
 		sig.overheard.connect(_on_heard)
 		await _come_near(sig, 5.0)

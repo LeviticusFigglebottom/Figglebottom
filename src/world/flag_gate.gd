@@ -6,7 +6,7 @@ extends Node3D
 var flag := ""
 var or_cleared := ""          # area id: the gate also opens once its holdfast rests
 var kit := "fence_iron_4m"
-var open_sfx := "res://assets/audio/swell_warm.wav"
+var open_sfx := "world/gate_open"
 var open_dir := "down"          # "down" sinks away; "up" hoists (portcullis)
 
 var _piece: Node3D
@@ -36,6 +36,7 @@ func setup(spec: Dictionary, tag_bit: int) -> void:
 	cs.shape = box
 	cs.position.y = float(sz[2]) * sc.y * 0.5
 	_body.add_child(cs)
+	Surfaces.stamp(_body, Surfaces.for_kit(kit))
 	add_child(_body)
 
 func _unlocked() -> bool:

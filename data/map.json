@@ -1,0 +1,173 @@
+{
+ "doc": "Written by tools/ui/build_map.py. Where each baked map image sits in world metres (x east, z south). Do not edit by hand.",
+ "order": [
+  "saltfell_steading",
+  "lowe_barrows",
+  "kettle_fjord",
+  "tarnhall",
+  "thornwold",
+  "shepherds_reach",
+  "coldwell"
+ ],
+ "graph": {
+  "saltfell_steading": {
+   "lowe_barrows": "the cliff-top pass; the drawbridge"
+  },
+  "lowe_barrows": {
+   "saltfell_steading": "the cliff-top pass; the drawbridge",
+   "kettle_fjord": "the Kettle Road"
+  },
+  "kettle_fjord": {
+   "lowe_barrows": "the Kettle Road",
+   "tarnhall": "the Tarn Steps"
+  },
+  "tarnhall": {
+   "kettle_fjord": "the Tarn Steps",
+   "thornwold": "the drove-road"
+  },
+  "thornwold": {
+   "tarnhall": "the drove-road",
+   "shepherds_reach": "the fell path"
+  },
+  "shepherds_reach": {
+   "thornwold": "the fell path",
+   "coldwell": "the Upwater"
+  },
+  "coldwell": {
+   "shepherds_reach": "the Upwater"
+  }
+ },
+ "world": {
+  "origin": [
+   -212,
+   -568
+  ],
+  "size_m": [
+   1188,
+   724
+  ],
+  "ppm": 1,
+  "image": "res://assets/ui/map/base.webp"
+ },
+ "regions": {
+  "saltfell_steading": {
+   "name": "Saltfell",
+   "origin": [
+    -128.0,
+    -176.0
+   ],
+   "size_m": [
+    256.0,
+    320.0
+   ],
+   "ppm": 3,
+   "image": "res://assets/ui/map/saltfell_steading.webp",
+   "label_at": [
+    -15.0,
+    39.0
+   ]
+  },
+  "lowe_barrows": {
+   "name": "The Lowe",
+   "origin": [
+    -128.0,
+    -336.0
+   ],
+   "size_m": [
+    256.0,
+    280.0
+   ],
+   "ppm": 3,
+   "image": "res://assets/ui/map/lowe_barrows.webp",
+   "label_at": [
+    -15.0,
+    -160.0
+   ]
+  },
+  "kettle_fjord": {
+   "name": "Kettle Fjord",
+   "origin": [
+    -200.0,
+    -400.0
+   ],
+   "size_m": [
+    256.0,
+    184.0
+   ],
+   "ppm": 3,
+   "image": "res://assets/ui/map/kettle_fjord.webp",
+   "label_at": [
+    -45.0,
+    -303.0
+   ]
+  },
+  "tarnhall": {
+   "name": "Tarnhall",
+   "origin": [
+    24.0,
+    -400.0
+   ],
+   "size_m": [
+    256.0,
+    144.0
+   ],
+   "ppm": 3,
+   "image": "res://assets/ui/map/tarnhall.webp",
+   "label_at": [
+    152.0,
+    -328.0
+   ]
+  },
+  "thornwold": {
+   "name": "Thornwold",
+   "origin": [
+    246.0,
+    -410.0
+   ],
+   "size_m": [
+    256.0,
+    144.0
+   ],
+   "ppm": 3,
+   "image": "res://assets/ui/map/thornwold.webp",
+   "label_at": [
+    374.0,
+    -338.0
+   ]
+  },
+  "shepherds_reach": {
+   "name": "Shepherd's Reach",
+   "origin": [
+    466.0,
+    -420.0
+   ],
+   "size_m": [
+    256.0,
+    168.0
+   ],
+   "ppm": 3,
+   "image": "res://assets/ui/map/shepherds_reach.webp",
+   "label_at": [
+    594.0,
+    -336.0
+   ]
+  },
+  "coldwell": {
+   "name": "The Coldwell",
+   "origin": [
+    676.0,
+    -556.0
+   ],
+   "size_m": [
+    288.0,
+    192.0
+   ],
+   "ppm": 3,
+   "image": "res://assets/ui/map/coldwell.webp",
+   "label_at": [
+    820.0,
+    -460.0
+   ]
+  }
+ }
+}

@@ -61,6 +61,12 @@ static func set_dissolve(root: Node, v: float) -> void:
 			var mi := n as MeshInstance3D
 			if mi.mesh != null:
 				var cloned := mi.has_meta("_diss_cloned")
+				# an override is what is drawn (the Oarsman's ice oar): without
+				# this the oar stayed whole while the body shattered round it
+				if mi.material_override is ShaderMaterial:
+					if not cloned:
+						mi.material_override = mi.material_override.duplicate()
+					(mi.material_override as ShaderMaterial).set_shader_parameter("death_diss", v)
 				for s in mi.mesh.get_surface_count():
 					var mat := mi.get_surface_override_material(s)
 					if mat == null:

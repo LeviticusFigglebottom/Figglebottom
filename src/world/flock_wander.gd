@@ -50,16 +50,37 @@ func _process(dt: float) -> void:
 		if dist < 0.08:
 			# there: head down for a good while (most of a ewe's day)
 			s["wait"] = 8.0 + fmod(float(i) * 7.3 + n.position.x, 26.0)
+			_walk(n, false)
 			continue
 		# her face is local -Z: turn it to the way she is going, then go
 		var want := atan2(-to.x, -to.z)
 		var diff := wrapf(want - n.rotation.y, -PI, PI)
 		n.rotation.y += clampf(diff, -TURN * dt, TURN * dt)
+		_walk(n, true)
 		if absf(diff) < 0.5:
 			var step := to / dist * minf(PACE * dt, dist)
 			var p := n.position + step
 			p.y = area.terrain.height_at(p.x, p.z)
 			n.position = p
+
+## A rigged ewe (kit_sr_ewe) walks her own walk clip while she moves and
+## stands in its first frame when she stops; the unrigged ones have none.
+func _walk(n: Node3D, on: bool) -> void:
+	if not n.has_meta("walk_ap"):
+		var found := n.find_children("*", "AnimationPlayer", true, false)
+		# (false, not null: setting a meta to null removes it)
+		n.set_meta("walk_ap", found[0] if not found.is_empty() and (found[0] as AnimationPlayer).has_animation("walk") else false)
+	var ap = n.get_meta("walk_ap")
+	if not (ap is AnimationPlayer) or not is_instance_valid(ap):
+		return
+	var player := ap as AnimationPlayer
+	if on and not player.is_playing():
+		player.get_animation("walk").loop_mode = Animation.LOOP_LINEAR
+		player.play("walk", 0.3, 0.7)      # an amble: the clip is a brisk walk
+	elif not on and player.is_playing():
+		player.play("walk", 0.3, 0.0)
+		player.seek(0.0, true)
+		player.stop(true)
 
 ## The next patch: a metre or two off, inside the tether, on ground she
 ## could stand on (no steeper or higher than a step from home).

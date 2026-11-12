@@ -38,6 +38,14 @@ The Tripo client (`client.mjs`) and its cookie live only in the session scratchp
 - **Masks:** steer reference images with `gpt_image_2.5_sunburst` and "a perfectly flat oval board of pale birch wood like a small shield ... two small round eye holes and one carved horizontal groove ... no nose, no mouth". gemini_3_pro keeps drifting to carved faces.
 - **Bone names:** Godot sanitises `mixamorig:RightHand` to `mixamorig_RightHand`, so match bones by suffix. See `src/debug/art_pilot.gd` `_attach_blade()`, which also builds the grip frame from the rest pose (hand→Middle1 = fingers, Thumb1 = blade direction).
 
+## Weapons (ADR 0014)
+
+- **Look before the remesh.** A long thin reference (a spear, an arrow, a bow stave) comes back from Tripo doubled, flattened into a plank or with extra limbs, from one image and from four views alike. Preview the raw GLB (step 3) before paying 40 for the remesh.
+- `keep_one: true` in a weapon's manifest row deletes the second copy when a roll holds two clean ones side by side (the arrow).
+- The spear and the bow are modelled, not generated: `procedural/ash_spear.py`, `procedural/self_bow.py` (same atlas helpers as the kit, same origin rule as every weapon).
+- **Check which end is up.** `tools/anim/weapon_sheets.sh --rack` stands every weapon mesh on its grip origin, flat and edge-on, with a line at the hand: `docs/screens/weapon_rack.png`. The turf spade sat blade-in-hand for a week because nothing showed it bare.
+- Then judge it in the fist: `tools/anim/weapon_sheets.sh [kit ...]` writes `docs/screens/weapon_<kit>_<clip>_sheet.png`.
+
 ## Collision (made on import)
 
 `blender_process.py` and `kit_procedural.py` name the exported mesh node with a Godot import suffix:

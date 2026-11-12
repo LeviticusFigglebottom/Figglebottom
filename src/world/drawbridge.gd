@@ -77,6 +77,7 @@ func _ready() -> void:
 		rs.shape = rb
 		rs.position = Vector3(sx * (width * 0.5 + 0.05), 0.6, -length * 0.5)
 		_body.add_child(rs)
+	Surfaces.stamp_kind(_body, "drawbridge")
 	_deck.add_child(_body)
 	if operable:
 		_zone = Interactable.new()
@@ -105,9 +106,13 @@ func _apply(down: bool, instant: bool) -> void:
 	if instant:
 		_deck.rotation.x = target
 	else:
+		AudioDirector.play("world/bridge", global_position)
 		create_tween().tween_property(_deck, "rotation:x", target, LOWER_S)\
 			.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
-	_body.collision_layer = (1 << (RH.L_WORLD_BASE - 1)) if down else 0
+	# raised, the deck stands on end over the hinge and is as solid as it
+	# looks: with its collider off the Bearer walked through the planks and
+	# off the lip of the ravine behind them
+	_body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
 	_body.set_meta("orig_layer", _body.collision_layer)
 	if not instant and Game.current_area != null:
 		# (once the deck lies across: its collider turns with it)

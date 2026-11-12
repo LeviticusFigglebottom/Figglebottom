@@ -32,6 +32,7 @@ import anim_rig as R          # noqa: E402
 import anim_pose as A         # noqa: E402
 import combat_clips as C      # noqa: E402
 import foe_clips as F         # noqa: E402
+import weapon_clips as WC     # noqa: E402
 
 FPS = 30
 BASE = "assets/models/characters/bearer_traveller.glb"
@@ -225,6 +226,19 @@ def write_foe_meta(rows, sets):
         fh.write(json.dumps(meta, indent=1, ensure_ascii=False) + "\n")
 
 
+def write_weapon_meta(rows):
+    """Section rows for the generated per-weapon clips (w_*): their contact
+    is the data strike time they were keyed to."""
+    path = rp("data/anim/clip_meta.json")
+    with open(path) as fh:
+        meta = json.load(fh)
+    for k in [k for k in meta["clips"] if k.startswith("w_")]:
+        del meta["clips"][k]
+    meta["clips"].update(rows)
+    with open(path, "w") as fh:
+        fh.write(json.dumps(meta, indent=1, ensure_ascii=False) + "\n")
+
+
 def add_dummy_mesh(arm):
     """glTF only exports a skin (and Godot only builds a Skeleton3D) when a
     mesh is bound, so a degenerate triangle rides the hips."""
@@ -288,6 +302,14 @@ def main():
         built[name] = poses
     print(f"  foe clips: {len(foe_clips)}")
     write_foe_meta(foe_rows, foe_sets)
+    # the per-weapon clips, cut to the player's data strike times (ADR 0014)
+    w_clips, w_rows = WC.build(ctx, ROOT)
+    for name, poses in w_clips.items():
+        if only and name not in only:
+            continue
+        built[name] = poses
+    print(f"  weapon clips: {len(w_clips)}")
+    write_weapon_meta(w_rows)
     for s in srcs.values():
         s.free()
     for name, poses in built.items():

@@ -248,8 +248,39 @@ func _ice_cutter() -> void:
 	ic._begin_attack(dd)
 	await _secs(float(dd["windup"]) + 0.1)
 	check(ic.open_holes() == 1 and (ic.holes[0] as BrokenIce).covers(player.global_position), "he drills a hole under the Bearer")
-	await _secs(1.4)
-	check(player.dead, "and the fjord takes him")
+	await _secs(2.2)
+	check(player.dead, "and the fjord takes him, if he stays")
+	await _revive()
+	await _close_all_ice()
+
+	print("== off it in a second: the second is his to move in")
+	ic.target = player
+	ic._cooldowns.clear()
+	ic._set_state(Enemy.ES.COMBAT)
+	ic.vis.rotation.y = PI
+	player.global_position = ic.global_position + Vector3(0, 0, 8.0)
+	player.hp = player.max_hp
+	player.invulnerable = false
+	await ticks(2)
+	ic._begin_attack(dd)
+	# (already knocked about: the break's 30 will take what poise is left)
+	await _secs(float(dd["windup"]) - 0.1)
+	player.poise = 5.0
+	await _secs(0.2)
+	var on_it: bool = ic.open_holes() >= 1 and player.state == Player.S.STAGGER
+	var t_stag := 0
+	while player.state == Player.S.STAGGER and t_stag < 120:
+		await ticks(1)
+		t_stag += 1
+	check(on_it and not player.dead, "staggered on the hole for %.2f s, he is not under yet" % (t_stag / 60.0))
+	# on his feet: straight off it, away from the Ice-Cutter
+	player.cam.yaw = 0.0
+	player.sim_move = Vector3(0, 0, 1)
+	await _secs(0.9)
+	player.sim_move = Vector3.ZERO
+	var off_it: bool = not _open_ice().any(func(b): return (b as BrokenIce).covers(player.global_position))
+	await _secs(1.0)
+	check(off_it and not player.dead, "he walks off it inside the second and lives (hp %.0f)" % player.hp)
 	await _revive()
 	await _close_all_ice()
 
@@ -417,7 +448,10 @@ func _lines_of(thread_id: String) -> Array:
 func _expected(thread_id: String, n: int) -> Array:
 	for t in Keepsakes.threads_def():
 		if t["id"] == thread_id:
-			return (t["steps"] as Array).slice(0, n).map(func(s): return String(s["line"]))
+			# (the steps a point of interest adds are off this suite's road: POI.md,
+			# tools/test/poi_*_test.gd walk those)
+			return (t["steps"] as Array).filter(func(s): return not (String(s["flag"]) in ["ks_ivo_pole", "ks_ivo_line", "ks_ottar_pair"])) \
+				.slice(0, n).map(func(s): return String(s["line"]))
 	return []
 
 func _pickup(id: String) -> Pickup:

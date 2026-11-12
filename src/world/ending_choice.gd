@@ -36,7 +36,10 @@ func _ready() -> void:
 	_done = World.ended() != ""   # a save from after: there is nothing left to choose
 	_refresh()
 
-func _process(_dt: float) -> void:
+## (on the physics tick, the clock everything else here is told by: after a
+## heavy build the engine runs several ticks to one drawn frame, and a choice
+## that waited for the frame was three ticks late in opening)
+func _physics_process(_dt: float) -> void:
 	if not _done and not is_open() and World.flag(release_flag):
 		_refresh()
 

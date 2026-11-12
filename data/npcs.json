@@ -27,6 +27,21 @@
     "reward_item": "bog_iron",
     "reward_count": 1,
     "toast": "Ingra takes the rye. Received: Bog-iron ×1"
+   },
+   {
+    "needs_item": "item_three_bowls",
+    "absent_flag": "ks_ingra_bowls",
+    "take_item": true,
+    "set_flag": "ks_ingra_bowls",
+    "toast": "Ingra takes the bowls."
+   },
+   {
+    "needs_item": "item_pan_salt",
+    "absent_flag": "ingra_salt_shown",
+    "take_item": true,
+    "set_flag": "ingra_salt_shown",
+    "reward_warmth": 60,
+    "toast": "Ingra takes the salt. Received: 60 warmth"
    }
   ],
   "lines_when": [
@@ -43,6 +58,21 @@
     "lines": [
      "Found it in the byre, did you. Under that dog. Well. He's a good dog.",
      "You've got a look of someone. Don't mind me. Everyone's got a look of someone."
+    ]
+   },
+   {
+    "flag": "ks_ingra_bowls",
+    "closing_only": true,
+    "lines": [
+     "Those are mine. Who's had those out on the head?",
+     "Three short. I knew I was three short. Put them on the end, I'll wash them."
+    ]
+   },
+   {
+    "flag": "ingra_salt_shown",
+    "closing_only": true,
+    "lines": [
+     "That's burnt. Who burns salt?"
     ]
    }
   ],
@@ -108,6 +138,11 @@
     "take_item": true,
     "set_flag": "ks_brede_float",
     "toast": "Brede takes the float."
+   },
+   {
+    "needs_item": "item_thole_pin",
+    "absent_flag": "brede_pin_shown",
+    "set_flag": "brede_pin_shown"
    }
   ],
   "lines_when": [
@@ -124,6 +159,13 @@
     "lines": [
      "That's it. That's my knot. The one on the back's wrong, I did it the year we married. She says it makes it lucky.",
      "You've done me a kindness. If you're ever in a boat, take the oilskins. I've another set."
+    ]
+   },
+   {
+    "flag": "brede_pin_shown",
+    "closing_only": true,
+    "lines": [
+     "That's off mine. They don't come out. You'd have to pull her over sideways to get that out."
     ]
    }
   ],
@@ -177,6 +219,11 @@
     "take_item": true,
     "set_flag": "ks_aud_cord",
     "toast": "Aud takes the cord."
+   },
+   {
+    "needs_item": "item_birch_cup",
+    "absent_flag": "aud_cup_shown",
+    "set_flag": "aud_cup_shown"
    }
   ],
   "lines_when": [
@@ -194,6 +241,13 @@
      "That's Orm's cord. He tied his knots too tight. You can't read a word of it, so don't try.",
      "First on the road. It says a lot of things. He tied it in the dark half the time.",
      "You'll want his other cloak. He was buried in the good one."
+    ]
+   },
+   {
+    "flag": "aud_cup_shown",
+    "closing_only": true,
+    "lines": [
+     "That's the miller's lot. They leave something every year and then send a child up for it."
     ]
    }
   ],
@@ -252,6 +306,13 @@
     "reward_item": "bog_iron",
     "reward_count": 1,
     "toast": "Hesk takes the tongs. Received: Bog-iron ×1"
+   },
+   {
+    "needs_item": "item_spade_iron",
+    "absent_flag": "ks_hesk_iron",
+    "take_item": true,
+    "set_flag": "ks_hesk_iron",
+    "toast": "Hesk takes the spade-iron."
    }
   ],
   "lines_when": [
@@ -268,6 +329,14 @@
     "lines": [
      "Never that good, these. Bent in the rein. I'll have them back all the same.",
      "Put your blade on the stone. I'll do it for less. Don't go telling people."
+    ]
+   },
+   {
+    "flag": "ks_hesk_iron",
+    "closing_only": true,
+    "lines": [
+     "That's Arne's. I've one side done.",
+     "He'll have it by the morning. I always have it back to him by the morning."
     ]
    }
   ],
@@ -341,6 +410,19 @@
     "take_item": true,
     "set_flag": "ks_ivo_mitten",
     "toast": "Ivo takes the mitten."
+   },
+   {
+    "needs_item": "item_sounding_pole",
+    "absent_flag": "ks_ivo_pole",
+    "take_item": false,
+    "set_flag": "ks_ivo_pole"
+   },
+   {
+    "needs_item": "item_line_winder",
+    "absent_flag": "ks_ivo_line",
+    "take_item": true,
+    "set_flag": "ks_ivo_line",
+    "toast": "Ivo takes the winder."
    }
   ],
   "lines_when": [
@@ -355,6 +437,19 @@
     "flag": "ks_ivo_supper",
     "lines": [
      "Fish again. He only knows the one way. You'd think in sixty years."
+    ]
+   },
+   {
+    "flag": "ks_ivo_pole",
+    "lines": [
+     "That's Grandfather's. He knocks on everything.",
+     "You don't need it. You can hear ice through your feet, if you're any good."
+    ]
+   },
+   {
+    "flag": "ks_ivo_line",
+    "lines": [
+     "That's mine. He says I wind it backwards. It holds, doesn't it?"
     ]
    }
   ],
@@ -514,6 +609,20 @@
     "take_item": true,
     "set_flag": "ks_guest_tally",
     "toast": "Lusse takes the tally."
+   },
+   {
+    "needs_item": "item_vat_dipper",
+    "absent_flag": "ks_vat_dipper_shown",
+    "take_item": false,
+    "set_flag": "ks_vat_dipper_shown"
+   },
+   {
+    "needs_item": "item_wool_ends",
+    "require_flag": "ks_song_cord_read",
+    "absent_flag": "ks_wool_ends",
+    "take_item": false,
+    "set_flag": "ks_wool_ends",
+    "toast": "Lusse counts the ends."
    }
   ],
   "lines_when": [
@@ -541,6 +650,18 @@
     "flag": "ks_goat_song",
     "lines": [
      "There. Now you'll have it in your head till the Melt. I'm not sorry."
+    ]
+   },
+   {
+    "flag": "ks_vat_dipper_shown",
+    "lines": [
+     "He's had that vat filled twice since noon. He counts the horns, not the guests."
+    ]
+   },
+   {
+    "flag": "ks_wool_ends",
+    "lines": [
+     "She's cut and started again, look. Six times. Seven. It's hard, saying it about yourself."
     ]
    }
   ]
@@ -570,6 +691,12 @@
     "take_item": true,
     "set_flag": "ks_ottar_staff",
     "toast": "Ottar takes his stick."
+   },
+   {
+    "needs_item": "item_rowan_stick",
+    "absent_flag": "ks_ottar_pair",
+    "take_item": false,
+    "set_flag": "ks_ottar_pair"
    }
   ],
   "lines_when": [
@@ -585,6 +712,13 @@
     "lines": [
      "That's my stick. Where was that? I left it by the door.",
      "Well. I'll sit for the end of the song, then."
+    ]
+   },
+   {
+    "flag": "ks_ottar_pair",
+    "lines": [
+     "That's hers. What's that doing up here?",
+     "She's at home. She's got the calving. She'd not leave the calving."
     ]
    }
   ],
@@ -728,6 +862,13 @@
     "take_item": true,
     "set_flag": "ks_birch_ring",
     "toast": "Linnet takes the ring."
+   },
+   {
+    "needs_item": "item_gate_latch",
+    "absent_flag": "ks_gate_latch",
+    "take_item": false,
+    "set_flag": "ks_gate_latch",
+    "toast": "Linnet looks at the latch."
    }
   ],
   "lines_when": [
@@ -741,6 +882,12 @@
     "flag": "ks_birch_ring",
     "lines": [
      "That's mine. I had it on this morning. He made it. Don't tell him I took it off to work."
+    ]
+   },
+   {
+    "flag": "ks_gate_latch",
+    "lines": [
+     "He's made that for both. Look at it. It won't fit either."
     ]
    }
   ],
@@ -869,6 +1016,10 @@
     "ks_calder_hum"
    ]
   ],
+  "chapter_absent_flags": [
+   "ks_fellcaller_released",
+   ""
+  ],
   "line_sfx": {
    "Mm. Mm, mm.": [
     "res://assets/audio/hum.wav",
@@ -885,6 +1036,11 @@
     "needs_item": "item_calder_boots",
     "absent_flag": "ks_calder_boots_shown",
     "set_flag": "ks_calder_boots_shown"
+   },
+   {
+    "require_flag": "ks_smudge_found",
+    "absent_flag": "ks_smudge_told",
+    "set_flag": "ks_smudge_told"
    }
   ],
   "lines_when": [
@@ -902,9 +1058,20 @@
      "I've got mine on. Look.",
      "Well. Put them by the door. Toes to the wall, or she'll only move them."
     ]
+   },
+   {
+    "flag": "ks_smudge_told",
+    "closing_only": true,
+    "lines": [
+     "Smudge? She'll be at the door.",
+     "Never come to a call in her life, that one. She comes to a pocket."
+    ]
    }
   ],
-  "services": []
+  "services": [],
+  "line_flags": {
+   "Forty-one, forty-two. Where's Smudge. There's Smudge.": "ks_smudge_named"
+  }
  },
  "maren": {
   "name": "Maren",
@@ -1017,6 +1184,22 @@
     "label": "Take the spare fleece",
     "line_done": "It's his old one. He won't wear it, he says it makes him cough. Everything makes him cough."
    }
+  ],
+  "on_talk": [
+   {
+    "needs_item": "item_calder_blanket",
+    "absent_flag": "sigga_blanket_shown",
+    "set_flag": "sigga_blanket_shown"
+   }
+  ],
+  "lines_when": [
+   {
+    "flag": "sigga_blanket_shown",
+    "closing_only": true,
+    "lines": [
+     "That's not his. His is the one on the floor."
+    ]
+   }
   ]
  },
  "sigga_fold": {
@@ -1025,8 +1208,23 @@
   "body": "mannequin_thaw",
   "model": "sigga_thaw",
   "height": 1.8,
-  "mute": true,
-  "_scene": "REACH.md 9: after the release, THAW: in the High Fold beside her father, who is stood at the wall he has finished, his boots off beside him.",
+  "_scene": "REACH.md 9: after the release, THAW: in the High Fold beside her father, who is stood at the wall he has finished, his boots off beside him. She speaks (her own lines from the slope that still hold) and still has the spare fleece to give: a Bearer who rested before he met her had no other way to either.",
+  "lines_first": [
+   "They come to a call. Dogs are for people who can't call."
+  ],
+  "lines_repeat": [
+   "If he asks, I've had my supper."
+  ],
+  "services": [
+   {
+    "id": "give_fleece",
+    "type": "gift",
+    "item": "armour_fleece",
+    "once_flag": "got_fleece",
+    "label": "Take the spare fleece",
+    "line_done": "It's his old one. He won't wear it, he says it makes him cough. Everything makes him cough."
+   }
+  ],
   "overhear": [
    [
     "sigga",
@@ -1073,5 +1271,141 @@
   "frozen": true,
   "pose": "lie",
   "_scene": "REACH.md 4: RIME. Laid out at the foot of the fold cairn where she found him, on his back, rimed over. Not a foe; nothing to say."
+ },
+ "landing_guest_a": {
+  "name": "A late guest",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true,
+  "_scene": "POI.md 5.1: two late guests at the boat with its oars left in, THAW. Overheard only.",
+  "overhear": [
+   [
+    "",
+    "Is that the goat one? They've not got far."
+   ],
+   [
+    "",
+    "Ninth verse. I counted from the steps."
+   ],
+   [
+    "",
+    "Then there's time. Leave the oars in, we're not stopping long."
+   ],
+   [
+    "",
+    "You said that last year."
+   ],
+   [
+    "",
+    "Last year there was no fish."
+   ]
+  ],
+  "overhear_r": 9.0
+ },
+ "landing_guest_b": {
+  "name": "A late guest",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true
+ },
+ "cook_a": {
+  "name": "A cook",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true,
+  "_scene": "POI.md 5.3: two cooks at the vat behind the hall, THAW. Overheard only.",
+  "overhear": [
+   [
+    "",
+    "He's sent back for more. Again."
+   ],
+   [
+    "",
+    "There's the forty barrels and that's the lot. I told him."
+   ],
+   [
+    "",
+    "He said open another."
+   ],
+   [
+    "",
+    "Half the far bench isn't eating. They're sat there coughing."
+   ],
+   [
+    "",
+    "Then he'll want it kept hot for them."
+   ]
+  ],
+  "overhear_r": 8.0
+ },
+ "cook_b": {
+  "name": "A cook",
+  "short_name": "",
+  "body": "mannequin_thaw",
+  "mute": true
+ },
+ "salt_boilers": {
+  "name": "Salt-boilers",
+  "short_name": "",
+  "unseen": true,
+  "mute": true,
+  "_scene": "POI.md 2.2: two salt-boilers inside the salt house in THAW, never seen. Within 7 m of the door the Bearer overhears them.",
+  "overhear": [
+   [
+    "",
+    "Rake it to the edge. It's catching."
+   ],
+   [
+    "",
+    "It's not catching. Who's that in the byre?"
+   ],
+   [
+    "",
+    "Nobody. It's the hay."
+   ],
+   [
+    "",
+    "That's three nights it's been the hay."
+   ],
+   [
+    "",
+    "Then it's good hay. Are you raking or am I?"
+   ]
+  ],
+  "overhear_r": 7.0
+ },
+ "bread_family": {
+  "name": "A family going home",
+  "short_name": "",
+  "unseen": true,
+  "mute": true,
+  "_scene": "POI.md 3.1: a man and a woman going home down the road toward the pass, never seen. Within 12 m of the Bread Mound the Bearer overhears them.",
+  "overhear": [
+   [
+    "",
+    "You left the cup."
+   ],
+   [
+    "",
+    "I left it for her."
+   ],
+   [
+    "",
+    "You left it because you forgot it."
+   ],
+   [
+    "",
+    "Upside down, so the dew stays out. That's leaving it for her."
+   ],
+   [
+    "",
+    "She'd have said you forgot it."
+   ],
+   [
+    "",
+    "She would."
+   ]
+  ],
+  "overhear_r": 12.0
  }
 }

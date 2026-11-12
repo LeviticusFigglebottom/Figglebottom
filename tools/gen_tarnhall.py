@@ -226,7 +226,7 @@ def thaw_water_blockers():
         zs = []
         z = -362.0
         while z <= -290.0:
-            water_here = T.tarn_e(xm, z) < 0.98 and T.island_e(xm, z) > 1.12
+            water_here = T.tarn_e(xm, z) < 0.98 and T.island_e(xm, z) > 1.12 and not T.on_island_ground(xm, z)
             cd, _ = T.causeway_d(xm, z)
             if cd < T.CAUSEWAY_HALF + 1.6:
                 water_here = False
@@ -318,6 +318,153 @@ npcs = [{"id": "lusse", "at": [r2(HALL_C[0] + 1.0), FY, r2(HALL_C[1] + 4.6)], "r
         # just inside the front door with his boots on (TARNHALL.md 7)
         {"id": "ottar", "at": [r2(HALL_X0 + 2.2), FY, r2(DOOR_Z - 1.4)], "rot": 270, "tag": "thaw"}]
 
+# --- points of interest (docs/lore/POI.md 5) -----------------------------------
+# Set by hand on the south shore and on the island's two widened grounds
+# (tarn_land: COOK_YARD, SOUTH_WALK). Nothing stands on the causeway or its
+# bridge, and the porch keeps 1.2 m clear before the doors. "wayside": false
+# keeps the wayside dressing from gathering round them; WAYSIDE_CLEAR keeps
+# it, and the hall's own yard clutter, off their ground.
+PLAQUES, SCRIPTED, WAYSIDE_CLEAR = [], [], []
+POI = {"wayside": False}
+KIT_M = "res://assets/models/"
+
+
+def prop(kit, pos, rot=0.0, tag="base", **kw):
+    PROPS.append(dict({"kit": kit, "at": pos, "rot": r2(rot), "tag": tag}, **kw))
+
+
+def board(pos, rot, thaw=None, rime=None):
+    """One wayside board; its caption turns with the state."""
+    for tag, text in (("thaw", thaw), ("rime", rime)):
+        if text:
+            PLAQUES.append(dict(POI, at=pos, rot=rot, tag=tag, text=text))
+    other = "rime" if rime is None else ("thaw" if thaw is None else None)
+    if other:           # the board itself still stands in the state that has no caption
+        prop("plaque", pos, rot, tag=other)   # solid, as the board that reads is (LorePlaque)
+
+
+def face(frm, to):
+    """The yaw that turns a thing at `frm` (facing -z at rest) toward `to`."""
+    return r2(math.degrees(math.atan2(-(to[0] - frm[0]), -(to[1] - frm[1]))))
+
+
+# 5.1 the Seven Landings: seven boats bow to the land on the south-west shore,
+# beside the causeway's land end; one with its oars left in
+def shore(a_deg, e):
+    """A point on the tarn's shore ellipse at angle a (180 west, 90 south), at
+    elliptic radius e (1 the shore's top, about 0.925 the waterline)."""
+    a = math.radians(a_deg)
+    lo, hi = 20.0, 70.0
+    for _ in range(40):             # along the ray from the tarn's middle
+        mid = (lo + hi) * 0.5
+        if T.tarn_e(T.TARN_C[0] + math.cos(a) * mid, T.TARN_C[1] + math.sin(a) * mid) < e:
+            lo = mid
+        else:
+            hi = mid
+    return T.TARN_C[0] + math.cos(a) * lo, T.TARN_C[1] + math.sin(a) * lo
+
+
+LANDING_A = [172.0, 165.0, 158.0, 151.0, 144.0, 137.0, 130.0]
+OARS_IN = 3                         # the boat that was left ready to go
+for k, a in enumerate(LANDING_A):
+    bx, bz = shore(a, 0.865)
+    lx, lz = shore(a, 1.0)
+    yaw = r2(math.degrees(math.atan2(lx - bx, lz - bz)) + [3, -4, 2, 0, -3, 5, -2][k])     # bow to the land
+    # THAW: afloat at the water's edge. RIME: in the ice to the gunwales.
+    PROPS.append({"kit": "boat", "at": [r2(bx), T.TARN_Y - 0.12, r2(bz)], "rot": yaw, "tag": "thaw", "embed": True})
+    PROPS.append({"kit": "boat", "at": [r2(bx), T.TARN_Y - 0.5, r2(bz)], "rot": yaw, "tag": "rime", "embed": True})
+    if k == OARS_IN:
+        PROPS.append({"kit": "th_boat_oars", "at": [r2(bx), T.TARN_Y + 0.38, r2(bz)], "rot": yaw, "tag": "thaw", "collide": False, "on": "boat"})
+        PROPS.append({"kit": "th_boat_oars", "at": [r2(bx), T.TARN_Y + 0.0, r2(bz)], "rot": yaw, "tag": "rime", "collide": False, "on": "boat"})
+_ox, _oz = shore(LANDING_A[OARS_IN], 1.035)
+_gx, _gz = shore(LANDING_A[OARS_IN] + 1.6, 1.05)
+LANDING_GUESTS = [
+    {"id": "landing_guest_a", "at": at(_ox, _oz), "rot": face((_ox, _oz), (_gx, _gz)), "tag": "thaw"},
+    {"id": "landing_guest_b", "at": at(_gx, _gz), "rot": face((_gx, _gz), (_ox, _oz)), "tag": "thaw"},
+]
+# the oars of the six boats that were drawn up properly, each neighbourhood's own cut
+_sx, _sz = shore(176.5, 1.07)
+prop("th_oar_stand", at(_sx, _sz), face((_sx, _sz), shore(176.5, 0.8)) + 180)
+for a in (161.5, 140.5):
+    _cx, _cz = shore(a, 1.02)
+    prop("rope_coil", at(_cx, _cz), a * 3 % 360, collide=False)
+# the board stands where the hall's west doors show between two prows
+_bx, _bz = shore((LANDING_A[2] + LANDING_A[3]) * 0.5, 1.075)
+LANDING_BOARD = at(_bx, _bz)
+board(LANDING_BOARD, face((_bx, _bz), (HALL_X0, DOOR_Z)) + 180,
+      rime="THE TARN CAUSEWAY\n\nSeven boats. One was left ready to go, with the oars in.\nNobody came back down for any of them.")
+_mx, _mz = shore(151.0, 1.0)
+WAYSIDE_CLEAR.append([r2(_mx), r2(_mz), 19.0])
+
+# 5.2 the Porch: what she put down to knock (RIME); wet cloaks and sticks (THAW)
+ROWAN = dict(POI, id="rowan_stick", at=[r2(HALL_X0 - 1.0), PORCH_Y, r2(DOOR_Z - 1.4)], item="item_rowan_stick", tag="rime",
+             scene=KIT_M + "props/rowan_stick.tscn", label="Take the stick")
+WALL_X = HALL_X0 - 0.24             # the gable's outer face, on the porch
+prop("th_horn_rack", [WALL_X, PORCH_Y, r2(DOOR_Z - 4.3)], -90, collide=False, on="wall")
+prop("th_hanging", [WALL_X, PORCH_Y + 0.5, r2(DOOR_Z + 4.4)], -90, collide=False, on="wall")
+for k, dz in enumerate((2.3, 2.9)):
+    LANDMARKS.append({"scene": KIT_M + "props/hall_coat.tscn", "at": [r2(WALL_X - 0.12), PORCH_Y, r2(DOOR_Z + dz)], "rot": -90, "tag": "thaw"})
+for k, dz in enumerate((-2.5, -2.75)):
+    LANDMARKS.append({"scene": KIT_M + "props/ottar_stick.tscn", "at": [r2(WALL_X - 0.3), PORCH_Y, r2(DOOR_Z + dz)], "rot": -90 + 25 * k,
+                      "tilt": -11.0, "tag": "thaw"})
+
+# 5.3 the Cook-Yard: the terrace behind the hall's east half
+CY_X0, CY_Z0, CY_X1, CY_Z1 = T.COOK_YARD
+
+
+def yard(x, z, dy=0.0):
+    return [r2(x), r2(FY + dy), r2(z)]
+
+
+# the retaining wall's face, and a low parapet along the open north side
+BOXES.append({"min": [CY_X0 - 0.3, T.TARN_Y - 1.4, CY_Z0 - 0.45], "max": [CY_X1 + 0.3, FY - 0.02, CY_Z0 - 0.02], "mat": "M_drystone",
+              "tag": "base", "collide": False})
+BOXES.append({"min": [CY_X0, FY - 0.3, CY_Z0 - 0.1], "max": [CY_X1, FY + 0.55, CY_Z0 + 0.4], "mat": "M_drystone", "tag": "base"})
+VAT = (CY_X0 + 8.0, CY_Z0 + 3.3)
+prop("th_ale_vat", yard(*VAT), 180)
+SPIT = (CY_X0 + 3.4, CY_Z0 + 2.5)
+prop("th_spit", yard(*SPIT), 0)
+prop("hearth_fire", yard(SPIT[0], SPIT[1], 0.12), 90, tag="thaw", collide=False, embed=True, on="spit", scale=0.8)
+prop("th_bake_oven", yard(CY_X1 - 2.2, CY_Z0 + 2.1), 180)
+prop("th_carving_frame", yard(CY_X0 + 1.6, CY_Z1 - 1.3), 90)
+prop("th_trestles", yard(CY_X0 + 9.6, CY_Z1 - 1.0), 0)
+prop("th_ale_tub", yard(VAT[0] + 2.6, VAT[1] - 0.9), 30)
+COOKS = [
+    {"id": "cook_a", "at": yard(VAT[0] - 1.5, VAT[1] + 0.9), "rot": face((VAT[0] - 1.5, VAT[1] + 0.9), VAT), "tag": "thaw"},
+    {"id": "cook_b", "at": yard(VAT[0] + 0.2, VAT[1] + 1.7), "rot": face((VAT[0] + 0.2, VAT[1] + 1.7), VAT), "tag": "thaw"},
+]
+# RIME: two Cupbearers, one each side of the vat (they work as a pair: data "flank")
+CUPBEARERS = [
+    {"enemy": "cupbearer", "stand_in": "keener", "id": "cupbearer_vat_a", "at": yard(VAT[0] - 2.0, VAT[1] + 0.2, 0.1), "face": 270},
+    {"enemy": "cupbearer", "stand_in": "keener", "id": "cupbearer_vat_b", "at": yard(VAT[0] + 2.0, VAT[1] + 0.4, 0.1), "face": 90},
+]
+DIPPER = dict(POI, id="vat_dipper", at=yard(VAT[0] + 0.2, VAT[1] + 1.25), lift=1.2, item="item_vat_dipper", tag="rime",
+              scene=KIT_M + "props/vat_dipper.tscn", label="Take the dipper")
+WAYSIDE_CLEAR.append([(CY_X0 + CY_X1) * 0.5, (CY_Z0 + CY_Z1) * 0.5 + 1.0, 11.0])
+WAYSIDE_CLEAR.append([HALL_X1 + 1.0, CY_Z1 + 1.5, 5.0])        # the walk round the hall's north-east corner
+
+# 5.4 the South Window: a horn pane out, at eye height, on the walk along the south wall
+WIN_X = 190.0
+WIN_Z = HALL_C[1] + HALL_W / 2 + 0.22            # the wall's outer face
+prop("th_horn_window", [WIN_X, FY + 1.25, r2(WIN_Z)], 0, collide=False, on="wall")
+prop("th_pail", [WIN_X + 0.35, FY, r2(WIN_Z + 0.42)], 20, collide=False)
+prop("th_rush_bundles", [WIN_X - 3.1, FY, r2(WIN_Z + 0.75)], 90)
+for tag, cap in (("thaw", "They are on the ninth verse. The high seat is empty."),
+                 ("rime", "Everyone is sitting down. One man is on his feet, going along the table with a horn.")):
+    SCRIPTED.append({"script": "res://src/world/look_in.gd", "at": [WIN_X, FY, r2(WIN_Z + 0.1)], "rot": 0, "tag": tag,
+                     "params": {"prompt": "Look in", "caption": cap, "seconds": 4.0,
+                                "eye": [0.0, 1.52, 0.12], "look_at_local": [3.5, 1.0, r2(TABLE_Z - WIN_Z)]}})
+SW = T.SOUTH_WALK
+x = SW[0] + 3.0
+while x < SW[2]:
+    WAYSIDE_CLEAR.append([r2(x), r2((SW[1] + SW[3]) * 0.5), 3.4])
+    x += 5.0
+
+pickups += [ROWAN, DIPPER]
+spawners += CUPBEARERS
+npcs += LANDING_GUESTS + COOKS
+# --- end of points of interest ------------------------------------------------
+
 portal = seam("tarnhall")
 arrive = seam("kettle_fjord")       # Kettle's side of the seam sets you down here
 START = arrive["spawn"]
@@ -362,7 +509,8 @@ D = {
     # light coming down through the smoke-holes onto the hearth (THAW)
     "scripted": [{"script": "res://src/world/god_rays.gd", "at": sh, "tag": "thaw",
                   "params": {"count": 3, "span_x": 2.5, "span_z": 1.6, "sun": [-78, -100], "seed_v": k3}}
-                 for k3, sh in enumerate(SMOKE_HOLES)],
+                 for k3, sh in enumerate(SMOKE_HOLES)] + SCRIPTED,
+    "wayside_clear": WAYSIDE_CLEAR,
     "hazards": hazards,
     "zones": [
         {"name": "THE TARN CAUSEWAY", "min": [24, -400], "max": [HALL_X0 - 0.5, -256]},
@@ -380,7 +528,7 @@ D = {
     "frost_veils": [{"id": "long_table_veil", "at": VEIL, "rot": 90, "tag": "rime"}],
     "npcs": npcs,
     "plaques": [{"at": at(127.0, -337.5, 0.0), "rot": 230,
-                 "text": "TARNHALL\n\nSeven neighbourhoods came up the water every Long Light to feast here."}],
+                 "text": "TARNHALL\n\nSeven neighbourhoods came up the water every Long Light to feast here."}] + PLAQUES,
     "pickups": pickups,
     "portals": [portal, wood_seam("tarnhall")],
     "scatter": {

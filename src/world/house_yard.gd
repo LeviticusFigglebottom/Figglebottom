@@ -90,6 +90,10 @@ static func _clear(def: Dictionary, hd: HouseDetail, area: Area, wp: Vector3, r:
 	for p in placed:
 		if Vector2(wp.x - p.x, wp.z - p.y).length() < r + p.z:
 			return false
+	# ground the area keeps for its authored places (as Wayside does)
+	for c in def.get("wayside_clear", []):
+		if Vector2(wp.x - float(c[0]), wp.z - float(c[1])).length() < r + float(c[2]):
+			return false
 	for key in KEEP_OUT:
 		for sp in def.get(key, []):
 			var at: Array = sp.get("at", [])

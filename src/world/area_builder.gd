@@ -156,12 +156,14 @@ static func _build(area_id: String) -> Area:
 	area.display_name = def.get("name", area_id)
 	area.set_meta("def", def)
 
-	area.env.set_overrides(def.get("env", {}))
+	# the region's own look (data/biomes): light, ground, weather, ground cover
+	var biome := Biome.of(area_id)
+	area.env.set_overrides(Biome.over(def.get("env", {}), biome.get("env", {})))
 	_for_main(area, area.env.build_fog_pockets.bind(def.get("fog_pockets", [])))
 	# the land first: buildings sit on it, they are not it (ADR 0003)
 	if def.has("terrain"):
 		var t := Terrain.new()
-		if t.setup(def["terrain"]):
+		if t.setup(def["terrain"], area_id):
 			area.base.add_child(t)
 			BuildLock.computing = true
 			t.build(RH.L_WORLD_BASE)
@@ -205,7 +207,7 @@ static func _build(area_id: String) -> Area:
 	var ewes: Array = []
 	for spec in def.get("props", []):
 		var pp := _piece(area, spec, _prop_collides(spec))
-		if pp != null and String(spec["kit"]) == "sheep" and String(spec.get("tag", "base")) == "thaw":
+		if pp != null and (String(spec["kit"]) == "sheep" or bool(spec.get("wander", false))) and String(spec.get("tag", "base")) == "thaw":
 			ewes.append(pp)
 	if not ewes.is_empty():
 		# the living flock ambles (the frozen one in RIME stays as set)
@@ -242,6 +244,7 @@ static func _build(area_id: String) -> Area:
 				bcs.shape = bsh
 				bcs.position = Vector3(0, bsh.size.y * 0.5, 0)
 				bb.add_child(bcs)
+				Surfaces.stamp(bb, String(spec.get("surface", Surfaces.for_landmark(String(spec["scene"]), String(spec.get("family", ""))))))
 				area.attach(bb, String(spec.get("tag", "base")))
 				_place(bb, spec)
 			if spec.has("smoke"):
@@ -282,11 +285,15 @@ static func _build(area_id: String) -> Area:
 		g.door_width = float(spec.get("width", 3.6))
 		# progression gates (ADR 0015): opened by a release's world flag
 		g.open_flag = spec.get("open_flag", "")
-		g.unbar_prompt = spec.get("unbar_prompt", g.unbar_prompt)
-		g.open_toast = spec.get("open_toast", g.open_toast)
-		g.plank_leaves = bool(spec.get("leaves", true))
+		# a way grown shut, not a door (Thornwold's stiles, a net, a hedge): no
+		# leaves, its own words, and the dressing is what blocks it
 		g.door_height = float(spec.get("height", g.door_height))
 		g.body_depth = float(spec.get("depth", g.body_depth))
+		g.has_leaves = bool(spec.get("leaves", true))
+		# ("unbar_prompt": the progression gates' generators; same thing)
+		g.open_prompt = String(spec.get("open_prompt", spec.get("unbar_prompt", g.open_prompt)))
+		g.open_toast = String(spec.get("open_toast", g.open_toast))
+		g.leaf_kit = spec.get("leaf", g.leaf_kit)
 		if spec.has("tag"):
 			g.layer_bit = _tag_bit(String(spec["tag"]))
 			area.attach(g, String(spec["tag"]))    # (Tarnhall's doors: barred in RIME only)
@@ -298,9 +305,17 @@ static func _build(area_id: String) -> Area:
 		elif spec.has("dressing"):
 			# the gate's look (a Tripo pair of doors): shown while it is barred
 			var dr: Dictionary = spec["dressing"]
-			var lm := BuildingGen._landmark(String(dr["scene"]))
+			var lm := BuildingGen._landmark(String(dr["scene"]), String(dr.get("family", "")),
+				(2 if String(spec.get("tag", "")) == "rime" else 0) if dr.has("family") else 0)
 			if lm != null:
 				lm.set_meta("gate_dressing", true)
+				if dr.has("range"):
+					for gi in lm.find_children("*", "GeometryInstance3D", true, false):
+						(gi as GeometryInstance3D).visibility_range_end = float(dr["range"])
+						(gi as GeometryInstance3D).visibility_range_end_margin = 6.0
+				if not bool(dr.get("shadow", true)):
+					for gi in lm.find_children("*", "GeometryInstance3D", true, false):
+						(gi as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 				lm.position = _v3(dr.get("offset", [0, 0, 0]))
 				lm.rotation.y = deg_to_rad(float(dr.get("rot", 0)))
 				lm.scale = Vector3.ONE * float(dr.get("scale", 1.0))
@@ -321,6 +336,10 @@ static func _build(area_id: String) -> Area:
 		s.pose = String(spec.get("pose", ""))
 		s.absent_flag = String(spec.get("absent_flag", ""))
 		s.spawn_flag = "slain_" + spec.get("id", spec.get("enemy", "e"))
+		s.spawn_id = String(spec.get("id", ""))
+		s.wakes_with = spec.get("wakes_with", [])
+		if spec.has("rise_time"):
+			s.cfg_over["rise_time"] = float(spec["rise_time"])
 		s.area_id = area_id
 		var tag: String = spec.get("tag", "rime")
 		area.attach(s, tag)
@@ -369,6 +388,7 @@ static func _build(area_id: String) -> Area:
 		p.set_flag = spec.get("set_flag", "")
 		p.flag_toast = spec.get("flag_toast", "")
 		p.style = spec.get("style", "plaque")
+		p.layer_bit = _tag_bit(String(spec.get("tag", "base")))
 		area.attach(p, spec.get("tag", "base"))
 		_place(p, spec)
 	for spec in def.get("scripted", []):
@@ -436,7 +456,11 @@ static func _build(area_id: String) -> Area:
 		Forest.build(area, area.terrain, def["forest"], _keep_clear(def))
 	BuildProf.lap("forest")
 	if area.terrain != null:
-		_for_main(area, Weather.build.bind(area, area.terrain, def))
+		var wdef := def
+		if biome.has("weather"):
+			wdef = def.duplicate()
+			wdef["weather"] = Biome.over({"w": def.get("weather", {})}, {"w": biome["weather"]})["w"]
+		_for_main(area, Weather.build.bind(area, area.terrain, wdef))
 		TrapWarden.build(area)      # no ditch keeps the Bearer (tools/fix_traps.py)
 		var wayside_n := Wayside.build(area, def)   # cairns, stone rows, racks, boats: things met along the way
 		if "--house-stats" in OS.get_cmdline_user_args():
@@ -709,7 +733,7 @@ static func _prop_collides(spec: Dictionary) -> bool:
 ## Kits that are walls/openings you must pass through — these keep exact
 ## trimesh collision. Anything NOT here gets a solid convex blocker.
 const STRUCTURAL_KITS := ["wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "floor_4x4",
-	"fence_iron_4m", "gate_iron", "roof_slab_4m", "frost_veil_frame"]
+	"fence_iron_4m", "gate_iron", "roof_slab_4m", "frost_veil_frame", "cw_shelter"]
 
 static func _is_structural(kit) -> bool:
 	return String(kit) in STRUCTURAL_KITS
@@ -737,9 +761,19 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 	k.set_flag = spec.get("set_flag", "")
 	k.look_text = spec.get("look", "")
 	k.display_lift = float(spec.get("lift", 0.0))
+	# (two names for one thing: "show_off" from Thornwold's places, "show_at" from Saltfell's)
+	for off_key in ["show_off", "show_at"]:
+		if spec.has(off_key):
+			k.display_offset = Vector2(float(spec[off_key][0]), float(spec[off_key][1]))
 	k.chip_heavy = bool(spec.get("chip_heavy", false))
+	k.bare = bool(spec.get("bare", false))
+	k.needs_item = String(spec.get("needs_item", ""))
 	area.attach(k, spec.get("tag", "base"))
 	_place(k, spec)
+	if spec.has("raise"):
+		k.position.y += float(spec["raise"])        # up on something (the crown of a kin-mound)
+	if spec.get("settle", false):
+		k.add_child(SettleDown.new())
 	return k
 
 ## A rest is a new visit too. Souls and finds gated on a story flag are
@@ -827,6 +861,8 @@ static func _range_by_size(piece: Node3D, kit: String, spec: Dictionary) -> void
 		sc = maxf(maxf(float(v[0]), float(v[1])), float(v[2])) if v is Array else float(v)
 	var big := maxf(maxf(float(sz[0]), float(sz[1])), float(sz[2])) * sc
 	var end := float(r[1]) if big <= float(r[0]) else (float(r[3]) if big <= float(r[2]) else 0.0)
+	if spec.has("range"):
+		end = float(spec["range"])      # a piece no one can see from further (a wood closes in at 70 m)
 	if end <= 0.0:
 		return
 	for gi in piece.find_children("*", "GeometryInstance3D", true, false):
@@ -847,6 +883,17 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 	if spec.has("scale"):
 		var sc = spec["scale"]
 		piece.scale = _v3(sc) if sc is Array else Vector3.ONE * float(sc)
+	if spec.has("lift"):
+		piece.position.y += float(spec["lift"])    # set on top of another piece (a cup on a stone)
+	if spec.has("tilt"):
+		# degrees: a pitch alone (hurdles leaned against a hedge), or [pitch,
+		# roll] for long pieces laid on a slope (rollers up a beach)
+		var tl = spec["tilt"]
+		if tl is Array:
+			piece.rotation_degrees.x = float(tl[0])
+			piece.rotation_degrees.z = float(tl[1])
+		else:
+			piece.rotation_degrees.x = float(tl)
 	if collide and spec.get("collide", true):
 		if String(spec["kit"]) == "stair_4m":
 			_stair_ramp(piece, tag, "stair_4m")   # ramp-only: step trimesh would wall off the climb
@@ -854,8 +901,11 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 			# architecture (walls, arcades, portals, windows) keeps its exact
 			# hollow shell so you can pass through openings; everything else
 			# is a solid convex blocker so the capsule never wedges inside it
-			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]))
+			KitLib.add_collision(piece, _tag_bit(tag), not _is_structural(spec["kit"]), String(spec.get("surface", "")))
 	_range_by_size(piece, String(spec["kit"]), spec)
+	if spec.has("smoke"):
+		# a lit charcoal clamp set as a prop (THAW only, like a landmark's)
+		_smoke(area, _v3(spec["at"]) + Vector3(0, float(spec["smoke"]), 0))
 	if spec.get("flames", true) and (tag != "rime"):
 		KitLib.add_flame_lights(piece)
 	# "glow": [dy, energy, range] — a warm interior light the piece carries
@@ -872,6 +922,8 @@ static func _piece(area: Area, spec: Dictionary, collide: bool) -> Node3D:
 		piece.add_child(gl)
 	if spec.has("group"):
 		piece.add_to_group(String(spec["group"]))   # (the Reach's frozen flock, which lies down)
+	if spec.get("settle", false):
+		piece.add_child(SettleDown.new())           # seated on what is under it (a mound's crown)
 	area.attach(piece, tag)
 	return piece
 
@@ -913,6 +965,7 @@ static func _stair_ramp(piece: Node3D, tag: String, kit := "stair_4m") -> void:
 		# floor in front of every open flight.
 		fs.position = Vector3(sx, -0.57, -2.35)
 		body.add_child(fs)
+	Surfaces.stamp(body, Surfaces.for_kit(kit))
 	piece.add_child(body)
 
 static func _row(area: Area, spec: Dictionary) -> void:
@@ -1152,6 +1205,7 @@ static func _solid_box(area: Area, spec: Dictionary) -> void:
 		cs.shape = cb
 		body.add_child(cs)
 		body.position = center
+		Surfaces.stamp(body, String(spec.get("surface", Surfaces.for_family(fam))))
 		area.attach(body, tag)
 
 ## A deck in place of a box of the same size: boards of uneven width laid
@@ -1220,6 +1274,7 @@ static func _blocker(area: Area, spec: Dictionary) -> void:
 		cyl.height = float(spec.get("height", 0.6))
 		ccs.shape = cyl
 		cb.add_child(ccs)
+		Surfaces.stamp(cb, String(spec.get("surface", Surfaces.lookup("kinds", "blocker"))))
 		area.attach(cb, tag)
 		cb.position = _v3(spec["at"])
 		return
@@ -1235,6 +1290,7 @@ static func _blocker(area: Area, spec: Dictionary) -> void:
 	box.size = mx - mn
 	cs.shape = box
 	body.add_child(cs)
+	Surfaces.stamp(body, String(spec.get("surface", Surfaces.lookup("kinds", "blocker"))))
 	area.attach(body, tag)
 	body.position = (mn + mx) * 0.5
 	cs.position = Vector3.ZERO

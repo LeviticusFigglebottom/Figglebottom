@@ -414,7 +414,8 @@ func _run() -> void:
 	Game.player_stilled.connect(_on_stilled)
 	# its own save dir per mode: a shots run beside a headless run must not
 	# find the other's hearth in slot I (the title would ask to forget it)
-	World._save_dir = "user://test_fullslice" + ("_shots" if shots_dir != "" else "")
+	# (and per process: two runs of the walk at once wrote over each other's slot)
+	World._save_dir = "user://test_fullslice" + ("_shots" if shots_dir != "" else "") + "_%d" % OS.get_process_id()
 	for i in range(1, World.SLOTS + 1):
 		World.delete_slot(i)
 	World.reset()
@@ -467,6 +468,17 @@ func _run() -> void:
 		finish()
 		return
 	check(Game.difficulty == "gentle", "The Gentle Thaw holds")
+	# a new journey opens on the intro (tools/test/intro_test.gd sits through
+	# it); this walk lets it go at the first card, as a second-time player would
+	check(await _until(func(): return IntroDirector.active != null, 5.0), "the intro opens the journey")
+	if IntroDirector.active != null:
+		await _until(func(): return IntroDirector.active.card_alpha() > 0.9, 20.0)
+		await _shot("intro_card")
+		Input.action_press("interact")
+		await _until(func(): return IntroDirector.active == null or IntroDirector.active.skipped, 5.0)
+		Input.action_release("interact")
+		await _until(func(): return IntroDirector.active == null or IntroDirector.active.done, 10.0)
+	check(Game.player.input_enabled and World.flag(IntroDirector.FLAG), "held, it lets go and hands the Bearer over")
 	player = Game.player
 	area = Game.current_area
 	player.sim_active = true

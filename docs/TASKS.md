@@ -21,6 +21,12 @@ Format: worktree → branch.
   - Frost/melt wavefront in `hall`, `hall_ds` and `terrain` (`shaders/wavefront.gdshaderinc`), snow-crystal and pollen/steam/drip wave particles
   - The score (THAW, RIME, the Outsong, the Netmender, title), ambiences and the foley pass: `docs/audio/MUSIC.md`
 
+- `/home/user/fb-sfx` → `feat/sfx-redo` (ready for review; needs the owner's ears)
+  - Every sound effect replaced with CC0 recordings (footsteps on 8 surfaces, combat, foe families, Holdfast signatures, world, UI): `docs/audio/SFX.md`
+  - `AudioDirector.impact(surface, position)` for prop hit VFX
+  - Recorded ambience with region layers; the THAW/RIME handover is equal-power and follows the wave front
+  - Not wired yet: `world/ladder`, `world/door_open`, `world/door_close`, `world/water_splash`, `ui/tab`, `boss/sung_note`
+
 - `/home/user/fb-end` → `feat/reach-coldwell-endings` (ready for review)
   - Reach and Coldwell encounters and writing (`REACH.md`, `COLDWELL.md`)
   - Both endings, the credits, the world after each (ADR 0013)
@@ -30,6 +36,8 @@ Format: worktree → branch.
 - cloud streaming env → `feat/streaming` (pushed; ready for review; status in `docs/handoffs/live/INBOX_streaming.md`)
   - Area streaming (ADR 0014): neighbours built on a worker and grafted under a frame budget, disk cache, gradual free, shader warm-up, prompt quit with work in flight. `tools/test.sh streaming`, `tools/qa/quit_check.sh`
   - Progression gating (ADR 0015): one gate on every region's way on, opened by that region's release; tracks worn to each; `way_on` in every area def. `tools/test.sh gates`
+- `/home/user/fb-anim` → `feat/weapons-overhaul` (ready for review)
+  - Every weapon has a model, its own grip, trail and strikes; the torch is a fire with a light; the bow is strung (ADR 0014)
 
 ## todo
 1. Wire Brede's `give_oilskins` gift once his NPC data lands.

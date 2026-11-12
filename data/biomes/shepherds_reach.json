@@ -1,0 +1,127 @@
+{
+ "_doc": "Sheep and folds: short bright grass on pale limestone, scree. The palest sun; bright thin overcast and wind in RIME.",
+ "terrain": {
+  "palette": {
+   "turf_a": [
+    0.17,
+    0.264,
+    0.053
+   ],
+   "turf_b": [
+    0.207,
+    0.264,
+    0.077
+   ],
+   "path_col": [
+    0.259,
+    0.235,
+    0.177
+   ],
+   "shingle_col": [
+    0.33,
+    0.33,
+    0.284
+   ],
+   "rock_col": [
+    0.444,
+    0.43,
+    0.366
+   ],
+   "snow_col": [
+    0.891,
+    0.908,
+    0.916
+   ]
+  },
+  "sets": {
+   "turf": "sr_turf",
+   "shingle": "sr_scree",
+   "rock": "sr_rock"
+  },
+  "shader": {
+   "bed_thickness": 0.9,
+   "bed_strength": 0.8,
+   "joint_vertical": 0.5,
+   "joint_spacing": 1.2,
+   "streak_strength": 0.12,
+   "rock_moss": 0.12,
+   "rock_stain": [
+    0.94,
+    0.94,
+    0.9
+   ],
+   "rock_slope": 0.76
+  }
+ },
+ "env": {
+  "thaw": {
+   "sun_rot": [
+    -18,
+    -80
+   ],
+   "sun_color": [
+    1.0,
+    0.92,
+    0.8
+   ],
+   "sun_energy": 2.1,
+   "fog_color": [
+    0.78,
+    0.8,
+    0.78
+   ],
+   "fog_density": 0.0008,
+   "vol_density": 0.0028,
+   "ambient": [
+    0.36,
+    0.39,
+    0.42
+   ]
+  },
+  "rime": {
+   "sun_rot": [
+    -26,
+    -70
+   ],
+   "sun_color": [
+    0.91,
+    0.93,
+    0.96
+   ],
+   "fog_color": [
+    0.8,
+    0.84,
+    0.9
+   ],
+   "fog_density": 0.005,
+   "vol_density": 0.012,
+   "sun_energy": 1.5
+  }
+ },
+ "weather": {
+  "gulls": false,
+  "pollen": 110,
+  "pollen_color": [
+   1.0,
+   1.0,
+   0.95,
+   0.6
+  ],
+  "pollen_drift": [
+   1.4,
+   0.1,
+   0.3
+  ],
+  "pollen_size": 0.08,
+  "snow": 0,
+  "glitter": 80,
+  "spindrift": 30
+ },
+ "veg": {
+  "density": {
+   "heather": 0.0,
+   "grass": 1.3
+  },
+  "add": []
+ }
+}

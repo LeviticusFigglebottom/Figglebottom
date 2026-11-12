@@ -339,7 +339,10 @@ func _leg_seam() -> bool:
 	walked = await _walk_path(_g(316.0, -320.5), 3600, false)
 	check(walked, "down the road to its head (%s)" % str(player.global_position.snapped(Vector3.ONE)))
 	var plaques := area.find_children("*", "LorePlaque", true, false)
-	check(plaques.size() == 1 and String((plaques[0] as LorePlaque).text).begins_with("THORNWOLD\n"), "the plaque at the road's head names the wood")
+	# (four boards now: the wood's own, the Notch's two captions and the Hedge's)
+	var named := plaques.filter(func(b): return String((b as LorePlaque).text).begins_with("THORNWOLD\n"))
+	check(plaques.size() == 4 and named.size() == 1 and (named[0] as LorePlaque).global_position.distance_to(player.global_position) < 8.0,
+		"the plaque at the road's head names the wood")
 	check(Game.find_hearth("hs_drove_road") != null and Game.find_hearth("hs_colliers_clearing") != null
 		and Game.find_hearth("hs_outer_ring") != null and Game.find_hearth("hs_the_pine") == null,
 		"three hearths stand; the Pine is not woken")

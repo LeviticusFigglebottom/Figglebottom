@@ -1,0 +1,4776 @@
+{
+ "doc": "Known collision offenders (tools/test/collision_audit_test.gd). Each has an owner; the suite fails on anything not listed here. Regenerate with tools/audit_collision.sh --update-baseline, and only after the new entries have been routed.",
+ "offenders": [
+  {
+   "area": "saltfell_steading",
+   "check": "invisible",
+   "fix": "generator: the landmark's \"blocker\" box is wider than what is drawn",
+   "id": "landmark_blocker:lm_fold_cairn.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    -57.86,
+    23.17,
+    24.38
+   ],
+   "size": [
+    2.73,
+    2.2,
+    2.73
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    -26.03,
+    23.1,
+    23.41
+   ],
+   "size": [
+    0.97,
+    0.95,
+    0.97
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    23.0,
+    4.15,
+    55.6
+   ],
+   "size": [
+    0.76,
+    0.95,
+    0.76
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw+released",
+    "rime+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    0.0,
+    22.95,
+    -26.31
+   ],
+   "size": [
+    0.76,
+    0.95,
+    0.76
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "unbacked_floor",
+   "fix": "generator: give the drawn floor its collider",
+   "id": "kit:boat",
+   "owner": "QA env",
+   "passes": [
+    "thaw",
+    "thaw+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    -5.75,
+    1.66,
+    71.75
+   ],
+   "size": [
+    0.5,
+    0.12,
+    1.0
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "unbacked_floor",
+   "fix": "generator: give the drawn floor its collider",
+   "id": "kit:boat",
+   "owner": "QA env",
+   "passes": [
+    "thaw",
+    "thaw+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    13.25,
+    2.62,
+    65.75
+   ],
+   "size": [
+    0.5,
+    0.04,
+    1.0
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "unbacked_floor",
+   "fix": "generator: give the drawn floor its collider",
+   "id": "kit:boat",
+   "owner": "QA env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    5.75,
+    2.46,
+    67.25
+   ],
+   "size": [
+    0.5,
+    0.04,
+    1.0
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "unbacked_floor",
+   "fix": "generator: give the drawn floor its collider",
+   "id": "kit:sf_boat_half",
+   "owner": "QA env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    28.75,
+    4.16,
+    50.25
+   ],
+   "size": [
+    0.0,
+    0.08,
+    3.0
+   ]
+  },
+  {
+   "area": "saltfell_steading",
+   "check": "walk_through",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
+   "id": "house:boatshed/turf_edge",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released",
+    "thaw+spring"
+   ],
+   "pos": [
+    18.3,
+    6.94,
+    47.7
+   ],
+   "size": [
+    13.8,
+    6.22,
+    13.5
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "invisible",
+   "fix": "gen_lowe.py: the round blocker stands clear of the piece it was set for",
+   "id": "blocker#6",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    37.1,
+    46.51,
+    -177.98
+   ],
+   "size": [
+    1.04,
+    2.2,
+    1.04
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "invisible",
+   "fix": "gen_lowe.py: the round blocker stands clear of the piece it was set for",
+   "id": "blocker#4",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -3.21,
+    38.47,
+    -140.97
+   ],
+   "size": [
+    1.04,
+    2.2,
+    1.04
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -81.94,
+    26.58,
+    -104.07
+   ],
+   "size": [
+    1.07,
+    0.95,
+    1.07
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    39.53,
+    46.56,
+    -203.59
+   ],
+   "size": [
+    0.97,
+    0.95,
+    0.97
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
+   "id": "house:kin_c/M_drystone",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -4.26,
+    37.86,
+    -145.4
+   ],
+   "size": [
+    17.49,
+    2.7,
+    20.06
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
+   "id": "house:kin_a/M_drystone",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -55.61,
+    32.61,
+    -124.07
+   ],
+   "size": [
+    15.88,
+    2.68,
+    18.5
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
+   "id": "house:kin_d/M_drystone",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    15.6,
+    33.01,
+    -132.69
+   ],
+   "size": [
+    16.23,
+    2.77,
+    16.91
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
+   "id": "house:twin/M_drystone",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    39.61,
+    48.38,
+    -215.55
+   ],
+   "size": [
+    13.78,
+    2.81,
+    17.74
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:lm_barrow_door.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    46.12,
+    48.68,
+    -212.06
+   ],
+   "size": [
+    6.72,
+    3.67,
+    5.85
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:lm_barrow_door.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    17.59,
+    33.4,
+    -137.46
+   ],
+   "size": [
+    5.33,
+    2.2,
+    5.24
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:lm_barrow_door.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    -58.44,
+    32.88,
+    -119.94
+   ],
+   "size": [
+    5.17,
+    2.2,
+    4.94
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "src/world/frost_veil.gd: the veil's dressing is wider than its seal; once the veil is cleared it is walked through",
+   "id": "scene:lm_veil_rime.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    47.88,
+    46.08,
+    -177.25
+   ],
+   "size": [
+    5.2,
+    5.5,
+    1.84
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:lm_barrow_door.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    -26.58,
+    29.6,
+    -119.06
+   ],
+   "size": [
+    4.99,
+    2.2,
+    4.67
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -82.24,
+    26.15,
+    -103.42
+   ],
+   "size": [
+    2.25,
+    1.19,
+    2.25
+   ]
+  },
+  {
+   "area": "lowe_barrows",
+   "check": "partial",
+   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    32.15,
+    40.67,
+    -165.38
+   ],
+   "size": [
+    2.19,
+    1.19,
+    2.19
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -57.97,
+    2.75,
+    -313.28
+   ],
+   "size": [
+    0.97,
+    0.95,
+    0.97
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -104.0,
+    2.72,
+    -302.98
+   ],
+   "size": [
+    0.76,
+    0.95,
+    0.76
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "partial",
+   "fix": "gen_kettle.py: the sledge's \"blocker\" covers half of what is drawn: widen it to the runners",
+   "id": "scene:lm_sledge.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "thaw"
+   ],
+   "pos": [
+    -55.04,
+    2.46,
+    -318.29
+   ],
+   "size": [
+    3.14,
+    0.82,
+    3.59
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "partial",
+   "fix": "gen_kettle.py: the dogs at the Dog Lines have no blocker: add one each (about 0.5 x 0.8 x 1.0)",
+   "id": "scene:sledge_dog.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    -56.28,
+    2.66,
+    -321.61
+   ],
+   "size": [
+    1.18,
+    1.5,
+    2.06
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "partial",
+   "fix": "gen_kettle.py: the dogs at the Dog Lines have no blocker: add one each (about 0.5 x 0.8 x 1.0)",
+   "id": "scene:sledge_dog.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    -57.39,
+    2.79,
+    -318.89
+   ],
+   "size": [
+    1.18,
+    1.5,
+    2.06
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "partial",
+   "fix": "gen_kettle.py: the dogs at the Dog Lines have no blocker: add one each (about 0.5 x 0.8 x 1.0)",
+   "id": "scene:sledge_dog.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    -58.61,
+    2.69,
+    -321.61
+   ],
+   "size": [
+    1.18,
+    1.5,
+    2.06
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "walk_through",
+   "fix": "the generator places it with \"collide\": false: drop that (AreaBuilder then gives it a convex hull)",
+   "id": "kit:drying_rack",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    25.59,
+    3.26,
+    -291.91
+   ],
+   "size": [
+    4.06,
+    2.64,
+    1.98
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "walk_through",
+   "fix": "the generator places it with \"collide\": false: drop that (AreaBuilder then gives it a convex hull)",
+   "id": "kit:drying_rack",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -97.92,
+    3.29,
+    -302.85
+   ],
+   "size": [
+    4.0,
+    2.64,
+    1.84
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "walk_through",
+   "fix": "the generator places it with \"collide\": false: drop that (AreaBuilder then gives it a convex hull)",
+   "id": "kit:net_frame",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    12.35,
+    3.26,
+    -293.33
+   ],
+   "size": [
+    3.53,
+    2.58,
+    0.59
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "walk_through",
+   "fix": "gen_kettle.py: the dogs at the Dog Lines have no blocker: add one each (about 0.5 x 0.8 x 1.0)",
+   "id": "scene:sledge_dog.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    -55.58,
+    2.75,
+    -318.95
+   ],
+   "size": [
+    1.46,
+    1.5,
+    2.0
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "walk_through",
+   "fix": "the generator places it with \"collide\": false: drop that (AreaBuilder then gives it a convex hull)",
+   "id": "kit:net_frame",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -20.04,
+    3.21,
+    -303.87
+   ],
+   "size": [
+    3.51,
+    2.58,
+    0.41
+   ]
+  },
+  {
+   "area": "kettle_fjord",
+   "check": "walk_through",
+   "fix": "the generator places it with \"collide\": false: drop that (AreaBuilder then gives it a convex hull)",
+   "id": "kit:net_frame",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    -16.29,
+    3.16,
+    -307.13
+   ],
+   "size": [
+    3.51,
+    2.58,
+    0.41
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "floating",
+   "fix": "generator: the drawn floor and the collider must cover the same ground",
+   "id": "kit:boat",
+   "owner": "QA env",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    155.75,
+    23.46,
+    -298.25
+   ],
+   "size": [
+    3.5,
+    0.66,
+    2.5
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "floating",
+   "fix": "generator: the drawn floor and the collider must cover the same ground",
+   "id": "kit:boat",
+   "owner": "QA env",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    162.75,
+    23.45,
+    -296.75
+   ],
+   "size": [
+    2.5,
+    0.58,
+    2.5
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "floating",
+   "fix": "generator: the drawn floor and the collider must cover the same ground",
+   "id": "kit:boat",
+   "owner": "QA env",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    169.75,
+    23.37,
+    -297.25
+   ],
+   "size": [
+    1.5,
+    0.48,
+    2.5
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    123.91,
+    24.63,
+    -331.03
+   ],
+   "size": [
+    0.97,
+    0.95,
+    0.97
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    81.91,
+    14.96,
+    -316.07
+   ],
+   "size": [
+    0.97,
+    0.95,
+    0.97
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    197.1,
+    25.25,
+    -327.4
+   ],
+   "size": [
+    0.76,
+    0.95,
+    0.76
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    219.6,
+    25.25,
+    -322.1
+   ],
+   "size": [
+    0.76,
+    0.95,
+    0.76
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "partial",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
+   "id": "house:byres/staves",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    216.59,
+    25.54,
+    -329.11
+   ],
+   "size": [
+    15.83,
+    7.44,
+    11.92
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "partial",
+   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    81.71,
+    14.51,
+    -315.55
+   ],
+   "size": [
+    2.05,
+    1.19,
+    2.05
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "partial",
+   "fix": "ShortcutGate: the barred doors' collider is thinner than the drawn pair",
+   "id": "scene:lm_hall_doors.glb",
+   "owner": "World-fidelity env",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    179.21,
+    25.69,
+    -329.06
+   ],
+   "size": [
+    0.55,
+    2.4,
+    2.0
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "partial",
+   "fix": "gen_tarnhall.py: the open leaf is \"collide\": false",
+   "id": "kit:door_leaf",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    179.23,
+    25.69,
+    -330.41
+   ],
+   "size": [
+    0.95,
+    2.49,
+    0.14
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "partial",
+   "fix": "gen_tarnhall.py: the open leaf is \"collide\": false",
+   "id": "kit:door_leaf",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    179.23,
+    25.69,
+    -327.61
+   ],
+   "size": [
+    0.95,
+    2.49,
+    0.14
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "threshold",
+   "fix": "generator: a step or a ramp at the deck's end, or drop the collider if it is not meant to be walked",
+   "id": "box#8(M_wood) end",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    185.0,
+    25.12,
+    -333.6
+   ],
+   "size": [
+    25.0,
+    0.1,
+    1.4
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "threshold",
+   "fix": "generator: a step or a ramp at the deck's end, or drop the collider if it is not meant to be walked",
+   "id": "box#8(M_wood) end",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    210.0,
+    25.12,
+    -333.6
+   ],
+   "size": [
+    25.0,
+    0.1,
+    1.4
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "walk_through",
+   "fix": "gen_tarnhall.py: the cook-yard's retaining wall face is \"collide\": false and stands clear of the yard's edge in RIME: give it its collider",
+   "id": "box#62(M_drystone)",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    205.1,
+    23.39,
+    -347.45
+   ],
+   "size": [
+    16.6,
+    3.68,
+    0.43
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "walk_through",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:lm_high_seat.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    214.16,
+    25.41,
+    -333.53
+   ],
+   "size": [
+    1.28,
+    2.5,
+    1.28
+   ]
+  },
+  {
+   "area": "tarnhall",
+   "check": "walk_through",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:lm_guest_post.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    180.93,
+    25.57,
+    -327.04
+   ],
+   "size": [
+    0.98,
+    3.0,
+    0.98
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    304.4,
+    36.91,
+    -368.65
+   ],
+   "size": [
+    2.82,
+    3.0,
+    2.18
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    464.52,
+    37.53,
+    -280.38
+   ],
+   "size": [
+    2.18,
+    3.0,
+    2.82
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    304.3,
+    36.4,
+    -355.16
+   ],
+   "size": [
+    2.6,
+    3.0,
+    1.72
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    481.7,
+    37.7,
+    -364.39
+   ],
+   "size": [
+    2.6,
+    3.0,
+    1.72
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    304.3,
+    36.47,
+    -359.44
+   ],
+   "size": [
+    2.6,
+    3.0,
+    1.72
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    304.3,
+    36.48,
+    -356.55
+   ],
+   "size": [
+    2.6,
+    3.0,
+    1.72
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    304.3,
+    36.5,
+    -358.07
+   ],
+   "size": [
+    2.6,
+    3.0,
+    1.72
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    304.3,
+    36.72,
+    -367.2
+   ],
+   "size": [
+    2.6,
+    3.0,
+    1.72
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    481.7,
+    39.24,
+    -349.02
+   ],
+   "size": [
+    2.6,
+    3.0,
+    1.72
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    356.18,
+    36.93,
+    -280.3
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    357.41,
+    36.94,
+    -280.3
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    380.12,
+    35.56,
+    -385.7
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    380.25,
+    37.66,
+    -280.3
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    381.63,
+    35.51,
+    -385.7
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    381.67,
+    37.82,
+    -280.3
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    404.37,
+    37.64,
+    -280.3
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    405.75,
+    37.54,
+    -280.3
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    428.5,
+    38.56,
+    -385.7
+   ],
+   "size": [
+    1.72,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    324.36,
+    35.62,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    324.36,
+    38.58,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    325.82,
+    35.62,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    328.8,
+    35.59,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    328.89,
+    38.76,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    337.96,
+    38.37,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    339.33,
+    38.27,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    340.84,
+    38.12,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    349.99,
+    36.74,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    351.36,
+    36.79,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    360.62,
+    36.26,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    360.71,
+    36.97,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    361.94,
+    37.0,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    377.14,
+    37.63,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    378.69,
+    37.64,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    378.74,
+    35.54,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    383.09,
+    37.82,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    383.14,
+    35.46,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    392.2,
+    35.48,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    403.01,
+    37.64,
+    -280.3
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    411.98,
+    36.98,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    413.2,
+    37.07,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    416.51,
+    37.29,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    427.08,
+    38.34,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    434.64,
+    38.88,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    440.49,
+    38.92,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    441.9,
+    38.88,
+    -385.7
+   ],
+   "size": [
+    1.71,
+    3.0,
+    2.6
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    331.65,
+    34.98,
+    -284.3
+   ],
+   "size": [
+    3.0,
+    0.82,
+    2.85
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    342.69,
+    37.25,
+    -373.77
+   ],
+   "size": [
+    0.78,
+    4.0,
+    0.78
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    308.45,
+    36.12,
+    -290.49
+   ],
+   "size": [
+    0.77,
+    4.0,
+    0.77
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    423.77,
+    37.81,
+    -351.29
+   ],
+   "size": [
+    0.77,
+    4.0,
+    0.77
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    439.54,
+    38.8,
+    -353.23
+   ],
+   "size": [
+    0.77,
+    4.0,
+    0.77
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    439.66,
+    37.14,
+    -292.7
+   ],
+   "size": [
+    0.76,
+    4.0,
+    0.76
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    432.21,
+    38.65,
+    -383.12
+   ],
+   "size": [
+    0.74,
+    4.0,
+    0.74
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    410.38,
+    37.71,
+    -351.47
+   ],
+   "size": [
+    0.74,
+    4.0,
+    0.74
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    458.02,
+    38.29,
+    -292.38
+   ],
+   "size": [
+    0.71,
+    4.0,
+    0.71
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    318.15,
+    37.86,
+    -376.83
+   ],
+   "size": [
+    0.71,
+    4.0,
+    0.71
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    446.28,
+    38.57,
+    -378.65
+   ],
+   "size": [
+    0.71,
+    4.0,
+    0.71
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    408.4,
+    36.87,
+    -365.95
+   ],
+   "size": [
+    0.7,
+    4.0,
+    0.7
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    340.06,
+    35.26,
+    -303.07
+   ],
+   "size": [
+    1.07,
+    0.95,
+    1.07
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    462.0,
+    38.58,
+    -297.31
+   ],
+   "size": [
+    0.97,
+    0.95,
+    0.97
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    450.1,
+    38.63,
+    -322.0
+   ],
+   "size": [
+    0.76,
+    0.95,
+    0.76
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "partial",
+   "fix": "ShortcutGate with \"leaves\": false: the grown-shut stile is wider than the gate's box; fit the box to the dressing",
+   "id": "scene:lm_thorn_stile.glb",
+   "owner": "POI agent (Thornwold)",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    436.86,
+    38.8,
+    -303.16
+   ],
+   "size": [
+    3.23,
+    2.54,
+    3.0
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "partial",
+   "fix": "ShortcutGate with \"leaves\": false: the grown-shut stile is wider than the gate's box; fit the box to the dressing",
+   "id": "scene:lm_thorn_stile.glb",
+   "owner": "POI agent (Thornwold)",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    440.89,
+    38.86,
+    -308.87
+   ],
+   "size": [
+    3.23,
+    2.54,
+    3.0
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "partial",
+   "fix": "src/world/forest.gd _hedge: a hedge section stands outside its segment's box collider (the ends of a run, upper courses)",
+   "id": "mm:Forest_hedge_hd_laid2_base",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    303.22,
+    35.18,
+    -313.84
+   ],
+   "size": [
+    1.93,
+    1.76,
+    2.01
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "partial",
+   "fix": "src/world/forest.gd _hedge: a hedge section stands outside its segment's box collider (the ends of a run, upper courses)",
+   "id": "mm:Forest_hedge_hd_laid2_base",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    482.68,
+    39.57,
+    -336.97
+   ],
+   "size": [
+    1.92,
+    1.74,
+    2.0
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "walk_through",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:rime_stag.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    373.28,
+    37.66,
+    -292.74
+   ],
+   "size": [
+    5.98,
+    5.89,
+    5.02
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "walk_through",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator",
+   "id": "scene:rime_stag.glb",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    418.68,
+    38.37,
+    -348.76
+   ],
+   "size": [
+    5.02,
+    5.89,
+    5.98
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "walk_through",
+   "fix": "gen_thornwold.py places it with \"collide\": false (a burnt-out clamp's ring stands 1 m high): drop that, or keep it under 0.6 m",
+   "id": "kit:tw_clamp_c",
+   "owner": "POI agent (Thornwold)",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    353.09,
+    35.93,
+    -298.62
+   ],
+   "size": [
+    6.53,
+    1.0,
+    6.53
+   ]
+  },
+  {
+   "area": "thornwold",
+   "check": "walk_through",
+   "fix": "gen_thornwold.py places it with \"collide\": false (a burnt-out clamp's ring stands 1 m high): drop that, or keep it under 0.6 m",
+   "id": "kit:tw_clamp_c",
+   "owner": "POI agent (Thornwold)",
+   "passes": [
+    "rime",
+    "rime+released"
+   ],
+   "pos": [
+    343.59,
+    35.27,
+    -296.21
+   ],
+   "size": [
+    5.95,
+    1.0,
+    5.93
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    653.58,
+    77.7,
+    -377.45
+   ],
+   "size": [
+    1.04,
+    0.95,
+    1.04
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    604.03,
+    68.78,
+    -306.09
+   ],
+   "size": [
+    0.97,
+    0.95,
+    0.97
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "partial",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
+   "id": "house:sheiling_low/staves",
+   "owner": "World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    597.46,
+    68.9,
+    -292.59
+   ],
+   "size": [
+    10.63,
+    5.8,
+    7.71
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "partial",
+   "fix": "gen_reach.py places it with \"collide\": false, or its hull misses the drawn frame: drop that, or box it",
+   "id": "kit:sr_crook_rack",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    584.61,
+    67.48,
+    -279.8
+   ],
+   "size": [
+    1.26,
+    1.74,
+    0.63
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "partial",
+   "fix": "gen_reach.py places it with \"collide\": false, or its hull misses the drawn frame: drop that, or box it",
+   "id": "kit:sr_crook_rack",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    614.73,
+    70.05,
+    -283.97
+   ],
+   "size": [
+    1.28,
+    1.74,
+    0.39
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    611.48,
+    69.34,
+    -310.67
+   ],
+   "size": [
+    1.38,
+    1.11,
+    1.36
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    598.07,
+    68.3,
+    -304.99
+   ],
+   "size": [
+    1.39,
+    1.11,
+    1.35
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    690.4,
+    74.73,
+    -303.51
+   ],
+   "size": [
+    1.39,
+    1.11,
+    1.34
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    615.41,
+    68.92,
+    -347.58
+   ],
+   "size": [
+    1.32,
+    1.11,
+    1.41
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    611.0,
+    67.31,
+    -384.07
+   ],
+   "size": [
+    1.29,
+    1.11,
+    1.43
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    586.94,
+    66.74,
+    -356.61
+   ],
+   "size": [
+    1.27,
+    1.11,
+    1.43
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    624.64,
+    70.64,
+    -297.23
+   ],
+   "size": [
+    1.26,
+    1.11,
+    1.44
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    698.87,
+    76.12,
+    -348.87
+   ],
+   "size": [
+    1.44,
+    1.11,
+    1.26
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    674.74,
+    74.24,
+    -335.45
+   ],
+   "size": [
+    1.22,
+    1.11,
+    1.45
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    584.48,
+    66.45,
+    -358.22
+   ],
+   "size": [
+    1.46,
+    1.11,
+    1.15
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    594.57,
+    67.63,
+    -321.21
+   ],
+   "size": [
+    1.46,
+    1.11,
+    1.12
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py: Smudge is \"collide\": false: give her a blocker where she stands",
+   "id": "kit:sr_smudge",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    599.52,
+    68.47,
+    -292.4
+   ],
+   "size": [
+    1.46,
+    1.11,
+    1.11
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    595.73,
+    66.11,
+    -386.38
+   ],
+   "size": [
+    1.46,
+    1.11,
+    1.1
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    629.68,
+    70.92,
+    -297.81
+   ],
+   "size": [
+    1.46,
+    1.11,
+    1.09
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    629.72,
+    70.66,
+    -357.55
+   ],
+   "size": [
+    1.03,
+    1.11,
+    1.45
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py places it with \"collide\": false: drop that",
+   "id": "kit:creel_stack",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    594.87,
+    67.85,
+    -290.01
+   ],
+   "size": [
+    1.14,
+    0.92,
+    1.54
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    574.59,
+    65.65,
+    -309.01
+   ],
+   "size": [
+    1.44,
+    1.11,
+    0.95
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    597.69,
+    68.08,
+    -309.72
+   ],
+   "size": [
+    1.44,
+    1.11,
+    0.93
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    602.83,
+    68.45,
+    -316.0
+   ],
+   "size": [
+    1.18,
+    1.0,
+    1.21
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    675.77,
+    74.24,
+    -305.99
+   ],
+   "size": [
+    1.22,
+    1.0,
+    1.17
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    677.81,
+    74.54,
+    -337.59
+   ],
+   "size": [
+    1.16,
+    1.0,
+    1.22
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    608.93,
+    67.06,
+    -384.9
+   ],
+   "size": [
+    1.14,
+    1.0,
+    1.23
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    643.97,
+    71.67,
+    -282.94
+   ],
+   "size": [
+    1.24,
+    1.0,
+    1.12
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    592.93,
+    65.74,
+    -389.12
+   ],
+   "size": [
+    1.24,
+    1.0,
+    1.12
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    595.69,
+    67.18,
+    -344.45
+   ],
+   "size": [
+    1.11,
+    1.0,
+    1.25
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    627.14,
+    70.75,
+    -298.69
+   ],
+   "size": [
+    1.25,
+    1.0,
+    1.09
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    670.99,
+    76.47,
+    -351.44
+   ],
+   "size": [
+    1.26,
+    1.0,
+    1.09
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    581.28,
+    66.35,
+    -310.69
+   ],
+   "size": [
+    1.08,
+    1.0,
+    1.26
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    582.79,
+    66.38,
+    -357.53
+   ],
+   "size": [
+    0.86,
+    1.11,
+    1.42
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    694.28,
+    74.81,
+    -297.13
+   ],
+   "size": [
+    1.26,
+    1.0,
+    1.07
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    590.18,
+    67.67,
+    -296.17
+   ],
+   "size": [
+    1.03,
+    1.0,
+    1.27
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    616.12,
+    67.72,
+    -381.78
+   ],
+   "size": [
+    1.27,
+    1.0,
+    1.02
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    588.45,
+    65.92,
+    -382.19
+   ],
+   "size": [
+    0.99,
+    1.0,
+    1.27
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    695.8,
+    75.97,
+    -349.75
+   ],
+   "size": [
+    1.27,
+    1.0,
+    0.92
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    674.04,
+    73.46,
+    -279.27
+   ],
+   "size": [
+    1.19,
+    0.81,
+    1.21
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    669.45,
+    73.63,
+    -310.73
+   ],
+   "size": [
+    1.16,
+    0.81,
+    1.22
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    659.01,
+    73.01,
+    -333.72
+   ],
+   "size": [
+    1.13,
+    0.81,
+    1.24
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    595.03,
+    67.9,
+    -306.51
+   ],
+   "size": [
+    1.12,
+    0.81,
+    1.25
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw"
+   ],
+   "pos": [
+    632.49,
+    69.99,
+    -351.0
+   ],
+   "size": [
+    0.89,
+    1.0,
+    1.26
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw+released"
+   ],
+   "pos": [
+    632.57,
+    70.05,
+    -350.86
+   ],
+   "size": [
+    0.89,
+    1.0,
+    1.26
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    582.18,
+    66.39,
+    -354.56
+   ],
+   "size": [
+    1.25,
+    0.81,
+    1.1
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    613.38,
+    69.38,
+    -313.75
+   ],
+   "size": [
+    1.1,
+    0.81,
+    1.26
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py places it with \"collide\": false, or its hull misses the drawn frame: drop that, or box it",
+   "id": "kit:sr_crook_rack",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "rime",
+    "thaw+released",
+    "rime+released"
+   ],
+   "pos": [
+    597.29,
+    68.82,
+    -292.66
+   ],
+   "size": [
+    1.28,
+    1.74,
+    0.47
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    615.57,
+    69.74,
+    -299.02
+   ],
+   "size": [
+    0.99,
+    0.81,
+    1.27
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    681.88,
+    74.45,
+    -320.31
+   ],
+   "size": [
+    1.27,
+    0.81,
+    0.98
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    584.89,
+    66.53,
+    -356.36
+   ],
+   "size": [
+    1.27,
+    0.81,
+    0.97
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    632.13,
+    70.17,
+    -347.89
+   ],
+   "size": [
+    1.35,
+    1.11,
+    0.67
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    584.85,
+    66.72,
+    -330.25
+   ],
+   "size": [
+    0.95,
+    0.81,
+    1.27
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    597.19,
+    67.74,
+    -321.38
+   ],
+   "size": [
+    1.27,
+    0.81,
+    0.94
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    579.61,
+    65.64,
+    -371.44
+   ],
+   "size": [
+    1.27,
+    0.81,
+    0.93
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    698.12,
+    76.02,
+    -342.38
+   ],
+   "size": [
+    0.93,
+    0.81,
+    1.27
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    579.78,
+    66.25,
+    -325.81
+   ],
+   "size": [
+    1.24,
+    1.0,
+    0.77
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    671.53,
+    75.39,
+    -348.02
+   ],
+   "size": [
+    0.91,
+    0.81,
+    1.27
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    601.14,
+    68.28,
+    -307.65
+   ],
+   "size": [
+    1.22,
+    1.0,
+    0.72
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    574.64,
+    65.65,
+    -307.37
+   ],
+   "size": [
+    1.25,
+    0.81,
+    0.82
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    698.47,
+    75.99,
+    -357.61
+   ],
+   "size": [
+    0.66,
+    1.0,
+    1.2
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    637.35,
+    71.17,
+    -338.43
+   ],
+   "size": [
+    0.66,
+    1.0,
+    1.2
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    676.89,
+    78.27,
+    -375.19
+   ],
+   "size": [
+    0.59,
+    1.0,
+    1.17
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    655.56,
+    72.69,
+    -306.53
+   ],
+   "size": [
+    1.16,
+    1.0,
+    0.57
+   ]
+  },
+  {
+   "area": "shepherds_reach",
+   "check": "walk_through",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her",
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "thaw+released"
+   ],
+   "pos": [
+    650.11,
+    76.02,
+    -358.66
+   ],
+   "size": [
+    0.64,
+    0.81,
+    1.19
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    799.74,
+    116.95,
+    -450.56
+   ],
+   "size": [
+    1.07,
+    0.95,
+    1.07
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "invisible",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    889.18,
+    153.41,
+    -478.5
+   ],
+   "size": [
+    0.76,
+    0.95,
+    0.76
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "partial",
+   "fix": "gen_coldwell.py: the \"blocker\" is far smaller than the 7.5 m wellhead",
+   "id": "scene:lm_wellhead_thaw.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "thaw"
+   ],
+   "pos": [
+    922.24,
+    158.27,
+    -481.81
+   ],
+   "size": [
+    7.5,
+    3.18,
+    8.0
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "partial",
+   "fix": "gen_coldwell.py: the \"blocker\" is far smaller than the 7.5 m wellhead",
+   "id": "scene:lm_wellhead.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    922.25,
+    158.23,
+    -481.81
+   ],
+   "size": [
+    7.5,
+    3.18,
+    8.0
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "partial",
+   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    799.85,
+    116.44,
+    -450.03
+   ],
+   "size": [
+    2.25,
+    1.19,
+    2.25
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "partial",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    821.49,
+    123.78,
+    -453.72
+   ],
+   "size": [
+    1.38,
+    1.9,
+    1.96
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "partial",
+   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    724.38,
+    86.7,
+    -398.73
+   ],
+   "size": [
+    2.05,
+    1.19,
+    2.05
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "partial",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    896.77,
+    155.25,
+    -469.13
+   ],
+   "size": [
+    0.59,
+    1.8,
+    1.78
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "threshold",
+   "fix": "the house stands on a 45-degree corrie wall (ground runs -17 m to +12 m across its footprint): move it to level ground, or cut a pad in tools/terrain_coldwell.py",
+   "id": "door W0 of wellhouse_0",
+   "owner": "Lead's endings agent (Coldwell) with the World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    898.0,
+    172.77,
+    -492.82
+   ],
+   "size": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "threshold",
+   "fix": "the house stands on a 45-degree corrie wall (ground runs -17 m to +12 m across its footprint): move it to level ground, or cut a pad in tools/terrain_coldwell.py",
+   "id": "door W0 of wellhouse_0",
+   "owner": "Lead's endings agent (Coldwell) with the World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    898.0,
+    174.62,
+    -490.4
+   ],
+   "size": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "threshold",
+   "fix": "the house stands on a 45-degree corrie wall (ground runs -17 m to +12 m across its footprint): move it to level ground, or cut a pad in tools/terrain_coldwell.py",
+   "id": "door W1 of wellhouse_1",
+   "owner": "Lead's endings agent (Coldwell) with the World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    902.0,
+    143.43,
+    -459.6
+   ],
+   "size": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "threshold",
+   "fix": "the house stands on a 45-degree corrie wall (ground runs -17 m to +12 m across its footprint): move it to level ground, or cut a pad in tools/terrain_coldwell.py",
+   "id": "door W1 of wellhouse_1",
+   "owner": "Lead's endings agent (Coldwell) with the World-fidelity env",
+   "passes": [
+    "thaw",
+    "rime"
+   ],
+   "pos": [
+    902.0,
+    144.64,
+    -456.4
+   ],
+   "size": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "unbacked_floor",
+   "fix": "generator: give the drawn floor its collider",
+   "id": "scene:lm_wellhead.glb",
+   "owner": "QA env",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    923.75,
+    157.28,
+    -479.25
+   ],
+   "size": [
+    0.5,
+    0.0,
+    0.5
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py places it with \"collide\": false and \"embed\": true (ice columns up to 5 m): give the column a hull",
+   "id": "kit:cw_ice_column_c",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    813.03,
+    124.64,
+    -463.23
+   ],
+   "size": [
+    2.98,
+    5.42,
+    2.73
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py places it with \"collide\": false and \"embed\": true (ice columns up to 5 m): give the column a hull",
+   "id": "kit:cw_ice_column_b",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    794.2,
+    116.14,
+    -449.26
+   ],
+   "size": [
+    2.37,
+    3.82,
+    2.24
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    768.83,
+    99.86,
+    -412.19
+   ],
+   "size": [
+    1.66,
+    1.9,
+    1.83
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    786.83,
+    107.4,
+    -427.55
+   ],
+   "size": [
+    1.66,
+    1.9,
+    1.83
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    804.41,
+    115.31,
+    -442.29
+   ],
+   "size": [
+    1.65,
+    1.9,
+    1.84
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    749.17,
+    92.37,
+    -399.75
+   ],
+   "size": [
+    1.49,
+    1.9,
+    1.93
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    726.6,
+    85.27,
+    -389.24
+   ],
+   "size": [
+    1.23,
+    1.9,
+    1.98
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    777.78,
+    103.52,
+    -419.91
+   ],
+   "size": [
+    1.51,
+    1.8,
+    1.67
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    795.22,
+    111.02,
+    -434.72
+   ],
+   "size": [
+    1.5,
+    1.8,
+    1.67
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    759.17,
+    96.32,
+    -406.07
+   ],
+   "size": [
+    1.34,
+    1.8,
+    1.76
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    813.66,
+    120.03,
+    -449.94
+   ],
+   "size": [
+    1.33,
+    1.8,
+    1.76
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    832.25,
+    128.63,
+    -459.13
+   ],
+   "size": [
+    1.23,
+    1.8,
+    1.79
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    840.88,
+    133.16,
+    -462.0
+   ],
+   "size": [
+    1.0,
+    1.9,
+    1.98
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    715.45,
+    81.88,
+    -384.98
+   ],
+   "size": [
+    1.1,
+    1.8,
+    1.82
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    737.64,
+    88.83,
+    -393.62
+   ],
+   "size": [
+    1.09,
+    1.8,
+    1.82
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    740.14,
+    89.32,
+    -392.24
+   ],
+   "size": [
+    1.06,
+    1.63,
+    1.71
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    852.74,
+    138.06,
+    -464.75
+   ],
+   "size": [
+    0.88,
+    1.8,
+    1.82
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    862.34,
+    142.46,
+    -466.65
+   ],
+   "size": [
+    0.74,
+    1.9,
+    1.94
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    884.57,
+    150.72,
+    -468.45
+   ],
+   "size": [
+    0.69,
+    1.9,
+    1.93
+   ]
+  },
+  {
+   "area": "coldwell",
+   "check": "walk_through",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "passes": [
+    "rime"
+   ],
+   "pos": [
+    874.48,
+    146.91,
+    -467.7
+   ],
+   "size": [
+    0.64,
+    1.8,
+    1.79
+   ]
+  }
+ ]
+}

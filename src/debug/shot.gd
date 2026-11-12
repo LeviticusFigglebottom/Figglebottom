@@ -266,13 +266,19 @@ func _first_hearth() -> Hearthstone:
 ##   death:  the Bearer falls; the capture lands on the death splash
 ##   rest:   the hearthstone menu opens on the levelling page
 ##   dialogue_ingra: Ingra's audience, framed over the Bearer's shoulder
-##   keepsakes: the Pack opened at the Keepsakes leaf, two threads begun
+##   journal: the Pack opened at the Journal, threads begun, one pinned
+##   pack / pack_songs / pack_armour: the Pack's other leaves, stocked
+##   belt: the HUD with a full belt and the pinned objective
+##   map / map_zoom: the Map, the whole highland and one region
 ##   swing / foe_death / boss: character close-ups (ADR 0004), see _char_stage
 func _stage_tick() -> void:
 	_stage_frame += 1
 	var p: Player = Game.player
 	if _stage in ["swing", "foe_death", "boss"] or _stage.begins_with("bearer_"):
 		_char_stage(p)
+		return
+	if _stage.begins_with("prop_"):
+		_prop_stage(p)
 		return
 	match _stage:
 		"combat":
@@ -337,12 +343,61 @@ func _stage_tick() -> void:
 			# the HUD at rest, with an area card held up for the photograph
 			if _stage_frame == 8:
 				Game.title_card.emit("THE STRAND", 120.0)
-		"keepsakes":
-			# a journey part-way along: both threads started, one further on
+		"ui_tour":
+			# every UI photograph in one boot (the world is slow to build under
+			# a software renderer): OUT_belt, _pack, _songs, _armour, _journal,
+			# _map, _map_zoom. Run with --shot-frames=90.
+			var names := ["belt", "pack", "songs", "armour", "journal", "map", "map_zoom"]
 			if _stage_frame == 8:
-				for f in ["ks_ingra_met", "ks_ingra_rye_found", "ks_ingra_rye", "ks_brede_met", "ks_brede_float_found"]:
+				_stock_pack(p)
+				_walked_world()
+				for f in ["ks_ingra_met", "ks_ingra_rye_found", "ks_brede_met", "ks_knucklebones_found", "ks_horn_wellhead"]:
 					World.set_flag(f)
-				InventoryUI.open_for(p, "keepsakes")
+				Journal.set_pin("ingra_rye")
+			var k := (_stage_frame - 18) / 9
+			if _stage_frame >= 18 and (_stage_frame - 18) % 9 == 0 and k < names.size():
+				get_viewport().get_texture().get_image().save_png("%s_%s.png" % [_shot_path.get_basename(), names[k]])
+				print("[shot] saved %s_%s.png" % [_shot_path.get_basename(), names[k]])
+				var inv: InventoryUI = get_tree().get_first_node_in_group("inventory_ui")
+				match names[k]:
+					"belt": InventoryUI.open_for(p, "pack")
+					"pack": inv._show_tab("songs")
+					"songs": inv._show_tab("armour")
+					"armour": inv._show_tab("journal")
+					"journal": inv._show_tab("map")
+					"map": (inv.get_meta("map_view") as MapView).show_region(Game.current_area_id)
+		"keepsakes", "journal":
+			# a journey part-way along: both threads started, one further on,
+			# one finished thread folded under Done
+			if _stage_frame == 8:
+				for f in ["ks_ingra_met", "ks_ingra_rye_found", "ks_brede_met", "ks_knucklebones_found", "ks_horn_wellhead"]:
+					World.set_flag(f)
+				World.set_area_flag("saltfell_steading", "lit_hs_boat_shed")
+				Journal.set_pin("ingra_rye")
+				InventoryUI.open_for(p, "journal")
+		"pack", "pack_songs", "pack_armour":
+			# the Pack with a traveller's worth in it
+			if _stage_frame == 8:
+				_stock_pack(p)
+				InventoryUI.open_for(p, {"pack": "pack", "pack_songs": "songs", "pack_armour": "armour"}[_stage])
+		"belt":
+			# the HUD with a full belt, a song attuned and a thread pinned
+			if _stage_frame == 8:
+				_stock_pack(p)
+				World.set_flag("ks_ingra_met")
+				Journal.set_pin("ingra_rye")
+		"map", "map_zoom":
+			# the Map after three regions: two released, the third walked into
+			if _stage_frame == 8:
+				_walked_world()
+				World.set_flag("ks_ingra_met")
+				Journal.set_pin("ingra_rye")
+				InventoryUI.open_for(p, "map")
+			if _stage_frame == 12 and _stage == "map_zoom":
+				for c in get_tree().get_nodes_in_group("inventory_ui"):
+					var mv := c.get_meta("map_view", null) as MapView
+					if mv != null:
+						mv.show_region(Game.current_area_id)
 		"rest":
 			if _stage_frame == 8:
 				var h := _first_hearth()
@@ -355,6 +410,39 @@ func _stage_tick() -> void:
 				for c in get_tree().root.get_children():
 					if c is RestUI:
 						(c as RestUI).choose(1)   # the levelling page
+
+## A journey three regions along, for the Map photographs: Saltfell and the
+## Lowe released, Kettle Fjord just walked into.
+func _walked_world() -> void:
+	for a in ["saltfell_steading", "lowe_barrows", "kettle_fjord"]:
+		MapState._mark("regions", a)
+		for h in DB.area_def(a).get("hearths", []):
+			if a != "kettle_fjord" or String(h["id"]) == "hs_landing_ice":
+				MapState._mark("hearths", "%s/%s" % [a, h["id"]])
+		for pl in MapState.places_def(a):
+			MapState._mark("places", "%s/%s" % [a, pl["id"]])
+	# (the flags only: the area on screen is left in the state it was built in)
+	for a in ["saltfell_steading", "lowe_barrows"]:
+		MapState._mark("veils", a)
+		for h in DB.area_def(a).get("hearths", []):
+			World.set_area_flag(a, "lit_" + String(h["id"]))
+	World.set_area_flag("kettle_fjord", "lit_hs_landing_ice")
+	World.last_hearth = {"area": "saltfell_steading", "hearth": "hs_salt_house"}
+
+## A traveller's Pack for the UI photographs: arms on the belt, two songs,
+## armour and a handful of goods.
+func _stock_pack(p: Player) -> void:
+	for id in ["hewing_blade", "spear", "bow", "maul", "turf_spade", "mend", "ember_throw", "long_note",
+			"armour_traveller_coat", "armour_saltfell_oilskins", "armour_barrow_cloak",
+			"item_net_float", "item_rye_sack", "ks_child_mask", "ks_knucklebones", "item_orm_cord", "fostering_horn"]:
+		p.inventory[id] = maxi(int(p.inventory.get(id, 0)), 1)
+	p.inventory["arrows"] = 14
+	p.inventory["bog_iron"] = 3
+	for i in 4:
+		p.set_hotbar_slot(i, ["hewing_blade", "spear", "bow", "maul"][i])
+	p.set_hotbar_slot(4, "gourd")
+	p.attune_song("mend")
+	p.inventory_changed.emit()
 
 ## Character close-ups, side-on, captured on a gameplay beat rather than a
 ## frame count:
@@ -420,6 +508,7 @@ func _char_stage(p: Player) -> void:
 ## The Bearer's own strikes on a foe (the combat clips, ADR 0011), frozen a
 ## few ticks into the active window so the trail and the hit both show:
 ##   bearer_light1 / bearer_light2 / bearer_heavy / bearer_sprint
+##   bearer_bow (the full draw, held) / bearer_hold (the weapon carried, no foe)
 ## --shot-weapon=<id> arms him first; --shot-beat=<s> moves the capture
 ## (seconds after the windup ends; negative looks at the wind-up).
 func _bearer_stage(p: Player, foe: Enemy) -> void:
@@ -451,9 +540,132 @@ func _bearer_stage(p: Player, foe: Enemy) -> void:
 				p._chain_attack(true)
 			"bearer_sprint":
 				p._sprint_attack()
+			"bearer_bow":
+				# the draw, driven by hand (no key is held in a shot): nock,
+				# pull, and hold at the cheek
+				p.inventory["arrows"] = 12
+				p.set_physics_process(false)
+				p.vis.play("bow_draw", 0.1)
+				p._nock_arrow(true)
+			"bearer_hold":
+				foe.visible = false   # the weapon carried, nobody to hit
+	if _stage == "bearer_bow" or _stage == "bearer_hold":
+		_frame_char_cam(p, foe)
+		if _stage == "bearer_bow" and _stage_frame > 30 and p.vis.rig.action_time() > 0.74 and p.vis.current_clip() != "bow_hold":
+			p.vis.play("bow_hold", 0.08)
+		# (software frames in a full area take seconds each: wait on game time, not on many frames)
+		var settled := (_stage == "bearer_hold" and p.vis.brand != null and p.vis.brand.lit > 0.98) \
+				or (_stage == "bearer_bow" and p.vis.current_clip() == "bow_hold")
+		if settled and not get_tree().paused and _stage_frame > 40:
+			_hold_frames += 1
+			if _hold_frames > 8:   # a few drawn frames so the string, flame and smoke are all up
+				get_tree().paused = true
+				_frames_left = mini(_frames_left, 4)
+		return
 	if _stage_frame >= 30:
 		_frame_char_cam(p, foe)
 		if p.state == Player.S.ATTACK and p.state_t >= float(p._atk["windup"]) + beat and not get_tree().paused:
+			get_tree().paused = true
+			_frames_left = mini(_frames_left, 4)
+
+var _hold_frames := 0
+
+## The blade on the world (PropStrike / PropHitFX), for looking at:
+##   prop_sheet: one burst of every surface in a row, each on a thing of
+##               that surface, frozen a beat after they are raised
+##   prop_swing: the Bearer swings at a kit piece set down in front of him
+##               (--shot-prop=<kit>, default crate; --shot-heavy), frozen
+##               as the burst flies; a brazier beside it takes a burst of
+##               sparks raised directly at the same beat
+## Use --shot-frames=60 or more: the row is set at frame 10.
+var _prop_at := Vector3.ZERO
+var _prop_frozen := -1
+var _prop_seen := -1
+
+func _prop_stage(p: Player) -> void:
+	var fwd := -p.vis.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var side := fwd.cross(Vector3.UP)
+	var kit := "crate"
+	var heavy := false
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--shot-prop="):
+			kit = a.get_slice("=", 1)
+		elif a == "--shot-heavy":
+			heavy = true
+	var scene := get_tree().current_scene
+	var terrain: Terrain = Game.current_area.terrain if Game.current_area != null else null
+	if _stage_frame == 10:
+		p.invulnerable = true
+		_prop_at = p.global_position + fwd * (3.2 if _stage == "prop_sheet" else 1.35)
+		var cam := Camera3D.new()
+		cam.name = "ShotCam"
+		scene.add_child(cam)
+		cam.current = true
+		if _stage == "prop_sheet":
+			p.visible = false
+			var row: Array = [["crate", "wood"], ["hearthstone", "stone"], ["brazier", "metal"], ["rime_spike", "ice"],
+					["rye_sack", "cloth"], ["", "turf"], ["", "snow"]]
+			for i in row.size():
+				var at := _prop_at + side * (float(i) - 3.0) * 1.05
+				if terrain != null:
+					at.y = terrain.height_at(at.x, at.z)
+				if String(row[i][0]) != "":
+					var piece := KitLib.instance(String(row[i][0]))
+					scene.add_child(piece)
+					piece.global_position = at
+				row[i].append(at)
+			set_meta("prop_row", row)
+			var tgt := _prop_at + Vector3.UP * 0.75
+			cam.global_position = tgt - fwd * 4.4 + Vector3.UP * 0.9
+			cam.look_at(tgt, Vector3.UP)
+			cam.fov = 50.0
+		else:
+			var piece := KitLib.instance(kit)
+			KitLib.add_collision(piece, RH.L_WORLD_BASE, true)
+			scene.add_child(piece)
+			if terrain != null:
+				_prop_at.y = terrain.height_at(_prop_at.x, _prop_at.z)
+			piece.global_position = _prop_at
+			# a brazier beside it takes a burst of its own at the same beat,
+			# so one frame shows chips and sparks at the same scale
+			var other := KitLib.instance("brazier")
+			scene.add_child(other)
+			var oat := _prop_at + side * 1.4
+			if terrain != null:
+				oat.y = terrain.height_at(oat.x, oat.z)
+			other.global_position = oat
+			set_meta("prop_other", oat)
+			var tgt := _prop_at + side * 0.7 + Vector3.UP * 0.8
+			cam.global_position = tgt + side * 1.3 - fwd * 3.1 + Vector3.UP * 0.6
+			cam.look_at(tgt, Vector3.UP)
+			cam.fov = 45.0
+	if _prop_frozen >= 0:
+		return
+	if _stage == "prop_sheet":
+		if _stage_frame == _frames_total - 8:
+			for r in get_meta("prop_row"):
+				var has_kit := String(r[0]) != ""
+				var n := (-fwd * 0.5 + side * 0.6 + Vector3.UP * 0.35).normalized() if has_kit else Vector3.UP
+				var at: Vector3 = (r[2] as Vector3) + (Vector3.UP * 0.7 - fwd * 0.3 if has_kit else Vector3.ZERO)
+				PropHitFX.burst(p, at, n, String(r[1]), side)
+		elif _stage_frame == _frames_total - 7:
+			_prop_frozen = _stage_frame
+			get_tree().paused = true
+			_frames_left = mini(_frames_left, 4)
+	else:
+		if _stage_frame == 30:
+			p.sim_active = true
+			p.try_attack(heavy)
+		# freeze one drawn frame after the burst is raised: its emitters have
+		# then had one step (about an eighth of a second under lavapipe)
+		if _prop_seen < 0 and not get_tree().get_nodes_in_group(PropHitFX.GROUP).is_empty():
+			_prop_seen = _stage_frame
+			var oat: Vector3 = get_meta("prop_other")
+			PropHitFX.burst(p, oat + Vector3.UP * 0.75 - fwd * 0.3, (-fwd + Vector3.UP * 0.3).normalized(), "metal", side)
+		elif _prop_seen >= 0 and _stage_frame > _prop_seen:
+			_prop_frozen = _stage_frame
 			get_tree().paused = true
 			_frames_left = mini(_frames_left, 4)
 
@@ -482,10 +694,17 @@ func _frame_char_cam(p: Player, foe: Enemy) -> void:
 	cam.global_position = tgt + side * 3.6 + Vector3.UP * 0.35
 	if _stage.begins_with("bearer_"):   # three-quarter, from behind the Bearer's sword arm
 		cam.global_position = tgt + side * 3.3 - axis.normalized() * 1.3 + Vector3.UP * 0.45
+	if _stage == "bearer_hold":   # the Bearer alone, from his front quarter, the light in frame
+		tgt = p.global_position + Vector3.UP * 1.25
+		cam.global_position = tgt + axis.normalized() * 2.9 + side * 2.2 + Vector3.UP * 0.25
+	elif _stage == "bearer_bow":  # from ahead on his open side: stave, string, shaft and the drawing hand
+		tgt = p.global_position + Vector3.UP * 1.3
+		cam.global_position = tgt + side * 3.0 + axis.normalized() * 1.3 + Vector3.UP * 0.15
 	cam.look_at(tgt, Vector3.UP)
 	cam.fov = 48.0
 
 func _exit_tree() -> void:
 	AmbientLife._mote_tex = null
 	FrostFX.clear_cache()
+	PropHitFX.clear_cache()
 	EnvRig.active_instance = null

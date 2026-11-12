@@ -9,6 +9,9 @@ var text := "..."
 var set_flag := ""      # a read that MEANS something: swearing the amend
 var flag_toast := ""
 var style := "plaque"   # "plaque" | "note"
+## A board that stands in one state only (a caption per state) is solid in
+## that state only: on the base layer it stood unseen in the other.
+var layer_bit := RH.L_WORLD_BASE
 
 var _paper: Node3D = null
 
@@ -71,7 +74,11 @@ func _ready() -> void:
 		_paper.add_child(motes)
 		zone.prompt = "Read the note"
 	else:
-		add_child(KitLib.instance("plaque"))
+		var stone := KitLib.instance("plaque")
+		add_child(stone)
+		# a carved stone 1.4 m tall stands in the way like any other stone
+		# (the collision audit found every one of them walked through)
+		KitLib.add_collision(stone, layer_bit, true)
 		zone.prompt = "Read"
 	zone.setup_zone(1.3, 1.4)
 	zone.activated.connect(func(_p):
@@ -81,7 +88,7 @@ func _ready() -> void:
 			World.save_game()
 			if flag_toast != "":
 				Game.toast.emit(flag_toast)
-			AudioDirector.sfx("res://assets/audio/swell_warm.wav", -8.0, 0.9)
+			AudioDirector.play("world/plaque")
 			if style == "note":
 				_taken(zone))
 	add_child(zone)

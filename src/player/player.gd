@@ -113,6 +113,7 @@ var vis: PlayerVisual
 var cam: CameraRig
 var hitbox: Hitbox
 var hitbox_shape: CollisionShape3D
+var prop_strike: PropStrike     # the blade against props, walls and ground
 var hurtbox: Hurtbox
 var _interact_scan: Area3D
 var _nadir_light: OmniLight3D
@@ -175,6 +176,7 @@ func _ready() -> void:
 	hitbox.add_child(hitbox_shape)
 	vis.add_child(hitbox)
 	hitbox.on_contact = _on_hit_contact
+	prop_strike = PropStrike.new(self)
 
 	_interact_scan = Area3D.new()
 	_interact_scan.name = "InteractScan"
@@ -367,7 +369,12 @@ func _physics_process(dt: float) -> void:
 		_interact_suppress -= 1
 	if not is_on_floor():
 		velocity.y -= 22.0 * dt
+		_air_t += dt
 	else:
+		# a real drop, not a step off a kerb, lands audibly
+		if _air_t > float(T["move"].get("land_sound_air", 0.3)) and not dead:
+			AudioDirector.land(global_position)
+		_air_t = 0.0
 		velocity.y = maxf(velocity.y, -0.5)
 		if state == S.MOVE and global_position.y > -20.0:
 			_last_ground = global_position
@@ -460,6 +467,9 @@ func _set_state(s: S) -> void:
 		_show_gourd(false)   # a stagger or a death mid-drink drops the gourd
 		if vis.shield_mount != null:
 			vis.shield_mount.visible = not bool(weapon_data().get("two_handed", false))
+	# kneeling at a hearth the weapon is put away (a brand dies to a coal)
+	if (s == S.REST) != (state == S.REST) and vis != null:
+		vis.set_stowed(s == S.REST)
 	state = s
 	state_t = 0.0
 	if s != S.MOVE:
@@ -748,7 +758,7 @@ func _try_roll(dir: Vector3) -> bool:
 	vis.rotation.y = atan2(-_roll_dir.x, -_roll_dir.z)
 	vis.play("roll", 0.03, vis.clip_length("roll") / _roll_dur)
 	Juice.spawn_hit_fx(global_position + Vector3(0, 0.08, 0), -_roll_dir, "dust")
-	AudioDirector.sfx_at("res://assets/audio/roll.wav", global_position, -6.0, randf_range(0.95, 1.05))
+	AudioDirector.play("foley/roll", global_position)
 	return true
 
 func _st_roll(dt: float) -> void:
@@ -821,7 +831,7 @@ func equip_weapon(id: String) -> void:
 	cam.zoomed = false
 	_refresh_weapon_visual()
 	weapon_changed.emit(id)
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -12.0)
+	AudioDirector.play("foley/equip")
 
 ## How each arm rides the fist at rest. The spear is carried tip-skyward
 ## (relaxed arms ran it through the floor), the greatsword shoulders, the
@@ -840,11 +850,17 @@ func _refresh_weapon_visual() -> void:
 	if _torch_light != null:
 		_torch_light.queue_free()
 		_torch_light = null
-	if weapon_id == "torch":
+	var lg: Dictionary = w.get("light", {})
+	if vis.brand != null:
+		vis.brand.set_lit(false, true)
+		vis.brand.set_lit(true)   # drawn: it catches, flares and settles
+	elif not lg.is_empty():
+		# a body with no model for the brand (the mannequin): the light alone
 		_torch_light = OmniLight3D.new()
-		_torch_light.light_color = Color(1.0, 0.72, 0.38)
-		_torch_light.omni_range = 8.0
-		_torch_light.light_energy = 1.8
+		var lc: Array = lg.get("light_color", [1.0, 0.72, 0.38])
+		_torch_light.light_color = Color(lc[0], lc[1], lc[2])
+		_torch_light.omni_range = float(lg.get("light_range", 8.0))
+		_torch_light.light_energy = float(lg.get("light_energy", 1.8))
 		_torch_light.position = Vector3(0, 0.8, 0)
 		vis.weapon_mount.add_child(_torch_light)
 
@@ -1002,6 +1018,9 @@ func _set_crosshair(on: bool) -> void:
 var _nock: Node3D = null
 
 func _nock_arrow(on: bool) -> void:
+	if vis.bow_rig != null:
+		vis.bow_rig.set_nocked(on)   # the modelled bow: arrow on the string, string to the hand
+		return
 	if _nock != null and is_instance_valid(_nock):
 		_nock.queue_free()
 	_nock = null
@@ -1015,6 +1034,8 @@ func _nock_arrow(on: bool) -> void:
 
 func _bow_release() -> void:
 	_bow_drawing = false
+	if vis.bow_rig != null and _bow_t >= 0.45:
+		vis.bow_rig.loose()   # the string snaps forward and rings
 	_nock_arrow(false)
 	vis.back_to_idle(0.2)
 	if _bow_t < 0.45:
@@ -1041,7 +1062,7 @@ func _bow_release() -> void:
 	var pr := Projectile.launch_arrow(get_parent(), from, aim, 26.0 + 16.0 * k, pk)
 	pr.team = "player"
 	vis.rotation.y = atan2(-aim.x, -aim.z)
-	AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -6.0, 1.4)
+	AudioDirector.play("combat/bow_loose", global_position)
 
 # --- attacks ---------------------------------------------------------------
 func weapon_data() -> Dictionary:
@@ -1175,11 +1196,16 @@ func _st_attack(dt: float) -> void:
 		_atk_hit_open = true
 		_open_hitbox(_atk)
 		vis.trail.visible = true
-		AudioDirector.sfx_at("res://assets/audio/swing.wav", global_position, -9.0,
-				randf_range(0.94, 1.1) * (0.85 if _atk_is_heavy else 1.0))
+		AudioDirector.swing(String(DB.weapon(weapon_id).get("class", "")), _atk_is_heavy, global_position)
 	if _atk_hit_open and t >= wind + act and hitbox.monitoring:
 		hitbox.end_swing()
 		vis.trail.visible = false
+	# the same window, against the world: chips off a post, sparks off iron
+	if prop_strike.live():
+		if t < wind + act:
+			_sweep_props()
+		else:
+			prop_strike.end()
 
 	# combo input capture during recovery
 	if not sim_active and t > wind + act:
@@ -1227,8 +1253,19 @@ func _open_hitbox(m: Dictionary) -> void:
 			float(weapon_data().get("poise_damage", 20)) * float(m.get("poise_mult", 1.0)), self)
 	pk.origin = global_position
 	hitbox.begin_swing(pk)
+	prop_strike.begin(_atk_is_heavy)
 	if _atk_is_heavy:
 		_chip_frozen(reach)
+
+## The blade's edge this tick, from the pose (the ribbon's own two points).
+func _sweep_props() -> void:
+	var xf := vis.weapon_xform()
+	var base_up := 0.12
+	var tip_up := 1.08
+	if vis.trail != null:
+		base_up = float(vis.trail.get("base_up"))
+		tip_up = float(vis.trail.get("tip_up"))
+	prop_strike.sweep(get_world_3d().direct_space_state, xf * Vector3(0, base_up, 0), xf * Vector3(0, tip_up, 0))
 
 ## A heavy blow chips out what is frozen in close in front (the float in
 ## the tide wall): pickups in group chip_heavy within reach and ahead.
@@ -1253,17 +1290,20 @@ func _on_hit_contact(_hb: Area3D, result: String) -> void:
 			Juice.hitstop(0.09 if _atk_is_heavy else 0.06)
 			vis.impact_dig(1.5 if _atk_is_heavy else 1.0)   # held on the impact pose by the hit-stop
 			Juice.shake(0.35 if _atk_is_heavy else 0.2, 0.18)
-			Juice.spawn_hit_fx(fx_pos, fx_dir, "heavy" if _atk_is_heavy else "blood")
+			if vis.brand != null and vis.brand.is_lit():
+				# a brand does not cut: it throws fire off the foe and itself
+				Juice.spawn_hit_fx(fx_pos, fx_dir, "ember")
+				vis.brand.burst(34 if _atk_is_heavy else 22, 4.2 if _atk_is_heavy else 3.0)
+			else:
+				Juice.spawn_hit_fx(fx_pos, fx_dir, "heavy" if _atk_is_heavy else "blood")
 			# every foe is frost-taken: the edge meets rime and frozen wool
-			AudioDirector.sfx_at("res://assets/audio/slash.wav", global_position, -9.0, randf_range(0.9, 1.1))
-			AudioDirector.sfx_at(AudioDirector.foley("frost_hit"), fx_pos, -3.0,
-					randf_range(0.82, 0.92) if _atk_is_heavy else randf_range(0.95, 1.08))
+			AudioDirector.play("combat/hit_flesh", fx_pos, -4.0)   # the foe adds its own crust or cry (enemy.take_hit)
 		"blocked":
 			Juice.hitstop(0.05)
 			Juice.spawn_hit_fx(fx_pos, fx_dir, "spark")
-			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -4.0)
-			AudioDirector.sfx_at("res://assets/audio/shield_ding.wav", global_position, -5.0,
-					randf_range(0.95, 1.12))
+			AudioDirector.play("combat/hit_shield", fx_pos)
+			if vis.brand != null and vis.brand.is_lit():
+				vis.brand.burst(16, 2.6)
 		"parried":
 			pass  # on_parried() handles our stagger
 
@@ -1369,7 +1409,7 @@ func on_parry_success(enemy: Node3D) -> void:
 	Juice.shake(0.4, 0.2)
 	var ppos := (global_position + enemy.global_position) * 0.5 + Vector3(0, 1.15, 0) if enemy != null else (global_position + Vector3(0, 1.15, 0))
 	Juice.spawn_hit_fx(ppos, Vector3.UP, "parry")
-	AudioDirector.sfx_at("res://assets/audio/parry.wav", global_position, 0.0)
+	AudioDirector.play("combat/parry", global_position)
 
 ## Riposte / backstab entry (crit states).
 func try_riposte() -> bool:
@@ -1423,7 +1463,7 @@ func try_gourd() -> bool:
 	_show_gourd(true)
 	if vis.shield_mount != null:
 		vis.shield_mount.visible = false   # the gourd arm carries no shield
-	AudioDirector.sfx("res://assets/audio/gourd.wav", -6.0)
+	AudioDirector.play("combat/gourd", global_position)
 	return true
 
 func knows_any_song() -> bool:
@@ -1434,6 +1474,24 @@ func knows_any_song() -> bool:
 
 ## The learned songs. Cast from the hotbar; each takes the whole hearth-bar
 ## economy seriously: breath gates it, a short cooldown stops mashing.
+## Any Song is heard (COLDWELL.md 5: "Any Song breaks one outright"): whoever
+## breaks to one ("breaks_to" holds "song") and stands within its own
+## "song_hear" metres breaks, whether the Song strikes, wards or mends. Only
+## the Songs that strike used to reach them, and the first Song a Bearer
+## learns, which attunes itself, is a ward.
+func _song_heard() -> void:
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		var en := e as Enemy
+		if en == null or en.dead or not en.is_inside_tree() or not en.can_process():
+			continue
+		if not ("song" in en.cfg.get("breaks_to", [])):
+			continue
+		if en.global_position.distance_to(global_position) > float(en.cfg.get("song_hear", 6.0)):
+			continue
+		var pk := DamagePacket.new(0.0, 0, self)
+		pk.kind = "song"
+		en.take_hit(pk)
+
 func cast_song(id: String) -> void:
 	var sp := DB.song(id)
 	if sp.is_empty() or dead or int(inventory.get(id, 0)) < 1:
@@ -1457,6 +1515,7 @@ func cast_song(id: String) -> void:
 			if vis != null and is_instance_valid(vis) and vis.shield_mount != null and state != S.GOURD:
 				vis.shield_mount.visible = not bool(weapon_data().get("two_handed", false)))
 	var dev: float = 1.0 + _over_base("kinship") * 0.025   # songs.json is rebalanced for (stat - base)
+	_song_heard()
 	match String(sp.get("type", "")):
 		"heal":
 			vis.play("cast_self", 0.1)
@@ -1480,7 +1539,7 @@ func cast_song(id: String) -> void:
 			var pr := Projectile.launch(get_parent(), from, aim, 30.0, pk, Color(1.0, 0.88, 0.5))
 			pr.team = "player"
 			vis.rotation.y = atan2(-aim.x, -aim.z)
-			AudioDirector.sfx("res://assets/audio/whoosh_h.wav", -6.0, 1.2)
+			AudioDirector.play("foe/heavy_whoosh", global_position, -3.0)
 			_ember_flash(1.2, 3.0)
 		"lance":
 			vis.play("cast_lance", 0.08)
@@ -1505,7 +1564,7 @@ func cast_song(id: String) -> void:
 			_lance_beam(lfrom, lend)
 			vis.rotation.y = atan2(-laim.x, -laim.z)
 			Juice.shake(0.2, 0.18)
-			AudioDirector.sfx("res://assets/audio/whoosh_h.wav", -4.0, 1.5)
+			AudioDirector.play("foe/heavy_whoosh", global_position, -3.0)
 			_ember_flash(1.6, 4.0)
 		"ward":
 			vis.play("cast_ward", 0.1)
@@ -1833,7 +1892,7 @@ func take_hit(packet: DamagePacket) -> void:
 		_ward_hp -= soak
 		packet.amount = maxf(packet.amount - soak / maxf(Game.dmg_in_mult(), 0.001), 0.0)
 		_ember_flash(1.2, 2.6)
-		AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -8.0, 1.4)
+		AudioDirector.play("combat/block", global_position)
 		if _ward_hp <= 0.0:
 			Game.toast.emit("The Warding Hum fades.")
 		if packet.amount <= 0.0:
@@ -1850,7 +1909,7 @@ func take_hit(packet: DamagePacket) -> void:
 	vis.flinch(hdir, 1.15)
 	Juice.spawn_hit_fx(global_position + Vector3(0, 1.1, 0), -hdir, "blood")
 	Juice.shake(0.3, 0.2)
-	AudioDirector.sfx_at("res://assets/audio/impact_flesh.wav", global_position, -6.0, 0.85)
+	AudioDirector.play("player/hurt", global_position)
 	if hp <= 0.0:
 		_fell_to_land = packet.kind == "hazard"
 		_die()
@@ -1863,6 +1922,7 @@ var _hit_from_back := false
 ## is under water or out of reach; the warmth waits on the last ground stood
 ## on instead, so the one chance to take it back is a real one.
 var _fell_to_land := false
+var _air_t := 0.0
 func breathmark_spot() -> Vector3:
 	if _fell_to_land and _last_ground != Vector3.ZERO:
 		return _last_ground
@@ -1892,7 +1952,7 @@ func _die() -> void:
 	_set_state(S.DEAD)
 	hitbox.end_swing()
 	vis.play("death", 0.1)
-	AudioDirector.sfx("res://assets/audio/death.wav", 0.0, 1.0, "UI")
+	AudioDirector.play("player/death")
 	died.emit()
 
 ## External control (rest ceremony, dialogue, respawn)

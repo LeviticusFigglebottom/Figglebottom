@@ -172,7 +172,10 @@ func _in_hall(e: Enemy) -> bool:
 func _expected(thread_id: String, n: int) -> Array:
 	for t in Keepsakes.threads_def():
 		if t["id"] == thread_id:
-			return (t["steps"] as Array).slice(0, n).map(func(s): return String(s["line"]))
+			# (the steps a point of interest adds are off this suite's road: POI.md,
+			# tools/test/poi_*_test.gd walk those)
+			return (t["steps"] as Array).filter(func(s): return not (String(s["flag"]) in ["ks_ivo_pole", "ks_ivo_line", "ks_ottar_pair"])) \
+				.slice(0, n).map(func(s): return String(s["line"]))
 	return []
 
 func _has(item: String) -> bool:
@@ -617,8 +620,8 @@ func _first_rest() -> void:
 	var kinds := {}
 	for e in _standing():
 		kinds[(e as Enemy).id] = int(kinds.get((e as Enemy).id, 0)) + 1
-	check(int(kinds.get("feast_guest", 0)) == 4 and int(kinds.get("cupbearer", 0)) == 2 and int(kinds.get("hall_champion", 0)) == 2
-		and int(kinds.get("host", 0)) == 1, "the frost-taken stand: four guests, two cupbearers, two champions, the Host (%s)" % str(kinds))
+	check(int(kinds.get("feast_guest", 0)) == 4 and int(kinds.get("cupbearer", 0)) == 4 and int(kinds.get("hall_champion", 0)) == 2
+		and int(kinds.get("host", 0)) == 1, "the frost-taken stand: four guests, the byre's two cupbearers and the cook-yard's two, two champions, the Host (%s)" % str(kinds))
 	var seats := _seated()
 	check(seats.size() == 5 and seats.all(func(g): return (g as Enemy).state == Enemy.ES.IDLE and (g as Enemy).vis.current_clip() == "sit_feast"),
 		"five guests sit white at the long table (%d)" % seats.size())
@@ -727,7 +730,9 @@ func _byres() -> void:
 	await _clear_near(12.0, 90.0)
 	check(await _take_alive("byre_cache", "Pry up"), "what the byre floor holds")
 	await _clear_near(12.0, 90.0)
-	check(not player.dead and _standing().filter(func(e): return (e as Enemy).id == "cupbearer").is_empty(), "both Cupbearers are down")
+	# (the cook-yard's pair, behind the hall, are off this road: POI.md 5.3)
+	check(not player.dead and _standing().filter(func(e): return (e as Enemy).id == "cupbearer" and (e as Enemy).global_position.z > -338.0).is_empty(),
+		"both Cupbearers are down")
 	await _shot("byre_rime")
 
 var _veil_node: FrostVeil = null
@@ -830,6 +835,12 @@ func _release() -> void:
 	var t0 := Engine.get_physics_frames()
 	await _walk_to(DOOR + Vector3(1.2, 0, 0), 300, 0.5, true)   # square to the doorway, then out
 	var walked := await _walk_to(PORCH, 600, 1.0, true)
+	if not walked and not player.dead and player.global_position.x < DOOR.x - 1.5:
+		# (out through the doors, and then drawn off down the shore by a fight
+		# until the leg's time was spent: he comes back to the porch)
+		print("  (drawn off the porch to %s: coming back)" % str(player.global_position.snapped(Vector3.ONE * 0.1)))
+		await _fight(16.0, 60.0)
+		walked = await _walk_path(PORCH, 1200, true)
 	check(walked and player.global_position.x < DOOR.x - 1.5, "the Bearer walks out through them onto the porch (%s, %d ticks)" % [
 		str(player.global_position.snapped(Vector3.ONE * 0.1)), Engine.get_physics_frames() - t0])
 	if not walked:

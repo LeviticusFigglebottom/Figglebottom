@@ -222,6 +222,7 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 		cs.shape = bx
 		cs.position = s[0]
 		body.add_child(cs)
+	Surfaces.stamp(body, String(spec.get("surface", Surfaces.lookup("kinds", "house"))))
 	root.add_child(body)
 	area.attach(root, tag)
 	return root
@@ -572,6 +573,7 @@ static func _barrow(area: Area, spec: Dictionary) -> Node3D:
 		mcs.shape = tm
 		mcs.name = "mound"
 		body.add_child(mcs)
+	Surfaces.stamp_kind(body, "barrow")
 	root.add_child(body)
 	area.attach(root, "base")
 	if area.terrain != null:
@@ -658,5 +660,6 @@ static func _turf_door(size: Vector3, collide: bool, bit: int) -> Node3D:
 		cs.shape = bx
 		cs.position.y = size.y * 0.5
 		body.add_child(cs)
+		Surfaces.stamp_kind(body, "turf_door")
 		n.add_child(body)
 	return n

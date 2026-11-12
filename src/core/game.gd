@@ -224,7 +224,7 @@ func _release_leavings(boss: Node, bcfg: Dictionary) -> void:
 			current_area.base.add_child(h)
 			h.position = Vector3(spec["at"][0], spec["at"][1], spec["at"][2])
 			h.rotation.y = deg_to_rad(float(spec.get("rot", 0)))
-			AudioDirector.sfx_at("res://assets/audio/swell_warm.wav", h.global_position, -2.0)
+			AudioDirector.play("world/pickup", h.global_position)
 
 ## release_clear (metres, opt-in): she sits back down where the fight
 ## ended; if that is on the hearth her release wakes, the hearth caught
@@ -528,5 +528,6 @@ func _exit_tree() -> void:
 	MaterialLib._tex_cache.clear()
 	AmbientLife._mote_tex = null
 	FrostFX.clear_cache()
+	PropHitFX.clear_cache()
 	FrostDissolve.clear_cache()
 	EnvRig.active_instance = null

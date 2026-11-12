@@ -229,7 +229,7 @@ func _transition_event(ev: String) -> void:
 		"set_down":
 			sod_at = "threshold"
 			_set_sod_down(_threshold(), door_point() - home)
-			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -10.0, 0.5)
+			AudioDirector.play("boss/sod_thud", global_position, -6.0)
 		"raise_walls":
 			_raise_walls()
 		"take_turf":
@@ -273,11 +273,12 @@ func _raise_walls() -> void:
 		w.height = float(spec.get("height", 1.6))
 		w.setup(along.length(), float(spec.get("life", 9999.0)), int(spec.get("breaks", 3)), "sod")
 		get_parent().add_child(w)
+		_own(w)   # (they stand for the phase: reset mid-fight, they stood for good)
 		pa.y = global_position.y
 		w.global_transform = Transform3D(Basis.looking_at(along.normalized(), Vector3.UP), pa)
 		walls.append(w)
 	Juice.shake(0.6, 0.6)
-	AudioDirector.sfx_at("res://assets/audio/horn_low.wav", global_position, 0.0, 0.7)
+	AudioDirector.play("boss/sod_thud", global_position)
 
 ## The middle of the cross, where every bay opens (the mean of the walls'
 ## inner ends, in the same frame as _raise_walls).
@@ -440,6 +441,7 @@ func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
 	_end_all_swings()
+	_fight_over()
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	if vis.rig != null:

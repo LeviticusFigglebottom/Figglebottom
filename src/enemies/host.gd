@@ -314,7 +314,7 @@ func _st_transition(dt: float) -> void:
 func _transition_event(ev: String) -> void:
 	match ev:
 		"set_down":   # the horn set down on the table in front of a guest
-			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -10.0, 0.7)
+			AudioDirector.play("combat/hit_wood", global_position, -4.0)
 		"raise":
 			raise_guests(int(_d("raise_count", 2)))
 		"refill":
@@ -418,7 +418,7 @@ func _st_hold(dt: float) -> void:
 	_hold_quiet += dt
 	_face(_table_dir(), dt, 1.0)
 	if fmod(state_t, 1.2) < dt:
-		AudioDirector.sfx_at("res://assets/audio/whoosh_l.wav", global_position, -16.0, 0.4)
+		AudioDirector.play("foley/cloth", global_position, -4.0)
 	if _hold_quiet >= float(attack_by_id("pour").get("quiet", 5.0)):
 		raise_guests(1)
 		_set_state(ES.COMBAT)
@@ -443,9 +443,7 @@ func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
 	_end_all_swings()
-	if hook_hold != null:
-		hook_hold.end(false)
-	_pull_t = 0.0
+	_fight_over()
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	var to := _table_dir()
@@ -498,4 +496,13 @@ func _exit_tree() -> void:
 		if is_instance_valid(s):
 			s.queue_free()
 	filled.clear()
+	# and a fight reset before his release seats them again: the stills that
+	# stood up are back in their places (they stayed gone, the bench empty,
+	# with nobody left for the next Host to raise)
+	if not released:
+		for n in _places_cache:
+			if is_instance_valid(n) and not (n is Enemy) and n.has_meta("risen"):
+				(n as Node3D).visible = true
+				n.remove_meta("risen")
+				n.remove_meta("refilled")
 	super._exit_tree()

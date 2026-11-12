@@ -205,8 +205,7 @@ func _physics_process(_dt: float) -> void:
 		set_physics_process(false)
 
 func _fly_off(bird: Node3D, wings: Array) -> void:
-	AudioDirector.sfx_at("res://assets/audio/warmth.wav", bird.global_position,
-			-14.0, randf_range(1.1, 1.35))
+	AudioDirector.play("world/bird_flush", bird.global_position)
 	for wi in wings.size():
 		var sd := -1.0 if wi == 0 else 1.0
 		(wings[wi] as Node3D).scale = Vector3.ONE

@@ -314,6 +314,38 @@ nodes = [("WoadBand", "Node3D", None, {}),
          ("Knot", "MeshInstance3D", ".", {"transform": xf(y=0.3), "mesh": 'SubResource("knot")'})]
 scene("woad_band", res, nodes)
 
+# Thornwold points of interest (POI.md 6.2, 6.3): the ends Linnet cut off her
+# cord, swept into a heap, and the holly latch Eyvind whittled for both gates
+res = [mat("oat", 0.74, 0.68, 0.54, 0.95), mat("yellow", 0.72, 0.56, 0.2, 0.95),
+       ("end", "CapsuleMesh", {"radius": 0.007, "height": 0.07, "radial_segments": 6, "rings": 2, "material": 'SubResource("oat")'}),
+       ("endy", "CapsuleMesh", {"radius": 0.007, "height": 0.06, "radial_segments": 6, "rings": 2, "material": 'SubResource("yellow")'})]
+nodes = [("WoolEnds", "Node3D", None, {})]
+for k in range(16):
+    a = k * 2.399963
+    r = 0.015 + 0.012 * (k % 5)
+    c, s_ = math.cos(a * 1.7 + k), math.sin(a * 1.7 + k)
+    # each end lies flat, turned its own way, a few resting on the others
+    nodes.append(("End%d" % k, "MeshInstance3D", ".", {
+        "transform": "Transform3D(%.3f, %.3f, 0, 0, 0, 1, %.3f, %.3f, 0, %.3f, %.3f, %.3f)" % (
+            c, -s_, s_, c, r * math.cos(a), 0.008 + 0.004 * (k % 3), r * math.sin(a)),
+        "mesh": 'SubResource("%s")' % ("endy" if k % 3 == 0 else "end")}))
+scene("wool_ends", res, nodes, upright=True)
+
+res = [mat("holly", 0.86, 0.82, 0.7, 0.45), mat("hollydark", 0.6, 0.55, 0.42, 0.5),
+       ("bar", "BoxMesh", {"size": "Vector3(0.24, 0.022, 0.045)", "material": 'SubResource("holly")'}),
+       ("nose", "PrismMesh", {"size": "Vector3(0.045, 0.04, 0.022)", "material": 'SubResource("holly")'}),
+       ("keeper", "BoxMesh", {"size": "Vector3(0.05, 0.03, 0.09)", "material": 'SubResource("holly")'}),
+       ("slot", "BoxMesh", {"size": "Vector3(0.052, 0.014, 0.05)", "material": 'SubResource("hollydark")'}),
+       ("pin", "CylinderMesh", {"top_radius": 0.006, "bottom_radius": 0.006, "height": 0.035, "radial_segments": 6,
+                                "material": 'SubResource("hollydark")'})]
+nodes = [("GateLatch", "Node3D", None, {}),
+         ("Bar", "MeshInstance3D", ".", {"transform": xf(y=0.011), "mesh": 'SubResource("bar")'}),
+         ("Nose", "MeshInstance3D", ".", {"transform": "Transform3D(0, 0, 1, 1, 0, 0, 0, 1, 0, 0.14, 0.011, 0)", "mesh": 'SubResource("nose")'}),
+         ("Pin", "MeshInstance3D", ".", {"transform": xf(x=-0.09, y=0.02), "mesh": 'SubResource("pin")'}),
+         ("Keeper", "MeshInstance3D", ".", {"transform": xf(x=0.05, y=0.015, z=0.1), "mesh": 'SubResource("keeper")'}),
+         ("Slot", "MeshInstance3D", ".", {"transform": xf(x=0.05, y=0.016, z=0.085), "mesh": 'SubResource("slot")'})]
+scene("gate_latch", res, nodes, upright=True)
+
 
 def mask_scene(name, h, root):
     """A mourning mask: the carved board is modelled (tools/art/procedural/

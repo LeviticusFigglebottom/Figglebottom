@@ -113,9 +113,18 @@ static func weapon_cfg(kit: String) -> Dictionary:
 	return (meta().get("weapons", {}) as Dictionary).get(kit, {})
 
 static func weapon_instance(kit: String) -> Node3D:
-	var path := String(weapon_cfg(kit).get("scene", ""))
+	var cfg := weapon_cfg(kit)
+	var path := String(cfg.get("scene", ""))
 	if path != "" and ResourceLoader.exists(path):
-		return (load(path) as PackedScene).instantiate() as Node3D
+		var n := (load(path) as PackedScene).instantiate() as Node3D
+		# this weapon's own seat in the fist (weapons.<kit>.seat): slid along
+		# the haft and turned about it, inside the class grip
+		var seat: Dictionary = cfg.get("seat", {})
+		var sp: Array = seat.get("pos", [0, 0, 0])
+		var sr: Array = seat.get("rot", [0, 0, 0])
+		n.position = Vector3(sp[0], sp[1], sp[2])
+		n.rotation_degrees = Vector3(sr[0], sr[1], sr[2])
+		return n
 	return null
 
 static func prop_cfg(id: String) -> Dictionary:

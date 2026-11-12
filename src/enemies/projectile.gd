@@ -39,6 +39,13 @@ static func launch_arrow(parent: Node, from: Vector3, dir: Vector3, speed: float
 ## goose-feather hint at the tail. Shared by the nocked visual and the shot.
 static func make_arrow() -> Node3D:
 	var root := Node3D.new()
+	var model := HumanoidLib.weapon_instance("arrow")
+	if model != null:
+		# the modelled arrow: nock at its origin, head +Y; laid along -Z about its middle
+		model.rotation_degrees = Vector3(-90, 0, 0)
+		model.position = Vector3(0, 0, 0.36)
+		root.add_child(model)
+		return root
 	var shaft := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.011
@@ -165,6 +172,11 @@ func _on_area(a: Area3D) -> void:
 	if result != "immune":
 		_poof(global_position)
 
+## Whoever sang it is gone: it goes out where it is.
+func dispel() -> void:
+	if not is_queued_for_deletion():
+		_poof(global_position)
+
 func _poof(at: Vector3) -> void:
 	set_deferred("monitoring", false)
 	packet = null
@@ -188,5 +200,5 @@ func _poof(at: Vector3) -> void:
 	var btw := burst.create_tween()
 	btw.tween_interval(1.0)
 	btw.tween_callback(burst.queue_free)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", at, -14.0, 1.6)
+	AudioDirector.play("foe/poof", at)
 	queue_free()

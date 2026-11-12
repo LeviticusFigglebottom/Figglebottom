@@ -109,6 +109,14 @@ func _ready() -> void:
 	var chapters: Array = npc_cfg.get("chapters", [])
 	if chapters.size() > 0:
 		var ci := int(World.flag_val("chapter_" + nid, 0))
+		# a chapter the story has passed is not told ("chapter_absent_flags":
+		# one flag per chapter, "" for none): met only after the release,
+		# Calder opened on his lass calling the flock in and getting it
+		# wrong, with the wall done and her beside him saying forty-four
+		var gone: Array = npc_cfg.get("chapter_absent_flags", [])
+		while ci < chapters.size() and ci < gone.size() and String(gone[ci]) != "" and World.flag(String(gone[ci])):
+			ci += 1
+			World.set_flag("chapter_" + nid, ci)
 		var closing := _closing_lines()
 		if not closing.is_empty():
 			# an errand closed in this very talk is answered before the tale
@@ -142,18 +150,21 @@ func _repeat_lines() -> Array:
 	if not closing.is_empty():
 		return closing
 	for w in npc_cfg.get("lines_when", []):
+		if w.get("closing_only", false):
+			continue    # said once, when the thing is shown; not a new habit of speech
 		if World.flag(String(w.get("flag", ""))):
 			if String(w.get("set_flag", "")) != "":
 				World.set_flag(String(w["set_flag"]))
 			return w.get("lines", [])
 	return npc_cfg.get("lines_repeat", [])
 
-## The "lines_when" lines of an errand closed in this talk, or none.
+## The "lines_when" lines of every errand closed in this talk, or none.
 func _closing_lines() -> Array:
+	var out: Array = []
 	for w in npc_cfg.get("lines_when", []):
 		if _closed_now.has(String(w.get("flag", ""))):
-			return w.get("lines", [])
-	return []
+			out.append_array(w.get("lines", []))    # (two things shown at once are both answered)
+	return out
 
 ## Things handed over just by talking (SLICE.md: "talk to Ingra carrying the
 ## sack"): no menu entry, the errand closes when you arrive with it.
@@ -200,7 +211,7 @@ func _grant_gift(g: Dictionary) -> void:
 	var iname: String = DB.weapon(item).get("name",
 		DB.song(item).get("name", DB.item(item).get("name", item)))
 	Game.toast.emit(g.get("toast", "Received %s x%d" % [iname, count]))
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -6.0)
+	AudioDirector.play("world/pickup")
 
 func _show_line() -> void:
 	options_box.visible = false
@@ -210,6 +221,11 @@ func _show_line() -> void:
 	if _line_i < _lines.size():
 		text_label.text = String(_lines[_line_i])
 		_speak(String(_lines[_line_i]))
+		# a line that is itself a Keepsakes step when it is heard ("line_flags":
+		# {line: flag}): Calder counting Smudge last (POI.md 7.2)
+		var lf: Dictionary = npc_cfg.get("line_flags", {})
+		if lf.has(text_label.text) and not World.flag(String(lf[text_label.text])):
+			World.set_flag(String(lf[text_label.text]))
 		# a line may carry a sound of its own ("line_sfx": {line: [path, db,
 		# pitch]}): Old Calder humming three notes (REACH.md 7)
 		var ls: Dictionary = npc_cfg.get("line_sfx", {})
@@ -422,7 +438,7 @@ func _activate(o: Dictionary) -> void:
 				World.set_flag(gflag)
 				p.give_item(gitem, int(o.get("count", 1)))
 				Game.toast.emit("Received: %s" % DB.item(gitem).get("name", gitem))
-				AudioDirector.sfx("res://assets/audio/ui_tick.wav", -6.0)
+				AudioDirector.play("ui/confirm")
 				World.save_game()
 				text_label.text = o.get("line_done", "")
 			_flash_line()

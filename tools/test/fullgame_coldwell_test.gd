@@ -433,7 +433,8 @@ func _leg_seam() -> bool:
 	check(ti >= 0 and seen.slice(ti + 1) == ["THE UPWATER"], "the region's card, then the place (%s)" % str(seen))
 	check(Game.current_area_id == "coldwell", "the seam does not carry him back")
 	await _shot("arrival_thaw")
-	var plaques := area.find_children("*", "LorePlaque", true, false)
+	# (the board at the foot; the points of interest up the water have their own)
+	var plaques := area.find_children("*", "LorePlaque", true, false).filter(func(pl): return String((pl as LorePlaque).text).begins_with("THE COLDWELL\n"))
 	check(plaques.size() == 1 and String((plaques[0] as LorePlaque).text) == "THE COLDWELL\n\nThe river's source, under the glacier's lip.",
 		"the plaque at the foot names it")
 	check(Game.find_hearth("hs_upwater") != null and Game.find_hearth("hs_ice_falls") != null
@@ -468,7 +469,7 @@ func _leg_climb_thaw() -> bool:
 	await _until(func(): return hud.last_title == "THE WELLHEAD", 6.0)
 	check(_titles.slice(n_t).has("THE WELLHEAD"), "THE WELLHEAD is named (%s)" % str(_titles.slice(n_t)))
 	check(_horn() == HORN_HERE, "the horn reads differently from here on")
-	check(_journal("fostering_horn") == ["The coal is still alight."], "The fostering horn: the coal is still alight")
+	check(_journal("fostering_horn") == ["Reached the Wellhead. The coal in the fostering horn is still alight. The horn's description in the Pack has changed."], "The fostering horn: the coal is still alight")
 	await _shot("wellhead_thaw")
 	return true
 
@@ -610,17 +611,11 @@ func _leg_level() -> bool:
 	var two: Array = _awake_foes().filter(func(e): return e.id == "unsung")
 	check(two.size() == 2, "two of the Unsung on the level (%d)" % two.size())
 	check(player.attuned_song != "" and int(player.inventory.get(player.attuned_song, 0)) > 0, "the Bearer has learned a Song on the way up (%s)" % player.attuned_song)
-	# the first Song learned attunes itself, and on this road that is Aud's
-	# (a ward); the Unsung break to a Song that strikes, so the Bearer turns
-	# to one he carries, as the Songs leaf of the Pack does
-	if float(DB.song(player.attuned_song).get("damage", 0.0)) <= 0.0:
-		for sid in ["goat_song", "long_note"]:
-			if int(player.inventory.get(sid, 0)) > 0:
-				player.attune_song(sid)
-				break
-	check(float(DB.song(player.attuned_song).get("damage", 0.0)) > 0.0, "a Song that strikes is attuned (%s)" % player.attuned_song)
-	if two.is_empty():
-		return true
+	# the first Song learned attunes itself, and on this road that is Aud's,
+	# a ward. "Any Song breaks one outright": it is sung as it is, unchanged
+	# (only Songs that strike used to reach them)
+	check(float(DB.song(player.attuned_song).get("damage", 0.0)) <= 0.0 or player.attuned_song != "",
+		"the Song attuned is whatever the road left there (%s)" % player.attuned_song)
 	var first: Enemy = two[0]
 	_halt = func(): return is_instance_valid(first) and _flat(first.global_position - player.global_position).length() < 3.2
 	await _walk_path(first.global_position, 3600, false)

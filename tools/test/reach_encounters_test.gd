@@ -476,7 +476,7 @@ func _reach() -> void:
 	check(kinds.has("drover") and kinds.has("frost_ram") and kinds.has("fellcaller") and not kinds.has("rimewalker")
 		and not kinds.has("hearthhound") and not kinds.has("netmender"), "the Reach's own foes, no stand-ins (%s)" % str(kinds.keys()))
 	var standing := get_tree().get_nodes_in_group("flock_rime").filter(func(n): return area.is_ancestor_of(n))
-	check(standing.size() == 70, "seventy sheep stand on the slope (%d)" % standing.size())
+	check(standing.size() == 71, "seventy sheep stand on the slope, and Smudge at the sheiling door (%d)" % standing.size())
 	var fc: Fellcaller = null
 	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
 		if e is Fellcaller and e.can_process():
@@ -515,7 +515,7 @@ func _reach() -> void:
 	var lying := area.find_children("*", "Node3D", true, false).filter(func(n):
 		# (not the three at the Upwater hurdles: those are the gate's, ADR 0015)
 		return absf((n as Node3D).scale.y - 0.58) < 0.001 and absf((n as Node3D).scale.x - 1.0) < 0.001 and not n.has_meta("gate_piece"))
-	check(lying.size() == 70, "the seventy lie where they stood (%d)" % lying.size())
+	check(lying.size() == 71, "the seventy lie where they stood, and Smudge (%d)" % lying.size())
 	check(Game.find_hearth("hs_high_fold") != null, "and the High Fold stays lit")
 
 	print("== after: in the fold, in the thaw")
@@ -549,12 +549,39 @@ func _reach() -> void:
 	ui = _talk("old_calder")
 	await ticks(2)
 	check(_all_lines(ui) == DB.npc("old_calder")["lines_when"][1]["lines"], "he answers the boots before he starts his tale")
-	check(World.flag("ks_calder_boots_shown") and not World.flag("ks_calder_met") and int(World.flag_val("chapter_old_calder", 0)) == 0,
-		"and the tale has not moved on")
+	check(World.flag("ks_calder_boots_shown") and not World.flag("ks_calder_met") and not World.flag("ks_calder_hum"),
+		"and nothing of the tale has been told yet")
 	await _close(ui)
 	ui = _talk("old_calder")
 	await ticks(2)
-	check(ui.text_label.text.begins_with("Hold still, Brokenhorn."), "the first audience comes next")
+	check(ui.text_label.text.begins_with("Old Leadvoice's lass came up this way at the Melt."),
+		"then who came up the fell: not his lass calling the flock in, with the wall done and her beside him (%s)" % ui.text_label.text.left(40))
 	await _close(ui)
-	check(World.flag("ks_calder_met") and _lines_of("calder_boots") == _expected("calder_boots", 4), "and its line heads the thread again")
+	check(not World.flag("ks_calder_met") and World.flag("ks_calder_hum") and int(World.flag_val("chapter_old_calder", 0)) == 2,
+		"the first audience is passed over, the second told")
+	check(_lines_of("calder_boots") == _expected("calder_boots", 4).slice(1), "the thread holds what he did hear: three lines")
+	ui = _talk("old_calder")
+	await ticks(2)
+	check(ui.text_label.text.begins_with("Wall's done."), "and after it, the wall is done by dark")
+	await _close(ui)
+	# Sigga at the fold: her own words from the slope, and the fleece still to give
+	var sf := DB.npc("sigga_fold")
+	check(not bool(sf.get("mute", false)) and (sf.get("services", []) as Array).size() == 1
+			and String(sf["services"][0]["once_flag"]) == String(DB.npc("sigga")["services"][0]["once_flag"])
+			and String(sf["lines_first"][0]) in (DB.npc("sigga")["lines_repeat"] as Array),
+		"Sigga at the fold speaks, and gives the same one fleece")
+	World.flags.erase("got_fleece")
+	World.flags.erase("met_sigga_fold")
+	var had := int(player.inventory.get("armour_fleece", 0))
+	ui = _talk("sigga_fold")
+	await ticks(2)
+	check(ui != null and ui.text_label.text == "They come to a call. Dogs are for people who can't call.", "she can be spoken with there")
+	if ui != null:
+		var sids: Array = _service_ids(ui)
+		check(sids.has("give_fleece"), "and offers the spare fleece (%s)" % str(sids))
+		if sids.has("give_fleece"):
+			ui.choose(sids.find("give_fleece"))
+			await ticks(3)
+		check(int(player.inventory.get("armour_fleece", 0)) == had + 1 and World.flag("got_fleece"), "the fleece is given")
+		await _close(ui)
 	player.invulnerable = false

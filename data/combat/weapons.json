@@ -48,7 +48,8 @@
   "block": {
    "stab": 1.0,
    "chip": 0.25
-  }
+  },
+  "two_handed": true
  },
  "turf_spade": {
   "name": "Turf Spade",
@@ -209,7 +210,7 @@
  },
  "torch": {
   "name": "Torch",
-  "desc": "A pitch-soaked brand. Holds back the dark; does nothing to the cold.",
+  "desc": "A brand of birch bark and pitched rag on an ash haft, bound in iron wire. Every boat on the strand carries one for landing after dark. The thong at the butt is for hanging it in the bows, head down, so the rag keeps dry.",
   "class": "brand",
   "kit": "torch",
   "damage": 0,
@@ -229,7 +230,15 @@
    "stab": 0.3,
    "chip": 0.5
   },
-  "no_attack": true
+  "light": {
+   "light_range": 8.0,
+   "light_energy": 1.8,
+   "light_color": [
+    1.0,
+    0.72,
+    0.38
+   ]
+  }
  },
  "feast_cleaver": {
   "name": "Host's Carving Cleaver",

@@ -77,7 +77,7 @@ func _ready() -> void:
 	var tw := create_tween()
 	tw.tween_property(_vis, "scale", Vector3.ONE, 0.45).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	_burst(0.9)
-	AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -4.0, 0.5)
+	AudioDirector.play("boss/thorn_growth", global_position)
 
 ## Stems leaning and crossing, a dense core, a box collider per segment.
 func _build_run(run: Array) -> void:
@@ -117,6 +117,7 @@ func _build_run(run: Array) -> void:
 		cs.shape = bx
 		body.add_child(cs)
 		body.transform = Transform3D(cb, Vector3(mid.x, height * 0.5, mid.y))
+		Surfaces.stamp_kind(body, "thorn_wall")
 		add_child(body)
 		bodies.append(body)
 	# the modelled wall (tools/art/procedural/thorn_rime.py): two sections a

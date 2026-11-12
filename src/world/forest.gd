@@ -144,6 +144,7 @@ static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
 		cs.position = Vector3(0, 2.0, 0)
 		body.add_child(cs)
 		body.position = xf.origin
+		Surfaces.stamp_kind(body, "tree")
 		area.attach(body, "base")
 
 ## Chunked MultiMeshes of one mesh.
@@ -166,11 +167,16 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = mesh
 		mm.instance_count = list.size()
+		var local: Array[Transform3D] = []
 		for i in list.size():
 			var t2: Transform3D = list[i]
 			t2.origin -= c
 			mm.set_instance_transform(i, t2)
+			local.append(t2)
 		var mmi := MultiMeshInstance3D.new()
+		# the headless server keeps no instance buffer: the collision audit
+		# (tools/test/collision_audit_test.gd) reads the transforms from here
+		mmi.set_meta("instance_xfs", local)
 		var label := key
 		if key.begins_with("hero|"):
 			# keep the node names the primitives had (tests and tools find
@@ -409,6 +415,7 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			cs.shape = bx
 			body.add_child(cs)
 			body.transform = Transform3D(cb, Vector3(p0.x, y0 + h * 0.5, p0.y))
+			Surfaces.stamp_kind(body, "hedge")
 			area.attach(body, tag)
 	if hero_ok:
 		var names: Array = [hh[0]]

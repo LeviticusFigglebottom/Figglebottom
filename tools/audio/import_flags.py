@@ -28,6 +28,11 @@ def wanted():
     audio = json.load(open(os.path.join(ROOT, "data", "audio.json")))
     for e in audio.get("music", {}).values():
         out[e["path"]] = bool(e.get("loop", True))
+    # every ambience layer loops; the two state-wave bridges play once
+    rep = os.path.join(ROOT, "docs", "audio", "sfx_report.json")
+    if os.path.exists(rep):
+        for name, b in json.load(open(rep))["beds"].items():
+            out.setdefault(f"res://assets/audio/ambience/{name}.ogg", bool(b["loop"]))
     return out
 
 

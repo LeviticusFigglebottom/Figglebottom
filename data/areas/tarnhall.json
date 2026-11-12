@@ -1076,7 +1076,129 @@
     ],
     "seed_v": 2
    }
+  },
+  {
+   "script": "res://src/world/look_in.gd",
+   "at": [
+    190.0,
+    24.3,
+    -322.68
+   ],
+   "rot": 0,
+   "tag": "thaw",
+   "params": {
+    "prompt": "Look in",
+    "caption": "They are on the ninth verse. The high seat is empty.",
+    "seconds": 4.0,
+    "eye": [
+     0.0,
+     1.52,
+     0.12
+    ],
+    "look_at_local": [
+     3.5,
+     1.0,
+     -10.82
+    ]
+   }
+  },
+  {
+   "script": "res://src/world/look_in.gd",
+   "at": [
+    190.0,
+    24.3,
+    -322.68
+   ],
+   "rot": 0,
+   "tag": "rime",
+   "params": {
+    "prompt": "Look in",
+    "caption": "Everyone is sitting down. One man is on his feet, going along the table with a horn.",
+    "seconds": 4.0,
+    "eye": [
+     0.0,
+     1.52,
+     0.12
+    ],
+    "look_at_local": [
+     3.5,
+     1.0,
+     -10.82
+    ]
+   }
   }
+ ],
+ "wayside_clear": [
+  [
+   145.01,
+   -298.84,
+   19.0
+  ],
+  [
+   206.0,
+   -342.5,
+   11.0
+  ],
+  [
+   217.0,
+   -338.5,
+   5.0
+  ],
+  [
+   178.0,
+   -321.3,
+   3.4
+  ],
+  [
+   183.0,
+   -321.3,
+   3.4
+  ],
+  [
+   188.0,
+   -321.3,
+   3.4
+  ],
+  [
+   193.0,
+   -321.3,
+   3.4
+  ],
+  [
+   198.0,
+   -321.3,
+   3.4
+  ],
+  [
+   203.0,
+   -321.3,
+   3.4
+  ],
+  [
+   208.0,
+   -321.3,
+   3.4
+  ],
+  [
+   213.0,
+   -321.3,
+   3.4
+  ],
+  [
+   218.0,
+   -321.3,
+   3.4
+  ],
+  [
+   223.0,
+   -321.3,
+   3.4
+  ],
+  [
+   228.0,
+   -321.3,
+   3.4
+  ]
  ],
  "hazards": [
   {
@@ -2149,6 +2271,35 @@
    "mat": "M_ice_sheet",
    "tag": "rime",
    "collide": false
+  },
+  {
+   "min": [
+    197.7,
+    20.6,
+    -347.45
+   ],
+   "max": [
+    214.3,
+    24.28,
+    -347.02
+   ],
+   "mat": "M_drystone",
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "min": [
+    198.0,
+    24.0,
+    -347.1
+   ],
+   "max": [
+    214.0,
+    24.85,
+    -346.6
+   ],
+   "mat": "M_drystone",
+   "tag": "base"
   }
  ],
  "blockers": [
@@ -4840,6 +4991,357 @@
    ],
    "rot": 20,
    "collide": false
+  },
+  {
+   "kit": "boat",
+   "at": [
+    149.07,
+    21.88,
+    -319.69
+   ],
+   "rot": -79.0,
+   "tag": "thaw",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    149.07,
+    21.5,
+    -319.69
+   ],
+   "rot": -79.0,
+   "tag": "rime",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    148.28,
+    21.88,
+    -313.75
+   ],
+   "rot": -79.0,
+   "tag": "thaw",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    148.28,
+    21.5,
+    -313.75
+   ],
+   "rot": -79.0,
+   "tag": "rime",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    148.72,
+    21.88,
+    -307.7
+   ],
+   "rot": -66.0,
+   "tag": "thaw",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    148.72,
+    21.5,
+    -307.7
+   ],
+   "rot": -66.0,
+   "tag": "rime",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    151.62,
+    21.88,
+    -302.51
+   ],
+   "rot": -61.0,
+   "tag": "thaw",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    151.62,
+    21.5,
+    -302.51
+   ],
+   "rot": -61.0,
+   "tag": "rime",
+   "embed": true
+  },
+  {
+   "kit": "th_boat_oars",
+   "at": [
+    151.62,
+    22.38,
+    -302.51
+   ],
+   "rot": -61.0,
+   "tag": "thaw",
+   "collide": false,
+   "on": "boat"
+  },
+  {
+   "kit": "th_boat_oars",
+   "at": [
+    151.62,
+    22.0,
+    -302.51
+   ],
+   "rot": -61.0,
+   "tag": "rime",
+   "collide": false,
+   "on": "boat"
+  },
+  {
+   "kit": "boat",
+   "at": [
+    156.93,
+    21.88,
+    -299.07
+   ],
+   "rot": -57.0,
+   "tag": "thaw",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    156.93,
+    21.5,
+    -299.07
+   ],
+   "rot": -57.0,
+   "tag": "rime",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    163.44,
+    21.88,
+    -297.5
+   ],
+   "rot": -42.0,
+   "tag": "thaw",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    163.44,
+    21.5,
+    -297.5
+   ],
+   "rot": -42.0,
+   "tag": "rime",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    169.71,
+    21.88,
+    -297.05
+   ],
+   "rot": -42.0,
+   "tag": "thaw",
+   "embed": true
+  },
+  {
+   "kit": "boat",
+   "at": [
+    169.71,
+    21.5,
+    -297.05
+   ],
+   "rot": -42.0,
+   "tag": "rime",
+   "embed": true
+  },
+  {
+   "kit": "th_oar_stand",
+   "at": [
+    138.98,
+    24.23,
+    -322.63
+   ],
+   "rot": 93.5,
+   "tag": "base"
+  },
+  {
+   "kit": "rope_coil",
+   "at": [
+    140.04,
+    24.14,
+    -307.95
+   ],
+   "rot": 124.5,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "rope_coil",
+   "at": [
+    154.07,
+    24.09,
+    -293.08
+   ],
+   "rot": 61.5,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "plaque",
+   "at": [
+    139.11,
+    24.27,
+    -299.82
+   ],
+   "rot": 125.51,
+   "tag": "thaw"
+  },
+  {
+   "kit": "th_horn_rack",
+   "at": [
+    179.76,
+    24.5,
+    -333.3
+   ],
+   "rot": -90,
+   "tag": "base",
+   "collide": false,
+   "on": "wall"
+  },
+  {
+   "kit": "th_hanging",
+   "at": [
+    179.76,
+    25.0,
+    -324.6
+   ],
+   "rot": -90,
+   "tag": "base",
+   "collide": false,
+   "on": "wall"
+  },
+  {
+   "kit": "th_ale_vat",
+   "at": [
+    206.0,
+    24.3,
+    -343.7
+   ],
+   "rot": 180,
+   "tag": "base"
+  },
+  {
+   "kit": "th_spit",
+   "at": [
+    201.4,
+    24.3,
+    -344.5
+   ],
+   "rot": 0,
+   "tag": "base"
+  },
+  {
+   "kit": "hearth_fire",
+   "at": [
+    201.4,
+    24.42,
+    -344.5
+   ],
+   "rot": 90,
+   "tag": "thaw",
+   "collide": false,
+   "embed": true,
+   "on": "spit",
+   "scale": 0.8
+  },
+  {
+   "kit": "th_bake_oven",
+   "at": [
+    211.8,
+    24.3,
+    -344.9
+   ],
+   "rot": 180,
+   "tag": "base"
+  },
+  {
+   "kit": "th_carving_frame",
+   "at": [
+    199.6,
+    24.3,
+    -341.3
+   ],
+   "rot": 90,
+   "tag": "base"
+  },
+  {
+   "kit": "th_trestles",
+   "at": [
+    207.6,
+    24.3,
+    -341.0
+   ],
+   "rot": 0,
+   "tag": "base"
+  },
+  {
+   "kit": "th_ale_tub",
+   "at": [
+    208.6,
+    24.3,
+    -344.6
+   ],
+   "rot": 30,
+   "tag": "base"
+  },
+  {
+   "kit": "th_horn_window",
+   "at": [
+    190.0,
+    25.55,
+    -322.78
+   ],
+   "rot": 0,
+   "tag": "base",
+   "collide": false,
+   "on": "wall"
+  },
+  {
+   "kit": "th_pail",
+   "at": [
+    190.35,
+    24.3,
+    -322.36
+   ],
+   "rot": 20,
+   "tag": "base",
+   "collide": false
+  },
+  {
+   "kit": "th_rush_bundles",
+   "at": [
+    186.9,
+    24.3,
+    -322.03
+   ],
+   "rot": 90,
+   "tag": "base"
   }
  ],
  "landmarks": [
@@ -4860,6 +5362,48 @@
     -333.5
    ],
    "rot": -90
+  },
+  {
+   "scene": "res://assets/models/props/hall_coat.tscn",
+   "at": [
+    179.64,
+    24.5,
+    -326.7
+   ],
+   "rot": -90,
+   "tag": "thaw"
+  },
+  {
+   "scene": "res://assets/models/props/hall_coat.tscn",
+   "at": [
+    179.64,
+    24.5,
+    -326.1
+   ],
+   "rot": -90,
+   "tag": "thaw"
+  },
+  {
+   "scene": "res://assets/models/props/ottar_stick.tscn",
+   "at": [
+    179.46,
+    24.5,
+    -331.5
+   ],
+   "rot": -90,
+   "tilt": -11.0,
+   "tag": "thaw"
+  },
+  {
+   "scene": "res://assets/models/props/ottar_stick.tscn",
+   "at": [
+    179.46,
+    24.5,
+    -331.75
+   ],
+   "rot": -65,
+   "tilt": -11.0,
+   "tag": "thaw"
   }
  ],
  "gates": [
@@ -5114,6 +5658,28 @@
    "face": 0,
    "pose": "sit_feast",
    "absent_flag": "ks_host_released"
+  },
+  {
+   "enemy": "cupbearer",
+   "stand_in": "keener",
+   "id": "cupbearer_vat_a",
+   "at": [
+    204.0,
+    24.4,
+    -343.5
+   ],
+   "face": 270
+  },
+  {
+   "enemy": "cupbearer",
+   "stand_in": "keener",
+   "id": "cupbearer_vat_b",
+   "at": [
+    208.0,
+    24.4,
+    -343.3
+   ],
+   "face": 90
   }
  ],
  "frost_veils": [
@@ -5148,6 +5714,46 @@
    ],
    "rot": 270,
    "tag": "thaw"
+  },
+  {
+   "id": "landing_guest_a",
+   "at": [
+    143.29,
+    24.07,
+    -297.89
+   ],
+   "rot": 64.42,
+   "tag": "thaw"
+  },
+  {
+   "id": "landing_guest_b",
+   "at": [
+    141.46,
+    24.14,
+    -298.77
+   ],
+   "rot": -115.58,
+   "tag": "thaw"
+  },
+  {
+   "id": "cook_a",
+   "at": [
+    204.5,
+    24.3,
+    -342.8
+   ],
+   "rot": -59.04,
+   "tag": "thaw"
+  },
+  {
+   "id": "cook_b",
+   "at": [
+    206.2,
+    24.3,
+    -342.0
+   ],
+   "rot": 6.71,
+   "tag": "thaw"
   }
  ],
  "plaques": [
@@ -5159,6 +5765,17 @@
    ],
    "rot": 230,
    "text": "TARNHALL\n\nSeven neighbourhoods came up the water every Long Light to feast here."
+  },
+  {
+   "wayside": false,
+   "at": [
+    139.11,
+    24.27,
+    -299.82
+   ],
+   "rot": 125.50999999999999,
+   "tag": "rime",
+   "text": "THE TARN CAUSEWAY\n\nSeven boats. One was left ready to go, with the oars in.\nNobody came back down for any of them."
   }
  ],
  "pickups": [
@@ -5261,6 +5878,33 @@
    "tag": "rime",
    "scene": "res://assets/models/props/latch_wool.tscn",
    "label": "Take the wool off the latch"
+  },
+  {
+   "wayside": false,
+   "id": "rowan_stick",
+   "at": [
+    179.0,
+    24.5,
+    -330.4
+   ],
+   "item": "item_rowan_stick",
+   "tag": "rime",
+   "scene": "res://assets/models/props/rowan_stick.tscn",
+   "label": "Take the stick"
+  },
+  {
+   "wayside": false,
+   "id": "vat_dipper",
+   "at": [
+    206.2,
+    24.3,
+    -342.45
+   ],
+   "lift": 1.2,
+   "item": "item_vat_dipper",
+   "tag": "rime",
+   "scene": "res://assets/models/props/vat_dipper.tscn",
+   "label": "Take the dipper"
   }
  ],
  "portals": [

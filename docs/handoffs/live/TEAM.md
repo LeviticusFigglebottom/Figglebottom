@@ -31,7 +31,7 @@ Ownership avoids merge fights. Ask the lead before crossing a line.
 - **Branches:** work on your own branch, based on `origin/main` (or the branch the lead names). Never push to `main`; the lead merges.
 - **Before every commit:** run `tools/check_originality.sh --all`.
 - **Commits:** small and imperative, with the trailers your session was given.
-- **Tests:** run the suites you touch, plus `smoke`. The full suite runs in GitHub CI on every push to `feat/**`, `fix/**` and `art/**`. Check it with `gh api repos/LeviticusFigglebottom/Figglebottom/actions/runs?branch=<branch>`.
+- **Tests:** run the suites you touch, plus `smoke`, locally. **GitHub CI runs on `main` only** (per-branch runs burned thousands of Actions minutes); the long full-game walks run only on demand. Before the lead merges a branch, the GPU worker or the lead runs the full suite on it.
 - **Visual work:** look at your own screenshots before reporting. Renders here are software (lavapipe), so keep them at 1280x720.
 - **Writing:** it must meet `docs/lore/WRITING.md`.
 - **Money:** only the lead spends Tripo credits.

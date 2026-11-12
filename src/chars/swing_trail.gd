@@ -4,7 +4,7 @@ extends MeshInstance3D
 ## frame and stitched into a short-lived Catmull-Rom subdivided ribbon —
 ## the actual arc the swing swept, fading along its length.
 
-const LIFE := 0.15          # seconds of arc kept behind the blade
+var life := 0.15           # seconds of arc kept behind the blade
 var base_up := 0.12         # sample points along the blade (+Y from grip)
 var tip_up := 1.08
 const SUBDIV := 3
@@ -57,9 +57,21 @@ func _sample(dt: float, xf: Transform3D) -> void:
 	global_transform = Transform3D.IDENTITY
 	_pts.push_front({"b": xf * Vector3(0, base_up, 0),
 			"t": xf * Vector3(0, tip_up, 0), "at": _clock})
-	while _pts.size() > 2 and _clock - float(_pts[_pts.size() - 1]["at"]) > LIFE:
+	while _pts.size() > 2 and _clock - float(_pts[_pts.size() - 1]["at"]) > life:
 		_pts.pop_back()
 	_dirty = true
+
+## Per-weapon look (clip_meta weapons.<kit>): trail_tint [r,g,b],
+## trail_life (s), trail_energy, and trail_style "ember" for a brand, whose
+## swing leaves fire and sparks in the air where steel leaves a pale cut.
+func configure(cfg: Dictionary) -> void:
+	var m := material_override as ShaderMaterial
+	var tint: Array = cfg.get("trail_tint", [0.96, 0.91, 0.80])
+	m.set_shader_parameter("tint", Color(tint[0], tint[1], tint[2]))
+	m.set_shader_parameter("energy", float(cfg.get("trail_energy", 0.6)))
+	m.set_shader_parameter("ember", 1.0 if String(cfg.get("trail_style", "")) == "ember" else 0.0)
+	m.set_shader_parameter("weight", float(cfg.get("trail_weight", 1.0)))
+	life = float(cfg.get("trail_life", 0.15))
 
 static func _catmull_rom(p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, t: float) -> Vector3:
 	var t2 := t * t

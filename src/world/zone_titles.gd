@@ -11,6 +11,10 @@ var _t := 0.0
 var _pending := ""
 
 func _process(dt: float) -> void:
+	# the intro moves the Bearer about a place he has not yet walked into:
+	# nothing is named, or counted as seen, until it hands him over
+	if IntroDirector.active != null and not IntroDirector.active.done:
+		return
 	_t += dt
 	if _pending != "" and _t >= 0.0:
 		Game.area_title.emit(_pending)

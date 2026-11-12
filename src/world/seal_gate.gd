@@ -23,5 +23,5 @@ func _physics_process(_dt: float) -> void:
 	World.set_flag(target)
 	World.save_game()
 	Game.toast.emit(notice)
-	AudioDirector.sfx("res://assets/audio/swell_warm.wav", -4.0, 0.7)
+	AudioDirector.play("world/gate_open", global_position)
 	_done = true

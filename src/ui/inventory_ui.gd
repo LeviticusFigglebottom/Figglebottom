@@ -1,9 +1,10 @@
 class_name InventoryUI
 extends CanvasLayer
-## The Pack — Tab opens it (J opens it at the Keepsakes). Its leaves come
-## from the registry below: the PACK (arms and relics; drag or click an arm
-## onto a hand-slot 1-5), the SONGS (known songs; click or drop one to
-## attune it to X), the KEEPSAKES (the journal). Fully mouse-driven — click
+## The Pack — Tab opens it (J opens it at the Journal, M at the Map). Its
+## leaves come from the registry below: the PACK (arms and relics; drag or
+## click an arm onto a hand-slot 1-5), the SONGS (known songs; click or drop
+## one to attune it to X), the ARMOUR, the JOURNAL (the quest log) and the
+## MAP. Fully mouse-driven — click
 ## rows, click slots, or drag between them — with W/S + 1-5 + A/D still live.
 
 const GOLD := UITheme.EMBER_HOT
@@ -15,16 +16,23 @@ const DIM := UITheme.BONE_DIM
 ## fill(ui) lists the leaf's rows; `footer` is "hand" (the belt rail),
 ## "attune" (the X slot) or "" (none). A new leaf is one register_leaf()
 ## call (or one line here) plus its fill; nothing else in this file changes.
+## A script leaf may also have static input(ui, event) -> bool (keys it takes
+## for itself) and static act(ui, row) (Enter or a click on one of its rows).
 static var LEAVES: Array = [
-	{"key": "pack", "title": "The Pack", "fill": "_fill_pack", "footer": "hand",
+	{"key": "pack", "title": "Pack", "fill": "_fill_pack", "footer": "hand",
 	 "hint": "A/D  leaf      W/S  choose      1-5 or drag  set the arm in that hand-slot      Tab  close"},
-	{"key": "songs", "title": "The Songs", "fill": "_fill_songs", "footer": "attune",
+	{"key": "songs", "title": "Songs", "fill": "_fill_songs", "footer": "attune",
 	 "hint": "A/D  leaf      W/S  choose      Enter, click or drag  attune the song to X      Tab  close"},
-	{"key": "armour", "title": "The Armour", "fill": "_fill_armour", "footer": "armour",
+	{"key": "armour", "title": "Armour", "fill": "_fill_armour", "footer": "armour",
 	 "hint": "A/D  leaf      W/S  choose      Enter, click or drag  wear it (again to take it off)      1-4  that slot      Tab  close"},
-	{"key": "keepsakes", "title": "Keepsakes", "fill": "res://src/ui/pack/keepsakes_leaf.gd", "footer": "",
-	 "hint": "A/D  leaf      W/S  read on      Tab or J  close"},
+	{"key": "journal", "title": "Journal", "fill": "res://src/ui/pack/journal_leaf.gd", "footer": "",
+	 "hint": "A/D  leaf      W/S  choose      Enter or click  pin a thread to the HUD and the Map      J  close"},
+	{"key": "map", "title": "Map", "fill": "res://src/ui/pack/map_leaf.gd", "footer": "",
+	 "hint": "A/D  leaf      Enter or click  the highland / one region      W/S  next region      M  close"},
 ]
+
+## Old names for leaves, so a caller (or a saved habit) still lands.
+const LEAF_ALIAS := {"keepsakes": "journal"}
 
 static func register_leaf(def: Dictionary, before := "") -> void:
 	for l in LEAVES:
@@ -39,7 +47,7 @@ static func register_leaf(def: Dictionary, before := "") -> void:
 var player: Node
 var _scroll: ScrollContainer
 var _list: VBoxContainer
-var _tab := "pack"           # "pack" | "songs"
+var _tab := "pack"           # a LEAVES key
 var _tab_btns := {}
 var _slots: Array = []          # hand-slot drop targets (pack)
 var _attune_slot: Panel = null  # the X-song drop target (songs)
@@ -59,7 +67,7 @@ var _frule: ColorRect = null
 
 func _init(p, leaf := "pack") -> void:
 	player = p
-	_first_leaf = leaf
+	_first_leaf = String(LEAF_ALIAS.get(leaf, leaf))
 
 func _ready() -> void:
 	layer = 22
@@ -68,6 +76,7 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	var root := Control.new()
 	root.theme = UITheme.theme()
+	root.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS   # 256 px icons, shown small
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var dim := ColorRect.new()
@@ -86,7 +95,7 @@ func _ready() -> void:
 
 	# ---- tab bar: one tab per registered leaf
 	for i in LEAVES.size():
-		_add_tab(panel, String(LEAVES[i]["key"]), String(LEAVES[i]["title"]), 44 + i * 232)
+		_add_tab(panel, String(LEAVES[i]["key"]), String(LEAVES[i]["title"]), 44 + i * (952.0 / LEAVES.size()))
 	var rule := ColorRect.new()
 	rule.color = Color(UITheme.EMBER, 0.55)
 	rule.position = Vector2(44, 84); rule.size = Vector2(952, 1)
@@ -121,7 +130,7 @@ func _ready() -> void:
 	panel.add_child(KnotFrame.new())
 
 	_show_tab(_first_leaf if not _leaf(_first_leaf).is_empty() else "pack")
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("ui/open")
 
 # ------------------------------------------------------------------ tabs
 
@@ -129,7 +138,7 @@ func _add_tab(panel: Panel, key: String, text: String, x: float) -> void:
 	var b := Button.new()
 	b.text = text
 	b.flat = true
-	b.position = Vector2(x, 30); b.size = Vector2(220, 46)
+	b.position = Vector2(x, 30); b.size = Vector2(952.0 / LEAVES.size() - 12, 46)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.focus_mode = Control.FOCUS_NONE
 	b.add_theme_font_override("font", UITheme.font("caps"))
@@ -167,7 +176,7 @@ func _show_tab(key: String) -> void:
 	_rebuild_list()
 	var footer := String(leaf.get("footer", ""))
 	# a leaf with no footer reads on down to the hint line
-	_scroll.size.y = 512.0 if footer != "" else 640.0
+	_scroll.size.y = 512.0 if footer != "" else 604.0
 	if _frule != null: _frule.visible = footer != ""
 	for s in _slots:
 		(s["panel"] as Control).visible = (footer == "hand")
@@ -255,7 +264,7 @@ func _row(id: String, kind: String, icon_path: String, nm: String, tag: String, 
 	row.add_theme_constant_override("separation", 16)
 	pc.add_child(row)
 	var icon := TextureRect.new()
-	icon.custom_minimum_size = Vector2(52, 52)
+	icon.custom_minimum_size = Vector2(64, 64)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -289,7 +298,7 @@ func _relic_row(icon_path: String, nm: String, tag: String, desc: String) -> voi
 	row.add_theme_constant_override("separation", 16)
 	pc.add_child(row)
 	var icon := TextureRect.new()
-	icon.custom_minimum_size = Vector2(52, 52)
+	icon.custom_minimum_size = Vector2(64, 64)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	if ResourceLoader.exists(icon_path): icon.texture = load(icon_path)
@@ -335,10 +344,18 @@ func _act_selected() -> void:
 	if r["kind"] == "song":
 		player.attune_song(r["id"])
 		Game.toast.emit("%s is attuned. Cast with X." % _name_of(r["id"]))
-		AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+		AudioDirector.play("ui/confirm")
 		_rebuild_list()
 	elif r["kind"] == "armour":
 		_toggle_armour(r["id"])
+	else:
+		var sc := _leaf_script()
+		if sc != null and sc.has_method("act"):
+			sc.act(self, r)
+
+func _leaf_script() -> Script:
+	var fill := String(_leaf(_tab).get("fill", ""))
+	return load(fill) as Script if fill.begins_with("res://") else null
 
 # ------------------------------------------------------------------ hand rail
 
@@ -392,7 +409,7 @@ func _bind_hand(i: int, id: String) -> void:
 	player.set_hotbar_slot(i, id)
 	_refresh_hand()
 	Game.toast.emit("%s rides in slot %d." % [_name_of(id), i + 1])
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("foley/equip")
 
 # ------------------------------------------------------------------ attune slot
 
@@ -420,7 +437,7 @@ func _can_drop_attune(_at, data) -> bool:
 func _drop_attune(_at, data) -> void:
 	player.attune_song(data["id"])
 	Game.toast.emit("%s is attuned. Cast with X." % _name_of(data["id"]))
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("ui/deny")
 	_rebuild_list()
 
 # ------------------------------------------------------------------ armour leaf
@@ -521,7 +538,7 @@ func _wear(slot: String, id: String) -> void:
 		Game.toast.emit("That is not worn on the %s." % slot)
 		return
 	Game.toast.emit(("%s is worn." % _name_of(id)) if id != "" else ("The %s is bare." % slot))
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -8.0)
+	AudioDirector.play("foley/equip")
 	_refresh_armour()
 	var keep := _sel
 	_rebuild_list()
@@ -574,18 +591,24 @@ func _drag_row(_at, ctrl: Control, id: String, kind: String) -> Variant:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("inventory") or event.is_action_pressed("ui_cancel") \
-			or (event.is_action_pressed("keepsakes") and _tab == "keepsakes"):
+			or (event.is_action_pressed("keepsakes") and _tab == "journal") \
+			or (event.is_action_pressed("map") and _tab == "map"):
 		close(); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("keepsakes"):
-		_show_tab("keepsakes"); get_viewport().set_input_as_handled(); return
+		_show_tab("journal"); get_viewport().set_input_as_handled(); return
+	if event.is_action_pressed("map"):
+		_show_tab("map"); get_viewport().set_input_as_handled(); return
+	var sc := _leaf_script()
+	if sc != null and sc.has_method("input") and sc.input(self, event):
+		get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("move_left"):
 		_leaf_step(-1); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("move_right"):
 		_leaf_step(1); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("move_forward"):
-		_sel = maxi(_sel - 1, 0); _mark_selected(); _scroll.scroll_vertical -= 56; return
+		_sel = maxi(_sel - 1, 0); _mark_selected(); AudioDirector.play("ui/move"); _scroll.scroll_vertical -= 56; return
 	if event.is_action_pressed("move_back"):
-		_sel = clampi(_sel + 1, 0, maxi(_rows.size() - 1, 0)); _mark_selected(); _scroll.scroll_vertical += 56; return
+		_sel = clampi(_sel + 1, 0, maxi(_rows.size() - 1, 0)); _mark_selected(); AudioDirector.play("ui/move"); _scroll.scroll_vertical += 56; return
 	if event.is_action_pressed("interact") and _sel < _rows.size():
 		_act_selected(); get_viewport().set_input_as_handled(); return
 	if _tab == "armour":
@@ -614,34 +637,7 @@ func _name_of(id: String) -> String:
 	return String(id).capitalize()
 
 func _icon_for(id: String) -> String:
-	var by := {
-		"hewing_blade": "hewing_blade", "spear": "spear", "bow": "bow",
-		"greatblade": "greatblade", "maul": "maul", "torch": "torch",
-		"arrows": "arrows", "gourd": "gourd", "deep_gourd": "gourd", "bog_iron": "bog_iron",
-		"mend": "song", "ember_throw": "song", "hearth_shout": "song",
-		"long_note": "song", "warding_hum": "song",
-		"item_rye_sack": "rye_sack", "item_net_float": "net_float",
-		"item_mending_needle": "needle", "ks_child_mask": "mask",
-		"fostering_horn": "crest",
-		"armour_traveller_coat": "armour_coat", "armour_saltfell_oilskins": "armour_oilskins",
-		# the Lowe and Kettle Fjord
-		"turf_spade": "turf_spade", "ice_auger": "ice_auger", "sealer_harpoon": "harpoon",
-		"turf_song": "song", "armour_barrow_cloak": "armour_cloak", "armour_icefur": "armour_icefur",
-		"item_tally_stick": "tally", "item_twin_spindles": "spindles", "item_orm_cord": "knot_cord",
-		"item_halla_cord": "knot_cord", "item_hesk_tongs": "tongs", "ks_woad_thread": "woad_thread",
-		"item_ivo_mitten": "mitten", "item_kettle_ladle": "ladle",
-		# Tarnhall
-		"feast_cleaver": "cleaver", "goat_song": "song", "item_host_cup": "host_cup",
-		"item_guest_tally": "guest_tally", "item_ottar_staff": "stick", "item_barrel_head": "barrel_head",
-		# Thornwold
-		"hedging_bill": "bill", "item_song_cord": "song_cord", "item_birch_ring": "birch_ring",
-		"item_knucklebone": "knucklebone", "armour_collier": "armour_collier",
-		# Shepherd's Reach, the Coldwell, and the pieces on the way up
-		"item_fold_tally": "fold_tally", "item_calder_boots": "boots", "item_shepherd_whistle": "whistle",
-		"armour_fleece": "armour_fleece", "armour_hall": "armour_hall", "item_latch_wool": "latch_wool", "item_wren_band": "woad_band",
-		"item_maren_mask": "bare_mask",
-	}
-	return "res://assets/ui/icons/%s.png" % by.get(id, "relic")
+	return UIIcons.path_for(id)
 
 func _ls(size: int, color: Color, weight := "regular") -> LabelSettings:
 	return UITheme.ls(size, color, weight, false)
@@ -651,7 +647,7 @@ func close() -> void:
 		player.lock_control(false)
 		player.suppress_interact(10)
 		Input.mouse_mode = Input.MOUSE_MODE_CONFINED_HIDDEN if player.look_compat else Input.MOUSE_MODE_CAPTURED
-	AudioDirector.sfx("res://assets/audio/ui_tick.wav", -10.0)
+	AudioDirector.play("ui/close")
 	remove_from_group("inventory_ui")
 	if player != null and is_instance_valid(player) and player.has_method("refresh_outfit"):
 		player.refresh_outfit()   # the Pack is shut: he is wearing what was chosen

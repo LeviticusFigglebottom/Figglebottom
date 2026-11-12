@@ -50,6 +50,12 @@ def edge_z(x):
     return L.fjord_z(x) + L.fjord_half(x) - L.shelf_width(x)
 
 
+def north_wl(x):
+    """The north waterline (the foot of the far wall)."""
+    return L.fjord_z(x) - L.fjord_half(x)
+
+
+FAR_X0, FAR_X1 = L.FAR_LANDING      # the Far Landing's level ground (terrain_lowe)
 DECK = L.SHELF_Y + 0.32         # jetties and hut platforms: a natural step up off the shingle
 HOUSES, BUILDINGS, PROPS, BOXES, BLOCKERS, FLOORS = [], [], [], [], [], []
 
@@ -78,7 +84,8 @@ for spx, spw in L.SHELF_SPURS:
     zo = min(za, zb) - 7.0
     deck(xa - 1.2, za + 5.6, xa + 1.2, zo)          # out from the shelf
     deck(xa - 1.2, zo - 1.2, xb + 1.2, zo + 1.2)    # along, clear of the rock
-    deck(xb - 1.2, zo, xb + 1.2, zb + 5.6)          # back in to the shelf
+    # back in to the shelf (or onto the Dog Lines' spit, where that stands in the way)
+    deck(xb - 1.2, zo, xb + 1.2, zb + 5.6 - (L.DOG_SPIT[2] if L.DOG_SPIT[0] <= xb <= L.DOG_SPIT[1] else 0.0))
 
 # --- the fish-houses on stilts, between the spurs
 FISH = [(-48.0, 0.0), (-38.5, 6.0), (-29.0, -5.0)]
@@ -99,16 +106,16 @@ for i, (hx, yaw) in enumerate(FISH):
 
 # the trader's boat at the middle house, sail half furled (THAW)
 TRADER = (-38.5, edge_z(-38.5) - 14.0)
-PROPS.append({"kit": "boat", "at": [TRADER[0], 0.05, r2(TRADER[1])], "rot": 84, "tag": "thaw", "scale": [1.5, 1.4, 1.6], "embed": True})
+PROPS.append({"kit": "boat", "at": [TRADER[0], 0.05, r2(TRADER[1])], "rot": 84, "tag": "thaw", "scale": 1.5, "embed": True})
 BOXES.append({"min": [TRADER[0] - 0.1, 0.4, TRADER[1] - 0.1], "max": [TRADER[0] + 0.1, 8.5, TRADER[1] + 0.1],
               "mat": "M_wood", "collide": False, "tag": "thaw"})
 # boats on the water in THAW, frozen in the ice in RIME (they were leaving)
-for k, (bx, dz, rot) in enumerate([(-88, -10, 70), (-60, -16, 100), (-12, -12, 75), (2, -22, 110), (-100, -18, 60)]):
+for k, (bx, dz, rot) in enumerate([(-88, -10, 70), (-70, -14, 100), (-12, -12, 75), (2, -22, 110), (-100, -18, 60)]):
     bz = edge_z(bx) + dz
     PROPS.append({"kit": "boat", "at": [bx, 0.05, r2(bz)], "rot": rot, "tag": "thaw", "embed": True})
     PROPS.append({"kit": "boat", "at": [bx + 3, -1.0, r2(bz - 6)], "rot": rot + 25, "tag": "rime", "collide": False, "embed": True})
 # the fish-kettles on the shelf
-for (kx, dz) in [(-54, 6.0), (-22, 5.5), (-17, 6.0)]:
+for (kx, dz) in [(-54, 6.0), (-26.5, 5.5), (-9.5, 6.0)]:       # (clear of the Net-Cleft's mouths)
     PROPS.append({"kit": "fish_kettle", "at": at(kx, edge_z(kx) + dz), "rot": kx * 7 % 360})
 
 # --- RIME: the ice sheet, crevasses and thin ice
@@ -116,6 +123,13 @@ ICE = {"min": [-150.0, -0.6, -365.0], "max": [46.0, 0.05, -275.0]}
 BLOCKERS.append({"min": ICE["min"], "max": ICE["max"], "tag": "rime"})
 BOXES.append({"min": [ICE["min"][0], 0.02, ICE["min"][2]], "max": [ICE["max"][0], 0.07, ICE["max"][2]],
               "mat": "M_ice_sheet", "tag": "rime", "collide": False})
+
+
+def water_z(x):
+    """The south waterline as the AI sees it: the shelf's lip, or the lip of
+    the Dog Lines' spit where that is built out past it."""
+    x0, x1, out = L.DOG_SPIT
+    return edge_z(x) - (out if x0 - 4.0 <= x <= x1 + 4.0 else 0.0)
 
 
 def thaw_water_blockers():
@@ -130,7 +144,7 @@ def thaw_water_blockers():
     for a, b in zip(xs, xs[1:]):
         if b - a < 0.05:
             continue
-        zmax = min(edge_z(a), edge_z(b), edge_z((a + b) * 0.5)) + 1.0
+        zmax = min(water_z(a), water_z(b), water_z((a + b) * 0.5)) + 1.0
         for f in FLOORS:
             if f["min"][0] < b - 0.01 and f["max"][0] > a + 0.01:
                 zmax = min(zmax, f["min"][1] - 0.6)
@@ -143,7 +157,7 @@ HOLE = (22.0, r2(fz(22.0) + 2.0))
 THIN = [
     # crevasses: long cracks across the ice
     {"min": [-96.0, -1.0, r2(fz(-96) - 14)], "max": [-94.8, 0.8, r2(fz(-96) + 8)]},
-    {"min": [-64.0, -1.0, r2(fz(-64) - 3)], "max": [-50.0, 0.8, r2(fz(-64) - 1.8)]},
+    {"min": [-64.0, -1.0, r2(fz(-64) - 4.5)], "max": [-50.0, 0.8, r2(fz(-64) - 3.3)]},
     {"min": [-6.0, -1.0, r2(fz(-6) - 16)], "max": [-4.8, 0.8, r2(fz(-6) + 2)]},
     # the floe edge at the fjord mouth: the ice breaks up into open sea
     {"min": [-157.0, -1.0, -366.0], "max": [-149.0, 0.8, -274.0]},
@@ -222,7 +236,7 @@ FALLS.append({"pts": [[p[0], p[1] + 0.12, p[2]] for p in _st], "width": 2.8, "ta
 # --- the shelf: nets drying, fish racks, boats hauled up, rope and creels
 # (kept to the wall side so the shelf stays a walk; nothing on a jetty root,
 # a house walk, a hearth or where the foes stand)
-KEEP_CLEAR = [f["min"][0] for f in FLOORS] + [f["max"][0] for f in FLOORS] + [-104, -58, -52, -90, -12, -54, -22, -17]
+KEEP_CLEAR = [f["min"][0] for f in FLOORS] + [f["max"][0] for f in FLOORS] + [-104, -58, -52, -90, -12, -54, -26.5, -9.5]
 SHELF_KIT = ["net_frame", "drying_rack", "boat_upturned", "creel_stack", "net_frame", "rope_coil", "drying_rack", "creel_stack"]
 
 
@@ -237,7 +251,7 @@ def wall_foot(x):
 k = 0
 x = -124.0
 while x < 34.0:
-    if all(abs(x - c) > 4.0 for c in KEEP_CLEAR) and not (-80 < x < -64) and not (-26 < x < -10 and False):
+    if all(abs(x - c) > 4.0 for c in KEEP_CLEAR) and not (-80 < x < -64) and not (-27 < x < -9) and x > -114:
         kit = SHELF_KIT[k % len(SHELF_KIT)]
         zf = wall_foot(x)
         if zf - edge_z(x) > 7.5:
@@ -270,8 +284,8 @@ spawners = [
     {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_head", "at": [4.0, 0.15, r2(fz(4))], "face": 90},
     {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "fisher_road", "at": at(-100, -276, 0.1), "face": 200},
     # the pair in harness below Ivo's place, facing out toward the fjord head
-    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_a", "at": [-58.0, 0.15, r2(fz(-58) + 4)], "face": 60},
-    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_b", "at": [-56.5, 0.15, r2(fz(-56) + 5.5)], "face": 60},
+    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_a", "at": [-58.0, 0.15, r2(edge_z(-58) - 7.6)], "face": 60},
+    {"enemy": "sledge_dog", "stand_in": "hearthhound", "id": "dogs_b", "at": [-56.4, 0.15, r2(edge_z(-56.4) - 6.9)], "face": 60},
     {"enemy": "sealer", "stand_in": "oarsman", "id": "sealer_shelf", "at": SH(-12, 0.0), "face": 180},
     {"enemy": "sealer", "stand_in": "oarsman", "id": "sealer_jetty", "at": SH(-90, 0.0), "face": 90},
     # he kneels at the north rim of the hole, facing it and the way in
@@ -285,7 +299,7 @@ pickups = [
     # Ivo's supper: the pot on its hook in the westmost house, the ladle standing up in it
     {"id": "kettle_ladle", "at": [FH[0][0] + 0.6, DECK, r2(FH[0][1] - 1.0)], "item": "item_kettle_ladle", "tag": "rime",
      "label": "Take the ladle", "set_flag": "ks_ivo_supper"},
-    {"id": "north_shore_cache", "at": [-60.0, 0.06, r2(fz(-60) - L.fjord_half(-60) + 3.5)], "item": "bog_iron", "count": 2,
+    {"id": "north_shore_cache", "at": at(FAR_X1 - 1.6, north_wl(FAR_X1 - 1.6) - 1.4), "item": "bog_iron", "count": 2,
      "tag": "rime", "label": "Pry up what the ice holds"},
     # Halla's cord, tied round the mooring post at the middle house
     {"id": "halla_cord", "at": [TRADER[0] + 1.6, 0.06, r2(TRADER[1])], "item": "item_halla_cord", "tag": "rime",
@@ -330,6 +344,181 @@ npcs = [
     {"id": "halla", "at": SH(-41.0, -0.8), "rot": 140, "tag": "thaw"},
     {"id": "sten", "at": SH(-35.5, -1.2), "rot": 170, "tag": "thaw"},
 ]
+# --- points of interest (docs/lore/POI.md 4) -----------------------------------
+# Every place here is set by hand on ground the terrain generator widened for
+# it (terrain_lowe: ROAD_BAY, DOG_SPIT, the Net-Cleft, FAR_LANDING) or out on
+# the RIME ice; nothing stands on a jetty. "wayside": false keeps the wayside
+# dressing from gathering round them, WAYSIDE_CLEAR keeps it off their ground.
+PLAQUES, GATES, LANDMARKS, WAYSIDE_CLEAR = [], [], [], []
+POI = {"wayside": False}
+KIT_M = "res://assets/models/"
+
+
+def prop(kit, pos, rot=0.0, tag="base", **kw):
+    PROPS.append(dict({"kit": kit, "at": pos, "rot": r2(rot), "tag": tag}, **kw))
+
+
+def board(pos, rot, thaw=None, rime=None):
+    """One wayside board; its caption turns with the state."""
+    for tag, text in (("thaw", thaw), ("rime", rime)):
+        if text:
+            PLAQUES.append(dict(POI, at=pos, rot=rot, tag=tag, text=text))
+    other = "rime" if rime is None else ("thaw" if thaw is None else None)
+    if other:           # the board itself still stands in the state that has no caption
+        prop("plaque", pos, rot, tag=other)   # solid, as the board that reads is (LorePlaque)
+
+
+# 4.1 the Turn in the Road: a bay on the outside of the last bend
+BAY_X, BAY_Z, BAY_ALONG, BAY_OUT, _bay_y = L.road_bay()
+
+
+def bay(u, v, dy=0.0):
+    """A place in the bay: u metres down the road, v metres out from the bay's middle."""
+    return at(BAY_X + BAY_ALONG[0] * u + BAY_OUT[0] * v, BAY_Z + BAY_ALONG[1] * u + BAY_OUT[1] * v, dy)
+
+
+BAY_YAW = r2(math.degrees(math.atan2(BAY_OUT[0], BAY_OUT[1])))       # facing out of the bay, at the road
+TURN_BOARD = bay(-0.9, 0.9)
+board(TURN_BOARD, BAY_YAW,
+      thaw="THE KETTLE ROAD\n\nYou can smell the kettles from here.\nEvery boat on the water is coming in.",
+      rime="THE KETTLE ROAD\n\nAt the fjord head there is one round of black water with white round its edge.\nEverything else has skinned over.")
+place_poi = [
+    # a boulder to sit against, at the back of the bay
+    {"kind": "boulder", "at": bay(1.2, 1.5)[::2], "rot": 40, "scale": 0.8},
+    # the low kerb along the bay's mouth, downhill of the way in
+    {"kind": "stone_fence", "at": bay(1.6, -1.9)[::2], "rot": r2(BAY_YAW + 90), "scale": 0.45},
+]
+# bough markers down the road's outer edge, below the bend
+_b, _c = L.KETTLE_ROAD[L.ROAD_BAY_AT], L.KETTLE_ROAD[L.ROAD_BAY_AT + 1]
+for t in (0.3, 0.55, 0.8):
+    prop("kf_bough_markers", at(_b[0] + (_c[0] - _b[0]) * t + BAY_OUT[0] * 2.2, _b[1] + (_c[1] - _b[1]) * t + BAY_OUT[1] * 2.2),
+         t * 300, collide=False)
+WAYSIDE_CLEAR.append([r2(BAY_X), r2(BAY_Z), 6.0])
+
+# 4.2 the Dog Lines: the picket and its trough on the spit, off the walkway
+SPIT_X0, SPIT_X1, SPIT_OUT = L.DOG_SPIT
+
+
+def spit(x, d):
+    """A place on the spit, d metres south of the shelf's own waterline."""
+    return at(x, edge_z(x) + d)
+
+
+PICKET = spit(-57.0, 0.5)
+prop("kf_dog_picket", PICKET, 0)
+prop("kf_fish_cord", spit(-63.1, 1.2), 90)
+LANDMARKS.append({"scene": KIT_M + "landmarks/lm_sledge.glb", "at": spit(-55.4, 3.4), "rot": 70, "family": "M_wood",
+                  "blocker": [1.0, 0.8, 2.2]})
+# THAW: four of the six on their tethers (Ivo has two in harness, up by the kettle)
+for k, (dx, dz, yaw) in enumerate([(-1.5, -0.9, 200), (-0.5, 1.2, 20), (0.6, -1.0, 160), (1.5, 1.1, -30)]):
+    LANDMARKS.append({"scene": KIT_M + "enemies/sledge_dog.glb", "at": spit(-57.0 + dx, 0.5 + dz), "rot": yaw, "tag": "thaw",
+                      "pose": "walk@%.2f" % (0.1 + 0.2 * k)})
+POLE = dict(POI, id="sounding_pole", at=spit(-59.2, 0.9), item="item_sounding_pole", tag="rime",
+            label="Take the sounding pole", scene=KIT_M + "props/sounding_pole.tscn")
+WAYSIDE_CLEAR.append([(SPIT_X0 + SPIT_X1) * 0.5, r2(edge_z(-59) + 2.0), 8.0])
+
+# 4.3 the Net-Cleft: the way through the east spur, lashed shut from the east
+CLEFT_X = L.SHELF_SPURS[L.CLEFT_SPUR][0]
+CLEFT_ZC = (L.CLEFT_Z[0] + L.CLEFT_Z[1]) * 0.5
+CLEFT_W = L.CLEFT_Z[1] - L.CLEFT_Z[0]
+GATE_AT = at(CLEFT_X + 3.5, CLEFT_ZC)
+GATES.append({"id": "net_cleft", "at": GATE_AT, "rot": -90, "width": CLEFT_W, "leaf": "kf_net_hurdle",
+              "locked_prompt": "Lashed from the other side", "open_prompt": "Cut the lashing",
+              "open_toast": "The hurdle swings in."})
+CLEFT_CACHE = dict(POI, id="cleft_cache", at=at(CLEFT_X - 0.5, L.CLEFT_Z[1] - 0.45), item="bog_iron", count=2, tag="rime",
+                   label="Take the net-weights")
+# nets hung out of the wind along the walls (the way between them stays clear)
+prop("net_frame", at(CLEFT_X - 1.6, L.CLEFT_Z[1] + 0.15), 0, collide=False)
+prop("net_frame", at(CLEFT_X + 1.2, L.CLEFT_Z[0] - 0.15), 180, collide=False)
+prop("rope_coil", at(CLEFT_X - 3.0, L.CLEFT_Z[0] + 0.45), 30, collide=False)
+prop("kf_tool_rack", at(CLEFT_X - 6.6, L.CLEFT_Z[1] + 0.35), 0)
+WAYSIDE_CLEAR.append([CLEFT_X, CLEFT_ZC, 9.0])
+
+# 4.4 the Ice Camp: four huts, drawn up under the wall in THAW, out on the ice in RIME
+CAMP_THAW_X = [-126.2, -123.2, -120.2, -117.2]
+# two makes of hut (plank, and skin over bent poles; the second is modelled lengthwise)
+HUT_KIT = ["kf_ice_hut", "kf_ice_hut_b", "kf_ice_hut", "kf_ice_hut_b"]
+HUT_TURN = {"kf_ice_hut": 0.0, "kf_ice_hut_b": 90.0}
+for k, hx in enumerate(CAMP_THAW_X):
+    prop(HUT_KIT[k], at(hx, wall_foot(hx) + 0.3), [4, -3, 2, -5][k] + HUT_TURN[HUT_KIT[k]], tag="thaw")
+WAYSIDE_CLEAR.append([-121.7, r2(wall_foot(-121.7)), 8.0])
+CAMP = (-113.0, r2(fz(-113.0) - 5.0))      # 30 m north of the Landing Ice hearth, 12 m clear of the crevasse at x -96
+CAMP_R = 5.2
+ICE_Y = 0.07
+
+
+def camp(ang, r, dy=0.0):
+    a = math.radians(ang)
+    return [r2(CAMP[0] + r * math.sin(a)), r2(ICE_Y + dy), r2(CAMP[1] + r * math.cos(a))]
+
+
+CAMP_HUTS = [35.0, 125.0, 215.0, 305.0]
+BAND_HUT = 1                                # the hut with the madder band on its door
+for k, ang in enumerate(CAMP_HUTS):
+    prop(HUT_KIT[k], camp(ang, CAMP_R), ang + 180 + HUT_TURN[HUT_KIT[k]], tag="rime")     # doors to the middle
+# the camp's one fire, in the middle, the kettle still hung over it
+prop("kf_kettle_tripod", camp(0.0, 0.0), 40, tag="rime")
+# the band hangs on that hut's door, and the winder lies just inside it (taken at the door)
+prop("kf_door_band", camp(CAMP_HUTS[BAND_HUT], CAMP_R - 0.9, 0.75), CAMP_HUTS[BAND_HUT] + 180, tag="rime", collide=False, on=True)
+WINDER = dict(POI, id="line_winder", at=camp(CAMP_HUTS[BAND_HUT], CAMP_R - 1.5), item="item_line_winder", tag="rime",
+              label="Take the line-winder", scene=KIT_M + "props/line_winder.tscn")
+# five holes, skinned over: a tip-up at each, boughs ringing it
+CAMP_HOLES = [(80.0, 2.2), (170.0, 2.6), (260.0, 2.0), (350.0, 2.8), (215.0, 8.6)]
+for k, (ang, r) in enumerate(CAMP_HOLES):
+    hole = camp(ang, r)
+    prop("kf_jig_frame", hole, ang + 90 + 30 * k, tag="rime", collide=False)
+    for j in range(2):
+        a = math.radians(ang + 180 * j + 12)          # in line with the camp's middle: the fisher kneels to one side
+        prop("kf_bough_markers", [r2(hole[0] + 0.85 * math.sin(a)), ICE_Y, r2(hole[2] + 0.85 * math.cos(a))], 70 * j + k * 30,
+             tag="rime", collide=False, scale=0.8)
+WINDBREAK_ANG = 80.0
+prop("kf_windbreak", camp(WINDBREAK_ANG, CAMP_R + 0.6), WINDBREAK_ANG + 180, tag="rime")
+prop("kf_ice_blocks", camp(170.0, CAMP_R + 1.0), 20, tag="rime")
+prop("kf_ice_blocks", camp(262.0, CAMP_R + 0.4), 110, tag="rime")
+# two Ice-fishers at their holes; the Sealer behind the windbreak waits until one of them is struck
+CAMP_FOES = [
+    {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "camp_fisher_a", "at": camp(CAMP_HOLES[0][0] + 28, CAMP_HOLES[0][1], 0.08),
+     "face": r2(CAMP_HOLES[0][0] + 28 - 90), "pose": "kneel_fish"},
+    {"enemy": "ice_fisher", "stand_in": "rimewalker", "id": "camp_fisher_b", "at": camp(CAMP_HOLES[2][0] - 30, CAMP_HOLES[2][1], 0.08),
+     "face": r2(CAMP_HOLES[2][0] - 30 + 90), "pose": "kneel_fish"},
+    {"enemy": "sealer", "stand_in": "oarsman", "id": "camp_sealer", "at": camp(WINDBREAK_ANG, CAMP_R + 1.7, 0.08),
+     "face": r2(WINDBREAK_ANG + 180), "wakes_with": ["camp_fisher_a", "camp_fisher_b"]},
+]
+# loose floes keep off the camp
+place = [p for p in place if math.hypot(p["at"][0] - CAMP[0], p["at"][1] - CAMP[1]) > CAMP_R + 6.0]
+
+# 4.5 the Far Landing: the healer's house and her sledge, on the north shore
+FAR_Z = north_wl((FAR_X0 + FAR_X1) * 0.5)
+
+
+def far(x, d):
+    """A place on the landing, d metres out from the wall foot (negative: into the cut)."""
+    return at(x, north_wl(x) + d)
+
+
+HEALER = (FAR_X0 + 3.5, r2(FAR_Z + 0.2))
+HOUSES.append({"id": "healer_house", "center": [HEALER[0], HEALER[1]], "size": [6, 6], "yaw": 0, "y": g(HEALER[0], HEALER[1] + 2.0),
+               "doors": [], "gate_doors": [], "open": [], "wall_h": 2.6})
+BUILDINGS.append({"id": "healer_house", "center": [HEALER[0], HEALER[1]], "size": [6, 6], "yaw": 0, "y": L.SHELF_Y, "doors": [], "open": []})
+# her door, shut behind the sledge (the house has no way in)
+prop("door_leaf", [HEALER[0] + 0.6, g(HEALER[0], HEALER[1] + 3.3), r2(HEALER[1] + 3.24)], 0, collide=False)
+SLEDGE = far(FAR_X1 - 3.6, 2.2)
+LANDMARKS.append({"scene": KIT_M + "landmarks/lm_healer_sledge.glb", "at": SLEDGE, "rot": 25, "family": "M_wood",
+                  "blocker": [0.8, 0.7, 1.7]})
+PACK = dict(POI, id="healer_pack", at=[SLEDGE[0] - 0.9, SLEDGE[1], r2(SLEDGE[2] + 0.5)], item="item_healer_pack", tag="rime",
+            label="Unstrap the pack", scene=KIT_M + "props/healer_pack.tscn")
+board(far(FAR_X1 - 1.4, 3.2), 200,
+      rime="THE FAR LANDING\n\nThe healer's sledge is packed and the door is shut behind it.\nShe was waiting for the ice to be made.")
+WAYSIDE_CLEAR.append([(FAR_X0 + FAR_X1) * 0.5, r2(FAR_Z), 11.0])
+
+pickups += [POLE, CLEFT_CACHE, WINDER, PACK]
+spawners += CAMP_FOES
+place += place_poi
+for p in pickups:
+    if p["id"] == "north_shore_cache":
+        p.update(POI)
+# --- end of points of interest ------------------------------------------------
+
 portal = seam("kettle_fjord")
 arrive = seam("lowe_barrows")          # where the Lowe's side of the seam sets you down
 START = arrive["spawn"]
@@ -340,7 +529,8 @@ edges = {
     "nav_bounds": [-150, -368, 58, -236],
     "buildings": BUILDINGS, "thickets": [],
     "state_floors": FLOORS + [{"tag": "rime", "min": [ICE["min"][0], ICE["min"][2]], "max": [ICE["max"][0], ICE["max"][2]], "y": 0.05}],
-    "gates": [],
+    # (the Net-Cleft's hurdle bars a way that runs east-west)
+    "gates": [{"id": g_["id"], "at": g_["at"], "span": "z"} for g_ in GATES],
 }
 
 D = {
@@ -374,11 +564,15 @@ D = {
     "boxes": BOXES,
     "blockers": BLOCKERS,
     "props": PROPS,
+    "landmarks": LANDMARKS,
+    "gates": GATES,
+    "wayside_clear": WAYSIDE_CLEAR,
     "hearths": hearths,
     "spawners": spawners,
     "frost_veils": [{"id": "breathing_hole_veil", "at": VEIL, "rot": 0, "tag": "rime"}],
     "npcs": npcs,
-    "plaques": [{"at": SH(-108, 1.0), "rot": 160, "text": "KETTLE FJORD\n\nThe ice comes in the Hearth-months, and the fishing moves out onto it."}],
+    "plaques": [{"at": SH(-108, 1.0), "rot": 160, "text": "KETTLE FJORD\n\nThe ice comes in the Hearth-months, and the fishing moves out onto it."}]
+    + PLAQUES,
     "pickups": pickups,
     "portals": [portal, tarn_seam("kettle_fjord")],
     "scatter": {

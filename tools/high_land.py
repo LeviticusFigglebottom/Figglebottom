@@ -37,6 +37,33 @@ def beck_z(x):
     return -334.0 + 7.0 * math.sin(x * 0.03 + 0.6)
 
 
+# --- points of interest (docs/lore/POI.md 7): ground made for them -----------------
+# the Counting Stone: a level pad 5 x 4 m on the beck's south bank, 5 m short
+# of the plank bridge and 3 m west of the trod (cx, cz, half x, half z)
+COUNTING_PAD = (BRIDGE_X - 3.6, beck_z(BRIDGE_X) + 8.4, 2.5, 2.0)
+# the lower sheiling, now a house you can go into: its floor
+SHEILING_PAD = (SHEILINGS[0][0], SHEILINGS[0][1], 5.2, 3.2, SHEILINGS[0][2])
+# the Drift Lane: a walled lane 3 m wide from the beck's north bank up the
+# west edge of the slope to the fold wall, west of the trod the whole way
+DRIFT_LANE = [(607.0, -340.5), (615.0, -347.5), (625.0, -354.5), (636.0, -361.0), (645.0, -366.2)]
+LANE_HALF = 1.5
+# from the lane's head to the fold's gap: a ramp across the fold's bank (the
+# bank round the fold is too steep to walk anywhere but the trod)
+GAP_A = 135.0
+FOLD_GAP = (HIGH_FOLD[0] + FOLD_R * math.cos(math.radians(GAP_A)), HIGH_FOLD[1] + FOLD_R * math.sin(math.radians(GAP_A)))
+LANE_HEAD = [DRIFT_LANE[-1], (647.0, -364.5), (648.65, -362.8)]      # round the wall's foot, clear of the trod
+
+
+def lane_dist(x, z):
+    """(distance to the lane's centre line, the nearest point on it)."""
+    best = (1e9, DRIFT_LANE[0])
+    for (ax, az), (bx, bz) in zip(DRIFT_LANE, DRIFT_LANE[1:]):
+        d, t = _seg(x, z, ax, az, bx, bz)
+        if d < best[0]:
+            best = (d, (ax + (bx - ax) * t, az + (bz - az) * t))
+    return best
+
+
 # --- the Coldwell ---------------------------------------------------------------
 UPWATER = [(686.0, -382.0, 75.0), (712.0, -392.0, 82.0), (738.0, -402.0, 90.0), (764.0, -418.0, 100.0),
            (788.0, -438.0, 110.0), (810.0, -456.0, 120.0), (834.0, -468.0, 131.0), (860.0, -474.0, 142.0),
@@ -46,6 +73,52 @@ RING_R = 10.0
 WELL_Y = 157.0
 RIVER_OFF = 7.5            # the frozen river runs this far out from the path, on the downhill side
 PATH_HALF = 3.0
+# ledges cut beside the Upwater for its places (docs/lore/POI.md 8, 9): the
+# leg of UPWATER, how far along it (0..1), metres along the path, metres out
+# from the path's edge, and the side (+1 uphill into the bank, -1 downhill
+# onto the shoulder). Each is level with the path where it leaves it.
+LEDGES = {
+    "flower_bank": (1, 0.93, 6.0, 3.0, 1),
+    "stick_shelter": (4, 0.80, 8.0, 5.0, 1),
+    "sitting_place": (8, 0.63, 6.0, 4.0, -1),
+}
+LEDGE_EASE = 1.6           # a ledge's ends ease into the path's own climb over this
+
+
+def ledge_frame(name):
+    """(centre x, centre z, along (x, z), out (x, z), y) of a ledge: `out`
+    points away from the path, the centre is the middle of its level ground."""
+    i, f, _along, depth, side = LEDGES[name]
+    ax, az, ay = UPWATER[i]
+    bx, bz, by = UPWATER[i + 1]
+    ln = math.hypot(bx - ax, bz - az)
+    ux, uz = (bx - ax) / ln, (bz - az) / ln
+    ox, oz = uz * side, -ux * side            # (uz, -ux) is the uphill side
+    px, pz = ax + (bx - ax) * f, az + (bz - az) * f
+    mid = PATH_HALF + depth * 0.5
+    # level with the path as it lies there (the wellhead's flat lifts the last rise)
+    return px + ox * mid, pz + oz * mid, (ux, uz), (ox, oz), cold_land(px, pz, 0.0, ledges=False)
+
+
+_LEDGES = None
+
+
+def _ledges(x, z, land):
+    global _LEDGES
+    if _LEDGES is None:
+        _LEDGES = {n: ledge_frame(n) for n in LEDGES}
+    for n, (cx, cz, al, out, y) in _LEDGES.items():
+        if abs(x - cx) > 12.0 or abs(z - cz) > 12.0:
+            continue
+        _i, _f, along, depth, _side = LEDGES[n]
+        u = (x - cx) * al[0] + (z - cz) * al[1]
+        v = (x - cx) * out[0] + (z - cz) * out[1]
+        hu, hv = along * 0.5, depth * 0.5
+        # level over the ledge; eased into the path along its mouth and at its ends
+        w = (1.0 - smooth(hu, hu + LEDGE_EASE, abs(u))) * (1.0 - smooth(hv, hv + 0.9, v)) * smooth(-hv - 1.6, -hv + 0.4, v)
+        if w > 0.0:
+            land = _lerp(land, y + 0.06 * fbm(x * 0.4, z * 0.4, 1, 199), w)
+    return land
 
 
 def _seg(px, pz, ax, az, bx, bz):
@@ -90,6 +163,42 @@ def pasture_y(x, z):
     return y
 
 
+def _poi_ground(x, z, y):
+    """The pasture with the ground people made on it: two level pads, and the
+    lane's floor graded across (it climbs with the slope, it does not tilt)."""
+    cx, cz, hx, hz = COUNTING_PAD
+    w = S._pad_weight(x, z, (cx, cz, hx, hz, 0.0, 0, 2.0))
+    if w > 0:
+        y = _lerp(y, pasture_y(cx, cz), w)
+    sx, sz, hx, hz, yaw = SHEILING_PAD
+    w = S._pad_weight(x, z, (sx, sz, hx, hz, yaw, 0, 2.5))
+    if w > 0:
+        y = _lerp(y, pasture_y(sx, sz), w)
+    # the lane's floor: an even grade from bend to bend (the pasture's own
+    # height at each bend), so the fold's bank does not put a step in it
+    best_l = (1e9, 0.0)
+    for a, b in zip(DRIFT_LANE, DRIFT_LANE[1:]):
+        dd, t = _seg(x, z, a[0], a[1], b[0], b[1])
+        if dd < best_l[0]:
+            best_l = (dd, _lerp(pasture_y(*a), pasture_y(*b), t))
+    d = best_l[0]
+    if d < LANE_HALF + 2.0:
+        y = _lerp(y, best_l[1], 1.0 - smooth(LANE_HALF + 0.3, LANE_HALF + 2.0, d))
+    # the ramp from the lane's head up to the gap: one even grade end to end
+    y0, y1 = pasture_y(*LANE_HEAD[0]), pasture_y(*FOLD_GAP)
+    total = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(LANE_HEAD, LANE_HEAD[1:]))
+    run, best = 0.0, (1e9, 0.0)
+    for a, b in zip(LANE_HEAD, LANE_HEAD[1:]):
+        dd, t = _seg(x, z, a[0], a[1], b[0], b[1])
+        ln = math.hypot(b[0] - a[0], b[1] - a[1])
+        if dd < best[0]:
+            best = (dd, (run + t * ln) / total)
+        run += ln
+    if best[0] < 2.6:
+        y = _lerp(y, _lerp(y0, y1, best[1]), 1.0 - smooth(1.2, 2.6, best[0]))
+    return y
+
+
 def reach_land(x, z, h):
     if x < 470.0 or x > 720.0 or z > -200.0:
         return h
@@ -102,7 +211,7 @@ def reach_land(x, z, h):
         cut = path if rd < 22.0 else _lerp(path, min(h, path), smooth(22.0, 34.0, rd))
         h = _lerp(h, cut, smooth(483.0, 490.0, x))
     if x >= 486.0:
-        fl = pasture_y(x, z)
+        fl = _poi_ground(x, z, pasture_y(x, z))
         # round green fells either side (the concept: a valley, not a gorge)
         fell = max(min(h, fl + 34.0), fl + 22.0 + 14.0 * fbm(x * 0.01, z * 0.01, 2, 183))
         land = min(fell, fl + _rise(pasture_out(x, z) * RIM_STEEP, x, z, 184))
@@ -118,7 +227,7 @@ def reach_land(x, z, h):
     return _lerp(h, h0, smooth(-250.0, -205.0, z))
 
 
-def cold_land(x, z, h):
+def cold_land(x, z, h, ledges=True):
     """The Upwater runs along the crest of the mountain's west shoulder: the
     frozen river on its north side, and beyond the river the land drops
     away to the valleys below (the way back over every region); the
@@ -145,6 +254,8 @@ def cold_land(x, z, h):
     if wd < 34.0:
         flat = WELL_Y + 0.15 * fbm(x * 0.3, z * 0.3, 1, 195)
         land = _lerp(flat, land, smooth(RING_R + 9.0, 30.0, wd))
+    if ledges:
+        land = _ledges(x, z, land)
     if x > WELLHEAD[0] + 14.0 or (wd > 22.0 and x > WELLHEAD[0] - 6.0):
         lip = _rise((max(x - WELLHEAD[0] - 14.0, wd - 22.0)) * 1.8, x, z, 191)
         lip = min(lip, 34.0 + 0.25 * max(0.0, wd - 40.0) + 6.0 * fbm(x * 0.02, z * 0.02, 2, 198))

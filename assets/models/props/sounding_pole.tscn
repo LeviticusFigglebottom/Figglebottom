@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="StandardMaterial3D" id="ash"]
+albedo_color = Color(0.560, 0.470, 0.340, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.200, 0.190, 0.190, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="tarred"]
+albedo_color = Color(0.130, 0.110, 0.090, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="m0"]
+top_radius = 0.016
+bottom_radius = 0.02
+height = 2.2
+radial_segments = 8
+material = SubResource("ash")
+
+[sub_resource type="CylinderMesh" id="m1"]
+top_radius = 0.022
+bottom_radius = 0.012
+height = 0.16
+radial_segments = 8
+material = SubResource("iron")
+
+[sub_resource type="CylinderMesh" id="m2"]
+top_radius = 0.021
+bottom_radius = 0.021
+height = 0.2
+radial_segments = 8
+material = SubResource("tarred")
+
+[node name="SoundingPole" type="Node3D"]
+
+[node name="Body" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9703, -0.24192, 0, 0.24192, 0.9703, 0, 0, 0)
+
+[node name="Part0" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+mesh = SubResource("m0")
+
+[node name="Part1" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+mesh = SubResource("m1")
+
+[node name="Part2" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+mesh = SubResource("m2")

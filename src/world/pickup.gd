@@ -22,6 +22,9 @@ var set_flag := ""
 ## the shown thing sits this high (the float frozen into the tide wall's
 ## face at chest height, SLICE.md 2); the prompt zone stays on the ground
 var display_lift := 0.0
+## and this far to the side (the latch on top of a gatepost: the prompt zone
+## stands clear of the post, the thing is shown on it)
+var display_offset := Vector2.ZERO
 ## frozen in: only a heavy blow from close in front frees it (the Bearer's
 ## heavy swing calls chip()); using it only says so
 var chip_heavy := false
@@ -30,6 +33,13 @@ var chip_hint := "The ice holds it fast. A heavy blow might chip it free."
 ## a thing that is looked at, not taken (one set of footprints in the ice):
 ## the words go up on the reading panel, the flag is raised, and it stays
 var look_text := ""
+
+## nothing of its own is shown: the thing looked at or used is already
+## standing there as a prop (a ewe at a sheiling door)
+var bare := false
+## only offered to a Bearer who has this with him, worn or carried (the
+## Shepherd's Fleece, whose pocket Smudge comes to)
+var needs_item := ""
 
 var _zone: Interactable
 var _shown := true
@@ -47,12 +57,16 @@ func _ready() -> void:
 	else:
 		_zone.activated.connect(_on_take)
 	add_child(_zone)
+	if display_scene == "" and item_id != "":
+		# a weapon lies there as itself: its own model, whatever the area row says
+		var kit := String(DB.weapon(item_id).get("kit", item_id))
+		display_scene = String(HumanoidLib.weapon_cfg(kit).get("scene", ""))
 	if display_scene != "" and ResourceLoader.exists(display_scene):
 		var mesh := (load(display_scene) as PackedScene).instantiate() as Node3D
 		if not mesh.get_meta("upright", false):
 			mesh.rotation_degrees = Vector3(0, 0, 90)   # lying on the boards
 		# (a thing that stands, like the Host's cup, says so: metadata/upright)
-		mesh.position.y = 0.05 + display_lift
+		mesh.position = Vector3(display_offset.x, 0.05 + display_lift, display_offset.y)
 		add_child(mesh)
 		var gl := OmniLight3D.new()
 		gl.light_color = Color(0.95, 0.93, 0.86)
@@ -65,24 +79,33 @@ func _ready() -> void:
 		# a relic shows ITSELF — its own shape on the stones, kept in a
 		# small gold shimmer instead of the brazier
 		var relic := KitLib.instance(display_kit)
-		relic.position.y = display_lift
+		relic.position = Vector3(display_offset.x, display_lift, display_offset.y)
 		add_child(relic)
 		var l := OmniLight3D.new()
 		l.light_color = Color(1.0, 0.88, 0.58)
 		l.light_energy = 1.3
 		l.omni_range = 3.2
 		l.shadow_enabled = false
-		l.position.y = 0.7 + display_lift * 0.8
+		l.position = Vector3(display_offset.x, 0.7 + display_lift * 0.8, display_offset.y)
 		add_child(l)
 		var tw := l.create_tween()
 		tw.set_loops(0)
 		tw.tween_property(l, "light_energy", 0.8, 1.3).set_trans(Tween.TRANS_SINE)
 		tw.tween_property(l, "light_energy", 1.3, 1.3).set_trans(Tween.TRANS_SINE)
+	elif bare:
+		pass
 	else:
 		var brazier := KitLib.instance("brazier")
 		brazier.scale = Vector3(0.55, 0.55, 0.55)
 		add_child(brazier)
 		KitLib.add_flame_lights(brazier, 1.4, 3.5)
+	if needs_item != "":
+		_zone.enabled = false
+		var nt := Timer.new()
+		nt.wait_time = 0.4
+		nt.timeout.connect(func(): _zone.enabled = _shown and _has_needed())
+		add_child(nt)
+		nt.start()
 	if appear_flag != "" and not World.flag(appear_flag):
 		visible = false
 		_zone.enabled = false
@@ -98,10 +121,19 @@ func _ready() -> void:
 		add_child(t)
 		t.start()
 
+func _has_needed() -> bool:
+	var p = Game.player
+	if p == null or not is_instance_valid(p):
+		return false
+	if int(p.inventory.get(needs_item, 0)) > 0:
+		return true
+	var worn = p.get("armour")
+	return worn is Dictionary and needs_item in (worn as Dictionary).values()
+
 ## A heavy blow landed on it (player.gd, the heavy swing's contact).
 func chip(player) -> void:
 	if chip_heavy and is_inside_tree() and _shown:
-		AudioDirector.sfx(AudioDirector.foley("frost_hit"), -2.0)
+		AudioDirector.play("combat/hit_ice", global_position)
 		_on_take(player)
 
 func _on_take(player) -> void:
@@ -126,6 +158,6 @@ func _on_take(player) -> void:
 			DB.song(item_id).get("name", DB.item(item_id).get("name", item_id)))
 		what.append("%s ×%d" % [iname, item_count])
 	Game.toast.emit("Received: " + " · ".join(what))
-	AudioDirector.sfx("res://assets/audio/warmth.wav", -4.0)
+	AudioDirector.play("world/pickup")
 	World.save_game()
 	queue_free()

@@ -1,7 +1,7 @@
 extends Node
 ## StateDirector — owns the thaw↔rime transformation: the expanding wave
 ## (global shader uniforms), the environment/light lerp, layer + navmesh
-## swaps, particles and the audio swell. Everyone else calls transition()
+## swaps, particles and the ambience handover. Everyone else calls transition()
 ## or snap(); the seam stays here. (DECISIONS D-002/D-003)
 
 signal transition_started(area_id: String, to_state: RH.WState)
@@ -21,6 +21,14 @@ func _set_g(param: String, v) -> void:
 		state_blend = float(v)
 	RenderingServer.global_shader_parameter_set(param, v)
 
+## Give up a wave that is running (the intro, skipped mid-wave). The caller
+## then snaps the area to the state it wants.
+var _cancelled := false
+func cancel() -> void:
+	if transitioning:
+		_cancelled = true
+		transitioning = false
+
 ## Instant state application (loads, tools). No spectacle.
 func snap(area: Area, to_state: RH.WState) -> void:
 	if area == null:
@@ -36,9 +44,12 @@ func snap(area: Area, to_state: RH.WState) -> void:
 ## endings: the flag has turned the answer before the world has turned).
 ## `keep_music` leaves whatever is playing alone (the Outsong is sung
 ## through the melt it brings; the wave used to cut it off at the coal).
-func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false, keep_music := false) -> void:
+## `persist` false shows the wave without keeping it: World's answer for the
+## area is not changed and nothing is saved (the intro's waves).
+func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false, keep_music := false, persist := true) -> void:
 	if transitioning or area == null:
 		return
+	_cancelled = false
 	if not force and World.get_area_state(area.area_id) == to_state:
 		return
 	transitioning = true
@@ -64,10 +75,12 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 	ts = BuildProf.now()
 	_spawn_wave_particles(area, origin, duration, max_r, to_rime)
 	BuildProf.slice("flip", "flip: wave particles", ts)
-	# the world draws a breath in and holds it (RIME), or lets it go (THAW);
-	# ice cracks ride the frost line out, or give as it melts
+	# the wind turns and the ground tightens (RIME), or the ice gives and
+	# water starts (THAW): a quiet bridge on the Ambience bus, under the
+	# beds, which change hands as the front passes the listener
 	var wave_cfg: Dictionary = AudioDirector.cfg("wave", {})
-	AudioDirector.sfx(String(wave_cfg.get("to_rime" if to_rime else "to_thaw", "")), 0.0)
+	AudioDirector.sfx(String(wave_cfg.get("to_rime" if to_rime else "to_thaw", "")), float(wave_cfg.get("db", -6.0)), 1.0, "Ambience")
+	AudioDirector.wave_begin(area.env, to_state, origin)
 	if not keep_music:
 		AudioDirector.play_music("", float(wave_cfg.get("music_out_fade", 2.5)))   # music dies during the wave
 	Juice.shake(0.25, 1.2)
@@ -83,7 +96,13 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 		_set_g("rh_wave_r", _wave_r)
 		state_blend = lerpf(env_from, env_to, k)
 		area.env.blend(state_blend)
+		AudioDirector.wave_update(_wave_r, dt)
 		await get_tree().process_frame
+		if _cancelled or not is_instance_valid(area):
+			# given up part-way (cancel()): whoever cancelled settles the world
+			AudioDirector.wave_end()
+			transitioning = false
+			return
 
 	# settle
 	_set_g("rh_state_blend", 1.0 if to_rime else 0.0)
@@ -91,15 +110,16 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 	ts = BuildProf.now()
 	area.apply_state(to_state)
 	BuildProf.slice("flip", "flip: apply_state", ts)
-	World.set_area_state(area.area_id, to_state)
-	ts = BuildProf.now()
-	World.save_game()
-	BuildProf.slice("flip", "flip: save", ts)
-	if keep_music:
+	if persist:
+		World.set_area_state(area.area_id, to_state)
+		ts = BuildProf.now()
+		World.save_game()
+		BuildProf.slice("flip", "flip: save", ts)
+	# the bed already changed hands with the front; this only finishes it
+	AudioDirector.wave_end()
+	if not keep_music:
 		var prof: Dictionary = area.env.audio_for(to_state)
-		AudioDirector.play_ambience(String(prof.get("ambience", "")), float(prof.get("ambience_fade", 2.0)))
-	else:
-		AudioDirector.play_state(area.env, to_state)
+		AudioDirector.play_music(String(prof.get("music", "")), float(prof.get("music_fade_in", 3.0)))
 	transitioning = false
 	transition_finished.emit(area.area_id, to_state)
 

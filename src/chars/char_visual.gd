@@ -16,6 +16,11 @@ var weapon_mount: Node3D
 var shield_mount: Node3D
 var head_mount: Node3D
 var weapon_kit := ""
+## Where the weapon rides when it is put away (set_stowed), and the fire on
+## a brand's head (null for every other weapon).
+var stow_mount: Node3D
+var brand: BrandFire = null
+var _stowed := false
 ## Humanoid mode: the AnimationTree driver (null for mannequins).
 var rig: HumanoidRig = null
 ## Quadruped mode (clip_meta.json models.<id>.rig == "quadruped"): one real
@@ -373,16 +378,36 @@ func set_weapon(kit_id: String) -> void:
 		# a two-handed class keeps both hands on the haft through locomotion
 		var cc := HumanoidLib.candidates("_carry", rig.clip_set)
 		if cc.size() > 1 and rig.has_clip(String(cc[0])):
-			rig.set_carry(String(cc[0]), _carry_bones())
+			# (a brand is held up in one hand: `_carry_arms` names the side)
+			var sides = ((HumanoidLib.meta().get("clip_sets", {}) as Dictionary).get(rig.clip_set, {}) as Dictionary).get("_carry_arms", ["Left", "Right"])
+			rig.set_carry(String(cc[0]), _carry_bones(sides))
 		else:
 			rig.set_carry("")
+	brand = null
+	_stowed = false
+	if stow_mount != null:
+		for c in stow_mount.get_children():
+			c.queue_free()
 	if kit_id != "":
 		var w: Node3D = HumanoidLib.weapon_instance(kit_id) if rig != null else null
 		weapon_mount.add_child(w if w != null else KitLib.instance(kit_id))
+		var fire: Dictionary = HumanoidLib.weapon_cfg(kit_id).get("fire", {})
+		if w != null and not fire.is_empty():
+			# a brand: its fire rides the head of the model (the light's reach
+			# and strength are the weapon's own data, weapons.json `light`)
+			var fc := fire.duplicate()
+			fc.merge(DB.weapon(kit_id).get("light", {}), true)
+			brand = BrandFire.new()
+			brand.name = "Fire"
+			brand.position = Vector3(0, float(fire.get("head", 0.7)), 0)
+			w.add_child(brand)
+			brand.setup(fc)
 	if trail != null:
 		var ext := _trail_extents()
 		trail.set("base_up", ext.x)
 		trail.set("tip_up", ext.y)
+		if rig != null:
+			trail.call("configure", HumanoidLib.weapon_cfg(kit_id))
 	apply_carry_pose(current_clip())
 
 func apply_carry_pose(clip := "") -> void:
@@ -411,9 +436,35 @@ func apply_carry_pose(clip := "") -> void:
 	else:
 		weapon_mount.rotation_degrees = Vector3(CARRY_POSE.get(weapon_kit, Vector3.ZERO))
 
-func _carry_bones() -> Array:
+## Put the weapon away (the class's `stow@<class>` mount: hip or back) or
+## take it back in hand. A stowed brand dies down to a coal.
+func set_stowed(on: bool) -> void:
+	if rig == null or weapon_mount == null or on == _stowed:
+		return
+	if on and HumanoidLib.class_mount_cfg("stow", rig.clip_set).is_empty():
+		return
+	_stowed = on
+	if stow_mount == null:
+		stow_mount = mount_slot("stow")
+	_apply_slot(stow_mount)   # the class may have changed since it was made
+	var c := HumanoidLib.class_mount_cfg("stow", rig.clip_set)
+	var att := stow_mount.get_parent() as BoneAttachment3D
+	if att != null and String(c.get("bone", att.bone_name)) != att.bone_name:
+		att.bone_name = String(c["bone"])
+	var from := weapon_mount if on else stow_mount
+	var to := stow_mount if on else weapon_mount
+	for ch in from.get_children():
+		from.remove_child(ch)
+		to.add_child(ch)
+	if brand != null:
+		brand.set_lit(not on)
+
+func is_stowed() -> bool:
+	return _stowed
+
+func _carry_bones(sides: Array = ["Left", "Right"]) -> Array:
 	var out := []
-	for side in ["Left", "Right"]:
+	for side in sides:
 		for b in ["Shoulder", "Arm", "ForeArm", "Hand"]:
 			out.append("mixamorig_%s%s" % [side, b])
 		for f in ["Thumb", "Index", "Middle", "Ring", "Pinky"]:
@@ -433,12 +484,17 @@ func add_trail() -> void:
 	trail = st
 	if rig != null:
 		st.set("sampler", Callable(self, "weapon_xform"))
+		st.call("configure", HumanoidLib.weapon_cfg(weapon_kit))
 	# sibling of the weapon so set_weapon() never frees it
 	weapon_mount.get_parent().add_child(trail)
 
 func play(clip: String, blend := 0.12, speed := 1.0) -> void:
 	if rig != null:
-		rig.play(clip, blend, speed)
+		if clip in HumanoidRig.LOCO_CLIPS:
+			# the gait is the tree's own; as an action it would never end
+			rig.settle(blend)
+		else:
+			rig.play(clip, blend, speed)
 		return
 	if quad != null:
 		_quad_play(clip, blend / maxf(speed, 0.05))
@@ -531,7 +587,7 @@ func locomotion(dt: float, ground_speed: float, accel_lean := Vector2.ZERO, grou
 		var idx := int(anim.current_animation_position / half)
 		if idx != _step_i:
 			_step_i = idx
-			AudioDirector.footstep(global_position, idx, step_volume)
+			AudioDirector.footstep(global_position, idx, step_volume, base == "run")
 
 func _humanoid_locomotion(dt: float, ground_speed: float, accel_lean: Vector2, grounded: bool) -> void:
 	var gait := rig.locomotion(dt, ground_speed, stride, run_stride, grounded)
@@ -545,7 +601,7 @@ func _humanoid_locomotion(dt: float, ground_speed: float, accel_lean: Vector2, g
 		var idx := int(cyc.x / maxf(cyc.y * 0.5, 0.01))
 		if idx != _step_i:
 			_step_i = idx
-			AudioDirector.footstep(global_position, idx, step_volume)
+			AudioDirector.footstep(global_position, idx, step_volume, gait == "run" or gait == "sprint")
 
 ## Quadruped clip vocabulary -> poses ("death" lies it on its side; an
 ## unknown clip, or "", releases every pose back to the stand).

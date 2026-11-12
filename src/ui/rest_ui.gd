@@ -44,6 +44,7 @@ func _ready() -> void:
 		player.lock_control(true)
 	var root := Control.new()
 	root.theme = UITheme.theme()
+	root.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var dim := ColorRect.new()
@@ -155,7 +156,7 @@ func _enter_level() -> void:
 	for stat in DB.tuning("levels/stats", []):
 		_options.append({"id": "stat:" + stat, "label": "%s  %d  →  %d   ·  %s      (%d warmth)" %
 			[stat.capitalize(), player.attributes[stat], player.attributes[stat] + 1,
-			STAT_HINTS.get(stat, ""), cost]})
+			STAT_HINTS.get(stat, ""), cost], "icon": "stat_" + stat})
 	_options.append({"id": "back", "label": "Back"})
 	info_label.text = "Level %d.  Each step costs %d warmth.  You hold %d." % [player.level, cost, Game.warmth]
 	_opt_i = 0
@@ -190,6 +191,19 @@ func _render() -> void:
 		var sel := i == _opt_i
 		l.label_settings = UITheme.ls(25, UITheme.EMBER_HOT if sel else UITheme.BONE_DIM)
 		l.text = ("◆   " if sel else "     ") + _options[i]["label"]
+		var icon_tex := UIIcons.named(String(_options[i].get("icon", "")))
+		if icon_tex != null:
+			# a stat's row wears its icon at the left, inside the label's own indent
+			l.text = "         " + _options[i]["label"]
+			var ic := TextureRect.new()
+			ic.texture = icon_tex
+			ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			ic.position = Vector2(0, 1)
+			ic.size = Vector2(32, 32)
+			ic.modulate = Color(1, 1, 1, 1.0 if sel else 0.72)
+			ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			l.add_child(ic)
 		l.mouse_filter = Control.MOUSE_FILTER_STOP
 		var idx := i
 		l.mouse_entered.connect(func():
@@ -230,7 +244,7 @@ func choose(idx: int) -> void:
 		_do_hearth("toggle")
 	elif id == "cold":
 		info_label.text = "The horn is empty."
-		AudioDirector.sfx("res://assets/audio/ui_tick.wav", -10.0, 0.7)
+		AudioDirector.play("ui/ember")
 	elif id == "level":
 		_enter_level()
 	elif id == "back":

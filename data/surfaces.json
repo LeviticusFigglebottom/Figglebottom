@@ -1,0 +1,680 @@
+{
+ "_doc": "What a blade meets when it strikes the world (Surfaces, PropHitFX). 'surfaces' is the closed set. A collider carries a 'surface' meta stamped by whoever builds it: kit pieces read 'kits' (a per-kit override) and then 'families' (the material family of the mesh the collider wraps, after any mat_remap); boxes read 'families'; Tripo landmarks and wayside dressing read 'landmarks' (by file name, no extension); scatter reads 'scatter' (by kind); everything else reads 'kinds' (the collider's kind). A collider with no stamp is 'default'. 'none' takes a blow in silence (a soul's body, flame, water). 'ground' is settled at the blow from the footstep surface under the point (AudioDirector.surface_at). 'fx' per surface: particle layers (mesh quad|sliver|chunk; amount; life s; speed [min,max] m/s; gravity m/s2 downward; size [min,max] m; color rgba; spread deg; tex soft|crystal|drip for quads; additive; lit; damping; grow = end scale of a puff; thin = a sliver's width over its length; hot = a brightness factor over 1 for sparks, so they bloom; colours are sRGB), an optional light flash, and the camera shake [trauma, seconds]. The sound is the recorded strike for the surface: AudioDirector.impact(surface, position), audio.json 'impacts'. The sweep itself is tuned in game.json prop_hit.",
+ "surfaces": [
+  "wood",
+  "stone",
+  "metal",
+  "ice",
+  "cloth",
+  "turf",
+  "snow"
+ ],
+ "default": "stone",
+ "ground": {
+  "turf": "turf",
+  "shingle": "stone",
+  "plank": "wood",
+  "snow": "snow"
+ },
+ "families": {
+  "M_wood": "wood",
+  "M_wood_dark": "wood",
+  "M_drift": "wood",
+  "M_planks": "wood",
+  "M_timber": "wood",
+  "M_bark_pine": "wood",
+  "M_bark_birch": "wood",
+  "M_thorn": "wood",
+  "M_needles": "wood",
+  "M_leaves": "wood",
+  "M_foliage": "wood",
+  "M_wax": "wood",
+  "M_stone": "stone",
+  "M_stone_dark": "stone",
+  "M_stone_trim": "stone",
+  "M_drystone": "stone",
+  "M_drystone_wall": "stone",
+  "M_schist": "stone",
+  "M_shingle": "stone",
+  "M_marble": "stone",
+  "M_marble_floor": "stone",
+  "M_mosaic": "stone",
+  "M_coals": "stone",
+  "M_bone": "stone",
+  "M_backdrop": "stone",
+  "M_backdrop_dark": "stone",
+  "M_citywindow": "stone",
+  "M_iron": "metal",
+  "M_steel": "metal",
+  "M_bronze": "metal",
+  "M_brass": "metal",
+  "M_bell": "metal",
+  "M_gold": "metal",
+  "M_gild": "metal",
+  "M_chainmail": "metal",
+  "M_plate_dark": "metal",
+  "M_ice": "ice",
+  "M_ice_sheet": "ice",
+  "M_rime": "ice",
+  "M_veil_rime": "ice",
+  "M_thorn_rime": "ice",
+  "M_glass": "ice",
+  "M_cloth": "cloth",
+  "M_rime_cloth": "cloth",
+  "M_rope": "cloth",
+  "M_wool": "cloth",
+  "M_fleece": "cloth",
+  "M_leather": "cloth",
+  "M_habit": "cloth",
+  "M_robe": "cloth",
+  "M_robe_boss": "cloth",
+  "M_felt": "cloth",
+  "M_shroud": "cloth",
+  "M_turf": "turf",
+  "M_peat": "turf",
+  "M_marsh": "turf",
+  "M_terrain": "turf",
+  "M_roof": "turf",
+  "M_snow": "snow",
+  "M_cloud": "snow",
+  "M_flame": "none",
+  "M_ember": "none",
+  "M_water": "none",
+  "M_falls": "none",
+  "M_spring": "none",
+  "M_wraith": "none"
+ },
+ "kits": {
+  "brazier": "metal",
+  "fish_kettle": "metal",
+  "gate_iron": "metal",
+  "fence_iron_4m": "metal",
+  "hearthstone": "stone",
+  "well": "stone",
+  "salt_pan": "stone",
+  "rime_spike": "ice",
+  "feast_horn_frozen": "ice",
+  "frost_veil_frame": "ice",
+  "sheep": "cloth",
+  "rye_sack": "cloth",
+  "net_frame": "cloth",
+  "net_float": "wood",
+  "hearth_fire": "wood",
+  "hearth_logs": "wood",
+  "creel_stack": "wood",
+  "stair_4m": "stone"
+ },
+ "landmarks": {
+  "lm_standing_stone": "stone",
+  "lm_fold_cairn": "stone",
+  "lm_wellhead": "stone",
+  "lm_wellhead_thaw": "stone",
+  "lm_sheiling": "stone",
+  "lm_spring_kerb": "stone",
+  "lm_charcoal_clamp": "turf",
+  "lm_sledge": "wood",
+  "lm_hall_doors": "wood",
+  "lm_high_seat": "wood",
+  "lm_guest_post": "wood"
+ },
+ "scatter": {
+  "ice_floe": "ice",
+  "boulder": "stone",
+  "rock": "stone",
+  "stone_fence": "stone",
+  "standing_stone": "stone",
+  "wattle_fence": "wood",
+  "driftwood": "wood",
+  "peat_stack": "turf"
+ },
+ "kinds": {
+  "terrain": "ground",
+  "house": "wood",
+  "barrow": "stone",
+  "turf_door": "turf",
+  "blocker": "stone",
+  "landmark": "stone",
+  "tree": "wood",
+  "hedge": "wood",
+  "thorn_wall": "wood",
+  "hearth": "stone",
+  "gate": "wood",
+  "drawbridge": "wood",
+  "tide_wall": "ice",
+  "frost_veil": "ice",
+  "ice_ridge": "ice",
+  "sod_ridge": "turf",
+  "stone_ridge": "stone",
+  "npc": "none"
+ },
+ "fx": {
+  "wood": {
+   "layers": [
+    {
+     "mesh": "sliver",
+     "amount": 14,
+     "life": 0.6,
+     "speed": [
+      1.8,
+      4.6
+     ],
+     "gravity": 9.5,
+     "size": [
+      0.06,
+      0.14
+     ],
+     "color": [
+      0.88,
+      0.7,
+      0.44,
+      1.0
+     ],
+     "spread": 42,
+     "lit": true,
+     "thin": 0.3
+    },
+    {
+     "mesh": "chunk",
+     "amount": 6,
+     "life": 0.5,
+     "speed": [
+      1.2,
+      3.2
+     ],
+     "gravity": 9.5,
+     "size": [
+      0.025,
+      0.055
+     ],
+     "color": [
+      0.5,
+      0.35,
+      0.2,
+      1.0
+     ],
+     "spread": 55,
+     "lit": true
+    },
+    {
+     "mesh": "quad",
+     "amount": 6,
+     "life": 0.55,
+     "speed": [
+      0.3,
+      1.1
+     ],
+     "gravity": -0.4,
+     "size": [
+      0.16,
+      0.34
+     ],
+     "color": [
+      0.7,
+      0.6,
+      0.46,
+      0.4
+     ],
+     "tex": "soft",
+     "spread": 70,
+     "damping": 1.6,
+     "grow": 1.6
+    }
+   ],
+   "shake": [
+    0.05,
+    0.08
+   ]
+  },
+  "stone": {
+   "layers": [
+    {
+     "mesh": "chunk",
+     "amount": 9,
+     "life": 0.55,
+     "speed": [
+      1.6,
+      4.4
+     ],
+     "gravity": 11.0,
+     "size": [
+      0.03,
+      0.075
+     ],
+     "color": [
+      0.62,
+      0.62,
+      0.6,
+      1.0
+     ],
+     "spread": 50,
+     "lit": true
+    },
+    {
+     "mesh": "quad",
+     "amount": 5,
+     "life": 0.5,
+     "speed": [
+      0.3,
+      1.0
+     ],
+     "gravity": -0.2,
+     "size": [
+      0.14,
+      0.3
+     ],
+     "color": [
+      0.7,
+      0.69,
+      0.66,
+      0.26
+     ],
+     "tex": "soft",
+     "spread": 70,
+     "damping": 1.8,
+     "grow": 1.5
+    },
+    {
+     "mesh": "sliver",
+     "amount": 3,
+     "life": 0.16,
+     "speed": [
+      3.0,
+      6.0
+     ],
+     "gravity": 10.0,
+     "size": [
+      0.03,
+      0.05
+     ],
+     "color": [
+      1.0,
+      0.7,
+      0.3,
+      1.0
+     ],
+     "spread": 40,
+     "additive": false,
+     "thin": 0.1,
+     "hot": 1.4
+    }
+   ],
+   "shake": [
+    0.07,
+    0.09
+   ]
+  },
+  "metal": {
+   "layers": [
+    {
+     "mesh": "sliver",
+     "amount": 26,
+     "life": 0.34,
+     "speed": [
+      4.5,
+      10.0
+     ],
+     "gravity": 14.0,
+     "size": [
+      0.06,
+      0.12
+     ],
+     "color": [
+      1.0,
+      0.68,
+      0.24,
+      1.0
+     ],
+     "spread": 50,
+     "additive": false,
+     "thin": 0.1,
+     "hot": 1.5
+    },
+    {
+     "mesh": "sliver",
+     "amount": 8,
+     "life": 0.55,
+     "speed": [
+      2.0,
+      5.0
+     ],
+     "gravity": 12.0,
+     "size": [
+      0.03,
+      0.06
+     ],
+     "color": [
+      1.0,
+      0.45,
+      0.12,
+      1.0
+     ],
+     "spread": 65,
+     "additive": false,
+     "thin": 0.12,
+     "hot": 1.3
+    },
+    {
+     "mesh": "quad",
+     "amount": 1,
+     "life": 0.09,
+     "speed": [
+      0.0,
+      0.0
+     ],
+     "gravity": 0.0,
+     "size": [
+      0.45,
+      0.55
+     ],
+     "color": [
+      1.0,
+      0.86,
+      0.6,
+      0.85
+     ],
+     "tex": "soft",
+     "additive": true
+    }
+   ],
+   "light": {
+    "color": [
+     1.0,
+     0.78,
+     0.4
+    ],
+    "energy": 1.6,
+    "range": 2.8,
+    "fade": 0.14
+   },
+   "shake": [
+    0.08,
+    0.09
+   ]
+  },
+  "ice": {
+   "layers": [
+    {
+     "mesh": "sliver",
+     "amount": 14,
+     "life": 0.55,
+     "speed": [
+      2.0,
+      5.5
+     ],
+     "gravity": 10.0,
+     "size": [
+      0.05,
+      0.1
+     ],
+     "color": [
+      0.82,
+      0.93,
+      1.0,
+      0.95
+     ],
+     "spread": 48,
+     "lit": false
+    },
+    {
+     "mesh": "quad",
+     "amount": 5,
+     "life": 0.38,
+     "speed": [
+      0.6,
+      2.0
+     ],
+     "gravity": 2.0,
+     "size": [
+      0.1,
+      0.2
+     ],
+     "color": [
+      0.9,
+      0.97,
+      1.0,
+      0.9
+     ],
+     "tex": "crystal",
+     "spread": 60,
+     "additive": true
+    },
+    {
+     "mesh": "quad",
+     "amount": 5,
+     "life": 0.5,
+     "speed": [
+      0.3,
+      1.0
+     ],
+     "gravity": 0.2,
+     "size": [
+      0.16,
+      0.32
+     ],
+     "color": [
+      0.86,
+      0.93,
+      1.0,
+      0.3
+     ],
+     "tex": "soft",
+     "spread": 70,
+     "damping": 1.6,
+     "grow": 1.5
+    },
+    {
+     "mesh": "quad",
+     "amount": 1,
+     "life": 0.1,
+     "speed": [
+      0.0,
+      0.0
+     ],
+     "gravity": 0.0,
+     "size": [
+      0.3,
+      0.4
+     ],
+     "color": [
+      0.85,
+      0.95,
+      1.0,
+      0.7
+     ],
+     "tex": "soft",
+     "additive": true
+    }
+   ],
+   "shake": [
+    0.05,
+    0.08
+   ]
+  },
+  "cloth": {
+   "layers": [
+    {
+     "mesh": "sliver",
+     "amount": 14,
+     "life": 0.8,
+     "speed": [
+      0.8,
+      2.4
+     ],
+     "gravity": 2.2,
+     "size": [
+      0.05,
+      0.11
+     ],
+     "color": [
+      0.8,
+      0.74,
+      0.62,
+      0.95
+     ],
+     "spread": 65,
+     "damping": 2.4,
+     "thin": 0.08
+    },
+    {
+     "mesh": "quad",
+     "amount": 4,
+     "life": 0.5,
+     "speed": [
+      0.2,
+      0.8
+     ],
+     "gravity": 0.3,
+     "size": [
+      0.12,
+      0.24
+     ],
+     "color": [
+      0.78,
+      0.74,
+      0.66,
+      0.24
+     ],
+     "tex": "soft",
+     "spread": 80,
+     "damping": 1.8,
+     "grow": 1.4
+    }
+   ],
+   "shake": [
+    0.0,
+    0.0
+   ]
+  },
+  "turf": {
+   "layers": [
+    {
+     "mesh": "chunk",
+     "amount": 10,
+     "life": 0.6,
+     "speed": [
+      1.6,
+      4.2
+     ],
+     "gravity": 10.5,
+     "size": [
+      0.04,
+      0.1
+     ],
+     "color": [
+      0.36,
+      0.26,
+      0.16,
+      1.0
+     ],
+     "spread": 38,
+     "lit": true
+    },
+    {
+     "mesh": "sliver",
+     "amount": 8,
+     "life": 0.7,
+     "speed": [
+      1.4,
+      3.6
+     ],
+     "gravity": 7.0,
+     "size": [
+      0.06,
+      0.12
+     ],
+     "color": [
+      0.42,
+      0.52,
+      0.22,
+      1.0
+     ],
+     "spread": 50,
+     "lit": true,
+     "thin": 0.1
+    },
+    {
+     "mesh": "quad",
+     "amount": 4,
+     "life": 0.45,
+     "speed": [
+      0.3,
+      0.9
+     ],
+     "gravity": 0.2,
+     "size": [
+      0.14,
+      0.28
+     ],
+     "color": [
+      0.42,
+      0.35,
+      0.26,
+      0.26
+     ],
+     "tex": "soft",
+     "spread": 70,
+     "damping": 1.8,
+     "grow": 1.4
+    }
+   ],
+   "shake": [
+    0.04,
+    0.08
+   ]
+  },
+  "snow": {
+   "layers": [
+    {
+     "mesh": "quad",
+     "amount": 12,
+     "life": 0.65,
+     "speed": [
+      0.7,
+      2.4
+     ],
+     "gravity": 2.0,
+     "size": [
+      0.16,
+      0.38
+     ],
+     "color": [
+      0.95,
+      0.97,
+      1.0,
+      0.5
+     ],
+     "tex": "soft",
+     "spread": 60,
+     "damping": 1.5,
+     "grow": 1.7
+    },
+    {
+     "mesh": "chunk",
+     "amount": 14,
+     "life": 0.55,
+     "speed": [
+      1.5,
+      4.0
+     ],
+     "gravity": 8.0,
+     "size": [
+      0.015,
+      0.04
+     ],
+     "color": [
+      0.96,
+      0.98,
+      1.0,
+      1.0
+     ],
+     "spread": 45,
+     "lit": false
+    }
+   ],
+   "shake": [
+    0.0,
+    0.0
+   ]
+  }
+ }
+}

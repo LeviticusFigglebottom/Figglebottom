@@ -103,6 +103,29 @@ for k in range(14):
     LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_standing_stone.glb", "at": at(x, z, -0.15), "rot": r2(a * 1.3 % 360),
                       "scale": 0.85, "blocker": [1.6, 3.0, 1.6]})
 GAP = (WX + H.RING_R * math.cos(math.radians(GAP_A)), WZ + H.RING_R * math.sin(math.radians(GAP_A)))
+# In RIME the ring is shut everywhere but the veil: rime has grown stone to
+# stone, and in from each side of the gap to the veil's width. Without it
+# every space between the stones was a way in, the navmesh went round the
+# veil, and the last duel could be begun unsealed or walked out of. RIME
+# only: the Melt and the spring find the ring as open as it was built.
+RIME_SHUT = []
+def _shut(x, z, r, n_spikes, along):
+    """One closed space: an unseen post the Bearer cannot pass, dressed with
+    rime spikes set along `along` (deg, the line the space runs on)."""
+    RIME_SHUT.append({"at": [r2(x), r2(g(x, z) + 1.5), r2(z)], "radius": r, "height": 3.4, "tag": "rime"})
+    for j in range(n_spikes):
+        t = (j - (n_spikes - 1) / 2.0) * (2.0 * r / max(n_spikes, 1)) * 1.3
+        sx, sz = x + t * math.cos(math.radians(along)), z + t * math.sin(math.radians(along))
+        PROPS.append({"kit": "rime_spike", "at": at(sx, sz, -0.05), "rot": r2((j * 97 + x * 13) % 360), "tag": "rime",
+                      "scale": r2(1.15 + 0.2 * ((j + int(abs(x))) % 3)), "collide": False})
+for k in range(13):
+    (x0, z0), (x1, z1) = STONES[k], STONES[k + 1]
+    _shut((x0 + x1) / 2.0, (z0 + z1) / 2.0, 1.05, 2, math.degrees(math.atan2(z1 - z0, x1 - x0)))
+# the gap: 7.6 m between its two stones, the veil 3.6 m across in the middle
+for (ex, ez) in (STONES[0], STONES[13]):
+    for f in (0.36, 0.78):     # from the veil's edge out to the stone
+        mx, mz = GAP[0] + (ex - GAP[0]) * (0.47 + 0.53 * f), GAP[1] + (ez - GAP[1]) * (0.47 + 0.53 * f)
+        _shut(mx, mz, 0.6, 1, math.degrees(math.atan2(ez - GAP[1], ex - GAP[0])))
 # two old houses on the level, flanking the way in (BuildingGen turf houses)
 for i, (hx, hz) in enumerate(((WX - 22.0, WZ - 17.0), (WX - 22.0, WZ + 17.0))):
     hy = g(hx, hz)
@@ -131,9 +154,9 @@ hearths = [
 spawners = [
     # the climb is long and quiet: few of them, and slow
     {"enemy": "upwalker", "id": "upwalker_low", "at": on_path(2, 0.6, 0.0, 0.1), "face": 240},
-    {"enemy": "upwalker", "id": "upwalker_falls", "at": on_path(5, 0.4, 0.0, 0.1), "face": 230},
+    # (upwalker_falls sits on the shelter's bench: see the points of interest)
     {"enemy": "upwalker", "id": "upwalker_high", "at": on_path(7, 0.5, 0.0, 0.1), "face": 250},
-    {"enemy": "unsung", "id": "unsung_level_a", "at": at(WX - 16.0, WZ - 6.0, 0.1), "face": 270},
+    {"enemy": "unsung", "id": "unsung_level_a", "at": at(WX - 14.5, WZ - 4.4, 0.1), "face": 270},
     {"enemy": "unsung", "id": "unsung_level_b", "at": at(WX - 16.0, WZ + 6.0, 0.1), "face": 270},
     # COLDWELL.md 6: sat beyond the spring, facing the gap, Wren against her chest
     # (her own script holds her sat: no idle pose from the spawner)
@@ -145,6 +168,116 @@ npcs = [{"id": "maren", "at": at(WX - 14.0, WZ + 9.0), "rot": 200, "tag": "thaw"
         {"id": "wren", "at": at(WX - 13.2, WZ + 9.6), "rot": 200, "tag": "thaw"}]
 pickups = [{"id": "upwater_cache", "at": on_path(6, 0.5, 2.6, 0.05), "item": "bog_iron", "count": 2, "tag": "rime",
             "label": "Pry up what the ice holds"}]
+
+# --- points of interest (docs/lore/POI.md 8) -----------------------------------
+# Set by hand on the three ledges cut beside the Upwater (high_land.LEDGES) and
+# on the wellhead's level. "wayside": false keeps the wayside dressing from
+# gathering round them; WAYSIDE_CLEAR keeps it off their ground.
+PLAQUES, SCRIPTED, WAYSIDE_CLEAR = [], [], []
+POI = {"wayside": False}
+KIT_M = "res://assets/models/"
+
+
+def prop(kit, pos, rot=0.0, tag="base", **kw):
+    PROPS.append(dict({"kit": kit, "at": pos, "rot": r2(rot), "tag": tag}, **kw))
+
+
+def board(pos, rot, thaw=None, rime=None):
+    """One wayside board; its caption turns with the state."""
+    for tag, text in (("thaw", thaw), ("rime", rime)):
+        if text:
+            PLAQUES.append(dict(POI, at=pos, rot=rot, tag=tag, text=text))
+
+
+class Ledge:
+    """A ledge's own frame: u metres up the path, v metres out from its middle."""
+
+    def __init__(self, name):
+        self.cx, self.cz, self.al, self.out, self.y = H.ledge_frame(name)
+        _i, _f, self.along, self.depth, self.side = H.LEDGES[name]
+        # yaw of a thing whose front (local +z) looks back at the path, and of one that looks out
+        self.to_path = r2(math.degrees(math.atan2(-self.out[0], -self.out[1])))
+        self.outward = r2(self.to_path + 180.0)
+        WAYSIDE_CLEAR.append([r2(self.cx), r2(self.cz), r2(max(self.along, self.depth) * 0.5 + 3.5)])
+
+    def xz(self, u, v):
+        return self.cx + self.al[0] * u + self.out[0] * v, self.cz + self.al[1] * u + self.out[1] * v
+
+    def at(self, u, v, dy=0.0):
+        return at(*self.xz(u, v), dy)
+
+
+# 8.1 the Flower Bank
+FB = Ledge("flower_bank")
+MELT = dict(POI, id="melt_flowers", at=FB.at(0.6, 0.3), item="item_melt_flowers", tag="thaw", label="Pick a bunch",
+            scene=KIT_M + "props/melt_flowers.tscn")
+prop("cw_flower_basket", FB.at(-0.5, -0.5), 35, tag="thaw", collide=False)
+# the bank in flower (THAW): a few clumps growing, by hand; the art pass owns the ground cover
+for k, (u, v) in enumerate([(-2.3, 0.9), (-1.2, 1.2), (0.2, 1.1), (1.5, 1.2), (2.5, 0.8), (2.0, -0.2)]):
+    prop("cw_flower_bunch", FB.at(u, v, -0.04), 55 * k, tag="thaw", collide=False, scale=1.5)
+# RIME: one of the standing dead in the river beside it, a small woman, a bunch held in both hands
+_rx, _rz = FB.xz(0.5, -(FB.depth * 0.5 + H.PATH_HALF * 2 + H.RIVER_OFF - 0.6))
+_ry = r2(L.height(_rx, _rz) - 0.1)
+_rface = r2(math.degrees(math.atan2(FB.al[0], FB.al[1])))
+LANDMARKS.append({"scene": "res://assets/models/enemies/upwalker.glb", "at": [r2(_rx), _ry, r2(_rz)], "rot": _rface, "tag": "rime",
+                  "pose": "idle@0.55", "scale": 0.86})
+prop("cw_flower_bunch", [r2(_rx + FB.al[0] * 0.26), r2(_ry + 0.98), r2(_rz + FB.al[1] * 0.26)], 0, tag="rime", collide=False, on="hands")
+# the custom itself: thrown in at the water's edge beside Maren and Wren
+SCRIPTED.append({"script": "res://src/world/offering.gd", "at": at(WX - 12.4, WZ + 8.0), "tag": "thaw",
+                 "params": {"item": "item_melt_flowers", "set_flag": "ks_melt_flowers", "prompt": "Throw them in",
+                            "speaker": "wren", "line": "And that one."}})
+
+# 8.2 the Shelter at the Ice-Falls
+SS = Ledge("stick_shelter")
+prop("cw_shelter", SS.at(0.4, 0.55), SS.to_path)
+board(SS.at(-3.5, -1.6), SS.to_path,
+      thaw="THE ICE-FALLS\n\nYou cut a stick to come up, and leave it here for someone going down.\nThe rack is nearly empty. Everyone is up at the water.",
+      rime="THE ICE-FALLS\n\nThe rack is full. There are more against the wall, and more on the ground.\nNobody has wanted one going down.")
+# the rack by the path: four sticks in THAW; in RIME full, and more leant and laid about the shelter
+prop("cw_staff_rack", SS.at(-1.6, -2.05), SS.to_path, tag="thaw")
+prop("cw_staff_rack_full", SS.at(-1.6, -2.05), SS.to_path, tag="rime")
+prop("cw_staff_heap", SS.at(-2.4, 1.75), SS.to_path, tag="rime", collide=False)
+prop("cw_staff_heap", SS.at(3.0, 1.75), SS.to_path, tag="rime", collide=False)
+prop("cw_staff_heap", SS.at(3.55, -0.9), SS.to_path - 90, tag="rime", collide=False)
+# it got this far and sat down (RIME): on the bench, slow to rise
+SHELTER_FOE = {"enemy": "upwalker", "id": "upwalker_falls", "at": SS.at(1.4, 1.0, 0.1), "face": r2(SS.to_path + 180.0),
+               "pose": "sit", "rise_time": 2.4}
+# a rope rail down the outside of the next steep pitch, and ice on the falls above it
+for f in (0.14, 0.26, 0.38):
+    prop("cw_rope_rail", on_path(5, f, -(H.PATH_HALF - 0.15)), r2(math.degrees(math.atan2(-(H.UPWATER[6][1] - H.UPWATER[5][1]),
+                                                                                           H.UPWATER[6][0] - H.UPWATER[5][0]))))
+for kit, (i, f, off) in (("cw_ice_column_b", (4, 0.42, 5.0)), ("cw_ice_column_c", (5, 0.2, 5.3)), ("cw_ice_column_a", (5, 0.52, 5.0))):
+    prop(kit, on_path(i, f, off, -0.3), SS.to_path, tag="rime", collide=False, embed=True)
+
+# 8.3 the Sitting Place
+SP = Ledge("sitting_place")
+prop("cw_slab_bench", SP.at(0.3, 0.3), SP.outward, tag="thaw")
+prop("cw_slab_bench_snow", SP.at(0.3, 0.3), SP.outward, tag="rime")
+board(SP.at(-2.3, -1.2), SP.outward,
+      thaw="THE WELLHEAD STEPS\n\nYou can hear it from here.\nChildren are carried the last part, so they see it all at once.",
+      rime="THE WELLHEAD STEPS\n\nThe snow on this bench has been sat in, at the left end only.\nSomething was put down at the right end, and picked up again.")
+_al_yaw = r2(math.degrees(math.atan2(-SP.al[1], SP.al[0])))
+prop("cw_rope_rail", SP.at(-1.5, SP.depth * 0.5 - 0.15), _al_yaw)
+prop("cw_rope_rail", SP.at(1.5, SP.depth * 0.5 - 0.15), _al_yaw)
+prop("cw_rope_rail", SP.at(-SP.along * 0.5 + 0.15, 0.4), _al_yaw + 90)
+
+# 8.4 the Thread-Post, on the level between the two houses, outside the ring.
+# (POI.md's "about WX - 21, WZ - 8" is on the bank, where the level has begun
+# to rise: it stands two strides nearer, on the flat, still 10 m from the veil)
+POST = at(WX - 18.5, WZ - 6.0)
+prop("cw_thread_post", POST, 200)
+board(at(WX - 20.3, WZ - 5.0), 250,
+      thaw="THE WELLHEAD\n\nA thread on the post for each one going down the water this year.\nBlue, red and yellow. Eleven. It was a mild winter.",
+      rime="THE WELLHEAD\n\nThe same eleven threads, white with frost.\nNobody came up to tie the next year's.")
+prop("cw_dipper_trough", at(WX - 13.6, WZ + 5.4), 110)
+prop("cw_offering_cairn", at(WX - 16.8, WZ - 9.4), 20)
+prop("cw_water_yoke", at(WX - 15.7, WZ + 6.5), 110)
+WAYSIDE_CLEAR.append([r2(WX - 18.5), r2(WZ - 7.0), 6.0])
+WAYSIDE_CLEAR.append([r2(WX - 13.6), r2(WZ + 6.5), 5.0])
+
+pickups.append(MELT)
+spawners.append(SHELTER_FOE)
+# --- end of points of interest ------------------------------------------------
 
 portals = [seam("coldwell", "coldwell")]
 arrive = seam("coldwell", "shepherds_reach")
@@ -185,6 +318,7 @@ D = {
     ],
     "houses": HOUSES,
     "boxes": BOXES,
+    "blockers": RIME_SHUT,
     "props": PROPS,
     "landmarks": LANDMARKS,
     "hearths": hearths,
@@ -192,13 +326,14 @@ D = {
     "frost_veils": [{"id": "wellhead_veil", "at": VEIL, "rot": -90, "tag": "rime"}],
     "npcs": npcs,
     "scripted": [{"script": "res://src/world/ending_choice.gd", "at": at(WX - 5.5, WZ, 0.0), "rot": -90, "tag": "base",
-                  "params": {"release_flag": "ks_leadvoice_released"}}],
-    "plaques": [{"at": on_path(0, 0.9, 3.4), "rot": 240, "text": "THE COLDWELL\n\nThe river's source, under the glacier's lip."}],
+                  "params": {"release_flag": "ks_leadvoice_released"}}] + SCRIPTED,
+    "wayside_clear": WAYSIDE_CLEAR,
+    "plaques": [{"at": on_path(0, 0.9, 3.4), "rot": 240, "text": "THE COLDWELL\n\nThe river's source, under the glacier's lip."}] + PLAQUES,
     "pickups": pickups,
     "portals": portals,
     "scatter": {
         "seed": 7071,
-        "clear": [[WX, WZ, H.RING_R + 4.0]],
+        "clear": [[WX, WZ, H.RING_R + 4.0]] + WAYSIDE_CLEAR,      # (no scattered rock on a ledge or by the post)
         "rules": [
             {"kind": "rock", "count": 140, "region": [676, -556, 964, -364], "slope": [0.75, 1.0], "scale": [0.3, 0.9], "path_max": 0.3},
             {"kind": "boulder", "count": 80, "region": [676, -556, 964, -364], "slope": [0.4, 0.85], "scale": [1.0, 2.6]},

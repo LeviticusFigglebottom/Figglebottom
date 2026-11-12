@@ -184,12 +184,13 @@ func _st_transition(dt: float) -> void:
 func _transition_event(ev: String) -> void:
 	match ev:
 		"knock":   # the shavings knocked off the auger against his boot
-			AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -10.0, 0.6)
+			AudioDirector.play("world/ice_break", global_position, -6.0)
 		"ring_band":
 			var rb: Dictionary = _d("ring_band", {})
 			band = BrokenIce.open(get_parent(), hole_point(), "ring", float(rb.get("outer", 10.5)),
 					float(rb.get("inner", 9.0)), float(rb.get("life", 9999.0)), float(rb.get("sink", 0.7)))
 			holes.append(band)
+			_own(band)   # (open for the phase: reset mid-fight, it stayed open for good)
 		"band_close":
 			if band != null and is_instance_valid(band):
 				band.close()
@@ -273,7 +274,7 @@ func _st_hold(dt: float) -> void:
 	velocity.z = 0
 	_hold_quiet += dt
 	if fmod(state_t, 1.1) < dt:
-		AudioDirector.sfx_at("res://assets/audio/impact_blocked.wav", global_position, -14.0, 0.45)
+		AudioDirector.play("world/ice_break", global_position, -10.0)
 	if _hold_quiet >= float(attack_by_id("cut_fresh").get("quiet", 5.0)):
 		_set_state(ES.COMBAT)
 		vis.idle(0.6)
@@ -290,6 +291,7 @@ func _run_team() -> void:
 		var dog := Enemy.new()
 		dog.setup(String(_atk.get("dog", "sledge_dog")))
 		get_parent().add_child(dog)
+		_own(dog)
 		dog.set_physics_process(false)
 		dog.collision_layer = 0
 		dog.hurtbox.monitorable = false
@@ -323,9 +325,7 @@ func _die() -> void:
 	dead = true
 	_set_state(ES.DEAD)
 	_end_all_swings()
-	if hook_hold != null:
-		hook_hold.end(false)
-	_pull_t = 0.0
+	_fight_over()
 	hurtbox.set_deferred("monitorable", false)
 	collision_layer = 0
 	var to := hole_point() - global_position

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""UI icons for Rimeholt: flat silhouettes drawn with PIL, in the UI palette
+"""RETIRED for anything the painted set covers: the game's icons are now
+painted and cut by tools/ui/build_icons.py (sheets in
+tools/ui/icon_sheets.json). This script only writes an icon the painted set
+has no tile for, as a stand-in until one is painted.
+
+UI icons for Rimeholt: flat silhouettes drawn with PIL, in the UI palette
 of docs/art/STYLE.md (bone-white and coal-ember on near-black). Drawn at 4x
 and filtered down, so edges are smooth at any HUD size.
 Usage: python3 tools/gen_icons.py   (writes assets/ui/icons/*.png)"""
@@ -541,6 +546,31 @@ def icon_armour_collier():
     return im
 
 
+# --- Thornwold points of interest (POI.md 6) -----------------------------------
+def icon_wool_ends():
+    """Short ends of plaited wool, oat and yellow, in a swept heap."""
+    im, d = canvas()
+    rnd = [(0.13, 0.71), (0.52, 0.24), (0.88, 0.63), (0.35, 0.92), (0.67, 0.08), (0.21, 0.45), (0.79, 0.33), (0.44, 0.58),
+           (0.95, 0.86), (0.06, 0.17), (0.61, 0.77), (0.29, 0.02)]
+    for k, (a, b) in enumerate(rnd):
+        x, y = 30 + a * 64, 52 + b * 44
+        ang = (a * 7 + b * 3) * 2.0
+        dx, dy = 13 * math.cos(ang), 7 * math.sin(ang)
+        d.line([(x - dx, y - dy), (x + dx, y + dy)], fill=WOOL if k % 3 else (196, 160, 70, 255), width=5)
+        d.line([(x + dx - 2, y + dy - 2), (x + dx + 2, y + dy + 2)], fill=DARK, width=2)     # the cut
+    return im
+
+
+def icon_gate_latch():
+    """A holly latch and its keeper, cut for different posts."""
+    im, d = canvas()
+    d.polygon(rot([(22, 56), (92, 56), (100, 64), (92, 72), (22, 72)], -18), fill=INK)        # the latch bar
+    c = rot([(32, 64)], -18)[0]
+    d.ellipse((c[0] - 5, c[1] - 5, c[0] + 5, c[1] + 5), fill=DARK)                           # its pivot hole
+    d.polygon([(78, 84), (104, 84), (104, 112), (94, 112), (94, 96), (78, 96)], fill=(170, 158, 132, 255))   # the keeper
+    return im
+
+
 # --- Shepherd's Reach, the Coldwell, and the pieces on the way up (REACH.md 8,
 # COLDWELL.md 8) ---------------------------------------------------------------
 def icon_fold_tally():
@@ -633,9 +663,72 @@ def icon_bare_mask():
     return im
 
 
+# --- Kettle Fjord's points of interest (docs/lore/POI.md 4)
+def icon_sounding_pole():
+    """An ash pole, iron-shod at the foot."""
+    im, d = canvas()
+    d.polygon(rot([(61, 8), (67, 8), (67, 104), (61, 104)], 24), fill=INK)
+    d.polygon(rot([(60, 100), (68, 100), (65, 122), (63, 122)], 24), fill=DARK)
+    d.polygon(rot([(60, 36), (68, 36), (68, 50), (60, 50)], 24), fill=DARK)
+    return im
+
+
+def icon_line_winder():
+    """A notched board with line wound round its waist."""
+    im, d = canvas()
+    d.polygon(rot([(46, 14), (82, 14), (82, 30), (74, 36), (74, 92), (82, 98), (82, 114), (46, 114), (46, 98), (54, 92),
+                   (54, 36), (46, 30)], 18), fill=INK)
+    for y in range(40, 90, 7):
+        d.line(rot([(50, y), (78, y + 4)], 18), fill=DARK, width=4)
+    d.line(rot([(78, 88), (96, 104), (92, 112)], 18), fill=DARK, width=3)
+    return im
+
+
+def icon_healer_pack():
+    """A rolled pack done up with three straps."""
+    im, d = canvas()
+    d.rounded_rectangle((16, 42, 112, 96), radius=26, fill=INK)
+    for x in (38, 60, 82):
+        d.rectangle((x, 40, x + 8, 98), fill=DARK)
+    d.rounded_rectangle((34, 28, 94, 44), radius=7, fill=(196, 184, 160, 255))
+    return im
+
+
+# --- Tarnhall's and the Coldwell's points of interest (docs/lore/POI.md 5, 8)
+def icon_vat_dipper():
+    """A long-handled dipper, the bowl's lip worn flat."""
+    im, d = canvas()
+    d.polygon(rot([(61, 6), (67, 6), (67, 86), (61, 86)], -32), fill=INK)
+    c = rot([(64, 98)], -32)[0]
+    d.chord((c[0] - 22, c[1] - 20, c[0] + 22, c[1] + 20), 20, 200, fill=INK)
+    d.chord((c[0] - 14, c[1] - 12, c[0] + 14, c[1] + 12), 20, 200, fill=DARK)
+    return im
+
+
+def icon_melt_flowers():
+    """A tied bunch: five-petalled heads on stems, a turn of grass round them."""
+    im, d = canvas()
+    for (x, y) in ((40, 34), (64, 22), (88, 34), (52, 52), (78, 54)):
+        d.line([(64, 116), (x, y)], fill=DARK, width=3)
+    for (x, y, r) in ((40, 34, 13), (64, 22, 14), (88, 34, 13), (52, 52, 10), (78, 54, 10)):
+        for k in range(5):
+            a = math.radians(72 * k - 90)
+            d.ellipse((x + math.cos(a) * r * 0.6 - r * 0.5, y + math.sin(a) * r * 0.6 - r * 0.5,
+                       x + math.cos(a) * r * 0.6 + r * 0.5, y + math.sin(a) * r * 0.6 + r * 0.5), fill=INK)
+        d.ellipse((x - 4, y - 4, x + 4, y + 4), fill=EMBER)
+    d.line([(54, 92), (74, 96)], fill=INK, width=5)
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
+    import json
+    _sheets = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ui", "icon_sheets.json")))["sheets"]
+    PAINTED = {t[0] for sh in _sheets.values() for t in sh["tiles"]}
     for name, fn in list(globals().items()):
+        if name.startswith("icon_") and name[5:] in PAINTED:
+            print("[icons] %s is painted (tools/ui/build_icons.py); not drawn" % name[5:])
+            continue
         if name.startswith("icon_"):
             fn().save(os.path.join(OUT, name[5:] + ".png"))
             print("[icons]", name[5:])

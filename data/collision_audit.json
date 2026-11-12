@@ -1,0 +1,388 @@
+{
+ "doc": "Settings and allow-list of the collision audit (tools/test/collision_audit_test.gd, docs/qa/COLLISION_AUDIT.md). 'allow' rules match on id (glob on the audit's id: kit:<id>, scene:<file>, house:<id>/<mesh>, mm:<multimesh>, node:<path>, blocker#n, box#n(mat)), path (glob on the node path under the area) and class (a script class among the node's ancestors). allow: all = walk-through on purpose; partial = only its core is solid on purpose; invisible = a collider with nothing drawn on purpose; surface = a water or ice sheet; undrawn = light, smoke, sky. Never add a rule to make the audit pass: a thing the player expects to bump into is an offender.",
+ "thresholds": {
+  "min_height": 0.6,
+  "min_width": 0.5,
+  "band_min": 0.4,
+  "band_max": 1.5,
+  "cover_radius": 0.3,
+  "min_samples": 3,
+  "partial_min": 8,
+  "sample_spacing": 0.3,
+  "max_samples": 1500,
+  "max_tris": 60000,
+  "max_tests": 64,
+  "drawn_radius": 0.45,
+  "surface_tol": 0.3,
+  "terrain_tol": 0.05,
+  "proxy_min_extent": 0.3,
+  "floor_min_extent": 2.5,
+  "cluster_min": 2,
+  "baseline_match_m": 1.0,
+  "min_second": 0.3,
+  "step_slack": 0.05,
+  "gap_min": 0.3,
+  "spawn_tol": 1.2,
+  "cluster_link": 0.6
+ },
+ "allow": [
+  {
+   "id": "mm:Veg_*",
+   "allow": "all",
+   "reason": "grass, heather and sedge clumps: ground cover the Bearer wades through"
+  },
+  {
+   "id": "mm:roof_grass",
+   "allow": "all",
+   "reason": "grass growing on the turf roofs, overhead"
+  },
+  {
+   "id": "node:Water",
+   "allow": "surface",
+   "reason": "sea, river, tarn and bog sheets (and the same sheets frozen): a surface, never a wall"
+  },
+  {
+   "id": "node:Falls",
+   "allow": "surface",
+   "reason": "falling and running water ribbons, and the same ribbons frozen"
+  },
+  {
+   "id": "mm:Forest_tree_*",
+   "allow": "partial",
+   "reason": "a tree's trunk is the solid (Forest._tree_bodies); boughs and needles brush past"
+  },
+  {
+   "id": "kit:beam_4m",
+   "allow": "all",
+   "reason": "PASSABLE_PROPS: a roof beam overhead"
+  },
+  {
+   "class": "GodRays",
+   "allow": "undrawn",
+   "reason": "shafts of light"
+  },
+  {
+   "path": "*flame*",
+   "allow": "undrawn",
+   "reason": "flame cards on fires, lamps and braziers"
+  },
+  {
+   "path": "RimeLayer/Drift_*",
+   "allow": "all",
+   "reason": "snow banked against house walls in RIME: soft, the wall behind it is the solid"
+  },
+  {
+   "class": "FrostVeil",
+   "allow": "invisible",
+   "reason": "the veil's seal and its side seals close an arena: the sheet is the drawn part"
+  },
+  {
+   "id": "house:*/roof_grass",
+   "allow": "all",
+   "reason": "grass growing on the turf roofs, overhead"
+  },
+  {
+   "class": "FrostVeil",
+   "allow": "doorway",
+   "reason": "a frost veil stands in a doorway until its Holdfast is released"
+  },
+  {
+   "class": "ShortcutGate",
+   "allow": "doorway",
+   "reason": "a barred gate is a wall until it is unbarred"
+  },
+  {
+   "class": "FlagGate",
+   "allow": "doorway",
+   "reason": "a gate that opens when the story turns"
+  },
+  {
+   "id": "*lowe_barrows",
+   "area": "saltfell_steading",
+   "near": [
+    -8.0,
+    22.3,
+    -73.7,
+    4.0
+   ],
+   "allow": "spot",
+   "reason": "the drawbridge end: no floor until bridge_down (audited lowered in the released build)"
+  },
+  {
+   "id": "*saltfell_steading",
+   "area": "lowe_barrows",
+   "near": [
+    -8.0,
+    22.3,
+    -77.7,
+    4.0
+   ],
+   "allow": "spot",
+   "reason": "the drawbridge end: no floor until bridge_down (audited lowered in the released build)"
+  },
+  {
+   "id": "node:MeshInstance3D[* water.gdshader]",
+   "allow": "surface",
+   "reason": "a second water sheet in the same area (the engine renames it)"
+  },
+  {
+   "id": "node:MeshInstance3D[* falls.gdshader]",
+   "allow": "surface",
+   "reason": "a second falls ribbon in the same area (the engine renames it)"
+  },
+  {
+   "id": "node:Node3D/MeshInstance3D[QuadMesh ]",
+   "allow": "undrawn",
+   "reason": "god rays (src/world/god_rays.gd): crossed quads of light"
+  }
+ ],
+ "owners": [
+  {
+   "id": "scene:lm_veil_rime.glb",
+   "owner": "Lead's look-pass agent",
+   "fix": "src/world/frost_veil.gd: the veil's dressing is wider than its seal; once the veil is cleared it is walked through"
+  },
+  {
+   "id": "node:Node3D/MeshInstance3D[ArrayMesh hall.gdshader]",
+   "owner": "Lead",
+   "fix": "src/world/tide_wall.gd: the frozen wave's crest curls 0.7 m landward of its 1.1 m box colliders; lean the boxes with the curl or widen them"
+  },
+  {
+   "check": "floating",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "fix": "Wayside._landmark: the fitted box (0.8 of the mesh's AABB) overhangs the drawn landmark, so its top is a ledge with nothing under it: fit a hull, or shrink the box"
+  },
+  {
+   "check": "floating",
+   "owner": "QA env",
+   "fix": "generator: the drawn floor and the collider must cover the same ground"
+  },
+  {
+   "check": "unbacked_floor",
+   "owner": "QA env",
+   "fix": "generator: give the drawn floor its collider"
+  },
+  {
+   "check": "void",
+   "owner": "QA env",
+   "fix": "terrain/generator: close the hole"
+  },
+  {
+   "check": "terrain_collider",
+   "owner": "QA env",
+   "fix": "src/world/terrain.gd"
+  },
+  {
+   "check": "terrain_edge",
+   "owner": "QA env",
+   "fix": "generator: a seam or an edge before the heightfield ends"
+  },
+  {
+   "check": "seam",
+   "owner": "QA env",
+   "fix": "tools/seams_*.py: both areas must hold the same ground at the crossing"
+  },
+  {
+   "check": "spawn",
+   "owner": "QA env",
+   "fix": "tools/seams_*.py / generator: seat the spawn on the floor"
+  },
+  {
+   "check": "threshold",
+   "id": "door * of wellhouse_*",
+   "owner": "Lead's endings agent (Coldwell) with the World-fidelity env",
+   "fix": "the house stands on a 45-degree corrie wall (ground runs -17 m to +12 m across its footprint): move it to level ground, or cut a pad in tools/terrain_coldwell.py"
+  },
+  {
+   "check": "threshold",
+   "id": "door *",
+   "owner": "World-fidelity env",
+   "fix": "level the threshold: house y against the ground at the door"
+  },
+  {
+   "check": "threshold",
+   "owner": "World-fidelity env",
+   "fix": "generator: a step or a ramp at the deck's end, or drop the collider if it is not meant to be walked"
+  },
+  {
+   "id": "house:*",
+   "owner": "World-fidelity env",
+   "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's"
+  },
+  {
+   "id": "mm:Scatter_hummock*",
+   "owner": "Lead's look-pass agent",
+   "fix": "src/world/scatter.gd: hummocks have no collider at all; either keep them under 0.6 m or raise the land under them"
+  },
+  {
+   "id": "mm:Scatter_*",
+   "owner": "Lead's look-pass agent",
+   "fix": "src/world/scatter.gd: the piece is drawn but Scatter._emit gives it no collider (flat ice floes are skipped on purpose)"
+  },
+  {
+   "id": "mm:Forest_hedge*",
+   "owner": "Lead's look-pass agent",
+   "fix": "src/world/forest.gd _hedge: a hedge section stands outside its segment's box collider (the ends of a run, upper courses)"
+  },
+  {
+   "id": "mm:Forest_*",
+   "owner": "Lead's look-pass agent",
+   "fix": "src/world/forest.gd: trunk collider missing or off the trunk"
+  },
+  {
+   "check": "invisible",
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry"
+  },
+  {
+   "id": "kit:hearthstone",
+   "owner": "Lead's look-pass agent",
+   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb"
+  },
+  {
+   "id": "kit:sr_ewe",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her"
+  },
+  {
+   "id": "kit:sr_smudge",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py: Smudge is \"collide\": false: give her a blocker where she stands"
+  },
+  {
+   "id": "kit:sr_*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py places it with \"collide\": false, or its hull misses the drawn frame: drop that, or box it"
+  },
+  {
+   "id": "kit:sf_*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_steading.py: the drawn piece and its collider do not cover the same ground (a half boat's thwarts read as a floor)"
+  },
+  {
+   "id": "kit:lw_*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_lowe.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:creel_stack",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_reach.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:boat",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "the boat model was replaced: its convex hull now stands over the open hull (a floor with nothing drawn under it) and its thwarts read as a floor: fit the collider to the new mesh"
+  },
+  {
+   "check": "invisible",
+   "id": "blocker#*",
+   "owner": "POI agent (Saltfell, Lowe, Reach)",
+   "fix": "gen_lowe.py: the round blocker stands clear of the piece it was set for"
+  },
+  {
+   "id": "kit:tw_*",
+   "owner": "POI agent (Thornwold)",
+   "fix": "gen_thornwold.py places it with \"collide\": false (a burnt-out clamp's ring stands 1 m high): drop that, or keep it under 0.6 m"
+  },
+  {
+   "id": "scene:lm_thorn_stile.glb",
+   "owner": "POI agent (Thornwold)",
+   "fix": "ShortcutGate with \"leaves\": false: the grown-shut stile is wider than the gate's box; fit the box to the dressing"
+  },
+  {
+   "id": "kit:kf_*",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_kettle.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:th_*",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_tarnhall.py places it with \"collide\": false: drop that"
+  },
+  {
+   "id": "kit:cw_*",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_coldwell.py places it with \"collide\": false and \"embed\": true (ice columns up to 5 m): give the column a hull"
+  },
+  {
+   "id": "scene:sledge_dog.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_kettle.py: the dogs at the Dog Lines have no blocker: add one each (about 0.5 x 0.8 x 1.0)"
+  },
+  {
+   "id": "scene:lm_sledge.glb",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_kettle.py: the sledge's \"blocker\" covers half of what is drawn: widen it to the runners"
+  },
+  {
+   "check": "walk_through",
+   "id": "box#*(M_drystone)",
+   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
+   "fix": "gen_tarnhall.py: the cook-yard's retaining wall face is \"collide\": false and stands clear of the yard's edge in RIME: give it its collider"
+  },
+  {
+   "id": "kit:sheep",
+   "owner": "Lead's look-pass agent",
+   "fix": "gen_reach.py sets the living flock \"collide\": false because FlockWander moves it: give each ewe a body that moves with her"
+  },
+  {
+   "id": "kit:door_leaf",
+   "owner": "World-fidelity env",
+   "fix": "gen_tarnhall.py: the open leaf is \"collide\": false"
+  },
+  {
+   "id": "kit:*",
+   "owner": "Lead's look-pass agent",
+   "fix": "the generator places it with \"collide\": false: drop that (AreaBuilder then gives it a convex hull)"
+  },
+  {
+   "id": "scene:unsung.glb",
+   "owner": "Lead's endings agent",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)"
+  },
+  {
+   "id": "scene:upwalker.glb",
+   "owner": "Lead's endings agent",
+   "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)"
+  },
+  {
+   "id": "scene:lm_wellhead*",
+   "owner": "Lead's endings agent",
+   "fix": "gen_coldwell.py: the \"blocker\" is far smaller than the 7.5 m wellhead"
+  },
+  {
+   "check": "invisible",
+   "id": "landmark_blocker:*",
+   "owner": "Lead's look-pass agent",
+   "fix": "generator: the landmark's \"blocker\" box is wider than what is drawn"
+  },
+  {
+   "check": "invisible",
+   "id": "node:StaticBody3D",
+   "owner": "Lead's look-pass agent",
+   "fix": "the box collider is wider than what is drawn (Forest._hedge: seg + 0.2 by h + 0.4 by max(w, 0.8); Wayside._landmark: 0.8 of the mesh's AABB)"
+  },
+  {
+   "id": "scene:lm_hall_doors.glb",
+   "owner": "World-fidelity env",
+   "fix": "ShortcutGate: the barred doors' collider is thinner than the drawn pair"
+  },
+  {
+   "id": "scene:*",
+   "owner": "Lead's look-pass agent",
+   "fix": "a landmark placed without \"blocker\" (or with one smaller than the mesh): add or widen it in the generator"
+  }
+ ],
+ "release_also": {
+  "doc": "world flags set with an area's release flags for the second build, so what they bring is audited too",
+  "saltfell_steading": [
+   "lowe_bridge_down"
+  ],
+  "lowe_barrows": [
+   "lowe_bridge_down"
+  ]
+ }
+}

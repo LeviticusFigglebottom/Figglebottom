@@ -1,8 +1,33 @@
 # Live handoff: Rimeholt
 
-_Last updated: 2026-11-10 (lead session, after the all-in merge)_
+_Last updated: 2026-11-12 (integration session: `feat/integration-1112`; the sections below it are the lead's of 2026-11-10)_
 
 Read `docs/handoffs/live/TEAM.md` next: it has the roster, file ownership and how the sessions talk.
+
+## Integration branch `feat/integration-1112` (2026-11-12): waiting for the lead to fast-forward main
+
+**What it is.** `origin/main` 024ff96 (sounds redo, painted icons, Journal, Map) with these merged in, in this order: `feat/weapons-overhaul`, `feat/poi-kettle-tarnhall-coldwell`, `fix/playtest-1`, `feat/poi-thornwold-plants`, `feat/intro`, `art/biomes`, `feat/poi-saltfell-lowe-reach`. Not merged: `feat/streaming`. Main was not touched.
+
+**Next exact step (lead).** Read the results below, then:
+```
+git fetch origin && git checkout main && git merge --ff-only origin/feat/integration-1112 && git push origin main
+```
+The last green point before the Saltfell, Lowe and Reach merge is commit `7e4f172`, if that merge has to be backed out.
+
+**Rules the merges settled (read before editing these files).**
+- **Journal steps** (`data/keepsakes.json`): every step has `flag`, `objective`, `line`. A thing shown to somebody is an `optional` step (`needs_item`, `after`), never a second entry in `steps`. Tests read it through `Journal.view_of(Journal.thread_def(id))["done"]`.
+- **Plants:** the order is written at `Scatter.region_rules` (`src/world/scatter.gd`): area rules, then the region recipe (`data/veg/<area>.json`), then the biome file's `density` and `swap` over the whole list (`Biome.veg_rules`), applied once in `Scatter.build_veg`.
+- **Scatter collision:** one rule. Rocks, boulders, driftwood, peat stacks, walls and rows, standing stones and upright floes collide as the hull of their own mesh once they stand 0.55 m out of the ground. `solid_small` is gone.
+- **Prop strikes** play `AudioDirector.impact(surface, position)` (`data/audio.json` `impacts`). The fourteen synthesized strike takes were not carried over.
+- **Terrain:** all seven regions were regenerated in full from the merged generators (`python3 tools/gen_<region>.py`). The far-ring bins of every region changed with their neighbours; regenerate all seven after any terrain edit.
+- **A board with a caption in one state only** stands solid in both (`gen_kettle.py`, `gen_tarnhall.py`), and a tagged board's collider is on its state's layer.
+- **Props:** `"tilt"` is a pitch or `[pitch, roll]`; a pickup's display offset is `"show_off"` or `"show_at"`.
+
+**Verification on the final state** (local, headless; see the session's report for run counts):
+- `tools/check_originality.sh --all`, `tools/audit_edges.py`, `tools/audit_areas.py`: clean.
+- Default `tools/test.sh`: 44 suites, 2,975 checks, 0 failures.
+- Walks, all green on the final walk code: `fullslice` (6 runs), `fullgame_lowe` (4), `fullgame_reach` (3), `fullgame_kettle`, `fullgame_tarnhall` (2), `fullgame_thornwold`, `fullgame_coldwell`, both endings. See "Known breakages" for the slice walk on the owner's PC.
+- Collision audit: 219 baselined offenders (189 before), each with an owner in `tools/test/fixtures/collision_baseline.json`. New owners: the three POI agents (`data/collision_audit.json`).
 
 ## State (on main fd881f6)
 The whole game is on main, in structure:
@@ -34,6 +59,7 @@ The whole game is on main, in structure:
 | QA env (cloud) | `fix/qa-regions` | End-to-end walks for regions 2–5 (extend to Reach, Coldwell and the endings next); the bench flake |
 | World-fidelity env (cloud) | `art/world-fidelity` | Exposure per state, cliffs, snow, the Coldwell horizon, building construction detail, interiors |
 | Lead's agents (this box) | `feat/anims-4`, `art/look-pass-5` | See the task board |
+| Sound (this box) | `feat/sfx-redo` (ready for review) | Every sound effect and ambience bed rebuilt from CC0 recordings; the THAW/RIME bed handover follows the wave front. `docs/audio/SFX.md`. **Nobody has listened yet: the owner must.** Rebuild: `python3 tools/audio/build_sfx.py`; check: `tools/test.sh audio`. Hit-VFX sessions call `AudioDirector.impact(surface, position)`. |
 
 ## Area streaming (`feat/streaming`, ADR 0014; not on main)
 - `Streamer` (`Game.stream`) builds the next area on a worker thread ahead of each seam, grafts it hidden under a per-frame budget, swaps behind a short dip to black and frees the old area over frames. `--no-streaming` falls back to the old synchronous build. Tuning: `data/game.json` → `streaming`.
@@ -77,4 +103,8 @@ The whole game is on main, in structure:
 - None right now.
 
 ## Known breakages
-- None yet.
+- **`fullslice` is red on the owner's PC and green here.** At 0cac9ad the PC failed it twice, at different places (the float's prompt; the Netmender, six deaths), after passing it before the Saltfell, Lowe and Reach merge. On this box it passed six times on the merged code, one of them with drawn frames held to four a second. Cause not found. Next step: have the PC run `tools/test.sh fullslice` alone, with nothing else running, and send the whole log, not only the FAIL lines. The walks now keep a save directory per process, so two runs at once cannot write over each other.
+- **`fullgame_reach` leaned on luck in two places,** both in the walk's driving: a scatter stone on the straight line over the beck ice, and the fold cache inside the Drift Lane's walls with foes on the far side. The walk now follows the planned path over the ice and goes back for the cache (`_leg_slope`). Three runs green since. `fullgame_tarnhall`'s porch leg comes back from a fight the same way.
+- **A dense convex hull can lose the Bearer.** The hide tent `kf_ice_hut_b` (a 186-point hull) stopped being named as a wall to a capsule sliding along it, `Player._unpin` then lifted him and he walked in. That piece now asks for a 32-point hull (`"hull": "simple"` in `KitLib.PIECES`). Other Tripo props with hulls that dense have not been walked into one by one.
+- **Decision records 0006 and 0011 each exist twice** (on main already). Not renumbered here.
+- **`data/map.json` and the baked map images were not rebuilt** after the points of interest moved ground (`tools/ui/build_map.py`).

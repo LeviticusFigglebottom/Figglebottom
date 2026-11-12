@@ -2,6 +2,52 @@
 
 Session `session_01F3vrULm3SXqTh8xCJswNEX`, branch `art/world-fidelity` (based on `origin/fix/slice-qa`). Newest entry at the top.
 
+## 2026-11-11 (9): biome pass, first complete round on `art/biomes`
+
+**Branch `art/biomes`** (cut from `origin/main` c5b918f, then `art/world-fidelity` merged in, so it also carries the light-balance and wayside commits you have not merged yet; it now has main's CI triggers). I still cannot message you; this file is the channel. Both of your notes (CI on main only; take main's `.github`) are done.
+
+**The mechanism (all data, no generator edits at all)**
+
+- `data/biomes/<area>.json`, loaded by `src/world/biome.gd` and laid over the generator's blocks at build time. Keys: `terrain.palette`, `terrain.sets`, `terrain.shader` (rock character), `env.thaw` / `env.rime`, `weather`, `veg`. The format is documented at the top of `biome.gd` and in each file's `_doc`.
+- **`veg` key for `feat/poi-thornwold-plants`:** `{"density": {<kind>: scale, 0 removes it}, "swap": {<kind>: <kind>}, "add": [ <scatter rule>, ... ]}`. `add` is empty in all seven files and is theirs to fill; `Biome.veg_rules()` appends those rules to the area's own.
+- `--no-biome` (user arg) builds the regions as the generators made them. The before shots use it.
+- `shaders/terrain.gdshader`: seven new rock uniforms (`bed_thickness`, `bed_strength`, `joint_vertical`, `joint_spacing`, `streak_strength`, `rock_moss`, `rock_stain`). Defaults reproduce the old schist.
+- `src/world/weather.gd`: `pollen*`, `snow*`, `glitter` keys so each region and state has its own particles.
+
+**Per region**
+
+| Region | Added | Still shared |
+|---|---|---|
+| Saltfell | sets `sf_turf`, `sf_shingle`, `sf_wrack`; thicker warm-stained beds; sideways fine snow in RIME, pearl fog; no ling | rock set (schist), heath set |
+| The Lowe | `lw_peat` path; near-unbedded mossy rock, more puddles; blue drift motes in THAW, slow hoar in RIME, lilac fog; ling x1.5 | turf, heath, shingle, rock sets |
+| Kettle | `kf_shore`, `kf_granite`; pale upright-jointed granite with water streaks; cool sky fill on the shaded wall; grey fog in place of orange; no snowfall, heavy glitter | turf, shingle sets |
+| Tarnhall | `th_grass`, `th_mud`, `th_slate`, `th_rock`; thin blue slate beds; rose fog, big flakes straight down under flat overcast; ling swapped to sedge | none of the four ground layers |
+| Thornwold | `tw_needles`, `tw_leaves`, `tw_mud`, `tw_rock`; mossy unbedded boulders; green-gold fog, thick pollen, violet RIME shade | shingle set |
+| Shepherd's Reach | `sr_turf`, `sr_scree`, `sr_rock`; pale close-jointed limestone; clear air, thistledown on the wind, spindrift in RIME; no ling, grass x1.3 | heath, path sets |
+| The Coldwell | `cw_gravel`, `cw_moss`, `cw_cobble`, `cw_moraine`; blue-stained moraine; cool-white sun, blue RIME shade, glitter, nothing falls | path set |
+
+**Texture ids I substituted or dropped after looking at them:** `withered_grass` (Lowe bog grass: reads as sand), `seaside_rock` (Saltfell) and `rock_surface` (Reach pavement) are featureless at 1K. Those layers stay on the existing sets, re-tinted. `flower_scattered_gravel` and `Ice004` were not fetched (the Melt and the ice are not in my columns).
+
+**Light, against the BIOMES.md rules**
+
+- THAW sun: 2.0 to 2.1 in data, 1.60 to 1.68 after `render/balance`. RIME: 1.5 in data, 1.38 after balance (Tarnhall 1.1, overcast).
+- No frame over 1% black or white in the fourteen after shots. Worst: Tarnhall THAW 0.7% (it was 7.6% before), Coldwell THAW 0.7%. Tarnhall and Thornwold needed their palettes lifted as well as their ambient: the literal BIOMES.md hexes are much darker than what the generators used.
+- **Not measured:** the grey-card sun-to-shade ratio at each hearth. I raised ambient and fill, and did not lower any sun below the range.
+- Fog distance is the same in both states only where the generators already had it so; I changed fog colour, and density in a few RIME blocks. Check against STYLE.md if that rule is strict.
+- The sky is not mine, so every THAW sky is still the same rose haze. That is now the biggest thing the regions share.
+
+**Perf.** No new meshes or draw calls: uniforms, textures and particle counts only. 21 sets at 1K, 25 MB on disk; a region loads only its own two to four sets (roughly 4 MB of VRAM per set compressed with mips, so up to 16 MB), and the shared 2K sets it replaces are no longer bound there. Largest particle count added: Tarnhall RIME, 520 flakes. Not measured on a GPU.
+
+**Shots.** `docs/screens/biome_before_<area>_<state>.png` and `biome_after_...`, one framing per region, HUD off. `docs/screens/biome_sheet_thaw.png` and `_rime.png`: top row before, bottom row after, regions in route order. The RIME after shots predate the last small change (RIME sun 1.55 to 1.5).
+
+**Tests (local, lavapipe).** All exit 0 on the final data: `smoke`, `houses`, `traps`, the seven area suites (`steading`, `lowe`, `kettle`, `tarnhall`, `thornwold`, `reach`, `coldwell`) and the seven encounter suites (`tarnhall_encounters` included, no flake this run). `tools/audit_edges.py` and `tools/audit_areas.py` clean in every area and both states. `check_originality.sh --all` OK. Not run: `fullslice`, `fullgame_*`, and the suites this work does not touch.
+
+**Not done**
+
+- Ground-cover tint per region (only distribution is in).
+- Ground was not widened and no landform touched, as told.
+- Kettle and Saltfell THAW still look closest to their "before"; they need the plants and props from the other branches to separate further.
+
 ## 2026-11-11 (8): clean stopping point, ready to merge
 
 **Branch `art/world-fidelity`, head: the commit that adds this entry (on top of `844c9ad`, which merges `main` at `103a252` with no conflicts).** I still cannot message you (trusted-device refusal), so this is the report you asked for.

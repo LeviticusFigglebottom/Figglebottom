@@ -1,252 +1,564 @@
 {
- "doc": "Keepsakes journal (SPEC.md §7.11, docs/lore/SLICE.md §7, docs/lore/LOWE.md §7, docs/lore/KETTLE.md §7, docs/lore/TARNHALL.md §7, docs/lore/THORNWOLD.md §7). A thread starts when its first step's flag is set; the journal shows every step whose flag is set, in step order. Lines are verbatim from SLICE.md, LOWE.md, KETTLE.md, TARNHALL.md and THORNWOLD.md.",
- "toast": "A keepsake is remembered.",
+ "doc": "The Journal (SPEC.md 6, ADR 0014, docs/lore/WRITING.md 'Quest log voice'). `main` is the journey itself; `threads` are the side threads. A thread starts when its first step's flag is set. Each step has: `flag` (the World flag that completes it), `objective` (plain instruction for how to complete it, shown while it is the next step), `line` (plain statement shown once it is done), and optionally `area` + `at` (where the objective is, when the Bearer has been told: 'npc:<id>', 'pickup:<id>', 'hearth:<id>', 'veil' or [x, z]) and `objective_when` ([{flag|item, objective}], first match replaces the objective). `optional` steps never block the thread: {`needs_item`: shown as an extra objective only while that item is carried, `after`: the flag it sorts after}. A new thread or step needs only an entry here. Entries marked `poi` are the POI.md threads and steps: their text is ready, and they stay silent until something sets their flags.",
+ "toast": "Journal updated.",
+ "main": {
+  "id": "outsong",
+  "title": "The Outsong",
+  "sequential": true,
+  "about": "The journey up the water, from Saltfell to the Coldwell. Each region is held in RIME by its Holdfast.",
+  "steps": [
+   {
+    "area_flag": [
+     "saltfell_steading/lit_hs_boat_shed",
+     "saltfell_steading/lit_hs_salt_house"
+    ],
+    "area": "saltfell_steading",
+    "at": "hearth:hs_boat_shed",
+    "objective": "Rest at a Hearthstone. The nearest is in the boat-shed at the east end of the Strand. Resting heals you, refills the Gourd and saves. The first rest in a region also turns it from THAW to RIME, and it stays in RIME until that region's Holdfast is released. The people of Saltfell are only here in THAW, so talk to them first.",
+    "line": "Rested at a Hearthstone in Saltfell. Saltfell is in RIME until its Holdfast is released."
+   },
+   {
+    "flag": "ks_netmender_released",
+    "area": "saltfell_steading",
+    "at": "veil",
+    "objective": "Release the Holdfast of Saltfell. It is in the Longhouse, at the north end of Saltfell yard, up the cliff path from the Strand. The way in is the frost veil across the Longhouse door, which stands only in RIME.",
+    "line": "Released the Netmender, the Holdfast of Saltfell. Any Hearthstone in Saltfell can now turn it between THAW and RIME."
+   },
+   {
+    "flag": "ks_turfwright_released",
+    "area": "lowe_barrows",
+    "at": "veil",
+    "objective": "Go up the water to the Lowe. The pass leaves the north-west corner of Saltfell yard. Follow the Barrow Road past the Kin-Mounds to the Drying Stacks, and release the Lowe's Holdfast behind the frost veil there.",
+    "line": "Released the Turfwright, the Holdfast of the Lowe."
+   },
+   {
+    "flag": "ks_ice_cutter_released",
+    "area": "kettle_fjord",
+    "at": "veil",
+    "objective": "Go on to Kettle Fjord. The Kettle Road leaves the north side of the Lowe, beyond the peat cuttings. In RIME the fjord is frozen and can be crossed on foot. Release the Holdfast at the Breathing Hole, at the east end of the fjord.",
+    "line": "Released the Ice-Cutter, the Holdfast of Kettle Fjord."
+   },
+   {
+    "flag": "ks_host_released",
+    "area": "tarnhall",
+    "at": "veil",
+    "objective": "Go on to Tarnhall. The Tarn Steps climb from the east end of Kettle Fjord. In RIME the hall's front doors are barred from the inside: go round to the Byres on the east side of the island, and release the Holdfast through the frost veil there.",
+    "line": "Released the Host, the Holdfast of Tarnhall. The hall's front doors are open."
+   },
+   {
+    "flag": "ks_hedgelayer_released",
+    "area": "thornwold",
+    "at": "veil",
+    "objective": "Go on to Thornwold. The drove-road leaves Tarnhall to the east, past the Byres. Follow it through the Collier's Clearing to the Hedge, and release the Holdfast at the pine in the middle of the rings.",
+    "line": "Released the Hedgelayer, the Holdfast of Thornwold."
+   },
+   {
+    "flag": "ks_fellcaller_released",
+    "area": "shepherds_reach",
+    "at": "veil",
+    "objective": "Go on to Shepherd's Reach. The fell path climbs out of the east side of the Hedge. Cross the beck beyond the Sheilings and release the Holdfast at the High Fold.",
+    "line": "Released the Fellcaller, the Holdfast of Shepherd's Reach."
+   },
+   {
+    "flag": "ks_leadvoice_released",
+    "area": "coldwell",
+    "at": "veil",
+    "objective": "Go on to the Coldwell. The Upwater path starts east of the High Fold. Climb past the Ice-Falls to the Wellhead and release the Holdfast in the ring of stones.",
+    "line": "Released Maren, the Leadvoice, at the Wellhead."
+   },
+   {
+    "flag": [
+     "ending_outsong",
+     "ending_hearth_kept"
+    ],
+    "area": "coldwell",
+    "objective": "At the spring in the Wellhead, decide what to do with the coal in the fostering horn: lay it in the spring, or keep the horn shut and sit down. Either choice ends the journey and cannot be undone.",
+    "line": "The choice at the Wellhead is made."
+   }
+  ]
+ },
  "threads": [
   {
    "id": "ingra_rye",
-   "title": "Ingra's rye",
+   "title": "Ingra's missing rye",
+   "area": "saltfell_steading",
    "steps": [
     {
      "flag": "ks_ingra_met",
-     "line": "Ingra is a sack of rye short and blames a dog."
+     "objective": "Talk to Ingra, the steward, in Saltfell yard, in THAW.",
+     "line": "Met Ingra, the steward, in Saltfell yard. She is a sack of rye short and blames a dog.",
+     "at": "npc:steward_ingra"
     },
     {
      "flag": "ks_ingra_rye_found",
-     "line": "The rye was in the byre, under the dog. It had been his bed."
+     "objective": "Find Ingra's missing sack of rye. She thinks a dog took it. Look in the byre, west of the Longhouse in Saltfell yard, in RIME.",
+     "line": "Found the rye sack in the byre, under a frozen dog. The dog had been sleeping on it.",
+     "at": [
+      -27,
+      -14
+     ]
     },
     {
      "flag": "ks_ingra_rye",
-     "line": "Ingra said he was a good dog."
+     "objective": "Take the rye sack back to Ingra in Saltfell yard, in THAW. Saltfell can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Gave Ingra the rye. She paid one bog-iron and now sells the Deep Gourd at half price.",
+     "at": "npc:steward_ingra"
     },
     {
      "flag": "ks_ingra_count",
-     "line": "Ingra is counting bowls."
+     "objective": "Talk to Ingra again, in THAW.",
+     "line": "Talked to Ingra after the Netmender's release. She is counting the bowls on the long table and gets eleven, then twelve, then eleven.",
+     "at": "npc:steward_ingra"
+    }
+   ],
+   "optional": [
+    {
+     "flag": "ks_ingra_bowls",
+     "objective": "Show Ingra the three bowls from the Lookout Stone, in THAW.",
+     "line": "Showed Ingra the three bowls from the headland. She knew she was three short, and took them to wash.",
+     "at": "npc:steward_ingra",
+     "needs_item": "item_three_bowls",
+     "after": "ks_ingra_rye",
+     "poi": "POI.md 2.4"
     }
    ]
   },
   {
    "id": "brede_float",
-   "title": "Brede's float",
+   "title": "Brede's lost net-float",
+   "area": "saltfell_steading",
    "steps": [
     {
      "flag": "ks_brede_met",
-     "line": "Brede lost a cork float off the herring net."
+     "objective": "Talk to Brede at his boat on the Strand, in THAW.",
+     "line": "Met Brede at his boat on the Strand. He lost a cork float off his herring net this morning and hopes the tide brings it in.",
+     "at": "npc:brede"
     },
     {
      "flag": "ks_brede_float_found",
-     "line": "The float was in the ice, where the tide stopped."
+     "objective": "Find Brede's cork net-float. He expects the tide to bring it in: search along the tide line on the Strand, in RIME, where the sea has frozen.",
+     "line": "Chipped Brede's float out of the frozen tide on the Strand."
     },
     {
      "flag": "ks_brede_float",
-     "line": "Brede says the wrong knot on the back makes it lucky."
+     "objective": "Take the float back to Brede on the Strand, in THAW. Saltfell can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Gave Brede his float. He will part with his spare oilskins for it: ask him.",
+     "at": "npc:brede"
     },
     {
      "flag": "ks_brede_mending",
-     "line": "Brede is mending the net himself."
+     "objective": "Talk to Brede again, in THAW.",
+     "line": "Talked to Brede after the Netmender's release. He is sitting on his boat, mending the net himself.",
+     "at": "npc:brede"
     }
    ]
   },
   {
    "id": "hesk_tongs",
-   "title": "Hesk's tongs",
+   "title": "Hesk's good tongs",
+   "area": "lowe_barrows",
    "steps": [
     {
      "flag": "ks_hesk_met",
-     "line": "Hesk dropped his good tongs in the bog, raking for iron."
+     "objective": "Talk to Hesk, the smith, at his furnace in the peat cutting west of the road, in THAW.",
+     "line": "Met Hesk, the travelling smith, at his furnace in a peat cutting on the Lowe. He dropped his good tongs in the bog this morning, raking for iron.",
+     "at": "npc:hesk"
     },
     {
      "flag": "ks_hesk_tongs_found",
-     "line": "The tongs were frozen into the bog, jaws down."
+     "objective": "Find Hesk's tongs in the peat bog east of his cutting. In THAW the bog is black water and cannot be crossed. In RIME it is frozen and can be walked on.",
+     "line": "Chipped Hesk's tongs out of the frozen bog.",
+     "at": [
+      -40,
+      -190
+     ]
     },
     {
      "flag": "ks_hesk_tongs",
-     "line": "Hesk said they were never that good, and took them."
+     "objective": "Take the tongs back to Hesk at his furnace, in THAW. The Lowe can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Gave Hesk his tongs. He paid one bog-iron, and now folds bog-iron into a blade for 140 warmth instead of 220.",
+     "at": "npc:hesk"
     },
     {
      "flag": "ks_hesk_wind",
-     "line": "Hesk says the wind has come right."
+     "objective": "Talk to Hesk again, in THAW.",
+     "line": "Talked to Hesk after the Turfwright's release. The wind has turned and his furnace is drawing properly.",
+     "at": "npc:hesk"
+    }
+   ],
+   "optional": [
+    {
+     "flag": "ks_hesk_iron",
+     "objective": "Show Hesk the spade-iron from beside his furnace, in THAW.",
+     "line": "Showed Hesk the half-edged spade-iron. It is Arne Holm's, and Hesk says he will have it back to him by the morning.",
+     "at": "npc:hesk",
+     "needs_item": "item_spade_iron",
+     "after": "ks_hesk_tongs_found",
+     "poi": "POI.md 3.3"
     }
    ]
   },
   {
    "id": "aud_cord",
-   "title": "Orm's cord",
+   "title": "Orm's knot-cord",
+   "area": "lowe_barrows",
    "steps": [
     {
      "flag": "ks_aud_met",
-     "line": "Aud ties heather on Orm's mound every evening, the last one on the road."
+     "objective": "Talk to Aud on the Barrow Road, between the first two barrows, in THAW.",
+     "line": "Met Aud, a barrow-keeper's widow, on the Barrow Road. Her husband Orm was buried with his knot-cord. She says he is under the last mound on the road.",
+     "at": "npc:aud"
     },
     {
      "flag": "ks_aud_cord_found",
-     "line": "Orm's cord was in the first barrow on the road."
+     "objective": "Find Orm's knot-cord. It was buried with him in one of the barrows along the road. In RIME the barrows stand open.",
+     "line": "Took Orm's knot-cord from the mouth of the first barrow on the road, not the last."
     },
     {
      "flag": "ks_aud_cord",
-     "line": "Aud says Orm tied his knots too tight to read."
+     "objective": "Take Orm's cord to Aud on the Barrow Road, in THAW. The Lowe can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Showed Aud the cord. She will give away Orm's working cloak: ask her.",
+     "at": "npc:aud"
     },
     {
      "flag": "ks_aud_heather",
-     "line": "Aud has moved her heather to the first mound. She says it was always there."
+     "objective": "Talk to Aud again, in THAW.",
+     "line": "Talked to Aud after the Turfwright's release. She now ties her heather on the first mound, and says she always did.",
+     "at": "npc:aud"
     }
    ]
   },
   {
    "id": "ivo_mitten",
    "title": "Ivo's mitten",
+   "area": "kettle_fjord",
    "steps": [
     {
      "flag": "ks_ivo_met",
-     "line": "Ivo is harnessing the dogs and says he is not going anywhere."
+     "objective": "Talk to Ivo at the dogs by the Fish-Houses, in THAW.",
+     "line": "Met Ivo at the Fish-Houses, harnessing the sledge dogs. He has lost a mitten and is wearing one of his grandfather's. His supper is waiting for him in the fish-house.",
+     "at": "npc:ivo"
     },
     {
      "flag": "ks_ivo_supper",
-     "line": "The supper was still on the hook. The ladle was frozen standing up in it."
+     "objective": "Look for Ivo's supper in the westmost fish-house, in RIME.",
+     "line": "Took the ladle out of Ivo's supper pot in the westmost fish-house. The pot was still on its hook, frozen, with the ladle standing up in it.",
+     "at": "pickup:kettle_ladle"
     },
     {
      "flag": "ks_ivo_mitten_found",
-     "line": "The mitten was in the ice where the hole had been, palm up."
+     "objective": "Ivo's own mitten is still missing. In RIME, sledge tracks run east across the ice from the Fish-Houses toward the Breathing Hole. Follow them. The Holdfast there has to be released before anything can be taken from the hole.",
+     "line": "Chipped Ivo's mitten out of the new ice where the Breathing Hole closed over.",
+     "at": "veil"
     },
     {
      "flag": "ks_ivo_mitten",
-     "line": "Ivo put the mitten on. Both of his are his own now."
+     "objective": "Take the mitten to Ivo at the Fish-Houses, in THAW.",
+     "line": "Gave Ivo his mitten. He is wearing both of his own again.",
+     "at": "npc:ivo"
+    }
+   ],
+   "optional": [
+    {
+     "flag": "ks_ivo_pole",
+     "objective": "Show Ivo the sounding pole from the Dog Lines, in THAW.",
+     "line": "Showed Ivo the sounding pole. It is his grandfather's, and Ivo says he can judge ice without it.",
+     "at": "npc:ivo",
+     "needs_item": "item_sounding_pole",
+     "after": "ks_ivo_met",
+     "poi": "POI.md 4.2"
+    },
+    {
+     "flag": "ks_ivo_line",
+     "objective": "Show Ivo the line-winder from the Ice Camp, in THAW.",
+     "line": "Showed Ivo the line-winder. It is his. His grandfather says he winds it backwards.",
+     "at": "npc:ivo",
+     "needs_item": "item_line_winder",
+     "after": "ks_ivo_supper",
+     "poi": "POI.md 4.4"
     }
    ]
   },
   {
    "id": "halla_cord",
-   "title": "Halla's cord",
+   "title": "Halla's cargo cord",
+   "area": "kettle_fjord",
    "steps": [
     {
      "flag": "ks_halla_met",
-     "line": "Halla keeps her cargo on a knot-cord and says every knot on it is hers."
+     "objective": "Talk to Halla, the trader, on the shelf by the Fish-Houses, in THAW.",
+     "line": "Met Halla, a trader, at the Fish-Houses. She counts her cargo on a knot-cord and says every knot on it is hers.",
+     "at": "npc:halla"
     },
     {
      "flag": "ks_halla_cord_found",
-     "line": "Halla's cord was tied to the mooring post. There was a knot at the end in another hand."
+     "objective": "Find Halla's cargo cord. Her boat ties up at the middle fish-house: look at the mooring post there, in RIME.",
+     "line": "Untied Halla's cord from the mooring post at the middle fish-house. The last knot on it was tied by someone else.",
+     "at": "pickup:halla_cord"
     },
     {
      "flag": "ks_halla_cord",
-     "line": "Halla read the last knot and called Sten over, and then told him to stay where he was."
+     "objective": "Take the cord to Halla at the Fish-Houses, in THAW. Kettle Fjord can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Showed Halla the cord. The last knot is not hers. It counts one sick man aboard, and she told her crewman Sten to keep his distance.",
+     "at": "npc:halla"
     },
     {
      "flag": "ks_halla_bed",
-     "line": "Halla has put Sten by the fire in the end house."
+     "objective": "Talk to Halla again, in THAW.",
+     "line": "Talked to Halla after the Ice-Cutter's release. She has put Sten to bed by the fire in the end fish-house.",
+     "at": "npc:halla"
     }
    ]
   },
   {
    "id": "guest_tally",
    "title": "The guest-tally",
+   "area": "tarnhall",
    "steps": [
     {
      "flag": "ks_lusse_met",
-     "line": "Lusse is on the ninth verse of the goat song and wants the chorus from everyone."
+     "objective": "Talk to Lusse, the hall-singer, in the hall at Tarnhall, in THAW.",
+     "line": "Met Lusse, the hall-singer, in the hall at Tarnhall. She plaited the tally cord that counts the guests in at the door.",
+     "at": "npc:lusse"
     },
     {
      "flag": "ks_goat_song",
-     "line": "Lusse had the chorus out of you. She said it was nearly right."
+     "objective": "Sing the chorus of the goat song with Lusse: choose it when you talk to her, in THAW.",
+     "line": "Sang the chorus with Lusse and learned the Goat Song.",
+     "at": "npc:lusse"
     },
     {
      "flag": "ks_guest_tally_found",
-     "line": "The guest-tally was on the inside of the door-post. The last knots were one knot, tied over and over."
+     "objective": "Find the guest-tally. It hangs on the inside of the door-post at the hall's front doors. In RIME those doors are barred from the inside, so the Holdfast in the hall has to be released first.",
+     "line": "Untied the guest-tally from the door-post. Its last knots are one knot, tied over and over.",
+     "at": "pickup:guest_tally"
     },
     {
      "flag": "ks_guest_tally",
-     "line": "Lusse counted the tally twice and got two numbers, and started the goat song again from the first verse."
+     "objective": "Take the guest-tally to Lusse in the hall, in THAW.",
+     "line": "Showed Lusse the guest-tally. She counted it twice, got two different numbers, and started the goat song again from the first verse.",
+     "at": "npc:lusse"
     }
    ]
   },
   {
    "id": "ottar_stick",
-   "title": "Ottar's stick",
+   "title": "Ottar's walking stick",
+   "area": "tarnhall",
    "steps": [
     {
      "flag": "ks_ottar_met",
-     "line": "Ottar has his boots on to row home before dark. He has had them on since noon."
+     "objective": "Talk to Ottar, by the front doors inside the hall at Tarnhall, in THAW.",
+     "line": "Met Ottar in the hall at Tarnhall. He has been about to row home since noon, and left his walking stick by the door so that he would not forget it.",
+     "at": "npc:ottar"
     },
     {
      "flag": "ks_ottar_staff_found",
-     "line": "Ottar's stick was leaning inside the barred door, where he left it so as not to forget it."
+     "objective": "Fetch Ottar's stick from just inside the hall's front doors. In RIME the doors are barred from the inside: the only way into the hall is the frost veil at the Byres.",
+     "line": "Took Ottar's stick from inside the barred doors of the hall.",
+     "at": "pickup:ottar_staff"
     },
     {
      "flag": "ks_ottar_staff",
-     "line": "Ottar took his stick back and sat down again for the end of the song."
+     "objective": "Take the stick to Ottar in the hall, in THAW. Tarnhall can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Gave Ottar his stick. He sat down again to hear the end of the song.",
+     "at": "npc:ottar"
     },
     {
      "flag": "ks_ottar_air",
-     "line": "Somebody opened the doors, and Ottar went and stood in them."
+     "objective": "Talk to Ottar again, in THAW.",
+     "line": "Talked to Ottar after the Host's release. The doors are open and he is standing in the doorway.",
+     "at": "npc:ottar"
+    }
+   ],
+   "optional": [
+    {
+     "flag": "ks_ottar_pair",
+     "objective": "Show Ottar the rowan stick from the porch, in THAW.",
+     "line": "Showed Ottar the second stick, from the porch. He says it is his wife's, and that she is at home with the calving.",
+     "at": "npc:ottar",
+     "needs_item": "item_rowan_stick",
+     "after": "ks_ottar_staff_found",
+     "poi": "POI.md 5.2"
     }
    ]
   },
   {
    "id": "song_cord",
    "title": "Linnet's song-cord",
+   "area": "thornwold",
    "steps": [
     {
      "flag": "ks_linnet_met",
-     "line": "Linnet and Eyvind cannot agree where the gate goes. Neither of them wants to."
+     "objective": "Talk to Linnet at the charcoal clamps in the Collier's Clearing, in THAW.",
+     "line": "Met Linnet, a collier, in the Collier's Clearing. She and Eyvind are to be married after the Melt, and are arguing about where a gate should go.",
+     "at": "npc:linnet"
     },
     {
      "flag": "ks_birch_ring",
-     "line": "The birch ring was in the ash at the eastmost clamp. Linnet took it off to work."
+     "objective": "Search the ash at the charcoal clamps in the Collier's Clearing, in RIME. If anything of Linnet's is there, take it to her in THAW. Thornwold can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Gave Linnet the ring of plaited birch from the ash at the eastmost clamp. Eyvind made it, and she takes it off to work.",
+     "at": "hearth:hs_colliers_clearing",
+     "objective_when": [
+      {
+       "item": "item_birch_ring",
+       "objective": "Take the ring of plaited birch to Linnet in Thornwold, in THAW. Thornwold can be turned back to THAW at a Hearthstone once its Holdfast is released."
+      }
+     ]
     },
     {
      "flag": "ks_song_cord_found",
-     "line": "At the grave was a knotted cord. Nobody here could read it."
+     "objective": "Nothing more of Linnet's can be reached until Thornwold's Holdfast is released. After that, look at the grave under the pine in the middle of the Hedge.",
+     "line": "Took a knotted cord from the grave under the pine. Nobody in Thornwold can read its knots.",
+     "at": "veil"
     },
     {
      "flag": "ks_song_cord_read",
-     "line": "Lusse read Linnet's cord. It is an Outsong, tied by the one it was for."
+     "objective": "Find someone who can read song-knots. Lusse, the hall-singer at Tarnhall, plaits cords herself: show her the cord, in THAW.",
+     "line": "Lusse read the cord. It is an Outsong, and Linnet tied it for herself.",
+     "area": "tarnhall",
+     "at": "npc:lusse"
+    }
+   ],
+   "optional": [
+    {
+     "flag": "ks_gate_latch",
+     "objective": "Show Linnet the gate latch from the field with two pairs of gateposts, in THAW.",
+     "line": "Showed Linnet the holly latch. Eyvind cut it for both gates, and it fits neither.",
+     "at": "npc:linnet",
+     "needs_item": "item_gate_latch",
+     "after": "ks_linnet_met",
+     "poi": "POI.md 6.3"
+    },
+    {
+     "flag": "ks_wool_ends",
+     "objective": "Show Lusse the ends of wool from Linnet's hut. She is in the hall at Tarnhall, in THAW.",
+     "line": "Showed Lusse the ends of wool. She counted them: Linnet began her cord seven times.",
+     "area": "tarnhall",
+     "at": "npc:lusse",
+     "needs_item": "item_wool_ends",
+     "after": "ks_song_cord_read",
+     "poi": "POI.md 6.2"
     }
    ]
   },
   {
    "id": "calder_boots",
    "title": "Calder's boots",
+   "area": "shepherds_reach",
    "steps": [
     {
      "flag": "ks_calder_met",
-     "line": "Old Calder makes the flock forty-four. Sigga makes it forty-three."
+     "objective": "Talk to Old Calder at the fold wall on the fell, above the beck, in THAW.",
+     "line": "Met Old Calder, mending the fold wall on Shepherd's Reach. He counts the flock at forty-four. His daughter Sigga counts forty-three.",
+     "at": "npc:old_calder"
     },
     {
      "flag": "ks_calder_boots_found",
-     "line": "A pair of boots stood by the sheiling door, toes to the wall. The door was on the latch."
+     "objective": "Search the Sheilings, south of the beck, in RIME. Start at the door of the lower sheiling.",
+     "line": "Took a pair of boots from beside the lower sheiling's door. They stood toes to the wall, and the door was on the latch.",
+     "at": "pickup:calder_boots"
     },
     {
      "flag": "ks_fold_tally_found",
-     "line": "The fold-tally was by his hand at the cairn. Forty-three notches, and one cut small."
+     "objective": "Release the Holdfast at the High Fold, then look at the cairn inside the fold.",
+     "line": "Took the fold-tally from the cairn in the High Fold. It has forty-three notches, and one more cut small.",
+     "at": "veil"
     },
     {
      "flag": "ks_calder_boots_shown",
-     "line": "Calder says the boots are his. He says he has his on."
+     "objective": "Show the boots to Old Calder at the High Fold, in THAW.",
+     "line": "Showed Calder the boots. He says they are his, and that he has his on.",
+     "at": "npc:old_calder"
     }
    ]
   },
   {
    "id": "knucklebones",
-   "title": "Knucklebones",
+   "title": "The knucklebones",
+   "area": "saltfell_steading",
    "steps": [
     {
      "flag": "ks_knucklebones_found",
-     "line": "Four knucklebones were in the turf by the small grave on the cliff. The set has five."
+     "objective": "Look at the small grave on the cliff terrace east of Saltfell yard, in RIME.",
+     "line": "Picked up four knucklebones from the turf by the small grave on the cliff at Saltfell. A set has five.",
+     "at": "pickup:knucklebones"
     },
     {
      "flag": "ks_knucklebone_found",
-     "line": "There was a knucklebone in the middle of the drove-road, on the side going east."
+     "objective": "The fifth knucklebone is missing, and it is not at Saltfell. Watch the roads further up the water, in RIME.",
+     "line": "Picked up the fifth knucklebone in the middle of the drove-road in Thornwold, on the side going east."
     },
     {
      "flag": "ks_knucklebones_shown",
-     "line": "Wren has a set like it. One of hers has a bite in it. She says she did it."
+     "objective": "Keep all five knucklebones with you on the way up the water.",
+     "line": "Showed the set to Wren at the Wellhead. She has one like it. One of hers has a bite mark in it, which she says she made.",
+     "area": "coldwell",
+     "objective_when": [
+      {
+       "flag": "ks_horn_wellhead",
+       "objective": "Show the five knucklebones to the child at the Wellhead, in THAW."
+      }
+     ]
     }
    ]
   },
   {
    "id": "fostering_horn",
    "title": "The fostering horn",
+   "area": "coldwell",
    "steps": [
     {
      "flag": "ks_horn_wellhead",
-     "line": "The coal is still alight."
+     "objective": "Carry the fostering horn up the water to the Wellhead.",
+     "line": "Reached the Wellhead. The coal in the fostering horn is still alight. The horn's description in the Pack has changed."
+    }
+   ]
+  },
+  {
+   "id": "smudge",
+   "title": "Smudge the ewe",
+   "area": "shepherds_reach",
+   "poi": "POI.md 7.2",
+   "steps": [
+    {
+     "flag": "ks_smudge_named",
+     "objective": "Listen to Old Calder counting the flock at the fold wall, in THAW.",
+     "line": "Old Calder counts a ewe called Smudge last, every time.",
+     "at": "npc:old_calder"
+    },
+    {
+     "flag": "ks_smudge_found",
+     "objective": "Find the ewe called Smudge among the frozen flock on Shepherd's Reach, in RIME. She has a dark smear down her nose.",
+     "line": "Found Smudge at the door of the lower sheiling. She is the only sheep on the fell not facing the High Fold."
+    },
+    {
+     "flag": "ks_smudge_told",
+     "objective": "Tell Old Calder where Smudge is, in THAW. Shepherd's Reach can be turned back to THAW at a Hearthstone once its Holdfast is released.",
+     "line": "Told Calder. He says Smudge has never come to a call, only to a pocket with food in it.",
+     "at": "npc:old_calder"
+    },
+    {
+     "flag": "ks_smudge_fed",
+     "objective": "Stand beside Smudge at the lower sheiling, in THAW, wearing or carrying the Shepherd's Fleece, and turn out its pocket. Sigga gives the fleece away if asked.",
+     "line": "Smudge ate the oatcake from the fleece's pocket and went back to the sheiling door.",
+     "at": [
+      600,
+      -296
+     ]
+    }
+   ]
+  },
+  {
+   "id": "melt_flowers",
+   "title": "Melt flowers",
+   "area": "coldwell",
+   "poi": "POI.md 8.1",
+   "steps": [
+    {
+     "flag": "ks_melt_flowers",
+     "objective": "Pick a bunch of flowers at the Flower Bank on the Upwater, in THAW, and throw them in at the water's edge at the Wellhead.",
+     "line": "Threw a bunch of Melt flowers into the water at the Wellhead. Wren watched them out of sight."
     }
    ]
   }

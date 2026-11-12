@@ -90,6 +90,20 @@ func spawn_hit_fx(world_pos: Vector3, normal := Vector3.UP, kind := "blood") -> 
 			l.light_energy = 2.2
 			l.omni_range = 3.8
 			post_flash("blood", 0.55)
+		"ember":   # a burning brand on a frozen body: fire knocked loose, slow to fall
+			p.amount = 34
+			p.lifetime = 0.7
+			p.spread = 70.0
+			p.initial_velocity_min = 1.6
+			p.initial_velocity_max = 5.5
+			p.gravity = Vector3(0.4, -4.0, 0.2)
+			p.scale_amount_min = 0.02
+			p.scale_amount_max = 0.06
+			p.color = Color(1.0, 0.56, 0.16)
+			l.light_color = Color(1.0, 0.62, 0.26)
+			l.light_energy = 2.6
+			l.omni_range = 4.2
+			post_flash("spark", 0.3)
 		"dust":
 			p.amount = 18
 			p.lifetime = 0.42
@@ -125,7 +139,7 @@ func spawn_hit_fx(world_pos: Vector3, normal := Vector3.UP, kind := "blood") -> 
 	mat.albedo_texture = AreaPortal._radial_tex()
 	mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	if kind == "spark" or kind == "parry":
+	if kind == "spark" or kind == "parry" or kind == "ember":
 		mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	qm.material = mat
 	p.mesh = qm
@@ -140,7 +154,7 @@ func spawn_hit_fx(world_pos: Vector3, normal := Vector3.UP, kind := "blood") -> 
 	tw.tween_property(l, "light_energy", 0.0, 0.18)
 	tw.tween_callback(l.queue_free)
 	var ptw := p.create_tween()
-	ptw.tween_interval(0.65)
+	ptw.tween_interval(maxf(0.65, p.lifetime + 0.1))
 	ptw.tween_callback(p.queue_free)
 
 func reset() -> void:

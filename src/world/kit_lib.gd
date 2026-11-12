@@ -71,6 +71,140 @@ const PIECES := {
 	"fat_lamp": {"size": [0.25, 0.18, 0.1], "origin": "bottom-center"},
 	"fat_lamp_cold": {"size": [0.25, 0.18, 0.1], "origin": "bottom-center"},
 	"well": {"size": [1.4, 1.4, 1.0], "origin": "bottom-center"},
+	# --- Kettle Fjord's own set (docs/art/BIOMES.md 3; tools/art/procedural/poi_props_b.py and Tripo)
+	"kf_ice_hut": {"size": [2.4, 1.7, 2.3], "origin": "bottom-center"},
+	"kf_tool_rack": {"size": [1.8, 0.5, 1.7], "origin": "bottom-center"},
+	"kf_dog_picket": {"size": [3.4, 1.0, 2.1], "origin": "bottom-center"},
+	"kf_windbreak": {"size": [2.2, 1.2, 1.7], "origin": "bottom-center"},
+	"kf_jig_frame": {"size": [0.9, 0.2, 0.8], "origin": "bottom-center"},
+	"kf_fish_cord": {"size": [1.8, 0.6, 0.95], "origin": "bottom-center"},
+	"kf_ice_blocks": {"size": [2.0, 1.0, 0.9], "origin": "bottom-center"},
+	"kf_bough_markers": {"size": [0.7, 0.7, 1.1], "origin": "bottom-center"},
+	"kf_net_hurdle": {"size": [0.95, 0.12, 2.4], "origin": "bottom-center"},
+	"kf_door_band": {"size": [0.1, 0.04, 0.36], "origin": "bottom-center"},
+	"kf_ice_hut_b": {"size": [1.5, 2.6, 1.7], "origin": "bottom-center", "hull": "simple"},
+	"kf_kettle_tripod": {"size": [1.75, 1.45, 1.8], "origin": "bottom-center"},
+	# --- Tarnhall's own set
+	"th_spit": {"size": [3.0, 1.1, 1.5], "origin": "bottom-center"},
+	"th_ale_vat": {"size": [2.0, 1.7, 1.35], "origin": "bottom-center"},
+	"th_bake_oven": {"size": [2.2, 2.3, 1.9], "origin": "bottom-center"},
+	"th_carving_frame": {"size": [2.2, 1.1, 2.2], "origin": "bottom-center"},
+	"th_ale_tub": {"size": [1.2, 1.0, 0.75], "origin": "bottom-center"},
+	"th_hanging": {"size": [1.5, 0.1, 1.9], "origin": "bottom-center"},
+	"th_horn_rack": {"size": [2.5, 0.35, 2.1], "origin": "bottom-center"},
+	"th_trestles": {"size": [2.9, 1.5, 0.85], "origin": "bottom-center"},
+	"th_oar_stand": {"size": [2.0, 1.1, 2.9], "origin": "bottom-center"},
+	"th_rush_bundles": {"size": [1.3, 1.2, 0.7], "origin": "bottom-center"},
+	"th_horn_window": {"size": [1.06, 0.1, 0.68], "origin": "bottom-center"},
+	"th_pail": {"size": [0.37, 0.37, 0.34], "origin": "bottom-center"},
+	"th_boat_oars": {"size": [1.0, 2.8, 0.15], "origin": "bottom-center"},
+	# --- the Coldwell's own set
+	"cw_thread_post": {"size": [0.9, 0.9, 2.4], "origin": "bottom-center"},
+	"cw_flower_basket": {"size": [0.6, 0.46, 0.4], "origin": "bottom-center"},
+	"cw_dipper_trough": {"size": [1.9, 1.1, 1.3], "origin": "bottom-center"},
+	"cw_offering_cairn": {"size": [1.2, 1.2, 0.9], "origin": "bottom-center"},
+	"cw_water_yoke": {"size": [1.5, 0.6, 0.8], "origin": "bottom-center"},
+	"cw_shelter": {"size": [6.5, 3.6, 2.7], "origin": "bottom-center"},
+	"cw_staff_rack": {"size": [2.2, 0.5, 1.45], "origin": "bottom-center"},
+	"cw_staff_rack_full": {"size": [2.2, 0.5, 1.45], "origin": "bottom-center"},
+	"cw_staff_heap": {"size": [1.3, 1.5, 1.4], "origin": "bottom-center"},
+	"cw_rope_rail": {"size": [3.1, 0.12, 1.05], "origin": "bottom-center"},
+	"cw_slab_bench": {"size": [1.9, 0.5, 0.5], "origin": "bottom-center"},
+	"cw_slab_bench_snow": {"size": [1.9, 0.5, 0.6], "origin": "bottom-center"},
+	"cw_ice_column_a": {"size": [1.2, 0.8, 2.2], "origin": "bottom-center"},
+	"cw_ice_column_b": {"size": [1.8, 0.9, 3.6], "origin": "bottom-center"},
+	"cw_ice_column_c": {"size": [2.4, 1.0, 5.2], "origin": "bottom-center"},
+	"cw_flower_bunch": {"size": [0.16, 0.16, 0.32], "origin": "bottom-center"},
+	# --- Thornwold's own prop set (BIOMES.md; tools/art/procedural/thornwold_props.py,
+	# and two Tripo pieces: the shaving horse and the riddle stand)
+	"tw_clamp_a": {"size": [3.7, 3.7, 2.3], "origin": "bottom-center"},
+	"tw_clamp_b": {"size": [3.8, 3.6, 2.1], "origin": "bottom-center"},
+	"tw_clamp_c": {"size": [4.5, 4.5, 1.0], "origin": "bottom-center"},
+	"tw_cordwood": {"size": [2.45, 1.15, 1.45], "origin": "bottom-center"},
+	"tw_hurdle": {"size": [1.87, 0.1, 1.54], "origin": "bottom-center"},
+	"tw_stake_bundle": {"size": [1.63, 0.48, 0.46], "origin": "bottom-center"},
+	"tw_stile": {"size": [2.67, 1.35, 1.59], "origin": "bottom-center"},
+	"tw_charcoal_sacks": {"size": [1.94, 1.45, 1.0], "origin": "bottom-center"},
+	"tw_gatepost": {"size": [0.59, 0.51, 1.64], "origin": "bottom-center"},
+	"tw_collier_hut": {"size": [4.2, 4.0, 3.35], "origin": "bottom-center"},
+	"tw_hut_yard": {"size": [0.8, 0.8, 0.45], "origin": "bottom-center"},
+	"tw_hut_thaw": {"size": [2.0, 1.7, 1.0], "origin": "bottom-center"},
+	"tw_hut_rime": {"size": [2.1, 2.9, 1.3], "origin": "bottom-center"},
+	"tw_shaving_horse": {"size": [0.57, 1.39, 0.95], "origin": "bottom-center"},
+	"tw_riddle_stand": {"size": [1.65, 1.2, 1.5], "origin": "bottom-center"},
+	"tw_sledge": {"size": [0.75, 1.93, 0.85], "origin": "bottom-center"},
+	"tw_hedging_tools": {"size": [1.09, 0.92, 0.95], "origin": "bottom-center"},
+	"tw_wood_shelter": {"size": [2.09, 2.89, 2.3], "origin": "bottom-center"},
+	# --- Saltfell: its own prop set and points of interest (BIOMES.md, POI.md 2)
+	"sf_capstan": {"size": [1.8, 1.8, 1.2], "origin": "bottom-center"},
+	"sf_salt_basket": {"size": [1.9, 0.9, 1.35], "origin": "bottom-center"},
+	"sf_gutting_bench": {"size": [2.2, 0.9, 1.0], "origin": "bottom-center"},
+	"sf_tar_pot": {"size": [0.9, 0.9, 1.0], "origin": "bottom-center"},
+	"sf_brine_trough": {"size": [3.0, 0.85, 0.7], "origin": "bottom-center"},
+	"sf_roller_run": {"size": [1.8, 5.2, 0.27], "origin": "bottom-center"},
+	"sf_oar_rack": {"size": [3.2, 0.8, 2.0], "origin": "bottom-center"},
+	"sf_net_sinkers": {"size": [1.9, 0.6, 1.4], "origin": "bottom-center"},
+	"sf_kelp_rick": {"size": [3.2, 0.65, 0.85], "origin": "bottom-center"},
+	"sf_salt_pan_split": {"size": [3.0, 2.0, 0.5], "origin": "bottom-center"},
+	"sf_lookout_stone": {"size": [1.9, 1.25, 0.4], "origin": "bottom-center"},
+	"sf_three_bowls": {"size": [0.3, 0.3, 0.15], "origin": "bottom-center"},
+	"sf_needle_case": {"size": [0.25, 0.11, 0.04], "origin": "bottom-center"},
+	"sf_thole_pin": {"size": [0.22, 0.12, 0.09], "origin": "bottom-center"},
+	"sf_pan_salt": {"size": [0.34, 0.22, 0.11], "origin": "bottom-center"},
+	"sf_turf_spade": {"size": [0.2, 0.25, 1.4], "origin": "bottom-center"},
+	"sf_rack_tall": {"size": [3.4, 2.3, 3.0], "origin": "bottom-center"},
+	"sf_rack_low": {"size": [2.4, 1.53, 1.3], "origin": "bottom-center"},
+	"sf_net_pile": {"size": [1.29, 1.16, 0.85], "origin": "bottom-center"},
+	"sf_fish_barrels": {"size": [1.79, 1.89, 1.15], "origin": "bottom-center"},
+	"sf_salt_sacks": {"size": [1.07, 0.87, 1], "origin": "bottom-center"},
+	"sf_mooring_post": {"size": [1.29, 1.31, 1.3], "origin": "bottom-center"},
+	"sf_boat_half": {"size": [2.69, 6, 3.02], "origin": "bottom-center"},
+	"sf_small_grave": {"size": [1.3, 0.6, 0.45], "origin": "bottom-center"},
+	"sf_small_grave_open": {"size": [2.1, 0.8, 0.45], "origin": "bottom-center"},
+	# --- the Lowe: its own prop set and points of interest (BIOMES.md, POI.md 3)
+	"lw_sod_row": {"size": [2.8, 1.2, 0.22], "origin": "bottom-center"},
+	"lw_peat_stack": {"size": [1.8, 1.2, 1.45], "origin": "bottom-center"},
+	"lw_peat_wall": {"size": [2.3, 0.75, 1.27], "origin": "bottom-center"},
+	"lw_peat_row": {"size": [2.2, 0.5, 0.5], "origin": "bottom-center"},
+	"lw_peat_sled": {"size": [0.76, 2.8, 0.8], "origin": "bottom-center"},
+	"lw_bier": {"size": [1.2, 1.3, 1.9], "origin": "bottom-center"},
+	"lw_kin_post": {"size": [0.5, 0.5, 1.1], "origin": "bottom-center"},
+	"lw_bloomery": {"size": [2.6, 2.4, 1.6], "origin": "bottom-center"},
+	"lw_spade_rack": {"size": [2.05, 0.4, 1.45], "origin": "bottom-center"},
+	"lw_heather_bunch": {"size": [0.36, 0.22, 0.2], "origin": "bottom-center"},
+	"lw_heather_heap": {"size": [4.0, 1.7, 1.9], "origin": "bottom-center"},
+	"lw_bread_cloth": {"size": [1.0, 0.75, 0.1], "origin": "bottom-center"},
+	"lw_birch_cup": {"size": [0.1, 0.1, 0.085], "origin": "bottom-center"},
+	"lw_spade_iron": {"size": [0.3, 0.2, 0.05], "origin": "bottom-center"},
+	"lw_edging_stone": {"size": [0.62, 0.36, 0.4], "origin": "bottom-center"},
+	"lw_small_spades": {"size": [0.4, 0.36, 0.8], "origin": "bottom-center"},
+	"lw_three_spades": {"size": [0.72, 0.36, 1.34], "origin": "bottom-center"},
+	"lw_dinner_cloth": {"size": [0.28, 0.24, 0.2], "origin": "bottom-center"},
+	"lw_mound_steps": {"size": [1.4, 3.4, 1.7], "origin": "bottom-center"},
+	"lw_stone_b": {"size": [1.1, 0.69, 1.6], "origin": "bottom-center"},
+	"lw_stone_c": {"size": [2, 1.01, 1.27], "origin": "bottom-center"},
+	"lw_turf_barrow": {"size": [1.02, 2.2, 0.98], "origin": "bottom-center"},
+	"lw_offering_slab": {"size": [1.7, 1.66, 1.05], "origin": "bottom-center"},
+	# --- Shepherd's Reach: its own prop set and points of interest (BIOMES.md, POI.md 7)
+	"sr_ewe": {"size": [0.6, 1.3, 1.0], "origin": "bottom-center"},
+	"sr_smudge": {"size": [0.6, 1.3, 1.0], "origin": "bottom-center"},
+	"sr_shearing_stool": {"size": [1.0, 0.9, 0.6], "origin": "bottom-center"},
+	"sr_cheese_press": {"size": [1.2, 0.75, 1.05], "origin": "bottom-center"},
+	"sr_wool_frame": {"size": [2.2, 1.6, 3.0], "origin": "bottom-center"},
+	"sr_creep_wall": {"size": [2.2, 0.9, 1.35], "origin": "bottom-center"},
+	"sr_slab_gate": {"size": [3.9, 0.7, 1.5], "origin": "bottom-center"},
+	"sr_slab_posts": {"size": [3.6, 0.7, 1.5], "origin": "bottom-center"},
+	"sr_rails_down": {"size": [3.3, 0.4, 0.1], "origin": "bottom-center"},
+	"sr_crook_rack": {"size": [1.26, 0.22, 1.7], "origin": "bottom-center"},
+	"sr_counting_stone": {"size": [1.47, 1.05, 0.46], "origin": "bottom-center"},
+	"sr_coping_row": {"size": [3.5, 0.9, 0.3], "origin": "bottom-center"},
+	"sr_heather_bed": {"size": [2.0, 0.96, 0.29], "origin": "bottom-center"},
+	"sr_heather_bed_thrown": {"size": [2.1, 1.7, 0.3], "origin": "bottom-center"},
+	"sr_blanket": {"size": [0.5, 0.36, 0.12], "origin": "bottom-center"},
+	"sr_pot_bowls": {"size": [0.7, 0.46, 0.26], "origin": "bottom-center"},
+	"sr_fodder_rack": {"size": [1.03, 2.0, 1.5], "origin": "bottom-center"},
+	"sr_stone_trough": {"size": [0.89, 2.4, 0.77], "origin": "bottom-center"},
+	"sr_lamb_pen": {"size": [2.05, 2.6, 1.07], "origin": "bottom-center"},
 	"mannequin_wayfarer": {"skeletal": true},
 	"mannequin_rime": {"skeletal": true},
 	"mannequin_holdfast": {"skeletal": true},
@@ -93,9 +227,12 @@ static func has_piece(id: String) -> bool:
 ## falls back to the primitives.
 ##   glb, family, length (m along local Z), yaw (deg), lift (m), flip (keel up)
 const HERO_PIECES := {
-	"boat": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 6.0, "yaw": 90.0, "lift": 0.0},
+	# the clinker boat (Saltfell, Kettle, Tarnhall): one slender hull at one scale, no oars
+	# or rollers of its own (those are sf_oar_rack and sf_roller_run). The first Tripo boat
+	# had been fitted per axis to a design size and read as warped from above.
+	"boat": {"glb": "res://assets/models/kit/kit_sf_boat.glb", "family": "M_wood", "length": 6.0, "yaw": 90.0, "lift": 0.0},
 	"drying_rack": {"glb": "res://assets/models/kit/kit_drying_rack_hero.glb", "family": "M_wood", "length": 4.0, "yaw": 90.0, "lift": 0.0},
-	"boat_upturned": {"glb": "res://assets/models/landmarks/lm_brede_boat.glb", "family": "M_wood", "length": 5.8, "yaw": 90.0, "lift": 1.32, "flip": true},
+	"boat_upturned": {"glb": "res://assets/models/kit/kit_sf_boat.glb", "family": "M_wood", "length": 5.8, "yaw": 90.0, "lift": 1.86, "flip": true},
 	# every rest site: the carved hearthstone, its slab at the back (-z)
 	"hearthstone": {"glb": "res://assets/models/kit/kit_hearthstone.glb", "family": "M_stone", "length": 1.6, "yaw": 0.0, "lift": 0.0},
 	"fish_kettle": {"glb": "res://assets/models/landmarks/lm_fish_kettle.glb", "family": "M_iron", "length": 1.75, "yaw": 0.0, "lift": 0.0},
@@ -124,13 +261,153 @@ const HERO_PIECES := {
 	"trencher": {"glb": "res://assets/models/kit/kit_trencher_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
 	"fat_lamp": {"glb": "res://assets/models/kit/kit_fat_lamp_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
 	"fat_lamp_cold": {"glb": "res://assets/models/kit/kit_fat_lamp_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	# --- Kettle Fjord's own set: four from Tripo, the rest modelled (poi_props_b.py)
+	"kf_ice_hut": {"glb": "res://assets/models/kit/kf_ice_hut.glb", "family": "M_wood", "length": 2.4, "yaw": 0.0, "lift": 0.0},
+	"kf_tool_rack": {"glb": "res://assets/models/kit/kf_tool_rack.glb", "family": "M_drift", "length": 1.8, "yaw": 0.0, "lift": 0.0},
+	"kf_dog_picket": {"glb": "res://assets/models/kit/kf_dog_picket.glb", "family": "M_rope", "length": 3.4, "yaw": 0.0, "lift": 0.0},
+	"kf_windbreak": {"glb": "res://assets/models/kit/kf_windbreak.glb", "family": "M_leather", "length": 2.2, "yaw": 0.0, "lift": 0.0},
+	"kf_jig_frame": {"glb": "res://assets/models/kit/kf_jig_frame.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"kf_fish_cord": {"glb": "res://assets/models/kit/kf_fish_cord.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"kf_ice_blocks": {"glb": "res://assets/models/kit/kf_ice_blocks.glb", "family": "M_ice", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"kf_bough_markers": {"glb": "res://assets/models/kit/kf_bough_markers.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"kf_net_hurdle": {"glb": "res://assets/models/kit/kf_net_hurdle.glb", "family": "M_rope", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"kf_door_band": {"glb": "res://assets/models/kit/kf_door_band.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"kf_ice_hut_b": {"glb": "res://assets/models/kit/kf_ice_hut_b.glb", "family": "M_leather", "length": 2.6, "yaw": 0.0, "lift": 0.0},
+	"kf_kettle_tripod": {"glb": "res://assets/models/kit/kf_kettle_tripod.glb", "family": "M_iron", "length": 1.75, "yaw": 0.0, "lift": 0.0},
+	# --- Tarnhall's own set: Tripo, then the modelled pieces
+	"th_spit": {"glb": "res://assets/models/kit/th_spit.glb", "family": "M_iron", "length": 3.0, "yaw": 0.0, "lift": 0.0},
+	"th_ale_vat": {"glb": "res://assets/models/kit/th_ale_vat.glb", "family": "M_wood", "length": 2.1, "yaw": 0.0, "lift": 0.0},
+	"th_bake_oven": {"glb": "res://assets/models/kit/th_bake_oven.glb", "family": "M_stone", "length": 2.3, "yaw": 0.0, "lift": 0.0},
+	"th_carving_frame": {"glb": "res://assets/models/kit/th_carving_frame.glb", "family": "M_wood", "length": 2.2, "yaw": 0.0, "lift": 0.0},
+	"th_ale_tub": {"glb": "res://assets/models/kit/th_ale_tub.glb", "family": "M_wood", "length": 1.1, "yaw": 0.0, "lift": 0.0},
+	"th_hanging": {"glb": "res://assets/models/kit/th_hanging.glb", "family": "M_wool", "length": 1.68, "yaw": 0.0, "lift": 0.0},
+	"th_horn_rack": {"glb": "res://assets/models/kit/th_horn_rack.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"th_trestles": {"glb": "res://assets/models/kit/th_trestles.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"th_oar_stand": {"glb": "res://assets/models/kit/th_oar_stand.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"th_rush_bundles": {"glb": "res://assets/models/kit/th_rush_bundles.glb", "family": "M_rope", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"th_horn_window": {"glb": "res://assets/models/kit/th_horn_window.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"th_pail": {"glb": "res://assets/models/kit/th_pail.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"th_boat_oars": {"glb": "res://assets/models/kit/th_boat_oars.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	# --- the Coldwell's own set
+	"cw_thread_post": {"glb": "res://assets/models/kit/cw_thread_post.glb", "family": "M_wood", "length": 0.92, "yaw": 0.0, "lift": 0.0},
+	"cw_flower_basket": {"glb": "res://assets/models/kit/cw_flower_basket.glb", "family": "M_drift", "length": 0.6, "yaw": 0.0, "lift": 0.0},
+	"cw_dipper_trough": {"glb": "res://assets/models/kit/cw_dipper_trough.glb", "family": "M_stone", "length": 1.9, "yaw": 0.0, "lift": 0.0},
+	"cw_offering_cairn": {"glb": "res://assets/models/kit/cw_offering_cairn.glb", "family": "M_stone", "length": 1.2, "yaw": 0.0, "lift": 0.0},
+	"cw_water_yoke": {"glb": "res://assets/models/kit/cw_water_yoke.glb", "family": "M_wood", "length": 1.5, "yaw": 0.0, "lift": 0.0},
+	"cw_shelter": {"glb": "res://assets/models/kit/cw_shelter.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_staff_rack": {"glb": "res://assets/models/kit/cw_staff_rack.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_staff_rack_full": {"glb": "res://assets/models/kit/cw_staff_rack_full.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_staff_heap": {"glb": "res://assets/models/kit/cw_staff_heap.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_rope_rail": {"glb": "res://assets/models/kit/cw_rope_rail.glb", "family": "M_rope", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_slab_bench": {"glb": "res://assets/models/kit/cw_slab_bench.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_slab_bench_snow": {"glb": "res://assets/models/kit/cw_slab_bench_snow.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_ice_column_a": {"glb": "res://assets/models/kit/cw_ice_column_a.glb", "family": "M_ice", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_ice_column_b": {"glb": "res://assets/models/kit/cw_ice_column_b.glb", "family": "M_ice", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_ice_column_c": {"glb": "res://assets/models/kit/cw_ice_column_c.glb", "family": "M_ice", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"cw_flower_bunch": {"glb": "res://assets/models/kit/cw_flower_bunch.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
 	# the Reach flocks: a ewe with her head up and one grazing, taken in turn
+	# (the rigged ewe is her own piece, sr_ewe: her bind-pose hull is not one
+	# to freeze into a statue the Bearer has to walk round)
 	"sheep": {"glb": "res://assets/models/kit/kit_ewe_a.glb", "alt": ["res://assets/models/kit/kit_ewe_b.glb"],
 		"family": "M_fleece", "length": 1.15, "yaw": 90.0, "lift": 0.0,
 		# unrigged: the hall shader swings head and ears (graze_* uniforms).
 		# glb file -> [amp, pivot x, pivot y, from x, from y, mode, ear y]
 		"graze": {"kit_ewe_a.glb": [0.34, 0.22, 0.62, 0.2, 0.5, 0.0, 0.9],
 			"kit_ewe_b.glb": [0.3, 0.26, 0.56, 0.3, -1.0, 1.0, 9.0]}},
+	# --- Thornwold's own prop set: authored at the footprint, atlas colours kept
+	"tw_clamp_a": {"glb": "res://assets/models/kit/kit_tw_clamp_a.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_clamp_b": {"glb": "res://assets/models/kit/kit_tw_clamp_b.glb", "family": "M_turf", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_clamp_c": {"glb": "res://assets/models/kit/kit_tw_clamp_c.glb", "family": "M_turf", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_cordwood": {"glb": "res://assets/models/kit/kit_tw_cordwood.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_hurdle": {"glb": "res://assets/models/kit/kit_tw_hurdle.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_stake_bundle": {"glb": "res://assets/models/kit/kit_tw_stake_bundle.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_stile": {"glb": "res://assets/models/kit/kit_tw_stile.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_charcoal_sacks": {"glb": "res://assets/models/kit/kit_tw_charcoal_sacks.glb", "family": "M_felt", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_gatepost": {"glb": "res://assets/models/kit/kit_tw_gatepost.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_collier_hut": {"glb": "res://assets/models/kit/kit_tw_collier_hut.glb", "family": "M_turf", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_hut_yard": {"glb": "res://assets/models/kit/kit_tw_hut_yard.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_hut_thaw": {"glb": "res://assets/models/kit/kit_tw_hut_thaw.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_hut_rime": {"glb": "res://assets/models/kit/kit_tw_hut_rime.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"tw_shaving_horse": {"glb": "res://assets/models/kit/kit_tw_shaving_horse.glb", "family": "M_wood", "length": 1.39, "yaw": 0.0, "lift": 0.0},
+	"tw_riddle_stand": {"glb": "res://assets/models/kit/kit_tw_riddle_stand.glb", "family": "M_wood", "length": 1.65, "yaw": 0.0, "lift": 0.0},
+	"tw_sledge": {"glb": "res://assets/models/kit/kit_tw_sledge.glb", "family": "M_wood", "length": 1.93, "yaw": 0.0, "lift": 0.0},
+	"tw_hedging_tools": {"glb": "res://assets/models/kit/kit_tw_hedging_tools.glb", "family": "M_wood", "length": 1.09, "yaw": 0.0, "lift": 0.0},
+	"tw_wood_shelter": {"glb": "res://assets/models/kit/kit_tw_wood_shelter.glb", "family": "M_wood", "length": 2.89, "yaw": 0.0, "lift": 0.0},
+	# --- Saltfell (Tripo: capstan, salt baskets, gutting bench, tar pot; the rest
+	# modelled in tools/art/procedural/props_saltfell.py)
+	"sf_capstan": {"glb": "res://assets/models/kit/kit_sf_capstan.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_salt_basket": {"glb": "res://assets/models/kit/kit_sf_salt_basket.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_gutting_bench": {"glb": "res://assets/models/kit/kit_sf_gutting_bench.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_tar_pot": {"glb": "res://assets/models/kit/kit_sf_tar_pot.glb", "family": "M_iron", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	# variety (owner's playtest: too many of the same rack, boat, barrel): Tripo, image first
+	"sf_rack_tall": {"glb": "res://assets/models/kit/kit_sf_rack_tall.glb", "family": "M_drift", "yaw": 90.0, "lift": 0.0, "tint": 0.25},
+	"sf_rack_low": {"glb": "res://assets/models/kit/kit_sf_rack_low.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_net_pile": {"glb": "res://assets/models/kit/kit_sf_net_pile.glb", "family": "M_rope", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_fish_barrels": {"glb": "res://assets/models/kit/kit_sf_fish_barrels.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_salt_sacks": {"glb": "res://assets/models/kit/kit_sf_salt_sacks.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_mooring_post": {"glb": "res://assets/models/kit/kit_sf_mooring_post.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_boat_half": {"glb": "res://assets/models/kit/kit_sf_boat_half.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sf_brine_trough": {"glb": "res://assets/models/kit/kit_sf_brine_trough_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_roller_run": {"glb": "res://assets/models/kit/kit_sf_roller_run_p.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_oar_rack": {"glb": "res://assets/models/kit/kit_sf_oar_rack_p.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_net_sinkers": {"glb": "res://assets/models/kit/kit_sf_net_sinkers_p.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_kelp_rick": {"glb": "res://assets/models/kit/kit_sf_kelp_rick_p.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_salt_pan_split": {"glb": "res://assets/models/kit/kit_sf_salt_pan_split_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_lookout_stone": {"glb": "res://assets/models/kit/kit_sf_lookout_stone_p.glb", "family": "M_schist", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_three_bowls": {"glb": "res://assets/models/kit/kit_sf_three_bowls_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_needle_case": {"glb": "res://assets/models/kit/kit_sf_needle_case_p.glb", "family": "M_bone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_thole_pin": {"glb": "res://assets/models/kit/kit_sf_thole_pin_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_pan_salt": {"glb": "res://assets/models/kit/kit_sf_pan_salt_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_turf_spade": {"glb": "res://assets/models/kit/kit_sf_turf_spade_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_small_grave": {"glb": "res://assets/models/kit/kit_sf_small_grave_p.glb", "family": "M_turf", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sf_small_grave_open": {"glb": "res://assets/models/kit/kit_sf_small_grave_open_p.glb", "family": "M_peat", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	# --- the Lowe (tools/art/procedural/props_lowe.py)
+	"lw_sod_row": {"glb": "res://assets/models/kit/kit_lw_sod_row_p.glb", "family": "M_turf", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_peat_sled": {"glb": "res://assets/models/kit/kit_lw_peat_sled.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"lw_bier": {"glb": "res://assets/models/kit/kit_lw_bier.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"lw_kin_post": {"glb": "res://assets/models/kit/kit_lw_kin_post.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"lw_bloomery": {"glb": "res://assets/models/kit/kit_lw_bloomery.glb", "family": "M_peat", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"lw_peat_stack": {"glb": "res://assets/models/kit/kit_lw_peat_stack_p.glb", "family": "M_peat", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_peat_wall": {"glb": "res://assets/models/kit/kit_lw_peat_wall_p.glb", "family": "M_peat", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_peat_row": {"glb": "res://assets/models/kit/kit_lw_peat_row_p.glb", "family": "M_peat", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_spade_rack": {"glb": "res://assets/models/kit/kit_lw_spade_rack_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_heather_bunch": {"glb": "res://assets/models/kit/kit_lw_heather_bunch_p.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_heather_heap": {"glb": "res://assets/models/kit/kit_lw_heather_heap_p.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_bread_cloth": {"glb": "res://assets/models/kit/kit_lw_bread_cloth_p.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_birch_cup": {"glb": "res://assets/models/kit/kit_lw_birch_cup_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_spade_iron": {"glb": "res://assets/models/kit/kit_lw_spade_iron_p.glb", "family": "M_iron", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_edging_stone": {"glb": "res://assets/models/kit/kit_lw_edging_stone_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_small_spades": {"glb": "res://assets/models/kit/kit_lw_small_spades_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_three_spades": {"glb": "res://assets/models/kit/kit_lw_three_spades_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_dinner_cloth": {"glb": "res://assets/models/kit/kit_lw_dinner_cloth_p.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"lw_mound_steps": {"glb": "res://assets/models/kit/kit_lw_mound_steps_p.glb", "family": "M_turf", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	# variety (Tripo, image first)
+	"lw_stone_b": {"glb": "res://assets/models/kit/kit_lw_stone_b.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"lw_stone_c": {"glb": "res://assets/models/kit/kit_lw_stone_c.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"lw_turf_barrow": {"glb": "res://assets/models/kit/kit_lw_turf_barrow.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"lw_offering_slab": {"glb": "res://assets/models/kit/kit_lw_offering_slab.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	# --- Shepherd's Reach (Tripo: ewe, shearing stool, cheese press, wool frame; the rest
+	# modelled in tools/art/procedural/props_reach.py)
+	"sr_ewe": {"glb": "res://assets/models/kit/kit_sr_ewe.glb", "family": "M_fleece", "length": 1.15, "yaw": 0.0, "lift": 0.0, "tint": 0.2},
+	"sr_smudge": {"glb": "res://assets/models/kit/kit_sr_smudge.glb", "family": "M_fleece", "length": 1.15, "yaw": 0.0, "lift": 0.0, "tint": 0.2},
+	"sr_shearing_stool": {"glb": "res://assets/models/kit/kit_sr_shearing_stool.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sr_cheese_press": {"glb": "res://assets/models/kit/kit_sr_cheese_press.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sr_wool_frame": {"glb": "res://assets/models/kit/kit_sr_wool_frame.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sr_creep_wall": {"glb": "res://assets/models/kit/kit_sr_creep_wall_p.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_slab_gate": {"glb": "res://assets/models/kit/kit_sr_slab_gate_p.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_slab_posts": {"glb": "res://assets/models/kit/kit_sr_slab_posts_p.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_rails_down": {"glb": "res://assets/models/kit/kit_sr_rails_down_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_crook_rack": {"glb": "res://assets/models/kit/kit_sr_crook_rack_p.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_counting_stone": {"glb": "res://assets/models/kit/kit_sr_counting_stone_p.glb", "family": "M_stone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_coping_row": {"glb": "res://assets/models/kit/kit_sr_coping_row_p.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_heather_bed": {"glb": "res://assets/models/kit/kit_sr_heather_bed_p.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_heather_bed_thrown": {"glb": "res://assets/models/kit/kit_sr_heather_bed_thrown_p.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_blanket": {"glb": "res://assets/models/kit/kit_sr_blanket_p.glb", "family": "M_wool", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	"sr_pot_bowls": {"glb": "res://assets/models/kit/kit_sr_pot_bowls_p.glb", "family": "M_iron", "yaw": 0.0, "lift": 0.0, "tint": 0.0},
+	# variety (Tripo, image first)
+	"sr_fodder_rack": {"glb": "res://assets/models/kit/kit_sr_fodder_rack.glb", "family": "M_drift", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sr_stone_trough": {"glb": "res://assets/models/kit/kit_sr_stone_trough.glb", "family": "M_drystone", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
+	"sr_lamb_pen": {"glb": "res://assets/models/kit/kit_sr_lamb_pen.glb", "family": "M_wood", "yaw": 0.0, "lift": 0.0, "tint": 0.25},
 }
 static var _hero_turn := 0
 
@@ -187,7 +464,13 @@ static func _build_hero(n: Node3D, id: String) -> void:
 	var long := maxf(aabb.size.x, aabb.size.z)
 	var sc := float(h.get("length", long)) / maxf(long, 0.01)
 	inst.scale = Vector3.ONE * sc
-	inst.rotation_degrees = Vector3(0, float(h.get("yaw", 0.0)), 180.0 if h.get("flip", false) else 0.0)
+	var yaw := float(h.get("yaw", 0.0))
+	if h.has("yaw_by") and (h["yaw_by"] as Dictionary).has(glb.get_file()):
+		yaw = float(h["yaw_by"][glb.get_file()])
+	inst.rotation_degrees = Vector3(0, yaw, 180.0 if h.get("flip", false) else 0.0)
+	# a rigged piece stands in its first clip's first frame until something plays it
+	for ap in inst.find_children("*", "AnimationPlayer", true, false):
+		(ap as AnimationPlayer).stop()
 	inst.position.y = float(h.get("lift", 0.0))
 	n.add_child(inst)
 	if id == "hearthstone":
@@ -806,6 +1089,7 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 			var hfam := String(mi.get_meta("hero_family"))
 			if mat_remap.has(hfam):
 				hfam = String(mat_remap[hfam])
+			mi.set_meta("family", hfam)   # what a blade meets here (Surfaces)
 			for s in mesh.get_surface_count():
 				var hm := MaterialLib.hero_mat(mesh.surface_get_material(s), hfam, state_mode,
 						float(mi.get_meta("hero_tint", 0.55)))
@@ -821,6 +1105,8 @@ static func remap_materials(node: Node, state_mode := 0, mat_remap: Dictionary =
 			fam = fam.get_slice(".", 0)
 			if mat_remap.has(fam):
 				fam = String(mat_remap[fam])
+			if s == 0:
+				mi.set_meta("family", fam)   # what a blade meets here (Surfaces)
 			mi.set_surface_override_material(s, MaterialLib.get_mat(fam, state_mode))
 			if fam == "M_flame":
 				var aabb := mesh.get_aabb()
@@ -892,7 +1178,9 @@ static func add_flame_lights(piece: Node3D, energy := 2.15, range_m := 7.6,
 ## convex=false -> trimesh (architecture with openings); true -> convex hull.
 static var _shape_cache: Dictionary = {}
 
-static func add_collision(piece: Node3D, layer_bit: int, convex := false) -> void:
+## Each collider is stamped with the surface a blade meets on it: `surface`
+## when the caller knows better, else the kit's own, else its mesh's family.
+static func add_collision(piece: Node3D, layer_bit: int, convex := false, surface := "") -> void:
 	var kit_id := str(piece.get_meta("kit_id", "?"))
 	for mi in _mesh_instances(piece):
 		if mi.mesh == null or String(mi.name).contains("flame"):
@@ -901,7 +1189,12 @@ static func add_collision(piece: Node3D, layer_bit: int, convex := false) -> voi
 		var lk := BuildLock.lock()    # (an area build on a worker shares the cache)
 		var shape: Shape3D = _shape_cache.get(key)
 		if shape == null:
-			shape = mi.mesh.create_convex_shape() if convex else mi.mesh.create_trimesh_shape()
+			# "hull": "simple" on a piece: a hull of at most 32 points. The
+			# physics server stopped naming the 186-point hull of the hide tent
+			# as a wall to a capsule sliding along its side; the Bearer, taken
+			# for pinned and lifted a hair (Player._unpin), then walked in.
+			var simple := convex and String((PIECES.get(kit_id, {}) as Dictionary).get("hull", "")) == "simple"
+			shape = mi.mesh.create_convex_shape(true, simple) if convex else mi.mesh.create_trimesh_shape()
 			_shape_cache[key] = shape
 		BuildLock.unlock(lk)
 		var body := StaticBody3D.new()
@@ -910,4 +1203,6 @@ static func add_collision(piece: Node3D, layer_bit: int, convex := false) -> voi
 		var cs := CollisionShape3D.new()
 		cs.shape = shape
 		body.add_child(cs)
+		Surfaces.stamp(body, surface if surface != "" else Surfaces.for_kit(kit_id, String(mi.get_meta("family", ""))))
+		body.set_meta(PropStrike.META_GROUP, piece.get_instance_id())   # one piece, one burst
 		mi.add_child(body)

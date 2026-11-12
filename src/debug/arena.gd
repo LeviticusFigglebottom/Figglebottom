@@ -62,20 +62,47 @@ func _ready() -> void:
 	add_child(hearth)
 	add_child(HUD.new())
 
-	# warm look
+	# warm look; `--state=rime` instead frosts the kit (the global state
+	# blend), drops a low blue dusk over it and lets snow fall, so a carried
+	# light and its guttering can be judged where a full area will not load
+	var rime := "--state=rime" in OS.get_cmdline_user_args()
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-35, -120, 0)
-	sun.light_color = Color(1.0, 0.85, 0.62)
-	sun.light_energy = 1.8
+	sun.rotation_degrees = Vector3(-35, -120, 0) if not rime else Vector3(-14, -120, 0)
+	sun.light_color = Color(1.0, 0.85, 0.62) if not rime else Color(0.62, 0.74, 1.0)
+	sun.light_energy = 1.8 if not rime else 0.42
 	sun.shadow_enabled = true
 	add_child(sun)
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color(0.5, 0.45, 0.38)
+	e.background_color = Color(0.5, 0.45, 0.38) if not rime else Color(0.07, 0.09, 0.15)
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	e.ambient_light_color = Color(0.55, 0.5, 0.48)
-	e.ambient_light_energy = 0.75
+	e.ambient_light_color = Color(0.55, 0.5, 0.48) if not rime else Color(0.34, 0.42, 0.6)
+	e.ambient_light_energy = 0.75 if not rime else 0.4
+	if rime:
+		StateDirector._set_g("rh_state_blend", 1.0)
+		StateDirector._set_g("rh_wave_r", -1000.0)
+		var snow := CPUParticles3D.new()
+		snow.amount = 260
+		snow.lifetime = 7.0
+		snow.preprocess = 7.0
+		snow.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+		snow.emission_box_extents = Vector3(12, 0.5, 12)
+		snow.direction = Vector3(0.45, -1.0, 0.18)   # on the wind BrandFire leans to
+		snow.spread = 12.0
+		snow.gravity = Vector3.ZERO
+		snow.initial_velocity_min = 0.7
+		snow.initial_velocity_max = 1.3
+		var flake := QuadMesh.new()
+		flake.size = Vector2(0.035, 0.035)
+		var fm := StandardMaterial3D.new()
+		fm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		fm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+		fm.albedo_color = Color(0.9, 0.94, 1.0)
+		flake.material = fm
+		snow.mesh = flake
+		snow.position = Vector3(0, 6.0, 0)
+		add_child(snow)
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	e.glow_enabled = true
 	env.environment = e
