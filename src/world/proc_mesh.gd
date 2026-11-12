@@ -12,6 +12,25 @@ class_name ProcMesh
 
 static var _unit_box: Array = []
 
+## A PrimitiveMesh's surface arrays as the RenderingServer hands them back
+## (surface_get_arrays), kept per shape: the same cylinder, torus or sphere
+## is asked for again and again, and each asking is a round trip to the
+## renderer. On a worker thread (a streamed area build) that round trip
+## waits for the main thread's next flush, a frame each. The arrays are
+## shared: read them, never write.
+static var _prim_arrays: Dictionary = {}
+
+static func arrays_of(mesh: Mesh) -> Array:
+	if not (mesh is PrimitiveMesh):
+		return mesh.surface_get_arrays(0)
+	var key := mesh.get_class()
+	for p in mesh.get_property_list():
+		if int(p["usage"]) & PROPERTY_USAGE_STORAGE and not String(p["name"]) in ["material", "script", "resource_name", "resource_path", "resource_local_to_scene", "resource_scene_unique_id"]:
+			key += "|" + var_to_str(mesh.get(p["name"]))
+	if not _prim_arrays.has(key):
+		_prim_arrays[key] = mesh.surface_get_arrays(0)
+	return _prim_arrays[key]
+
 ## A box of `size` placed by `xf` (local to the SurfaceTool's mesh).
 ## grain: 0/1/2 = x/y/z runs along V; -1 = the longest axis.
 static func box(st: SurfaceTool, size: Vector3, xf: Transform3D, grain := -1, uv_off := Vector2.INF) -> void:
@@ -52,7 +71,7 @@ static func _face_uv(p: Vector3, n: Vector3, g: int) -> Vector2:
 ## Append any PrimitiveMesh (cylinder, torus, sphere) with its UVs scaled to
 ## metres: uv_scale = (around, along), e.g. (TAU * r, height) for a log.
 static func append(st: SurfaceTool, mesh: Mesh, xf: Transform3D, uv_scale := Vector2.ONE, uv_off := Vector2.ZERO) -> void:
-	var arr := mesh.surface_get_arrays(0)
+	var arr := arrays_of(mesh)
 	var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 	var nrms: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
 	var uvs: PackedVector2Array = arr[Mesh.ARRAY_TEX_UV] if arr[Mesh.ARRAY_TEX_UV] != null else PackedVector2Array()

@@ -13,6 +13,10 @@ var last_hearth := {"area": "", "hearth": ""}
 var player_data: Dictionary = {}  # written by Game on save
 
 var _save_dir := "user://saves"
+## Flag reads also come from an area build on a worker thread (Streamer):
+## the dictionaries are only touched under this lock. Never held across a
+## signal or a call out.
+var _mx := Mutex.new()
 
 func _enter_tree() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -20,9 +24,12 @@ func _enter_tree() -> void:
 			_save_dir = arg.get_slice("=", 1)
 
 func _area(id: String) -> Dictionary:
+	_mx.lock()
 	if not areas.has(id):
 		areas[id] = {"state": RH.WState.THAW, "cleared": false, "flags": {}}
-	return areas[id]
+	var a: Dictionary = areas[id]
+	_mx.unlock()
+	return a
 
 func get_area_state(id: String) -> RH.WState:
 	var e := ended()
@@ -68,26 +75,48 @@ func set_area_state(id: String, s: RH.WState) -> void:
 	area_state_changed.emit(id, s)
 
 func is_cleared(id: String) -> bool:
-	return _area(id)["cleared"]
+	var a := _area(id)
+	_mx.lock()
+	var v: bool = a["cleared"]
+	_mx.unlock()
+	return v
 
 func set_cleared(id: String, v := true) -> void:
-	_area(id)["cleared"] = v
+	var a := _area(id)
+	_mx.lock()
+	a["cleared"] = v
+	_mx.unlock()
 
 func area_flag(id: String, flag: String) -> bool:
-	return _area(id)["flags"].get(flag, false)
+	var a := _area(id)
+	_mx.lock()
+	var v: bool = a["flags"].get(flag, false)
+	_mx.unlock()
+	return v
 
 func set_area_flag(id: String, flag: String, v := true) -> void:
-	_area(id)["flags"][flag] = v
+	var a := _area(id)
+	_mx.lock()
+	a["flags"][flag] = v
+	_mx.unlock()
 
 func flag(name: String) -> bool:
-	return flags.get(name, false)
+	_mx.lock()
+	var v: bool = flags.get(name, false)
+	_mx.unlock()
+	return v
 
 func flag_val(name: String, def = null):
-	return flags.get(name, def)
+	_mx.lock()
+	var v = flags.get(name, def)
+	_mx.unlock()
+	return v
 
 func set_flag(name: String, v = true) -> void:
+	_mx.lock()
 	var was = flags.get(name, false)
 	flags[name] = v
+	_mx.unlock()
 	if not was and v is bool and v:
 		flag_raised.emit(name)
 

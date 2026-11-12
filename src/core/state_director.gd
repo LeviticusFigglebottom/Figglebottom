@@ -58,8 +58,12 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 			else Vector3(MELT_GLOW.r, MELT_GLOW.g, MELT_GLOW.b))
 	_set_g("rh_wave_r", 0.0)
 
+	var ts := BuildProf.now()
 	area.pre_transition(to_state)
+	BuildProf.slice("flip", "flip: pre_transition", ts)
+	ts = BuildProf.now()
 	_spawn_wave_particles(area, origin, duration, max_r, to_rime)
+	BuildProf.slice("flip", "flip: wave particles", ts)
 	# the world draws a breath in and holds it (RIME), or lets it go (THAW);
 	# ice cracks ride the frost line out, or give as it melts
 	var wave_cfg: Dictionary = AudioDirector.cfg("wave", {})
@@ -84,9 +88,13 @@ func transition(area: Area, to_state: RH.WState, origin: Vector3, force := false
 	# settle
 	_set_g("rh_state_blend", 1.0 if to_rime else 0.0)
 	_set_g("rh_wave_r", -1000.0)
+	ts = BuildProf.now()
 	area.apply_state(to_state)
+	BuildProf.slice("flip", "flip: apply_state", ts)
 	World.set_area_state(area.area_id, to_state)
+	ts = BuildProf.now()
 	World.save_game()
+	BuildProf.slice("flip", "flip: save", ts)
 	if keep_music:
 		var prof: Dictionary = area.env.audio_for(to_state)
 		AudioDirector.play_ambience(String(prof.get("ambience", "")), float(prof.get("ambience_fade", 2.0)))

@@ -508,7 +508,18 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			bl["density"] = float(rule.get("density", 1.0)) * 6.0
 			bl["range"] = 11.0
 			all_rules.append(bl)
+	# where every clump stands is a pure function of the rules, the seed and
+	# the land: kept on disk (StreamCache) as one MultiMesh buffer per chunk
+	var ck := StreamCache.key(["veg", rules, seed, keep_clear, terrain.origin, terrain.cell, terrain.nx, terrain.nz,
+			terrain.heights, terrain.splat])
+	var cached: Variant = StreamCache.load_var("veg", ck)
+	var hit: bool = cached is Array and (cached as Array).size() == all_rules.size()
+	var store: Array = []
+	var ri := -1
 	for rule in all_rules:
+		if AreaBuilder._cancelled():
+			return     # (a worker build nobody waits for; nothing is cached)
+		ri += 1
 		var kind := String(rule.get("kind", "grass"))
 		var tag := String(rule.get("tag", "base"))
 		var reg: Array = rule.get("region", [-50, -50, 50, 50])
@@ -517,7 +528,7 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 		var step := 1.0 / sqrt(maxf(dens, 0.01))
 		var kseed := hash(kind)
 		var chunks: Dictionary = {}
-		var x := float(reg[0])
+		var x := float(reg[2]) if hit else float(reg[0])   # (a hit walks nothing)
 		while x < float(reg[2]):
 			var z := float(reg[1])
 			while z < float(reg[3]):
@@ -576,20 +587,18 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			x += step
 		var mesh := _veg_mesh(kind, tag, ground)
 		var rng_end := float(rule.get("range", 55.0))
-		for key in chunks:
-			var xfs: Array = chunks[key]
+		var bufs: Dictionary = cached[ri] if hit else _veg_buffers(chunks, terrain)
+		store.append(bufs)
+		for key in bufs:
+			var buf: PackedFloat32Array = bufs[key]
 			var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
 			c.y = terrain.height_at(c.x, c.z)
 			var mm := MultiMesh.new()
 			mm.transform_format = MultiMesh.TRANSFORM_3D
 			mm.use_custom_data = true
 			mm.mesh = mesh
-			mm.instance_count = xfs.size()
-			for i in xfs.size():
-				var t: Transform3D = xfs[i][0]
-				t.origin -= c
-				mm.set_instance_transform(i, t)
-				mm.set_instance_custom_data(i, xfs[i][1])
+			mm.instance_count = buf.size() / 16
+			mm.buffer = buf
 			var mmi := MultiMeshInstance3D.new()
 			mmi.name = "Veg_%s_%d_%d" % [kind, key.x, key.y]
 			mmi.multimesh = mm
@@ -600,6 +609,34 @@ static func build_veg(area: Area, terrain: Terrain, rules: Array, seed: int, kee
 			mmi.visibility_range_end_margin = 6.0
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			area.attach(mmi, tag)
+	if not hit:
+		StreamCache.store_var("veg", ck, store)
+
+## Each chunk's clumps as the MultiMesh's own buffer (per instance: the
+## transform's three rows with the origin, relative to the chunk centre, then
+## the custom data), exactly what set_instance_transform and
+## set_instance_custom_data would have written.
+static func _veg_buffers(chunks: Dictionary, terrain: Terrain) -> Dictionary:
+	var out := {}
+	for key in chunks:
+		var xfs: Array = chunks[key]
+		var c := Vector3((key.x + 0.5) * VEG_CHUNK, 0, (key.y + 0.5) * VEG_CHUNK)
+		c.y = terrain.height_at(c.x, c.z)
+		var buf := PackedFloat32Array()
+		buf.resize(xfs.size() * 16)
+		var o := 0
+		for e in xfs:
+			var t: Transform3D = e[0]
+			t.origin -= c
+			var b := t.basis
+			var cu: Color = e[1]
+			buf[o] = b.x.x; buf[o + 1] = b.y.x; buf[o + 2] = b.z.x; buf[o + 3] = t.origin.x
+			buf[o + 4] = b.x.y; buf[o + 5] = b.y.y; buf[o + 6] = b.z.y; buf[o + 7] = t.origin.y
+			buf[o + 8] = b.x.z; buf[o + 9] = b.y.z; buf[o + 10] = b.z.z; buf[o + 11] = t.origin.z
+			buf[o + 12] = cu.r; buf[o + 13] = cu.g; buf[o + 14] = cu.b; buf[o + 15] = cu.a
+			o += 16
+		out[key] = buf
+	return out
 
 ## One clump: a few cards crossed through the root, each tipped outward so
 ## the clump has a top when seen from above, each in three rows so the wind

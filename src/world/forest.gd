@@ -204,7 +204,14 @@ static func _emit(area: Area, key: String, tag: String, xfs: Array, range_end: f
 
 # ------------------------------------------------------------ meshes
 
+## (locked: an area build on a worker thread shares this cache, BuildLock)
 static func _mesh(key: String, mode: int) -> Mesh:
+	var lk := BuildLock.lock()
+	var out: Mesh = _mesh_u(key, mode)
+	BuildLock.unlock(lk)
+	return out
+
+static func _mesh_u(key: String, mode: int) -> Mesh:
 	var ck := "%s|%d" % [key, mode]
 	if _cache.has(ck):
 		return _cache[ck]
@@ -274,7 +281,14 @@ static func _hero(name: String, fam: String, mode: int, sway: float, sway_h: flo
 
 ## A hero hedge section's length along its own X (the GLBs are processed to
 ## run along X), for spacing them down a line.
+## (locked: an area build on a worker thread shares this cache, BuildLock)
 static func _hero_len(name: String) -> float:
+	var lk := BuildLock.lock()
+	var out: float = _hero_len_u(name)
+	BuildLock.unlock(lk)
+	return out
+
+static func _hero_len_u(name: String) -> float:
 	var ck := "len|" + name
 	if not _cache.has(ck):
 		var m := _hero(name, "M_thorn", 0, 0.0, 1.0)

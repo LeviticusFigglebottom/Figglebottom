@@ -134,7 +134,14 @@ const HERO_PIECES := {
 }
 static var _hero_turn := 0
 
+## (locked: an area build on a worker thread shares this cache, BuildLock)
 static func instance(id: String, state_mode := 0, mat_remap: Dictionary = {}) -> Node3D:
+	var lk := BuildLock.lock()
+	var out: Node3D = _instance_u(id, state_mode, mat_remap)
+	BuildLock.unlock(lk)
+	return out
+
+static func _instance_u(id: String, state_mode := 0, mat_remap: Dictionary = {}) -> Node3D:
 	if not PIECES.has(id):
 		push_error("KitLib: unknown piece '%s'" % id)
 		return Node3D.new()
@@ -211,9 +218,12 @@ static var _ph_mats: Dictionary = {}
 
 static func _ph(fam: String) -> Material:
 	if not _ph_mats.has(fam):
-		var m := StandardMaterial3D.new()
-		m.resource_name = fam
-		_ph_mats[fam] = m
+		# (made on the main thread, and its shader settled there: BuildLock.on_main)
+		BuildLock.on_main(func() -> void:
+			var m := StandardMaterial3D.new()
+			m.resource_name = fam
+			m.get_rid()
+			_ph_mats[fam] = m)
 	return _ph_mats[fam]
 
 static func _box(parent: Node3D, size: Vector3, pos: Vector3, fam: String, nm := "box", rot := Vector3.ZERO) -> MeshInstance3D:
@@ -343,12 +353,14 @@ static var _ember_mat: StandardMaterial3D = null
 ## go out. CPU particles: a dozen per fire is cheaper than a GPU system each.
 static func _embers(parent: Node3D, pos: Vector3, spread: float, amount := 10) -> CPUParticles3D:
 	if _ember_mat == null:
-		_ember_mat = StandardMaterial3D.new()
-		_ember_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_ember_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-		_ember_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-		_ember_mat.vertex_color_use_as_albedo = true
-		_ember_mat.albedo_color = Color(1.0, 0.55, 0.2)
+		BuildLock.on_main(func() -> void:     # (see _ph)
+			_ember_mat = StandardMaterial3D.new()
+			_ember_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			_ember_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+			_ember_mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+			_ember_mat.vertex_color_use_as_albedo = true
+			_ember_mat.albedo_color = Color(1.0, 0.55, 0.2)
+			_ember_mat.get_rid())
 	var p := CPUParticles3D.new()
 	p.name = "embers"
 	p.amount = amount
@@ -886,10 +898,12 @@ static func add_collision(piece: Node3D, layer_bit: int, convex := false) -> voi
 		if mi.mesh == null or String(mi.name).contains("flame"):
 			continue
 		var key := kit_id + "/" + str(mi.name) + ("/cvx" if convex else "")
+		var lk := BuildLock.lock()    # (an area build on a worker shares the cache)
 		var shape: Shape3D = _shape_cache.get(key)
 		if shape == null:
 			shape = mi.mesh.create_convex_shape() if convex else mi.mesh.create_trimesh_shape()
 			_shape_cache[key] = shape
+		BuildLock.unlock(lk)
 		var body := StaticBody3D.new()
 		body.collision_layer = 1 << (layer_bit - 1)
 		body.collision_mask = 0
