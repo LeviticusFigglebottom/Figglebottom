@@ -568,6 +568,7 @@ static func _pickup(area: Area, spec: Dictionary) -> Pickup:
 	k.warmth = int(spec.get("warmth", 0))
 	k.item_id = spec.get("item", "")
 	k.item_count = int(spec.get("count", 1))
+	k.also = spec.get("also", {})
 	k.label = spec.get("label", "Take")
 	k.appear_flag = spec.get("appear_flag", "")
 	k.display_kit = spec.get("kit", "")

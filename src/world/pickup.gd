@@ -8,6 +8,8 @@ var area_id := ""
 var warmth := 0
 var item_id := ""
 var item_count := 1
+## more given with it, id -> count (the arrows that hang with a bow)
+var also := {}
 var label := "Take"
 ## quest reveals inside an already-built area: stay hidden and inert until
 ## the flag turns true, THEN appear — a build-time require_flag can't do
@@ -156,6 +158,9 @@ func _on_take(player) -> void:
 		Game.add_warmth(warmth)
 	if item_id != "" and player != null:
 		player.give_item(item_id, item_count)
+	if player != null:
+		for extra in also:
+			player.give_item(String(extra), int(also[extra]))
 	var what := []
 	if warmth > 0:
 		what.append("%d warmth" % warmth)
@@ -163,6 +168,8 @@ func _on_take(player) -> void:
 		var iname: String = DB.weapon(item_id).get("name",
 			DB.song(item_id).get("name", DB.item(item_id).get("name", item_id)))
 		what.append("%s ×%d" % [iname, item_count])
+	for extra in also:
+		what.append("%s ×%d" % [DB.item(String(extra)).get("name", extra), int(also[extra])])
 	Game.toast.emit("Received: " + " · ".join(what))
 	AudioDirector.play("world/pickup")
 	World.save_game()
