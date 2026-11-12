@@ -151,6 +151,7 @@ func _build_dressing(when: String) -> void:
 			# this gate both sit at the area's origin, so local space is enough)
 			_area.attach(n, tag)
 			n.transform = transform * local
+			n.set_meta("gate_piece", gate_id)    # (not under the gate: say whose it is)
 		if when == "shut":
 			_dress_shut.append(n)
 

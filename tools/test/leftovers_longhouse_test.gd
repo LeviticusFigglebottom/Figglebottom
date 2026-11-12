@@ -69,8 +69,20 @@ func _beside_leavings(before: Dictionary) -> Array:
 			continue   # (the fallen veil re-bakes the area's navmesh: its own two regions, new)
 		if n is Enemy and _pen_of(n) != null and _pen_of(n).current == n:
 			continue   # (a rest raises the yard's dead again: those are new)
+		if _of_gate(n):
+			continue   # (the way on opens with the release, ADR 0015: what it leaves is new)
 		out.append(n)
 	return out
+
+## Made by a progression gate as it opened (its "open" dressing: the net's
+## coil of rope where it hung), not by her.
+func _of_gate(n: Node) -> bool:
+	var p := n
+	while p != null:
+		if p is ShortcutGate:
+			return true
+		p = p.get_parent()
+	return n.has_meta("gate_piece")
 
 func _needles() -> int:
 	var k := 0
