@@ -3,12 +3,24 @@ name: CI — test and export
 # Imports the project, runs the headless test suite (tools/test.sh: static
 # area audits + in-engine tests), then packages standalone Linux and Windows
 # builds. Grab the builds from the run's Artifacts.
+# Runs on main only (and on demand). Branch pushes do NOT trigger it: with
+# many sessions pushing branches all day, per-branch runs burned thousands of
+# Actions minutes. Branches are tested locally and by the GPU worker instead.
 on:
   workflow_dispatch:
+    inputs:
+      fullgame:
+        description: "Also run the full-game region walks (8 long jobs)"
+        type: boolean
+        default: false
   push:
-    branches: ["main", "feat/**", "fix/**", "art/**", "claude/**"]
+    branches: ["main"]
     paths-ignore: ["docs/**", "*.md"]
-  pull_request:
+
+# a newer push to the same ref cancels the run still going for the older one
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   GODOT_VERSION: "4.7"
@@ -51,13 +63,52 @@ jobs:
           test -f build/rimeholt-windows.exe
 
       - name: Upload Linux build
+        # builds are kept for main only, and briefly: branch runs filled the artifact quota
+        if: github.ref == 'refs/heads/main'
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 3
           name: rimeholt-linux
           path: build/rimeholt-linux.x86_64
 
       - name: Upload Windows build
+        # builds are kept for main only, and briefly: branch runs filled the artifact quota
+        if: github.ref == 'refs/heads/main'
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 3
           name: rimeholt-windows
           path: build/rimeholt-windows.exe
+
+  # The full-game region walks (tools/test/fullgame_<region>_test.gd): each
+  # plays one whole region with a steered Bearer, from the save the previous
+  # region's walk ends on. A quarter of an hour apiece, so one job per region.
+  fullgame:
+    # eight long jobs: only when asked for (Run workflow -> fullgame)
+    if: github.event_name == 'workflow_dispatch' && inputs.fullgame
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        region: [lowe, kettle, tarnhall, thornwold, reach, coldwell, ending_outsong, ending_kept]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot
+        run: |
+          set -e
+          curl -sSL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+
+      - name: Import project resources
+        run: godot --headless --path . --import 2>&1 | tail -2 || true
+
+      - name: Walk the region
+        run: |
+          test -f "tools/test/fullgame_${{ matrix.region }}_test.tscn" || { echo "no suite yet"; exit 0; }
+          tools/test.sh "fullgame_${{ matrix.region }}"
