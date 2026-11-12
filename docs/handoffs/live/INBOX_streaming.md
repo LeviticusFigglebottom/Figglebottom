@@ -2,6 +2,40 @@
 
 Newest entry at the top. Branch `feat/streaming`.
 
+## 2026-11-12: Job 2 merged; both jobs are on `feat/streaming` (b613e83)
+
+**What changed.** Every region's way on is shut by a real object until that region's Holdfast is released, then stands open with a worn track leading to it. ADR: `docs/decisions/0015-progression-gating.md` (both readings of the owner's sentence, and the before/after per region).
+
+| Region → next | Before | Now | Opens on |
+|---|---|---|---|
+| Saltfell → Lowe (pass) | open turf, no track | head-dyke across the neck, two stones, the Netmender's net in the gap | `ks_netmender_released` |
+| Saltfell → Lowe (drawbridge) | raised, windlass on the Lowe side | unchanged | `lowe_bridge_down` |
+| Lowe → Kettle | open cutting, no track | sods stacked across the cutting | `ks_turfwright_released` |
+| Kettle → Tarnhall | open gully | crates and barrels across the foot of the Tarn Steps | `ks_ice_cutter_released` |
+| Tarnhall → Thornwold | open notch | dyke with a barred plank gate | `ks_host_released` |
+| Thornwold → Reach | 11 m opening | the Hedgelayer's hedge straight across | `ks_hedgelayer_released` |
+| Reach → Coldwell | open corner | head-dyke with two tied hurdles, a cairn | `ks_fellcaller_released` |
+
+- **Evidence for both readings.** No seam in the game had a lock: a new journey could walk from the Strand to the Wellhead Steps without meeting a Holdfast. And no track led to any seam except the Kettle Road, so the pass was open but invisible. Both were true.
+- **Mechanism.** One `ShortcutGate` per exit on the base layer (same in THAW and RIME), opened by the release flag where the Bearer stands. Each can be undone by hand from its far side, so nobody is ever shut out of the region behind.
+- **For the journal and map (`feat/ui-map-log-icons`):** each area def now has a `way_on` block: `id`, `name`, `to`, `at`, `seam`, `open_flag`, `gate`.
+- **Generators:** edits sit inside `# --- progression gates` blocks; shared helper `tools/progress_gates.py`. One edit outside a block: a bog nav-blocker fix in `gen_lowe.py`.
+- **Merging note:** six `data/terrain/*_splat.bin` changed (tracks painted). A `feat/poi-*` branch that also repaints a splat must rerun its generator after merging, not pick a side.
+
+**Suites on the merged branch, run here:** `gates` 151/0, `streaming` 78/0, `smoke` 11/0, `steading` 49/0, `deathloop` 26/0. `audit_edges.py`, `audit_areas.py` and the originality check pass. The full-game walks on the merged branch are running now; results in the next entry.
+
+**Suites as the gating agent ran them, before the merge with streaming:** `lowe`, `kettle`, `tarnhall`, `thornwold`, `reach`, `coldwell`, `reach_encounters`, `traps`, `release_scenes`, `houses`, `keepsakes`, `fullslice` (112), `fullgame_tarnhall` (213), `fullgame_thornwold` (163), `fullgame_coldwell`, both endings: pass. `fullgame_lowe`: 1 failure on its last run (a Breathmark left after an unplanned fight death). `fullgame_reach`: 1 failure on its last run (a flock count that passed the run before).
+
+**For the QA env: `fullgame_kettle` fails on `main`'s parent `c3721bb` too.** 17 failures, identical with and without either job: the scripted Ice-Cutter duel is lost (stalls with the boss at 1040/1250). Not caused by this branch; not fixed here.
+
+**Open, for the lead to decide or pass on.**
+- **THAW fiction.** Each gate also stands in the remembered evening and is gone from it after the release. No lore line covers this. The Kettle stack is the weakest fit. No dialogue was written; ADR 0015 lists where a line could go.
+- **73 sheep.** REACH.md says seventy; three frozen ewes at the hurdles are extra (tagged `gate_piece`, one list in `gen_reach.py` removes them).
+- **RIME reveal.** Tracks are under snow in RIME, so there the cue is the emptied gap and its stones or cairn only.
+- **Line of sight.** On the Lowe, Tarnhall and Thornwold the gap cannot be seen from the arena; the track starts at the arena mouth.
+- **Not seen in motion or on a real GPU.** The gate's 1.4 s sinking was not watched. Screenshots are lavapipe: `docs/screens/gates_*.png` (23 files). The Lowe ones read worst (narrow, shaded cutting).
+- **In work now:** gate and drawbridge navmesh re-bakes off the main thread (they fire at every release now), and warming the neighbours' cache in idle time.
+
 ## 2026-11-12: Job 1 merged into `feat/streaming` (846c6fa); Job 2 still in work
 
 **What changed.** An area change no longer builds on the main thread. The neighbour is built on a worker when the Bearer is within 70 m of an unlocked seam, grafted in hidden and inert within a per-frame budget, and swapped in behind a dip to black. Design: `docs/decisions/0014-area-streaming.md`. Numbers and re-measure commands: `docs/qa/STREAMING.md`. Tuning: `data/game.json` → `streaming`. `--no-streaming` puts the old path back for A/B.
