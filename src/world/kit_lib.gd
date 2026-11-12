@@ -167,7 +167,7 @@ static func _build_hero(n: Node3D, id: String) -> void:
 		var pick := String(all[_hero_turn % all.size()])
 		if ResourceLoader.exists(pick):
 			glb = pick
-	var inst := (load(glb) as PackedScene).instantiate() as Node3D
+	var inst := (BuildLock.wload(glb) as PackedScene).instantiate() as Node3D
 	# colliders come from the generator's own shapes, not the landmark's
 	for c in inst.find_children("*", "CollisionObject3D", true, false):
 		c.get_parent().remove_child(c)

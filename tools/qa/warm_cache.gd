@@ -69,4 +69,4 @@ func _run() -> void:
 	if Game.stream != null:
 		Game.stream.reset()
 	AudioDirector.shutdown()
-	get_tree().quit(0)
+	Game.quit(0)

@@ -291,7 +291,7 @@ static func _hero_mesh(name: String, family: String, mode: int) -> Mesh:
 	var path := name if name.begins_with("res://") else "res://assets/models/scatter/%s.glb" % name
 	var out: Mesh = null
 	if ResourceLoader.exists(path):
-		var inst := (load(path) as PackedScene).instantiate()
+		var inst := (BuildLock.wload(path) as PackedScene).instantiate()
 		for c in inst.find_children("*", "MeshInstance3D", true, false):
 			var src := (c as MeshInstance3D).mesh
 			if src == null:

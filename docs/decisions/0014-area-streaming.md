@@ -75,6 +75,27 @@ Every key also hashes the **source of the builder scripts** (their `.gd`, or `.g
 - **One build at a time.** The builders' own statics (`BuildingGen._hd`, `Scatter._mesh_cache`, ...) are not locked; instead `AreaBuilder.build` on the main thread waits for a worker build to end first (`Streamer.yield_to_sync_build`).
 - **RenderingServer reads from the worker** (`PrimitiveMesh.surface_get_arrays` in `ProcMesh.append` and `MeshBuf.append_mesh`, `Texture2D.get_image`, loading a scene) block until the main thread flushes its queue. One flush a frame made a build take as many frames as it has reads (over a minute under a software renderer). So `ProcMesh.arrays_of` keeps a primitive's arrays per shape, and while the worker is in a phase that asks (`BuildLock.computing` is false) the streamer spends three quarters of the build stage's budget flushing.
 
+### Quitting (added 2026-11-12, after a hang on exit)
+
+**What happened.** Two full-game walks printed their result and never exited. Each ended beside a seam with a neighbour being built on a worker. `TestBase.finish` (and after it both `_exit_tree`s) called `Streamer.reset`, which called the build off and waited for the worker in `BuildLock.wait_idle`, three times 120 s; then the engine's own join of the worker pool at exit waited for ever. The player quitting near a seam would have met the same.
+
+**Cause, as far as it was established.** Reproduced with `tools/qa/quit_probe.gd` and narrowed by experiment (the engine binary has no symbols, so the engine-side reason is not named here):
+
+- The worker was not building. The build had seen the cancel and returned; the task was in `Streamer._preload_actors`, inside `load()` of the first model scene (a `.glb`) not yet in the resource cache.
+- **A scene loaded with `load()` from a WorkerThreadPool task does not return until the main thread has run a frame.** Measured: four seconds of the main thread waiting outside the frame loop, flushing the RenderingServer all the while, and the load had not returned; one frame later it had. Textures and shaders loaded the same way return at once. `ResourceLoader.load_threaded_request` from the worker completes by itself, but `load_threaded_get` from the worker waits for a frame in the same way; from the main thread it returns in 0.03 to 0.18 ms.
+- `wait_idle` runs outside the frame loop (it is what a synchronous build, the return to the title and `_exit_tree` use), so it could never release such a worker. In play nobody noticed: frames kept coming, and each scene load cost the worker one of them.
+- A second trap found on the way: with the build posted as a low-priority task, a threaded load it asked for never left "in progress", every other pool thread standing idle; posted at high priority, the same load completed in about 14 ms. The likely reason is the pool's limit on low-priority tasks running at once (one, on four cores, by the engine's default ratio), the load being such a task itself. That reading is inferred from the behaviour, not read from the engine.
+
+**Fix.**
+
+- `BuildLock.wload(path)` replaces `load()` for scenes wherever a worker build can reach it (`KitLib`, `BuildingGen`, `Forest`, `Scatter`, `FrostVeil._hero`, `Streamer._preload_actors`). On a worker it requests a threaded load, polls it, and has the main thread collect the result through `BuildLock.on_main`, which every pump answers: the frame-loop pumps and the waits outside it. What it loaded is kept until the next build starts. On the main thread it is `load()`.
+- The build task is posted at high priority, so the pool's low-priority place is free for the loads it asks for.
+- `_preload_actors` looks at the cancel flag between scenes and is skipped for a build that was called off.
+- `Game.quit(code)` is the way out for the pause sheet, the window's close request (`auto_accept_quit` is off; `Game` answers `NOTIFICATION_WM_CLOSE_REQUEST`), `TestBase.finish` and the QA tools: `Streamer.shutdown` calls every worker off and sees them end a frame at a time while the main loop still runs, then the tree quits. A bare `get_tree().quit()` (the debug tools in `src/debug/`) still ends in `Game._exit_tree`, whose wait now does release the worker.
+- `tools/qa/quit_check.sh` quits with each kind of work in flight (a preload, the cache warming, a re-bake, a crossing) in each way (`Game.quit`, a bare tree quit, the close request), each as a process under a timeout; the streaming suite runs three of those cases itself.
+
+**New rule for builders:** a scene is loaded with `BuildLock.wload`, never `load`, in anything a build runs.
+
 ## Consequences
 
 - A seam crossed with the neighbour ready is a dip to black of a few tenths of a second with no frame over the budget; the numbers, per area, are in STREAMING.md.
@@ -85,5 +106,6 @@ Every key also hashes the **source of the builder scripts** (their `.gd`, or `.g
 - **Runtime re-bakes no longer freeze a frame**, and the routes through an opened gate exist a moment later, not in the same frame: anything that must path through it at once waits for `nav_ready`. The suites that did (gates, steading, lowe, tarnhall, fullslice, the full-game walks) now call `nav_wait()`.
 - The idle-time warming uses one worker core for some seconds after each arrival, on a first visit only.
 - The front door still builds synchronously behind the title's veil, faster for the cache.
+- A worker build no longer loses a frame to every scene it loads; how much sooner a neighbour is ready for it was not measured again.
 - New rules for builders: anything that acts must be created in the entity section of `AreaBuilder._build` (it is marked late by position); a static cache that both a build and live play reach must take `BuildLock`; and anything that makes a `StandardMaterial3D`, a `ParticleProcessMaterial`, a `FogMaterial` or a `GradientTexture2D` at build time must go through `AreaBuilder._for_main` (or `BuildLock.on_main`).
 - Tests that count on `travel_to` being instantaneous must wait for `current_area_id` and `player.input_enabled`, as the full-game walks already do.
