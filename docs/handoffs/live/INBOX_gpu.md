@@ -73,3 +73,16 @@ Failing lines, verbatim:
 - **VRAM:** Tarnhall is about 1.09 GB at q0/1, twice the others.
 - **Caveat:** job 1's walks were running at the same time in a second Godot process, so the CPU figures may be partly contention. A clean re-run is offered.
 - **Fixes proposed, not made:** ablate script per region, the Area3D/physics ablation in Lowe and the Reach, and Tarnhall's textures.
+
+## 2026-11-12T06:40Z Job 3: GPU re-shoot, gallery v4 (integration 0cac9ad)
+- **Where:** `docs/gallery_gpu/v4/` on `gpu/gallery-v4` (0442c3c). That's 67 JPEGs at q2, 1920x1080. `README.md` there lists the sets and cameras.
+- **Coverage:** 22 POI places across all seven regions in both states, the seven biome views, the Saltfell cliff top and the Strand shore, the Journal and the Map (×2), and the torch, spear, greatblade and bow in RIME.
+- **Looks wrong on the GPU:**
+  - Very dark THAW under the cliffs: Kettle Road (luma 4/255), the Tarn Causeway, Tarnhall and the Far Landing.
+  - Thornwold THAW has a strong yellow fog wash.
+  - The `instantiate`-on-null script error appears in every boot.
+- **Not covered:**
+  - `bearer_light1` does nothing in THAW, so there are no THAW weapon shots.
+  - There is no unlit-torch hook.
+  - The title card is visible in the weapon shots.
+- **POI cameras:** these are generated from the wayside boards, since only Thornwold has scripted POI cameras. Three of them frame badly; they are named in the README.
