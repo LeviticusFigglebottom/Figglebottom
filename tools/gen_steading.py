@@ -109,11 +109,12 @@ for i in range(6):
 prop("boat", -6.0, 70.5, 8, tag="thaw", collide=True)             # Brede's, oars ready
 prop("boat", 6.0, 66.0, -6, collide=True)
 prop("boat", 13.0, 64.5, 4, tag="thaw", collide=True)
-prop("boat", 28.5, 52.0, 0, collide=True)                         # the keel in the shed
+prop("sf_boat_half", 28.5, 52.0, 0, collide=True)                 # on the stocks in the shed: keel, posts and four strakes
 # (the Strand's racks stand in rows across the wind: see "the working shore" below)
 # the yard: two racks end to end by the path, two side by side at the kailyard
-for x, z, r in [(-9.0, 9.0, 33), (-13.2, 11.72, 33), (7.0, 15.0, -22), (8.1, 12.2, -22)]:
+for x, z, r in [(-9.0, 9.0, 33), (-13.2, 11.72, 33), (7.0, 15.0, -22)]:
     prop("drying_rack", x, z, r)
+prop("sf_rack_low", 8.1, 12.0, -22)
 prop("well", 6.0, -2.0, 17)
 for x, z, r in [(-34, 27.0, 8), (-29.5, 28.5, -5), (-38.5, 26.0, 14)]:
     prop("salt_pan", x, z, r)
@@ -298,7 +299,7 @@ pickups.append({"id": "pan_salt", "at": at(-34.3, 28.25), "item": "item_pan_salt
 prop("sf_brine_trough", -33.7, 18.9, 82)
 prop("sf_salt_basket", -30.9, 24.9, 24)
 prop("sf_salt_basket", -33.4, 23.9, -70)
-prop("woodpile", -34.2, 15.6, 82)
+prop("sf_salt_sacks", -34.3, 16.3, 82)                            # sacked and stacked by the door, for the store
 
 # --- 2.3 sf_cliff_graves: the Cliff Graves (the turf terrace, east) -----------
 # Two plaques on one board. The small grave: closed in THAW with today's
@@ -352,6 +353,15 @@ slope_prop("sf_net_sinkers", -27.4, 62.6, RACK_ROT + 90, span=0.3)
 prop("sf_oar_rack", 17.9, 56.4, 90)
 prop("boat_upturned", 12.4, 58.3, 82)
 slope_prop("sf_tar_pot", 14.4, 61.2, 0, span=0.4)
+# variety, each at its work (owner: more kinds, fewer repeats)
+slope_prop("sf_rack_low", -49.6, 66.4, RACK_ROT, span=0.5)       # flatfish, at the west end of the seaward row
+slope_prop("sf_fish_barrels", -28.0, 67.0, 30, span=0.4)         # what the bench fills
+slope_prop("sf_net_pile", -0.4, 71.8, 40, span=0.3)              # Brede's net, by his boat
+slope_prop("sf_net_pile", 18.3, 60.6, -20, span=0.3)             # and the shed's
+slope_prop("sf_mooring_post", -6.7, 65.6, 10, span=0.3)          # a post at the head of a run: what a hauled boat is made fast to
+slope_prop("sf_mooring_post", 5.2, 62.4, 80, span=0.3)
+prop("sf_fish_barrels", -9.0, 17.0, 120)                         # the yard bench's
+prop("sf_salt_sacks", 17.2, -17.4, 13)                           # at the store-house wall
 # kelp carried up off the wrack line to dry on the old walls at the beach head
 slope_prop("sf_kelp_rick", -55.0, 63.6, 6, span=0.4)
 slope_prop("sf_kelp_rick", 40.5, 62.0, -8, span=0.4)

@@ -7,6 +7,13 @@ extends PoiBase
 func _ready() -> void:
 	_run.call_deferred()
 
+func _any_solid(kit: String) -> bool:
+	# some stand tight against a mound, where there is no level run-up: try each
+	for n in area.find_children(kit + "*", "Node3D", true, false):
+		if String(n.get_meta("kit_id", "")) == kit and (n as Node3D).is_visible_in_tree() and await solid(n):
+			return true
+	return false
+
 func _run() -> void:
 	await setup("lowe_barrows")
 	var def: Dictionary = area.get_meta("def")
@@ -65,6 +72,11 @@ func _run() -> void:
 	var back := hesk.global_transform.basis.z
 	check((furnace.global_position - hesk.global_position).normalized().dot(back) > 0.7
 		and furnace.global_position.distance_to(hesk.global_position) < 4.0, "his furnace is behind him")
+
+	print("== collision: the hero props are solid")
+	for kit in ["lw_bloomery", "lw_spade_rack", "lw_peat_sled", "lw_bier", "lw_kin_post", "lw_stone_b", "lw_stone_c", "lw_turf_barrow"]:
+		check(await _any_solid(kit), "%s stops the Bearer" % kit)
+	check(not bool(def.get("wayside", true)), "nothing strewn: the Lowe is dressed by hand")
 
 	print("== the Rise")
 	await stand(hearth)

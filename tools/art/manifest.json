@@ -3963,7 +3963,7 @@
    "input": "raw/sf_net_pile/remesh.fbx",
    "yaw_deg": -90,
    "target": {
-    "length": 1.9
+    "height": 0.85
    },
    "origin": "bottom_center",
    "texture_max": 1024,
@@ -3992,6 +3992,236 @@
    "texture_max": 1024,
    "collision": null,
    "output": "assets/models/kit/kit_sf_fish_barrels.glb"
+  },
+  {
+   "name": "kit_sf_salt_sacks",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "a4cf0291-a65c-48c5-adba-5067954c30b6",
+    "task_id": "4e2c921b-6593-4c7d-b601-1e92c785a5ae",
+    "remesh_operator": "e30565f2-7b11-4297-9a86-2c7e29eb5b5c",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/sf_salt_sacks/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_salt_sacks.glb"
+  },
+  {
+   "name": "kit_sf_mooring_post",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "3f0cc1ce-1806-4070-b18a-b4d305dda884",
+    "task_id": "280b1503-bab9-4b96-94ae-74ccdc88f9b5",
+    "remesh_operator": "59321c1a-2662-4c8c-b278-9bf0c755569b",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/sf_mooring_post/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.3
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_mooring_post.glb"
+  },
+  {
+   "name": "kit_sf_boat_half",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "592e8852-c32e-464d-8c88-dee829633e27",
+    "task_id": "cf3496bd-5321-424f-8e69-89a875d2db9d",
+    "remesh_operator": "15947c24-72fe-4a4b-a377-d9298df2ec75",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 8000
+   },
+   "input": "raw/sf_boat_half/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 6.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sf_boat_half.glb"
+  },
+  {
+   "name": "kit_lw_stone_b",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "561165d4-f1dc-453a-b113-5c92ad0f8cb3",
+    "task_id": "26fea531-fcc5-4634-a9b2-4096e5a0200a",
+    "remesh_operator": "c33cc32d-15d5-42c9-8f20-6f3377c03c52",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 3000
+   },
+   "input": "raw/lw_stone_b/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_stone_b.glb"
+  },
+  {
+   "name": "kit_lw_stone_c",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "4fba2952-27a6-4768-b910-e94115eb8952",
+    "task_id": "f0df91f4-b1fc-481c-b243-59e434e58b8e",
+    "remesh_operator": "5e76a3d7-6360-4ab7-8b13-96b736e951a5",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/lw_stone_c/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.0
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_stone_c.glb"
+  },
+  {
+   "name": "kit_lw_turf_barrow",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "afe2f08f-879e-4060-bb9f-58fa879e48db",
+    "task_id": "a74ff665-591d-4f04-9b25-0d5dae3bd960",
+    "remesh_operator": "3d524b2b-975a-4cf6-9e4e-74e4ecc94bcf",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 4000
+   },
+   "input": "raw/lw_turf_barrow/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.2
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_turf_barrow.glb"
+  },
+  {
+   "name": "kit_lw_offering_slab",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "5b9c58a7-d426-4eac-8883-13496945b9d4",
+    "task_id": "58886fa1-bdb8-4c87-b1ea-143043aeed1f",
+    "remesh_operator": "2c231ff8-5c5a-43b6-8b66-6a938e78a64a",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/lw_offering_slab/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 1.7
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_lw_offering_slab.glb"
+  },
+  {
+   "name": "kit_sr_fodder_rack",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "e8acbebe-4de7-4920-a5a2-eea752a76bdb",
+    "task_id": "10a785b1-a67a-4e38-b3a9-72966d6d83cb",
+    "remesh_operator": "9b5b5481-06c1-4a24-a142-ad0f80caaf44",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 5000
+   },
+   "input": "raw/sr_fodder_rack/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "height": 1.5
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_fodder_rack.glb"
+  },
+  {
+   "name": "kit_sr_stone_trough",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "7fc5ca73-378c-4c80-be11-9a26073810ee",
+    "task_id": "2ba0345f-36a6-4f0c-abc5-381fc0b2c608",
+    "remesh_operator": "b412b06f-bd77-40df-b7a3-f898e8fe1b24",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 3000
+   },
+   "input": "raw/sr_stone_trough/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.4
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_stone_trough.glb"
+  },
+  {
+   "name": "kit_sr_lamb_pen",
+   "category": "kit",
+   "kind": "static",
+   "source": {
+    "tool": "tripo_image -> tripo_generate_image",
+    "project_id": "1d4ed8aa-d563-4b90-9601-15ec56ea2f1d",
+    "task_id": "1a0ea1c9-3223-46d5-b1b9-5bd72a0cdd0c",
+    "remesh_operator": "d3cb0be0-93cd-42f5-b28a-9d384752148e",
+    "model_version": "v3.1-20260211",
+    "texture_quality": "detailed",
+    "remesh_face_limit": 6000
+   },
+   "input": "raw/sr_lamb_pen/remesh.fbx",
+   "yaw_deg": -90,
+   "target": {
+    "length": 2.6
+   },
+   "origin": "bottom_center",
+   "texture_max": 1024,
+   "collision": null,
+   "output": "assets/models/kit/kit_sr_lamb_pen.glb"
   }
  ]
 }

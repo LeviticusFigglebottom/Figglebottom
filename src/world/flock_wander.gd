@@ -68,9 +68,10 @@ func _process(dt: float) -> void:
 func _walk(n: Node3D, on: bool) -> void:
 	if not n.has_meta("walk_ap"):
 		var found := n.find_children("*", "AnimationPlayer", true, false)
-		n.set_meta("walk_ap", found[0] if not found.is_empty() and (found[0] as AnimationPlayer).has_animation("walk") else null)
+		# (false, not null: setting a meta to null removes it)
+		n.set_meta("walk_ap", found[0] if not found.is_empty() and (found[0] as AnimationPlayer).has_animation("walk") else false)
 	var ap = n.get_meta("walk_ap")
-	if ap == null or not is_instance_valid(ap):
+	if not (ap is AnimationPlayer) or not is_instance_valid(ap):
 		return
 	var player := ap as AnimationPlayer
 	if on and not player.is_playing():

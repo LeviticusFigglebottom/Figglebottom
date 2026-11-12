@@ -194,7 +194,8 @@ func _come_near(n: NPC, r := 4.0) -> void:
 
 func _flock_standing() -> Array:
 	return get_tree().get_nodes_in_group("flock_rime").filter(func(n):
-		return is_instance_valid(n) and area.is_ancestor_of(n) and (n as Node3D).is_visible_in_tree())
+		# (the slope's seventy: Smudge, at the sheiling door, is in the group and is not one of them)
+		return is_instance_valid(n) and area.is_ancestor_of(n) and (n as Node3D).is_visible_in_tree() and String(n.get_meta("kit_id", "")) == "sheep")
 
 ## The sheep of the RIME layer that lie (the area's flagged props, or the
 ## standing ones the release has laid down).

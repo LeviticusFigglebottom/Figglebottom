@@ -54,7 +54,7 @@ static func build(area_id: String) -> Area:
 	var ewes: Array = []
 	for spec in def.get("props", []):
 		var pp := _piece(area, spec, _prop_collides(spec))
-		if pp != null and String(spec["kit"]) == "sheep" and String(spec.get("tag", "base")) == "thaw":
+		if pp != null and (String(spec["kit"]) == "sheep" or bool(spec.get("wander", false))) and String(spec.get("tag", "base")) == "thaw":
 			ewes.append(pp)
 	if not ewes.is_empty():
 		# the living flock ambles (the frozen one in RIME stays as set)

@@ -51,10 +51,12 @@ func _grow(rest: RestUI, most := 12) -> int:
 	await ticks(2)
 	return bought
 
-func _expected(thread_id: String, n: int) -> Array:
+## The thread's first n lines. `without`: a step this walk does not take (the
+## points of interest add one to a thread, found off the thread's own road).
+func _expected(thread_id: String, n: int, without := "") -> Array:
 	for t in Keepsakes.threads_def():
 		if t["id"] == thread_id:
-			return (t["steps"] as Array).slice(0, n).map(func(s): return String(s["line"]))
+			return (t["steps"] as Array).filter(func(s): return String(s["flag"]) != without).slice(0, n).map(func(s): return String(s["line"]))
 	return []
 
 func _has(item: String) -> int:
@@ -547,7 +549,7 @@ func _region() -> void:
 		check(h2 == DB.npc("hesk")["lines_when"][0]["lines"] and h2[0] == "Wind's come right. First time all summer. I don't trust it.",
 			"then the wind has come right (%s)" % str(h2.slice(0, 1)))
 		await _leave(ui)
-	check(World.flag("ks_hesk_wind") and _journal("hesk_tongs") == _expected("hesk_tongs", 4),
+	check(World.flag("ks_hesk_wind") and _journal("hesk_tongs") == _expected("hesk_tongs", 4, "ks_hesk_iron"),
 		"Hesk's tongs: four lines, in order (%d)" % _journal("hesk_tongs").size())
 
 	print("== the bog in THAW again")

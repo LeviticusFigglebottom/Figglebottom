@@ -313,6 +313,24 @@ for (x, z, r) in [(-65.0, -148.0, 12), (-62.5, -152.5, 30), (-66.5, -156.5, -8)]
     place.append({"kind": "peat_row", "at": [x, z], "rot": r})           # footed to dry beside the bog path
     POI_CLEAR.append([x, z, 1.6])
 
+# variety (owner: more kinds, fewer repeats), each where it is used
+_px, _pz = barrow_at("kin_b", -4.4, BY["kin_b"][4] * 0.5 + 1.5)
+prop("lw_stone_b", _px, _pz, DOORS["kin_b"][0] + 12)                    # the miller's people's stone
+prop("lw_stone_c", -61.0, -118.6, 62)                                   # the pair that marks the bog path
+prop("lw_stone_c", -88.6, -98.2, 20)                                    # and the pair at the pass
+_px, _pz = barrow_at("kin_c", -6.6, BY["kin_c"][4] * 0.5 + 2.8)
+for _bx, _bz, _br in ((_px, _pz, DOORS["kin_c"][0] + 70),              # what carried the closed barrow's turf back
+                      (36.8, -177.6, 150)):                             # on the Rise, by the sods it brought
+    # (its convex hull is a ramp up from the handles, and the Bearer walked up it:
+    # two upright rounds along its length stand in for it)
+    prop("lw_turf_barrow", _bx, _bz, _br, collide=False)
+    for _k in (-0.5, 0.5):
+        _cx, _cz = _bx + math.sin(math.radians(_br)) * _k, _bz + math.cos(math.radians(_br)) * _k
+        BLOCKERS.append({"radius": 0.52, "at": [r2(_cx), r2(g(_bx, _bz) + 0.9), r2(_cz)], "height": 2.2})
+for bid, ox in (("kin_a", 5.6), ("kin_d", 6.0)):
+    _px, _pz = barrow_at(bid, ox, BY[bid][4] * 0.5 + 2.2)
+    prop("lw_offering_slab", _px, _pz, DOORS[bid][0] + 180)             # what is left for them, at the mound's foot
+
 # cairns where a way leaves the road (were Wayside's, strewn; now two, set by hand):
 # at the fork of the bog path, and where the Kettle Road goes down off the moor
 CAIRNS = [{"scene": "res://assets/models/landmarks/lm_fold_cairn.glb", "at": at(x, z, -0.06), "rot": r, "scale": sc,

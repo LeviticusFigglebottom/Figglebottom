@@ -54,7 +54,8 @@ func _run() -> void:
 
 	print("== collision: the hero props are solid")
 	for kit in ["sf_capstan", "sf_salt_basket", "sf_gutting_bench", "sf_tar_pot", "sf_brine_trough", "sf_oar_rack", "sf_net_sinkers",
-			"sf_kelp_rick", "drying_rack", "boat", "boat_upturned"]:
+			"sf_kelp_rick", "drying_rack", "boat", "boat_upturned", "sf_rack_tall", "sf_rack_low", "sf_net_pile", "sf_fish_barrels",
+			"sf_salt_sacks", "sf_mooring_post", "sf_boat_half"]:
 		check(await solid(prop(kit)), "%s stops the Bearer" % kit)
 	# (a MultiMesh cannot be read back under the headless renderer: measure what it is built from)
 	var logs := area.find_children("Scatter_driftwood*", "MultiMeshInstance3D", true, false)

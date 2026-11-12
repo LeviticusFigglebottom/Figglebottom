@@ -385,10 +385,12 @@ func _lines_of(thread_id: String) -> Array:
 			return t["lines"]
 	return []
 
-func _expected(thread_id: String, n: int) -> Array:
+## The thread's first n lines. `without`: a step this walk does not take (the
+## points of interest add one to a thread, found off the thread's own road).
+func _expected(thread_id: String, n: int, without := "") -> Array:
 	for t in Keepsakes.threads_def():
 		if t["id"] == thread_id:
-			return (t["steps"] as Array).slice(0, n).map(func(s): return String(s["line"]))
+			return (t["steps"] as Array).filter(func(s): return String(s["flag"]) != without).slice(0, n).map(func(s): return String(s["line"]))
 	return []
 
 func _pickup(id: String) -> Pickup:
@@ -545,5 +547,5 @@ func _lowe() -> void:
 	await ticks(2)
 	check(ui.text_label.text.begins_with("I've moved the heather."), "Aud: she has moved the heather")
 	await _close(ui)
-	check(_lines_of("hesk_tongs") == _expected("hesk_tongs", 4), "Hesk's tongs: four lines, in order")
+	check(_lines_of("hesk_tongs") == _expected("hesk_tongs", 4, "ks_hesk_iron"), "Hesk's tongs: four lines, in order")
 	check(_lines_of("aud_cord") == _expected("aud_cord", 4), "Orm's cord: four lines, in order")
