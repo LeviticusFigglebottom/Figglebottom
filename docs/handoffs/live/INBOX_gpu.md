@@ -382,3 +382,39 @@ a37afed is the same tree as 740ca4d apart from ci.yml, and the same as main 4e8e
 **Still open:**
 - **The Kettle Road cut** stays near-black (4 → 7). Its slope faces away from both the sun and the top-down fill, and my generated camera is a metre from it. More global fill would flatten the open fjord. It needs a local fill light or a brighter path palette in the cut: one for art/biomes.
 - **The Tarn Causeway** could take one more step of fill (2.5) if you'd rather have it brighter than keep the cliff contrast.
+
+## 2026-11-12T17:35Z Item 1 DONE: THAW light, second pass, on gpu/thaw-light-2 (484651d), from main
+**What:**
+- `area_builder` gains **`shade_fills`**: a soft, shadowless, non-specular OmniLight3D per entry, tagged by state.
+- The generators write them, **THAW only**:
+  - Kettle: 11 down the Kettle Road cut, 2 at the Far Landing.
+  - Tarnhall: 10, on the upper steps, the causeway, the porch and the shore board.
+  - Lowe: 2, at the Last Mound.
+  - Coldwell: 2, under the Ice-Falls shelter.
+- Each generator reproduces its committed file exactly before the change.
+- THAW exposure: Kettle 1.10, Tarnhall 1.22. Thornwold THAW ambient 1.5, fill 1.15.
+
+**Luma, before (main 86128b6) → after; % of pixels below 10 in brackets:**
+- Kettle Road 7.2 (84%) → **66.1 (0.1%)**
+- Tarn Causeway 29.1 (16%) → **68.2 (0.0%)**
+- Tarnhall 43.3 (25%) → **78.6 (0.2%)**
+- Far Landing 51.4 → **75.6**
+- Last Mound 37.8 (5.3%) → **64.4 (0.1%)**
+- Coldwell Ice-Falls 86.1 (8.0%) → **98.5 (4.4%)**
+- Thornwold canopy: Hedge 61.7 → 68.1 (8.7 → 6.7%); Thornwold 64.4 → 70.6 (12.3 → 10.7%). That's leaf shade, and the latter is my camera with a branch at the lens.
+
+**Below the ≥ 70 line:** Kettle Road, Causeway and Last Mound sit at 64–68, but every one is now readable: path, board and people. Thornwold's canopy is the one place still over the 5% line.
+
+**RIME:** unchanged. Per-pixel diffs are at the same level as two runs of main (falling snow).
+
+**Cost:** Kettle THAW q1 GPU 4.42 → 4.49 ms, FPS within noise.
+
+**Tests:** smoke, look5, kettle, tarnhall, lowe and coldwell are green.
+
+**Shots:** `docs/gallery_gpu/thaw_light_2/` (README with the full luma table, before/after JPEGs and a sheet).
+
+**Other regions, surveyed:** Saltfell has no black spots (Cliff Graves and the cliff top are dim at about 55–57, not black). Reach and the rest of Lowe are fine.
+
+**Process note:** a shoot script of mine ended in `git checkout -- .` and wiped one uncommitted pass of this work. It was redone from the same edits, and I now commit before every run.
+
+Next: item 3 (trails, gpu/trail-fix, code ready), then item 2 (Lowe physics, ablation hooks in), then item 4 (full-suite fullslice, gpu/test-seed: an unseeded RNG is the lead suspect).
