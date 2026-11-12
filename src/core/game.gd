@@ -314,7 +314,7 @@ func dmg_in_mult() -> float:
 func toggle_free(aid: String) -> bool:
 	if World.ended() != "":
 		return false   # the coal is in the spring, or kept shut: no hearth turns
-	return World.is_cleared(aid) or bool(DB.area_def(aid).get("free_warm", false))
+	return World.is_cleared(aid) or bool(DB.area_def_ro(aid).get("free_warm", false))
 
 ## The rest ceremony: kneel, heal, respawn the dead, and turn the world.
 ## D-009 rules: uncleared+thaw -> still (committed); uncleared+rime -> rest
