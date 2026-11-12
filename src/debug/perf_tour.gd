@@ -458,7 +458,7 @@ func _clear_spot(rp: Vector3, out_dir: Vector3) -> Vector3:
 	if Game.player != null:
 		q.exclude = [Game.player.get_rid()]
 	for d in [2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 0.0]:
-		var p := rp + out_dir * d
+		var p: Vector3 = rp + out_dir * float(d)
 		q.transform = Transform3D(Basis.IDENTITY, p + Vector3(0, 1.0, 0))   # lifted clear of the ground it stands on
 		var solid := false
 		for r in space.intersect_shape(q, 8):
