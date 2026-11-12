@@ -200,7 +200,9 @@ func _flock_standing() -> Array:
 ## standing ones the release has laid down).
 func _flock_lying() -> Array:
 	return area.rime_layer.find_children("*", "Node3D", true, false).filter(func(n):
-		return String(n.get_meta("kit_id", "")) == "sheep" and absf((n as Node3D).scale.y - 0.58) < 0.03 and (n as Node3D).is_visible_in_tree())
+		# (the three ewes at the Upwater hurdles are the gate's, ADR 0015: the seventy are the slope's)
+		return String(n.get_meta("kit_id", "")) == "sheep" and not n.has_meta("gate_piece") \
+				and absf((n as Node3D).scale.y - 0.58) < 0.03 and (n as Node3D).is_visible_in_tree())
 
 func _wake_up() -> void:
 	if player.dead:

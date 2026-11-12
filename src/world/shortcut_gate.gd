@@ -128,6 +128,7 @@ func _build_dressing(when: String) -> void:
 					n = holder
 		if n == null:
 			continue
+		n.set_meta("gate_piece", gate_id)     # (not one of the area's own props: the Reach counts its flock)
 		var o: Array = spec.get("offset", [0, 0, 0])
 		var sc = spec.get("scale", 1.0)
 		var local := Transform3D(Basis(Vector3.UP, deg_to_rad(float(spec.get("rot", 0)))),
