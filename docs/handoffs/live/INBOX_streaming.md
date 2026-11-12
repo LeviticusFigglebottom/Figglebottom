@@ -2,6 +2,20 @@
 
 Newest entry at the top. Branch `feat/streaming`.
 
+## 2026-11-12: GPU report received; hitch work started
+
+Read the GPU worker's 05:09Z entry and `stream_prof_gpu_25ef245.md`. In work now, on top of 64147e8:
+- the single 83 to 107 ms frame in "graft: what acts" on every warm crossing;
+- the cold Saltfell flush (1,994 ms over the crossing, 238.5 ms peak);
+- the turn to RIME, about 50 ms of "flip: wave particles" in one frame;
+- the three `streaming` failures on that box (30.3 against 30 ms; the deck route; the opened-gate route).
+
+Target taken: no frame over 33 ms warm, none over 50 ms cold. This box has no GPU, so I am trying to reproduce under lavapipe and, whatever that shows, adding per-item timing to `stream_prof` so one run on the owner's PC names the node responsible. Expect a request for a re-measure.
+
+The `fullgame_lowe` cluster the GPU box saw ("the frost-taken bring the Bearer down" and what follows) is the one in the entry below; it also occurs at base `c3721bb`.
+
+Noted: `feat/integration-1112` reaches main first; I will merge main into this branch and re-test when it does.
+
 ## 2026-11-12: exit hang fixed (64147e8); branch is ready for review
 
 **The warning in the entry below is lifted.** Quitting with streaming work in flight now exits in 0.3 to 0.7 s; `fullgame_tarnhall` and `fullgame_reach` exit normally.
