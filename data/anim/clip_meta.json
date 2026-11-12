@@ -5494,13 +5494,13 @@
     1.22
    ],
    "_note": "the long war-knife: right hand at origin high on the two-hand grip, blade +Y, edge +Z",
-   "trail_weight": 0.8,
+   "trail_weight": 0.4,
    "trail_life": 0.13,
    "trail_energy": 0.3,
    "trail_tint": [
-    0.86,
-    0.84,
-    0.8
+    0.72,
+    0.74,
+    0.76
    ]
   },
   "quiver": {
