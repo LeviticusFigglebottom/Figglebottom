@@ -779,3 +779,49 @@ inside another footprint is skipped.
 entries); nothing else changed. Collision audit 45 / 0, with no new or gone entries.
 
 **Next:** `stream_prof` on main, once you say fix/streaming-followups is merged.
+
+---
+
+## 9. fix/collision-burn-down: the baseline from 237 to 124 (2026-11-13)
+
+Branch `fix/collision-burn-down` from main 3ef2fd4, head **b382f2c**, pushed. Commits: e5f590e (hedges and
+wayside), 5d9136b (hearthstones), 0dc8678 (prop_hit's hearth swing), b382f2c (batch 2).
+
+**State:**
+- Collision audit **45 / 0, no new offenders**.
+- Edges and areas audits clean.
+- Full `tools/test.sh` green.
+- `fullgame_{kettle,thornwold,reach,coldwell,tarnhall}` 0 failures.
+- Originality OK.
+
+**Pinch audit:** 422 gaps, **2 on a route**, both the Tarnhall vat against the two cooks.
+- Run on **main 3ef2fd4** (`--areas=tarnhall`), those same 2 show on a route.
+- Item 8's "0 on a route" was wrong for Tarnhall: the all-region run must have read differently. Sorry.
+- They're left untouched, per your earlier note.
+
+**Per group:**
+
+| Group | Fixed | Left | Why |
+|---|---|---|---|
+| Hedges (Thornwold) | hero hedges get a hull per drawn section, plus small end boxes; non-hero hedges get their exact core box | — | the old box stood 0.4 m above and 0.2 m beside the drawn mass |
+| Hearthstones (every area) | the kerb's own trimesh replaces the 0.38 m capsule in the fire | — | 21 invisible / partial entries |
+| Trees beside hedges | scattered trees that stand against a hedge are skipped (by index, so variants and the stream are kept) | the 13 invisible tree trunks (Thornwold): some hero pine trunks sit off their mesh origin | needs a per-variant trunk offset measured from the GLBs; next |
+| Wayside landmarks and standing stones | a simplified hull per mesh; stones 3.1 m apart | — | — |
+| Frozen figures (Coldwell upwalker / unsung) | blockers sized by pose: wading strides longer; the unsung's defeat clip stands full height | — | the scenes carry no collider |
+| Ice columns (Coldwell) | column a is solid | b and c, back in the baseline with a reason | they stand on the falls' ice with no ground beside them (poi_coldwell) |
+| Kettle props | racks, frames, cleft net frames, sledge (full hull) and dogs collide; frames moved clear of the gate hurdle | — | — |
+| Thornwold rime | clamp rings structural and set 8 cm in; the rime stag is a hull | — | 0.15 m read as sunk in audit_areas |
+| Reach | creel stack, Smudge and the crook racks collide; Smudge and a rack moved off sheiling_low's door | — | the threshold was blocked |
+| Tarnhall | the guest post and high seat are hulls | the vat / cooks pinch | as asked |
+| Surfaces | upwalker and unsung strike as ice, sledge dogs as cloth (prop_hit) | — | — |
+| Sheep and ewes (65) | — | left | animals, non-blocking per your note; the 3 frozen gate ewes still want hulls |
+| Boats, wellhouse thresholds, barrow door, door_leaf, ShortcutGate dressing, house details, veil, wellhead, Lowe blockers | — | left | the next batches |
+
+**Notes:**
+- **A regression I caused, now fixed:** 5d9136b broke `prop_hit` (the hearth's kerb now sits under the blade). Fixed in
+  0dc8678.
+- **Possible flake:** `streaming` failed once at 35.7 ms against its 30 ms budget, then passed on re-run. Probably
+  load from other jobs on the PC.
+
+**Next:** the tree-trunk offsets, the 3 gate ewes, then boats and thresholds. `stream_prof` once you say
+fix/streaming-followups is merged.
