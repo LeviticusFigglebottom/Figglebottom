@@ -2,31 +2,35 @@ extends Node
 ## Hitstop + camera-shake + directional combat VFX bus. Autoloaded as `Juice`.
 ##
 ## `hitstop()` freezes `Engine.time_scale` briefly while an `ALWAYS`-processed
-## clock counts unscaled frame time (the frame delta undone of `time_scale`): at
-## a fixed timestep that is a fixed number of frames, so a seeded walk repeats. Everything in the scene tree
-## that respects `time_scale` pauses on the contact frame — the blade hangs in
-## the meat for a beat before the follow-through.
+## clock counts down: the wall clock in play, as it always was; in a deterministic walk
+## (--deterministic, on a fixed timestep) frames times the fixed step, so a seeded walk repeats.
+## (An unscaled delta, delta / time_scale, is wrong on the frame a hitstop starts: that delta was
+## scaled at 1.0 and would count twenty times over.)
 
 signal shake_requested(trauma: float, duration: float)
 signal post_flash_requested(kind: String, might: float)
 
-var _clock_ms := 0.0          # unscaled milliseconds, advanced in _process
-var _hitstop_until_ms := 0     # when the last hitstop ends, on that clock (kept after it ends)
+var _frame_ms := 0.0          # deterministic walks only: process frames x the fixed step
+var _hitstop_until_ms := 0     # when the last hitstop ends, on _now_ms() (kept after it ends)
 var _stopped := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
-func _process(delta: float) -> void:
-	_clock_ms += delta / maxf(Engine.time_scale, 0.0001) * 1000.0
-	if _stopped and _clock_ms >= _hitstop_until_ms:
+func _now_ms() -> int:
+	return int(_frame_ms) if Engine.has_meta("deterministic") else Time.get_ticks_msec()
+
+func _process(_delta: float) -> void:
+	if Engine.has_meta("deterministic"):
+		_frame_ms += 1000.0 / float(Engine.physics_ticks_per_second)
+	if _stopped and _now_ms() >= _hitstop_until_ms:
 		_stopped = false
 		Engine.time_scale = 1.0
 
 ## Freeze gameplay briefly. Uses Engine.time_scale; stacked calls extend.
 func hitstop(duration := 0.09, scale := 0.05) -> void:
 	Engine.time_scale = scale
-	_hitstop_until_ms = maxi(_hitstop_until_ms, int(_clock_ms) + int(duration * 1000.0))
+	_hitstop_until_ms = maxi(_hitstop_until_ms, _now_ms() + int(duration * 1000.0))
 	_stopped = true
 
 func shake(trauma: float, duration := 0.18) -> void:

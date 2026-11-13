@@ -404,6 +404,11 @@ func _physics_process(dt: float) -> void:
 	_regen(dt)
 	_step_up(dt)
 	move_and_slide()
+	# fall speed never runs ahead of the real fall: a body pinned off the floor (a roll into the gap
+	# between a table and a column) banked gravity it never moved at, and came free at 128 m/s
+	# straight through the floor. And never past the terminal speed (data move.max_fall).
+	if velocity.y < 0.0:
+		velocity.y = maxf(maxf(velocity.y, get_real_velocity().y), -float(T["move"].get("max_fall", 40.0)))
 	_part_from_foes()
 	if is_on_floor():
 		_floor_y = global_position.y
@@ -1570,7 +1575,7 @@ func cast_song(id: String) -> void:
 		"ward":
 			vis.play("cast_ward", 0.1)
 			_ward_hp = float(sp.get("absorb", 70)) * dev
-			_ward_until = _clock + float(sp.get("duration", 9.0))
+			_ward_until = _ward_now() + float(sp.get("duration", 9.0))
 			_ward_glow()
 			Game.toast.emit("The Warding Hum settles over you.")
 			AudioDirector.sfx("res://assets/audio/swell_warm.wav", -6.0, 1.1)
@@ -1840,11 +1845,16 @@ var _ward_hp := 0.0
 var _ward_until := 0.0
 ## game seconds this Bearer has lived (physics ticks): the ward ends on game time, not the wall clock
 var _clock := 0.0
+
+## the ward's clock: the wall clock in play, as it always was; in a deterministic walk the
+## Bearer's physics time, so a seeded walk repeats
+func _ward_now() -> float:
+	return _clock if Engine.has_meta("deterministic") else Time.get_ticks_msec() / 1000.0
 var invulnerable := false
 var _stagger_dur := 0.6
 
 func _ward_active() -> bool:
-	return _ward_hp > 0.0 and _clock < _ward_until
+	return _ward_hp > 0.0 and _ward_now() < _ward_until
 
 func _ward_glow() -> void:
 	var l := OmniLight3D.new()
@@ -1855,7 +1865,7 @@ func _ward_glow() -> void:
 	l.shadow_enabled = false
 	l.position.y = 1.2
 	add_child(l)
-	var life := _ward_until - _clock
+	var life := _ward_until - _ward_now()
 	var tw := l.create_tween()
 	tw.tween_interval(maxf(life - 0.6, 0.1))
 	tw.tween_property(l, "light_energy", 0.0, 0.6)

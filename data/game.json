@@ -37,7 +37,8 @@
    "step_height": 0.35,
    "step_probe": 0.12,
    "snap_down": 0.35,
-   "land_sound_air": 0.3
+   "land_sound_air": 0.3,
+   "max_fall": 40.0
   },
   "gourd": {
    "charges": 3,
