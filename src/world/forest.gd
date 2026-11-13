@@ -288,6 +288,18 @@ static func _hero(name: String, fam: String, mode: int, sway: float, sway_h: flo
 ## A hero hedge section's length along its own X (the GLBs are processed to
 ## run along X), for spacing them down a line.
 ## (locked: an area build on a worker thread shares this cache, BuildLock)
+## The hero hedge mesh's simplified convex hull points (<= 32), cached: a section's collider.
+static func _hero_hull(name: String) -> PackedVector3Array:
+	var lk := BuildLock.lock()
+	var ck := "hull|" + name
+	if not _cache.has(ck):
+		var m := _hero(name, "M_thorn", 0, 0.0, 1.0)
+		var sh: ConvexPolygonShape3D = m.create_convex_shape(true, true) if m != null else null
+		_cache[ck] = sh.points if sh != null else PackedVector3Array()
+	var out: PackedVector3Array = _cache[ck]
+	BuildLock.unlock(lk)
+	return out
+
 static func _hero_len(name: String) -> float:
 	var lk := BuildLock.lock()
 	var out: float = _hero_len_u(name)
@@ -406,15 +418,19 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			var core := float(st["core"])
 			if not hero_ok:
 				cores.append(Transform3D(cb.scaled_local(Vector3(seg * 1.02, h * core, w * core)), Vector3(p0.x, y0 + h * core * 0.5 - 0.05, p0.y)))
+			if hero_ok:
+				continue    # hero hedges take a hull per drawn section (below)
+			# solid as drawn: the core box the hedge draws (the old box stood 0.4 m above it and at least
+			# 0.8 m wide: an invisible wall in the collision audit)
 			var body := StaticBody3D.new()
 			body.collision_layer = 1 << (bit - 1)
 			body.collision_mask = 0
 			var cs := CollisionShape3D.new()
 			var bx := BoxShape3D.new()
-			bx.size = Vector3(seg + 0.2, h + 0.4, maxf(w, 0.8))
+			bx.size = Vector3(seg * 1.02, h * core, w * core)
 			cs.shape = bx
 			body.add_child(cs)
-			body.transform = Transform3D(cb, Vector3(p0.x, y0 + h * 0.5, p0.y))
+			body.transform = Transform3D(cb, Vector3(p0.x, y0 + h * core * 0.5 - 0.05, p0.y))
 			Surfaces.stamp_kind(body, "hedge")
 			area.attach(body, tag)
 	if hero_ok:
@@ -430,6 +446,26 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			for i in heroes.size():
 				if i % names.size() == vi:
 					pick.append(heroes[i])
+			# solid as drawn: each section's own hull (the hero mesh's simplified hull, <= 32 points) under
+			# that section's transform, all on one body for the hedge
+			var hpts := _hero_hull(String(names[vi]))
+			if not hpts.is_empty() and not pick.is_empty():
+				var hb := StaticBody3D.new()
+				hb.collision_layer = 1 << (bit - 1)
+				hb.collision_mask = 0
+				for tr in pick:
+					var t3 := tr as Transform3D
+					var pp := PackedVector3Array()
+					for v in hpts:
+						pp.append(t3.basis * v)
+					var ch := ConvexPolygonShape3D.new()
+					ch.points = pp
+					var hcs := CollisionShape3D.new()
+					hcs.shape = ch
+					hcs.position = t3.origin
+					hb.add_child(hcs)
+				Surfaces.stamp_kind(hb, "hedge")
+				area.attach(hb, tag)
 			var hk := "hero|%s|%s|%s" % [names[vi], hh[1], sway]
 			if ResourceLoader.exists(HERO_DIR + String(names[vi]) + "_far.glb"):
 				var hfar := hk.replace("hero|%s|" % names[vi], "hero|%s_far|" % names[vi])

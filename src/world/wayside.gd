@@ -384,15 +384,18 @@ static func _landmark(area: Area, t: Terrain, file: String, p: Vector3, yaw: flo
 	area.attach(lm, "base")
 	if first:
 		return
-	var body := StaticBody3D.new()
-	body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
-	body.collision_mask = 0
-	var cs := CollisionShape3D.new()
-	var bx := BoxShape3D.new()
-	bx.size = bb.size * sc * Vector3(0.8, 1.0, 0.8)
-	cs.shape = bx
-	body.add_child(cs)
-	body.position = Vector3(p.x, y + bx.size.y * 0.5, p.z)
-	body.rotation_degrees.y = yaw
-	Surfaces.stamp(body, Surfaces.for_landmark(file))
-	area.attach(body, "base")
+	# what is drawn is what stops you: a simplified hull (<= 32 points) of each of the landmark's own meshes,
+	# riding the landmark. The old box (0.8 of the whole AABB, full height) stood as an invisible wall
+	# around thin parts and over gaps (collision audit, Thornwold).
+	for c in lm.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var body := StaticBody3D.new()
+		body.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
+		body.collision_mask = 0
+		var cs := CollisionShape3D.new()
+		cs.shape = mi.mesh.create_convex_shape(true, true)
+		body.add_child(cs)
+		Surfaces.stamp(body, Surfaces.for_landmark(file))
+		mi.add_child(body)
