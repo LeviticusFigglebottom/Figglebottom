@@ -199,8 +199,34 @@ func _walk_path(to: Vector3, max_ticks := 3600, fight := true) -> bool:
 			k = 1
 	return true
 
-## A plain melee bot: close in, light swings, drink below 40%, roll back out
-## of a windup now and then. Returns true when nothing awake is near.
+## The walk's combat reads the foe's own attack data (enemies.json): seconds to its next blow,
+## INF when it is not swinging; and how far that blow reaches (range, lunge, a body's width).
+var ROLL_COST: float = float(DB.tuning("player/stamina/roll_cost", 24.0))
+var SWING_RESERVE: float = ROLL_COST + 17.0     # a light swing (weapons.json, longsword) with a roll still in hand
+func _time_to_hit(foe: Enemy) -> float:
+	if foe.state != Enemy.ES.ATTACK or foe._atk.is_empty():
+		return INF
+	var sm: float = foe._speed_mult()
+	var w := float(foe._atk.get("windup", 0.5)) / sm
+	var best := INF
+	for h in foe._atk.get("hits", [0.0]):
+		var at := w + float(h) / sm
+		if at >= foe.state_t:
+			best = minf(best, at - foe.state_t)
+	return best
+
+func _threat_reach(foe: Enemy, melee := false) -> float:
+	var a: Dictionary = foe._atk
+	if melee or a.is_empty():
+		var r := 2.5
+		for x in foe.cfg.get("attacks", []):
+			if float((x as Dictionary).get("range", 2.5)) <= 4.0:
+				r = maxf(r, float(x.get("range", 2.5)) + float(x.get("lunge", 0.0)))
+		return r + float(foe.cfg.get("col_r", 0.4))
+	return float(a.get("range", 2.5)) + float(a.get("lunge", 0.0)) + float(foe.cfg.get("col_r", 0.4)) + 0.5
+
+## A melee bot that reads the foe: close in, one light swing at a time with a roll kept in hand,
+## roll across a committed blow, drink below half out of reach. Returns true when nothing awake is near.
 var hp_low := 1.0
 func _fight(radius := 14.0, max_s := 90.0, boss := false) -> bool:
 	var n := 0
@@ -221,12 +247,29 @@ func _fight(radius := 14.0, max_s := 90.0, boss := false) -> bool:
 		d.y = 0
 		player.cam.yaw = atan2(-d.x, -d.z)
 		var reach := 2.4 if not boss else 3.4
-		if player.hp < player.max_hp * 0.4 and player.gourds > 0 and d.length() > 4.0:
-			player.sim_move = Vector3.ZERO
-			player.try_gourd()
-		elif player.hp < player.max_hp * 0.4 and player.gourds > 0:
-			player.sim_move = Vector3(0, 0, 1)   # back off to drink
-		elif d.length() > reach:
+		var tt := _time_to_hit(foe)
+		var danger := tt < INF and d.length() <= _threat_reach(foe)
+		var safe := _threat_reach(foe, true) + 0.5
+		if danger:
+			# her swing is coming: never trade into it. Roll across the committed line just before the
+			# first blow (a roll's i-frames are 0.28 s, shorter than a combo; leaving the line beats them all);
+			# without a roll's worth of stamina, walk back out of her reach
+			if tt <= 0.18 and player.stamina >= ROLL_COST and (player.state == Player.S.MOVE or player.state == Player.S.BLOCK):
+				player.sim_move = Vector3(_side, 0, 0.35)
+				if player.try_roll():
+					_side = -_side
+			elif player.stamina < ROLL_COST:
+				player.sim_move = Vector3(0, 0, 1)
+			else:
+				player.sim_move = Vector3.ZERO
+		elif player.hp < player.max_hp * 0.5 and player.gourds > 0:
+			# drink only out of her reach: a gourd is 1.1 s rooted
+			if d.length() > safe:
+				player.sim_move = Vector3.ZERO
+				player.try_gourd()
+			else:
+				player.sim_move = Vector3(0, 0, 1)
+		elif d.length() > reach and player.stamina >= SWING_RESERVE:
 			# close in along the navmesh: the hearth kerb splits the hall
 			var route := _path(player.global_position, foe.global_position)
 			if route.size() > 2 or (route.size() == 2 and d.length() > 6.0):
@@ -236,14 +279,17 @@ func _fight(radius := 14.0, max_s := 90.0, boss := false) -> bool:
 				var dw := wp - player.global_position
 				player.cam.yaw = atan2(-dw.x, -dw.z)
 			player.sim_move = Vector3(0, 0, -1)
+		elif d.length() > reach:
+			# winded: hold just out of reach and let the stamina come back
+			player.sim_move = Vector3(0, 0, 1) if d.length() < safe else Vector3.ZERO
 		else:
 			# hold a sword's length off; walking into a body clips through it
 			player.sim_move = Vector3(0, 0, 0.5) if d.length() < reach * 0.55 else Vector3.ZERO
-			if foe.state == Enemy.ES.ATTACK and foe.state_t < 0.25 and randf() < 0.35 and player.stamina > 30.0:
-				player.sim_move = Vector3(1 if randf() < 0.5 else -1, 0, 0.4)
-				player.try_roll()
-			elif player.stamina > 18.0:
+			# one light swing at a time (no queued combo), always keeping a roll in hand
+			if player.state == Player.S.MOVE and player.stamina >= SWING_RESERVE:
 				player.try_attack(false)
+			elif player.stamina < SWING_RESERVE and player.state == Player.S.MOVE:
+				player.sim_move = Vector3(0, 0, 1)
 		await ticks(3)
 		n += 3
 		hp_low = minf(hp_low, player.hp / player.max_hp)
@@ -795,6 +841,12 @@ func _run() -> void:
 	Game.test_boss_dmg_mult = 3.0 if shots_dir == "" else 20.0
 	var phases := {}
 	var t_fight := 0
+	var hp_was := [player.hp]
+	var on_hp := func(hp: float, _mx: float) -> void:
+		if hp < hp_was[0] - 0.5 and boss != null and is_instance_valid(boss):
+			print("  [hit] -%.0f -> %.0f  atk=%s bstate=%d ph=%d dist=%.1f pstate=%d gourds=%d st=%.0f" % [hp_was[0] - hp, hp, String(boss._atk.get("id", "")), boss.state, boss.phase, boss.global_position.distance_to(player.global_position), player.state, player.gourds, player.stamina])
+		hp_was[0] = hp
+	player.health_changed.connect(on_hp)
 	var deaths := 0
 	# each attempt gets the full time budget: after a fall the Bearer walks back from the hearth and the
 	# holdfast is whole again, so one shared budget made a single death fail the walk (seeds 2 and 3).
