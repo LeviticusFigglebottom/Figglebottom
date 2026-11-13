@@ -138,7 +138,14 @@ func setup(enemy_id: String) -> void:
 	id = enemy_id
 	cfg = DB.enemy(id)
 
+## spawn order, for staggering and flank sides: an instance id is a global counter that loads
+## and audio on other threads also advance, so it differed run to run and so did the fights
+static var _spawned := 0
+var _ord := 0
+
 func _ready() -> void:
+	_ord = _spawned
+	_spawned += 1
 	if cfg.is_empty():
 		cfg = DB.enemy(id)
 	add_to_group("targetable")
@@ -381,7 +388,7 @@ func _nav_retarget(dt: float, dist: float) -> void:
 	if _nav_t <= 0.0 or _nav_goal.distance_squared_to(tp) > tol * tol:
 		agent.target_position = tp
 		_nav_goal = tp
-		_nav_t = 0.3 + float(get_instance_id() % 7) * 0.01
+		_nav_t = 0.3 + float(_ord % 7) * 0.01
 
 func _st_approach(dt: float) -> void:
 	if not _target_valid():
@@ -454,7 +461,7 @@ func _st_combat(dt: float) -> void:
 		_think_t = randf_range(0.8, 1.6)
 		# a pair works from opposite sides ("flank"): each keeps its own side
 		if cfg.get("flank", false):
-			_strafe_dir = 1.0 if get_instance_id() % 2 == 0 else -1.0
+			_strafe_dir = 1.0 if _ord % 2 == 0 else -1.0
 		else:
 			_strafe_dir = -_strafe_dir if randf() < 0.4 else _strafe_dir
 		_blocking = cfg.has("block_arc") and randf() < float(cfg.get("block_chance", 0.45))

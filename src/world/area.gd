@@ -274,6 +274,7 @@ func apply_nav(thaw_mesh: NavigationMesh, rime_mesh: NavigationMesh) -> void:
 		region.enabled = false
 		region.navigation_mesh = pair[1]
 		add_child(region)
+		_sync_region(region)
 		made.append(region)
 	nav_thaw = made[0]
 	nav_rime = made[1]
@@ -328,11 +329,18 @@ func retire() -> void:
 		if is_instance_valid(layer):     # (an area freed from its leaves in has none left)
 			_set_layer_collision(layer, false)
 
+## A deterministic walk (--deterministic) updates regions in step with the frame, not on a worker.
+func _sync_region(region: NavigationRegion3D) -> void:
+	if Engine.has_meta("deterministic"):
+		NavigationServer3D.region_set_use_async_iterations(region.get_rid(), false)
+		NavigationServer3D.map_set_use_async_iterations(get_world_3d().navigation_map, false)
+
 func _bake_nav(name_: String, rime_world: bool) -> NavigationRegion3D:
 	var region := NavigationRegion3D.new()
 	region.name = name_
 	region.enabled = false
 	add_child(region)
+	_sync_region(region)
 	var map_rid := get_world_3d().navigation_map
 	NavigationServer3D.map_set_cell_size(map_rid, 0.20)
 	NavigationServer3D.map_set_cell_height(map_rid, 0.20)

@@ -411,7 +411,24 @@ func _on_stilled() -> void:
 	_stilled += 1
 	_warmth_at_death = Game.warmth
 
+## --trace: every half second of game time, the Bearer and a checksum of the foes, to find
+## the first frame where two runs of one seed part (diff the TRACE lines)
+func _trace() -> void:
+	var f := Engine.get_physics_frames()
+	if f % 30 != 0: return
+	var p := Game.player
+	var ps := "-"
+	if p != null and is_instance_valid(p): ps = "%.4f,%.4f,%.4f hp%.3f st%.3f s%d" % [p.global_position.x, p.global_position.y, p.global_position.z, p.hp, p.stamina, p.state]
+	var h := 0.0
+	var n := 0
+	for e in get_tree().get_nodes_in_group(RH.GROUP_ENEMIES):
+		if e is Enemy and is_instance_valid(e):
+			n += 1
+			h += e.global_position.x * 1.3 + e.global_position.z * 0.7 + e.hp * 0.01 + float(e.state) * 0.1
+	print("TRACE %d %s area=%s foes%d h%.4f w%d" % [f, ps, Game.current_area_id, n, h, Game.warmth])
+
 func _run() -> void:
+	if "--trace" in OS.get_cmdline_user_args(): get_tree().physics_frame.connect(_trace)
 	Game.player_stilled.connect(_on_stilled)
 	# its own save dir per mode: a shots run beside a headless run must not
 	# find the other's hearth in slot I (the title would ask to forget it)

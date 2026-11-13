@@ -15,9 +15,13 @@ func _ready() -> void:
 			# fight each time and passed or failed by luck. --test-seed=N to vary.
 			test_seed = hash(arg.get_slice("=", 1))
 		elif arg == "--deterministic":
-			# test walks: synchronous navmesh rebakes (Area.rebake_navmeshes), so nothing a worker
-			# thread finishes "some frames later" can change a seeded run
+			# test walks: no streamer (synchronous builds and bakes) and the nav map and regions
+			# updated in step, so nothing a worker thread finishes "some frames later" can change
+			# a seeded run (a foe's path query read the old map or the new one by thread timing)
 			Engine.set_meta("deterministic", true)
+			ProjectSettings.set_setting("navigation/world/region_use_async_iterations", false)
+			ProjectSettings.set_setting("navigation/world/map_use_async_iterations", false)
+			NavigationServer3D.map_set_use_async_iterations(get_viewport().world_3d.navigation_map, false)
 		elif arg.begins_with("--test-seed="):
 			seed_arg = int(arg.get_slice("=", 1))
 		elif arg.begins_with("--scene="):
