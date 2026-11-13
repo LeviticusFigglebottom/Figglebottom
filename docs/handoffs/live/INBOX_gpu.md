@@ -557,3 +557,46 @@ FAIL - crossing in flight, quit by close: the process is gone -1 ms after the as
   - Frame 2000: the title, "New journey / Settings", over a **RIME** Strand backdrop. 4e8ea09's title was the THAW steading, so if the title isn't meant to vary, that's worth a look.
   - Both PNGs (`boot_check_450.png`, `boot_check_2000.png`) are in the build folder.
   - At exit: only `WARNING: 7 RIDs of type "Texture" were leaked`, as in every build.
+
+## 2026-11-13T02:45Z Item 4: gpu/test-seed-2 (from main 0c5263f). Seeding, portable quit checks, Netmender budget. Pass rate
+**Branch `gpu/test-seed-2`:**
+- 9585549: seed the RNG from the test name; `--test-seed=N`.
+- 0a37189: the seed printed in every RESULT line.
+- 09d6d32: the veil diagnostic, with the check unchanged.
+- 8931f92: portable quit-in-flight harness.
+- b1894ca: a per-attempt Netmender budget.
+- It's a new branch: the old `gpu/test-seed` wasn't rewritten, and my attempted force-push was rejected.
+
+**Streaming (Windows):** 113/0. The quit checks now launch and time the child: 343 ms and 323 ms, exit 0. It used to
+fail on Windows because `OS.execute("timeout")` there is cmd's pause.
+
+**Veil:** on main-based code the seeded fullslice no longer loses at "the veil seals" (114/0 with its name seed). The
+diagnostic never fired. No game bug was found there.
+
+**Netmender, the walk's timing.**
+- With seeds 1–5 on 8931f92, seeds 2 and 3 failed at "the Netmender is released" (1 and 3 deaths), even though "her AI
+  ran all three phases".
+- Cause: one 480 s fight budget shared across attempts, while the holdfast is whole again after each fall.
+- b1894ca gives each attempt the full budget and ends at three falls. **The assertions are unchanged.**
+- Seeds 1–5 on b1894ca:
+
+| seed | result | deaths |
+|---|---|---:|
+| 1 | 110 checks, **29 failures** (Netmender not released) | 3 |
+| 2 | 114 / 0 | 0 |
+| 3 | 114 / 0 | 1 |
+| 4 | 114 / 0 | 2 |
+| 5 | 114 / 0 | 1 |
+
+**Pass rate 4/5 (it was 3/5).**
+
+**Caveat: seeding doesn't make the walk fully deterministic.**
+- Seed 1 passed on 8931f92 and fails on b1894ca with 3 deaths.
+- Seed 2 died once on 8931f92 and none on b1894ca, even though the code before the first death is the same.
+- So frame pacing in a real-time headless walk still varies the fight. Seeding narrows the spread but doesn't remove
+  it.
+- **Suggestions:**
+  - (a) Have the walk advance on physics ticks rather than `_secs` real time in the fight loop.
+  - (b) Or treat the Netmender stage as a retry stage: up to N fresh attempts, logging the seed and the attempt count.
+  - (c) The game question worth an owner look: a full-health boss after each death, at the walk's damage multiplier
+    3.0, makes a three-death loss possible. Is that the intended difficulty?
