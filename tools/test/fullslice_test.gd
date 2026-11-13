@@ -748,6 +748,20 @@ func _run() -> void:
 	check(_near_interact("Part the frost veil") != null, "the veil offers passage")
 	player.try_interact()
 	await _secs(1.5)
+	if not Game.arena_locked:
+		# why, for the log: is the seal only late, or never coming?
+		var through := veil.global_position - veil.global_transform.basis.z * 2.2
+		print("   [veil] engaged=%s zone=%s intercept=%s dead=%s state=%d hp=%.0f at=%s through=%s dist=%.2f near=%s" % [
+			veil.get("_engaged"), veil.get("_zone").enabled if veil.get("_zone") != null else "?", veil.get("intercept"),
+			player.dead, player.state, player.hp, player.global_position, through,
+			player.global_position.distance_to(through), _near_interact("") != null])
+		for i in 12:
+			await _secs(0.5)
+			if Game.arena_locked:
+				print("   [veil] sealed %.1f s late" % (0.5 * (i + 1)))
+				break
+		if not Game.arena_locked:
+			print("   [veil] still open after 6 s more: engaged=%s dead=%s state=%d at=%s" % [veil.get("_engaged"), player.dead, player.state, player.global_position])
 	check(Game.arena_locked, "the veil seals at the Bearer's back")
 
 	_set_leg("boss")
