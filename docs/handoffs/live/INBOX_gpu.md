@@ -661,3 +661,42 @@ part.
 - ce6fefd: `juice.gd`, where `prop_hit_test` read the old field.
 - Both are fixed in the next commits on the same branch, which is unmerged. I now parse-check (`--import`, grep
   SCRIPT ERROR) before every commit.
+
+---
+
+## 6. gpu/walk-ticks: merge checks done; full suite green at e09d46d (2026-11-13)
+
+**Full `tools/test.sh` at e09d46d:** both audits plus **48 / 48 suites pass, 0 failures.** The run is sequential,
+with nothing else on the box.
+
+**Check 1, normal play unchanged outside `--deterministic`.**
+- My first game-time hitstop was wrong in play. It used an unscaled delta (delta / time_scale), but the delta of the
+  frame a hitstop starts was scaled at 1.0, so it counted 20 times over: a 0.09 s stop held 0.010 s.
+- **Play now reads the wall clock exactly as before**, for both the hitstop and the ward. Only `--deterministic`
+  counts frames × the fixed step (`Juice._now_ms`, `Player._ward_now`).
+- **New `clocks` suite:**
+  - hitstops of 0.06 / 0.09 / 0.14 s hold 0.071 / 0.098 / 0.152 s (data plus at most a frame);
+  - a short stop inside a long one doesn't cut it short;
+  - the Warding Hum holds 8.018 s (songs.json 8.0).
+- anim 229/0, combat 22/0, deltas 147/0, prop_hit 65/0. `Enemy._ord` only rekeys the 7-slot re-path stagger and the
+  flank side.
+
+**Check 2, seed 5's "112-damage cast at 26 m."** It was not a cast; my hit log blamed the boss's last attack for any
+HP drop.
+- **Cast range:** data gives 8 m, `min_range` 3.5, and `_net_cast` returns early beyond `net_range`. Fine.
+- **The real bug:**
+  - A sideways roll left the Bearer wedged off the floor at (−4.29, 22.0, −41.09), between the rime-layer
+    `table_3m` at (−5, 22, −40) and `column_4m` at (−4.2, 22, −38.8 / −43.4).
+  - For 330 frames he couldn't move, while gravity banked fall speed into `velocity.y`, reaching −128 m/s.
+  - Freed, he moved 2.1 m a tick, straight through the floor to the kill plane.
+- **Fix (`player.gd`, after `move_and_slide`):** fall speed never runs ahead of the real fall,
+  `max(v.y, min(real_v.y, 0))`, and never past a terminal `move.max_fall` (40 m/s, game.json).
+  - My first version, `max(v.y, real_v.y)`, lent upward speed on step-ups. `poi_thornwold` caught it: he walked onto
+    `tw_charcoal_sacks`. That is fixed in e09d46d, where `poi_thornwold` passes 104/0.
+- **Still open (level geometry):** the table/column gap in the Long Hall can still pin a capsule. With the fix it is a
+  stuck spot, not a fall. Worth a collision look; I left the area data untouched.
+
+**Fullslice at e09d46d:** seeds 1–5 → 114/0 each, **no deaths, 0 boss hits**. Two runs per seed at ec651c3 were
+identical.
+
+**Branch head: e09d46d.** Ready to merge from my side.
