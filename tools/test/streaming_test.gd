@@ -383,18 +383,33 @@ func _keeping() -> void:
 
 ## The game is quit while a neighbour is on a worker thread: the process
 ## must go, promptly (it once never did: ADR 0014, "Quitting"). Each case is
-## its own process (tools/qa/quit_probe.gd) under `timeout`, so a hang fails
-## here in a minute and not at the suite's time limit. The whole matrix
+## its own process (tools/qa/quit_probe.gd), killed after a minute, so a hang
+## fails here and not at the suite's time limit. The whole matrix
 ## (four kinds of work, three ways of quitting) is tools/qa/quit_check.sh.
 func _quits() -> void:
 	print("== quitting with a build in flight")
 	for c in [["preload", "tree"], ["preload", "game"], ["crossing", "close"]]:
-		var out: Array = []
-		var code := OS.execute("timeout", ["60", OS.get_executable_path(), "--headless", "--path", ProjectSettings.globalize_path("res://"),
+		# portable: no `timeout` (on Windows that is cmd's pause, and the
+		# child never ran). The child logs to a file; Godot keeps the clock.
+		var log_path := ProjectSettings.globalize_path("user://quit_probe/%s_%s.log" % [c[0], c[1]])
+		DirAccess.make_dir_recursive_absolute(log_path.get_base_dir())
+		if FileAccess.file_exists(log_path):
+			DirAccess.remove_absolute(log_path)
+		var pid := OS.create_process(OS.get_executable_path(), ["--headless", "--log-file", log_path,
+			"--path", ProjectSettings.globalize_path("res://"),
 			"--", "--scene=res://tools/qa/quit_probe.tscn", "--quit-case=" + String(c[0]), "--quit-how=" + String(c[1]),
-			"--quit-after-ms=1500", "--cache-dir=user://quit_probe/cache"], out, true)
+			"--quit-after-ms=1500", "--cache-dir=user://quit_probe/cache"])
+		var t0 := Time.get_ticks_msec()
+		while pid > 0 and OS.is_process_running(pid) and Time.get_ticks_msec() - t0 < 60000:
+			OS.delay_msec(10)
 		var gone_ms := int(Time.get_unix_time_from_system() * 1000.0)
-		var text := "\n".join(out)
+		var code := -1
+		if pid > 0 and OS.is_process_running(pid):
+			OS.kill(pid)
+			code = 124            # as `timeout` reported a hang
+		elif pid > 0:
+			code = OS.get_process_exit_code(pid)
+		var text := FileAccess.get_file_as_string(log_path)
 		var asked := -1
 		for line in text.split("\n"):
 			if line.begins_with("[quit] asked at "):
