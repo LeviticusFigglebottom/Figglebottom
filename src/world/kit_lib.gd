@@ -32,8 +32,8 @@ const PIECES := {
 	"pell": {"size": [1.0, 0.8, 1.96], "origin": "bottom-center"},
 	"barrel": {"size": [0.7, 0.7, 0.9], "origin": "bottom-center"},
 	"crate": {"size": [1.0, 1.0, 1.0], "origin": "bottom-center"},
-	"table_3m": {"size": [3.0, 1.0, 0.8], "origin": "bottom-center"},
-	"bench_3m": {"size": [3.0, 0.4, 0.45], "origin": "bottom-center"},
+	"table_3m": {"size": [3.0, 1.0, 0.8], "origin": "bottom-center", "hull": "simple"},
+	"bench_3m": {"size": [3.0, 0.4, 0.45], "origin": "bottom-center", "hull": "simple"},
 	"woodpile": {"size": [2.0, 0.8, 1.0], "origin": "bottom-center"},
 	"rime_spike": {"size": [0.8, 0.8, 1.8], "origin": "bottom-center"},
 	"gourd": {"size": [0.17, 0.17, 0.26], "origin": "bottom-center"},
@@ -737,7 +737,9 @@ static func _build_piece(n: Node3D, id: String) -> void:
 			_box(n, Vector3(4, 1.05, 0.38), Vector3(0, 0.525, 0), "M_stone", "wall")
 		"column_4m", "pillar":
 			_box(n, Vector3(0.8, 4, 0.8), Vector3(0, 2, 0), "M_wood", "post")
-			_box(n, Vector3(0.95, 0.3, 0.95), Vector3(0, 0.15, 0), "M_stone_trim", "plinth")
+			# the plinth is dress, not a wall: its 7.5 cm lip held a capsule perched on its edge against the
+			# post (gaps_test). The post is the column's collider.
+			_box(n, Vector3(0.95, 0.3, 0.95), Vector3(0, 0.15, 0), "M_stone_trim", "plinth").set_meta("no_collide", true)
 		"portal_4m":
 			_wall_with_opening(n, 4, 4, 1.9, 2.9, 0.38, "M_stone")
 			_box(n, Vector3(2.3, 0.3, 0.5), Vector3(0, 3.05, 0), "M_wood", "door_beam")
@@ -1183,7 +1185,7 @@ static var _shape_cache: Dictionary = {}
 static func add_collision(piece: Node3D, layer_bit: int, convex := false, surface := "") -> void:
 	var kit_id := str(piece.get_meta("kit_id", "?"))
 	for mi in _mesh_instances(piece):
-		if mi.mesh == null or String(mi.name).contains("flame"):
+		if mi.mesh == null or String(mi.name).contains("flame") or mi.get_meta("no_collide", false):
 			continue
 		var key := kit_id + "/" + str(mi.name) + ("/cvx" if convex else "")
 		var lk := BuildLock.lock()    # (an area build on a worker shares the cache)
