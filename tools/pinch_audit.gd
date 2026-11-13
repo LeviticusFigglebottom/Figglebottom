@@ -110,11 +110,14 @@ func _audit(id: String, st: int) -> void:
 					continue
 				var y := maxf(A[3], B[3])
 				if not best.has(pk) or d < best[pk][0]:
-					best[pk] = [d, Vector3(res[1].x, y, res[1].y)]
+					best[pk] = [d, Vector3(res[1].x, y, res[1].y), A[0], B[0]]
 	var map := area.get_world_3d().navigation_map
 	var routes := _routes(area, map)
 	for pk in best:
 		if touching.has(pk):
+			continue
+		# a gap a third body stands in is filled, not a slot (an infill rock between two floes)
+		if _filled(Vector2(best[pk][1].x, best[pk][1].z), best[pk][2], best[pk][3], items, grid):
 			continue
 		var bi := int(pk.get_slice("|", 0))
 		var bj := int(pk.get_slice("|", 1))
@@ -132,6 +135,17 @@ func _audit(id: String, st: int) -> void:
 	area.queue_free()
 	for i in 3:
 		await get_tree().process_frame
+
+func _filled(q: Vector2, ia: int, ib: int, items: Array, grid: Dictionary) -> bool:
+	var key := Vector2i(floori(q.x / CELL), floori(q.y / CELL))
+	for k in grid.get(key, []):
+		var it: Array = items[k]
+		if it[0] == ia or it[0] == ib:
+			continue
+		var poly: PackedVector2Array = it[1]
+		if poly.size() >= 3 and Geometry2D.is_point_in_polygon(q, poly):
+			return true
+	return false
 
 func _is_ground(body: Node) -> bool:
 	var n := body

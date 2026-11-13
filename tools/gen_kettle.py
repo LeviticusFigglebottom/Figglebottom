@@ -549,6 +549,12 @@ for _i, (_x, _z) in enumerate(L.KETTLE_ROAD):
     for (_px, _pz) in _pts:
         SHADE_FILLS.append({"at": at(_px, _pz, 4.0), "range": 18.0, "energy": 3.0, "color": [0.86, 0.9, 1.0], "tag": "thaw"})
 
+# (appended last: the scatter picks each piece's mesh in list order, so a piece added mid-list re-rolls the rest)
+# one infill floe where two irregular hulls set back left a 0.62 m notch in the ring's face, under a
+# body's width (audit_pinch.sh): drawn and solid, it reads as part of the ring
+_th = math.radians(141.7)
+place.append({"kind": "ice_floe", "at": [r2(HOLE[0] + ARENA_R * math.cos(_th)), r2(HOLE[1] + ARENA_R * math.sin(_th))],
+              "y": -0.2, "rot": 23, "scale": [1.6, 1.45, 1.6], "tag": "rime"})
 D = {
     "id": "kettle_fjord",
     "name": "Kettle Fjord",

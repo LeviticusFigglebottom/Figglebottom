@@ -4,30 +4,6 @@
   {
    "area": "saltfell_steading",
    "check": "invisible",
-   "fix": "generator: the landmark's \"blocker\" box is wider than what is drawn",
-   "id": "landmark_blocker:lm_fold_cairn.glb",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released",
-    "thaw+spring"
-   ],
-   "pos": [
-    -57.86,
-    23.17,
-    24.38
-   ],
-   "size": [
-    2.73,
-    2.2,
-    2.73
-   ]
-  },
-  {
-   "area": "saltfell_steading",
-   "check": "invisible",
    "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
    "id": "kit:hearthstone",
    "owner": "Lead's look-pass agent",
@@ -264,29 +240,6 @@
    "id": "kit:hearthstone",
    "owner": "Lead's look-pass agent",
    "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    -81.94,
-    26.58,
-    -104.07
-   ],
-   "size": [
-    1.07,
-    0.95,
-    1.07
-   ]
-  },
-  {
-   "area": "lowe_barrows",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
     "thaw+released",
     "rime+released"
    ],
@@ -498,29 +451,6 @@
     4.99,
     2.2,
     4.67
-   ]
-  },
-  {
-   "area": "lowe_barrows",
-   "check": "partial",
-   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    -82.24,
-    26.15,
-    -103.42
-   ],
-   "size": [
-    2.25,
-    1.19,
-    2.25
    ]
   },
   {
