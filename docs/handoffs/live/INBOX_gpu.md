@@ -502,3 +502,58 @@ No timing change. smoke 11/0, anim 229/0, combat 22/0, body 8/0. Before/after sh
 Full logs are in `docs/qa/gpu/fullslice_seeded_run{1,2}.log` and `suite_seeded.log`.
 
 **Now running, in order, alone:** stream_prof on main 0c5263f, then the full gate on main, then the Windows build of main.
+
+## 2026-11-13T00:18Z Main 0c5263f: hitch re-measure, full gate, Windows build
+### 1. Real-GPU hitches: stream_prof --prof-stream, alone, RX 9070 XT, 1920x1080
+The full tables are in `docs/qa/gpu/stream_prof_gpu_0c5263f.md`. Against the 05:09Z run (25ef245):
+
+| area | worst warm crossing ms (was) | worst cold crossing ms (was) | turn to RIME ms (was) | warm worst frame held |
+|---|---:|---:|---:|---|
+| saltfell_steading | **48.7** (107.2) | **131.4** (238.5) | 6.8 (54.0) | graft: what acts 49 |
+| lowe_barrows | **35.3** (90.8) | 42.3 (89.7) | 6.8 (53.1) | graft: what acts 33 |
+| kettle_fjord | **52.4** (92.9) | **58.8** (85.1) | 7.1 (54.9) | graft: what acts 50 |
+| tarnhall | **49.3** (83.3) | **51.8** (83.8) | 9.4 (57.5) | graft: what acts 49 |
+| thornwold | **35.7** (96.6) | 39.7 (101.4) | 11.2 (55.4) | graft: what acts 33 |
+| shepherds_reach | **80.6** (89.3) | **97.9** (127.0) | 8.5 (58.9) | graft: what acts 78 |
+| coldwell | **40.1** (97.2) | 35.2 (100.8) | 8.4 (57.2) | graft: what acts 37 |
+
+**Against the targets:**
+- **Turn to RIME under 33 ms: met everywhere** (6.8–11.2 ms). The 50 ms wave-particle flip is gone.
+- **Cold crossing under 50 ms:** met in Lowe, Thornwold and Coldwell. Not met in Saltfell (131), the Reach (98), Kettle (59) or Tarnhall (52).
+- **Warm crossing under 33 ms: not met anywhere** (35–81). Every region roughly halved, but each worst frame is still a single "graft: what acts" step of 33–78 ms. That one graft needs splitting across frames. The Reach's 78 ms graft is the largest.
+
+### 2. Gate on main 0c5263f: alone, one at a time
+
+| stage | commit | checks | failures |
+|---|---|---:|---:|
+| originality | 0c5263f | n/a | 0 (rc 0) |
+| full `tools/test.sh` | 0c5263f | 3300 | **3** (rc 0) |
+| fullslice | 0c5263f | 114 | 0 |
+| fullgame_lowe | 0c5263f | 196 | 0 |
+| fullgame_kettle | 0c5263f | 199 | 0 |
+| fullgame_tarnhall | 0c5263f | 213 | 0 |
+| fullgame_thornwold | 0c5263f | 163 | 0 |
+| fullgame_reach | 0c5263f | 197 | 0 |
+| fullgame_coldwell | 0c5263f | 179 | 0 |
+| fullgame_ending_outsong | 0c5263f | 161 | 0 |
+| fullgame_ending_kept | 0c5263f | 193 | 0 |
+
+**The 3 FAILs, verbatim** (all in the streaming suite, "quitting with a build in flight"):
+```
+FAIL - preload in flight, quit by tree: the process is gone -1 ms after the asking (exit 1)
+FAIL - preload in flight, quit by game: the process is gone -1 ms after the asking (exit 1)
+FAIL - crossing in flight, quit by close: the process is gone -1 ms after the asking (exit 1)
+```
+- **Cause: Windows only, in the test harness, not the game.** `streaming_test.gd:393` runs `OS.execute("timeout", ["60", OS.get_executable_path(), ...])`. On Linux that's coreutils `timeout`. On Windows, `timeout` is cmd's pause command, so it exits 1 at once and the child Godot never starts.
+- **Suggested fix:** call the executable directly and time it with `OS.create_process` plus `OS.is_process_running`, or skip that block when `OS.get_name() == "Windows"`. Cloud and CI (Linux) are unaffected.
+- **Everything else in the suite is green,** including the unseeded fullslice inside it. Log: `docs/qa/gpu/suite_main_0c5263f.log`.
+
+### 3. Windows build of main 0c5263f
+- **Exe:** `C:\Users\Aaron\Documents\Rimeholt_Windows_main_0c5263f\Rimeholt.exe`, **1,767,698,768 bytes** (1.77 GB), up from 1.53 GB at 4e8ea09.
+- **Built in:** the fully imported release tree (0 of 906 missing, 1,812 extracted textures).
+- **Export:** rc 0, **0 warnings or errors** in the log.
+- **Boot check:** off-screen.
+  - Frame 450: the studio card.
+  - Frame 2000: the title, "New journey / Settings", over a **RIME** Strand backdrop. 4e8ea09's title was the THAW steading, so if the title isn't meant to vary, that's worth a look.
+  - Both PNGs (`boot_check_450.png`, `boot_check_2000.png`) are in the build folder.
+  - At exit: only `WARNING: 7 RIDs of type "Texture" were leaked`, as in every build.
