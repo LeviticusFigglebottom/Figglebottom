@@ -600,3 +600,64 @@ diagnostic never fired. No game bug was found there.
   - (b) Or treat the Netmender stage as a retry stage: up to N fresh attempts, logging the seed and the attempt count.
   - (c) The game question worth an owner look: a full-health boss after each death, at the walk's damage multiplier
     3.0, makes a three-death loss possible. Is that the intended difficulty?
+
+---
+
+## 5. gpu/walk-ticks: the walks are now deterministic; fullslice seeds 1–5 pass 10/10 (2026-11-13)
+
+Branch `gpu/walk-ticks` from main b1894ca, head **572d495**. A full `tools/test.sh` regression run is in progress;
+its result follows in the next entry.
+
+**Result:** fullslice seeds 1–5, each run twice:
+- every seed gives the **identical run both times** (every check line plus a 30-frame state trace, 0 differing
+  lines);
+- **pass rate 10/10, 114/114 each.**
+
+| seed | result (both runs) | deaths at the Netmender | boss hits taken |
+|---|---|---:|---:|
+| 1 | 114 / 0 | 0 | 0 |
+| 2 | 114 / 0 | 1 | 11 |
+| 3 | 114 / 0 | 0 | 0 |
+| 4 | 114 / 0 | 0 | 0 |
+| 5 | 114 / 0 | 1 | 1 |
+
+**Why a fixed timestep alone wasn't enough.** Each fix was found by tracing two runs of one seed to the first
+differing frame:
+1. **The streamer** slices area builds by wall-clock budget, so builds and foe spawns landed on different frames.
+   `--deterministic` now implies `--no-streaming`: synchronous builds and bakes.
+2. **The hitstop** ran on real milliseconds, and the ward expired on the wall clock. The hitstop now counts unscaled
+   frame time (`Juice._clock_ms`), and the ward the Bearer's physics time. `prop_hit` 65/65.
+3. **The nav map and region iterations were async** (Godot 4.5+ default). They're off in `--deterministic`.
+4. **The last divergence:** a foe's re-path stagger and flank side were keyed on `get_instance_id() % 7`.
+   - Instance ids are a global counter that loads and audio on other threads also advance, so the same foe had id
+     mod 7 of 4, 5 or 6 across runs, and a re-path came on a different frame.
+   - Foes now take a spawn index (`Enemy._ord`). This one also touches real play: the stagger is still spread over
+     7 slots, just keyed differently.
+
+**The walk's combat policy was poor; that, not luck, lost seeds 1 and 5.**
+- The new `[hit]` log showed nearly every hit was `needle_stitch` at 1–2 m, taken mid-swing with 2–5 stamina.
+  - The bot swung whenever stamina was above 18, queuing combos, so it never had the 24 a roll costs.
+  - Its dodge fired 35 % of the time, in the first 0.25 s of an attack.
+- It now reads the foe's own attack data (windup, hits, range, lunge):
+  - no swing into a windup;
+  - a sideways roll just before the first blow (the stitch's 3–4 stabs outlast the 0.28 s of i-frames, so it
+    leaves her committed line rather than i-framing);
+  - it backs out when winded;
+  - one light swing at a time, with a roll kept in hand;
+  - it drinks below half, only out of reach.
+- That also fixed seed 2's deterministic failure at the frozen float. The Strand fight was dragging it 63 m off.
+
+**What's left (not failures):**
+- **Seed 2:** it is pinned in phase 2, at 1.1 m, rolling but still stitched 11 times, and never drinks. Probably a
+  roll into the slammed tables after `haul_floor`.
+- **Seed 5:** one 112-damage `cast` at 26 m, while she approaches. A snare's pull or haul, not melee.
+- Either is a follow-up if you want the walk to beat her deathless.
+
+**Tool:** `--trace` prints the Bearer and a foe checksum every 30 physics frames. Diff two runs to find where they
+part.
+
+**My mistakes along the way:** two pushed commits didn't parse.
+- dd49ac4: a literal `\n` in `area.gd`.
+- ce6fefd: `juice.gd`, where `prop_hit_test` read the old field.
+- Both are fixed in the next commits on the same branch, which is unmerged. I now parse-check (`--import`, grep
+  SCRIPT ERROR) before every commit.
