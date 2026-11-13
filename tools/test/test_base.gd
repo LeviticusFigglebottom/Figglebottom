@@ -31,7 +31,7 @@ func nav_wait(a: Area = null, max_s := 30.0) -> void:
 func finish() -> void:
 	AudioDirector.shutdown()
 	print("")
-	print("RESULT: %d checks, %d failures" % [checks, fails])
+	print("RESULT: %d checks, %d failures (seed %d)" % [checks, fails, int(Engine.get_meta("test_seed", -1))])
 	# (Game.quit calls any worker build off and sees it end before the tree goes)
 	Game.quit(1 if fails > 0 else 0)
 

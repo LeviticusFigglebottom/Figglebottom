@@ -19,7 +19,9 @@ func _ready() -> void:
 		elif arg.begins_with("--scene="):
 			target = arg.get_slice("=", 1)
 	if test_seed != -1:
-		seed(seed_arg if seed_arg != -1 else test_seed)
+		var used := seed_arg if seed_arg != -1 else test_seed
+		seed(used)
+		Engine.set_meta("test_seed", used)   # printed in the RESULT line, to replay a run
 	if not ResourceLoader.exists(target):
 		push_warning("Boot: scene %s missing; staying on boot screen" % target)
 		return
