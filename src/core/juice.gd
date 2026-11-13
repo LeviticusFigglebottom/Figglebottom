@@ -2,28 +2,30 @@ extends Node
 ## Hitstop + camera-shake + directional combat VFX bus. Autoloaded as `Juice`.
 ##
 ## `hitstop()` freezes `Engine.time_scale` briefly while an `ALWAYS`-processed
-## timer counts down in real wall-clock seconds. Everything in the scene tree
+## clock counts unscaled frame time (the frame delta undone of `time_scale`): at
+## a fixed timestep that is a fixed number of frames, so a seeded walk repeats. Everything in the scene tree
 ## that respects `time_scale` pauses on the contact frame — the blade hangs in
 ## the meat for a beat before the follow-through.
 
 signal shake_requested(trauma: float, duration: float)
 signal post_flash_requested(kind: String, might: float)
 
-var _hitstop_until_ms := 0
+var _clock := 0.0           # unscaled seconds, advanced in _process
+var _hitstop_until := -1.0  # < 0: no hitstop running
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+func _process(delta: float) -> void:
+	_clock += delta / maxf(Engine.time_scale, 0.0001)
+	if _hitstop_until >= 0.0 and _clock >= _hitstop_until:
+		_hitstop_until = -1.0
+		Engine.time_scale = 1.0
 
 ## Freeze gameplay briefly. Uses Engine.time_scale; stacked calls extend.
 func hitstop(duration := 0.09, scale := 0.05) -> void:
 	Engine.time_scale = scale
-	var until := Time.get_ticks_msec() + int(duration * 1000.0)
-	_hitstop_until_ms = max(_hitstop_until_ms, until)
-	_restore_later()
-
-func _restore_later() -> void:
-	await get_tree().create_timer(0.02, true, false, true).timeout
-	if Time.get_ticks_msec() >= _hitstop_until_ms:
-		Engine.time_scale = 1.0
-	else:
-		_restore_later()
+	_hitstop_until = maxf(_hitstop_until, _clock + duration)
 
 func shake(trauma: float, duration := 0.18) -> void:
 	shake_requested.emit(trauma, duration)

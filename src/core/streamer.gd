@@ -154,7 +154,9 @@ static var _arg_off := -1
 
 func enabled() -> bool:
 	if _arg_off < 0:
-		_arg_off = 1 if "--no-streaming" in OS.get_cmdline_user_args() else 0
+		# a deterministic walk (--deterministic) builds areas and bakes synchronously: the streamer
+		# slices its work by wall-clock budgets, so what lands on which frame would vary run to run
+		_arg_off = 1 if "--no-streaming" in OS.get_cmdline_user_args() or "--deterministic" in OS.get_cmdline_user_args() else 0
 	return _arg_off == 0 and bool(cfg("enabled", true)) and Game.world_root != null
 
 # ---------------------------------------------------------------- what stands

@@ -244,8 +244,7 @@ func bake_navmeshes() -> void:
 ## Without the streamer it is the synchronous bake, as it always was.
 func rebake_navmeshes(delay_s := 0.0) -> void:
 	nav_pending = true
-	if Game.stream != null and Game.stream.enabled() and is_inside_tree() and not inert \
-			and not Engine.has_meta("deterministic"):
+	if Game.stream != null and Game.stream.enabled() and is_inside_tree() and not inert:
 		Game.stream.rebake(self, delay_s)
 	elif delay_s > 0.0 and is_inside_tree():
 		get_tree().create_timer(delay_s, false).timeout.connect(bake_navmeshes)
