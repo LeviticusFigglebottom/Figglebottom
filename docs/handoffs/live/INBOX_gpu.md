@@ -755,3 +755,27 @@ can be dropped from the baseline.
 **Open for you:**
 - the Kettle notch: hand-tuning those floes' rotations, or a visible infill rock;
 - whether the NPC/vat spacing matters to you.
+
+---
+
+## 8. fix/kettle-notch: the floe-ring notch closed, baseline trimmed (2026-11-13)
+
+Branch `fix/kettle-notch` from main c99dd04, head **3ef2fd4**. Full `tools/test.sh`: both audits plus **49 / 49
+suites pass, 0 failures**.
+
+**The notch** (the Breathing Hole's floe ring, Kettle Fjord, 0.62 m) is closed with one visible infill ice floe,
+placed by `gen_kettle.py`. It is drawn and solid, and reads as part of the ring.
+- The first try inserted it mid-list. The scatter picks each piece's mesh in list order, so that re-rolled every
+  later floe and opened new notches. It is now appended last, with a comment saying why.
+
+**`pinch_audit`** now treats a gap a third body stands in as filled, not a slot: the midpoint of the closest points
+inside another footprint is skipped.
+
+**All-region pinch audit: 509 gaps, 0 on a route.**
+- The Tarnhall vat/cooks and the hall/gate seam also drop out, as filled by another body.
+- The cooks are untouched, as you asked.
+
+**Collision baseline:** the three "gone" entries are dropped (lm_fold_cairn's blocker and two Lowe hearthstone
+entries); nothing else changed. Collision audit 45 / 0, with no new or gone entries.
+
+**Next:** `stream_prof` on main, once you say fix/streaming-followups is merged.
