@@ -73,7 +73,7 @@ CX, CZ, CR = L.ARENA
 
 # the sod wall: stacked cut turf all round the hollow, a gap to the road
 place = []
-n = int(2 * math.pi * (CR - 0.5) / 1.45)
+n = int(2 * math.pi * (CR - 0.5) / 1.1)     # shoulder to shoulder: gaps under a body's width pinch a capsule
 for k in range(n):
     th = 2 * math.pi * k / n
     deg = math.degrees(th) % 360
@@ -236,7 +236,7 @@ CUP = barrow_at("kin_b", 0.62, -0.7)
 prop("lw_birch_cup", CUP[0], CUP[1], 0, tag="thaw", collide=False, lift=r2(KB_TOP), settle=True)
 BREAD_CUP = {"id": "birch_cup", "at": at(CUP[0], CUP[1]), "item": "item_birch_cup", "kit": "lw_birch_cup", "tag": "rime",
              "label": "Prise the cup off the turf", "raise": r2(KB_TOP), "settle": True}
-_px, _pz = barrow_at("kin_b", 1.5, -(KB[4] * 0.5 + 0.6) - 2.9)
+_px, _pz = barrow_at("kin_b", 1.5, -(KB[4] * 0.5 + 0.6) - 3.0)   # clear of the steps by a body's width
 prop("lw_kin_post", _px, _pz, KB_YAW + 160)
 NPCS_POI.append({"id": "bread_family", "at": at(KB[1], KB[2]), "rot": 0, "tag": "thaw"})
 
@@ -294,7 +294,7 @@ SMALL_SPADES = {"id": "small_spades", "at": at(_dx, _dz + 0.55), "item": "item_s
 _cx, _cz = rot_off(BX, BZ - 0.4, BOTHY_ROT, -1.45, 2.55)         # on the bench
 prop("lw_dinner_cloth", _cx, _cz, 30, tag="thaw", collide=False, lift=0.46)
 prop("lw_spade_rack", BX - 3.9, BZ + 1.2, 96)
-prop("lw_peat_sled", BX + 3.9, BZ + 2.2, 62)
+prop("lw_peat_sled", BX + 4.4, BZ + 2.2, 62)   # (0.4 m off the bothy pinched a capsule)
 
 # --- 3.5 lw_the_rise: the Rise (the road's last crest before the hollow) --------
 # From here the stacks can be counted. Nothing is set on the sight-line.

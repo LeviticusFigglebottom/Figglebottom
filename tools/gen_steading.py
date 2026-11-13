@@ -357,7 +357,7 @@ slope_prop("sf_tar_pot", 14.4, 61.2, 0, span=0.4)
 slope_prop("sf_rack_low", -49.6, 66.4, RACK_ROT, span=0.5)       # flatfish, at the west end of the seaward row
 slope_prop("sf_fish_barrels", -28.0, 67.0, 30, span=0.4)         # what the bench fills
 slope_prop("sf_net_pile", -0.4, 71.8, 40, span=0.3)              # Brede's net, by his boat
-slope_prop("sf_net_pile", 18.3, 60.6, -20, span=0.3)             # and the shed's
+slope_prop("sf_net_pile", 17.7, 61.0, -20, span=0.3)             # and the shed's (off the corner: 0.2 m from the wall pinched a capsule)
 slope_prop("sf_mooring_post", -6.7, 65.6, 10, span=0.3)          # a post at the head of a run: what a hauled boat is made fast to
 slope_prop("sf_mooring_post", 5.2, 62.4, 80, span=0.3)
 prop("sf_fish_barrels", -9.0, 17.0, 120)                         # the yard bench's

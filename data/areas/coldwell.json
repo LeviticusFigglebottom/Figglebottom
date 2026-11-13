@@ -2203,16 +2203,6 @@
    "tag": "base"
   },
   {
-   "kit": "cw_rope_rail",
-   "at": [
-    820.39,
-    124.18,
-    -458.01
-   ],
-   "rot": 26.57,
-   "tag": "base"
-  },
-  {
    "kit": "cw_ice_column_b",
    "at": [
     794.07,

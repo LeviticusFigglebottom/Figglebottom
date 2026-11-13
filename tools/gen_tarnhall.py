@@ -57,7 +57,7 @@ HOUSES.append({"id": "hall", "center": list(HALL_C), "size": [HALL_W, HALL_L], "
                "doors": [["N", 1], ["S", 1]], "gate_doors": [], "open": [], "wall_h": 4.6})
 BUILDINGS.append({"id": "hall", "center": list(HALL_C), "size": [HALL_W, HALL_L], "yaw": 90, "y": FY,
                   "doors": [[HALL_X0, DOOR_Z], [HALL_X1, DOOR_Z]], "open": []})
-BYRE_C, BYRE_W, BYRE_L = (HALL_X1 + 7.6, -330.0), 10.0, 14.0
+BYRE_C, BYRE_W, BYRE_L = (HALL_X1 + 7.4, -330.0), 10.0, 14.0   # gable to gable: a 0.2 m slit beside the door pinched a capsule
 BYRE_X0 = BYRE_C[0] - BYRE_L / 2
 BYRE_DOOR = (BYRE_C[0] - 1.0, BYRE_C[1] + BYRE_W / 2)                  # the cattle door, south wall
 # (the byre's gable is 10 m, its bays stand 2 m off the hall's: the door
@@ -159,7 +159,7 @@ for i, hx in enumerate((HALL_X0 + 8.5, HALL_X0 + 15.0, HALL_X0 + 21.5)):
 # --- the byres --------------------------------------------------------------
 for i in range(3):
     sx = BYRE_X0 + 3.0 + i * 4.0
-    BOXES.append({"min": [r2(sx - 0.1), FY, r2(BYRE_C[1] - 4.6)], "max": [r2(sx + 0.1), FY + 1.3, r2(BYRE_C[1] - 1.6)],
+    BOXES.append({"min": [r2(sx - 0.1), FY, r2(BYRE_C[1] - 4.85)], "max": [r2(sx + 0.1), FY + 1.3, r2(BYRE_C[1] - 1.6)],
                   "mat": "M_wood", "tag": "base"})                    # stall partitions (north side)
     BOXES.append({"min": [r2(sx - 1.6), FY, r2(BYRE_C[1] - 4.7)], "max": [r2(sx + 1.6), FY + 0.6, r2(BYRE_C[1] - 4.2)],
                   "mat": "M_wood_dark", "tag": "base", "collide": False})  # mangers

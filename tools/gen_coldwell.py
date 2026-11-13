@@ -243,7 +243,7 @@ prop("cw_staff_heap", SS.at(3.55, -0.9), SS.to_path - 90, tag="rime", collide=Fa
 SHELTER_FOE = {"enemy": "upwalker", "id": "upwalker_falls", "at": SS.at(1.4, 1.0, 0.1), "face": r2(SS.to_path + 180.0),
                "pose": "sit", "rise_time": 2.4}
 # a rope rail down the outside of the next steep pitch, and ice on the falls above it
-for f in (0.14, 0.26, 0.38):
+for f in (0.14, 0.26):       # (a third piece ended 0.14 m from the falls' ice: a pinch)
     prop("cw_rope_rail", on_path(5, f, -(H.PATH_HALF - 0.15)), r2(math.degrees(math.atan2(-(H.UPWATER[6][1] - H.UPWATER[5][1]),
                                                                                            H.UPWATER[6][0] - H.UPWATER[5][0]))))
 for kit, (i, f, off) in (("cw_ice_column_b", (4, 0.42, 5.0)), ("cw_ice_column_c", (5, 0.2, 5.3)), ("cw_ice_column_a", (5, 0.52, 5.0))):

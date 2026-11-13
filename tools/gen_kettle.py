@@ -189,7 +189,7 @@ water.append({"at": [HOLE[0], 0.08, HOLE[1]], "radius": 1.6, "tag": "rime"})
 # --- the Breathing Hole: an arena on the ice ringed by pressure ridges
 ARENA_R = 15.0
 place = []
-n = int(2 * math.pi * ARENA_R / 1.8)
+n = int(2 * math.pi * ARENA_R / 1.2)   # floe against floe: gaps under a body's width pinch a capsule
 for k in range(n):
     th = 2 * math.pi * k / n
     deg = math.degrees(th) % 360
@@ -201,6 +201,9 @@ for k in range(n):
         continue
     place.append({"kind": "ice_floe", "at": [r2(x), r2(z)], "y": -0.2, "rot": r2(k * 47 % 360),
                   "scale": [r2(2.2 + 0.6 * math.sin(k * 1.7)), r2(1.3 + 0.5 * abs(math.sin(k * 2.3))), 2.0], "tag": "rime"})
+    # the floes' rock hulls are irregular: one set back left a notch under a body's width in the ring's face.
+    # An unseen post at each floe evens the face (overlapping circles, shallow cusps a capsule cannot wedge in)
+    BLOCKERS.append({"at": [r2(x), 0.6, r2(z)], "radius": 0.85, "height": 2.4, "tag": "rime"})
 VEIL = [HOLE[0], 0.05, r2(HOLE[1] + ARENA_R)]
 # loose floes and pressure ridges elsewhere on the ice
 for k in range(26):
