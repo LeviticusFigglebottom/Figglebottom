@@ -43,11 +43,11 @@ func _prop(kit: String, pos: Vector3, remap := {}) -> Node3D:
 	arena.add_child(p)
 	return p
 
-## Stand `dist` south of `pos`, face it (-Z), swing, and let the swing and
+## Stand `dist` south of `pos` (or north), face it, swing, and let the swing and
 ## its bursts run out.
-func _swing_at(pos: Vector3, dist: float, heavy := false, wait := 110) -> void:
-	player.global_position = pos + Vector3(0, 0.1, dist)
-	player.vis.rotation.y = 0.0
+func _swing_at(pos: Vector3, dist: float, heavy := false, wait := 110, from_north := false) -> void:
+	player.global_position = pos + Vector3(0, 0.1, -dist if from_north else dist)
+	player.vis.rotation.y = PI if from_north else 0.0
 	player.velocity = Vector3.ZERO
 	await ticks(3)
 	hits.clear()
@@ -260,7 +260,10 @@ func _arena() -> void:
 	for c in arena.get_children():
 		if c is Hearthstone:
 			hearth = c
-	await _swing_at(hearth.global_position, 1.3, true)
+	# at its tall back stones (north, 1.2 m, 0.7 m out from its centre): the hearth collides as drawn, and
+	# its front kerb stands 0.37 m, under the blade's arc. A light swing: the heavy one's lunge carries the
+	# Bearer into the back stones, and a blade that starts inside them strikes nothing
+	await _swing_at(hearth.global_position, 1.4, false, 110, true)
 	_one("hearthstone", "stone")
 
 	print("== metal: a brazier")
