@@ -408,7 +408,7 @@ func _physics_process(dt: float) -> void:
 	# between a table and a column) banked gravity it never moved at, and came free at 128 m/s
 	# straight through the floor. And never past the terminal speed (data move.max_fall).
 	if velocity.y < 0.0:
-		velocity.y = maxf(maxf(velocity.y, get_real_velocity().y), -float(T["move"].get("max_fall", 40.0)))
+		velocity.y = maxf(maxf(velocity.y, minf(get_real_velocity().y, 0.0)), -float(T["move"].get("max_fall", 40.0)))
 	_part_from_foes()
 	if is_on_floor():
 		_floor_y = global_position.y
