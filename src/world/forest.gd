@@ -25,6 +25,14 @@ const STYLES := {
 ## given (snow crust, THAW/RIME branch) plus wind sway. Missing files fall
 ## back to the primitives below, so the API and layout never change.
 ##   kind -> [[glb name, family, wind sway m, wind height m], ...]
+## A hero tree whose trunk does not stand on its mesh origin: the trunk's centre in the GLB's own frame
+## (measured from the mesh: vertices within 0.6 m of the axis, 1-4 m up). The trunk collider sits there,
+## so it stands inside the drawn trunk (collision audit: "invisible" on the largest pines).
+const TRUNK_OFFSET := {"tr_pine_a": Vector2(0.1, -0.45)}
+## A tree kind's trunk collider radius (times the instance scale).
+const TRUNK_R := {"pine": 0.3, "grave_pine": 0.7, "snag": 0.25}
+## Two solids closer than this, and not touching, leave a slot the Bearer's capsule can wedge in (0.68 m + margin).
+const SLOT_W := 0.72
 const HERO_TREES := {
 	"pine": [["tr_pine_a", "M_needles", 0.35, 14.0], ["tr_pine_b", "M_needles", 0.3, 12.0]],
 	"birch": [["tr_birch_a2", "M_leaves", 0.45, 10.0], ["tr_birch_b", "M_leaves", 0.45, 10.0]],
@@ -98,26 +106,61 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 	var dropped: Dictionary = {}     # kind -> {index: true}
 	if not hedges.is_empty():
 		for kind in trees:
-			var r0: float = {"pine": 0.3, "grave_pine": 0.7, "snag": 0.25}.get(kind, 0.2)
+			var r0: float = TRUNK_R.get(kind, 0.2)
 			dropped[kind] = {}
 			for i in trees[kind].size():
 				var xf: Transform3D = trees[kind][i]
 				if _near_hedge(hedges, Vector2(xf.origin.x, xf.origin.z), r0 * xf.basis.get_scale().x + 0.75):
 					dropped[kind][i] = true
+	var n_scattered := {}
+	for kind in trees:
+		n_scattered[kind] = trees[kind].size()
 	for p in spec.get("place", []):
 		var at: Array = p["at"]
 		var x := float(at[0])
 		var z := float(at[1])
 		_tree(trees, String(p["kind"]), Vector3(x, terrain.height_at(x, z) - 0.15, z), float(p.get("scale", 1.0)), rng)
+	var trunks := {}     # Vector2i cell (2 m) -> [[centre: Vector2, radius: float], ...], every trunk kept so far
 	for kind in trees:
-		var bodied: Array = []
-		for i in trees[kind].size():
-			if not dropped.get(kind, {}).has(i):
-				bodied.append(trees[kind][i])
 		var vs: Array = []
 		for hv in HERO_TREES.get(kind, []):
 			if ResourceLoader.exists(HERO_DIR + String(hv[0]) + ".glb"):
 				vs.append(hv)
+		if not dropped.has(kind):
+			dropped[kind] = {}
+		var r0: float = TRUNK_R.get(kind, 0.2)
+		for i in trees[kind].size():
+			# no scattered tree whose trunk leaves a slot narrower than the Bearer beside one already kept
+			# (audit_pinch.sh); trunks that touch leave no slot. Placed trees ("place") are never skipped.
+			if dropped[kind].has(i) or i >= n_scattered.get(kind, 0):
+				continue
+			var xf0: Transform3D = trees[kind][i]
+			var vn0: String = String(vs[i % vs.size()][0]) if not vs.is_empty() else ""
+			var o0: Vector2 = TRUNK_OFFSET.get(vn0, Vector2.ZERO)
+			var w0: Vector3 = xf0.origin + xf0.basis * Vector3(o0.x, 0.0, o0.y)
+			var c0 := Vector2(w0.x, w0.z)
+			var rr := r0 * xf0.basis.get_scale().x
+			var cell := Vector2i(int(floor(c0.x / 2.0)), int(floor(c0.y / 2.0)))
+			var slot := false
+			for dx in [-1, 0, 1]:
+				for dz in [-1, 0, 1]:
+					for tr in trunks.get(cell + Vector2i(dx, dz), []):
+						var gap: float = c0.distance_to(tr[0]) - rr - float(tr[1])
+						if gap > 0.0 and gap < SLOT_W:
+							slot = true
+			if slot:
+				dropped[kind][i] = true
+				continue
+			if not trunks.has(cell):
+				trunks[cell] = []
+			trunks[cell].append([c0, rr])
+		var bodied: Array = []
+		var trunk_off: Array = []     # each body's trunk offset in its tree's own frame (the variant drawn there)
+		for i in trees[kind].size():
+			if not dropped.get(kind, {}).has(i):
+				bodied.append(trees[kind][i])
+				var vn: String = String(vs[i % vs.size()][0]) if not vs.is_empty() else ""
+				trunk_off.append(TRUNK_OFFSET.get(vn, Vector2.ZERO))
 		if vs.is_empty():
 			# grave pine and snag fall back to the plain pine
 			_emit(area, "tree_" + ("birch" if kind == "birch" else "pine"), "base", bodied, 160.0)
@@ -135,7 +178,7 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 					_emit(area, far_key, "base", pick, TREE_FAR, TREE_MID, false)
 				else:
 					_emit(area, key, "base", pick, 180.0)
-		_tree_bodies(area, kind, bodied)
+		_tree_bodies(area, kind, bodied, trunk_off)
 	for hd in spec.get("hedges", []):
 		_hedge(area, terrain, hd, rng)
 
@@ -157,22 +200,23 @@ static func _tree(trees: Dictionary, kind: String, pos: Vector3, s: float, rng: 
 	var b := Basis(Vector3.UP, rng.randf() * TAU) * Basis(Vector3.RIGHT, rng.randf_range(-0.03, 0.03))
 	trees[kind].append(Transform3D(b.scaled(Vector3(s, s * rng.randf_range(0.9, 1.12), s)), pos))
 
-static func _tree_bodies(area: Area, kind: String, xfs: Array) -> void:
+static func _tree_bodies(area: Area, kind: String, xfs: Array, offs: Array = []) -> void:
 	var bit := AreaBuilder._tag_bit("base")
-	for t in xfs:
-		var xf: Transform3D = t
+	for ti in xfs.size():
+		var xf: Transform3D = xfs[ti]
 		var sv := xf.basis.get_scale()
 		var body := StaticBody3D.new()
 		body.collision_layer = 1 << (bit - 1)
 		body.collision_mask = 0
 		var cs := CollisionShape3D.new()
 		var cyl := CylinderShape3D.new()
-		cyl.radius = {"pine": 0.3, "grave_pine": 0.7, "snag": 0.25}.get(kind, 0.2) * sv.x
+		cyl.radius = float(TRUNK_R.get(kind, 0.2)) * sv.x
 		cyl.height = 4.0
 		cs.shape = cyl
 		cs.position = Vector3(0, 2.0, 0)
 		body.add_child(cs)
-		body.position = xf.origin
+		var off: Vector2 = offs[ti] if ti < offs.size() else Vector2.ZERO
+		body.position = xf.origin + xf.basis * Vector3(off.x, 0.0, off.y)
 		Surfaces.stamp_kind(body, "tree")
 		area.attach(body, "base")
 
