@@ -778,9 +778,13 @@ func _run() -> void:
 	var phases := {}
 	var t_fight := 0
 	var deaths := 0
-	while boss != null and not boss.dead and t_fight < 60 * 480:
+	# each attempt gets the full time budget: after a fall the Bearer walks back from the hearth and the
+	# holdfast is whole again, so one shared budget made a single death fail the walk (seeds 2 and 3).
+	# Three falls end it. The checks below are unchanged.
+	while boss != null and not boss.dead and t_fight < 60 * 480 and deaths < 3:
 		if player.dead:
 			deaths += 1
+			t_fight = 0
 			await _until(func(): return not player.dead, 10.0)
 			await ticks(30)
 			boss = null
