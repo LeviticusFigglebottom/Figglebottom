@@ -54,7 +54,8 @@ func _secs(s: float):
 func _until(cond: Callable, max_s := 20.0) -> bool:
 	var n := 0
 	var t0 := Time.get_ticks_msec()
-	while not cond.call() and (n < int(max_s * 60.0) or Time.get_ticks_msec() - t0 < int(max_s * 1000.0)):
+	# game time only, so a seeded run repeats; the wall-time floor is for a software renderer's shots
+	while not cond.call() and (n < int(max_s * 60.0) or (shots_dir != "" and Time.get_ticks_msec() - t0 < int(max_s * 1000.0))):
 		await ticks(5)
 		n += 5
 	return cond.call()

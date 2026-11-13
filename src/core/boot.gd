@@ -14,6 +14,10 @@ func _ready() -> void:
 			# RNG (randf in enemy.gd), unseeded, so a walk met a different
 			# fight each time and passed or failed by luck. --test-seed=N to vary.
 			test_seed = hash(arg.get_slice("=", 1))
+		elif arg == "--deterministic":
+			# test walks: synchronous navmesh rebakes (Area.rebake_navmeshes), so nothing a worker
+			# thread finishes "some frames later" can change a seeded run
+			Engine.set_meta("deterministic", true)
 		elif arg.begins_with("--test-seed="):
 			seed_arg = int(arg.get_slice("=", 1))
 		elif arg.begins_with("--scene="):

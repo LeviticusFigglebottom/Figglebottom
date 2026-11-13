@@ -36,7 +36,11 @@ for scene in tools/test/*_test.tscn; do
   [ "$name" = "intro" ] && limit=900   # sits through the opening once
   # the full-game region walks (fullgame_<region>) each play a whole region
   case "$name" in fullgame_*) limit=2700 ;; esac
-  timeout "$limit" godot --headless --path . -- "--test=$name" 2>&1 \
+  # the walks run on a fixed timestep (one physics tick per frame, no real-time catch-up) with
+  # synchronous navmesh rebakes, so a seed alone decides the run (--deterministic, src/core/boot.gd)
+  det=(); dflag=()
+  case "$name" in fullslice|fullgame_*) det=(--fixed-fps 60); dflag=(--deterministic) ;; esac
+  timeout "$limit" godot --headless "${det[@]}" --path . -- "--test=$name" "${dflag[@]}" 2>&1 \
     | grep -vE "ALSA|snd_|libpulse|Condition \"status|dummy driver|Godot Engine|^\s*$" \
     | grep -vE "at: (init_output_device|push_warning)"
   code=${PIPESTATUS[0]}
