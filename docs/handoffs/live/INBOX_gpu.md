@@ -700,3 +700,58 @@ HP drop.
 identical.
 
 **Branch head: e09d46d.** Ready to merge from my side.
+
+---
+
+## 7. fix/table-column-gap: the Longhouse pinch closed, plus a pinch audit across every region (2026-11-13)
+
+Branch `fix/table-column-gap` from main e09d46d, head **c99dd04**. Full `tools/test.sh`: both audits plus **49 / 49
+suites pass, 0 failures**, the new `gaps` suite included.
+
+**The gap (Saltfell, the Longhouse, RIME).**
+- The rime `table_3m` at (−5, 22, −40), rot 94, by the west column row.
+- A roll into it put the Bearer *inside* the table's convex hull, hung 2 cm off the floor.
+- The same failure the hide tent had: a detailed hero hull the physics server stops naming as a wall.
+
+**The fix, in kit data (no area JSON hand-edited):**
+- `table_3m` and `bench_3m` take `"hull": "simple"` (≤ 32 points), the tent's remedy.
+- That exposed a second trap: a capsule perched on the column's 0.3 m plinth lip (7.5 cm proud of the post) against
+  the post. The plinth is now dress (`no_collide`); the post is the column's wall. This applies to every `column_4m`.
+
+**New `gaps` suite.** 25 rolls into that table from a fan of starts (z −40.4 … −41.6) and angles (±25°):
+- none leaves him hung;
+- every one walks back out (east, else along the wall).
+- Foes are removed for the check: the Netmender wakes within 4 m, and her body would part him into the corner.
+
+**The sweep: `tools/audit_pinch.sh`** (`tools/pinch_audit.gd`; `--areas=a,b`, `--out=gaps.json`).
+- Builds every area in THAW and RIME.
+- Lists each pair of solid bodies whose footprints, above step height, stand closer than the capsule's diameter
+  (0.68 m) without touching.
+- ROUTE marks the ones the navmesh reaches within 1 m of, and that lie within 2 m of a navmesh path from the start
+  to a hearth, portal, pickup or gate.
+- **Before: 782 gaps, 23 on a route (13 sites). After: 647 gaps, 4 route entries**, all left by judgement:
+  - a 0.62 m notch in Kettle's floe ring (irregular rock hulls; denser spacing and posts both failed other audits);
+  - two NPC cooks by Tarnhall's ale vat (NPC bodies, not geometry);
+  - a 3 cm hall/gate seam (too narrow to enter).
+- The off-route gaps (rocks, scatter, props against walls) are listed in the JSON, not fixed.
+
+**Fixed through the generators:**
+- Saltfell: the shed's net pile off the boat-shed corner.
+- Lowe:
+  - the kin post off the mound steps;
+  - the peat sled set against the bothy. Off it pinched a capsule, and further off bared `lw_three_spades` to the
+    collision audit.
+  - The arena sod wall packed at 1.1 m.
+- Kettle: the Breathing Hole's floe ring at 1.0 m. Unseen posts were tried and failed the collision audit as
+  invisible walls, so they're gone.
+- Coldwell: the rope-rail piece 0.14 m from the falls' ice dropped.
+- Tarnhall:
+  - the byres moved 0.2 m west, gable to gable with the hall (a 0.2 m slit beside the through door);
+  - the stall partitions run to the wall.
+
+**Collision audit:** 45 / 0. Three baseline offenders now read "gone" (lm_fold_cairn, two Lowe hearthstones), so they
+can be dropped from the baseline.
+
+**Open for you:**
+- the Kettle notch: hand-tuning those floes' rotations, or a visible infill rock;
+- whether the NPC/vat spacing matters to you.
