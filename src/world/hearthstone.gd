@@ -18,23 +18,11 @@ func _ready() -> void:
 	add_to_group("hearths")
 	var vis := KitLib.instance("hearthstone")
 	add_child(vis)
-	# solid post — you rest at the hearth, you don't walk through it
-	var lbody := StaticBody3D.new()
-	lbody.collision_layer = 1 << (RH.L_WORLD_BASE - 1)
-	lbody.collision_mask = 0
-	var lcs := CollisionShape3D.new()
-	var lcyl := CapsuleShape3D.new()
-	# waist-high: enough to stop a body, low enough for the camera's swept
-	# sphere to pass over. A 2.4 m invisible post folded the arm into the
-	# Bearer's cloak whenever the hearth was behind him (every rest at the
-	# Long Hearth, every wake at a hearth)
-	lcyl.radius = 0.38
-	lcyl.height = 0.95
-	lcs.shape = lcyl
-	lcs.position.y = 0.475
-	lbody.add_child(lcs)
-	Surfaces.stamp_kind(lbody, "hearth")
-	vis.add_child(lbody)
+	# solid as drawn: the kerb and its slab take their own trimesh (exact), so the stone stops you and
+	# the pit stays open over the fire (the flames take no collider). The old 0.38 m capsule stood in
+	# the middle of the fire with the 2.2 m kerb bare around it (collision audit: invisible + partial);
+	# a single hull would roof the pit. The camera meets only drawn stone, not an invisible post.
+	KitLib.add_collision(vis, RH.L_WORLD_BASE, false, Surfaces.lookup("kinds", "hearth"))
 	_flames = _find_flames(vis)
 	var lights := KitLib.add_flame_lights(vis, 2.2, 8.8)
 	if lights.size() > 0:

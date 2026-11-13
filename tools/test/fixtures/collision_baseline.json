@@ -3,76 +3,6 @@
  "offenders": [
   {
    "area": "saltfell_steading",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released",
-    "thaw+spring"
-   ],
-   "pos": [
-    -26.03,
-    23.1,
-    23.41
-   ],
-   "size": [
-    0.97,
-    0.95,
-    0.97
-   ]
-  },
-  {
-   "area": "saltfell_steading",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released",
-    "thaw+spring"
-   ],
-   "pos": [
-    23.0,
-    4.15,
-    55.6
-   ],
-   "size": [
-    0.76,
-    0.95,
-    0.76
-   ]
-  },
-  {
-   "area": "saltfell_steading",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw+released",
-    "rime+released",
-    "thaw+spring"
-   ],
-   "pos": [
-    0.0,
-    22.95,
-    -26.31
-   ],
-   "size": [
-    0.76,
-    0.95,
-    0.76
-   ]
-  },
-  {
-   "area": "saltfell_steading",
    "check": "unbacked_floor",
    "fix": "generator: give the drawn floor its collider",
    "id": "kit:boat",
@@ -231,27 +161,6 @@
     1.04,
     2.2,
     1.04
-   ]
-  },
-  {
-   "area": "lowe_barrows",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    39.53,
-    46.56,
-    -203.59
-   ],
-   "size": [
-    0.97,
-    0.95,
-    0.97
    ]
   },
   {
@@ -451,95 +360,6 @@
     4.99,
     2.2,
     4.67
-   ]
-  },
-  {
-   "area": "lowe_barrows",
-   "check": "partial",
-   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    32.15,
-    40.67,
-    -165.38
-   ],
-   "size": [
-    2.19,
-    1.19,
-    2.19
-   ]
-  },
-  {
-   "area": "kettle_fjord",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    -57.97,
-    2.75,
-    -313.28
-   ],
-   "size": [
-    0.97,
-    0.95,
-    0.97
-   ]
-  },
-  {
-   "area": "kettle_fjord",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    -104.0,
-    2.72,
-    -302.98
-   ],
-   "size": [
-    0.76,
-    0.95,
-    0.76
-   ]
-  },
-  {
-   "area": "kettle_fjord",
-   "check": "partial",
-   "fix": "gen_kettle.py: the sledge's \"blocker\" covers half of what is drawn: widen it to the runners",
-   "id": "scene:lm_sledge.glb",
-   "owner": "POI agent (Kettle, Tarnhall, Coldwell)",
-   "passes": [
-    "thaw"
-   ],
-   "pos": [
-    -55.04,
-    2.46,
-    -318.29
-   ],
-   "size": [
-    3.14,
-    0.82,
-    3.59
    ]
   },
   {
@@ -886,96 +706,6 @@
   },
   {
    "area": "tarnhall",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    123.91,
-    24.63,
-    -331.03
-   ],
-   "size": [
-    0.97,
-    0.95,
-    0.97
-   ]
-  },
-  {
-   "area": "tarnhall",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    81.91,
-    14.96,
-    -316.07
-   ],
-   "size": [
-    0.97,
-    0.95,
-    0.97
-   ]
-  },
-  {
-   "area": "tarnhall",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    197.1,
-    25.25,
-    -327.4
-   ],
-   "size": [
-    0.76,
-    0.95,
-    0.76
-   ]
-  },
-  {
-   "area": "tarnhall",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    219.6,
-    25.25,
-    -322.1
-   ],
-   "size": [
-    0.76,
-    0.95,
-    0.76
-   ]
-  },
-  {
-   "area": "tarnhall",
    "check": "partial",
    "fix": "src/world/house_detail.gd / building_gen.gd: a collider for the part, or keep it inside the wall's",
    "id": "house:byres/staves",
@@ -993,29 +723,6 @@
     15.83,
     7.44,
     11.92
-   ]
-  },
-  {
-   "area": "tarnhall",
-   "check": "partial",
-   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    81.71,
-    14.51,
-    -315.55
-   ],
-   "size": [
-    2.05,
-    1.19,
-    2.05
    ]
   },
   {
@@ -1557,50 +1264,6 @@
   },
   {
    "area": "thornwold",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    340.06,
-    35.26,
-    -303.07
-   ],
-   "size": [
-    1.07,
-    0.95,
-    1.07
-   ]
-  },
-  {
-   "area": "thornwold",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    450.1,
-    38.63,
-    -322.0
-   ],
-   "size": [
-    0.76,
-    0.95,
-    0.76
-   ]
-  },
-  {
-   "area": "thornwold",
    "check": "partial",
    "fix": "ShortcutGate with \"leaves\": false: the grown-shut stile is wider than the gate's box; fit the box to the dressing",
    "id": "scene:lm_thorn_stile.glb",
@@ -1723,50 +1386,6 @@
     5.95,
     1.0,
     5.93
-   ]
-  },
-  {
-   "area": "shepherds_reach",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    653.58,
-    77.7,
-    -377.45
-   ],
-   "size": [
-    1.04,
-    0.95,
-    1.04
-   ]
-  },
-  {
-   "area": "shepherds_reach",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime",
-    "thaw+released",
-    "rime+released"
-   ],
-   "pos": [
-    604.03,
-    68.78,
-    -306.09
-   ],
-   "size": [
-    0.97,
-    0.95,
-    0.97
    ]
   },
   {
@@ -3333,48 +2952,6 @@
   },
   {
    "area": "coldwell",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime"
-   ],
-   "pos": [
-    799.74,
-    116.95,
-    -450.56
-   ],
-   "size": [
-    1.07,
-    0.95,
-    1.07
-   ]
-  },
-  {
-   "area": "coldwell",
-   "check": "invisible",
-   "fix": "src/world/hearthstone.gd: the 0.38 m capsule stands in the middle of the fire, where nothing is drawn; see the partial entry",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime"
-   ],
-   "pos": [
-    889.18,
-    153.41,
-    -478.5
-   ],
-   "size": [
-    0.76,
-    0.95,
-    0.76
-   ]
-  },
-  {
-   "area": "coldwell",
    "check": "partial",
    "fix": "gen_coldwell.py: the \"blocker\" is far smaller than the 7.5 m wellhead",
    "id": "scene:lm_wellhead_thaw.glb",
@@ -3416,27 +2993,6 @@
   {
    "area": "coldwell",
    "check": "partial",
-   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime"
-   ],
-   "pos": [
-    799.85,
-    116.44,
-    -450.03
-   ],
-   "size": [
-    2.25,
-    1.19,
-    2.25
-   ]
-  },
-  {
-   "area": "coldwell",
-   "check": "partial",
    "fix": "gen_coldwell.py landmark without \"blocker\": add one (about 0.7 x 1.7 x 0.7)",
    "id": "scene:upwalker.glb",
    "owner": "Lead's endings agent",
@@ -3452,27 +3008,6 @@
     1.38,
     1.9,
     1.96
-   ]
-  },
-  {
-   "area": "coldwell",
-   "check": "partial",
-   "fix": "src/world/hearthstone.gd: the kerb is 2.2 m across and the collider a 0.38 m capsule in its middle: fit the collider to the kerb",
-   "id": "kit:hearthstone",
-   "owner": "Lead's look-pass agent",
-   "passes": [
-    "thaw",
-    "rime"
-   ],
-   "pos": [
-    724.38,
-    86.7,
-    -398.73
-   ],
-   "size": [
-    2.05,
-    1.19,
-    2.05
    ]
   },
   {
