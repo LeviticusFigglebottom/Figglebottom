@@ -294,7 +294,7 @@ SMALL_SPADES = {"id": "small_spades", "at": at(_dx, _dz + 0.55), "item": "item_s
 _cx, _cz = rot_off(BX, BZ - 0.4, BOTHY_ROT, -1.45, 2.55)         # on the bench
 prop("lw_dinner_cloth", _cx, _cz, 30, tag="thaw", collide=False, lift=0.46)
 prop("lw_spade_rack", BX - 3.9, BZ + 1.2, 96)
-prop("lw_peat_sled", BX + 4.4, BZ + 2.2, 62)   # (0.4 m off the bothy pinched a capsule)
+prop("lw_peat_sled", BX + 3.53, BZ + 1.86, 62)   # against the bothy (0.4 m off it pinched a capsule; further off bared the spades)
 
 # --- 3.5 lw_the_rise: the Rise (the road's last crest before the hollow) --------
 # From here the stacks can be counted. Nothing is set on the sight-line.
