@@ -204,7 +204,7 @@ for k, a in enumerate((40.0, 110.0, 200.0, 290.0)):
     rot = r2(a * 1.7 % 360)
     if k < 2:
         PROPS.append({"kit": "tw_clamp_b", "at": at(x, z, -0.06), "rot": rot, "tag": "thaw", "smoke": 2.2})
-        PROPS.append({"kit": "tw_clamp_c", "at": at(x, z, -0.04), "rot": r2(a + 90.0), "tag": "rime", "collide": False})
+        PROPS.append({"kit": "tw_clamp_c", "at": at(x, z, -0.08), "rot": r2(a + 90.0), "tag": "rime"})   # the 1 m ring stands solid, set into the ground
     else:
         PROPS.append({"kit": "tw_clamp_b", "at": at(x, z, -0.06), "rot": rot, "smoke": 2.2})
 # the fifth, not lit yet: billets stacked round the stake, waiting for turf
@@ -376,7 +376,7 @@ spawners = [
 VEIL = at(GX + R1 * math.cos(math.radians(INNER_GAP)), GZ + R1 * math.sin(math.radians(INNER_GAP)))
 # the frost-taken stag statues, mid-bound in the wood (RIME)
 for (sx, sz, rot) in ((372.0, -292.0, 120), (418.0, -350.0, 30)):
-    LANDMARKS.append({"scene": "res://assets/models/enemies/rime_stag.glb", "at": at(sx, sz), "rot": rot, "tag": "rime"})
+    LANDMARKS.append({"scene": "res://assets/models/enemies/rime_stag.glb", "at": at(sx, sz), "rot": rot, "tag": "rime", "hull": True})
 pickups = [
     {"id": "hedging_bill", "at": at(GX - R3 - 3.0, GZ + 5.0, 0.05), "item": "hedging_bill", "tag": "rime", "label": "Take the hedging bill",
      "scene": "res://assets/models/weapons/hedging_bill.glb"},

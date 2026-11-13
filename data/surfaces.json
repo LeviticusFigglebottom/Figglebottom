@@ -106,6 +106,9 @@
  },
  "landmarks": {
   "lm_standing_stone": "stone",
+  "upwalker": "ice",
+  "unsung": "ice",
+  "sledge_dog": "cloth",
   "lm_fold_cairn": "stone",
   "lm_wellhead": "stone",
   "lm_wellhead_thaw": "stone",

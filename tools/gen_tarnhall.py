@@ -100,9 +100,9 @@ GATES = [{"id": "hall_doors", "at": [HALL_X0 - 0.3, FY, DOOR_Z], "rot": -90, "wi
           "dressing": {"scene": "res://assets/models/landmarks/lm_hall_doors.glb", "offset": [0, 0, 0.45], "rot": 0, "scale": 0.4}}]
 STATE_WALLS = [{"tag": "rime", "min": [HALL_X0 - 0.6, DOOR_Z - 1.3], "max": [HALL_X0 + 0.6, DOOR_Z + 1.3]}]
 # the guest-post just inside the door (the guest-tally hangs on it)
-LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_guest_post.glb", "at": [HALL_X0 + 1.0, FY, r2(DOOR_Z + 2.0)], "rot": 90})
+LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_guest_post.glb", "at": [HALL_X0 + 1.0, FY, r2(DOOR_Z + 2.0)], "rot": 90, "hull": True})
 # the high seat at the east end, facing down the hall
-LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_high_seat.glb", "at": [HALL_X1 - 2.0, FY, r2(HALL_C[1] - 3.5)], "rot": -90})
+LANDMARKS.append({"scene": "res://assets/models/landmarks/lm_high_seat.glb", "at": [HALL_X1 - 2.0, FY, r2(HALL_C[1] - 3.5)], "rot": -90, "hull": True})
 
 # --- the Long Table ---------------------------------------------------------
 TABLE_Z = HALL_C[1] - 3.6

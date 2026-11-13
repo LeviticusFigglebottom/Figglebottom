@@ -82,7 +82,13 @@ for k in range(8, len(RIVER) - 4, 6):
     # each stopped mid-something: wading on, standing, bowed, gone to the knees
     # ("pose": clip@fraction, held by PoseHold; unposed they stand arms-out)
     pose = ["walk@0.15", "idle@0.3", "hit@0.45", "walk@0.62", "defeat@0.38", "idle@0.8", "hit@0.3", "walk@0.4"][(k // 6) % 8]
-    LANDMARKS.append({"scene": scene, "at": [x + 0.8 * math.sin(k), r2(y - 0.25), z], "rot": r2(face), "tag": "rime", "pose": pose})
+    # a frozen figure is a solid as tall as its pose (kneeling, bowed, standing): the scene carries no
+    # collider of its own, and a box taller than the pose would be an unseen wall (collision audit)
+    bh = 1.0 if pose.startswith("defeat") else (1.5 if pose.startswith("hit") else 1.75)
+    if "unsung" in scene and pose.startswith("defeat"):
+        bh = 1.75   # the unsung's defeat clip sways back at full height, it does not kneel (collision audit)
+    LANDMARKS.append({"scene": scene, "at": [x + 0.8 * math.sin(k), r2(y - 0.25), z], "rot": r2(face), "tag": "rime", "pose": pose,
+                      "blocker": [0.7, bh, 1.25 if pose.startswith("walk") else (0.95 if "unsung" in scene and pose.startswith("defeat") else 0.7)]})   # (a wading stride runs fore and aft)
 
 # --- the Wellhead ---------------------------------------------------------------------
 # a kerb of river cobbles round the pool (modelled, tools/art/procedural/kit_props.py)
@@ -220,7 +226,7 @@ _rx, _rz = FB.xz(0.5, -(FB.depth * 0.5 + H.PATH_HALF * 2 + H.RIVER_OFF - 0.6))
 _ry = r2(L.height(_rx, _rz) - 0.1)
 _rface = r2(math.degrees(math.atan2(FB.al[0], FB.al[1])))
 LANDMARKS.append({"scene": "res://assets/models/enemies/upwalker.glb", "at": [r2(_rx), _ry, r2(_rz)], "rot": _rface, "tag": "rime",
-                  "pose": "idle@0.55", "scale": 0.86})
+                  "pose": "idle@0.55", "scale": 0.86, "blocker": [0.6, r2(1.75 * 0.86), 0.6]})
 prop("cw_flower_bunch", [r2(_rx + FB.al[0] * 0.26), r2(_ry + 0.98), r2(_rz + FB.al[1] * 0.26)], 0, tag="rime", collide=False, on="hands")
 # the custom itself: thrown in at the water's edge beside Maren and Wren
 SCRIPTED.append({"script": "res://src/world/offering.gd", "at": at(WX - 12.4, WZ + 8.0), "tag": "thaw",
@@ -247,7 +253,9 @@ for f in (0.14, 0.26):       # (a third piece ended 0.14 m from the falls' ice: 
     prop("cw_rope_rail", on_path(5, f, -(H.PATH_HALF - 0.15)), r2(math.degrees(math.atan2(-(H.UPWATER[6][1] - H.UPWATER[5][1]),
                                                                                            H.UPWATER[6][0] - H.UPWATER[5][0]))))
 for kit, (i, f, off) in (("cw_ice_column_b", (4, 0.42, 5.0)), ("cw_ice_column_c", (5, 0.2, 5.3)), ("cw_ice_column_a", (5, 0.52, 5.0))):
-    prop(kit, on_path(i, f, off, -0.3), SS.to_path, tag="rime", collide=False, embed=True)
+    # column a stands where the Bearer can reach it, so it is solid; b and c stand out on the falls' ice with
+    # no ground beside them to walk in from (poi_coldwell), so they stay dressing
+    prop(kit, on_path(i, f, off, -0.3), SS.to_path, tag="rime", embed=True, collide=(kit == "cw_ice_column_a"))
 
 # 8.3 the Sitting Place
 SP = Ledge("sitting_place")

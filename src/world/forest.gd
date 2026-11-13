@@ -91,24 +91,41 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 			var s := rng.randf_range(float(sc[0]), float(sc[1]))
 			_tree(trees, kind, Vector3(x, terrain.height_at(x, z) - 0.15, z), s, rng)
 			placed += 1
+	# no scattered tree against a hedge: its trunk and the hedge's hull would leave a slot narrower than the
+	# Bearer (audit_pinch.sh). Marked after the scatter and skipped when drawn and bodied, so every other tree
+	# keeps its place, its stream and its variant (taken by list index)
+	var hedges: Array = spec.get("hedges", [])
+	var dropped: Dictionary = {}     # kind -> {index: true}
+	if not hedges.is_empty():
+		for kind in trees:
+			var r0: float = {"pine": 0.3, "grave_pine": 0.7, "snag": 0.25}.get(kind, 0.2)
+			dropped[kind] = {}
+			for i in trees[kind].size():
+				var xf: Transform3D = trees[kind][i]
+				if _near_hedge(hedges, Vector2(xf.origin.x, xf.origin.z), r0 * xf.basis.get_scale().x + 0.75):
+					dropped[kind][i] = true
 	for p in spec.get("place", []):
 		var at: Array = p["at"]
 		var x := float(at[0])
 		var z := float(at[1])
 		_tree(trees, String(p["kind"]), Vector3(x, terrain.height_at(x, z) - 0.15, z), float(p.get("scale", 1.0)), rng)
 	for kind in trees:
+		var bodied: Array = []
+		for i in trees[kind].size():
+			if not dropped.get(kind, {}).has(i):
+				bodied.append(trees[kind][i])
 		var vs: Array = []
 		for hv in HERO_TREES.get(kind, []):
 			if ResourceLoader.exists(HERO_DIR + String(hv[0]) + ".glb"):
 				vs.append(hv)
 		if vs.is_empty():
 			# grave pine and snag fall back to the plain pine
-			_emit(area, "tree_" + ("birch" if kind == "birch" else "pine"), "base", trees[kind], 160.0)
+			_emit(area, "tree_" + ("birch" if kind == "birch" else "pine"), "base", bodied, 160.0)
 		else:
 			for vi in vs.size():
 				var pick: Array = []
 				for i in trees[kind].size():
-					if i % vs.size() == vi:
+					if i % vs.size() == vi and not dropped.get(kind, {}).has(i):
 						pick.append(trees[kind][i])
 				var key := "hero|%s|%s|%s|%s" % [vs[vi][0], vs[vi][1], vs[vi][2], vs[vi][3]]
 				if ResourceLoader.exists(HERO_DIR + String(vs[vi][0]) + "_far.glb"):
@@ -118,9 +135,21 @@ static func build(area: Area, terrain: Terrain, spec: Dictionary, keep_clear: Ar
 					_emit(area, far_key, "base", pick, TREE_FAR, TREE_MID, false)
 				else:
 					_emit(area, key, "base", pick, 180.0)
-		_tree_bodies(area, kind, trees[kind])
+		_tree_bodies(area, kind, bodied)
 	for hd in spec.get("hedges", []):
 		_hedge(area, terrain, hd, rng)
+
+## Whether a point stands within `pad` of any hedge's drawn side (half its width off the line).
+static func _near_hedge(hedges: Array, q: Vector2, pad: float) -> bool:
+	for hd in hedges:
+		var pts: Array = hd["pts"]
+		var lim := float(hd.get("w", 1.0)) * 0.5 + pad
+		for i in pts.size() - 1:
+			var a := Vector2(float(pts[i][0]), float(pts[i][1]))
+			var b := Vector2(float(pts[i + 1][0]), float(pts[i + 1][1]))
+			if Geometry2D.get_closest_point_to_segment(q, a, b).distance_to(q) < lim:
+				return true
+	return false
 
 static func _tree(trees: Dictionary, kind: String, pos: Vector3, s: float, rng: RandomNumberGenerator) -> void:
 	if not trees.has(kind):
@@ -433,6 +462,23 @@ static func _hedge(area: Area, terrain: Terrain, hd: Dictionary, rng: RandomNumb
 			body.transform = Transform3D(cb, Vector3(p0.x, y0 + h * core * 0.5 - 0.05, p0.y))
 			Surfaces.stamp_kind(body, "hedge")
 			area.attach(body, tag)
+	if hero_ok and pts.size() >= 2:
+		# its two ends: a small core box (0.8 m) at each, so an end that meets another hedge or a thicket
+		# leaves no slot between its last section hull and the neighbour (audit_pinch.sh)
+		for v in [pts[0], pts[pts.size() - 1]]:
+			var vp := Vector2(float(v[0]), float(v[1]))
+			var jh := h * float(st["core"])
+			var jb := StaticBody3D.new()
+			jb.collision_layer = 1 << (bit - 1)
+			jb.collision_mask = 0
+			var jcs := CollisionShape3D.new()
+			var jbx := BoxShape3D.new()
+			jbx.size = Vector3(0.8, jh, 0.8)
+			jcs.shape = jbx
+			jb.add_child(jcs)
+			jb.position = Vector3(vp.x, terrain.height_at(vp.x, vp.y) + jh * 0.5 - 0.05, vp.y)
+			Surfaces.stamp_kind(jb, "hedge")
+			area.attach(jb, tag)
 	if hero_ok:
 		var names: Array = [hh[0]]
 		for vi in range(2, hh.size()):

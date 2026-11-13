@@ -3965,8 +3965,7 @@
     67.89,
     -294.0
    ],
-   "rot": 0,
-   "collide": false
+   "rot": 0
   },
   {
    "kit": "creel_stack",
@@ -3975,8 +3974,7 @@
     68.35,
     -282.0
    ],
-   "rot": 50,
-   "collide": false
+   "rot": 50
   },
   {
    "kit": "creel_stack",
@@ -3985,8 +3983,7 @@
     67.28,
     -290.0
    ],
-   "rot": 100,
-   "collide": false
+   "rot": 100
   },
   {
    "kit": "sheep",
@@ -7561,13 +7558,12 @@
   {
    "kit": "sr_smudge",
    "at": [
-    599.55,
-    67.67,
-    -292.33
+    597.98,
+    67.57,
+    -291.07
    ],
    "rot": 65.07,
-   "tag": "thaw",
-   "collide": false
+   "tag": "thaw"
   },
   {
    "kit": "sr_smudge",
@@ -7612,12 +7608,11 @@
   {
    "kit": "sr_crook_rack",
    "at": [
-    597.34,
+    596.77,
     67.68,
-    -292.62
+    -292.91
    ],
-   "rot": 192.0,
-   "collide": false
+   "rot": 192.0
   },
   {
    "kit": "sr_counting_stone",
@@ -7746,8 +7741,7 @@
     68.69,
     -283.9
    ],
-   "rot": 172.0,
-   "collide": false
+   "rot": 172.0
   },
   {
    "kit": "sr_cheese_press",
@@ -7765,8 +7759,7 @@
     66.19,
     -279.82
    ],
-   "rot": 200.0,
-   "collide": false
+   "rot": 200.0
   },
   {
    "kit": "sr_fodder_rack",
@@ -8306,8 +8299,8 @@
     7.0
    ],
    [
-    597.34,
-    -292.62,
+    596.77,
+    -292.91,
     2.2
    ],
    [

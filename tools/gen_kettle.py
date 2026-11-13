@@ -257,7 +257,7 @@ while x < 34.0:
         if zf - edge_z(x) > 7.5:
             big = kit in ("boat_upturned", "drying_rack", "net_frame")
             PROPS.append({"kit": kit, "at": at(x, zf - (1.0 if kit == "boat_upturned" else 0.0)),
-                          "rot": 90 if kit == "boat_upturned" else (k * 13) % 9 - 4, "collide": kit == "boat_upturned"})
+                          "rot": 90 if kit == "boat_upturned" else (k * 13) % 9 - 4, "collide": big})   # racks and frames stand solid (collision audit)
             if not big:
                 PROPS.append({"kit": "rope_coil", "at": at(x + 1.4, zf + 0.2), "rot": k * 40 % 360, "collide": False})
         k += 1
@@ -407,12 +407,11 @@ def spit(x, d):
 PICKET = spit(-57.0, 0.5)
 prop("kf_dog_picket", PICKET, 0)
 prop("kf_fish_cord", spit(-63.1, 1.2), 90)
-LANDMARKS.append({"scene": KIT_M + "landmarks/lm_sledge.glb", "at": spit(-55.4, 3.4), "rot": 70, "family": "M_wood",
-                  "blocker": [1.0, 0.8, 2.2]})
+LANDMARKS.append({"scene": KIT_M + "landmarks/lm_sledge.glb", "at": spit(-55.4, 3.4), "rot": 70, "family": "M_wood", "hull": "full"})   # solid as drawn (its runners need the full hull)
 # THAW: four of the six on their tethers (Ivo has two in harness, up by the kettle)
-for k, (dx, dz, yaw) in enumerate([(-1.5, -0.9, 200), (-0.5, 1.2, 20), (0.6, -1.0, 160), (1.5, 1.1, -30)]):
+for k, (dx, dz, yaw) in enumerate([(-1.5, -0.9, 200), (-0.5, 1.75, 20), (0.6, -1.0, 160), (1.5, 1.1, -30)]):   # (one clear of the picket)
     LANDMARKS.append({"scene": KIT_M + "enemies/sledge_dog.glb", "at": spit(-57.0 + dx, 0.5 + dz), "rot": yaw, "tag": "thaw",
-                      "pose": "walk@%.2f" % (0.1 + 0.2 * k)})
+                      "pose": "walk@%.2f" % (0.1 + 0.2 * k), "blocker": [0.5, 0.8, 1.0]})   # a posed dog: a body-sized box
 POLE = dict(POI, id="sounding_pole", at=spit(-59.2, 0.9), item="item_sounding_pole", tag="rime",
             label="Take the sounding pole", scene=KIT_M + "props/sounding_pole.tscn")
 WAYSIDE_CLEAR.append([(SPIT_X0 + SPIT_X1) * 0.5, r2(edge_z(-59) + 2.0), 8.0])
@@ -428,8 +427,8 @@ GATES.append({"id": "net_cleft", "at": GATE_AT, "rot": -90, "width": CLEFT_W, "l
 CLEFT_CACHE = dict(POI, id="cleft_cache", at=at(CLEFT_X - 0.5, L.CLEFT_Z[1] - 0.45), item="bog_iron", count=2, tag="rime",
                    label="Take the net-weights")
 # nets hung out of the wind along the walls (the way between them stays clear)
-prop("net_frame", at(CLEFT_X - 1.6, L.CLEFT_Z[1] + 0.15), 0, collide=False)
-prop("net_frame", at(CLEFT_X + 1.2, L.CLEFT_Z[0] - 0.15), 180, collide=False)
+prop("net_frame", at(CLEFT_X - 2.2, L.CLEFT_Z[1] + 0.15), 0)     # solid as drawn, against the wall, clear of the hurdle
+prop("net_frame", at(CLEFT_X + 0.5, L.CLEFT_Z[0] - 0.15), 180)   # a capsule clear of the gate's hurdle (audit_pinch.sh)
 prop("rope_coil", at(CLEFT_X - 3.0, L.CLEFT_Z[0] + 0.45), 30, collide=False)
 prop("kf_tool_rack", at(CLEFT_X - 6.6, L.CLEFT_Z[1] + 0.35), 0)
 WAYSIDE_CLEAR.append([CLEFT_X, CLEFT_ZC, 9.0])

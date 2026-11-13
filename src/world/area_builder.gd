@@ -229,6 +229,20 @@ static func _build(area_id: String) -> Area:
 			if spec.has("pose"):
 				# a rigged figure as dressing: one held frame, not the bind pose
 				PoseHold.attach(lm, String(spec["pose"]))
+			if spec.has("hull") and spec["hull"] and not spec.has("pose"):
+				# solid as drawn: a simplified hull (<= 32 points) of each of its own meshes, riding it
+				# (a held pose is not the mesh's rest shape: posed figures take a "blocker" instead)
+				for mi in KitLib._mesh_instances(lm):
+					if mi.mesh == null:
+						continue
+					var hb := StaticBody3D.new()
+					hb.collision_layer = 1 << (_tag_bit(lm_tag) - 1)
+					hb.collision_mask = 0
+					var hcs := CollisionShape3D.new()
+					hcs.shape = mi.mesh.create_convex_shape(true, not (spec["hull"] is String and spec["hull"] == "full"))   # "full": every point (thin runners)
+					hb.add_child(hcs)
+					Surfaces.stamp(hb, String(spec.get("surface", Surfaces.for_landmark(String(spec["scene"]), String(spec.get("family", ""))))))
+					mi.add_child(hb)
 			if spec.has("tilt"):
 				lm.rotation_degrees.x = float(spec["tilt"])
 			if spec.has("scale"):
@@ -734,7 +748,7 @@ static func _prop_collides(spec: Dictionary) -> bool:
 
 ## Kits that are walls/openings you must pass through — these keep exact
 ## trimesh collision. Anything NOT here gets a solid convex blocker.
-const STRUCTURAL_KITS := ["wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "floor_4x4",
+const STRUCTURAL_KITS := ["tw_clamp_c", "wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "floor_4x4",
 	"fence_iron_4m", "gate_iron", "roof_slab_4m", "frost_veil_frame", "cw_shelter"]
 
 static func _is_structural(kit) -> bool:

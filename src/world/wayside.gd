@@ -327,7 +327,9 @@ static func _group(area: Area, t: Terrain, kind: String, p: Vector3, rng: Random
 			var bend := rng.randf_range(-0.12, 0.12)
 			for i in cnt:
 				var k := float(i) - float(cnt - 1) * 0.5
-				var q := p + fwd * k * 2.6 + side * bend * k * k
+				# 3.1 m apart: at 2.6 a pair of the larger stones stood half a metre apart, a slot that pinches a
+				# capsule (audit_pinch.sh)
+				var q := p + fwd * k * 3.1 + side * bend * k * k
 				_landmark(area, t, "lm_standing_stone.glb", q, rng.randf() * 360.0, rng.randf_range(0.7, 1.2), rng.randf_range(-7.0, 7.0))
 		"sledge":
 			_landmark(area, t, "lm_sledge.glb", p, yaw, 1.0, 0.0)

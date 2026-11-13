@@ -175,12 +175,11 @@
    "kit": "tw_clamp_c",
    "at": [
     353.66,
-    35.27,
+    35.23,
     -299.57
    ],
    "rot": 130.0,
    "tag": "rime",
-   "collide": false,
    "range": 75.0
   },
   {
@@ -199,12 +198,11 @@
    "kit": "tw_clamp_c",
    "at": [
     342.58,
-    34.5,
+    34.46,
     -296.6
    ],
    "rot": 200.0,
    "tag": "rime",
-   "collide": false,
    "range": 75.0
   },
   {
@@ -568,7 +566,8 @@
     -292.0
    ],
    "rot": 120,
-   "tag": "rime"
+   "tag": "rime",
+   "hull": true
   },
   {
    "scene": "res://assets/models/enemies/rime_stag.glb",
@@ -578,7 +577,8 @@
     -350.0
    ],
    "rot": 30,
-   "tag": "rime"
+   "tag": "rime",
+   "hull": true
   }
  ],
  "gates": [

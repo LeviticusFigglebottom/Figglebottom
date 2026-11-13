@@ -5730,7 +5730,7 @@
     -302.85
    ],
    "rot": 0,
-   "collide": false
+   "collide": true
   },
   {
    "kit": "boat_upturned",
@@ -5770,7 +5770,7 @@
     -293.3
    ],
    "rot": 3,
-   "collide": false
+   "collide": true
   },
   {
    "kit": "rope_coil",
@@ -5800,7 +5800,7 @@
     -291.9
    ],
    "rot": 2,
-   "collide": false
+   "collide": true
   },
   {
    "kit": "rope_coil",
@@ -5928,24 +5928,22 @@
   {
    "kit": "net_frame",
    "at": [
-    -19.6,
-    2.5,
+    -20.2,
+    2.54,
     -303.85
    ],
    "rot": 0,
-   "tag": "base",
-   "collide": false
+   "tag": "base"
   },
   {
    "kit": "net_frame",
    "at": [
-    -16.8,
+    -17.5,
     2.36,
     -307.15
    ],
    "rot": 180,
-   "tag": "base",
-   "collide": false
+   "tag": "base"
   },
   {
    "kit": "rope_coil",
@@ -6307,11 +6305,7 @@
    ],
    "rot": 70,
    "family": "M_wood",
-   "blocker": [
-    1.0,
-    0.8,
-    2.2
-   ]
+   "hull": "full"
   },
   {
    "scene": "res://assets/models/enemies/sledge_dog.glb",
@@ -6322,18 +6316,28 @@
    ],
    "rot": 200,
    "tag": "thaw",
-   "pose": "walk@0.10"
+   "pose": "walk@0.10",
+   "blocker": [
+    0.5,
+    0.8,
+    1.0
+   ]
   },
   {
    "scene": "res://assets/models/enemies/sledge_dog.glb",
    "at": [
     -57.5,
-    1.82,
-    -319.17
+    1.81,
+    -318.62
    ],
    "rot": 20,
    "tag": "thaw",
-   "pose": "walk@0.30"
+   "pose": "walk@0.30",
+   "blocker": [
+    0.5,
+    0.8,
+    1.0
+   ]
   },
   {
    "scene": "res://assets/models/enemies/sledge_dog.glb",
@@ -6344,7 +6348,12 @@
    ],
    "rot": 160,
    "tag": "thaw",
-   "pose": "walk@0.50"
+   "pose": "walk@0.50",
+   "blocker": [
+    0.5,
+    0.8,
+    1.0
+   ]
   },
   {
    "scene": "res://assets/models/enemies/sledge_dog.glb",
@@ -6355,7 +6364,12 @@
    ],
    "rot": -30,
    "tag": "thaw",
-   "pose": "walk@0.70"
+   "pose": "walk@0.70",
+   "blocker": [
+    0.5,
+    0.8,
+    1.0
+   ]
   },
   {
    "scene": "res://assets/models/landmarks/lm_healer_sledge.glb",

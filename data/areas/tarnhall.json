@@ -5352,7 +5352,8 @@
     24.3,
     -327.0
    ],
-   "rot": 90
+   "rot": 90,
+   "hull": true
   },
   {
    "scene": "res://assets/models/landmarks/lm_high_seat.glb",
@@ -5361,7 +5362,8 @@
     24.3,
     -333.5
    ],
-   "rot": -90
+   "rot": -90,
+   "hull": true
   },
   {
    "scene": "res://assets/models/props/hall_coat.tscn",

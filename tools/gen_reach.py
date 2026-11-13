@@ -52,7 +52,7 @@ for (sx, sz, rot) in H.SHEILINGS[1:]:
 # peat stacks and a woodpile by the sheilings
 for k, (dx, dz) in enumerate(((7.0, 2.0), (-6.0, 5.0), (9.0, -6.0))):
     sx, sz, _ = H.SHEILINGS[k]
-    PROPS.append({"kit": "creel_stack", "at": at(sx + dx, sz + dz), "rot": k * 50, "collide": False})
+    PROPS.append({"kit": "creel_stack", "at": at(sx + dx, sz + dz), "rot": k * 50})   # solid as drawn
 
 # --- the High Fold: a dry-stone ring with one gap, the cairn inside --------------
 GAP_A = 135.0                      # the gap faces down the trod toward the bridge
@@ -321,7 +321,8 @@ pickups.append({"id": "sheiling_bow", "at": at(_px, _pz), "rot": r2(S0R), "item"
 SMUDGE = rot_off(S0X, S0Z, S0R, -1.2, 3.5)
 _fx, _fz = S0_DOOR[0] - SMUDGE[0], S0_DOOR[1] - SMUDGE[1]
 SMUDGE_FACE = r2(math.degrees(math.atan2(-_fx, -_fz)))             # her face (local -Z) to the door
-PROPS.append({"kit": "sr_smudge", "at": at(SMUDGE[0], SMUDGE[1]), "rot": r2(SMUDGE_FACE + 25), "tag": "thaw", "collide": False})
+_sgx, _sgz = rot_off(S0X, S0Z, S0R, -3.0, 4.4)                     # THAW: grazing off to the side, past the door's threshold
+PROPS.append({"kit": "sr_smudge", "at": at(_sgx, _sgz), "rot": r2(SMUDGE_FACE + 25), "tag": "thaw"})   # she stands solid where she grazes
 _rm = {"M_fleece": "M_rime", "M_wool": "M_rime", "M_leather": "M_rime"}
 PROPS.append({"kit": "sr_smudge", "at": at(SMUDGE[0], SMUDGE[1]), "rot": SMUDGE_FACE, "tag": "rime", "collide": True, "mat_remap": _rm,
               "group": "flock_rime", "absent_flag": "ks_fellcaller_released"})
@@ -332,8 +333,8 @@ pickups.append({"id": "smudge_look", "at": at(_lx, _lz), "tag": "rime", "bare": 
                 "look": "A ewe with a dark smear down her nose. She is the only one on the fell not facing the fold. She is facing the door."})
 pickups.append({"id": "smudge_pocket", "at": at(_lx, _lz), "tag": "thaw", "bare": True, "label": "Turn out the pocket", "needs_item": "armour_fleece",
                 "warmth": 90, "set_flag": "ks_smudge_fed"})
-_cx, _cz = rot_off(S0X, S0Z, S0R, -3.3, 2.75)
-prop("sr_crook_rack", _cx, _cz, S0R + 180, collide=False)          # the crooks by the door, under the eave
+_cx, _cz = rot_off(S0X, S0Z, S0R, -3.8, 2.35)   # against the wall, clear of the door (a slot behind it pinched)
+prop("sr_crook_rack", _cx, _cz, S0R + 180)          # the crooks by the door, under the eave (solid as drawn)
 
 # --- 7.1 sr_counting_stone: the Counting Stone (the beck's south bank) ----------
 # On its pad (high_land.COUNTING_PAD), 5 m short of the plank bridge and 3 m
@@ -437,7 +438,7 @@ for k in (1, 2):
     _x, _z = rot_off(sx, sz, sr, 2.4, 3.6)
     prop("sr_shearing_stool" if k == 1 else "sr_cheese_press", _x, _z, sr + 150)
     _x, _z = rot_off(sx, sz, sr, -2.6, 3.5)
-    prop("sr_crook_rack", _x, _z, sr + 180, collide=False)
+    prop("sr_crook_rack", _x, _z, sr + 180)
 # variety (owner: more kinds, fewer repeats), each where it is used
 prop("sr_fodder_rack", 611.5, -298.2, 70)                               # winter hay, by the sheilings
 prop("sr_fodder_rack", 632.0, -288.0, 15)
