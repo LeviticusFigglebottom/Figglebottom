@@ -748,7 +748,7 @@ static func _prop_collides(spec: Dictionary) -> bool:
 
 ## Kits that are walls/openings you must pass through — these keep exact
 ## trimesh collision. Anything NOT here gets a solid convex blocker.
-const STRUCTURAL_KITS := ["tw_clamp_c", "wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "floor_4x4",
+const STRUCTURAL_KITS := ["boat", "sf_boat_half", "tw_clamp_c", "wall_4x4", "wall_low_4m", "portal_4m", "arch_4m", "floor_4x4",
 	"fence_iron_4m", "gate_iron", "roof_slab_4m", "frost_veil_frame", "cw_shelter"]
 
 static func _is_structural(kit) -> bool:

@@ -41,6 +41,9 @@ var length := 9.5
 var opens: Array = []
 var doors: Array = []      # {side, t, bay, leaf}
 var windows: Array = []    # {side, t0, t1, y0, y1, open}
+## Each opened window shutter as a solid: [centre, basis, size] in the house's own frame. BuildingGen gives
+## each a box, so a shutter swung out at head height collides as drawn (collision audit: "partial").
+var shutter_boards: Array = []
 var louvre_z := INF        # ridge position of the smoke-hole, INF = none
 var origin := Vector3.ZERO
 var area_def: Dictionary = {}
@@ -447,7 +450,13 @@ func _window(wn: Dictionary) -> void:
 		# a byre vent: one upright bar across the slot
 		fine.box(Vector3(0.035, y1 - y0, 0.035), Transform3D(Basis(Vector3.UP, 0.6), Vector3((t0 + t1) * 0.5, (y0 + y1) * 0.5, 0.0)), 1)
 		return
-	_leaf(Transform3D(Basis(Vector3.UP, -open), Vector3(t0 - 0.01, y0 + 0.005, 0.118)), t1 - t0 + 0.02, y1 - y0 - 0.01, 1.0, false, false)
+	var hinge := Transform3D(Basis(Vector3.UP, -open), Vector3(t0 - 0.01, y0 + 0.005, 0.118))
+	_leaf(hinge, t1 - t0 + 0.02, y1 - y0 - 0.01, 1.0, false, false)
+	if open > 0.2:
+		var full := wood.xf * hinge
+		var lw := t1 - t0 + 0.02
+		var lh := y1 - y0 - 0.01
+		shutter_boards.append([full * Vector3(lw * 0.5, lh * 0.5, 0.0), full.basis.orthonormalized(), Vector3(lw, lh, 0.06)])
 
 # -------------------------------------------------------------------- roof
 

@@ -222,6 +222,13 @@ static func build(area: Area, spec: Dictionary) -> Node3D:
 		cs.shape = bx
 		cs.position = s[0]
 		body.add_child(cs)
+	for sb in hd.shutter_boards:      # opened shutters, solid as drawn
+		var scs := CollisionShape3D.new()
+		var sbx := BoxShape3D.new()
+		sbx.size = sb[2]
+		scs.shape = sbx
+		scs.transform = Transform3D(sb[1], sb[0])
+		body.add_child(scs)
 	Surfaces.stamp(body, String(spec.get("surface", Surfaces.lookup("kinds", "house"))))
 	root.add_child(body)
 	area.attach(root, tag)

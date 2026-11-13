@@ -132,12 +132,19 @@ for (ex, ez) in (STONES[0], STONES[13]):
     for f in (0.36, 0.78):     # from the veil's edge out to the stone
         mx, mz = GAP[0] + (ex - GAP[0]) * (0.47 + 0.53 * f), GAP[1] + (ez - GAP[1]) * (0.47 + 0.53 * f)
         _shut(mx, mz, 0.6, 1, math.degrees(math.atan2(ez - GAP[1], ex - GAP[0])))
-# two old houses on the level, flanking the way in (BuildingGen turf houses)
-for i, (hx, hz) in enumerate(((WX - 22.0, WZ - 17.0), (WX - 22.0, WZ + 17.0))):
+# two old houses on the level, north and south of the ring (BuildingGen turf houses). At (WX - 22, WZ -+ 17)
+# they stood on the 45-degree corrie wall (ground -17 m to +12 m across the footprint; no floor at either door,
+# collision audit "threshold"); 14.5-15 m out the level runs 0.2 m across a 6 x 8 footprint (the south side falls away beyond 16 m), clear of the ring's
+# stones (10 m) and of the dipper trough, the Sitting folk and the unsung by the way in (west)
+# (the south house stays on the corrie wall for now: on the level 14-15 m south its eaves read "partial"
+# in every orientation tried; see INBOX_gpu item 10)
+for i, (hx, hz) in enumerate(((WX - 22.0, WZ - 17.0), (WX, WZ + 15.0))):
     hy = g(hx, hz)
-    HOUSES.append({"id": "wellhouse_%d" % i, "center": [hx, hz], "size": [6, 8], "yaw": 90, "y": hy,
-                   "doors": [["W", 0 if i == 0 else 1]], "gate_doors": [], "open": [], "wall_h": 2.8})
-    BUILDINGS.append({"id": "wellhouse_%d" % i, "center": [hx, hz], "size": [6, 8], "yaw": 90, "y": hy, "doors": [], "open": []})
+    hyaw = 90
+    hdoor = "W"                        # the north house's west door faces out from the ring
+    HOUSES.append({"id": "wellhouse_%d" % i, "center": [hx, hz], "size": [6, 8], "yaw": hyaw, "y": hy,
+                   "doors": [[hdoor, 0 if i == 0 else 1]], "gate_doors": [], "open": [], "wall_h": 2.8})
+    BUILDINGS.append({"id": "wellhouse_%d" % i, "center": [hx, hz], "size": [6, 8], "yaw": hyaw, "y": hy, "doors": [], "open": []})
 
 # --- people and the frost-taken ----------------------------------------------------------
 
