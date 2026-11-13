@@ -10,22 +10,24 @@ extends Node
 signal shake_requested(trauma: float, duration: float)
 signal post_flash_requested(kind: String, might: float)
 
-var _clock := 0.0           # unscaled seconds, advanced in _process
-var _hitstop_until := -1.0  # < 0: no hitstop running
+var _clock_ms := 0.0          # unscaled milliseconds, advanced in _process
+var _hitstop_until_ms := 0     # when the last hitstop ends, on that clock (kept after it ends)
+var _stopped := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 func _process(delta: float) -> void:
-	_clock += delta / maxf(Engine.time_scale, 0.0001)
-	if _hitstop_until >= 0.0 and _clock >= _hitstop_until:
-		_hitstop_until = -1.0
+	_clock_ms += delta / maxf(Engine.time_scale, 0.0001) * 1000.0
+	if _stopped and _clock_ms >= _hitstop_until_ms:
+		_stopped = false
 		Engine.time_scale = 1.0
 
 ## Freeze gameplay briefly. Uses Engine.time_scale; stacked calls extend.
 func hitstop(duration := 0.09, scale := 0.05) -> void:
 	Engine.time_scale = scale
-	_hitstop_until = maxf(_hitstop_until, _clock + duration)
+	_hitstop_until_ms = maxi(_hitstop_until_ms, int(_clock_ms) + int(duration * 1000.0))
+	_stopped = true
 
 func shake(trauma: float, duration := 0.18) -> void:
 	shake_requested.emit(trauma, duration)
@@ -161,4 +163,5 @@ func spawn_hit_fx(world_pos: Vector3, normal := Vector3.UP, kind := "blood") -> 
 
 func reset() -> void:
 	_hitstop_until_ms = 0
+	_stopped = false
 	Engine.time_scale = 1.0
