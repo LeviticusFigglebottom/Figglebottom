@@ -25,7 +25,7 @@ const PIECES := {
 	"gate_iron": {"size": [3.6, 0.3, 3.2], "origin": "bottom-center"},
 	"fence_iron_4m": {"size": [4, 0.3, 3], "origin": "bottom-center"},
 	"frost_veil_frame": {"size": [4, 1, 5.2], "origin": "bottom-center", "opening": [3.2, 3.1]},
-	"hearthstone": {"size": [1.3, 1.3, 1.4], "origin": "bottom-center"},
+	"hearthstone": {"nav_block": 0.6, "size": [1.3, 1.3, 1.4], "origin": "bottom-center"},
 	"brazier": {"size": [0.6, 0.6, 1.1], "origin": "bottom-center"},
 	"candelabra": {"size": [0.6, 0.6, 1.1], "origin": "bottom-center"},
 	"plaque": {"size": [0.74, 0.3, 1.2], "origin": "bottom-center"},
@@ -62,7 +62,7 @@ const PIECES := {
 	"boat": {"size": [1.8, 6.0, 0.9], "origin": "bottom-center"},
 	"drying_rack": {"size": [4.0, 1.2, 2.2], "origin": "bottom-center"},
 	"ladder": {"size": [0.6, 0.2, 4.0], "origin": "bottom-center"},
-	"salt_pan": {"size": [3.0, 2.0, 0.45], "origin": "bottom-center"},
+	"salt_pan": {"nav_block": true, "size": [3.0, 2.0, 0.45], "origin": "bottom-center"},
 	# the Long Table's places (look pass 5): a horn beaker, the same frozen
 	# over, a bread board, and a soapstone fat lamp lit or cold
 	"feast_horn": {"size": [0.1, 0.1, 0.3], "origin": "bottom-center"},
@@ -145,7 +145,7 @@ const PIECES := {
 	"sf_oar_rack": {"size": [3.2, 0.8, 2.0], "origin": "bottom-center"},
 	"sf_net_sinkers": {"size": [1.9, 0.6, 1.4], "origin": "bottom-center"},
 	"sf_kelp_rick": {"size": [3.2, 0.65, 0.85], "origin": "bottom-center"},
-	"sf_salt_pan_split": {"size": [3.0, 2.0, 0.5], "origin": "bottom-center"},
+	"sf_salt_pan_split": {"nav_block": true, "size": [3.0, 2.0, 0.5], "origin": "bottom-center"},
 	"sf_lookout_stone": {"size": [1.9, 1.25, 0.4], "origin": "bottom-center"},
 	"sf_three_bowls": {"size": [0.3, 0.3, 0.15], "origin": "bottom-center"},
 	"sf_needle_case": {"size": [0.25, 0.11, 0.04], "origin": "bottom-center"},
@@ -1208,3 +1208,52 @@ static func add_collision(piece: Node3D, layer_bit: int, convex := false, surfac
 		Surfaces.stamp(body, surface if surface != "" else Surfaces.for_kit(kit_id, String(mi.get_meta("family", ""))))
 		body.set_meta(PropStrike.META_GROUP, piece.get_instance_id())   # one piece, one burst
 		mi.add_child(body)
+	var nbk: Variant = (PIECES.get(kit_id, {}) as Dictionary).get("nav_block", false)
+	if (nbk is bool and nbk) or nbk is float:
+		_add_nav_block(piece, layer_bit, float(nbk) if nbk is float else 0.0)
+
+## "nav_block": true on a piece: stone lower than the bake's climb (0.4 m, in
+## 0.2 m cells) but higher than the Bearer's step (move/step_height) gets a
+## path laid over it that no capsule can walk. A nav-only box over the drawn
+## piece, on its own state's nav-block layers, keeps routes round it; nothing
+## collides with it. A number instead of true is a drum of that radius at the
+## piece's middle: the hearth's, under its 0.8 m kerb, since the bake's own
+## 0.6 m margin round it must leave the respawn point (1.4 m out) walkable.
+static func _add_nav_block(piece: Node3D, layer_bit: int, drum_r := 0.0) -> void:
+	var bb := AABB()
+	var first := true
+	for mi in _mesh_instances(piece):
+		if mi.mesh == null or String(mi.name).contains("flame"):
+			continue
+		var t := Transform3D.IDENTITY
+		var q: Node = mi
+		while q != piece and q is Node3D:
+			t = (q as Node3D).transform * t
+			q = q.get_parent()
+		var b := t * mi.get_aabb()
+		bb = b if first else bb.merge(b)
+		first = false
+	if first:
+		return
+	var bits := 0
+	if layer_bit != RH.L_WORLD_RIME:
+		bits |= 1 << (RH.L_NAV_BLOCK_THAW - 1)
+	if layer_bit != RH.L_WORLD_THAW:
+		bits |= 1 << (RH.L_NAV_BLOCK_RIME - 1)
+	var body := StaticBody3D.new()
+	body.name = "NavBlock"
+	body.collision_layer = bits
+	body.collision_mask = 0
+	var cs := CollisionShape3D.new()
+	if drum_r > 0.0:
+		var cyl := CylinderShape3D.new()
+		cyl.radius = drum_r
+		cyl.height = 1.0
+		cs.shape = cyl
+	else:
+		var box := BoxShape3D.new()
+		box.size = Vector3(bb.size.x, 1.0, bb.size.z)
+		cs.shape = box
+	body.add_child(cs)
+	piece.add_child(body)
+	body.position = Vector3(bb.get_center().x, bb.position.y + 0.5, bb.get_center().z)
