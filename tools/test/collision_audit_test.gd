@@ -253,6 +253,14 @@ func _merge(id: String, f: Dictionary) -> void:
 		if not (pass_name in m["passes"]):
 			m["passes"].append(pass_name)
 		return
+	# the same thing seen by another pass a few cm on (a ewe FlockWander has
+	# moved in real time) may round to a different metre: one finding, not two
+	for k in merged:
+		var o: Dictionary = merged[k]
+		if o["area"] == id and o["check"] == f["check"] and o["id"] == f["id"] and not (pass_name in o["passes"]) \
+				and (o["pos"] as Vector3).distance_to(p) < 0.25:
+			o["passes"].append(pass_name)
+			return
 	f["area"] = id
 	f["passes"] = [pass_name]
 	merged[key] = f
