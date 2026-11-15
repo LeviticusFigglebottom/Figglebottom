@@ -337,6 +337,14 @@ func _die() -> void:
 			(h as BrokenIce).close()
 	holes.clear()
 	band = null
+	# KETTLE.md 9: the ring and *every* broken patch close, not only his own: a
+	# fisher drawn into the fight's last seconds may have cut one that is still open
+	var home: Node = get_parent()
+	while home != null and not (home is Area):
+		home = home.get_parent()
+	for b in get_tree().get_nodes_in_group("broken_ice"):
+		if is_instance_valid(b) and (home == null or home.is_ancestor_of(b)):
+			(b as BrokenIce).close()
 	died.emit(self)
 	_release_flow.call_deferred()
 
