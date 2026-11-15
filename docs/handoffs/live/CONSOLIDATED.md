@@ -1,10 +1,30 @@
 # Live handoff: Rimeholt
 
-_Last updated: 2026-11-12 (integration session: `feat/integration-1112`; the sections below it are the lead's of 2026-11-10)_
+_Last updated: 2026-11-15 (lead)_
 
 Read `docs/handoffs/live/TEAM.md` next: it has the roster, file ownership and how the sessions talk.
 
-## Main moved to a37afed (2026-11-12 ~11:55 UTC), on the owner's request, ahead of the last gate
+## Now (2026-11-15): main at 18ae11c, playable builds on GitHub Releases
+
+**Main = 18ae11c.** On top of a37afed it now has the Tarnhall walk fix, the map rebake, the weapon finds (spear, greatblade, bow and 20 arrows), the HUD perf fix, THAW light passes 1 and 2, test seeding and deterministic walks, the fall clamp, the pinch fixes, streaming and progression gates, collision batches 1 and 2 (baseline 237 -> 103) and the release pipeline.
+
+**Builds.** `.github/workflows/export.yml` runs on every push to main that touches more than docs. It exports Windows (.zip), Linux (.tar.gz) and macOS Apple silicon and Intel (.dmg, ad-hoc signed, not notarized), checks each one starts headless on its own OS, then publishes a GitHub Release tagged `build-YYYYMMDD-HHMM-<sha>`. Latest: https://github.com/LeviticusFigglebottom/Figglebottom/releases/latest. The macOS job adds `import_etc2_astc` to project.godot on the runner only, so working copies carry one texture set.
+
+**Collision batch 2 (merged at 18ae11c).** Kits can carry `nav_block` in `KitLib.PIECES`: a box (or drum, if a number) that only the navmesh bake sees. It keeps routes off kerbs between the player's 0.35 m step and the navmesh's 0.4 m climb. The hearthstone (0.6 m drum) and both salt pans have it. Other kits in that height gap (`bench_3m`, `cw_slab_bench`, `sr_shearing_stool`, ...) do not yet. The Ice-Cutter's release now closes every open patch in his area. Collision-audit findings within 0.25 m across passes merge into one; three shepherds_reach sheep print as "gone (fixed?)" because the baseline recorded them twice; regenerate the baseline to clear that.
+
+**Verification of 18ae11c.** Local (cloud box): `tools/test.sh` 49 suites green (collision_audit green after its fix), all eight full-game walks green, originality OK. GitHub `ci.yml` with `fullgame=true` dispatched on 18ae11c; check its result before the next merge.
+
+**Next exact steps.**
+1. Confirm the `ci.yml` fullgame run on 18ae11c is green (`gh api repos/LeviticusFigglebottom/Figglebottom/actions/workflows/ci.yml/runs?branch=main&per_page=1`).
+2. Streaming session ("Rimeholt: streaming and progression (Opus)") waits on the owner's "go" for: 11 gate pieces lacking collision, ADR 0014/0015 renumbering, robust frame-budget checks, splitting "graft: what acts" across frames plus prewarm. Real-GPU target: warm crossings <= 33 ms (now 35-81), cold <= 50 ms (Saltfell 131, Reach 98).
+3. GPU worker is paused by the owner. Held for it: door-dressing collision batch, wellhouse_0 slope, hitch re-measure after the streaming fixes.
+4. Add `nav_block` to the remaining 0.35-0.65 m kits.
+
+**Open questions for the owner.** Does a lit torch do damage (0 now)? Does a trader sell arrows? Does the repo stay public? macOS notarization ($99/yr Apple Developer account) to remove the first-launch warning?
+
+**Known breakages.** Real-GPU area-crossing hitches above target (above). The streaming suite's frame-budget checks can fail on a busy box and pass on rerun.
+
+## Earlier: main moved to a37afed (2026-11-12 ~11:55 UTC), on the owner's request, ahead of the last gate
 
 The owner asked for main now so they could play it. Main = `feat/integration-1112` at a37afed.
 **Known breakages on main:**
