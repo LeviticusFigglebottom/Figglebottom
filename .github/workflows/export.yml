@@ -1,8 +1,9 @@
-name: Build — playable export
+name: Build — Windows, Linux and macOS
 
-# Packages Windows and Linux builds of main without waiting on the test suite,
-# so the owner can always play the latest main. Tests stay in ci.yml.
-# Grab the builds from the run's Artifacts.
+# Packages playable builds of main without waiting on the test suite (tests stay
+# in ci.yml), checks each one starts on its own OS, and publishes them as a
+# GitHub Release: Windows .zip, Linux .tar.gz, macOS .dmg.
+# Latest: https://github.com/<owner>/<repo>/releases/latest
 on:
   workflow_dispatch:
   push:
@@ -19,21 +20,27 @@ env:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Free disk space
+        # three ~1.7 GB exports plus their archives need room the runner lacks by default
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h .
 
       - name: Install Godot + export templates
         run: |
           set -e
           curl -sSL -o godot.zip \
             "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
-          unzip -q godot.zip
+          unzip -q godot.zip && rm godot.zip
           sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
           curl -sSL -o templates.tpz \
             "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
           mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
-          unzip -q templates.tpz
+          unzip -q templates.tpz && rm templates.tpz
           mv templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
 
       - name: Import project resources
@@ -44,30 +51,110 @@ jobs:
           godot --headless --path . --import 2>&1 | tail -2 || true
           echo "imported files: $(ls .godot/imported | wc -l)"
 
+      - name: Name the build
+        id: tag
+        run: echo "tag=build-$(date -u +%Y%m%d-%H%M)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Export Windows
         run: |
-          mkdir -p build/windows
-          godot --headless --path . --export-release "Windows" build/windows/Rimeholt.exe 2>&1 | tail -3
-          test -f build/windows/Rimeholt.exe
-          ls -la build/windows
+          mkdir -p build/Rimeholt-windows dist
+          godot --headless --path . --export-release "Windows" build/Rimeholt-windows/Rimeholt.exe 2>&1 | tail -3
+          test -f build/Rimeholt-windows/Rimeholt.exe
+          (cd build && zip -q -r -1 ../dist/Rimeholt-windows.zip Rimeholt-windows)
+          rm -rf build/Rimeholt-windows
 
-      - name: Export Linux
+      - name: Export Linux, and check it starts
         run: |
-          mkdir -p build/linux
-          godot --headless --path . --export-release "Linux" build/linux/rimeholt.x86_64 2>&1 | tail -3
-          test -f build/linux/rimeholt.x86_64
+          mkdir -p build/Rimeholt-linux
+          godot --headless --path . --export-release "Linux" build/Rimeholt-linux/Rimeholt.x86_64 2>&1 | tail -3
+          chmod +x build/Rimeholt-linux/Rimeholt.x86_64
+          # boot to the title with no window, then quit
+          timeout 300 build/Rimeholt-linux/Rimeholt.x86_64 --headless --quit-after 600 > linux_boot.log 2>&1 || true
+          tail -5 linux_boot.log
+          if grep -E "SCRIPT ERROR|Couldn't load project data|Error loading" linux_boot.log; then exit 1; fi
+          tar -C build -czf dist/Rimeholt-linux.tar.gz Rimeholt-linux
+          rm -rf build/Rimeholt-linux
 
-      - name: Upload Windows build
-        uses: actions/upload-artifact@v4
-        with:
-          retention-days: 3
-          name: rimeholt-windows-${{ github.sha }}
-          path: build/windows
+      - name: Export macOS (universal .app, zipped)
+        run: |
+          godot --headless --path . --export-release "macOS" build/Rimeholt-macos.zip 2>&1 | tail -3
+          test -f build/Rimeholt-macos.zip
+          mv build/Rimeholt-macos.zip dist/
+          ls -la dist
 
-      - name: Upload Linux build
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
-        with:
-          retention-days: 3
-          name: rimeholt-linux-${{ github.sha }}
-          path: build/linux
+      - uses: actions/upload-artifact@v4
+        with: { name: windows, path: dist/Rimeholt-windows.zip, retention-days: 3, compression-level: 0 }
+      - uses: actions/upload-artifact@v4
+        with: { name: linux, path: dist/Rimeholt-linux.tar.gz, retention-days: 3, compression-level: 0 }
+      - uses: actions/upload-artifact@v4
+        with: { name: macos-zip, path: dist/Rimeholt-macos.zip, retention-days: 1, compression-level: 0 }
+
+  windows-check:
+    needs: export
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: windows }
+      - name: Check it starts
+        shell: pwsh
+        run: |
+          Expand-Archive Rimeholt-windows.zip -DestinationPath .
+          $p = Start-Process -FilePath "Rimeholt-windows\Rimeholt.exe" -ArgumentList "--headless","--quit-after","600" `
+               -RedirectStandardOutput boot.log -RedirectStandardError boot_err.log -PassThru -Wait
+          Get-Content boot.log -Tail 5; Get-Content boot_err.log -Tail 5
+          if (Select-String -Path boot.log,boot_err.log -Pattern "SCRIPT ERROR|Couldn't load project data") { exit 1 }
+          "exit code $($p.ExitCode)"
+
+  macos-dmg:
+    needs: export
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: macos-zip }
+      - name: Sign (ad hoc), check it starts, make the .dmg
+        run: |
+          set -e
+          ditto -x -k Rimeholt-macos.zip app
+          APP="$(ls -d app/*.app | head -1)"
+          echo "app: $APP"
+          # Apple silicon will not run an unsigned app at all; an ad-hoc signature lets it open
+          codesign --force --deep --sign - "$APP"
+          codesign --verify --deep --strict "$APP"
+          BIN="$APP/Contents/MacOS/$(ls "$APP/Contents/MacOS" | head -1)"
+          ( "$BIN" --headless --quit-after 600 > boot.log 2>&1 ) || true
+          tail -5 boot.log
+          if grep -E "SCRIPT ERROR|Couldn't load project data" boot.log; then exit 1; fi
+          mkdir dmg && mv "$APP" dmg/Rimeholt.app && ln -s /Applications dmg/Applications
+          hdiutil create -volname Rimeholt -srcfolder dmg -ov -format UDZO Rimeholt-macos.dmg
+          ls -la Rimeholt-macos.dmg
+      - uses: actions/upload-artifact@v4
+        with: { name: macos, path: Rimeholt-macos.dmg, retention-days: 3, compression-level: 0 }
+
+  release:
+    needs: [export, windows-check, macos-dmg]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist, merge-multiple: true }
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.export.outputs.tag }}
+        run: |
+          rm -f dist/Rimeholt-macos.zip   # the unsigned intermediate; the .dmg is the macOS build
+          ls -la dist
+          cat > notes.md <<EOF
+          Playable build of main at ${GITHUB_SHA::7}. Not tested beyond starting up; see the CI run for test results.
+
+          - **Windows:** unzip \`Rimeholt-windows.zip\`, run \`Rimeholt.exe\`. If SmartScreen warns, choose *More info → Run anyway*.
+          - **Linux:** \`tar xzf Rimeholt-linux.tar.gz\`, then run \`Rimeholt-linux/Rimeholt.x86_64\`.
+          - **macOS:** open \`Rimeholt-macos.dmg\`, drag Rimeholt to Applications. The app is not notarized, so the first time, right-click it and choose *Open* (or run \`xattr -dr com.apple.quarantine /Applications/Rimeholt.app\`).
+          EOF
+          gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "Rimeholt $TAG" --notes-file notes.md --latest
