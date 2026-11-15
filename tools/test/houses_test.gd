@@ -14,7 +14,7 @@ func _ready() -> void:
 
 ## Collision boxes BuildingGen makes for a house spec: one per wall run
 ## between doors, one over each door.
-func _expected_solids(spec: Dictionary) -> int:
+func _expected_solids(spec: Dictionary, def: Dictionary) -> int:
 	var w := float(spec["size"][0])
 	var l := float(spec["size"][1])
 	var doors := {}
@@ -34,6 +34,13 @@ func _expected_solids(spec: Dictionary) -> int:
 				cur = g + BuildingGen.DOOR_W * 0.5
 				n += 1
 		if span * 0.5 - cur >= 0.05:
+			n += 1
+	# plus one board per shutter opened past 0.2 rad (HouseDetail._window):
+	# the plan is seeded by the house id, so a fresh detail draws the same windows
+	var tag := String(spec.get("tag", "base"))
+	var hd := HouseDetail.new(spec, def, 1 if tag == "thaw" else (2 if tag == "rime" else 0))
+	for wn in hd.windows:
+		if float(wn["open"]) > 0.2:
 			n += 1
 	return n
 
@@ -79,7 +86,7 @@ func _run() -> void:
 			var shapes := 0
 			if not cols.is_empty():
 				shapes = (cols[0] as Node).get_child_count()
-			check(shapes == _expected_solids(spec), "%s: %d collision boxes, as the spec implies" % [spec["id"], shapes])
+			check(shapes == _expected_solids(spec, def), "%s: %d collision boxes, as the spec implies" % [spec["id"], shapes])
 			var staves := root.get_node_or_null("staves") as MeshInstance3D
 			var far := root.get_node_or_null("M_wood_far") as MeshInstance3D
 			check(staves != null and far != null and is_equal_approx(staves.visibility_range_end, HouseDetail.LOD_MID)
