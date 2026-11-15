@@ -23,6 +23,7 @@ func _ready() -> void:
 	# the middle of the fire with the 2.2 m kerb bare around it (collision audit: invisible + partial);
 	# a single hull would roof the pit. The camera meets only drawn stone, not an invisible post.
 	KitLib.add_collision(vis, RH.L_WORLD_BASE, false, Surfaces.lookup("kinds", "hearth"))
+	_nav_block(vis)
 	_flames = _find_flames(vis)
 	var lights := KitLib.add_flame_lights(vis, 2.2, 8.8)
 	if lights.size() > 0:
@@ -35,6 +36,33 @@ func _ready() -> void:
 	var hc: Dictionary = AudioDirector.amb_cfg().get("hearth", {})
 	_crackle = AudioDirector.loop_at(self, String(hc.get("bed", "")), float(hc.get("db", 0.0)))
 	_tint_for(World.get_area_state(_area_id()))
+
+## The kerb is lower than the navmesh's climb (0.4 m), so the bake laid a path
+## over the stone that no capsule can step: a nav-only drum over the drawn
+## kerb, in both states, keeps routes round it. Nothing collides with it.
+func _nav_block(vis: Node3D) -> void:
+	var bb := AABB()
+	var first := true
+	var to_self := global_transform.affine_inverse()
+	for c in vis.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		var b := (to_self * mi.global_transform) * mi.get_aabb()
+		bb = b if first else bb.merge(b)
+		first = false
+	if first:
+		return
+	var body := StaticBody3D.new()
+	body.name = "NavBlock"
+	body.collision_layer = (1 << (RH.L_NAV_BLOCK_THAW - 1)) | (1 << (RH.L_NAV_BLOCK_RIME - 1))
+	body.collision_mask = 0
+	var cs := CollisionShape3D.new()
+	var cyl := CylinderShape3D.new()
+	cyl.radius = maxf(bb.size.x, bb.size.z) * 0.5
+	cyl.height = 1.0
+	cs.shape = cyl
+	body.add_child(cs)
+	add_child(body)
+	body.position = Vector3(bb.get_center().x, 0.5, bb.get_center().z)
 
 func _area_id() -> String:
 	return area.area_id if area != null else Game.current_area_id
