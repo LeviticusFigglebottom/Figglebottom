@@ -110,7 +110,7 @@ jobs:
           grep -n import_etc2_astc project.godot
           godot --headless --path . --import 2>&1 | tail -2 || true
           godot --headless --path . --import 2>&1 | tail -2 || true
-          echo "imported files: $(ls .godot/imported | wc -l)"
+          echo "imported files: $(ls .godot/imported | wc -l), ETC2/ASTC textures: $(ls .godot/imported | grep -cE "etc2|astc")"
 
       - name: Export macOS (Apple silicon and Intel)
         run: |
